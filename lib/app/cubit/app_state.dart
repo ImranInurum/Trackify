@@ -2,12 +2,14 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 
+import '../../feature/auth/data/entity/login_response_model.dart';
+
 class AppState extends Equatable {
   final ThemeMode themeMode;
   final Locale locale;
   final bool isConnected;
   final Position? currentLocation;
-  final Map<String, dynamic>? userData;
+  final User? userData;
   final bool isSocketConnected;
   final List<Map<String, dynamic>> devices;
 
@@ -26,7 +28,7 @@ class AppState extends Equatable {
     Locale? locale,
     bool? isConnected,
     Position? currentLocation,
-    Map<String, dynamic>? userData,
+    User? userData,
     bool? isSocketConnected,
     List<Map<String, dynamic>>? devices,
   }) {

@@ -11,6 +11,8 @@ import 'package:trackify/core/widgets/option_tile.dart';
 import 'package:trackify/feature/map/presentation/pages/full_screen_map.dart';
 
 import '../../../../core/widgets/draggable_app_bar.dart';
+import '../cubit/map_cubit.dart';
+import '../cubit/map_state.dart';
 
 class MapScreen extends StatefulWidget {
   const MapScreen({super.key});
@@ -29,6 +31,11 @@ class _MapScreenState extends State<MapScreen> {
   void initState() {
     super.initState();
     _loadMapStyles();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<MapCubit>().fetchDevices({
+        'user_id': 1,
+      }); // Replace with actual user_id
+    });
   }
 
   Future<void> _loadMapStyles() async {
@@ -52,20 +59,22 @@ class _MapScreenState extends State<MapScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: const TopDraggableAppBar(
-        title: "Record Ride",
-        subtitle: "Make your phone a GPS Tracking device",
-      ),
-        body: _body());
+    return BlocBuilder<MapCubit, MapState>(
+      builder: (context, mapState) {
+        return Scaffold(
+          appBar: TopDraggableAppBar(
+            devices: mapState is MapLoaded ? mapState.deviceList.devices : null,
+          ),
+          body: _body(),
+        );
+      },
+    );
   }
 
   Widget _body() {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
-      child: SafeArea(
-        top: true,
-          child: Column(children: [_mapWidget()])),
+      child: SafeArea(top: true, child: Column(children: [_mapWidget()])),
     );
   }
 
@@ -77,13 +86,17 @@ class _MapScreenState extends State<MapScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text("Record Ride",style: Theme.of(context).textTheme.headlineSmall),
+          Text("Record Ride", style: Theme.of(context).textTheme.headlineSmall),
           SizedBox(height: 5),
-          Text("Make your phone a GPS Tracking device",style: Theme.of(context).textTheme.titleMedium),
+          Text(
+            "Make your phone a GPS Tracking device",
+            style: Theme.of(context).textTheme.titleMedium,
+          ),
           SizedBox(height: 5),
           BlocConsumer<AppCubit, AppState>(
             listenWhen: (prev, curr) =>
-                prev.currentLocation != curr.currentLocation && curr.currentLocation != null,
+                prev.currentLocation != curr.currentLocation &&
+                curr.currentLocation != null,
 
             listener: (BuildContext context, AppState state) async {
               if (!_followUser) return;
@@ -91,9 +104,12 @@ class _MapScreenState extends State<MapScreen> {
               final pos = state.currentLocation!;
               final controller = await _controller.future;
 
-              controller.animateCamera(CameraUpdate.newLatLng(LatLng(pos.latitude, pos.longitude)));
+              controller.animateCamera(
+                CameraUpdate.newLatLng(LatLng(pos.latitude, pos.longitude)),
+              );
             },
-            buildWhen: (previous, current) => previous.currentLocation != current.currentLocation,
+            buildWhen: (previous, current) =>
+                previous.currentLocation != current.currentLocation,
             builder: (context, state) {
               final currentPos = state.currentLocation;
 
@@ -124,9 +140,13 @@ class _MapScreenState extends State<MapScreen> {
           SizedBox(height: 10),
           OptionTile(
             title: "Go to Dashboard",
-              showDivider: false, leading: Icon(Icons.map_outlined), subtitle: 'See full map',
-            onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (context) => FullScreenMap(),)),
-            ),
+            showDivider: false,
+            leading: Icon(Icons.map_outlined),
+            subtitle: 'See full map',
+            onTap: () => Navigator.of(
+              context,
+            ).push(MaterialPageRoute(builder: (context) => FullScreenMap())),
+          ),
         ],
       ),
     );

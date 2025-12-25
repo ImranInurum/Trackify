@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'dart:ui';
+import 'dart:convert';
 
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
@@ -8,6 +8,8 @@ import 'package:geolocator/geolocator.dart';
 import '../../core/services/connectivity_service.dart';
 import '../../core/services/location_service.dart';
 import '../../core/services/socket_service.dart';
+import '../../core/utils/shared_preferences.dart';
+import '../../feature/auth/data/entity/login_response_model.dart';
 import 'app_state.dart';
 
 class AppCubit extends Cubit<AppState> {
@@ -26,7 +28,7 @@ class AppCubit extends Cubit<AppState> {
   }) : _connectivityService = connectivityService,
        _locationService = locationService,
        _socketService = socketService,
-       super(const AppState()){
+       super(const AppState()) {
     print("AppCubit constructed");
   }
 
@@ -35,7 +37,8 @@ class AppCubit extends Cubit<AppState> {
     try {
       _initializeConnectivity();
       await _initializeLocation();
-     // await _initializeSocket();
+      await loadUserSession();
+      // await _initializeSocket();
     } catch (e) {
       print('Initialization error: $e');
     }
@@ -43,7 +46,9 @@ class AppCubit extends Cubit<AppState> {
 
   void _initializeConnectivity() {
     _connectivityService.initialize();
-    _connectivitySubscription = _connectivityService.connectivityStream.listen((isConnected) {
+    _connectivitySubscription = _connectivityService.connectivityStream.listen((
+      isConnected,
+    ) {
       print("IsConnected : $isConnected");
       emit(state.copyWith(isConnected: isConnected));
 
@@ -68,6 +73,17 @@ class AppCubit extends Cubit<AppState> {
       );
     } catch (e) {
       print('Location initialization error: $e');
+    }
+  }
+
+  Future<void> loadUserSession() async {
+    final prefs = AppPreference.instance;
+    final userData = await prefs.get(key: AppPreference.KEY_USER_DETAILS);
+    print("UserDetails : $userData");
+
+    if (userData.isNotEmpty) {
+      final user = User.fromJson(jsonDecode(userData));
+      emit(state.copyWith(userData: user));
     }
   }
 

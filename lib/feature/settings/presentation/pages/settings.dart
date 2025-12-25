@@ -6,8 +6,19 @@ import 'package:trackify/core/widgets/custom_card.dart';
 
 import '../../../../core/widgets/option_tile.dart';
 
-class SettingsPlaceholder extends StatelessWidget {
+class SettingsPlaceholder extends StatefulWidget {
   const SettingsPlaceholder({super.key});
+
+  @override
+  State<SettingsPlaceholder> createState() => _SettingsPlaceholderState();
+}
+
+class _SettingsPlaceholderState extends State<SettingsPlaceholder> {
+  @override
+  void initState() {
+    super.initState();
+    context.read<AppCubit>().loadUserSession();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -16,16 +27,24 @@ class SettingsPlaceholder extends StatelessWidget {
         preferredSize: const Size.fromHeight(110),
         child: SafeArea(
           bottom: false,
-          child: OptionTile(
-            leading: const CircleAvatar(
-              minRadius: 45,
-              child: Text("I", style: TextStyle(fontSize: 12)),
-            ),
-            title: "Account",
-            subtitle: "Manage your profile and security",
-            extra: const Text("+91**********", style: TextStyle(fontSize: 12)),
-            onTap: () => print("Account tapped"),
-            showDivider: false,
+          child: BlocBuilder<AppCubit, AppState>(
+            builder: (context, state) {
+              final user = state.userData;
+              return OptionTile(
+                leading: const CircleAvatar(
+                  minRadius: 45,
+                  child: Text("I", style: TextStyle(fontSize: 12)),
+                ),
+                title: user?.name ?? "N/A",
+                subtitle: user?.email ?? "N/A",
+                extra: Text(
+                  user?.role ?? "+91**********",
+                  style: TextStyle(fontSize: 12),
+                ),
+                onTap: () => print("Account tapped"),
+                showDivider: false,
+              );
+            },
           ),
         ),
       ),
@@ -80,7 +99,7 @@ class SettingsPlaceholder extends StatelessWidget {
             subtitle: "Customize app preferences",
             onTap: () => print("Settings tapped"),
           ),
-          BlocBuilder<AppCubit,AppState>(
+          BlocBuilder<AppCubit, AppState>(
             builder: (context, state) {
               final themeMode = state.themeMode;
               final isDarkMode = themeMode == ThemeMode.dark;
@@ -96,15 +115,15 @@ class SettingsPlaceholder extends StatelessWidget {
                 trailing: Switch(
                   value: isDarkMode,
                   onChanged: (value) {
-                    context
-                        .read<AppCubit>()
-                        .changeTheme(value ? ThemeMode.dark : ThemeMode.light);
+                    context.read<AppCubit>().changeTheme(
+                      value ? ThemeMode.dark : ThemeMode.light,
+                    );
                   },
                 ),
                 onTap: () {
-                  context
-                      .read<AppCubit>()
-                      .changeTheme(isDarkMode ? ThemeMode.light : ThemeMode.dark);
+                  context.read<AppCubit>().changeTheme(
+                    isDarkMode ? ThemeMode.light : ThemeMode.dark,
+                  );
                 },
               );
             },

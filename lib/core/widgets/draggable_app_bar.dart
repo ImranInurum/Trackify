@@ -1,21 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:trackify/core/widgets/option_tile.dart';
+
+import '../../feature/map/data/entity/user_device_model.dart';
 
 class TopDraggableAppBar extends StatefulWidget implements PreferredSizeWidget {
-  final String title;
-  final String? subtitle;
   final List<Widget>? actions;
   final double collapsedHeight;
   final double expandedHeight;
   final Color? backgroundColor;
 
+  final List<UserDevices>? devices;
+
   const TopDraggableAppBar({
     super.key,
-    required this.title,
-    this.subtitle,
     this.actions,
     this.collapsedHeight = 100,
-    this.expandedHeight = 200,
+    this.expandedHeight = 300,
     this.backgroundColor,
+    this.devices,
   });
 
   @override
@@ -42,7 +44,6 @@ class _TopDraggableAppBarState extends State<TopDraggableAppBar>
   }
 
   void _onVerticalDragUpdate(DragUpdateDetails details) {
-    // ✅ Correct direction: drag down → collapse, drag up → expand
     setState(() {
       _height -= details.delta.dy;
       _height = _height.clamp(widget.collapsedHeight, widget.expandedHeight);
@@ -50,20 +51,13 @@ class _TopDraggableAppBarState extends State<TopDraggableAppBar>
   }
 
   void _onVerticalDragEnd(DragEndDetails details) {
-    final midpoint =
-        (widget.collapsedHeight + widget.expandedHeight) / 2;
-
-    final target = _height > midpoint
-        ? widget.expandedHeight
-        : widget.collapsedHeight;
+    final midpoint = (widget.collapsedHeight + widget.expandedHeight) / 2;
+    final target = _height > midpoint ? widget.expandedHeight : widget.collapsedHeight;
 
     _heightAnimation = Tween<double>(
       begin: _height,
       end: target,
-    ).animate(CurvedAnimation(
-      parent: _controller,
-      curve: Curves.easeOut,
-    ));
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut));
 
     _controller
       ..reset()
@@ -78,11 +72,16 @@ class _TopDraggableAppBarState extends State<TopDraggableAppBar>
 
   @override
   Widget build(BuildContext context) {
+    final topPadding = MediaQuery.of(context).padding.top;
+
+    final devices = widget.devices ?? [];
+
     return AnimatedContainer(
       duration: const Duration(milliseconds: 150),
-      height: _height,
+      height: _height + topPadding,
       decoration: BoxDecoration(
-        color: widget.backgroundColor ??
+        color:
+            widget.backgroundColor ??
             Theme.of(context).colorScheme.background ??
             Theme.of(context).colorScheme.surface,
         borderRadius: const BorderRadius.only(
@@ -97,55 +96,70 @@ class _TopDraggableAppBarState extends State<TopDraggableAppBar>
           ),
         ],
       ),
-      child: GestureDetector(
-        behavior: HitTestBehavior.translucent,
-        onVerticalDragUpdate: _onVerticalDragUpdate,
-        onVerticalDragEnd: _onVerticalDragEnd,
-        child: Column(
-          children: [
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Flexible(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            widget.title,
-                            style: Theme.of(context)
-                                .textTheme
-                                .headlineSmall
-                                ?.copyWith(fontWeight: FontWeight.bold),
-                          ),
-                          if (widget.subtitle != null)
-                            Text(
-                              widget.subtitle!,
-                              style: Theme.of(context).textTheme.titleMedium,
+      child: Padding(
+        padding: EdgeInsets.only(top: topPadding),
+        child: GestureDetector(
+          behavior: HitTestBehavior.translucent,
+          onVerticalDragUpdate: _onVerticalDragUpdate,
+          onVerticalDragEnd: _onVerticalDragEnd,
+          child: Column(
+            children: [
+              if (devices.isNotEmpty)
+                Expanded(
+                  child: ListView.builder(
+                    padding: const EdgeInsets.symmetric(horizontal: 12),
+                    itemCount: devices.length,
+                    itemBuilder: (context, index) {
+                      final device = devices[index];
+                      return OptionTile(
+                        leading: const Icon(
+                          Icons.pedal_bike,
+                          size: 32,
+                          color: Colors.green,
+                        ),
+                        title: device.deviceName ?? "Unnamed Device",
+                        subtitle: device.imei ?? "No IMEI",
+                        showDivider: index != devices.length - 1,
+                        onTap: () {
+                          print("Tapped ${device.deviceName}");
+                          // Optional: call a callback here if needed later
+                        },
+                      );
+                    },
+                  ),
+                )
+              else
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Flexible(
+                          child: Text(
+                            "No Device Found",
+                            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                              fontWeight: FontWeight.bold,
                             ),
-                        ],
-                      ),
+                          ),
+                        ),
+                        if (widget.actions != null) Row(children: widget.actions!),
+                      ],
                     ),
-                    if (widget.actions != null)
-                      Row(children: widget.actions!),
-                  ],
+                  ),
+                ),
+              // Handle bar at bottom
+              Container(
+                width: 40,
+                height: 4,
+                margin: const EdgeInsets.only(bottom: 10, top: 6),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).hintColor.withOpacity(0.7),
+                  borderRadius: BorderRadius.circular(10),
                 ),
               ),
-            ),
-            // Handle at the bottom
-            Container(
-              width: 40,
-              height: 4,
-              margin: const EdgeInsets.only(bottom: 10),
-              decoration: BoxDecoration(
-                color: Theme.of(context).hintColor.withOpacity(0.7),
-                borderRadius: BorderRadius.circular(10),
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
