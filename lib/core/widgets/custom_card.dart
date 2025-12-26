@@ -23,16 +23,12 @@ class CustomCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final effectiveBackgroundColor =
-        backgroundColor ?? theme.colorScheme.background;
     return Card(
       elevation: elevation,
       child: Container(
         height: height,
         width: width,
         decoration: BoxDecoration(
-          color: effectiveBackgroundColor,
           border: border,
           borderRadius: BorderRadius.all(
             Radius.circular(borderRadius!),
