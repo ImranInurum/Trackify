@@ -13,15 +13,21 @@ class AuthCubit extends Cubit<AuthState> {
 
   Future<void> loginUser(Map<String, dynamic> body) async {
     emit(AuthLoading());
+    final stopwatch = Stopwatch()..start();
     final result = await _authCase.loginCall(body);
+    print('Network + decode took: ${stopwatch.elapsedMilliseconds}ms');
 
     result.fold((failure) => emit(AuthFailure(failure)), (user) async {
+      final sw = Stopwatch()..start();
+
       final prefs = AppPreference.instance;
       await prefs.set(key: AppPreference.KEY_TOKEN, value: user.token ?? "");
       await prefs.set(
         key: AppPreference.KEY_USER_DETAILS,
         value: jsonEncode(user.user?.toJson()),
       );
+      print('Prefs write took: ${sw.elapsedMilliseconds}ms');
+
       emit(AuthSuccess(user));
     });
   }
@@ -29,10 +35,9 @@ class AuthCubit extends Cubit<AuthState> {
   Future<void> registerUser(Map<String, dynamic> body) async {
     emit(AuthLoading());
     final result = await _authCase.registerCall(body);
-
     result.fold(
       (failure) => emit(AuthFailure(failure)),
-      (user) => emit(AuthSuccess(user)),
+      (user) => emit(RegisterSuccess()),
     );
   }
 }

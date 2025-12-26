@@ -7,17 +7,20 @@ import '../../../../core/errors/exceptions.dart';
 import '../../../../core/network/base_api_service.dart';
 import '../../../../core/network/network_api_service.dart';
 import '../entity/login_response_model.dart';
+import '../entity/register_user_model.dart';
 
-class AuthRepositoryImpl implements AuthRepository{
+class AuthRepositoryImpl implements AuthRepository {
   static final BaseApiServices _apiServices = NetworkApiService();
 
   @override
-  ResultFuture<LoginResponseModel> loginWithEmailPassword(Map<String, dynamic> body) async {
+  ResultFuture<LoginResponseModel> loginWithEmailPassword(
+    Map<String, dynamic> body,
+  ) async {
     try {
       final res = await _apiServices.getPostApiResponse(ApiConstants.login, body);
       return res.fold(
-            (error) => Left(error),
-            (data) => Right(LoginResponseModel.fromJson(data)),
+        (error) => Left(error),
+        (data) => Right(LoginResponseModel.fromJson(data)),
       );
     } on AppException catch (e) {
       return Left(e);
@@ -25,16 +28,17 @@ class AuthRepositoryImpl implements AuthRepository{
   }
 
   @override
-  ResultFuture<LoginResponseModel> sighUpWithEmailPassword(Map<String, dynamic> body) async {
+  ResultFuture<RegisterUserModel> sighUpWithEmailPassword(
+    Map<String, dynamic> body,
+  ) async {
     try {
       final res = await _apiServices.getPostApiResponse(ApiConstants.registerUser, body);
       return res.fold(
-            (error) => Left(error),
-            (data) => Right(LoginResponseModel.fromJson(data)),
+        (error) => Left(error),
+        (data) => Right(RegisterUserModel.fromJson(data)),
       );
     } on AppException catch (e) {
       return Left(e);
     }
   }
-
 }

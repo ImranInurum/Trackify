@@ -4,7 +4,9 @@ import 'package:trackify/app/cubit/app_cubit.dart';
 import 'package:trackify/app/cubit/app_state.dart';
 import 'package:trackify/core/widgets/custom_card.dart';
 
+import '../../../../core/utils/shared_preferences.dart';
 import '../../../../core/widgets/option_tile.dart';
+import '../../../auth/presentation/pages/signin_screen.dart';
 
 class SettingsPlaceholder extends StatefulWidget {
   const SettingsPlaceholder({super.key});
@@ -58,7 +60,7 @@ class _SettingsPlaceholderState extends State<SettingsPlaceholder> {
       padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
-        children: [_deviceDetails(), _settingOptions()],
+        children: [_deviceDetails(), _settingOptions(), _logout()],
       ),
     );
   }
@@ -66,11 +68,15 @@ class _SettingsPlaceholderState extends State<SettingsPlaceholder> {
   Widget _deviceDetails() {
     return CustomCard(
       innerPadding: 10,
-      elevation: 1,
+      elevation: 0.7,
       child: Column(
         children: [
           OptionTile(
-            leading: const Icon(Icons.pedal_bike, size: 32, color: Colors.green),
+            leading: Icon(
+              Icons.local_taxi_sharp,
+              size: 18,
+              color: Theme.of(context).colorScheme.primaryContainer,
+            ),
             title: "Yamaha MT-15",
             subtitle: "KA-05-AB-1234",
             showDivider: false,
@@ -84,17 +90,25 @@ class _SettingsPlaceholderState extends State<SettingsPlaceholder> {
   Widget _settingOptions() {
     return CustomCard(
       innerPadding: 10,
-      elevation: 1,
+      elevation: 0.7,
       child: Column(
         children: [
           OptionTile(
-            leading: const Icon(Icons.garage_outlined, size: 28, color: Colors.blue),
+            leading: Icon(
+              Icons.garage_outlined,
+              size: 18,
+              color: Theme.of(context).colorScheme.primaryContainer,
+            ),
             title: "My Garage",
             subtitle: "View and manage your vehicles",
             onTap: () => print("My Garage tapped"),
           ),
           OptionTile(
-            leading: const Icon(Icons.settings, size: 28, color: Colors.orange),
+            leading: Icon(
+              Icons.settings,
+              size: 18,
+              color: Theme.of(context).colorScheme.primaryContainer,
+            ),
             title: "Settings",
             subtitle: "Customize app preferences",
             onTap: () => print("Settings tapped"),
@@ -107,18 +121,27 @@ class _SettingsPlaceholderState extends State<SettingsPlaceholder> {
               return OptionTile(
                 leading: Icon(
                   isDarkMode ? Icons.dark_mode : Icons.light_mode,
-                  size: 28,
-                  color: isDarkMode ? Colors.amber : Colors.blueGrey,
+                  size: 18,
+                  color: isDarkMode
+                      ? Theme.of(context).colorScheme.primaryContainer
+                      : Theme.of(context).colorScheme.primaryContainer,
                 ),
                 title: isDarkMode ? "Dark Mode" : "Light Theme",
                 subtitle: "Switch between light and dark themes",
-                trailing: Switch(
-                  value: isDarkMode,
-                  onChanged: (value) {
-                    context.read<AppCubit>().changeTheme(
-                      value ? ThemeMode.dark : ThemeMode.light,
-                    );
-                  },
+                trailing: Transform.scale(
+                  scale: 0.7,
+                  child: Switch(
+                    value: isDarkMode,
+                    activeThumbColor: isDarkMode
+                        ? Theme.of(context).colorScheme.primaryContainer
+                        : Theme.of(context).colorScheme.primaryContainer,
+                    activeTrackColor: Theme.of(context).colorScheme.primaryContainer,
+                    onChanged: (value) {
+                      context.read<AppCubit>().changeTheme(
+                        value ? ThemeMode.dark : ThemeMode.light,
+                      );
+                    },
+                  ),
                 ),
                 onTap: () {
                   context.read<AppCubit>().changeTheme(
@@ -130,17 +153,54 @@ class _SettingsPlaceholderState extends State<SettingsPlaceholder> {
           ),
 
           OptionTile(
-            leading: const Icon(Icons.help_outline, size: 28, color: Colors.purple),
+            leading: Icon(
+              Icons.help_outline,
+              size: 18,
+              color: Theme.of(context).colorScheme.primaryContainer,
+            ),
             title: "Help & Support",
             subtitle: "Get assistance and FAQs",
             onTap: () => print("Help & Support tapped"),
           ),
           OptionTile(
-            leading: const Icon(Icons.add_circle_outline, size: 28, color: Colors.teal),
+            leading: Icon(
+              Icons.add_circle_outline,
+              size: 18,
+              color: Theme.of(context).colorScheme.primaryContainer,
+            ),
             title: "Add More Vehicles",
             subtitle: "Connect another bike or car",
             onTap: () => print("Add More Vehicles tapped"),
             showDivider: false,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _logout() {
+    return CustomCard(
+      innerPadding: 10,
+      elevation: 0.7,
+      child: Column(
+        children: [
+          OptionTile(
+            leading: Icon(
+              Icons.logout_outlined,
+              size: 18,
+              color: Theme.of(context).colorScheme.primaryContainer,
+            ),
+            title: "Log out",
+            subtitle: "Logout from this device",
+            showDivider: false,
+            onTap: () {
+              final prefs = AppPreference.instance;
+              prefs.clearAll();
+              Navigator.of(context).pushAndRemoveUntil(
+                MaterialPageRoute(builder: (context) => const SignInScreen()),
+                (Route<dynamic> route) => false,
+              );
+            },
           ),
         ],
       ),

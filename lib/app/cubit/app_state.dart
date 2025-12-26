@@ -14,7 +14,7 @@ class AppState extends Equatable {
   final List<Map<String, dynamic>> devices;
 
   const AppState({
-    this.themeMode = ThemeMode.dark,
+    this.themeMode = ThemeMode.light,
     this.locale = const Locale('en'),
     this.isConnected = true,
     this.currentLocation,

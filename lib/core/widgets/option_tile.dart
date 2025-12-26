@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../config/style_manager.dart';
+
 class OptionTile extends StatelessWidget {
   final Widget leading;
   final String title;
@@ -8,9 +10,12 @@ class OptionTile extends StatelessWidget {
   final Widget? trailing;
   final VoidCallback? onTap;
   final bool showDivider;
+  final TextStyle? titleStyle;
+  final TextStyle? subtitleStyle;
+  final EdgeInsetsGeometry? contentPadding;
 
   const OptionTile({
-    Key? key,
+    super.key,
     required this.leading,
     required this.title,
     required this.subtitle,
@@ -18,7 +23,10 @@ class OptionTile extends StatelessWidget {
     this.trailing,
     this.onTap,
     this.showDivider = true,
-  }) : super(key: key);
+    this.titleStyle,
+    this.subtitleStyle,
+    this.contentPadding,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -27,50 +35,41 @@ class OptionTile extends StatelessWidget {
         InkWell(
           onTap: onTap,
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 // Leading widget
-                Padding(
-                  padding: const EdgeInsets.only(right: 12),
-                  child: leading,
-                ),
+                Padding(padding: const EdgeInsets.only(right: 12), child: leading),
 
-                // Title, subtitle, and optional extra
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         title,
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                        ),
+                        style:
+                            titleStyle ??
+                            getRegularStyle(
+                              color: Theme.of(context).colorScheme.tertiaryFixedDim,
+                            ),
                       ),
                       const SizedBox(height: 2),
                       Text(
                         subtitle,
-                        style: TextStyle(
-                          color: Colors.grey[600],
-                          fontSize: 14,
-                        ),
+                        style:
+                            subtitleStyle ??
+                            getMediumStyle(
+                              color: Theme.of(context).colorScheme.tertiaryFixed,
+                            ),
                       ),
-                      if (extra != null) ...[
-                        const SizedBox(height: 6),
-                        extra!,
-                      ],
+                      if (extra != null) ...[const SizedBox(height: 6), extra!],
                     ],
                   ),
                 ),
 
                 trailing ??
-                    const Icon(
-                      Icons.arrow_forward_ios,
-                      size: 18,
-                      color: Colors.grey,
-                    ),
+                    const Icon(Icons.arrow_forward_ios, size: 14, color: Colors.grey),
               ],
             ),
           ),
@@ -78,20 +77,12 @@ class OptionTile extends StatelessWidget {
 
         // Optional divider
         if (showDivider)
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 3),
-            child: Row(
-              children: [
-                const SizedBox(width: 45), // aligns divider after leading icon
-                Expanded(
-                  child: Divider(
-                    color: Colors.grey[300],
-                    thickness: 1,
-                  ),
-                ),
-                const SizedBox(width: 32), // space before trailing arrow
-              ],
-            ),
+          Row(
+            children: [
+              const SizedBox(width: 45), // aligns divider after leading icon
+              Expanded(child: Divider(color: Colors.grey[300], thickness: 1)),
+              const SizedBox(width: 32), // space before trailing arrow
+            ],
           ),
       ],
     );

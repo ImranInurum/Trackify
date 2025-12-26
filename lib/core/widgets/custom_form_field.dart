@@ -12,7 +12,7 @@ class CustomFormField extends StatefulWidget {
   final TextInputType keyboardType;
   final bool isPassword;
   final EdgeInsetsGeometry padding;
-  final Color backgroundColor;
+  final Color? backgroundColor;
   final Color borderColor;
   final InputBorder focusBorder;
   final void Function()? onTap;
@@ -47,7 +47,7 @@ class CustomFormField extends StatefulWidget {
     this.keyboardType = TextInputType.text,
     this.isPassword = false,
     this.padding = const EdgeInsets.all(12.0),
-    this.backgroundColor = const Color(0xFF1C1B1F),
+    this.backgroundColor,
     this.focusBorder = InputBorder.none,
     this.borderColor = Colors.grey,
     this.onTap,
@@ -96,8 +96,7 @@ class _CustomFormFieldState extends State<CustomFormField> {
     String newText = text;
 
     if (widget.capitalizeFirstLetter) {
-      newText =
-      text.isNotEmpty ? text[0].toUpperCase() + text.substring(1) : text;
+      newText = text.isNotEmpty ? text[0].toUpperCase() + text.substring(1) : text;
 
       if (widget.value != null && widget.value!.text != newText) {
         widget.value!.value = widget.value!.value.copyWith(
@@ -122,18 +121,16 @@ class _CustomFormFieldState extends State<CustomFormField> {
   Widget build(BuildContext context) {
     return Container(
       padding: EdgeInsets.symmetric(
-          vertical:
-          (showLabel && widget.value != null && widget.value!.text.isEmpty)
-              ? 4.0
-              : 12.0,
-          horizontal: 5.0),
+        vertical: (showLabel && widget.value != null && widget.value!.text.isEmpty)
+            ? 4.0
+            : 12.0,
+        horizontal: 5.0,
+      ),
       decoration: BoxDecoration(
-          color: widget.backgroundColor,
-          border: Border.all(
-              color: widget.borderColor,
-              width: 1.0 ),
-          borderRadius:
-          BorderRadius.circular(4.0)),
+        color: widget.backgroundColor ?? Theme.of(context).colorScheme.surface,
+        border: Border.all(color: widget.borderColor, width: 1.0),
+        borderRadius: BorderRadius.circular(4.0),
+      ),
       child: Row(
         children: [
           Expanded(
@@ -142,8 +139,7 @@ class _CustomFormFieldState extends State<CustomFormField> {
                 TextFormField(
                   enableInteractiveSelection: widget.enableInteractiveSelection,
                   enabled: !(widget.disabled ?? false),
-                  style:
-                  const TextStyle(/*fontFamily: AssetsConstants.defaultFont*/),
+                  style: const TextStyle(/*fontFamily: AssetsConstants.defaultFont*/),
                   onFieldSubmitted: widget.onFieldSubmitted,
                   focusNode: node,
                   inputFormatters: widget.inputFormatters,
@@ -162,44 +158,51 @@ class _CustomFormFieldState extends State<CustomFormField> {
                   keyboardType: widget.keyboardType,
                   decoration: InputDecoration(
                     hintStyle: const TextStyle(
-                        /*fontFamily: AssetsConstants.defaultFont,*/
-                        overflow: TextOverflow.ellipsis,color: Colors.grey),
+                      /*fontFamily: AssetsConstants.defaultFont,*/
+                      overflow: TextOverflow.ellipsis,
+                      color: Colors.grey,
+                    ),
                     suffixIcon: _buildSuffixIcons(),
                     counterText: '',
                     prefixText: widget.prefixText,
                     contentPadding: widget.isSearch!
-                        ? const EdgeInsets.symmetric(
-                        vertical: 12.0, horizontal: 8.0)
+                        ? const EdgeInsets.symmetric(vertical: 12.0, horizontal: 8.0)
                         : const EdgeInsets.symmetric(horizontal: 8.0),
-                    label: showLabel &&
-                        widget.value != null &&
-                        widget.value!.text.isEmpty
+                    label: showLabel && widget.value != null && widget.value!.text.isEmpty
                         ? Row(
-                      children: [
-                        if (widget.isFieldMandatory) ...[
-                          Text('*',style: TextStyle(color: AppColors.errorLight),),
-                          //AppText.body("* ", state: TextState.error)
-                        ],
-                        Expanded(child: Text(widget.header,style: TextStyle(fontSize: 16,
-                            overflow: TextOverflow.ellipsis,color: Colors.grey),)),
-/*                        Expanded(
+                            children: [
+                              if (widget.isFieldMandatory) ...[
+                                Text('*', style: TextStyle(color: AppColors.errorLight)),
+                                //AppText.body("* ", state: TextState.error)
+                              ],
+                              Expanded(
+                                child: Text(
+                                  widget.header,
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    overflow: TextOverflow.ellipsis,
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                              ),
+                              /*                        Expanded(
                           child: AppText.body(widget.header,
                               state: TextState.disabled,
                               fontsize: 16,
                               overflow: TextOverflow.ellipsis),
                         )*/
-                      ],
-                    )
+                            ],
+                          )
                         : null,
                     border: InputBorder.none,
                     focusedBorder: widget.focusBorder,
                     errorBorder: UnderlineInputBorder(
-                        borderSide:
-                        BorderSide(color: AppColors.errorLight, width: 1.0)),
+                      borderSide: BorderSide(color: AppColors.errorLight, width: 1.0),
+                    ),
                     isDense: true,
                     hintText: widget.hint,
-                    fillColor: Theme.of(context).colorScheme.primary,
-                    focusColor: Theme.of(context).colorScheme.primary,
+                    fillColor: Theme.of(context).colorScheme.surface,
+                    focusColor: Theme.of(context).colorScheme.surface,
                     errorText: errorMessage,
                   ),
                 ),
@@ -220,10 +223,7 @@ class _CustomFormFieldState extends State<CustomFormField> {
           padding: const EdgeInsets.only(right: 4.0),
           child: IconButton(
             onPressed: widget.onSearch,
-            icon: const Icon(
-              Icons.search,
-              size: 30,
-            ),
+            icon: const Icon(Icons.search, size: 30),
           ),
         ),
       );
@@ -238,10 +238,7 @@ class _CustomFormFieldState extends State<CustomFormField> {
               widget.value?.clear();
               _handleTextChanged('');
             },
-            icon: const Icon(
-              Icons.clear_rounded,
-              size: 14,
-            ),
+            icon: const Icon(Icons.clear_rounded, size: 14),
           ),
         ),
       );
@@ -270,9 +267,6 @@ class _CustomFormFieldState extends State<CustomFormField> {
       return null;
     }
 
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: icons,
-    );
+    return Row(mainAxisSize: MainAxisSize.min, children: icons);
   }
 }

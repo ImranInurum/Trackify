@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+
 import '../../../../core/errors/exceptions.dart';
 import '../../data/entity/login_response_model.dart';
 
@@ -12,6 +13,8 @@ abstract class AuthState extends Equatable {
 class AuthInitial extends AuthState {}
 
 class AuthLoading extends AuthState {}
+
+class RegisterSuccess extends AuthState {}
 
 class AuthSuccess extends AuthState {
   final LoginResponseModel user;

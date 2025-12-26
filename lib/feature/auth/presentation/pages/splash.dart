@@ -30,7 +30,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
     // Decide navigation based on token
     if (!mounted) return;
-    if (!token.isNotEmpty) {
+    if (token.isNotEmpty) {
       // User already logged in → go to Dashboard
       Navigator.pushReplacement(
         context,

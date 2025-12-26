@@ -3,110 +3,104 @@ import 'package:trackify/core/widgets/option_tile.dart';
 
 import '../../feature/map/data/entity/user_device_model.dart';
 
-class TopDraggableAppBar extends StatefulWidget implements PreferredSizeWidget {
+class DraggableAppBar extends StatefulWidget {
   final List<Widget>? actions;
   final double collapsedHeight;
   final double expandedHeight;
   final Color? backgroundColor;
-
   final List<UserDevices>? devices;
 
-  const TopDraggableAppBar({
+  const DraggableAppBar({
     super.key,
     this.actions,
-    this.collapsedHeight = 100,
-    this.expandedHeight = 300,
+    this.collapsedHeight = 70,
+    this.expandedHeight = 120,
     this.backgroundColor,
     this.devices,
   });
 
   @override
-  State<TopDraggableAppBar> createState() => _TopDraggableAppBarState();
-
-  @override
-  Size get preferredSize => Size.fromHeight(collapsedHeight);
+  State<DraggableAppBar> createState() => _DraggableAppBarBarState();
 }
 
-class _TopDraggableAppBarState extends State<TopDraggableAppBar>
+class _DraggableAppBarBarState extends State<DraggableAppBar>
     with SingleTickerProviderStateMixin {
-  late double _height;
   late AnimationController _controller;
   late Animation<double> _heightAnimation;
+  bool _isExpanded = false;
 
   @override
   void initState() {
     super.initState();
-    _height = widget.collapsedHeight;
     _controller = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 250),
     );
+
+    _heightAnimation =
+        Tween<double>(begin: widget.collapsedHeight, end: widget.expandedHeight).animate(
+          CurvedAnimation(parent: _controller, curve: Curves.easeOut),
+        )..addListener(() {
+          setState(() {});
+        });
   }
 
-  void _onVerticalDragUpdate(DragUpdateDetails details) {
+  void _toggleExpand() {
     setState(() {
-      _height -= details.delta.dy;
-      _height = _height.clamp(widget.collapsedHeight, widget.expandedHeight);
-    });
-  }
-
-  void _onVerticalDragEnd(DragEndDetails details) {
-    final midpoint = (widget.collapsedHeight + widget.expandedHeight) / 2;
-    final target = _height > midpoint ? widget.expandedHeight : widget.collapsedHeight;
-
-    _heightAnimation = Tween<double>(
-      begin: _height,
-      end: target,
-    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut));
-
-    _controller
-      ..reset()
-      ..forward();
-
-    _heightAnimation.addListener(() {
-      setState(() {
-        _height = _heightAnimation.value;
-      });
+      _isExpanded = !_isExpanded;
+      if (_isExpanded) {
+        _controller.forward();
+      } else {
+        _controller.reverse();
+      }
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    final topPadding = MediaQuery.of(context).padding.top;
-
+    final topInset = MediaQuery.of(context).padding.top;
     final devices = widget.devices ?? [];
+    final height = _heightAnimation.value;
 
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 150),
-      height: _height + topPadding,
-      decoration: BoxDecoration(
-        color:
-            widget.backgroundColor ??
-            Theme.of(context).colorScheme.background ??
-            Theme.of(context).colorScheme.surface,
-        borderRadius: const BorderRadius.only(
-          bottomLeft: Radius.circular(18),
-          bottomRight: Radius.circular(18),
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.15),
-            blurRadius: 6,
-            offset: const Offset(0, 3),
+    return GestureDetector(
+      onTap: _toggleExpand,
+      behavior: HitTestBehavior.translucent,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 250),
+        curve: Curves.easeOut,
+        height: height + topInset,
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              Colors.white,
+              (widget.backgroundColor ??
+                  Theme.of(context).colorScheme.secondaryContainer),
+            ],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            stops: const [0.3, 1.0], // 70% white, 30% your theme color
           ),
-        ],
-      ),
-      child: Padding(
-        padding: EdgeInsets.only(top: topPadding),
-        child: GestureDetector(
-          behavior: HitTestBehavior.translucent,
-          onVerticalDragUpdate: _onVerticalDragUpdate,
-          onVerticalDragEnd: _onVerticalDragEnd,
+          borderRadius: const BorderRadius.only(
+            bottomLeft: Radius.circular(18),
+            bottomRight: Radius.circular(18),
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.15),
+              blurRadius: 6,
+              offset: const Offset(0, 3),
+            ),
+          ],
+        ),
+
+        child: Padding(
+          padding: EdgeInsets.only(top: topInset),
           child: Column(
             children: [
               if (devices.isNotEmpty)
-                Expanded(
+                Flexible(
                   child: ListView.builder(
+                    physics: const NeverScrollableScrollPhysics(),
                     padding: const EdgeInsets.symmetric(horizontal: 12),
                     itemCount: devices.length,
                     itemBuilder: (context, index) {
@@ -120,16 +114,14 @@ class _TopDraggableAppBarState extends State<TopDraggableAppBar>
                         title: device.deviceName ?? "Unnamed Device",
                         subtitle: device.imei ?? "No IMEI",
                         showDivider: index != devices.length - 1,
-                        onTap: () {
-                          print("Tapped ${device.deviceName}");
-                          // Optional: call a callback here if needed later
-                        },
+                        trailing: SizedBox(),
+                        onTap: () {},
                       );
                     },
                   ),
                 )
               else
-                Expanded(
+                Flexible(
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                     child: Row(
@@ -148,7 +140,6 @@ class _TopDraggableAppBarState extends State<TopDraggableAppBar>
                     ),
                   ),
                 ),
-              // Handle bar at bottom
               Container(
                 width: 40,
                 height: 4,

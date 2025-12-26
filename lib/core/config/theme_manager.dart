@@ -61,6 +61,7 @@
 // }
 
 import 'package:flutter/material.dart';
+
 import '../theme/app_colors.dart';
 
 class ThemeManager {
@@ -68,22 +69,25 @@ class ThemeManager {
 
   static ThemeData getApplicationLightTheme() {
     return ThemeData(
-      scaffoldBackgroundColor: AppColors.backgroundLight,
+      colorScheme: ColorScheme.light(
+        primaryContainer: AppColors.secondaryLight,
+        secondaryContainer: AppColors.primaryLightVariant,
+        surface: AppColors.surfaceLight,
+        primary: AppColors.primaryDarkVariant,
+        tertiaryFixed: AppColors.textSecondaryLight,
+        tertiaryFixedDim: AppColors.textPrimaryLight,
+      ),
+      scaffoldBackgroundColor: AppColors.surfaceLight,
       primaryColor: AppColors.primaryLight,
-          cardTheme: CardThemeData(
-             color: AppColors.primaryLightVariant
-          )
+      cardTheme: CardThemeData(color: AppColors.surfaceLight),
     );
   }
 
   static ThemeData getApplicationDarkTheme() {
     return ThemeData(
       scaffoldBackgroundColor: AppColors.backgroundDark,
-        primaryColor: AppColors.primaryDark,
-        cardTheme: CardThemeData(
-        color: AppColors.surfaceDark
-    ),
-
+      primaryColor: AppColors.primaryDark,
+      cardTheme: CardThemeData(color: AppColors.surfaceDark),
     );
   }
 
