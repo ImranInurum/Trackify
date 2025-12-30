@@ -7,6 +7,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import '../../../../app/cubit/app_cubit.dart';
 import '../../../../app/cubit/app_state.dart';
+import '../cubit/map_cubit.dart';
 
 class FullScreenMap extends StatefulWidget {
   const FullScreenMap({super.key});
@@ -25,6 +26,17 @@ class _FullScreenMapState extends State<FullScreenMap> {
   void initState() {
     super.initState();
     _loadMapStyles();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Future.delayed(const Duration(milliseconds: 100), () {
+        if (mounted) {
+          context.read<MapCubit>().fetchDeviceDataByDate(
+            imei: '860710085959719',
+            startDate: '2025-12-24',
+            endDate: '2025-12-25',
+          );
+        }
+      });
+    });
   }
 
   Future<void> _loadMapStyles() async {
@@ -48,36 +60,43 @@ class _FullScreenMapState extends State<FullScreenMap> {
 
   @override
   Widget build(BuildContext context) {
-    return  DefaultTabController(
+    return DefaultTabController(
       length: 3,
       child: Scaffold(
-        appBar: AppBar(title: Text("Record via Phone"),centerTitle: false,          bottom: const TabBar(
-          tabs: [
-            Tab(text: "Ride Records"),
-            Tab(text: "Past Rides"),
-            Tab(text: "Statistics"),
+        appBar: AppBar(
+          title: Text("Record via Phone"),
+          centerTitle: false,
+          bottom: const TabBar(
+            tabs: [
+              Tab(text: "Ride Records"),
+              Tab(text: "Past Rides"),
+              Tab(text: "Statistics"),
+            ],
+          ),
+        ),
+        body: TabBarView(
+          children: [
+            _recordRides(),
+            _pastRides(),
+            Center(child: Text("Placeholder for Settings")),
           ],
-        ),),
-        body: TabBarView(children: [
-          _body(),
-          Center(child: Text("Placeholder for History")),
-          Center(child: Text("Placeholder for Settings")),
-        ]),
+        ),
       ),
     );
   }
 
-  Widget _body() {
-    return Stack(children:[
-      _mapWidget(),
-      _detailsSheet()
-    ]);
+  Widget _recordRides() {
+    return Stack(children: [_mapWidget()]);
+  }
+
+  Widget _pastRides() {
+    return Stack(children: [_mapWidget(), _detailsSheet()]);
   }
 
   Widget _mapWidget() {
     return BlocConsumer<AppCubit, AppState>(
       listenWhen: (prev, curr) =>
-      prev.currentLocation != curr.currentLocation && curr.currentLocation != null,
+          prev.currentLocation != curr.currentLocation && curr.currentLocation != null,
 
       listener: (BuildContext context, AppState state) async {
         if (!_followUser) return;
@@ -85,9 +104,12 @@ class _FullScreenMapState extends State<FullScreenMap> {
         final pos = state.currentLocation!;
         final controller = await _controller.future;
 
-        controller.animateCamera(CameraUpdate.newLatLng(LatLng(pos.latitude, pos.longitude)));
+        controller.animateCamera(
+          CameraUpdate.newLatLng(LatLng(pos.latitude, pos.longitude)),
+        );
       },
-      buildWhen: (previous, current) => previous.currentLocation != current.currentLocation,
+      buildWhen: (previous, current) =>
+          previous.currentLocation != current.currentLocation,
       builder: (context, state) {
         final currentPos = state.currentLocation;
 
@@ -102,6 +124,7 @@ class _FullScreenMapState extends State<FullScreenMap> {
         return GoogleMap(
           initialCameraPosition: cameraPosition,
           myLocationEnabled: true,
+          zoomGesturesEnabled: true,
           onMapCreated: (GoogleMapController controller) async {
             _controller.complete(controller);
             await _applyMapTheme(controller, state.themeMode);
@@ -111,7 +134,7 @@ class _FullScreenMapState extends State<FullScreenMap> {
     );
   }
 
-  Widget _detailsSheet(){
+  Widget _detailsSheet() {
     return DraggableScrollableSheet(
       initialChildSize: 0.1,
       minChildSize: 0.1,
@@ -142,10 +165,12 @@ class _FullScreenMapState extends State<FullScreenMap> {
                   ),
                 ),
               ),
-              SliverList.list(children: const [
-                ListTile(title: Text('Jane Doe')),
-                ListTile(title: Text('Jack Reacher')),
-              ])
+              SliverList.list(
+                children: const [
+                  ListTile(title: Text('Jane Doe')),
+                  ListTile(title: Text('Jack Reacher')),
+                ],
+              ),
             ],
           ),
         );

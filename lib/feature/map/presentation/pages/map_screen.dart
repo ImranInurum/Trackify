@@ -33,11 +33,13 @@ class _MapScreenState extends State<MapScreen> {
     super.initState();
     _loadMapStyles();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted) {
-        context.read<MapCubit>().fetchDevices({
-          'user_id': context.read<AppCubit>().state.userData?.id,
-        });
-      }
+      Future.delayed(const Duration(milliseconds: 100), () {
+        if (mounted) {
+          context.read<MapCubit>().fetchDevices({
+            'user_id': context.read<AppCubit>().state.userData?.id,
+          });
+        }
+      });
     });
   }
 

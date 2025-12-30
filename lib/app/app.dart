@@ -5,6 +5,7 @@ import 'package:trackify/app/cubit/app_state.dart';
 
 import '../core/config/theme_manager.dart';
 import '../feature/auth/presentation/pages/splash.dart';
+import '../main.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -13,9 +14,10 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<AppCubit, AppState>(
       builder: (context, state) => MaterialApp(
+        navigatorKey: rootNavigatorKey,
         themeMode: state.themeMode,
         theme: ThemeManager.getApplicationLightTheme(),
-        darkTheme:  ThemeManager.getApplicationDarkTheme(),
+        darkTheme: ThemeManager.getApplicationDarkTheme(),
         home: SplashScreen(),
       ),
     );

@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/utils/shared_preferences.dart';
+import '../../../../core/widgets/loading_screen_ol.dart';
 import '../../domain/usecase/auth_case.dart';
 import 'auth_state.dart';
 
@@ -12,6 +13,7 @@ class AuthCubit extends Cubit<AuthState> {
   AuthCubit(this._authCase) : super(AuthInitial());
 
   Future<void> loginUser(Map<String, dynamic> body) async {
+    LoadingScreenOL().show();
     emit(AuthLoading());
     final stopwatch = Stopwatch()..start();
     final result = await _authCase.loginCall(body);
@@ -29,6 +31,7 @@ class AuthCubit extends Cubit<AuthState> {
       print('Prefs write took: ${sw.elapsedMilliseconds}ms');
 
       emit(AuthSuccess(user));
+      LoadingScreenOL().hide();
     });
   }
 

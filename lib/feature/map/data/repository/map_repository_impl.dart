@@ -7,6 +7,7 @@ import '../../../../core/errors/exceptions.dart';
 import '../../../../core/network/base_api_service.dart';
 import '../../../../core/network/network_api_service.dart';
 import '../../domain/repository/map_repository.dart';
+import '../entity/device_data_by_date_response.dart';
 
 class MapRepositoryImpl implements MapRepository {
   static final BaseApiServices _apiServices = NetworkApiService();
@@ -18,6 +19,24 @@ class MapRepositoryImpl implements MapRepository {
       return res.fold(
         (error) => Left(error),
         (data) => Right(UserDeviceList.fromJson(data)),
+      );
+    } on AppException catch (e) {
+      return Left(e);
+    }
+  }
+
+  @override
+  ResultFuture<DeviceDataByDateResponse> getDeviceDataByDate(
+    Map<String, dynamic> body,
+  ) async {
+    try {
+      final res = await _apiServices.getPostApiResponse(
+        ApiConstants.deviceDataByDate,
+        body,
+      );
+      return res.fold(
+        (error) => Left(error),
+        (data) => Right(DeviceDataByDateResponse.fromJson(data)),
       );
     } on AppException catch (e) {
       return Left(e);

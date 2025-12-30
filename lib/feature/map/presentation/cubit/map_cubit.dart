@@ -26,4 +26,27 @@ class MapCubit extends Cubit<MapState> {
       },
     );
   }
+
+  Future<void> fetchDeviceDataByDate({
+    required String imei,
+    required String startDate,
+    String? endDate,
+  }) async {
+    final body = {"imei": imei, "start_date": "2025-12-24", "end_date": "2025-12-25"};
+    LoadingScreenOL().show();
+    emit(MapLoading());
+
+    final result = await _mapCase.fetchDeviceDataByDate(body);
+
+    result.fold(
+      (failure) {
+        emit(MapError(failure.message ?? ""));
+        LoadingScreenOL().hide();
+      },
+      (deviceDataByDate) {
+        print("deviceDataByDate : ${deviceDataByDate.data?.length}");
+        LoadingScreenOL().hide();
+      },
+    );
+  }
 }
