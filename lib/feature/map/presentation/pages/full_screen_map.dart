@@ -6,8 +6,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import '../../../../app/cubit/app_cubit.dart';
-import '../../../../app/cubit/app_state.dart';
 import '../cubit/map_cubit.dart';
+import '../cubit/map_state.dart';
 
 class FullScreenMap extends StatefulWidget {
   const FullScreenMap({super.key});
@@ -18,7 +18,6 @@ class FullScreenMap extends StatefulWidget {
 
 class _FullScreenMapState extends State<FullScreenMap> {
   final Completer<GoogleMapController> _controller = Completer<GoogleMapController>();
-  bool _followUser = true;
   String? _lightMapStyle;
   String? _darkMapStyle;
 
@@ -31,8 +30,8 @@ class _FullScreenMapState extends State<FullScreenMap> {
         if (mounted) {
           context.read<MapCubit>().fetchDeviceDataByDate(
             imei: '860710085959719',
-            startDate: '2025-12-24',
-            endDate: '2025-12-25',
+            startDate: DateTime.now().toIso8601String(),
+            endDate: DateTime.now().toIso8601String(),
           );
         }
       });
@@ -50,12 +49,25 @@ class _FullScreenMapState extends State<FullScreenMap> {
     } else if (themeMode == ThemeMode.light) {
       await controller.setMapStyle(_lightMapStyle);
     } else {
-      // Follow system theme
       final brightness = MediaQuery.of(context).platformBrightness;
       await controller.setMapStyle(
         brightness == Brightness.dark ? _darkMapStyle : _lightMapStyle,
       );
     }
+  }
+
+  LatLngBounds _boundsFromLatLngList(List<LatLng> list) {
+    double x0 = list.first.latitude,
+        x1 = list.first.latitude,
+        y0 = list.first.longitude,
+        y1 = list.first.longitude;
+    for (LatLng latLng in list) {
+      if (latLng.latitude > x1) x1 = latLng.latitude;
+      if (latLng.latitude < x0) x0 = latLng.latitude;
+      if (latLng.longitude > y1) y1 = latLng.longitude;
+      if (latLng.longitude < y0) y0 = latLng.longitude;
+    }
+    return LatLngBounds(northeast: LatLng(x1, y1), southwest: LatLng(x0, y0));
   }
 
   @override
@@ -75,6 +87,7 @@ class _FullScreenMapState extends State<FullScreenMap> {
           ),
         ),
         body: TabBarView(
+          physics: const NeverScrollableScrollPhysics(),
           children: [
             _recordRides(),
             _pastRides(),
@@ -90,88 +103,124 @@ class _FullScreenMapState extends State<FullScreenMap> {
   }
 
   Widget _pastRides() {
-    return Stack(children: [_mapWidget(), _detailsSheet()]);
+    return Stack(children: [_mapWidget(), _filterChipBar()]);
   }
 
   Widget _mapWidget() {
-    return BlocConsumer<AppCubit, AppState>(
-      listenWhen: (prev, curr) =>
-          prev.currentLocation != curr.currentLocation && curr.currentLocation != null,
-
-      listener: (BuildContext context, AppState state) async {
-        if (!_followUser) return;
-
-        final pos = state.currentLocation!;
-        final controller = await _controller.future;
-
-        controller.animateCamera(
-          CameraUpdate.newLatLng(LatLng(pos.latitude, pos.longitude)),
-        );
-      },
-      buildWhen: (previous, current) =>
-          previous.currentLocation != current.currentLocation,
-      builder: (context, state) {
-        final currentPos = state.currentLocation;
-
+    return BlocConsumer<MapCubit, MapState>(
+      listener: (BuildContext context, MapState mapState) async {},
+      builder: (context, mapState) {
+        final currentPos = context.read<AppCubit>().state.currentLocation;
         if (currentPos == null) {
           return const Center(child: CircularProgressIndicator());
         }
-        final cameraPosition = CameraPosition(
-          target: LatLng(currentPos.latitude, currentPos.longitude),
-          zoom: 16,
-        );
+        Set<Polyline> polylines = {};
+        if (mapState is MapDataByDateLoaded && mapState.polylines != null) {
+          polylines = mapState.polylines!;
+        }
 
         return GoogleMap(
-          initialCameraPosition: cameraPosition,
+          initialCameraPosition: CameraPosition(
+            target: LatLng(currentPos.latitude, currentPos.longitude),
+            zoom: 16,
+          ),
           myLocationEnabled: true,
           zoomGesturesEnabled: true,
+          zoomControlsEnabled: false,
+          polylines: polylines,
           onMapCreated: (GoogleMapController controller) async {
             _controller.complete(controller);
-            await _applyMapTheme(controller, state.themeMode);
+            if (mapState is MapDataByDateLoaded && mapState.polylines != null) {
+              final polyline = mapState.polylines?.first;
+              if (polyline?.points != null) {
+                controller.animateCamera(
+                  CameraUpdate.newLatLngBounds(
+                    _boundsFromLatLngList(polyline!.points),
+                    50,
+                  ),
+                );
+              }
+            }
           },
         );
       },
     );
   }
 
-  Widget _detailsSheet() {
-    return DraggableScrollableSheet(
-      initialChildSize: 0.1,
-      minChildSize: 0.1,
-      maxChildSize: 0.2,
-      builder: (BuildContext context, scrollController) {
-        return Container(
-          clipBehavior: Clip.hardEdge,
-          decoration: BoxDecoration(
-            color: Theme.of(context).canvasColor,
-            borderRadius: const BorderRadius.only(
-              topLeft: Radius.circular(25),
-              topRight: Radius.circular(25),
-            ),
-          ),
-          child: CustomScrollView(
-            controller: scrollController,
-            slivers: [
-              SliverToBoxAdapter(
-                child: Center(
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).hintColor,
-                      borderRadius: const BorderRadius.all(Radius.circular(10)),
-                    ),
-                    height: 4,
-                    width: 40,
-                    margin: const EdgeInsets.symmetric(vertical: 10),
+  Widget _filterChipBar() {
+    final filters = ['Today', 'Weekly', 'Monthly', 'Custom'];
+    String selectedFilter = 'Today';
+    DateTimeRange? customRange;
+
+    return StatefulBuilder(
+      builder: (context, setState) {
+        Future<void> _onSelect(String label) async {
+          setState(() => selectedFilter = label);
+
+          final now = DateTime.now();
+          DateTime start, end;
+
+          switch (label) {
+            case 'Today':
+              start = DateTime(now.year, now.month, now.day);
+              end = now;
+              break;
+            case 'Weekly':
+              start = now.subtract(const Duration(days: 7));
+              end = now;
+              break;
+            case 'Monthly':
+              start = DateTime(now.year, now.month - 1, now.day);
+              end = now;
+              break;
+            case 'Custom':
+              final picked = await showDateRangePicker(
+                context: context,
+                firstDate: DateTime(now.year - 1),
+                lastDate: now,
+                initialDateRange:
+                    customRange ??
+                    DateTimeRange(start: now.subtract(const Duration(days: 7)), end: now),
+              );
+              if (picked == null) return;
+              start = picked.start;
+              end = picked.end;
+              customRange = picked;
+              break;
+            default:
+              return;
+          }
+
+          // Trigger your cubit fetch
+          context.read<MapCubit>().fetchDeviceDataByDate(
+            imei: '860710085959719',
+            startDate: start.toIso8601String(),
+            endDate: end.toIso8601String(),
+          );
+        }
+
+        return Align(
+          alignment: AlignmentGeometry.bottomCenter,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: filters.map((label) {
+              final isSelected = selectedFilter == label;
+              return Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 10),
+                child: ChoiceChip(
+                  label: Text(label),
+                  selected: isSelected,
+                  onSelected: (_) => _onSelect(label),
+                  selectedColor: Theme.of(context).colorScheme.primary,
+                  labelStyle: TextStyle(
+                    color: isSelected
+                        ? Theme.of(context).colorScheme.surface
+                        : Theme.of(context).colorScheme.primaryContainer,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
-              ),
-              SliverList.list(
-                children: const [
-                  ListTile(title: Text('Jane Doe')),
-                  ListTile(title: Text('Jack Reacher')),
-                ],
-              ),
-            ],
+              );
+            }).toList(),
           ),
         );
       },
