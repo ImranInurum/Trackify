@@ -4,6 +4,7 @@ import 'package:trackify/app/cubit/app_cubit.dart';
 import 'package:trackify/app/cubit/app_state.dart';
 import 'package:trackify/core/widgets/custom_card.dart';
 
+import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/shared_preferences.dart';
 import '../../../../core/widgets/option_tile.dart';
 import '../../../auth/presentation/pages/signin_screen.dart';
@@ -24,6 +25,7 @@ class _SettingsPlaceholderState extends State<SettingsPlaceholder> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(110),
@@ -33,12 +35,20 @@ class _SettingsPlaceholderState extends State<SettingsPlaceholder> {
             builder: (context, state) {
               final user = state.userData;
               return OptionTile(
-                leading: const CircleAvatar(
+                leading: CircleAvatar(
                   minRadius: 45,
-                  child: Text("I", style: TextStyle(fontSize: 12)),
+                  child: const Text("I", style: TextStyle(fontSize: 12)),
+                  backgroundColor: isDark?
+                  AppColors.secondaryDark:
+                  AppColors.secondaryLight,
                 ),
+
                 title: user?.name ?? "N/A",
                 subtitle: user?.email ?? "N/A",
+titleStyle: TextStyle(
+  color: Theme.of(context).colorScheme.outline,
+),
+
                 extra: Text(
                   user?.role ?? "+91**********",
                   style: TextStyle(fontSize: 12),
@@ -78,6 +88,8 @@ class _SettingsPlaceholderState extends State<SettingsPlaceholder> {
               color: Theme.of(context).colorScheme.primaryContainer,
             ),
             title: "Yamaha MT-15",
+            titleStyle: Theme.of(context).textTheme.titleMedium,
+
             subtitle: "KA-05-AB-1234",
             showDivider: false,
             onTap: () => print("Bike details tapped"),
@@ -114,7 +126,7 @@ class _SettingsPlaceholderState extends State<SettingsPlaceholder> {
             onTap: () => print("Settings tapped"),
           ),
 
-          /*          BlocBuilder<AppCubit, AppState>(
+                    BlocBuilder<AppCubit, AppState>(
             builder: (context, state) {
               final themeMode = state.themeMode;
               final isDarkMode = themeMode == ThemeMode.dark;
@@ -123,20 +135,20 @@ class _SettingsPlaceholderState extends State<SettingsPlaceholder> {
                 leading: Icon(
                   isDarkMode ? Icons.dark_mode : Icons.light_mode,
                   size: 18,
-                  color: isDarkMode
-                      ? Theme.of(context).colorScheme.primaryContainer
-                      : Theme.of(context).colorScheme.primaryContainer,
+                  color: Theme.of(context).colorScheme.primaryContainer,
                 ),
+
                 title: isDarkMode ? "Dark Mode" : "Light Theme",
+
+                // titleStyle: Theme.of(context).textTheme.titleMedium,
                 subtitle: "Switch between light and dark themes",
                 trailing: Transform.scale(
                   scale: 0.7,
                   child: Switch(
                     value: isDarkMode,
-                    activeThumbColor: isDarkMode
-                        ? Theme.of(context).colorScheme.primaryContainer
-                        : Theme.of(context).colorScheme.primaryContainer,
-                    activeTrackColor: Theme.of(context).colorScheme.primaryContainer,
+                    activeThumbColor: Theme.of(context).colorScheme.surface,
+
+                    activeTrackColor: Theme.of(context).colorScheme.tertiaryFixedDim,
                     onChanged: (value) {
                       context.read<AppCubit>().changeTheme(
                         value ? ThemeMode.dark : ThemeMode.light,
@@ -151,7 +163,7 @@ class _SettingsPlaceholderState extends State<SettingsPlaceholder> {
                 },
               );
             },
-          ),*/
+          ),
           OptionTile(
             leading: Icon(
               Icons.help_outline,
@@ -191,6 +203,8 @@ class _SettingsPlaceholderState extends State<SettingsPlaceholder> {
               color: Theme.of(context).colorScheme.primaryContainer,
             ),
             title: "Log out",
+
+
             subtitle: "Logout from this device",
             showDivider: false,
             onTap: () {

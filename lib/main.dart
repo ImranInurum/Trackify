@@ -25,6 +25,8 @@ Future<void> main() async {
   final socketService = SocketService();
 
   runApp(
+
+
     MultiBlocProvider(
       providers: [
         BlocProvider(

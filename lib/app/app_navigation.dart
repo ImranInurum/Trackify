@@ -30,6 +30,7 @@ class _AppNavigationState extends State<AppNavigation> {
       bottomNavigationBar: AnimatedNotchBottomBar(
         notchColor: Theme.of(context).colorScheme.secondaryContainer,
         color: Theme.of(context).colorScheme.primaryContainer,
+
         notchBottomBarController: _controller,
         bottomBarItems: [
           BottomBarItem(

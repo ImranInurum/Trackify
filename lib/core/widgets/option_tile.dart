@@ -14,6 +14,8 @@ class OptionTile extends StatelessWidget {
   final TextStyle? subtitleStyle;
   final EdgeInsetsGeometry? contentPadding;
 
+
+
   const OptionTile({
     super.key,
     required this.leading,
@@ -26,6 +28,7 @@ class OptionTile extends StatelessWidget {
     this.titleStyle,
     this.subtitleStyle,
     this.contentPadding,
+
   });
 
   @override
@@ -40,7 +43,9 @@ class OptionTile extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 // Leading widget
-                Padding(padding: const EdgeInsets.only(right: 12), child: leading),
+                Padding(padding: const EdgeInsets.only(right: 12),
+
+                    child: leading,),
 
                 Expanded(
                   child: Column(
@@ -80,7 +85,7 @@ class OptionTile extends StatelessWidget {
           Row(
             children: [
               const SizedBox(width: 45), // aligns divider after leading icon
-              Expanded(child: Divider(color: Colors.grey[300], thickness: 1)),
+              Expanded(child: Divider(color: Colors.grey[300], thickness: 2)),
               const SizedBox(width: 32), // space before trailing arrow
             ],
           ),

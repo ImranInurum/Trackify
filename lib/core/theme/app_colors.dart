@@ -36,28 +36,37 @@ class AppColors {
   static const Color cardLight = Color(0xFFFAFDFB);
   static const Color errorLight = Color(0xFFEF4444);
 
+
   // Light Theme - Text Colors
   static const Color textPrimaryLight = Color(0xFF1F1F1F);
   static const Color textSecondaryLight = Color(0xFF6B7280);
   static const Color textTertiaryLight = Color(0xFF9CA3AF);
+  static const Color subtitleLight =  Color(0xFF4B5563);
 
   // Light Theme - Borders & Dividers
   static const Color borderLight = Color(0xFFE5E7EB);
   static const Color dividerLight = Color(0xFFF3F4F6);
 
   // Dark Theme - Sage Green
-  static const Color primaryDark = Color(0xFFA3C1AD);
-  static const Color primaryDarkVariant = Color(0xFF8AAF97);
-  static const Color secondaryDark = Color(0xFF7FA88F);
-  static const Color backgroundDark = Color(0xFF0A0F0C);
+  static const Color primaryDark = Color(0xFF7FA88F);
+  static const Color primaryDarkVariant = Color(0xFF141A16);
+  // static const Color primaryDarkVariant = Color(0xFFA5D6A7);
+
+  static const Color secondaryDark = Color(0xFF81C784);
+  // static const Color secondaryDark = Color(0xFFA5D6A7);
+
+  static const Color backgroundDark = Colors.black;
   static const Color surfaceDark = Color(0xFF141A16);
   static const Color cardDark = Color(0xFF1C2620);
   static const Color errorDark = Color(0xFFF87171);
+
+
 
   // Dark Theme - Text Colors
   static const Color textPrimaryDark = Color(0xFFF9FAFB);
   static const Color textSecondaryDark = Color(0xFFD1D5DB);
   static const Color textTertiaryDark = Color(0xFF9CA3AF);
+  static const Color subtitleDark =Color(0xFF374151);
 
   // Dark Theme - Borders & Dividers
   static const Color borderDark = Color(0xFF374151);

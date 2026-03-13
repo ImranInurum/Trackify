@@ -72,9 +72,10 @@ class _DraggableAppBarBarState extends State<DraggableAppBar>
         decoration: BoxDecoration(
           gradient: LinearGradient(
             colors: [
-              Colors.white,
+              Theme.of(context).colorScheme.background,
               (widget.backgroundColor ??
-                  Theme.of(context).colorScheme.secondaryContainer),
+                  Theme.of(context).colorScheme.outline
+              ),
             ],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
@@ -132,6 +133,7 @@ class _DraggableAppBarBarState extends State<DraggableAppBar>
                             "No Device Found",
                             style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                               fontWeight: FontWeight.bold,
+                              color:Theme.of(context).colorScheme.tertiaryFixedDim
                             ),
                           ),
                         ),

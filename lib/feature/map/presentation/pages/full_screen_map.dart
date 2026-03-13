@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:trackify/core/theme/app_colors.dart';
 
 import '../../../../app/cubit/app_cubit.dart';
 import '../cubit/map_cubit.dart';
@@ -78,7 +79,8 @@ class _FullScreenMapState extends State<FullScreenMap> {
         appBar: AppBar(
           title: Text("Record via Phone"),
           centerTitle: false,
-          bottom: const TabBar(
+          bottom:  TabBar(
+            labelColor: Theme.of(context).colorScheme.primaryContainer,
             tabs: [
               Tab(text: "Ride Records"),
               Tab(text: "Past Rides"),
@@ -181,9 +183,25 @@ class _FullScreenMapState extends State<FullScreenMap> {
                 initialDateRange:
                     customRange ??
                     DateTimeRange(start: now.subtract(const Duration(days: 7)), end: now),
+                // builder: (context,child){
+                //   return Theme(
+                //     data: Theme.of(context).copyWith(
+                //       secondaryHeaderColor: Colors.white,
+                //       colorScheme: ColorScheme.dark(
+                //           primary: AppColors.cardDark,        // Header + selected range
+                //           onPrimary: Colors.white,     // Text on header
+                //           surface: Colors.black,       // Calendar background
+                //           onSurface: Colors.white,     // Calendar text  primary: primary,
+                //       )
+                //       ,dialogBackgroundColor: Theme.of(context).colorScheme.background,
+                //     ),
+                //     child: child!,
+                //   );
+                // }
               );
               if (picked == null) return;
               start = picked.start;
+
               end = picked.end;
               customRange = picked;
               break;
@@ -211,7 +229,7 @@ class _FullScreenMapState extends State<FullScreenMap> {
                   label: Text(label),
                   selected: isSelected,
                   onSelected: (_) => _onSelect(label),
-                  selectedColor: Theme.of(context).colorScheme.primary,
+                  selectedColor: Theme.of(context).colorScheme.primaryContainer,
                   labelStyle: TextStyle(
                     color: isSelected
                         ? Theme.of(context).colorScheme.surface

@@ -48,7 +48,7 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.surface,
+      backgroundColor: Theme.of(context).colorScheme.background,
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -64,7 +64,10 @@ class _SplashScreenState extends State<SplashScreen> {
               "Trackify",
               style: Theme.of(
                 context,
-              ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
+              ).textTheme.headlineSmall?.copyWith(
+                  color: Theme.of(context).colorScheme.tertiaryFixedDim,
+                  fontWeight: FontWeight.bold
+              ),
             ),
             const SizedBox(height: 24),
             const CircularProgressIndicator(),

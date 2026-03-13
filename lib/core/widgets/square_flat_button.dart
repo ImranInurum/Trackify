@@ -16,7 +16,7 @@ class CommonButton extends StatelessWidget {
     super.key,
     required this.text,
     required this.onPressed,
-    this.color = AppColors.errorLight,
+    this.color = AppColors.primaryDark,
     this.height = 35.0,
     this.width = double.infinity,
     this.iconAsset,
@@ -29,20 +29,7 @@ class CommonButton extends StatelessWidget {
       width: width,
       child: ElevatedButton(
         onPressed: onPressed,
-        style: ButtonStyle(
-          elevation: WidgetStateProperty.all<double>(0.0),
-          shape: WidgetStateProperty.all<RoundedRectangleBorder>(
-            RoundedRectangleBorder(
-              side: BorderSide.none,
-              borderRadius: BorderRadius.circular(4.0),
-            ),
-          ),
-          backgroundColor: WidgetStateProperty.all(
-            onPressed == null
-                ? Colors.grey
-                : Theme.of(context).colorScheme.primaryContainer,
-          ),
-        ),
+        style: Theme.of(context).elevatedButtonTheme.style,
         child: Row(
           mainAxisAlignment: iconAsset != null || leading != null
               ? MainAxisAlignment.spaceEvenly
@@ -56,7 +43,9 @@ class CommonButton extends StatelessWidget {
             Flexible(
               child: Text(
                 text,
-                style: getRegularStyle(color: Theme.of(context).colorScheme.surface),
+                style:TextStyle(
+                  color: Theme.of(context).colorScheme.tertiaryFixedDim
+                )
               ),
             ),
           ],

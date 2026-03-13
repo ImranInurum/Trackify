@@ -139,7 +139,9 @@ class _CustomFormFieldState extends State<CustomFormField> {
                 TextFormField(
                   enableInteractiveSelection: widget.enableInteractiveSelection,
                   enabled: !(widget.disabled ?? false),
-                  style: const TextStyle(/*fontFamily: AssetsConstants.defaultFont*/),
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.tertiaryFixedDim,
+                    /*fontFamily: AssetsConstants.defaultFont*/),
                   onFieldSubmitted: widget.onFieldSubmitted,
                   focusNode: node,
                   inputFormatters: widget.inputFormatters,

@@ -23,6 +23,7 @@ class GradientButton extends StatelessWidget {
     this.padding = const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
     this.gradient,
     this.showBorder = false,
+    
   });
 
   @override
@@ -30,7 +31,10 @@ class GradientButton extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     final defaultGradient = const LinearGradient(
-      colors: [Color(0xFFF2F2F2), Color(0xFFE5E5E5)],
+      colors: [
+        Color(0xFFF2F2F2),
+        Color(0xFFE5E5E5)],
+
       begin: Alignment.topLeft,
       end: Alignment.bottomRight,
     );
@@ -57,17 +61,16 @@ class GradientButton extends StatelessWidget {
                 Text(
                   title,
                   style: getMediumStyle(
-                    color: isDark
-                        ? AppColors.textPrimaryDark
-                        : AppColors.textPrimaryLight,
+                    color:  AppColors.textPrimaryLight,
                   ),
                 ),
                 Text(
                   subtitle,
                   style: getLightStyle(
-                    color: isDark
-                        ? AppColors.textSecondaryDark
-                        : AppColors.textSecondaryLight,
+                    color:isDark?
+                         AppColors.subtitleDark:
+                        AppColors.subtitleLight
+
                   ),
                 ),
               ],

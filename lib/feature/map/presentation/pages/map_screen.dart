@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:trackify/app/cubit/app_cubit.dart';
 import 'package:trackify/app/cubit/app_state.dart';
+import 'package:trackify/core/theme/app_colors.dart';
 import 'package:trackify/core/widgets/custom_card.dart';
 
 import '../../../../core/config/style_manager.dart';
@@ -94,6 +95,7 @@ class _MapScreenState extends State<MapScreen> {
           Text(
             "Record Ride",
             style: getRegularStyle(color: Theme.of(context).colorScheme.primaryContainer),
+
           ),
           Text(
             "Make your phone a GPS Tracking device",
@@ -146,8 +148,12 @@ class _MapScreenState extends State<MapScreen> {
           ),
           SizedBox(height: 10),
           GradientButton(
+
             title: "Go to Dashboard",
+
             subtitle: "See full map",
+
+
             icon: Icons.arrow_forward,
             showBorder: true,
             onTap: () => Navigator.of(

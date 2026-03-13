@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:trackify/core/theme/app_colors.dart';
 import 'package:trackify/feature/auth/presentation/pages/signin_screen.dart';
 
 import '../../../../core/constants/app_images.dart';
@@ -55,7 +56,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(appBar: AppBar(), body: _body());
+    return Scaffold(appBar: AppBar(
+      backgroundColor: Theme.of(context).colorScheme.background,
+    ), body: _body());
   }
 
   Widget _body() {
@@ -114,7 +117,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   children: [
                     Expanded(
                       child: DropdownButtonFormField<String>(
+                   dropdownColor: Theme.of(context).colorScheme.background,
                         value: _selectedRole,
+
                         decoration: InputDecoration(
                           labelText: "Role",
                           border: OutlineInputBorder(
@@ -125,7 +130,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             .map(
                               (role) => DropdownMenuItem<String>(
                                 value: role,
-                                child: Text(role.toUpperCase()),
+                                child: Text(role.toUpperCase(),
+
+                                ),
+
                               ),
                             )
                             .toList(),

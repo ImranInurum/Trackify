@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:trackify/core/constants/app_images.dart';
+import 'package:trackify/core/theme/app_colors.dart';
 import 'package:trackify/feature/auth/presentation/pages/signup_screen.dart';
 
 import '../../../../app/app_navigation.dart';
@@ -40,7 +41,12 @@ class _SignInScreenState extends State<SignInScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(appBar: AppBar(), body: _body());
+    return Scaffold(
+
+        appBar: AppBar(
+        backgroundColor:Theme.of(context).colorScheme.background,
+        ),
+        body: _body());
   }
 
   Widget _body() {
@@ -99,12 +105,16 @@ class _SignInScreenState extends State<SignInScreen> {
                   ),
                   Row(
                     children: [
-                      Expanded(child: Divider(color: Colors.grey[300], thickness: 1)),
+                      Expanded(child: Divider(color: Colors.grey[300],
+                          thickness: 1,
+                      )),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                        child: Text("or", style: TextStyle(color: Colors.grey[600])),
+                        child: Text("or", style: TextStyle(color: Colors.grey[600]
+                        )),
                       ),
-                      Expanded(child: Divider(color: Colors.grey[300], thickness: 1)),
+                      Expanded(child: Divider(
+                          color: Colors.grey[300], thickness: 1)),
                     ],
                   ),
                   const SizedBox(height: 25),
@@ -113,9 +123,9 @@ class _SignInScreenState extends State<SignInScreen> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Text(
+                         Text(
                           "Don't have an account? ",
-                          style: TextStyle(color: Colors.black87),
+                          style: TextStyle(color: Theme.of(context).colorScheme.tertiaryFixedDim),
                         ),
                         GestureDetector(
                           onTap: () {
