@@ -28,14 +28,26 @@ class _SignInScreenState extends State<SignInScreen> {
     super.dispose();
   }
 
+  // void _onLoginPressed(BuildContext context) {
+  //   if (_formKey.currentState?.validate() ?? false) {
+  //     final body = {
+  //       'email': _emailController.text.trim(),
+  //       'password': _passwordController.text.trim(),
+  //     };
+  //     context.read<AuthCubit>().loginUser(body);
+  //   }
+  // }
+
   void _onLoginPressed(BuildContext context) {
-    if (_formKey.currentState?.validate() ?? false) {
-      final body = {
-        'email': _emailController.text.trim(),
-        'password': _passwordController.text.trim(),
-      };
-      context.read<AuthCubit>().loginUser(body);
-    }
+    // TEMP: bypass login API
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute(builder: (context) => AppNavigation()),
+    );
+    // if (_formKey.currentState?.validate() ?? false) {
+    //
+    //
+    //
+    // }
   }
 
   @override

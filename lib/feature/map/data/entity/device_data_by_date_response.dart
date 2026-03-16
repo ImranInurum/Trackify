@@ -65,19 +65,19 @@ class DataByDate {
 
   DataByDate.fromJson(Map<String, dynamic> json) {
     id = json['id'];
-    imei = json['imei'];
-    gs = json['gs'];
-    dt = json['dt'];
-    tm = json['tm'];
-    lt = json['lt'];
-    ns = json['ns'];
-    lg = json['lg'];
-    ew = json['ew'];
-    sp = json['sp'];
-    sg = json['sg'];
+    imei = json['imei']?.toString();
+    gs = json['gs']?.toString();
+    dt = json['dt']?.toString();
+    tm = json['tm']?.toString();
+    lt = json['lat']?.toString();
+    ns = json['ns']?.toString();
+    lg = json['lng']?.toString();
+    ew = json['ew']?.toString();
+    sp = json['sp']?.toString();
+    sg = json['sg']?.toString();
     status = json['status'];
-    deviceName = json['device_name'];
-    createdAt = json['created_at'];
+    deviceName = json['device_name']?.toString();
+    createdAt = json['createdAt']?.toString();
   }
 
   Map<String, dynamic> toJson() {
