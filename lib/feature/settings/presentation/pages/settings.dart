@@ -7,6 +7,8 @@ import 'package:trackify/core/widgets/custom_card.dart';
 import '../../../../core/utils/shared_preferences.dart';
 import '../../../../core/widgets/option_tile.dart';
 import '../../../auth/presentation/pages/signin_screen.dart';
+import 'my_garage_screen.dart';
+import 'product_screen.dart';
 
 class SettingsPlaceholder extends StatefulWidget {
   const SettingsPlaceholder({super.key});
@@ -50,7 +52,6 @@ class _SettingsPlaceholderState extends State<SettingsPlaceholder> {
           ),
         ),
       ),
-
       body: _body(),
     );
   }
@@ -82,6 +83,69 @@ class _SettingsPlaceholderState extends State<SettingsPlaceholder> {
             showDivider: false,
             onTap: () => print("Bike details tapped"),
           ),
+          const SizedBox(height: 12),
+          // Buy Device Card
+          InkWell(
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (context) => const ProductScreen()),
+              );
+            },
+            child: Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                  color: Colors.grey.shade100,
+                  borderRadius: BorderRadius.circular(12)),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "Secure your vehicle",
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    "Buy device now for real-time tracking, anti-theft alerts, and more.",
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: Colors.grey.shade600,
+                        ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          // Install Now Text
+          GestureDetector(
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (context) => const ProductScreen()),
+              );
+            },
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8.0),
+              child: RichText(
+                text: TextSpan(
+                  text: 'Bought a device ? ',
+                  style: TextStyle(
+                    color: Colors.black87,
+                    fontWeight: FontWeight.normal,
+                    fontSize: 14,
+                  ),
+                  children: [
+                    TextSpan(
+                      text: 'Install now',
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.primaryContainer,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
         ],
       ),
     );
@@ -101,7 +165,11 @@ class _SettingsPlaceholderState extends State<SettingsPlaceholder> {
             ),
             title: "My Garage",
             subtitle: "View and manage your vehicles",
-            onTap: () => print("My Garage tapped"),
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (context) => const MyGarageScreen()),
+              );
+            },
           ),
           OptionTile(
             leading: Icon(
@@ -113,8 +181,7 @@ class _SettingsPlaceholderState extends State<SettingsPlaceholder> {
             subtitle: "Customize app preferences",
             onTap: () => print("Settings tapped"),
           ),
-
-                    BlocBuilder<AppCubit, AppState>(
+          BlocBuilder<AppCubit, AppState>(
             builder: (context, state) {
               final themeMode = state.themeMode;
               final isDarkMode = themeMode == ThemeMode.dark;
@@ -136,18 +203,19 @@ class _SettingsPlaceholderState extends State<SettingsPlaceholder> {
                     activeThumbColor: isDarkMode
                         ? Theme.of(context).colorScheme.primaryContainer
                         : Theme.of(context).colorScheme.primaryContainer,
-                    activeTrackColor: Theme.of(context).colorScheme.primaryContainer,
+                    activeTrackColor:
+                        Theme.of(context).colorScheme.primaryContainer,
                     onChanged: (value) {
                       context.read<AppCubit>().changeTheme(
-                        value ? ThemeMode.dark : ThemeMode.light,
-                      );
+                            value ? ThemeMode.dark : ThemeMode.light,
+                          );
                     },
                   ),
                 ),
                 onTap: () {
                   context.read<AppCubit>().changeTheme(
-                    isDarkMode ? ThemeMode.light : ThemeMode.dark,
-                  );
+                        isDarkMode ? ThemeMode.light : ThemeMode.dark,
+                      );
                 },
               );
             },
