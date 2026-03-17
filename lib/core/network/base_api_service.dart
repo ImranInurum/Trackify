@@ -1,6 +1,5 @@
 
 import '../utils/typedefs.dart';
-import 'network_api_service.dart';
 
 abstract class BaseApiServices {
   ResultFuture getGetApiResponse(String serviceUrl, Map<String, dynamic> body);

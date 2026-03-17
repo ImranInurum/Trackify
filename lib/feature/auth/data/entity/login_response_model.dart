@@ -26,7 +26,7 @@ class LoginResponseModel {
 }
 
 class User {
-  int? id;
+  String? id;
   String? name;
   String? email;
   String? role;
@@ -41,7 +41,7 @@ class User {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
+    final Map<String, dynamic> data = <String, dynamic>{};
     data['id'] = this.id;
     data['name'] = this.name;
     data['email'] = this.email;

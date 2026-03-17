@@ -18,39 +18,69 @@ class UserDeviceList {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['message'] = this.message;
-    data['count'] = this.count;
-    if (this.devices != null) {
-      data['devices'] = this.devices!.map((v) => v.toJson()).toList();
+    data['message'] = message;
+    data['count'] = count;
+    if (devices != null) {
+      data['devices'] = devices!.map((v) => v.toJson()).toList();
     }
     return data;
   }
 }
 
 class UserDevices {
-  int? id;
-  int? userIdFK;
+  String? sId;
+  UserIdFK? userIdFK;
   String? imei;
+  int? iV;
+  String? createdAt;
+  String? updatedAt;
   String? deviceName;
+
+  UserDevices({this.sId,
+    this.userIdFK,
+    this.imei,
+    this.iV,
+    this.createdAt,
+    this.updatedAt,
+    this.deviceName});
+
+  UserDevices.fromJson(Map<String, dynamic> json) {
+    sId = json['_id'];
+    userIdFK = json['user_id_FK'] != null
+        ? new UserIdFK.fromJson(json['user_id_FK'])
+        : null;
+    imei = json['imei'];
+    iV = json['__v'];
+    createdAt = json['createdAt'];
+    updatedAt = json['updatedAt'];
+    deviceName = json['device_name'];
+  }
+
+  Map<String, dynamic> toJson()  {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['_id'] = sId;
+    if (userIdFK != null) {
+      data['user_id_FK'] = userIdFK!.toJson();
+    }
+    data['imei'] = imei;
+    data['__v'] = iV;
+    data['createdAt'] = createdAt;
+    data['updatedAt'] = updatedAt;
+    data['device_name'] = deviceName;
+    return data;
+  }
+}
+
+class UserIdFK {
+  String? sId;
   String? name;
   String? email;
   String? role;
 
-  UserDevices({
-    this.id,
-    this.userIdFK,
-    this.imei,
-    this.deviceName,
-    this.name,
-    this.email,
-    this.role,
-  });
+  UserIdFK({this.sId, this.name, this.email, this.role});
 
-  UserDevices.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    userIdFK = json['user_id_FK'];
-    imei = json['imei'];
-    deviceName = json['device_name'];
+  UserIdFK.fromJson(Map<String, dynamic> json) {
+    sId = json['_id'];
     name = json['name'];
     email = json['email'];
     role = json['role'];
@@ -58,10 +88,7 @@ class UserDevices {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['user_id_FK'] = this.userIdFK;
-    data['imei'] = this.imei;
-    data['device_name'] = this.deviceName;
+    data['_id'] = this.sId;
     data['name'] = this.name;
     data['email'] = this.email;
     data['role'] = this.role;

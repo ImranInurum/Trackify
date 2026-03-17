@@ -51,6 +51,7 @@ class AppPreference {
   static String KEY_LOGIN_AS_GUEST = "KEY_LOGIN_AS_GUEST";
   static String KEY_DEVICE_NAME = "KEY_DEVICE_NAME";
   static String KEY_DEVICE_MAC = "KEY_DEVICE_MAC";
+  static String KEY_SELECTED_LANGUAGE = "KEY_SELECTED_LANGUAGE";
 
   // --- Basic Getters/Setters ---
   Future<String> get({required String key}) async => _prefs.getString(key) ?? "";
@@ -74,7 +75,13 @@ class AppPreference {
       _prefs.setDouble(key, value);
 
   // --- Clear / Remove ---
-  Future<void> clearAll() async => _prefs.clear();
+  Future<void> clearAll() async {
+    final lang = _prefs.getString(KEY_SELECTED_LANGUAGE);
+    await _prefs.clear();
+    if (lang != null) {
+      await _prefs.setString(KEY_SELECTED_LANGUAGE, lang);
+    }
+  }
 
   Future<void> clearByKey({required String key}) async => _prefs.remove(key);
 

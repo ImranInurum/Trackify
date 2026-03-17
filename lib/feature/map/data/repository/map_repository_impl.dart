@@ -1,7 +1,9 @@
+import 'dart:convert';
 import 'package:fpdart/fpdart.dart';
 import 'package:trackify/core/constants/api_constants.dart';
 import 'package:trackify/core/utils/typedefs.dart';
 import 'package:trackify/feature/map/data/entity/user_device_model.dart';
+import '../../../../core/utils/shared_preferences.dart';
 
 import '../../../../core/errors/exceptions.dart';
 import '../../../../core/network/base_api_service.dart';
@@ -15,7 +17,15 @@ class MapRepositoryImpl implements MapRepository {
   @override
   ResultFuture<UserDeviceList> getUserDevices(Map<String, dynamic> body) async {
     try {
-      final res = await _apiServices.getGetApiResponse(ApiConstants.deviceByUserId, body);
+      final prefs = AppPreference.instance;
+      final userData = await prefs.get(key: AppPreference.KEY_USER_DETAILS);
+      String userId = "";
+      if (userData.isNotEmpty) {
+        final userMap = jsonDecode(userData);
+        userId = userMap['id']?.toString() ?? "";
+      }
+
+      final res = await _apiServices.getGetApiResponse(ApiConstants.deviceByUserId(userId), body);
       return res.fold(
         (error) => Left(error),
         (data) => Right(UserDeviceList.fromJson(data)),

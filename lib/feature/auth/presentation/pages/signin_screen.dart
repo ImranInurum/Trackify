@@ -6,6 +6,7 @@ import 'package:trackify/feature/auth/presentation/pages/signup_screen.dart';
 import '../../../../app/app_navigation.dart';
 import '../../../../core/widgets/custom_form_field.dart';
 import '../../../../core/widgets/square_flat_button.dart';
+import 'device_list_screen.dart';
 import '../cubit/auth_cubit.dart';
 import '../cubit/auth_state.dart';
 
@@ -28,27 +29,27 @@ class _SignInScreenState extends State<SignInScreen> {
     super.dispose();
   }
 
-  // void _onLoginPressed(BuildContext context) {
-  //   if (_formKey.currentState?.validate() ?? false) {
-  //     final body = {
-  //       'email': _emailController.text.trim(),
-  //       'password': _passwordController.text.trim(),
-  //     };
-  //     context.read<AuthCubit>().loginUser(body);
-  //   }
-  // }
-
   void _onLoginPressed(BuildContext context) {
-    // TEMP: bypass login API
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute(builder: (context) => AppNavigation()),
-    );
-    // if (_formKey.currentState?.validate() ?? false) {
-    //
-    //
-    //
-    // }
+    if (_formKey.currentState?.validate() ?? false) {
+      final body = {
+        'email': _emailController.text.trim(),
+        'password': _passwordController.text.trim(),
+      };
+      context.read<AuthCubit>().loginUser(body);
+    }
   }
+
+  // void _onLoginPressed(BuildContext context) {
+  //   // TEMP: bypass login API
+  //   Navigator.of(context).pushReplacement(
+  //     MaterialPageRoute(builder: (context) => AppNavigation()),
+  //   );
+  //   // if (_formKey.currentState?.validate() ?? false) {
+  //   //
+  //   //
+  //   //
+  //   // }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -111,16 +112,20 @@ class _SignInScreenState extends State<SignInScreen> {
                   ),
                   Row(
                     children: [
-                      Expanded(child: Divider(color: Colors.grey[300], thickness: 1)),
+                      Expanded(
+                          child:
+                              Divider(color: Colors.grey[300], thickness: 1)),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                        child: Text("or", style: TextStyle(color: Colors.grey[600])),
+                        child: Text("or",
+                            style: TextStyle(color: Colors.grey[600])),
                       ),
-                      Expanded(child: Divider(color: Colors.grey[300], thickness: 1)),
+                      Expanded(
+                          child:
+                              Divider(color: Colors.grey[300], thickness: 1)),
                     ],
                   ),
                   const SizedBox(height: 25),
-
                   Center(
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -132,7 +137,8 @@ class _SignInScreenState extends State<SignInScreen> {
                         GestureDetector(
                           onTap: () {
                             Navigator.of(context).push(
-                              MaterialPageRoute(builder: (context) => SignUpScreen()),
+                              MaterialPageRoute(
+                                  builder: (context) => SignUpScreen()),
                             );
                           },
                           child: const Text(
@@ -161,11 +167,13 @@ class _SignInScreenState extends State<SignInScreen> {
 
           Navigator.of(
             context,
-          ).push(MaterialPageRoute(builder: (context) => AppNavigation()));
+          ).pushReplacement(MaterialPageRoute(
+              builder: (context) => const DeviceListScreen()));
         } else if (state is AuthFailure) {
           ScaffoldMessenger.of(
             context,
-          ).showSnackBar(SnackBar(content: Text(state.error.message ?? 'Login failed')));
+          ).showSnackBar(
+              SnackBar(content: Text(state.error.message ?? 'Login failed')));
         }
       },
     );

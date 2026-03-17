@@ -114,7 +114,7 @@ class _SettingsPlaceholderState extends State<SettingsPlaceholder> {
             onTap: () => print("Settings tapped"),
           ),
 
-          /*          BlocBuilder<AppCubit, AppState>(
+                    BlocBuilder<AppCubit, AppState>(
             builder: (context, state) {
               final themeMode = state.themeMode;
               final isDarkMode = themeMode == ThemeMode.dark;
@@ -151,7 +151,7 @@ class _SettingsPlaceholderState extends State<SettingsPlaceholder> {
                 },
               );
             },
-          ),*/
+          ),
           OptionTile(
             leading: Icon(
               Icons.help_outline,
