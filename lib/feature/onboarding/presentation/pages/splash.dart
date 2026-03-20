@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:trackify/core/utils/shared_preferences.dart';
 import 'package:trackify/feature/auth/presentation/pages/device_list_screen.dart';
 import 'package:trackify/feature/auth/presentation/pages/signin_screen.dart';
-import 'package:trackify/feature/splash/presentation/pages/select_language_screen.dart';
-
+import 'package:trackify/feature/onboarding/presentation/cubit/splash_cubit.dart';
+import 'package:trackify/feature/onboarding/presentation/cubit/splash_state.dart';
+import 'package:trackify/feature/onboarding/presentation/pages/select_language_screen.dart';
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
 
@@ -19,6 +21,8 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   Future<void> _initializeApp() async {
+    context.read<SplashCubit>().fetchLogo();
+
     // Wait for a brief moment to show splash effect (optional)
     await Future.delayed(const Duration(milliseconds: 2000));
 
@@ -62,25 +66,29 @@ class _SplashScreenState extends State<SplashScreen> {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            // Replace with your app logo or animation
-            Icon(
-              Icons.track_changes,
-              size: 80,
-              color: Theme.of(context).colorScheme.primary,
-            ),
-            const SizedBox(height: 16),
-            Text(
-              "Trackify",
-              style: Theme.of(
-                context,
-              ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 24),
-            const CircularProgressIndicator(),
-          ],
+        child: BlocBuilder<SplashCubit, SplashState>(
+          builder: (context, state) {
+            if (state is SplashLoading){
+              return const CircularProgressIndicator();
+            }
+           else if (state is SplashLoaded && state.logo.path != null) {
+              return Image.network(
+                state.logo.path!,
+                height: 120,
+                errorBuilder: (context, error, stackTrace) => Icon(
+                  Icons.track_changes,
+                  size: 80,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+              );
+            } else {
+             return Icon(
+               Icons.track_changes,
+               size: 80,
+               color: Theme.of(context).colorScheme.primary,
+             );
+            }
+          },
         ),
       ),
     );

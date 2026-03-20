@@ -41,4 +41,43 @@ class AuthRepositoryImpl implements AuthRepository {
       return Left(e);
     }
   }
+
+  @override
+  ResultFuture<dynamic> sendOtp(Map<String, dynamic> body) async {
+    try {
+      final res = await _apiServices.getPostApiResponse(ApiConstants.sendOtp, body);
+      return res.fold(
+        (error) => Left(error),
+        (data) => Right(data),
+      );
+    } on AppException catch (e) {
+      return Left(e);
+    }
+  }
+
+  @override
+  ResultFuture<dynamic> verifyOtp(Map<String, dynamic> body) async {
+    try {
+      final res = await _apiServices.getPostApiResponse(ApiConstants.verifyOtp, body);
+      return res.fold(
+        (error) => Left(error),
+        (data) => Right(data),
+      );
+    } on AppException catch (e) {
+      return Left(e);
+    }
+  }
+
+  @override
+  ResultFuture<dynamic> resetPassword(Map<String, dynamic> body) async {
+    try {
+      final res = await _apiServices.getPostApiResponse(ApiConstants.resetPassword, body);
+      return res.fold(
+        (error) => Left(error),
+        (data) => Right(data),
+      );
+    } on AppException catch (e) {
+      return Left(e);
+    }
+  }
 }

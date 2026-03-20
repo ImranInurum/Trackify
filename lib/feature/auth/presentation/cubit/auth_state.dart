@@ -31,3 +31,9 @@ class AuthFailure extends AuthState {
   @override
   List<Object?> get props => [error];
 }
+
+class ForgotPasswordOtpSent extends AuthState {}
+
+class ForgotPasswordOtpVerified extends AuthState {}
+
+class ForgotPasswordResetSuccess extends AuthState {}

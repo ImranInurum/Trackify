@@ -6,28 +6,33 @@ import '../../../../core/widgets/custom_form_field.dart';
 import '../../../../core/widgets/square_flat_button.dart';
 import '../cubit/auth_cubit.dart';
 import '../cubit/auth_state.dart';
-import 'otp_verification_screen.dart';
+import 'reset_password_screen.dart';
 
-class ForgotPasswordScreen extends StatefulWidget {
-  const ForgotPasswordScreen({super.key});
+class OtpVerificationScreen extends StatefulWidget {
+  final String email;
+
+  const OtpVerificationScreen({super.key, required this.email});
 
   @override
-  State<ForgotPasswordScreen> createState() => _ForgotPasswordScreenState();
+  State<OtpVerificationScreen> createState() => _OtpVerificationScreenState();
 }
 
-class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
+class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
   final _formKey = GlobalKey<FormState>();
-  final _emailController = TextEditingController();
+  final _otpController = TextEditingController();
 
   @override
   void dispose() {
-    _emailController.dispose();
+    _otpController.dispose();
     super.dispose();
   }
 
-  void _onSubmitPressed(BuildContext context) {
+  void _onVerifyPressed(BuildContext context) {
     if (_formKey.currentState?.validate() ?? false) {
-      context.read<AuthCubit>().sendOtp({"email": _emailController.text.trim()});
+      context.read<AuthCubit>().verifyOtp({
+        "email": widget.email,
+        "otp": _otpController.text.trim(),
+      });
     }
   }
 
@@ -35,15 +40,15 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   Widget build(BuildContext context) {
     return BlocListener<AuthCubit, AuthState>(
       listener: (context, state) {
-        if (state is ForgotPasswordOtpSent) {
+        if (state is ForgotPasswordOtpVerified) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('OTP sent successfully')),
+            const SnackBar(content: Text('OTP verified successfully')),
           );
-          Navigator.push(
+          Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-              builder: (context) => OtpVerificationScreen(
-                email: _emailController.text.trim(),
+              builder: (context) => ResetPasswordScreen(
+                email: widget.email,
               ),
             ),
           );
@@ -55,7 +60,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       },
       child: Scaffold(
         appBar: AppBar(
-          title: const Text("Forgot Password"),
+          title: const Text("Verify OTP"),
           centerTitle: true,
         ),
         body: _body(),
@@ -74,34 +79,35 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
             Center(child: Image.asset(AppImages.appLogo)),
             const SizedBox(height: 20),
             Text(
-              "Reset Password",
+              "OTP Verification",
               style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
             ),
             const SizedBox(height: 8),
             Text(
-              "Enter your email address and we will send you a link to reset your password.",
+              "Enter the OTP sent to ${widget.email}.",
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                     color: Colors.grey[700],
                   ),
             ),
             const SizedBox(height: 25),
             CustomFormField(
-              header: "Email",
-              hint: 'example@test.com',
-              value: _emailController,
+              header: "OTP",
+              hint: '123456',
+              value: _otpController,
+              keyboardType: TextInputType.number,
               validator: (value) {
                 if (value?.isEmpty ?? true) {
-                  return "Email is required";
+                  return "OTP is required";
                 }
                 return null;
               },
             ),
             const SizedBox(height: 35),
             CommonButton(
-              onPressed: () => _onSubmitPressed(context),
-              text: 'Send Reset Link',
+              onPressed: () => _onVerifyPressed(context),
+              text: 'Verify OTP',
             ),
           ],
         ),

@@ -1,7 +1,7 @@
 class RegisterUserModel {
-  String? status;
+  bool? status;
   String? message;
-  int? userId;
+  String? userId;
 
   RegisterUserModel({this.status, this.message, this.userId});
 

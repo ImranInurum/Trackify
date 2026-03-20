@@ -23,7 +23,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final _passwordController = TextEditingController();
   String? _selectedRole;
 
-  final List<String> roles = ['admin', 'user', 'manager'];
+  final List<String> roles = ["admin", "customer"];
 
   @override
   void dispose() {

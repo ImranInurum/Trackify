@@ -9,12 +9,23 @@ class DeviceDataByDateResponse {
   DeviceDataByDateResponse.fromJson(Map<String, dynamic> json) {
     status = json['status'];
     message = json['message'];
-    total = json['total'];
-    if (json['data'] != null) {
+    
+    // Handle the case where the API returns the list inside the 'total' parameter
+    if (json['total'] is List) {
       data = <DataByDate>[];
-      json['data'].forEach((v) {
+      json['total'].forEach((v) {
         data!.add(DataByDate.fromJson(v));
       });
+      total = data!.length;
+    } else {
+      // The original parsing logic
+      total = json['total'];
+      if (json['data'] != null) {
+        data = <DataByDate>[];
+        json['data'].forEach((v) {
+          data!.add(DataByDate.fromJson(v));
+        });
+      }
     }
   }
 

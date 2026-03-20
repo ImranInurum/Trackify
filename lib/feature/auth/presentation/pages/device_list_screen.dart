@@ -18,7 +18,11 @@ class _DeviceListScreenState extends State<DeviceListScreen> {
   void initState() {
     super.initState();
     // Fetch devices on init
-    context.read<MapCubit>().fetchDevices({});
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        context.read<MapCubit>().fetchDevices({});
+      }
+    });
   }
 
   void _onDeviceSelected(String deviceName, String deviceMac) async {
@@ -65,8 +69,22 @@ class _DeviceListScreenState extends State<DeviceListScreen> {
             final devices = state.deviceList.devices ?? [];
 
             if (devices.isEmpty) {
-              return const Center(
-                child: Text('No devices found.'),
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text('No devices found.'),
+                    const SizedBox(height: 16),
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.of(context).pushReplacement(
+                          MaterialPageRoute(builder: (context) => const AppNavigation()),
+                        );
+                      },
+                      child: const Text('Proceed'),
+                    ),
+                  ],
+                ),
               );
             }
 

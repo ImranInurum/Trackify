@@ -13,6 +13,9 @@ import 'core/utils/shared_preferences.dart';
 import 'feature/auth/data/repository/auth_repository_impl.dart';
 import 'feature/auth/domain/usecase/auth_case.dart';
 import 'feature/auth/presentation/cubit/auth_cubit.dart';
+import 'feature/onboarding/data/repositories/splash_repository_impl.dart';
+import 'feature/onboarding/domain/usecases/get_logo_usecase.dart';
+import 'feature/onboarding/presentation/cubit/splash_cubit.dart';
 
 final GlobalKey<NavigatorState> rootNavigatorKey = GlobalKey<NavigatorState>();
 
@@ -37,6 +40,7 @@ Future<void> main() async {
         ),
         BlocProvider(create: (_) => AuthCubit(AuthCase(AuthRepositoryImpl()))),
         BlocProvider(create: (_) => MapCubit(MapCase(MapRepositoryImpl()))),
+        BlocProvider(create: (_) => SplashCubit(GetLogoUseCase(SplashRepositoryImpl()))),
       ],
       child: MyApp(),
     ),

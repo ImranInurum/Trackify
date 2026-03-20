@@ -43,4 +43,52 @@ class AuthCubit extends Cubit<AuthState> {
       (user) => emit(RegisterSuccess()),
     );
   }
+
+  Future<void> sendOtp(Map<String, dynamic> body) async {
+    LoadingScreenOL().show();
+    emit(AuthLoading());
+    final result = await _authCase.sendOtpCall(body);
+    result.fold(
+      (failure) {
+        LoadingScreenOL().hide();
+        emit(AuthFailure(failure));
+      },
+      (data) {
+        LoadingScreenOL().hide();
+        emit(ForgotPasswordOtpSent());
+      },
+    );
+  }
+
+  Future<void> verifyOtp(Map<String, dynamic> body) async {
+    LoadingScreenOL().show();
+    emit(AuthLoading());
+    final result = await _authCase.verifyOtpCall(body);
+    result.fold(
+      (failure) {
+        LoadingScreenOL().hide();
+        emit(AuthFailure(failure));
+      },
+      (data) {
+        LoadingScreenOL().hide();
+        emit(ForgotPasswordOtpVerified());
+      },
+    );
+  }
+
+  Future<void> resetPassword(Map<String, dynamic> body) async {
+    LoadingScreenOL().show();
+    emit(AuthLoading());
+    final result = await _authCase.resetPasswordCall(body);
+    result.fold(
+      (failure) {
+        LoadingScreenOL().hide();
+        emit(AuthFailure(failure));
+      },
+      (data) {
+        LoadingScreenOL().hide();
+        emit(ForgotPasswordResetSuccess());
+      },
+    );
+  }
 }

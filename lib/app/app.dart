@@ -4,7 +4,7 @@ import 'package:trackify/app/cubit/app_cubit.dart';
 import 'package:trackify/app/cubit/app_state.dart';
 
 import '../core/config/theme_manager.dart';
-import '../feature/splash/presentation/pages/splash.dart';
+import '../feature/onboarding/presentation/pages/splash.dart';
 import '../main.dart';
 
 class MyApp extends StatelessWidget {

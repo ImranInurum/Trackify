@@ -15,4 +15,16 @@ class AuthCase {
   ResultFuture<RegisterUserModel> registerCall(Map<String, dynamic> body) {
     return authRepository.sighUpWithEmailPassword(body);
   }
+
+  ResultFuture<dynamic> sendOtpCall(Map<String, dynamic> body) {
+    return authRepository.sendOtp(body);
+  }
+
+  ResultFuture<dynamic> verifyOtpCall(Map<String, dynamic> body) {
+    return authRepository.verifyOtp(body);
+  }
+
+  ResultFuture<dynamic> resetPasswordCall(Map<String, dynamic> body) {
+    return authRepository.resetPassword(body);
+  }
 }

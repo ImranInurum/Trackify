@@ -181,6 +181,7 @@ class _SettingsPlaceholderState extends State<SettingsPlaceholder> {
             subtitle: "Customize app preferences",
             onTap: () => print("Settings tapped"),
           ),
+/*
           BlocBuilder<AppCubit, AppState>(
             builder: (context, state) {
               final themeMode = state.themeMode;
@@ -220,6 +221,7 @@ class _SettingsPlaceholderState extends State<SettingsPlaceholder> {
               );
             },
           ),
+*/
           OptionTile(
             leading: Icon(
               Icons.help_outline,

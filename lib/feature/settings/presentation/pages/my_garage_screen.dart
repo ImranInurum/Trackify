@@ -16,7 +16,11 @@ class _MyGarageScreenState extends State<MyGarageScreen> {
   void initState() {
     super.initState();
     // Fetch user devices
-    context.read<MapCubit>().fetchDevices({});
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        context.read<MapCubit>().fetchDevices({});
+      }
+    });
   }
 
   @override

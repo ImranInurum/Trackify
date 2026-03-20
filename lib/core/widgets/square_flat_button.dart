@@ -12,7 +12,7 @@ class CommonButton extends StatelessWidget {
   final double height;
   final double width;
 
-  CommonButton({
+  const CommonButton({
     super.key,
     required this.text,
     required this.onPressed,
@@ -29,20 +29,31 @@ class CommonButton extends StatelessWidget {
       width: width,
       child: ElevatedButton(
         onPressed: onPressed,
-        style: ButtonStyle(
-          elevation: WidgetStateProperty.all<double>(0.0),
-          shape: WidgetStateProperty.all<RoundedRectangleBorder>(
-            RoundedRectangleBorder(
-              side: BorderSide.none,
-              borderRadius: BorderRadius.circular(4.0),
-            ),
-          ),
-          backgroundColor: WidgetStateProperty.all(
-            onPressed == null
-                ? Colors.grey
-                : Theme.of(context).colorScheme.primaryContainer,
-          ),
+        style: ElevatedButton.styleFrom(backgroundColor:
+              onPressed == null
+                  ? Colors.grey
+                  : Theme.of(context).colorScheme.primaryContainer,
+            shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8),
+      ),
         ),
+
+
+
+        // style: ButtonStyle(
+        //   elevation: WidgetStateProperty.all<double>(0.0),
+        //   shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+        //     RoundedRectangleBorder(
+        //       side: BorderSide.none,
+        //       borderRadius: BorderRadius.circular(4.0),
+        //     ),
+        //   ),
+        //   backgroundColor: WidgetStateProperty.all(
+        //     onPressed == null
+        //         ? Colors.grey
+        //         : Theme.of(context).colorScheme.primaryContainer,
+        //   ),
+        // ),
         child: Row(
           mainAxisAlignment: iconAsset != null || leading != null
               ? MainAxisAlignment.spaceEvenly
