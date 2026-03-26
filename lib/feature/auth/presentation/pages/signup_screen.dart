@@ -5,6 +5,7 @@ import 'package:trackify/feature/auth/presentation/pages/signin_screen.dart';
 import '../../../../core/constants/app_images.dart';
 import '../../../../core/widgets/custom_form_field.dart';
 import '../../../../core/widgets/square_flat_button.dart';
+import '../../../../l10n/app_localizations.dart';
 import '../cubit/auth_cubit.dart';
 import '../cubit/auth_state.dart';
 
@@ -34,11 +35,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
   }
 
   void _onSignUpPressed(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     if (_formKey.currentState?.validate() ?? false) {
       if (_selectedRole == null) {
         ScaffoldMessenger.of(
           context,
-        ).showSnackBar(const SnackBar(content: Text("Please select a role")));
+        ).showSnackBar(SnackBar(content: Text(l10n.roleRequired)));
         return;
       }
 
@@ -61,6 +63,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   Widget _body() {
     return BlocConsumer<AuthCubit, AuthState>(
       builder: (BuildContext context, state) {
+        final l10n = AppLocalizations.of(context)!;
         return Form(
           key: _formKey,
           child: SingleChildScrollView(
@@ -70,12 +73,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
               children: [
                 Image.asset(AppImages.appLogo),
                 CustomFormField(
-                  header: "Name",
-                  hint: 'John Doe',
+                  header: l10n.name,
+                  hint: l10n.nameHint,
                   value: _nameController,
                   validator: (value) {
                     if (value?.isEmpty ?? true) {
-                      return "Name is required";
+                      return l10n.nameRequired;
                     }
                     return null;
                   },
@@ -84,12 +87,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
                 // 🔹 Email
                 CustomFormField(
-                  header: "Email",
-                  hint: 'john@gmail.com',
+                  header: l10n.email,
+                  hint: l10n.emailHint,
                   value: _emailController,
                   validator: (value) {
                     if (value?.isEmpty ?? true) {
-                      return "Email is required";
+                      return l10n.emailRequired;
                     }
                     return null;
                   },
@@ -98,12 +101,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
                 // 🔹 Password
                 CustomFormField(
-                  header: "Password",
-                  hint: '******',
+                  header: l10n.password,
+                  hint: l10n.passwordHint,
                   value: _passwordController,
                   validator: (value) {
                     if (value?.isEmpty ?? true) {
-                      return "Password is required";
+                      return l10n.passwordRequired;
                     }
                     return null;
                   },
@@ -116,7 +119,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       child: DropdownButtonFormField<String>(
                         value: _selectedRole,
                         decoration: InputDecoration(
-                          labelText: "Role",
+                          labelText: l10n.role,
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(8),
                           ),
@@ -134,7 +137,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         },
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return "Please select a role";
+                            return l10n.roleRequired;
                           }
                           return null;
                         },
@@ -148,7 +151,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 // 🔹 Sign Up Button
                 CommonButton(
                   onPressed: () => _onSignUpPressed(context),
-                  text: 'Create Account',
+                  text: l10n.createAccount,
                 ),
               ],
             ),
@@ -156,9 +159,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
         );
       },
       listener: (context, state) {
+        final l10n = AppLocalizations.of(context)!;
         if (state is RegisterSuccess) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('User Registered Successfully Please Login')),
+            SnackBar(content: Text(l10n.registerSuccess)),
           );
 
           Navigator.of(context).pushReplacement(
@@ -166,7 +170,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
           );
         } else if (state is AuthFailure) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(state.error.message ?? 'Sign up failed')),
+            SnackBar(content: Text(state.error.message ?? l10n.signUpFailed)),
           );
         }
       },

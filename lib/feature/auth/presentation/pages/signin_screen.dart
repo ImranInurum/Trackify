@@ -6,6 +6,7 @@ import 'package:trackify/feature/auth/presentation/pages/signup_screen.dart';
 import '../../../../app/app_navigation.dart';
 import '../../../../core/widgets/custom_form_field.dart';
 import '../../../../core/widgets/square_flat_button.dart';
+import '../../../../l10n/app_localizations.dart';
 import 'device_list_screen.dart';
 import 'forgot_password_screen.dart';
 import '../cubit/auth_cubit.dart';
@@ -60,6 +61,7 @@ class _SignInScreenState extends State<SignInScreen> {
   Widget _body() {
     return BlocConsumer<AuthCubit, AuthState>(
       builder: (BuildContext context, state) {
+        final l10n = AppLocalizations.of(context)!;
         return Form(
           key: _formKey,
           child: Padding(
@@ -71,24 +73,24 @@ class _SignInScreenState extends State<SignInScreen> {
                   Image.asset(AppImages.appLogo),
                   const SizedBox(height: 20),
                   CustomFormField(
-                    header: "Email",
-                    hint: 'example@test.com',
+                    header: l10n.email,
+                    hint: l10n.emailHint,
                     value: _emailController,
                     validator: (value) {
                       if (value?.isEmpty ?? true) {
-                        return "Email required";
+                        return l10n.emailRequired;
                       }
                       return null;
                     },
                   ),
                   SizedBox(height: 15),
                   CustomFormField(
-                    header: 'Password',
-                    hint: '******',
+                    header: l10n.password,
+                    hint: l10n.passwordHint,
                     value: _passwordController,
                     validator: (value) {
                       if (value?.isEmpty ?? true) {
-                        return "Password required";
+                        return l10n.passwordRequired;
                       }
                       return null;
                     },
@@ -103,9 +105,9 @@ class _SignInScreenState extends State<SignInScreen> {
                           ),
                         );
                       },
-                      child: const Text(
-                        "Forgot Password?",
-                        style: TextStyle(
+                      child: Text(
+                        l10n.forgotPassword,
+                        style: const TextStyle(
                           color: Colors.blueAccent,
                           fontWeight: FontWeight.w600,
                         ),
@@ -115,7 +117,7 @@ class _SignInScreenState extends State<SignInScreen> {
                   const SizedBox(height: 20),
                   CommonButton(
                     onPressed: () => _onLoginPressed(context),
-                    text: 'Sign In',
+                    text: l10n.signIn,
                   ),
                   Row(
                     children: [
@@ -124,7 +126,7 @@ class _SignInScreenState extends State<SignInScreen> {
                               Divider(color: Colors.grey[300], thickness: 1)),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                        child: Text("or",
+                        child: Text(l10n.or,
                             style: TextStyle(color: Colors.grey[600])),
                       ),
                       Expanded(
@@ -137,9 +139,9 @@ class _SignInScreenState extends State<SignInScreen> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Text(
-                          "Don't have an account? ",
-                          style: TextStyle(color: Colors.black87),
+                        Text(
+                          l10n.dontHaveAccount,
+                          style: const TextStyle(color: Colors.black87),
                         ),
                         GestureDetector(
                           onTap: () {
@@ -148,9 +150,9 @@ class _SignInScreenState extends State<SignInScreen> {
                                   builder: (context) => SignUpScreen()),
                             );
                           },
-                          child: const Text(
-                            "Sign Up",
-                            style: TextStyle(
+                          child: Text(
+                            l10n.signUp,
+                            style: const TextStyle(
                               color: Colors.blueAccent,
                               fontWeight: FontWeight.bold,
                             ),
@@ -167,9 +169,12 @@ class _SignInScreenState extends State<SignInScreen> {
         );
       },
       listener: (context, state) {
+        final l10n = AppLocalizations.of(context)!;
         if (state is AuthSuccess) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Welcome ${state.user.user?.email ?? ''}!')),
+            SnackBar(
+                content: Text(
+                    l10n.welcome(state.user.user?.email ?? ''))),
           );
 
           Navigator.of(
@@ -179,8 +184,8 @@ class _SignInScreenState extends State<SignInScreen> {
         } else if (state is AuthFailure) {
           ScaffoldMessenger.of(
             context,
-          ).showSnackBar(
-              SnackBar(content: Text(state.error.message ?? 'Login failed')));
+          ).showSnackBar(SnackBar(
+              content: Text(state.error.message ?? l10n.loginFailed)));
         }
       },
     );

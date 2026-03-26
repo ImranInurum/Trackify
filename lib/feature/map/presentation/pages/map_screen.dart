@@ -7,6 +7,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:trackify/app/cubit/app_cubit.dart';
 import 'package:trackify/app/cubit/app_state.dart';
 import 'package:trackify/core/widgets/custom_card.dart';
+import 'package:trackify/l10n/app_localizations.dart';
 
 import '../../../../core/config/style_manager.dart';
 import '../../../../core/widgets/draggable_app_bar.dart';
@@ -84,6 +85,7 @@ class _MapScreenState extends State<MapScreen> {
   }
 
   Widget _mapWidget() {
+    final l10n = AppLocalizations.of(context)!;
     return CustomCard(
       innerPadding: 10,
       elevation: 0.7,
@@ -92,11 +94,11 @@ class _MapScreenState extends State<MapScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            "Record Ride",
+            l10n.recordRide,
             style: getRegularStyle(color: Theme.of(context).colorScheme.primaryContainer),
           ),
           Text(
-            "Make your phone a GPS Tracking device",
+            l10n.phoneAsGps,
             style: getMediumStyle(color: Theme.of(context).colorScheme.tertiaryFixed),
           ),
           SizedBox(height: 5),
@@ -146,8 +148,8 @@ class _MapScreenState extends State<MapScreen> {
           ),
           SizedBox(height: 10),
           GradientButton(
-            title: "Go to Dashboard",
-            subtitle: "See full map",
+            title: l10n.goToDashboard,
+            subtitle: l10n.seeFullMap,
             icon: Icons.arrow_forward,
             showBorder: true,
             onTap: () => Navigator.of(
@@ -160,19 +162,20 @@ class _MapScreenState extends State<MapScreen> {
   }
 
   Widget _exploreMoreWidget() {
+    final l10n = AppLocalizations.of(context)!;
     final options = [
-      {"icon": Icons.qr_code, "label": "ReachMe Sticker", "locked": false},
-      {"icon": Icons.local_offer_outlined, "label": "Products", "locked": false},
-      {"icon": Icons.local_gas_station_outlined, "label": "Fuel Logs", "locked": false},
-      {"icon": Icons.share_outlined, "label": "Location Sharing", "locked": false},
-      {"icon": Icons.folder_open_outlined, "label": "Document Folder", "locked": false},
-      {"icon": Icons.call, "label": "Voice Monitoring", "locked": true},
-      {"icon": Icons.power_settings_new, "label": "Remote Engine OFF", "locked": true},
-      {"icon": Icons.network_cell, "label": "Network Booster", "locked": true},
-      {"icon": Icons.sos, "label": "Emergency", "locked": true},
-      {"icon": Icons.speed, "label": "Overspeed Alert", "locked": true},
-      {"icon": Icons.location_on_outlined, "label": "Geo-fence Alert", "locked": true},
-      {"icon": Icons.more_horiz, "label": "More", "locked": false},
+      {"icon": Icons.qr_code, "label": l10n.reachMeSticker, "locked": false},
+      {"icon": Icons.local_offer_outlined, "label": l10n.products, "locked": false},
+      {"icon": Icons.local_gas_station_outlined, "label": l10n.fuelLogs, "locked": false},
+      {"icon": Icons.share_outlined, "label": l10n.locationSharing, "locked": false},
+      {"icon": Icons.folder_open_outlined, "label": l10n.documentFolder, "locked": false},
+      {"icon": Icons.call, "label": l10n.voiceMonitoring, "locked": true},
+      {"icon": Icons.power_settings_new, "label": l10n.remoteEngineOff, "locked": true},
+      {"icon": Icons.network_cell, "label": l10n.networkBooster, "locked": true},
+      {"icon": Icons.sos, "label": l10n.emergency, "locked": true},
+      {"icon": Icons.speed, "label": l10n.overspeedAlert, "locked": true},
+      {"icon": Icons.location_on_outlined, "label": l10n.geoFenceAlert, "locked": true},
+      {"icon": Icons.more_horiz, "label": l10n.more, "locked": false},
     ];
 
     return CustomCard(
@@ -182,7 +185,7 @@ class _MapScreenState extends State<MapScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            "Explore More",
+            l10n.exploreMore,
             style: getRegularStyle(color: Theme.of(context).colorScheme.primaryContainer),
           ),
           GridView.builder(

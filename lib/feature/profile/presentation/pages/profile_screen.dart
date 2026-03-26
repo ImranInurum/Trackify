@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:trackify/l10n/app_localizations.dart';
 
 class ProfilePlaceholder extends StatelessWidget {
   const ProfilePlaceholder({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Profile'),
+        title: Text(l10n.profile),
         centerTitle: true,
       ),
       body: SingleChildScrollView(
@@ -27,7 +29,7 @@ class ProfilePlaceholder extends StatelessWidget {
                       size: 50, color: Colors.blueAccent),
                   const SizedBox(height: 16),
                   Text(
-                    '1000+ people made their bike smart with our device',
+                    l10n.bikeSmartMsg,
                     textAlign: TextAlign.center,
                     style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                           fontWeight: FontWeight.bold,
@@ -43,14 +45,14 @@ class ProfilePlaceholder extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Text(
-                'Features',
+                l10n.features,
                 style: Theme.of(context).textTheme.titleLarge?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
               ),
             ),
             const SizedBox(height: 12),
-            _buildFeatureList(),
+            _buildFeatureList(context),
 
             const SizedBox(height: 32),
 
@@ -91,7 +93,7 @@ class ProfilePlaceholder extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Contact Us',
+                              l10n.contactUs,
                               style: Theme.of(context)
                                   .textTheme
                                   .titleMedium
@@ -101,7 +103,7 @@ class ProfilePlaceholder extends StatelessWidget {
                             ),
                             const SizedBox(height: 4),
                             Text(
-                              'Got questions? We are here to help.',
+                              l10n.contactUsDesc,
                               style: Theme.of(context)
                                   .textTheme
                                   .bodyMedium
@@ -125,7 +127,7 @@ class ProfilePlaceholder extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Text(
-                'User Reviews',
+                l10n.userReviews,
                 style: Theme.of(context).textTheme.titleLarge?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
@@ -141,34 +143,35 @@ class ProfilePlaceholder extends StatelessWidget {
     );
   }
 
-  Widget _buildFeatureList() {
+  Widget _buildFeatureList(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final features = [
       {
-        'title': 'Accident Alert',
+        'title': l10n.accidentAlert,
         'icon': Icons.warning_amber_rounded,
         'color': Colors.redAccent
       },
       {
-        'title': 'Anti-Theft Alert',
+        'title': l10n.antiTheftAlert,
         'icon': Icons.security,
         'color': Colors.orangeAccent
       },
       {
-        'title': 'Geo Fence',
+        'title': l10n.geoFence,
         'icon': Icons.my_location,
         'color': Colors.blueAccent
       },
       {
-        'title': 'Overspeed Alert',
+        'title': l10n.overspeedAlert,
         'icon': Icons.speed,
         'color': Colors.purpleAccent
       },
       {
-        'title': 'Fuel Logs',
+        'title': l10n.fuelLogs,
         'icon': Icons.local_gas_station,
         'color': Colors.green
       },
-      {'title': 'Statistics', 'icon': Icons.bar_chart, 'color': Colors.teal},
+      {'title': l10n.statistics, 'icon': Icons.bar_chart, 'color': Colors.teal},
     ];
 
     return SizedBox(

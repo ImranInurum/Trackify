@@ -318,6 +318,13 @@
             </list>
           </value>
         </entry>
+        <entry key="flutter_localizations">
+          <value>
+            <list>
+              <option value="$USER_HOME$/fvm/versions/3.35.0/packages/flutter_localizations/lib" />
+            </list>
+          </value>
+        </entry>
         <entry key="flutter_plugin_android_lifecycle">
           <value>
             <list>
@@ -1271,6 +1278,7 @@
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/yaml_edit-2.2.2/lib" />
       <root url="file://$USER_HOME$/fvm/versions/3.35.0/bin/cache/pkg/sky_engine/lib" />
       <root url="file://$USER_HOME$/fvm/versions/3.35.0/packages/flutter/lib" />
+      <root url="file://$USER_HOME$/fvm/versions/3.35.0/packages/flutter_localizations/lib" />
       <root url="file://$USER_HOME$/fvm/versions/3.35.0/packages/flutter_test/lib" />
       <root url="file://$USER_HOME$/fvm/versions/3.35.0/packages/flutter_web_plugins/lib" />
     </CLASSES>

@@ -34,7 +34,7 @@ class _SplashScreenState extends State<SplashScreen> {
         await AppPreference.instance.get(key: AppPreference.KEY_TOKEN);
 
     // Check saved language
-    final selectedLanguage = await AppPreference.instance
+    final selectedLanguage = '' ; await AppPreference.instance
         .get(key: AppPreference.KEY_SELECTED_LANGUAGE);
 
     // Decide navigation

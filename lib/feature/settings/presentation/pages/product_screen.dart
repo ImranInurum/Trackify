@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:trackify/l10n/app_localizations.dart';
 
 class ProductScreen extends StatelessWidget {
   const ProductScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Our Products'),
+        title: Text(l10n.ourProducts),
         centerTitle: true,
       ),
       body: SingleChildScrollView(
@@ -16,13 +18,13 @@ class ProductScreen extends StatelessWidget {
           children: [
             _buildProductCard(
               context: context,
-              title: "Trackify Pro",
-              subtitle: "Advanced tracking with max features",
+              title: l10n.proTitle,
+              subtitle: l10n.proSubtitle,
               price: "\$99.00",
               features: [
-                'Real-time 1s tracking',
-                'Remote engine cut-off',
-                'Detailed Fuel Analytics'
+                l10n.realTime1s,
+                l10n.remoteEngineCutOff,
+                l10n.detailedFuelAnalytics
               ],
               color: Colors.purple.shade50,
               iconColor: Colors.purple,
@@ -30,13 +32,13 @@ class ProductScreen extends StatelessWidget {
             const SizedBox(height: 16),
             _buildProductCard(
               context: context,
-              title: "Trackify Go",
-              subtitle: "Standard tracking for everyday use",
+              title: l10n.goTitle,
+              subtitle: l10n.goSubtitle,
               price: "\$69.00",
               features: [
-                'Real-time 5s tracking',
-                'Anti-theft alerts',
-                'Basic journey logs'
+                l10n.realTime5s,
+                l10n.antiTheftAlerts,
+                l10n.basicJourneyLogs
               ],
               color: Colors.blue.shade50,
               iconColor: Colors.blue,
@@ -44,10 +46,14 @@ class ProductScreen extends StatelessWidget {
             const SizedBox(height: 16),
             _buildProductCard(
               context: context,
-              title: "Trackify Lite",
-              subtitle: "Basic locator device",
+              title: l10n.liteTitle,
+              subtitle: l10n.liteSubtitle,
               price: "\$39.00",
-              features: ['Location updates', 'Geo-fencing', 'Battery monitor'],
+              features: [
+                l10n.locationUpdates,
+                l10n.geoFence,
+                l10n.batteryMonitor
+              ],
               color: Colors.green.shade50,
               iconColor: Colors.green,
             ),
@@ -125,9 +131,9 @@ class ProductScreen extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  'Features:',
-                  style: TextStyle(fontWeight: FontWeight.bold),
+                Text(
+                  AppLocalizations.of(context)!.featuresLabel,
+                  style: const TextStyle(fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 12),
                 ...features.map((feature) => Padding(
@@ -144,7 +150,7 @@ class ProductScreen extends StatelessWidget {
                 ElevatedButton(
                   onPressed: () {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Added $title to cart!')),
+                      SnackBar(content: Text(AppLocalizations.of(context)!.addedToCart(title))),
                     );
                   },
                   style: ElevatedButton.styleFrom(
@@ -155,9 +161,9 @@ class ProductScreen extends StatelessWidget {
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
-                  child: const Text('Buy Now',
+                  child: Text(AppLocalizations.of(context)!.buyNow,
                       style:
-                          TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                          const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
                 ),
               ],
             ),

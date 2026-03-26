@@ -1,0 +1,142 @@
+{
+  "selectLanguage": "اختر لغتك",
+  "letsGetStarted": "لنبدأ الآن",
+  "email": "البريد الإلكتروني",
+  "password": "كلمة المرور",
+  "emailHint": "example@test.com",
+  "passwordHint": "******",
+  "emailRequired": "البريد الإلكتروني مطلوب",
+  "passwordRequired": "كلمة المرور مطلوبة",
+  "forgotPassword": "هل نسيت كلمة المرور؟",
+  "signIn": "تسجيل الدخول",
+  "or": "أو",
+  "dontHaveAccount": "ليس لديك حساب؟ ",
+  "signUp": "إنشاء حساب",
+  "welcome": "أهلاً بك {email}!",
+  "@welcome": {
+    "placeholders": {
+      "email": {
+        "type": "String"
+      }
+    }
+  },
+  "loginFailed": "فشل تسجيل الدخول",
+  "name": "الاسم",
+  "nameHint": "John Doe",
+  "nameRequired": "الاسم مطلوب",
+  "role": "الدور",
+  "roleRequired": "يرجى اختيار دور",
+  "createAccount": "إنشاء حساب",
+  "registerSuccess": "تم تسجيل المستخدم بنجاح ، يرجى تسجيل الدخول",
+  "signUpFailed": "فشل إنشاء الحساب",
+  "otpSent": "تم إرسال الرمز بنجاح",
+  "resetPassword": "إعادة تعيين كلمة المرور",
+  "resetPasswordDesc": "أدخل بريدك الإلكتروني وسنرسل لك رابطاً لإعادة تعيين كلمة المرور.",
+  "sendResetLink": "إرسال رابط الإعادة",
+  "otpVerified": "تم التحقق من الرمز بنجاح",
+  "verifyOtp": "التحقق من الرمز",
+  "otpHeader": "التحقق من الرمز",
+  "otpDesc": "أدخل الرمز المرسل إلى {email}.",
+  "@otpDesc": {
+    "placeholders": {
+      "email": {
+        "type": "String"
+      }
+    }
+  },
+  "otp": "الرمز",
+  "otpHint": "123456",
+  "otpRequired": "الرمز مطلوب",
+  "passwordResetSuccess": "تمت إعادة تعيين كلمة المرور بنجاح",
+  "createNewPassword": "إنشاء كلمة مرور جديدة",
+  "passwordDesc": "يجب أن تكون كلمة المرور الجديدة مختلفة عن كلمات المرور السابقة.",
+  "newPassword": "كلمة مرور جديدة",
+  "newPasswordHint": "أدخل كلمة المرور الجديدة",
+  "passwordMinLength": "يجب أن تتكون كلمة المرور من 6 أحرف على الأقل",
+  "confirmPassword": "تأكيد كلمة المرور",
+  "confirmPasswordHint": "تأكيد كلمة المرور الجديدة",
+  "confirmPasswordRequired": "تأكيد كلمة المرور مطلوب",
+  "passwordsDoNotMatch": "كلمات المرور غير متطابقة",
+  "selectDevice": "اختر الجهاز",
+  "noDevicesFound": "لم يتم العثور على أجهزة.",
+  "proceed": "متابعة",
+  "unknownDevice": "جهاز غير معروف",
+  "imeiLabel": "IMEI: {imei}",
+  "@imeiLabel": {
+    "placeholders": {
+      "imei": {
+        "type": "String"
+      }
+    }
+  },
+  "initializeFetch": "ابدأ لجلب الأجهزة.",
+  "recordRide": "تسجيل الرحلة",
+  "phoneAsGps": "اجعل هاتفك جهاز تتبع GPS",
+  "goToDashboard": "الذهاب إلى لوحة التحكم",
+  "seeFullMap": "مشاهدة الخريطة الكاملة",
+  "exploreMore": "استكشف المزيد",
+  "reachMeSticker": "ملصق ReachMe",
+  "products": "المنتجات",
+  "fuelLogs": "سجلات الوقود",
+  "locationSharing": "مشاركة الموقع",
+  "documentFolder": "مجلد المستندات",
+  "voiceMonitoring": "مراقبة الصوت",
+  "remoteEngineOff": "إطفاء المحرك عن بعد",
+  "networkBooster": "معزز الشبكة",
+  "emergency": "الطوارئ",
+  "overspeedAlert": "تنبيه السرعة الزائدة",
+  "geoFenceAlert": "تنبيه السياج الجغرافي",
+  "more": "المزيد",
+  "profile": "الملف الشخصي",
+  "bikeSmartMsg": "أكثر من 1000 شخص جعلوا دراجاتهم ذكية بجهازنا",
+  "features": "الميزات",
+  "contactUs": "اتصل بنا",
+  "contactUsDesc": "هل لديك أسئلة؟ نحن هنا للمساعدة.",
+  "userReviews": "آراء المستخدمين",
+  "accidentAlert": "تنبيه الحوادث",
+  "antiTheftAlert": "تنبيه ضد السرقة",
+  "geoFence": "السياج الجغرافي",
+  "statistics": "الإحصائيات",
+  "myGarage": "مرآبي",
+  "noVehiclesInGarage": "لم يتم العثور على مركبات في مرآبك.",
+  "unknownVehicle": "مركبة غير معروفة",
+  "status": "الحالة",
+  "active": "نشط",
+  "subscription": "الاشتراك",
+  "proPlan": "خطة برو",
+  "initializeGarage": "ابدأ لجلب مرآبك.",
+  "ourProducts": "منتجاتنا",
+  "proTitle": "Trackify Pro",
+  "proSubtitle": "تتبع متقدم بميزات قصوى",
+  "goTitle": "Trackify Go",
+  "goSubtitle": "تتبع قياسي للاستخدام اليومي",
+  "liteTitle": "Trackify Lite",
+  "liteSubtitle": "جهاز تحديد مواقع أساسي",
+  "realTime1s": "تتبع فوري (ثانية واحدة)",
+  "remoteEngineCutOff": "قطع المحرك عن بعد",
+  "detailedFuelAnalytics": "تحليلات وقود مفصلة",
+  "realTime5s": "تتبع فوري (5 ثوانٍ)",
+  "antiTheftAlerts": "تنبيهات ضد السرقة",
+  "basicJourneyLogs": "سجلات رحلات أساسية",
+  "locationUpdates": "تحديثات الموقع",
+  "batteryMonitor": "مراقب البطارية",
+  "featuresLabel": "الميزات:",
+  "addedToCart": "تمت إضافة {title} إلى العربة!",
+  "@addedToCart": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "buyNow": "اشتري الآن",
+  "retry": "إعادة المحاولة",
+  "errorMsg": "خطأ: {message}",
+  "@errorMsg": {
+    "placeholders": {
+      "message": {
+        "type": "String"
+      }
+    }
+  }
+}

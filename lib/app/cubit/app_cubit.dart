@@ -79,11 +79,26 @@ class AppCubit extends Cubit<AppState> {
   Future<void> loadUserSession() async {
     final prefs = AppPreference.instance;
     final userData = await prefs.get(key: AppPreference.KEY_USER_DETAILS);
+    final selectedLanguageKey =
+        await prefs.get(key: AppPreference.KEY_SELECTED_LANGUAGE);
     print("UserDetails : $userData");
+    print("SelectedLanguageKey : $selectedLanguageKey");
 
     if (userData.isNotEmpty) {
       final user = User.fromJson(jsonDecode(userData));
       emit(state.copyWith(userData: user));
+    }
+
+    if (selectedLanguageKey.isNotEmpty) {
+      Locale? locale;
+      if (selectedLanguageKey == 'Hindi') {
+        locale = const Locale('hi');
+      } else if (selectedLanguageKey == 'Arabic') {
+        locale = const Locale('ar');
+      } else {
+        locale = const Locale('en');
+      }
+      emit(state.copyWith(locale: locale));
     }
   }
 

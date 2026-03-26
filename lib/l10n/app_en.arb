@@ -1,0 +1,142 @@
+{
+  "selectLanguage": "Select your language",
+  "letsGetStarted": "Let's Get Started",
+  "email": "Email",
+  "password": "Password",
+  "emailHint": "example@test.com",
+  "passwordHint": "******",
+  "emailRequired": "Email required",
+  "passwordRequired": "Password required",
+  "forgotPassword": "Forgot Password?",
+  "signIn": "Sign In",
+  "or": "or",
+  "dontHaveAccount": "Don't have an account? ",
+  "signUp": "Sign Up",
+  "welcome": "Welcome {email}!",
+  "@welcome": {
+    "placeholders": {
+      "email": {
+        "type": "String"
+      }
+    }
+  },
+  "loginFailed": "Login failed",
+  "name": "Name",
+  "nameHint": "John Doe",
+  "nameRequired": "Name is required",
+  "role": "Role",
+  "roleRequired": "Please select a role",
+  "createAccount": "Create Account",
+  "registerSuccess": "User Registered Successfully Please Login",
+  "signUpFailed": "Sign up failed",
+  "otpSent": "OTP sent successfully",
+  "resetPassword": "Reset Password",
+  "resetPasswordDesc": "Enter your email address and we will send you a link to reset your password.",
+  "sendResetLink": "Send Reset Link",
+  "otpVerified": "OTP verified successfully",
+  "verifyOtp": "Verify OTP",
+  "otpHeader": "OTP Verification",
+  "otpDesc": "Enter the OTP sent to {email}.",
+  "@otpDesc": {
+    "placeholders": {
+      "email": {
+        "type": "String"
+      }
+    }
+  },
+  "otp": "OTP",
+  "otpHint": "123456",
+  "otpRequired": "OTP is required",
+  "passwordResetSuccess": "Password reset successfully",
+  "createNewPassword": "Create New Password",
+  "passwordDesc": "Your new password must be different from previous used passwords.",
+  "newPassword": "New Password",
+  "newPasswordHint": "Enter your new password",
+  "passwordMinLength": "Password must be at least 6 characters",
+  "confirmPassword": "Confirm Password",
+  "confirmPasswordHint": "Confirm your new password",
+  "confirmPasswordRequired": "Confirm Password is required",
+  "passwordsDoNotMatch": "Passwords do not match",
+  "selectDevice": "Select Device",
+  "noDevicesFound": "No devices found.",
+  "proceed": "Proceed",
+  "unknownDevice": "Unknown Device",
+  "imeiLabel": "IMEI: {imei}",
+  "@imeiLabel": {
+    "placeholders": {
+      "imei": {
+        "type": "String"
+      }
+    }
+  },
+  "initializeFetch": "Initialize to fetch devices.",
+  "recordRide": "Record Ride",
+  "phoneAsGps": "Make your phone a GPS Tracking device",
+  "goToDashboard": "Go to Dashboard",
+  "seeFullMap": "See full map",
+  "exploreMore": "Explore More",
+  "reachMeSticker": "ReachMe Sticker",
+  "products": "Products",
+  "fuelLogs": "Fuel Logs",
+  "locationSharing": "Location Sharing",
+  "documentFolder": "Document Folder",
+  "voiceMonitoring": "Voice Monitoring",
+  "remoteEngineOff": "Remote Engine OFF",
+  "networkBooster": "Network Booster",
+  "emergency": "Emergency",
+  "overspeedAlert": "Overspeed Alert",
+  "geoFenceAlert": "Geo-fence Alert",
+  "more": "More",
+  "profile": "Profile",
+  "bikeSmartMsg": "1000+ people made their bike smart with our device",
+  "features": "Features",
+  "contactUs": "Contact Us",
+  "contactUsDesc": "Got questions? We are here to help.",
+  "userReviews": "User Reviews",
+  "accidentAlert": "Accident Alert",
+  "antiTheftAlert": "Anti-Theft Alert",
+  "geoFence": "Geo Fence",
+  "statistics": "Statistics",
+  "myGarage": "My Garage",
+  "noVehiclesInGarage": "No vehicles found in your garage.",
+  "unknownVehicle": "Unknown Vehicle",
+  "status": "Status",
+  "active": "Active",
+  "subscription": "Subscription",
+  "proPlan": "Pro Plan",
+  "initializeGarage": "Initialize to fetch your garage.",
+  "ourProducts": "Our Products",
+  "proTitle": "Trackify Pro",
+  "proSubtitle": "Advanced tracking with max features",
+  "goTitle": "Trackify Go",
+  "goSubtitle": "Standard tracking for everyday use",
+  "liteTitle": "Trackify Lite",
+  "liteSubtitle": "Basic locator device",
+  "realTime1s": "Real-time 1s tracking",
+  "remoteEngineCutOff": "Remote engine cut-off",
+  "detailedFuelAnalytics": "Detailed Fuel Analytics",
+  "realTime5s": "Real-time 5s tracking",
+  "antiTheftAlerts": "Anti-theft alerts",
+  "basicJourneyLogs": "Basic journey logs",
+  "locationUpdates": "Location updates",
+  "batteryMonitor": "Battery monitor",
+  "featuresLabel": "Features:",
+  "addedToCart": "Added {title} to cart!",
+  "@addedToCart": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "buyNow": "Buy Now",
+  "retry": "Retry",
+  "errorMsg": "Error: {message}",
+  "@errorMsg": {
+    "placeholders": {
+      "message": {
+        "type": "String"
+      }
+    }
+  }
+}

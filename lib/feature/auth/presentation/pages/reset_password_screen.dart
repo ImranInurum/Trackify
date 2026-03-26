@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/constants/app_images.dart';
 import '../../../../core/widgets/custom_form_field.dart';
 import '../../../../core/widgets/square_flat_button.dart';
+import '../../../../l10n/app_localizations.dart';
 import '../cubit/auth_cubit.dart';
 import '../cubit/auth_state.dart';
 
@@ -41,9 +42,10 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
   Widget build(BuildContext context) {
     return BlocListener<AuthCubit, AuthState>(
       listener: (context, state) {
+        final l10n = AppLocalizations.of(context)!;
         if (state is ForgotPasswordResetSuccess) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Password reset successfully')),
+            SnackBar(content: Text(l10n.passwordResetSuccess)),
           );
           // Navigate back to Login Screen
           Navigator.of(context).popUntil((route) => route.isFirst);
@@ -55,7 +57,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
       },
       child: Scaffold(
         appBar: AppBar(
-          title: const Text("Reset Password"),
+          title: Text(AppLocalizations.of(context)!.resetPassword),
           centerTitle: true,
         ),
         body: _body(),
@@ -64,6 +66,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
   }
 
   Widget _body() {
+    final l10n = AppLocalizations.of(context)!;
     return Form(
       key: _formKey,
       child: SingleChildScrollView(
@@ -74,46 +77,46 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
             Center(child: Image.asset(AppImages.appLogo)),
             const SizedBox(height: 20),
             Text(
-              "Create New Password",
+              l10n.createNewPassword,
               style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
             ),
             const SizedBox(height: 8),
             Text(
-              "Your new password must be different from previous used passwords.",
+              l10n.passwordDesc,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                     color: Colors.grey[700],
                   ),
             ),
             const SizedBox(height: 25),
             CustomFormField(
-              header: "New Password",
-              hint: 'Enter your new password',
+              header: l10n.newPassword,
+              hint: l10n.newPasswordHint,
               value: _passwordController,
               isPassword: true,
               validator: (value) {
                 if (value?.isEmpty ?? true) {
-                  return "Password is required";
+                  return l10n.passwordRequired;
                 }
                 if (value!.length < 6) {
-                  return "Password must be at least 6 characters";
+                  return l10n.passwordMinLength;
                 }
                 return null;
               },
             ),
             const SizedBox(height: 16),
             CustomFormField(
-              header: "Confirm Password",
-              hint: 'Confirm your new password',
+              header: l10n.confirmPassword,
+              hint: l10n.confirmPasswordHint,
               value: _confirmPasswordController,
               isPassword: true,
               validator: (value) {
                 if (value?.isEmpty ?? true) {
-                  return "Confirm Password is required";
+                  return l10n.confirmPasswordRequired;
                 }
                 if (value != _passwordController.text) {
-                  return "Passwords do not match";
+                  return l10n.passwordsDoNotMatch;
                 }
                 return null;
               },
@@ -121,7 +124,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
             const SizedBox(height: 35),
             CommonButton(
               onPressed: () => _onResetPressed(context),
-              text: 'Reset Password',
+              text: l10n.resetPassword,
             ),
           ],
         ),

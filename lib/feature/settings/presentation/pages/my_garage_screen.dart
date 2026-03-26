@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:trackify/l10n/app_localizations.dart';
 
 import '../../../map/presentation/cubit/map_cubit.dart';
 import '../../../map/presentation/cubit/map_state.dart';
@@ -25,9 +26,10 @@ class _MyGarageScreenState extends State<MyGarageScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(
-        title: const Text('My Garage'),
+        title: Text(l10n.myGarage),
         centerTitle: true,
       ),
       body: BlocBuilder<MapCubit, MapState>(
@@ -40,14 +42,14 @@ class _MyGarageScreenState extends State<MyGarageScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    'Error: ${state.message}',
+                    l10n.errorMsg(state.message),
                     style: const TextStyle(color: Colors.red),
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 16),
                   ElevatedButton(
                     onPressed: () => context.read<MapCubit>().fetchDevices({}),
-                    child: const Text('Retry'),
+                    child: Text(l10n.retry),
                   ),
                 ],
               ),
@@ -56,8 +58,8 @@ class _MyGarageScreenState extends State<MyGarageScreen> {
             final devices = state.deviceList.devices ?? [];
 
             if (devices.isEmpty) {
-              return const Center(
-                child: Text('No vehicles found in your garage.'),
+              return Center(
+                child: Text(l10n.noVehiclesInGarage),
               );
             }
 
@@ -100,7 +102,7 @@ class _MyGarageScreenState extends State<MyGarageScreen> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    device.deviceName ?? 'Unknown Vehicle',
+                                    device.deviceName ?? l10n.unknownVehicle,
                                     style: Theme.of(context)
                                         .textTheme
                                         .titleLarge
@@ -110,7 +112,7 @@ class _MyGarageScreenState extends State<MyGarageScreen> {
                                   ),
                                   const SizedBox(height: 4),
                                   Text(
-                                    'IMEI: ${device.imei ?? 'N/A'}',
+                                    l10n.imeiLabel(device.imei ?? 'N/A'),
                                     style: Theme.of(context)
                                         .textTheme
                                         .bodyMedium
@@ -137,15 +139,15 @@ class _MyGarageScreenState extends State<MyGarageScreen> {
                           children: [
                             _buildStatusInfo(
                               context,
-                              title: 'Status',
-                              value: 'Active',
+                              title: l10n.status,
+                              value: l10n.active,
                               icon: Icons.check_circle,
                               color: Colors.green,
                             ),
                             _buildStatusInfo(
                               context,
-                              title: 'Subscription',
-                              value: 'Pro Plan',
+                              title: l10n.subscription,
+                              value: l10n.proPlan,
                               icon: Icons.star,
                               color: Colors.amber,
                             ),
@@ -159,7 +161,7 @@ class _MyGarageScreenState extends State<MyGarageScreen> {
             );
           }
 
-          return const Center(child: Text('Initialize to fetch your garage.'));
+          return Center(child: Text(l10n.initializeGarage));
         },
       ),
     );

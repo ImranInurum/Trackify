@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:trackify/core/utils/shared_preferences.dart';
 
 import '../../../../app/app_navigation.dart';
+import '../../../../l10n/app_localizations.dart';
 import '../../../map/presentation/cubit/map_cubit.dart';
 import '../../../map/presentation/cubit/map_state.dart';
 
@@ -38,9 +39,10 @@ class _DeviceListScreenState extends State<DeviceListScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Select Device'),
+        title: Text(l10n.selectDevice),
         centerTitle: true,
       ),
       body: BlocBuilder<MapCubit, MapState>(
@@ -53,14 +55,14 @@ class _DeviceListScreenState extends State<DeviceListScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    'Error: ${state.message}',
+                    l10n.errorMsg(state.message),
                     style: const TextStyle(color: Colors.red),
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 16),
                   ElevatedButton(
                     onPressed: () => context.read<MapCubit>().fetchDevices({}),
-                    child: const Text('Retry'),
+                    child: Text(l10n.retry),
                   ),
                 ],
               ),
@@ -73,7 +75,7 @@ class _DeviceListScreenState extends State<DeviceListScreen> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Text('No devices found.'),
+                    Text(l10n.noDevicesFound),
                     const SizedBox(height: 16),
                     ElevatedButton(
                       onPressed: () {
@@ -81,7 +83,7 @@ class _DeviceListScreenState extends State<DeviceListScreen> {
                           MaterialPageRoute(builder: (context) => const AppNavigation()),
                         );
                       },
-                      child: const Text('Proceed'),
+                      child: Text(l10n.proceed),
                     ),
                   ],
                 ),
@@ -106,17 +108,17 @@ class _DeviceListScreenState extends State<DeviceListScreen> {
                       color: Colors.blueAccent,
                     ),
                     title: Text(
-                      device.deviceName ?? 'Unknown Device',
+                      device.deviceName ?? l10n.unknownDevice,
                       style: const TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 16,
                       ),
                     ),
-                    subtitle: Text('IMEI: ${device.imei ?? 'N/A'}'),
+                    subtitle: Text(l10n.imeiLabel(device.imei ?? 'N/A')),
                     trailing: const Icon(Icons.arrow_forward_ios, size: 16),
                     onTap: () {
                       _onDeviceSelected(
-                        device.deviceName ?? 'Unknown Device',
+                        device.deviceName ?? l10n.unknownDevice,
                         device.imei ?? '',
                       );
                     },
@@ -126,7 +128,7 @@ class _DeviceListScreenState extends State<DeviceListScreen> {
             );
           }
 
-          return const Center(child: Text('Initialize to fetch devices.'));
+          return Center(child: Text(l10n.initializeFetch));
         },
       ),
     );

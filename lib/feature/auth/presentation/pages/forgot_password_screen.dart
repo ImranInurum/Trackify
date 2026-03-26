@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/constants/app_images.dart';
 import '../../../../core/widgets/custom_form_field.dart';
 import '../../../../core/widgets/square_flat_button.dart';
+import '../../../../l10n/app_localizations.dart';
 import '../cubit/auth_cubit.dart';
 import '../cubit/auth_state.dart';
 import 'otp_verification_screen.dart';
@@ -35,9 +36,10 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   Widget build(BuildContext context) {
     return BlocListener<AuthCubit, AuthState>(
       listener: (context, state) {
+        final l10n = AppLocalizations.of(context)!;
         if (state is ForgotPasswordOtpSent) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('OTP sent successfully')),
+            SnackBar(content: Text(l10n.otpSent)),
           );
           Navigator.push(
             context,
@@ -55,7 +57,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       },
       child: Scaffold(
         appBar: AppBar(
-          title: const Text("Forgot Password"),
+          title: Text(AppLocalizations.of(context)!.forgotPassword),
           centerTitle: true,
         ),
         body: _body(),
@@ -64,6 +66,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   }
 
   Widget _body() {
+    final l10n = AppLocalizations.of(context)!;
     return Form(
       key: _formKey,
       child: SingleChildScrollView(
@@ -74,26 +77,26 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
             Center(child: Image.asset(AppImages.appLogo)),
             const SizedBox(height: 20),
             Text(
-              "Reset Password",
+              l10n.resetPassword,
               style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
             ),
             const SizedBox(height: 8),
             Text(
-              "Enter your email address and we will send you a link to reset your password.",
+              l10n.resetPasswordDesc,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                     color: Colors.grey[700],
                   ),
             ),
             const SizedBox(height: 25),
             CustomFormField(
-              header: "Email",
-              hint: 'example@test.com',
+              header: l10n.email,
+              hint: l10n.emailHint,
               value: _emailController,
               validator: (value) {
                 if (value?.isEmpty ?? true) {
-                  return "Email is required";
+                  return l10n.emailRequired;
                 }
                 return null;
               },
@@ -101,7 +104,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
             const SizedBox(height: 35),
             CommonButton(
               onPressed: () => _onSubmitPressed(context),
-              text: 'Send Reset Link',
+              text: l10n.sendResetLink,
             ),
           ],
         ),
