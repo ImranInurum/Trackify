@@ -1,8 +1,8 @@
-import 'package:animated_notch_bottom_bar/animated_notch_bottom_bar/animated_notch_bottom_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:trackify/core/constants/app_images.dart';
+import 'package:trackify/core/theme/app_colors.dart';
 
 import '../feature/map/presentation/pages/map_screen.dart';
-import '../feature/profile/presentation/pages/profile_screen.dart';
 import '../feature/settings/presentation/pages/settings.dart';
 
 class AppNavigation extends StatefulWidget {
@@ -13,63 +13,232 @@ class AppNavigation extends StatefulWidget {
 }
 
 class _AppNavigationState extends State<AppNavigation> {
-  final NotchBottomBarController _controller = NotchBottomBarController(index: 0);
   int _currentIndex = 0;
 
-  final _pages = [
+  final List<Widget> _pages = [
     const MapScreen(),
-    const ProfilePlaceholder(),
+    const Center(child: Text("Track Screen")),
+    const Center(child: Text("Stats Screen")),
     const SettingsPlaceholder(),
   ];
+
+  final List<String> _icons = [
+    AppImages.homeIcon,
+    AppImages.tripsIcon,
+    AppImages.statesIcon,
+    AppImages.profileIcon,
+  ];
+
+  void _onTabTap(int index) {
+    if (_currentIndex == index) return;
+    setState(() {
+      _currentIndex = index;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: _pages[_currentIndex],
-      extendBody: true,
-      bottomNavigationBar: AnimatedNotchBottomBar(
-        notchColor: Theme.of(context).colorScheme.secondaryContainer,
-        color: Theme.of(context).colorScheme.primaryContainer,
-        notchBottomBarController: _controller,
-        bottomBarItems: [
-          BottomBarItem(
-            inActiveItem: Icon(
-              Icons.map,
-              color: Theme.of(context).colorScheme.secondaryContainer,
-            ),
-            activeItem: Icon(
-              Icons.map_outlined,
-              color: Theme.of(context).colorScheme.primaryContainer,
-            ),
+      bottomNavigationBar: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: const BorderRadius.only(
+            topLeft: Radius.circular(24),
+            topRight: Radius.circular(24),
           ),
-          BottomBarItem(
-            inActiveItem: Icon(
-              Icons.person,
-              color: Theme.of(context).colorScheme.secondaryContainer,
+          border: Border(top: BorderSide(color: Colors.grey.shade300, width: 0.8)),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 10,
+              offset: const Offset(0, -2),
             ),
-            activeItem: Icon(
-              Icons.person,
-              color: Theme.of(context).colorScheme.primaryContainer,
-            ),
+          ],
+        ),
+        child: ClipRRect(
+          borderRadius: const BorderRadius.only(
+            topLeft: Radius.circular(24),
+            topRight: Radius.circular(24),
           ),
-          BottomBarItem(
-            inActiveItem: Icon(
-              Icons.settings,
-              color: Theme.of(context).colorScheme.secondaryContainer,
-            ),
-            activeItem: Icon(
-              Icons.settings,
-              color: Theme.of(context).colorScheme.primaryContainer,
-            ),
+          child: Stack(
+            children: [
+              /// 🔵 INNER SHADOW (IMPORTANT: placed ABOVE)
+              Positioned(
+                top: 0,
+                left: 0,
+                right: 0,
+                child: IgnorePointer(
+                  child: Align(
+                    alignment: Alignment.topCenter,
+                    child: Container(
+                      height: 20,
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [
+                            AppColors.secondaryLight.withOpacity(0.12),
+                            AppColors.secondaryLight.withOpacity(0.04),
+                            Colors.transparent,
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+
+              SafeArea(
+                top: false,
+                child: SizedBox(
+                  height: 64,
+                  child: Row(
+                    children: List.generate(
+                      _icons.length,
+                      (index) => Expanded(
+                        child: _RippleNavItem(
+                          assetPath: _icons[index],
+                          isSelected: _currentIndex == index,
+                          onTap: () => _onTabTap(index),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
-        ],
-        onTap: (int value) {
-          setState(() {
-            _currentIndex = value;
-          });
-        },
-        kIconSize: 24.0,
-        kBottomRadius: 28.0,
+        ),
+      ),
+    );
+  }
+}
+
+class _RippleNavItem extends StatefulWidget {
+  final String assetPath;
+  final bool isSelected;
+  final VoidCallback onTap;
+
+  const _RippleNavItem({
+    required this.assetPath,
+    required this.isSelected,
+    required this.onTap,
+  });
+
+  @override
+  State<_RippleNavItem> createState() => _RippleNavItemState();
+}
+
+class _RippleNavItemState extends State<_RippleNavItem>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+  late final Animation<double> _rippleScale;
+  late final Animation<double> _rippleOpacity;
+  late final Animation<double> _iconScale;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 450),
+    );
+
+    _rippleScale = Tween<double>(
+      begin: 0.2,
+      end: 1.8,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic));
+
+    _rippleOpacity = Tween<double>(
+      begin: 0.22,
+      end: 0.0,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut));
+
+    _iconScale = TweenSequence<double>([
+      TweenSequenceItem(
+        tween: Tween<double>(
+          begin: 1.0,
+          end: 0.92,
+        ).chain(CurveTween(curve: Curves.easeOut)),
+        weight: 35,
+      ),
+      TweenSequenceItem(
+        tween: Tween<double>(
+          begin: 0.92,
+          end: 1.06,
+        ).chain(CurveTween(curve: Curves.easeOut)),
+        weight: 35,
+      ),
+      TweenSequenceItem(
+        tween: Tween<double>(
+          begin: 1.06,
+          end: 1.0,
+        ).chain(CurveTween(curve: Curves.easeOut)),
+        weight: 30,
+      ),
+    ]).animate(_controller);
+  }
+
+  void _handleTap() {
+    _controller.forward(from: 0);
+    widget.onTap();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final iconColor = widget.isSelected ? AppColors.secondaryLight : Colors.grey.shade400;
+
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: _handleTap,
+      child: Center(
+        child: AnimatedBuilder(
+          animation: _controller,
+          builder: (context, child) {
+            return SizedBox(
+              width: 44,
+              height: 44,
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  Transform.scale(
+                    scale: _rippleScale.value,
+                    child: Opacity(
+                      opacity: _rippleOpacity.value,
+                      child: Container(
+                        width: 22,
+                        height: 22,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          border: Border.all(color: AppColors.secondaryLight, width: 1.2),
+                        ),
+                      ),
+                    ),
+                  ),
+                  Transform.scale(
+                    scale: _iconScale.value,
+                    child: Image.asset(
+                      widget.assetPath,
+                      width: 24,
+                      height: 24,
+                      fit: BoxFit.contain,
+                      color: iconColor,
+                      colorBlendMode: BlendMode.srcIn,
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        ),
       ),
     );
   }

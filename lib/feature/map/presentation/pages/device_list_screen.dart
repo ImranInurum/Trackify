@@ -4,8 +4,8 @@ import 'package:trackify/core/utils/shared_preferences.dart';
 
 import '../../../../app/app_navigation.dart';
 import '../../../../l10n/app_localizations.dart';
-import '../../../map/presentation/cubit/map_cubit.dart';
-import '../../../map/presentation/cubit/map_state.dart';
+import '../cubit/map_cubit.dart';
+import '../cubit/map_state.dart';
 
 class DeviceListScreen extends StatefulWidget {
   const DeviceListScreen({super.key});
@@ -32,19 +32,16 @@ class _DeviceListScreenState extends State<DeviceListScreen> {
     await prefs.set(key: AppPreference.KEY_DEVICE_MAC, value: deviceMac);
 
     if (!mounted) return;
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute(builder: (context) => const AppNavigation()),
-    );
+    Navigator.of(
+      context,
+    ).pushReplacement(MaterialPageRoute(builder: (context) => const AppNavigation()));
   }
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     return Scaffold(
-      appBar: AppBar(
-        title: Text(l10n.selectDevice),
-        centerTitle: true,
-      ),
+      appBar: AppBar(title: Text(l10n.selectDevice), centerTitle: true),
       body: BlocBuilder<MapCubit, MapState>(
         builder: (context, state) {
           if (state is MapLoading) {
@@ -109,10 +106,7 @@ class _DeviceListScreenState extends State<DeviceListScreen> {
                     ),
                     title: Text(
                       device.deviceName ?? l10n.unknownDevice,
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                      ),
+                      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                     ),
                     subtitle: Text(l10n.imeiLabel(device.imei ?? 'N/A')),
                     trailing: const Icon(Icons.arrow_forward_ios, size: 16),

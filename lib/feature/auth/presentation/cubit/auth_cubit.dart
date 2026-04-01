@@ -19,20 +19,26 @@ class AuthCubit extends Cubit<AuthState> {
     final result = await _authCase.loginCall(body);
     print('Network + decode took: ${stopwatch.elapsedMilliseconds}ms');
 
-    result.fold((failure) => emit(AuthFailure(failure)), (user) async {
-      final sw = Stopwatch()..start();
+    result.fold(
+      (failure) {
+        LoadingScreenOL().hide();
+        emit(AuthFailure(failure));
+      },
+      (user) async {
+        final sw = Stopwatch()..start();
 
-      final prefs = AppPreference.instance;
-      await prefs.set(key: AppPreference.KEY_TOKEN, value: user.token ?? "");
-      await prefs.set(
-        key: AppPreference.KEY_USER_DETAILS,
-        value: jsonEncode(user.user?.toJson()),
-      );
-      print('Prefs write took: ${sw.elapsedMilliseconds}ms');
+        final prefs = AppPreference.instance;
+        await prefs.set(key: AppPreference.KEY_TOKEN, value: user.token ?? "");
+        await prefs.set(
+          key: AppPreference.KEY_USER_DETAILS,
+          value: jsonEncode(user.user?.toJson()),
+        );
+        print('Prefs write took: ${sw.elapsedMilliseconds}ms');
 
-      emit(AuthSuccess(user));
-      LoadingScreenOL().hide();
-    });
+        emit(AuthSuccess(user));
+        LoadingScreenOL().hide();
+      },
+    );
   }
 
   Future<void> registerUser(Map<String, dynamic> body) async {

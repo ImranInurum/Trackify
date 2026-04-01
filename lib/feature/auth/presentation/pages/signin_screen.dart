@@ -3,14 +3,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:trackify/core/constants/app_images.dart';
 import 'package:trackify/feature/auth/presentation/pages/signup_screen.dart';
 
-import '../../../../app/app_navigation.dart';
 import '../../../../core/widgets/custom_form_field.dart';
 import '../../../../core/widgets/square_flat_button.dart';
 import '../../../../l10n/app_localizations.dart';
-import 'device_list_screen.dart';
-import 'forgot_password_screen.dart';
+import '../../../map/presentation/pages/device_list_screen.dart';
 import '../cubit/auth_cubit.dart';
 import '../cubit/auth_state.dart';
+import 'forgot_password_screen.dart';
 
 class SignInScreen extends StatefulWidget {
   const SignInScreen({super.key});
@@ -121,17 +120,12 @@ class _SignInScreenState extends State<SignInScreen> {
                   ),
                   Row(
                     children: [
-                      Expanded(
-                          child:
-                              Divider(color: Colors.grey[300], thickness: 1)),
+                      Expanded(child: Divider(color: Colors.grey[300], thickness: 1)),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                        child: Text(l10n.or,
-                            style: TextStyle(color: Colors.grey[600])),
+                        child: Text(l10n.or, style: TextStyle(color: Colors.grey[600])),
                       ),
-                      Expanded(
-                          child:
-                              Divider(color: Colors.grey[300], thickness: 1)),
+                      Expanded(child: Divider(color: Colors.grey[300], thickness: 1)),
                     ],
                   ),
                   const SizedBox(height: 25),
@@ -146,8 +140,7 @@ class _SignInScreenState extends State<SignInScreen> {
                         GestureDetector(
                           onTap: () {
                             Navigator.of(context).push(
-                              MaterialPageRoute(
-                                  builder: (context) => SignUpScreen()),
+                              MaterialPageRoute(builder: (context) => SignUpScreen()),
                             );
                           },
                           child: Text(
@@ -172,20 +165,16 @@ class _SignInScreenState extends State<SignInScreen> {
         final l10n = AppLocalizations.of(context)!;
         if (state is AuthSuccess) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-                content: Text(
-                    l10n.welcome(state.user.user?.email ?? ''))),
+            SnackBar(content: Text(l10n.welcome(state.user.user?.email ?? ''))),
           );
 
-          Navigator.of(
-            context,
-          ).pushReplacement(MaterialPageRoute(
-              builder: (context) => const DeviceListScreen()));
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (context) => const DeviceListScreen()),
+          );
         } else if (state is AuthFailure) {
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(SnackBar(
-              content: Text(state.error.message ?? l10n.loginFailed)));
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(state.error.message ?? l10n.loginFailed)),
+          );
         }
       },
     );

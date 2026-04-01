@@ -6,15 +6,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:trackify/app/cubit/app_cubit.dart';
 import 'package:trackify/app/cubit/app_state.dart';
-import 'package:trackify/core/widgets/custom_card.dart';
+import 'package:trackify/core/theme/app_colors.dart';
 import 'package:trackify/l10n/app_localizations.dart';
 
 import '../../../../core/config/style_manager.dart';
-import '../../../../core/widgets/draggable_app_bar.dart';
-import '../../../../core/widgets/gradient_button.dart';
 import '../cubit/map_cubit.dart';
 import '../cubit/map_state.dart';
-import 'full_screen_map.dart';
 
 class MapScreen extends StatefulWidget {
   const MapScreen({super.key});
@@ -25,7 +22,6 @@ class MapScreen extends StatefulWidget {
 
 class _MapScreenState extends State<MapScreen> {
   final Completer<GoogleMapController> _controller = Completer<GoogleMapController>();
-  bool _followUser = true;
   String? _lightMapStyle;
   String? _darkMapStyle;
 
@@ -64,166 +60,364 @@ class _MapScreenState extends State<MapScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(body: Column(children: [appBarWidget(), _body()]));
-  }
-
-  Widget _body() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
-      child: Column(children: [_mapWidget(), _exploreMoreWidget()]),
-    );
-  }
-
-  Widget appBarWidget() {
-    return BlocBuilder<MapCubit, MapState>(
-      builder: (context, mapState) {
-        return DraggableAppBar(
-          devices: mapState is MapLoaded ? mapState.deviceList.devices : null,
-        );
-      },
-    );
-  }
-
-  Widget _mapWidget() {
-    final l10n = AppLocalizations.of(context)!;
-    return CustomCard(
-      innerPadding: 10,
-      elevation: 0.7,
-      height: MediaQuery.of(context).size.height * 0.3,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+    return Scaffold(
+      backgroundColor: AppColors.backgroundLight,
+      body: Column(
         children: [
-          Text(
-            l10n.recordRide,
-            style: getRegularStyle(color: Theme.of(context).colorScheme.primaryContainer),
-          ),
-          Text(
-            l10n.phoneAsGps,
-            style: getMediumStyle(color: Theme.of(context).colorScheme.tertiaryFixed),
-          ),
-          SizedBox(height: 5),
-          BlocConsumer<AppCubit, AppState>(
-            listenWhen: (prev, curr) =>
-                prev.currentLocation != curr.currentLocation &&
-                curr.currentLocation != null,
-
-            listener: (BuildContext context, AppState state) async {
-              if (!_followUser) return;
-
-              final pos = state.currentLocation!;
-              final controller = await _controller.future;
-
-              controller.animateCamera(
-                CameraUpdate.newLatLng(LatLng(pos.latitude, pos.longitude)),
-              );
-            },
-            buildWhen: (previous, current) =>
-                previous.currentLocation != current.currentLocation,
-            builder: (context, state) {
-              final currentPos = state.currentLocation;
-
-              if (currentPos == null) {
-                return const Center(child: CircularProgressIndicator());
-              }
-              final cameraPosition = CameraPosition(
-                target: LatLng(currentPos.latitude, currentPos.longitude),
-                zoom: 16,
-              );
-
-              return Expanded(
-                child: ClipRRect(
-                  borderRadius: BorderRadiusGeometry.circular(12),
-                  child: GoogleMap(
-                    initialCameraPosition: cameraPosition,
-                    myLocationEnabled: true,
-                    zoomControlsEnabled: false,
-                    onMapCreated: (GoogleMapController controller) async {
-                      _controller.complete(controller);
-                      await _applyMapTheme(controller, state.themeMode);
-                    },
-                  ),
-                ),
-              );
-            },
-          ),
-          SizedBox(height: 10),
-          GradientButton(
-            title: l10n.goToDashboard,
-            subtitle: l10n.seeFullMap,
-            icon: Icons.arrow_forward,
-            showBorder: true,
-            onTap: () => Navigator.of(
-              context,
-            ).push(MaterialPageRoute(builder: (context) => FullScreenMap())),
+          _buildHeader(),
+          Expanded(
+            child: SingleChildScrollView(
+              physics: const BouncingScrollPhysics(),
+              child: Column(
+                children: [
+                  _buildMapSection(),
+                  _buildPromoBanner(),
+                  _buildExploreMore(),
+                  const SizedBox(height: 100), // Space for bottom nav
+                ],
+              ),
+            ),
           ),
         ],
       ),
     );
   }
 
-  Widget _exploreMoreWidget() {
-    final l10n = AppLocalizations.of(context)!;
-    final options = [
-      {"icon": Icons.qr_code, "label": l10n.reachMeSticker, "locked": false},
-      {"icon": Icons.local_offer_outlined, "label": l10n.products, "locked": false},
-      {"icon": Icons.local_gas_station_outlined, "label": l10n.fuelLogs, "locked": false},
-      {"icon": Icons.share_outlined, "label": l10n.locationSharing, "locked": false},
-      {"icon": Icons.folder_open_outlined, "label": l10n.documentFolder, "locked": false},
-      {"icon": Icons.call, "label": l10n.voiceMonitoring, "locked": true},
-      {"icon": Icons.power_settings_new, "label": l10n.remoteEngineOff, "locked": true},
-      {"icon": Icons.network_cell, "label": l10n.networkBooster, "locked": true},
-      {"icon": Icons.sos, "label": l10n.emergency, "locked": true},
-      {"icon": Icons.speed, "label": l10n.overspeedAlert, "locked": true},
-      {"icon": Icons.location_on_outlined, "label": l10n.geoFenceAlert, "locked": true},
-      {"icon": Icons.more_horiz, "label": l10n.more, "locked": false},
-    ];
+  Widget _buildHeader() {
+    return BlocBuilder<MapCubit, MapState>(
+      buildWhen: (prev, curr) => curr is MapLoaded || curr is MapLoading || curr is MapError,
+      builder: (context, state) {
+        String deviceName = "No Device";
+        String imei = "---";
 
-    return CustomCard(
-      innerPadding: 10,
-      elevation: 0.7,
+        if (state is MapLoaded && state.deviceList.devices?.isNotEmpty == true) {
+          final device = state.deviceList.devices![0]; // Displaying first device for now
+          deviceName = device.deviceName ?? "Unnamed Device";
+          imei = device.imei ?? "---";
+        }
+
+        return Container(
+          padding: EdgeInsets.only(
+            top: MediaQuery.of(context).padding.top + 5,
+            bottom: 12,
+            left: 16,
+            right: 16,
+          ),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: const BorderRadius.only(
+              bottomLeft: Radius.circular(20),
+              bottomRight: Radius.circular(20),
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.03),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: Row(
+            children: [
+              Container(
+                width: 44,
+                height: 44,
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade50,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: const Icon(Icons.motorcycle, color: AppColors.primaryLight, size: 26),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      deviceName,
+                      style: getBoldStyle(color: Colors.black, fontSize: 16),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    Row(
+                      children: [
+                        Text(
+                          imei,
+                          style: getMediumStyle(color: AppColors.textSecondaryLight, fontSize: 12),
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          "Lite 4G",
+                          style: getMediumStyle(color: AppColors.primaryLight, fontSize: 12),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              IconButton(
+                icon: const Icon(Icons.notifications_none_rounded, color: Colors.black, size: 26),
+                onPressed: () {},
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildMapSection() {
+    return Container(
+      height: 340,
+      margin: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: Colors.grey.shade200),
+      ),
+      child: Stack(
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadius.circular(20),
+            child: BlocBuilder<AppCubit, AppState>(
+              builder: (context, state) {
+                final currentPos = state.currentLocation;
+                if (currentPos == null) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+                return GoogleMap(
+                  initialCameraPosition: CameraPosition(
+                    target: LatLng(currentPos.latitude, currentPos.longitude),
+                    zoom: 15,
+                  ),
+                  myLocationEnabled: true,
+                  zoomControlsEnabled: false,
+                  myLocationButtonEnabled: false,
+                  onMapCreated: (GoogleMapController controller) async {
+                    if (!_controller.isCompleted) {
+                      _controller.complete(controller);
+                    }
+                    await _applyMapTheme(controller, state.themeMode);
+                  },
+                );
+              },
+            ),
+          ),
+          Positioned(
+            bottom: 0,
+            left: 0,
+            right: 0,
+            child: Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: AppColors.primaryLightVariant.withOpacity(0.9),
+                borderRadius: const BorderRadius.only(
+                  bottomLeft: Radius.circular(20),
+                  bottomRight: Radius.circular(20),
+                ),
+              ),
+              child: Column(
+                children: [
+                  Row(
+                    children: [
+                      Text(
+                        "Today",
+                        style: getBoldStyle(color: AppColors.paletteGreen, fontSize: 13),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  _buildStatsRow(),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStatsRow() {
+    return BlocBuilder<MapCubit, MapState>(
+      builder: (context, state) {
+        String distance = "0.0 km";
+        String speed = "0 km/hr";
+        String duration = "0m 0s";
+        String topSpeed = "0 km/hr";
+
+        // In a real app, you would extract this from MapDataByDateLoaded or similar
+        // if (state is MapDataByDateLoaded) { ... calculate stats ... }
+
+        return Column(
+          children: [
+            Row(
+              children: [
+                _buildStatItem("Distance", distance),
+                _buildStatItem("Speed", speed),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                _buildStatItem("Ride Duration", duration),
+                _buildStatItem("Top Speed", topSpeed),
+              ],
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _buildStatItem(String label, String value) {
+    return Expanded(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            l10n.exploreMore,
-            style: getRegularStyle(color: Theme.of(context).colorScheme.primaryContainer),
+            label,
+            style: getRegularStyle(color: Colors.black54, fontSize: 11),
           ),
+          Text(
+            value,
+            style: getBoldStyle(color: Colors.black87, fontSize: 13),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPromoBanner() {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.grey.shade100),
+      ),
+      child: Row(
+        children: [
+          SizedBox(
+            width: 44,
+            height: 44,
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                CircularProgressIndicator(
+                  value: 0.63,
+                  strokeWidth: 3.5,
+                  backgroundColor: Colors.grey.shade100,
+                  valueColor: const AlwaysStoppedAnimation<Color>(Colors.cyan),
+                ),
+                Text(
+                  "63%",
+                  style: getBoldStyle(color: Colors.cyan, fontSize: 10),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Text(
+                      "Get more out of Ajjas",
+                      style: getBoldStyle(color: Colors.cyan.shade800, fontSize: 14),
+                    ),
+                    const Icon(Icons.chevron_right, color: Colors.cyan, size: 18),
+                  ],
+                ),
+                Text(
+                  "Discover more — awesome things await!",
+                  style: getRegularStyle(color: Colors.grey.shade600, fontSize: 11),
+                ),
+              ],
+            ),
+          ),
+          const Icon(Icons.close, color: Colors.grey, size: 18),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildExploreMore() {
+    final l10n = AppLocalizations.of(context)!;
+    final options = [
+      {"icon": Icons.qr_code_scanner, "label": l10n.reachMeSticker, "badge": "Explore Now"},
+      {"icon": Icons.phone_android_rounded, "label": "Record via\nPhone", "badge": null},
+      {"icon": Icons.settings_outlined, "label": "Service Logs", "badge": null},
+      {"icon": Icons.share_location_rounded, "label": "Location\nSharing", "badge": null},
+      {"icon": Icons.local_parking_rounded, "label": "Safe Parking", "badge": null},
+      {"icon": Icons.system_update_alt_rounded, "label": "App Updates", "badge": null},
+      {"icon": Icons.local_gas_station_outlined, "label": "Fuel Logs", "badge": null},
+      {"icon": Icons.notifications_active_outlined, "label": "Geo-fence\nAlert", "badge": null},
+      {"icon": Icons.speed_rounded, "label": "Overspeed\nAlert", "badge": null},
+      {"icon": Icons.folder_open_outlined, "label": "Document\nFolder", "badge": null},
+      {"icon": Icons.list_alt_rounded, "label": "Device\nData Plan", "badge": null},
+      {"icon": Icons.security_rounded, "label": "Device\nWarranty", "badge": null},
+    ];
+
+    return Padding(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            "Explore more",
+            style: getBoldStyle(color: Colors.black87, fontSize: 17),
+          ),
+          const SizedBox(height: 16),
           GridView.builder(
-            padding: EdgeInsets.zero,
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
+            padding: EdgeInsets.zero,
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 4,
-              mainAxisSpacing: 8,
-              crossAxisSpacing: 8,
-              childAspectRatio: 0.9,
+              mainAxisSpacing: 20,
+              crossAxisSpacing: 10,
+              childAspectRatio: 0.75,
             ),
             itemCount: options.length,
             itemBuilder: (context, index) {
               final option = options[index];
-              final locked = option["locked"] as bool;
-
               return Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Icon(
-                    option["icon"] as IconData,
-                    size: 28,
-                    color: locked
-                        ? Colors.grey.shade400
-                        : Theme.of(context).colorScheme.primaryContainer,
+                  Stack(
+                    clipBehavior: Clip.none,
+                    children: [
+                      Icon(option["icon"] as IconData, size: 30, color: Colors.black87),
+                      if (option["badge"] != null)
+                        Positioned(
+                          top: -6,
+                          right: -32,
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
+                            decoration: BoxDecoration(
+                              color: Colors.cyan,
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                            child: Text(
+                              option["badge"] as String,
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 8,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ),
+                    ],
                   ),
-                  const SizedBox(height: 6),
+                  const SizedBox(height: 8),
                   Text(
                     option["label"] as String,
                     textAlign: TextAlign.center,
-                    style: getRegularStyle(
-                      color: locked
-                          ? Colors.grey.shade400
-                          : Theme.of(context).colorScheme.tertiaryFixed,
-                      fontSize: 11,
-                    ),
+                    maxLines: 2,
+                    style: getMediumStyle(color: Colors.black54, fontSize: 10.5),
                   ),
                 ],
               );
@@ -234,3 +428,6 @@ class _MapScreenState extends State<MapScreen> {
     );
   }
 }
+
+
+

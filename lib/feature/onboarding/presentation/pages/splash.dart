@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:trackify/core/utils/shared_preferences.dart';
-import 'package:trackify/feature/auth/presentation/pages/device_list_screen.dart';
 import 'package:trackify/feature/auth/presentation/pages/signin_screen.dart';
+import 'package:trackify/feature/map/presentation/pages/device_list_screen.dart';
 import 'package:trackify/feature/onboarding/presentation/cubit/splash_cubit.dart';
 import 'package:trackify/feature/onboarding/presentation/cubit/splash_state.dart';
 import 'package:trackify/feature/onboarding/presentation/pages/select_language_screen.dart';
+
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
 
@@ -30,12 +31,11 @@ class _SplashScreenState extends State<SplashScreen> {
     await AppPreference.instance.init();
 
     // Check saved token
-    final token =
-        await AppPreference.instance.get(key: AppPreference.KEY_TOKEN);
+    final token = await AppPreference.instance.get(key: AppPreference.KEY_TOKEN);
 
     // Check saved language
-    final selectedLanguage = '' ; await AppPreference.instance
-        .get(key: AppPreference.KEY_SELECTED_LANGUAGE);
+    final selectedLanguage = '';
+    await AppPreference.instance.get(key: AppPreference.KEY_SELECTED_LANGUAGE);
 
     // Decide navigation
     if (!mounted) return;
@@ -68,10 +68,9 @@ class _SplashScreenState extends State<SplashScreen> {
       body: Center(
         child: BlocBuilder<SplashCubit, SplashState>(
           builder: (context, state) {
-            if (state is SplashLoading){
+            if (state is SplashLoading) {
               return const CircularProgressIndicator();
-            }
-           else if (state is SplashLoaded && state.logo.path != null) {
+            } else if (state is SplashLoaded && state.logo.path != null) {
               return Image.network(
                 state.logo.path!,
                 height: 120,
@@ -82,11 +81,11 @@ class _SplashScreenState extends State<SplashScreen> {
                 ),
               );
             } else {
-             return Icon(
-               Icons.track_changes,
-               size: 80,
-               color: Theme.of(context).colorScheme.primary,
-             );
+              return Icon(
+                Icons.track_changes,
+                size: 80,
+                color: Theme.of(context).colorScheme.primary,
+              );
             }
           },
         ),
