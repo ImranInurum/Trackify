@@ -63,12 +63,14 @@ class AppColors {
 
   // Light Theme - Palette Matched (Image 1 & 2)
   static const Color primaryLight = Color(0xFF52ACCC); // Teal-Blue (Last bar in palette)
-  static const Color primaryLightVariant = Color(0xFFE3E8F3); // Pale Blue-Grey (5th bar)
+  // static const Color primaryLightVariant = Color(0xFFE3E8F3); // Pale Blue-Grey (5th bar)
+  static const Color primaryLightVariant = Color(0xFFD7E3F3); // Pale Blue-Grey (5th bar)
   static const Color secondaryLight = Color(0xFF1CA5D4); // Bright Blue (3rd bar)
   static const Color backgroundLight = Color(0xFFF7F8FA); // Near-white
   static const Color surfaceLight = Color(0xFFFFFFFF);
   static const Color cardLight = Color(0xFFFFFFFF);
   static const Color errorLight = Color(0xFFD22321); // Red (1st bar)
+  static const Color shadowColor = Color(0xFFDCE5EC); // Red (1st bar)
 
   // Light Theme - Text Colors
   static const Color textPrimaryLight = Color(0xFF1F1F1F);
@@ -117,4 +119,3 @@ class AppColors {
   static const Color userLocation = Color(0xFF34A853);
   static const Color userBackground = Color(0xFFFFFFFF);
 }
-

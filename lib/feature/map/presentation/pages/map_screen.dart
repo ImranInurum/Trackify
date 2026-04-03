@@ -7,6 +7,8 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:trackify/app/cubit/app_cubit.dart';
 import 'package:trackify/app/cubit/app_state.dart';
 import 'package:trackify/core/theme/app_colors.dart';
+import 'package:trackify/core/widgets/draggable_app_bar.dart';
+import 'package:trackify/feature/map/data/entity/user_device_model.dart';
 import 'package:trackify/l10n/app_localizations.dart';
 
 import '../../../../core/config/style_manager.dart';
@@ -62,30 +64,66 @@ class _MapScreenState extends State<MapScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.backgroundLight,
-      body: Column(
-        children: [
-          _buildHeader(),
-          Expanded(
-            child: SingleChildScrollView(
-              physics: const BouncingScrollPhysics(),
-              child: Column(
-                children: [
-                  _buildMapSection(),
-                  _buildPromoBanner(),
-                  _buildExploreMore(),
-                  const SizedBox(height: 100), // Space for bottom nav
-                ],
+      body: BlocConsumer<MapCubit, MapState>(
+        listener: (context, state) {},
+        builder: (context, state) {
+          final devices = state is MapLoaded
+              ? (state.deviceList.devices ?? <UserDevices>[])
+              : <UserDevices>[];
+          final topSpacing = MediaQuery.of(context).padding.top + 64;
+
+          return Stack(
+            children: [
+              Positioned.fill(
+                child: SingleChildScrollView(
+                  physics: const BouncingScrollPhysics(),
+                  child: Column(
+                    children: [
+                      SizedBox(height: topSpacing),
+                      _buildMapSection(),
+                      _buildPromoBanner(),
+                      _buildExploreMore(),
+                      const SizedBox(height: 100),
+                    ],
+                  ),
+                ),
               ),
-            ),
-          ),
-        ],
+
+              DraggableAppBar(
+                devices: devices,
+                selectedDevice: devices.isNotEmpty ? devices.first : null,
+                collapsedTrailing: IconButton(
+                  onPressed: () {},
+                  icon: const Icon(
+                    Icons.notifications_none_rounded,
+                    color: Colors.black,
+                    size: 26,
+                  ),
+                ),
+                expandedTrailing: IconButton(
+                  alignment: Alignment.centerRight,
+                  padding: EdgeInsets.zero,
+                  onPressed: () {},
+                  icon: const Icon(Icons.settings, color: Colors.black, size: 20),
+                ),
+                onAddVehicle: () {
+                  // navigate to add vehicle screen
+                },
+                onDeviceTap: (device) {
+                  // handle selected device here
+                },
+              ),
+            ],
+          );
+        },
       ),
     );
   }
 
   Widget _buildHeader() {
     return BlocBuilder<MapCubit, MapState>(
-      buildWhen: (prev, curr) => curr is MapLoaded || curr is MapLoading || curr is MapError,
+      buildWhen: (prev, curr) =>
+          curr is MapLoaded || curr is MapLoading || curr is MapError,
       builder: (context, state) {
         String deviceName = "No Device";
         String imei = "---";
@@ -126,7 +164,11 @@ class _MapScreenState extends State<MapScreen> {
                   color: Colors.grey.shade50,
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: const Icon(Icons.motorcycle, color: AppColors.primaryLight, size: 26),
+                child: const Icon(
+                  Icons.motorcycle,
+                  color: AppColors.primaryLight,
+                  size: 26,
+                ),
               ),
               const SizedBox(width: 12),
               Expanded(
@@ -143,12 +185,18 @@ class _MapScreenState extends State<MapScreen> {
                       children: [
                         Text(
                           imei,
-                          style: getMediumStyle(color: AppColors.textSecondaryLight, fontSize: 12),
+                          style: getMediumStyle(
+                            color: AppColors.textSecondaryLight,
+                            fontSize: 12,
+                          ),
                         ),
                         const SizedBox(width: 8),
                         Text(
                           "Lite 4G",
-                          style: getMediumStyle(color: AppColors.primaryLight, fontSize: 12),
+                          style: getMediumStyle(
+                            color: AppColors.primaryLight,
+                            fontSize: 12,
+                          ),
                         ),
                       ],
                     ),
@@ -156,7 +204,11 @@ class _MapScreenState extends State<MapScreen> {
                 ),
               ),
               IconButton(
-                icon: const Icon(Icons.notifications_none_rounded, color: Colors.black, size: 26),
+                icon: const Icon(
+                  Icons.notifications_none_rounded,
+                  color: Colors.black,
+                  size: 26,
+                ),
                 onPressed: () {},
               ),
             ],
@@ -169,70 +221,66 @@ class _MapScreenState extends State<MapScreen> {
   Widget _buildMapSection() {
     return Container(
       height: 340,
-      margin: const EdgeInsets.all(16),
+      margin: const EdgeInsets.only(top: 16, bottom: 16, left: 8, right: 8),
+      padding: EdgeInsets.all(4.0),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.grey.shade200),
-      ),
-      child: Stack(
-        children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(20),
-            child: BlocBuilder<AppCubit, AppState>(
-              builder: (context, state) {
-                final currentPos = state.currentLocation;
-                if (currentPos == null) {
-                  return const Center(child: CircularProgressIndicator());
-                }
-                return GoogleMap(
-                  initialCameraPosition: CameraPosition(
-                    target: LatLng(currentPos.latitude, currentPos.longitude),
-                    zoom: 15,
-                  ),
-                  myLocationEnabled: true,
-                  zoomControlsEnabled: false,
-                  myLocationButtonEnabled: false,
-                  onMapCreated: (GoogleMapController controller) async {
-                    if (!_controller.isCompleted) {
-                      _controller.complete(controller);
-                    }
-                    await _applyMapTheme(controller, state.themeMode);
-                  },
-                );
-              },
-            ),
-          ),
-          Positioned(
-            bottom: 0,
-            left: 0,
-            right: 0,
-            child: Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: AppColors.primaryLightVariant.withOpacity(0.9),
-                borderRadius: const BorderRadius.only(
-                  bottomLeft: Radius.circular(20),
-                  bottomRight: Radius.circular(20),
-                ),
-              ),
-              child: Column(
-                children: [
-                  Row(
-                    children: [
-                      Text(
-                        "Today",
-                        style: getBoldStyle(color: AppColors.paletteGreen, fontSize: 13),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 12),
-                  _buildStatsRow(),
-                ],
-              ),
-            ),
+        color: AppColors.primaryLightVariant.withOpacity(0.9),
+        borderRadius: const BorderRadius.all(Radius.circular(5)),
+        border: Border.all(color: Colors.grey.shade300),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.4),
+            blurRadius: 2,
+            offset: const Offset(0, 0),
           ),
         ],
+      ),
+      child: BlocBuilder<AppCubit, AppState>(
+        builder: (context, state) {
+          final currentPos = state.currentLocation;
+          if (currentPos == null) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          return Column(
+            children: [
+              Expanded(
+                child: ClipRRect(
+                  borderRadius: BorderRadius.all(Radius.circular(5)),
+                  child: GoogleMap(
+                    initialCameraPosition: CameraPosition(
+                      target: LatLng(currentPos.latitude, currentPos.longitude),
+                      zoom: 15,
+                    ),
+                    myLocationEnabled: true,
+                    zoomControlsEnabled: false,
+                    myLocationButtonEnabled: false,
+                    onMapCreated: (GoogleMapController controller) async {
+                      if (!_controller.isCompleted) {
+                        _controller.complete(controller);
+                      }
+                      await _applyMapTheme(controller, state.themeMode);
+                    },
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
+                child: Row(
+                  children: [
+                    Text(
+                      "Today",
+                      style: getBoldStyle(color: AppColors.paletteGreen, fontSize: 10),
+                    ),
+                  ],
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                child: _buildStatsRow(),
+              ),
+            ],
+          );
+        },
       ),
     );
   }
@@ -248,20 +296,23 @@ class _MapScreenState extends State<MapScreen> {
         // In a real app, you would extract this from MapDataByDateLoaded or similar
         // if (state is MapDataByDateLoaded) { ... calculate stats ... }
 
-        return Column(
+        return Row(
           children: [
-            Row(
-              children: [
-                _buildStatItem("Distance", distance),
-                _buildStatItem("Speed", speed),
-              ],
+            Expanded(
+              child: Column(
+                children: [
+                  _buildStatItem("Distance", distance),
+                  _buildStatItem("Ride Duration", duration),
+                ],
+              ),
             ),
-            const SizedBox(height: 12),
-            Row(
-              children: [
-                _buildStatItem("Ride Duration", duration),
-                _buildStatItem("Top Speed", topSpeed),
-              ],
+            Expanded(
+              child: Column(
+                children: [
+                  _buildStatItem("Speed", speed),
+                  _buildStatItem("Top Speed", topSpeed),
+                ],
+              ),
             ),
           ],
         );
@@ -270,20 +321,19 @@ class _MapScreenState extends State<MapScreen> {
   }
 
   Widget _buildStatItem(String label, String value) {
-    return Expanded(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            label,
-            style: getRegularStyle(color: Colors.black54, fontSize: 11),
-          ),
-          Text(
-            value,
-            style: getBoldStyle(color: Colors.black87, fontSize: 13),
-          ),
-        ],
-      ),
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        Text("$label:", style: getRegularStyle(color: Colors.black54, fontSize: 11)),
+        SizedBox(width: 4),
+        Text(
+          value,
+          style: getThinStyle(
+            color: Colors.black87,
+            fontSize: 13,
+          ).copyWith(fontWeight: FontWeight.w500),
+        ),
+      ],
     );
   }
 
@@ -310,10 +360,7 @@ class _MapScreenState extends State<MapScreen> {
                   backgroundColor: Colors.grey.shade100,
                   valueColor: const AlwaysStoppedAnimation<Color>(Colors.cyan),
                 ),
-                Text(
-                  "63%",
-                  style: getBoldStyle(color: Colors.cyan, fontSize: 10),
-                ),
+                Text("63%", style: getBoldStyle(color: Colors.cyan, fontSize: 10)),
               ],
             ),
           ),
@@ -347,14 +394,22 @@ class _MapScreenState extends State<MapScreen> {
   Widget _buildExploreMore() {
     final l10n = AppLocalizations.of(context)!;
     final options = [
-      {"icon": Icons.qr_code_scanner, "label": l10n.reachMeSticker, "badge": "Explore Now"},
+      {
+        "icon": Icons.qr_code_scanner,
+        "label": l10n.reachMeSticker,
+        "badge": "Explore Now",
+      },
       {"icon": Icons.phone_android_rounded, "label": "Record via\nPhone", "badge": null},
       {"icon": Icons.settings_outlined, "label": "Service Logs", "badge": null},
       {"icon": Icons.share_location_rounded, "label": "Location\nSharing", "badge": null},
       {"icon": Icons.local_parking_rounded, "label": "Safe Parking", "badge": null},
       {"icon": Icons.system_update_alt_rounded, "label": "App Updates", "badge": null},
       {"icon": Icons.local_gas_station_outlined, "label": "Fuel Logs", "badge": null},
-      {"icon": Icons.notifications_active_outlined, "label": "Geo-fence\nAlert", "badge": null},
+      {
+        "icon": Icons.notifications_active_outlined,
+        "label": "Geo-fence\nAlert",
+        "badge": null,
+      },
       {"icon": Icons.speed_rounded, "label": "Overspeed\nAlert", "badge": null},
       {"icon": Icons.folder_open_outlined, "label": "Document\nFolder", "badge": null},
       {"icon": Icons.list_alt_rounded, "label": "Device\nData Plan", "badge": null},
@@ -366,10 +421,7 @@ class _MapScreenState extends State<MapScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            "Explore more",
-            style: getBoldStyle(color: Colors.black87, fontSize: 17),
-          ),
+          Text("Explore more", style: getBoldStyle(color: Colors.black87, fontSize: 17)),
           const SizedBox(height: 16),
           GridView.builder(
             shrinkWrap: true,
@@ -395,7 +447,10 @@ class _MapScreenState extends State<MapScreen> {
                           top: -6,
                           right: -32,
                           child: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 4,
+                              vertical: 1,
+                            ),
                             decoration: BoxDecoration(
                               color: Colors.cyan,
                               borderRadius: BorderRadius.circular(4),
@@ -428,6 +483,3 @@ class _MapScreenState extends State<MapScreen> {
     );
   }
 }
-
-
-

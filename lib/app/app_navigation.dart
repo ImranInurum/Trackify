@@ -4,6 +4,7 @@ import 'package:trackify/core/theme/app_colors.dart';
 
 import '../feature/map/presentation/pages/map_screen.dart';
 import '../feature/settings/presentation/pages/settings.dart';
+import '../feature/trips/presentation/view/trip_screen.dart';
 
 class AppNavigation extends StatefulWidget {
   const AppNavigation({super.key});
@@ -17,7 +18,7 @@ class _AppNavigationState extends State<AppNavigation> {
 
   final List<Widget> _pages = [
     const MapScreen(),
-    const Center(child: Text("Track Screen")),
+    const TripScreen(),
     const Center(child: Text("Stats Screen")),
     const SettingsPlaceholder(),
   ];
@@ -41,18 +42,20 @@ class _AppNavigationState extends State<AppNavigation> {
     return Scaffold(
       body: _pages[_currentIndex],
       bottomNavigationBar: Container(
-        decoration: BoxDecoration(
+        decoration: ShapeDecoration(
           color: Colors.white,
-          borderRadius: const BorderRadius.only(
-            topLeft: Radius.circular(24),
-            topRight: Radius.circular(24),
+          shape: RoundedRectangleBorder(
+            borderRadius: const BorderRadius.only(
+              topLeft: Radius.circular(26),
+              topRight: Radius.circular(26),
+            ),
+            side: BorderSide(color: Colors.grey.shade300, width: 0.8),
           ),
-          border: Border(top: BorderSide(color: Colors.grey.shade300, width: 0.8)),
-          boxShadow: [
+          shadows: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
-              blurRadius: 10,
-              offset: const Offset(0, -2),
+              color: Colors.black.withOpacity(0.15),
+              blurRadius: 1,
+              offset: const Offset(1, 0),
             ),
           ],
         ),
@@ -74,13 +77,21 @@ class _AppNavigationState extends State<AppNavigation> {
                     child: Container(
                       height: 20,
                       decoration: BoxDecoration(
+                        // border: Border(top: BorderSide(color: Colors.grey, width: 0.15)),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.15),
+                            blurRadius: 20,
+                            offset: const Offset(1, 0),
+                          ),
+                        ],
                         gradient: LinearGradient(
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
+                          begin: Alignment.bottomCenter,
+                          end: Alignment.topCenter,
                           colors: [
-                            AppColors.secondaryLight.withOpacity(0.12),
-                            AppColors.secondaryLight.withOpacity(0.04),
-                            Colors.transparent,
+                            AppColors.primaryLightVariant.withOpacity(0.05),
+                            AppColors.primaryLightVariant.withOpacity(0.55),
+                            AppColors.primaryLightVariant.withOpacity(0.75),
                           ],
                         ),
                       ),
