@@ -30,10 +30,10 @@ class TripTooltip extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
+              Text(
                 "Create a New Trip",
                 style: TextStyle(
-                  color: Color(0xFF00AEEF),
+                  color: Theme.of(context).colorScheme.primary,
                   fontWeight: FontWeight.w700,
                   fontSize: 15,
                 ),
@@ -57,10 +57,10 @@ class TripTooltip extends StatelessWidget {
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                     color: Colors.transparent, // Increases tap area
-                    child: const Text(
+                    child: Text(
                       "Skip",
                       style: TextStyle(
-                        color: Color(0xFF00AEEF),
+                        color: Theme.of(context).colorScheme.primary,
                         fontWeight: FontWeight.w700,
                         fontSize: 14,
                       ),

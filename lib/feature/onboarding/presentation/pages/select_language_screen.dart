@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:trackify/app/cubit/app_cubit.dart';
 import 'package:trackify/app/cubit/app_state.dart';
 import 'package:trackify/core/utils/shared_preferences.dart';
@@ -21,7 +22,9 @@ class _SelectLanguageScreenState extends State<SelectLanguageScreen> {
   final List<Map<String, dynamic>> _languages = [
     {'key': 'English', 'name': 'English', 'locale': const Locale('en')},
     {'key': 'Hindi', 'name': 'हिंदी', 'locale': const Locale('hi')},
-    {'key': 'Arabic', 'name': 'العربية', 'locale': const Locale('ar')},
+    {'key': 'Marathi', 'name': 'मराठी', 'locale': const Locale('mr')},
+    {'key': 'Tamil', 'name': 'தமிழ்', 'locale': const Locale('ta')},
+    {'key': 'Kannada', 'name': 'ಕನ್ನಡ', 'locale': const Locale('kn')},
   ];
 
   String _selectedLanguageKey = 'English';
@@ -32,130 +35,169 @@ class _SelectLanguageScreenState extends State<SelectLanguageScreen> {
       value: _selectedLanguageKey,
     );
     if (!mounted) return;
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (_) => const SignInScreen()),
+    Navigator.push(context, MaterialPageRoute(builder: (_) => const SignInScreen()));
+  }
+
+  Widget _buildLogo(ColorScheme colorScheme, [ImageProvider? imageProvider]) {
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 20,
+            spreadRadius: 2,
+          ),
+        ],
+      ),
+      child: imageProvider != null
+          ? Image(image: imageProvider, height: 220, fit: BoxFit.contain)
+          : Icon(Icons.track_changes_rounded, size: 88, color: colorScheme.primary),
     );
   }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final textColor = theme.textTheme.bodyLarge?.color ?? Colors.white;
-    var selectedColor = theme.colorScheme.primaryContainer;
+    final textTheme = theme.textTheme;
+    final isDark = theme.brightness == Brightness.dark;
+
+    final overlayTop = Colors.black.withOpacity(isDark ? 0.35 : 0.20);
+    final overlayBottom = Colors.black.withOpacity(isDark ? 0.55 : 0.35);
+
+    const primaryTextColor = Colors.white;
 
     return Scaffold(
-      backgroundColor: theme.colorScheme.surface,
       body: Stack(
+        fit: StackFit.expand,
         children: [
-          // Background Image
-          Positioned.fill(
-            child: Opacity(
-              opacity: 0.5, // Adjust opacity as needed (0.0 to 1.0)
-              child: Image.asset(
-                'assets/images/road.jpeg',
-                fit: BoxFit.cover,
+          Image.asset('assets/images/road.jpg', fit: BoxFit.cover),
+          DecoratedBox(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  overlayTop,
+                  Colors.black.withOpacity(isDark ? 0.20 : 0.70),
+                  overlayBottom,
+                ],
               ),
             ),
           ),
           SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24.0),
-              child: BlocBuilder<AppCubit, AppState>(
-                builder: (context, appState) {
-                  final l10n = AppLocalizations.of(context)!;
-                  return Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      BlocBuilder<SplashCubit, SplashState>(
-                        builder: (context, state) {
-                          if (state is SplashLoading) {
-                            return const CircularProgressIndicator();
-                          } else if (state is SplashLoaded &&
-                              state.logo.path != null) {
-                            return Image.network(
-                              state.logo.path!,
-                              height: 200,
-                              errorBuilder: (context, error, stackTrace) =>
-                                  Icon(
-                                Icons.track_changes,
-                                size: 80,
-                                color: Theme.of(context).colorScheme.primary,
-                              ),
-                            );
-                          } else {
-                            return Icon(
-                              Icons.track_changes,
-                              size: 80,
-                              color: Theme.of(context).colorScheme.primary,
-                            );
-                          }
-                        },
-                      ),
-                      const SizedBox(height: 32),
-                      Text(
-                        l10n.selectLanguage,
-                        style: theme.textTheme.bodyMedium?.copyWith(
-                          fontWeight: FontWeight.w500,
-                          color: textColor,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                      const SizedBox(height: 16),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 8, horizontal: 8),
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                              color: textColor.withOpacity(0.5), width: 1),
-                          borderRadius: BorderRadius.circular(8),
-                          color: Colors.white
-                              .withOpacity(0.1), // Optional blend background
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: _languages.map((lang) {
-                            final isSelected =
-                                appState.locale == lang['locale'];
-                            return GestureDetector(
-                              onTap: () {
-                                context
-                                    .read<AppCubit>()
-                                    .changeLocale(lang['locale']);
-                                setState(() {
-                                  _selectedLanguageKey = lang['key']!;
-                                });
-                              },
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(
-                                    vertical: 4, horizontal: 8),
-                                color: Colors.transparent, // expand tap area
-                                child: Text(
-                                  lang['name']!,
-                                  style: TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                    color:
-                                        isSelected ? selectedColor : textColor,
-                                  ),
-                                ),
-                              ),
-                            );
-                          }).toList(),
-                        ),
-                      ),
-                      const SizedBox(height: 24),
-                      CommonButton(
-                          text: l10n.letsGetStarted,
-                          onPressed: () => _saveLanguageAndContinue()),
-                    ],
+            child: BlocBuilder<SplashCubit, SplashState>(
+              builder: (context, splashState) {
+                if (splashState is SplashLoading) {
+                  return  Center(
+                    child: CircularProgressIndicator(color: Theme.of(context).colorScheme.primary),
                   );
-                },
-              ),
+                }
+
+                return BlocBuilder<AppCubit, AppState>(
+                  builder: (context, appState) {
+                    final l10n = AppLocalizations.of(context)!;
+                    
+                    if (splashState is SplashLoaded && splashState.logo.path != null && splashState.logo.path!.isNotEmpty) {
+                      return CachedNetworkImage(
+                        imageUrl: splashState.logo.path!,
+                        placeholder: (context, url) => Center(
+                          child: CircularProgressIndicator(color: theme.colorScheme.primary),
+                        ),
+                        errorWidget: (context, url, err) => _buildMainContent(context, theme, appState, l10n, null),
+                        imageBuilder: (context, imageProvider) => _buildMainContent(context, theme, appState, l10n, imageProvider),
+                      );
+                    }
+                    
+                    return _buildMainContent(context, theme, appState, l10n, null);
+                  },
+                );
+              },
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildMainContent(
+    BuildContext context, 
+    ThemeData theme, 
+    AppState appState, 
+    AppLocalizations l10n, 
+    ImageProvider? imageProvider
+  ) {
+    const primaryTextColor = Colors.white;
+    return SingleChildScrollView(
+      physics: const AlwaysScrollableScrollPhysics(),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 24.0),
+        child: Column(
+          children: [
+            SizedBox(height: MediaQuery.of(context).size.height * 0.30),
+            _buildLogo(theme.colorScheme, imageProvider),
+            SizedBox(height: MediaQuery.of(context).size.height * 0.15),
+            Text(
+              l10n.selectLanguage,
+              textAlign: TextAlign.center,
+              style: theme.textTheme.titleMedium?.copyWith(
+                color: primaryTextColor,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            const SizedBox(height: 12),
+            Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: Colors.white, width: 1.5),
+              ),
+              child: Row(
+                children: _languages.map((lang) {
+                  final isSelected = appState.locale == lang['locale'];
+                  return Expanded(
+                    child: GestureDetector(
+                      behavior: HitTestBehavior.opaque,
+                      onTap: () {
+                        context.read<AppCubit>().changeLocale(
+                          lang['locale'],
+                        );
+                        setState(() {
+                          _selectedLanguageKey = lang['key'] as String;
+                        });
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        decoration: BoxDecoration(
+                          color: Colors.transparent,
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        child: Text(
+                          lang['name'] as String,
+                          textAlign: TextAlign.center,
+                          style: theme.textTheme.titleMedium?.copyWith(
+                            fontWeight: FontWeight.w700,
+                            fontSize: 14,
+                            color: isSelected
+                                ? theme.colorScheme.primary
+                                : Colors.white,
+                          ),
+                        ),
+                      ),
+                    ),
+                  );
+                }).toList(),
+              ),
+            ),
+            const SizedBox(height: 12),
+            CommonButton(
+              text: l10n.letsGetStarted,
+              onPressed: () => _saveLanguageAndContinue(),
+              borderRadius: 8,
+            ),
+            const SizedBox(height: 48),
+          ],
+        ),
       ),
     );
   }

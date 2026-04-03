@@ -7,6 +7,7 @@
   "passwordHint": "******",
   "emailRequired": "Email required",
   "passwordRequired": "Password required",
+  "invalidEmail": "Please enter a valid email address",
   "forgotPassword": "Forgot Password?",
   "signIn": "Sign In",
   "or": "or",

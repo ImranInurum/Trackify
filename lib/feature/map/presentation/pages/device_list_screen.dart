@@ -99,10 +99,10 @@ class _DeviceListScreenState extends State<DeviceListScreen> {
                       horizontal: 20,
                       vertical: 10,
                     ),
-                    leading: const Icon(
+                    leading: Icon(
                       Icons.devices,
                       size: 32,
-                      color: Colors.blueAccent,
+                      color: Theme.of(context).colorScheme.primary,
                     ),
                     title: Text(
                       device.deviceName ?? l10n.unknownDevice,

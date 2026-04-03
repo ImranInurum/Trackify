@@ -34,9 +34,8 @@ class RideCard extends StatelessWidget {
                   Positioned.fill(
                     child: Image.network(
                       "https://api.placeholder.com/400/200", // Replacement for actual map
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) => const Center(
-                        child: Icon(Icons.map, color: Colors.blueAccent, size: 40),
+                      errorBuilder: (context, error, stackTrace) => Center(
+                        child: Icon(Icons.map, color: Theme.of(context).colorScheme.primary, size: 40),
                       ),
                     ),
                   ),
@@ -51,10 +50,10 @@ class RideCard extends StatelessWidget {
                       ),
                       child: Text(
                         "${ride.distance} km",
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.bold,
-                          color: Color(0xFF00AEEF),
+                          color: Theme.of(context).colorScheme.primary,
                         ),
                       ),
                     ),
@@ -94,9 +93,9 @@ class RideCard extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    _buildStat(Icons.timer_outlined, ride.duration, "Duration"),
-                    _buildStat(Icons.speed, "${ride.avgSpeed} km/h", "Avg Speed"),
-                    _buildStat(Icons.bolt, "${ride.topSpeed} km/h", "Top Speed"),
+                    _buildStat(context, Icons.timer_outlined, ride.duration, "Duration"),
+                    _buildStat(context, Icons.speed, "${ride.avgSpeed} km/h", "Avg Speed"),
+                    _buildStat(context, Icons.bolt, "${ride.topSpeed} km/h", "Top Speed"),
                   ],
                 ),
                 const Padding(
@@ -143,13 +142,13 @@ class RideCard extends StatelessWidget {
     );
   }
 
-  Widget _buildStat(IconData icon, String value, String label) {
+  Widget _buildStat(BuildContext context, IconData icon, String value, String label) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
           children: [
-            Icon(icon, size: 14, color: const Color(0xFF00AEEF)),
+            Icon(icon, size: 14, color: Theme.of(context).colorScheme.primary),
             const SizedBox(width: 4),
             Text(
               value,

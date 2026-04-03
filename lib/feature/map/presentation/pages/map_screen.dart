@@ -9,7 +9,6 @@ import 'package:trackify/app/cubit/app_state.dart';
 import 'package:trackify/core/theme/app_colors.dart';
 import 'package:trackify/core/widgets/draggable_app_bar.dart';
 import 'package:trackify/feature/map/data/entity/user_device_model.dart';
-import 'package:trackify/l10n/app_localizations.dart';
 
 import '../../../../core/config/style_manager.dart';
 import '../cubit/map_cubit.dart';
@@ -221,10 +220,10 @@ class _MapScreenState extends State<MapScreen> {
   Widget _buildMapSection() {
     return Container(
       height: 340,
-      margin: const EdgeInsets.only(top: 16, bottom: 16, left: 8, right: 8),
+      margin: const EdgeInsets.only(top: 16, bottom: 16, left: 16, right: 16),
       padding: EdgeInsets.all(4.0),
       decoration: BoxDecoration(
-        color: AppColors.primaryLightVariant.withOpacity(0.9),
+        color: AppColors.primaryLightVariant.withOpacity(0.98),
         borderRadius: const BorderRadius.all(Radius.circular(5)),
         border: Border.all(color: Colors.grey.shade300),
         boxShadow: [
@@ -293,10 +292,8 @@ class _MapScreenState extends State<MapScreen> {
         String duration = "0m 0s";
         String topSpeed = "0 km/hr";
 
-        // In a real app, you would extract this from MapDataByDateLoaded or similar
-        // if (state is MapDataByDateLoaded) { ... calculate stats ... }
-
         return Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Expanded(
               child: Column(
@@ -306,6 +303,7 @@ class _MapScreenState extends State<MapScreen> {
                 ],
               ),
             ),
+            Spacer(),
             Expanded(
               child: Column(
                 children: [
@@ -372,7 +370,7 @@ class _MapScreenState extends State<MapScreen> {
                 Row(
                   children: [
                     Text(
-                      "Get more out of Ajjas",
+                      "Get more out of Trackify",
                       style: getBoldStyle(color: Colors.cyan.shade800, fontSize: 14),
                     ),
                     const Icon(Icons.chevron_right, color: Colors.cyan, size: 18),
@@ -392,28 +390,28 @@ class _MapScreenState extends State<MapScreen> {
   }
 
   Widget _buildExploreMore() {
-    final l10n = AppLocalizations.of(context)!;
+    // final l10n = AppLocalizations.of(context)!;
     final options = [
       {
         "icon": Icons.qr_code_scanner,
-        "label": l10n.reachMeSticker,
+        "label": "ReachMe\nSticker",
         "badge": "Explore Now",
       },
       {"icon": Icons.phone_android_rounded, "label": "Record via\nPhone", "badge": null},
-      {"icon": Icons.settings_outlined, "label": "Service Logs", "badge": null},
-      {"icon": Icons.share_location_rounded, "label": "Location\nSharing", "badge": null},
+      {"icon": Icons.handyman_outlined, "label": "Service Logs", "badge": null},
+      {"icon": Icons.share_outlined, "label": "Location\nSharing", "badge": null},
       {"icon": Icons.local_parking_rounded, "label": "Safe Parking", "badge": null},
-      {"icon": Icons.system_update_alt_rounded, "label": "App Updates", "badge": null},
+      {"icon": Icons.campaign_outlined, "label": "App Updates", "badge": null},
       {"icon": Icons.local_gas_station_outlined, "label": "Fuel Logs", "badge": null},
-      {
-        "icon": Icons.notifications_active_outlined,
-        "label": "Geo-fence\nAlert",
-        "badge": null,
-      },
-      {"icon": Icons.speed_rounded, "label": "Overspeed\nAlert", "badge": null},
+      {"icon": Icons.location_on_outlined, "label": "Geo-fence\nAlert", "badge": null},
+      {"icon": Icons.speed_outlined, "label": "Overspeed\nAlert", "badge": null},
       {"icon": Icons.folder_open_outlined, "label": "Document\nFolder", "badge": null},
       {"icon": Icons.list_alt_rounded, "label": "Device\nData Plan", "badge": null},
-      {"icon": Icons.security_rounded, "label": "Device\nWarranty", "badge": null},
+      {"icon": Icons.gpp_good_outlined, "label": "Device\nWarranty", "badge": null},
+      {"icon": Icons.chat_outlined, "label": "Help &\nSupport", "badge": null},
+      {"icon": Icons.sos_outlined, "label": "Emergency", "badge": null},
+      {"icon": Icons.play_arrow_outlined, "label": "Video\nTutorials", "badge": null},
+      {"icon": null, "label": "Upgrade to\nPlus", "badge": null, "isPlus": true},
     ];
 
     return Padding(
@@ -422,57 +420,83 @@ class _MapScreenState extends State<MapScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text("Explore more", style: getBoldStyle(color: Colors.black87, fontSize: 17)),
-          const SizedBox(height: 16),
+          const SizedBox(height: 24),
           GridView.builder(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             padding: EdgeInsets.zero,
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 4,
-              mainAxisSpacing: 20,
-              crossAxisSpacing: 10,
-              childAspectRatio: 0.75,
+              mainAxisSpacing: 24,
+              crossAxisSpacing: 8,
+              childAspectRatio: 0.9,
             ),
             itemCount: options.length,
             itemBuilder: (context, index) {
               final option = options[index];
               return Column(
+                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  Stack(
-                    clipBehavior: Clip.none,
-                    children: [
-                      Icon(option["icon"] as IconData, size: 30, color: Colors.black87),
-                      if (option["badge"] != null)
-                        Positioned(
-                          top: -6,
-                          right: -32,
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 4,
-                              vertical: 1,
-                            ),
-                            decoration: BoxDecoration(
-                              color: Colors.cyan,
-                              borderRadius: BorderRadius.circular(4),
-                            ),
-                            child: Text(
-                              option["badge"] as String,
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 8,
-                                fontWeight: FontWeight.bold,
+                  if (option["isPlus"] == true)
+                    Container(
+                      margin: const EdgeInsets.only(bottom: 6, top: 4),
+                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                      decoration: BoxDecoration(
+                        gradient: const LinearGradient(
+                          colors: [
+                            Color(0xFFD4AF37),
+                            Color(0xFFE1D2B0),
+                            Color(0xFFE2C275),
+                          ],
+                          stops: [0.0, 0.4, 1.0],
+                        ),
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      child: const Text(
+                        "Plus",
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
+                        ),
+                      ),
+                    )
+                  else
+                    Stack(
+                      clipBehavior: Clip.none,
+                      children: [
+                        Icon(option["icon"] as IconData, size: 28, color: Colors.black87),
+                        if (option["badge"] != null)
+                          Positioned(
+                            top: -10,
+                            right: -36,
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 5,
+                                vertical: 2,
+                              ),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFF00A3E0),
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                              child: Text(
+                                option["badge"] as String,
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 8,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
+                      ],
+                    ),
+                  const SizedBox(height: 10),
                   Text(
                     option["label"] as String,
                     textAlign: TextAlign.center,
                     maxLines: 2,
-                    style: getMediumStyle(color: Colors.black54, fontSize: 10.5),
+                    style: getMediumStyle(color: Colors.black54, fontSize: 11),
                   ),
                 ],
               );

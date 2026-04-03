@@ -96,6 +96,7 @@ class _TripScreenState extends State<TripScreen> with SingleTickerProviderStateM
   }
 
   Widget _buildTab(String label, int index) {
+    final theme = Theme.of(context);
     final isSelected = _tabController.index == index;
     return Expanded(
       child: GestureDetector(
@@ -103,7 +104,7 @@ class _TripScreenState extends State<TripScreen> with SingleTickerProviderStateM
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 12),
           decoration: BoxDecoration(
-            color: isSelected ? const Color(0xFFDFF3FA) : Colors.transparent,
+            color: isSelected ? theme.colorScheme.primary.withOpacity(0.12) : Colors.transparent,
             borderRadius: BorderRadius.circular(25),
           ),
           child: Center(
@@ -111,7 +112,7 @@ class _TripScreenState extends State<TripScreen> with SingleTickerProviderStateM
               label,
               style: TextStyle(
                 fontWeight: FontWeight.w700,
-                color: isSelected ? const Color(0xFF00AEEF) : Colors.black,
+                color: isSelected ? theme.colorScheme.primary : Colors.black,
               ),
             ),
           ),

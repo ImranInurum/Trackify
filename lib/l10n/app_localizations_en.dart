@@ -33,6 +33,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get passwordRequired => 'Password required';
 
   @override
+  String get invalidEmail => 'Please enter a valid email address';
+
+  @override
   String get forgotPassword => 'Forgot Password?';
 
   @override

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:trackify/core/utils/shared_preferences.dart';
 import 'package:trackify/feature/auth/presentation/pages/signin_screen.dart';
-import 'package:trackify/feature/map/presentation/pages/device_list_screen.dart';
+import 'package:trackify/app/app_navigation.dart';
 import 'package:trackify/feature/onboarding/presentation/cubit/splash_cubit.dart';
 import 'package:trackify/feature/onboarding/presentation/cubit/splash_state.dart';
 import 'package:trackify/feature/onboarding/presentation/pages/select_language_screen.dart';
@@ -34,8 +34,7 @@ class _SplashScreenState extends State<SplashScreen> {
     final token = await AppPreference.instance.get(key: AppPreference.KEY_TOKEN);
 
     // Check saved language
-    final selectedLanguage = '';
-    await AppPreference.instance.get(key: AppPreference.KEY_SELECTED_LANGUAGE);
+    final selectedLanguage = await AppPreference.instance.get(key: AppPreference.KEY_SELECTED_LANGUAGE);
 
     // Decide navigation
     if (!mounted) return;
@@ -47,10 +46,10 @@ class _SplashScreenState extends State<SplashScreen> {
         MaterialPageRoute(builder: (_) => const SelectLanguageScreen()),
       );
     } else if (token.isNotEmpty) {
-      // User already logged in -> go to Device List Screen
+      // User already logged in -> go to AppNavigation
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (_) => const DeviceListScreen()),
+        MaterialPageRoute(builder: (_) => const AppNavigation()),
       );
     } else {
       // No token -> go to SignIn

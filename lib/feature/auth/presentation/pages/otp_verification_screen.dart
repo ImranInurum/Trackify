@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import 'package:trackify/feature/onboarding/presentation/cubit/splash_cubit.dart';
+import 'package:trackify/feature/onboarding/presentation/cubit/splash_state.dart';
+
 import '../../../../core/constants/app_images.dart';
 import '../../../../core/widgets/custom_form_field.dart';
 import '../../../../core/widgets/square_flat_button.dart';
@@ -8,6 +11,7 @@ import '../../../../l10n/app_localizations.dart';
 import '../cubit/auth_cubit.dart';
 import '../cubit/auth_state.dart';
 import 'reset_password_screen.dart';
+import '../../../../core/utils/validators.dart';
 
 class OtpVerificationScreen extends StatefulWidget {
   final String email;
@@ -62,8 +66,9 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
       },
       child: Scaffold(
         appBar: AppBar(
-          title: Text(AppLocalizations.of(context)!.verifyOtp),
-          centerTitle: true,
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          leading: const BackButton(color: Colors.black),
         ),
         body: _body(),
       ),
@@ -77,35 +82,50 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
       child: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Center(child: Image.asset(AppImages.appLogo)),
-            const SizedBox(height: 20),
-            Text(
-              l10n.otpHeader,
-              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                    fontWeight: FontWeight.bold,
+            BlocBuilder<SplashCubit, SplashState>(
+              builder: (context, splashState) {
+                if (splashState is SplashLoaded &&
+                    splashState.logo.path != null &&
+                    splashState.logo.path!.isNotEmpty) {
+                  return Center(
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 20, bottom: 40),
+                      child: Image.network(
+                        splashState.logo.path!,
+                        height: 180,
+                        fit: BoxFit.contain,
+                      ),
+                    ),
+                  );
+                }
+                return Center(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 40),
+                    child: Image.asset(AppImages.appLogo, height: 120),
                   ),
+                );
+              },
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 10),
             Text(
               l10n.otpDesc(widget.email),
+              textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: Colors.grey[700],
+                    color: Colors.grey[600],
                   ),
             ),
-            const SizedBox(height: 25),
+            const SizedBox(height: 35),
             CustomFormField(
               header: l10n.otp,
               hint: l10n.otpHint,
               value: _otpController,
               keyboardType: TextInputType.number,
-              validator: (value) {
-                if (value?.isEmpty ?? true) {
-                  return l10n.otpRequired;
-                }
-                return null;
-              },
+              validator: (value) => Validators.validateRequired(
+                value,
+                l10n.otpRequired,
+              ),
             ),
             const SizedBox(height: 35),
             CommonButton(

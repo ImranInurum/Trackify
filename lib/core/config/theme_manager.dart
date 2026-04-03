@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import '../theme/app_colors.dart';
 
@@ -12,8 +13,11 @@ class ThemeManager {
   static final ThemeData lightTheme = ThemeData(
     useMaterial3: true,
     brightness: Brightness.light,
+
+    textTheme: GoogleFonts.robotoTextTheme(),
     primaryColor: AppColors.primaryLight,
     scaffoldBackgroundColor: AppColors.backgroundLight,
+
     colorScheme: const ColorScheme.light(
       primary: AppColors.primaryLight,
       primaryContainer: AppColors.primaryLightVariant,
@@ -25,6 +29,7 @@ class ThemeManager {
       onSurface: AppColors.textPrimaryLight,
       onError: Colors.white,
     ),
+
     appBarTheme: const AppBarTheme(
       centerTitle: true,
       elevation: 0,
@@ -66,8 +71,12 @@ class ThemeManager {
   static final ThemeData darkTheme = ThemeData(
     useMaterial3: true,
     brightness: Brightness.dark,
+
+    textTheme: GoogleFonts.robotoTextTheme(ThemeData.dark().textTheme),
+
     primaryColor: AppColors.primaryDark,
     scaffoldBackgroundColor: AppColors.backgroundDark,
+
     colorScheme: const ColorScheme.dark(
       primary: AppColors.primaryDark,
       primaryContainer: AppColors.primaryDarkVariant,

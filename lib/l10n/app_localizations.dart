@@ -148,6 +148,12 @@ abstract class AppLocalizations {
   /// **'Password required'**
   String get passwordRequired;
 
+  /// No description provided for @invalidEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a valid email address'**
+  String get invalidEmail;
+
   /// No description provided for @forgotPassword.
   ///
   /// In en, this message translates to:

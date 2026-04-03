@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import 'package:trackify/feature/onboarding/presentation/cubit/splash_cubit.dart';
+import 'package:trackify/feature/onboarding/presentation/cubit/splash_state.dart';
+
 import '../../../../core/constants/app_images.dart';
 import '../../../../core/widgets/custom_form_field.dart';
 import '../../../../core/widgets/square_flat_button.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../cubit/auth_cubit.dart';
 import '../cubit/auth_state.dart';
+import '../../../../core/utils/validators.dart';
 
 class ResetPasswordScreen extends StatefulWidget {
   final String email;
@@ -57,8 +61,9 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
       },
       child: Scaffold(
         appBar: AppBar(
-          title: Text(AppLocalizations.of(context)!.resetPassword),
-          centerTitle: true,
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          leading: const BackButton(color: Colors.black),
         ),
         body: _body(),
       ),
@@ -72,38 +77,51 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
       child: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Center(child: Image.asset(AppImages.appLogo)),
-            const SizedBox(height: 20),
-            Text(
-              l10n.createNewPassword,
-              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                    fontWeight: FontWeight.bold,
+            BlocBuilder<SplashCubit, SplashState>(
+              builder: (context, splashState) {
+                if (splashState is SplashLoaded &&
+                    splashState.logo.path != null &&
+                    splashState.logo.path!.isNotEmpty) {
+                  return Center(
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 20, bottom: 40),
+                      child: Image.network(
+                        splashState.logo.path!,
+                        height: 180,
+                        fit: BoxFit.contain,
+                      ),
+                    ),
+                  );
+                }
+                return Center(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 40),
+                    child: Image.asset(AppImages.appLogo, height: 120),
                   ),
+                );
+              },
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 10),
             Text(
               l10n.passwordDesc,
+              textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: Colors.grey[700],
+                    color: Colors.grey[600],
                   ),
             ),
-            const SizedBox(height: 25),
+            const SizedBox(height: 35),
             CustomFormField(
               header: l10n.newPassword,
               hint: l10n.newPasswordHint,
               value: _passwordController,
               isPassword: true,
-              validator: (value) {
-                if (value?.isEmpty ?? true) {
-                  return l10n.passwordRequired;
-                }
-                if (value!.length < 6) {
-                  return l10n.passwordMinLength;
-                }
-                return null;
-              },
+              validator: (value) => Validators.validatePassword(
+                value,
+                l10n.passwordRequired,
+                l10n.passwordMinLength ?? "Password must be at least 6 characters",
+              ),
             ),
             const SizedBox(height: 16),
             CustomFormField(
@@ -111,15 +129,11 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
               hint: l10n.confirmPasswordHint,
               value: _confirmPasswordController,
               isPassword: true,
-              validator: (value) {
-                if (value?.isEmpty ?? true) {
-                  return l10n.confirmPasswordRequired;
-                }
-                if (value != _passwordController.text) {
-                  return l10n.passwordsDoNotMatch;
-                }
-                return null;
-              },
+              validator: (value) => Validators.validateConfirmPassword(
+                value,
+                _passwordController.text,
+                l10n.passwordsDoNotMatch,
+              ),
             ),
             const SizedBox(height: 35),
             CommonButton(
