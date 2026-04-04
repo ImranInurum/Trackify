@@ -1,13 +1,14 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:cached_network_image/cached_network_image.dart';
+import 'package:trackify/feature/add_vehicle_and_device/choice_selector.dart';
 import 'package:trackify/feature/auth/presentation/pages/signup_screen.dart';
 
+import '../../../../app/app_navigation.dart';
 import '../../../../core/utils/validators.dart';
 import '../../../../core/widgets/custom_form_field.dart';
 import '../../../../core/widgets/square_flat_button.dart';
 import '../../../../l10n/app_localizations.dart';
-import '../../../../app/app_navigation.dart';
 import '../../../onboarding/presentation/cubit/splash_cubit.dart';
 import '../../../onboarding/presentation/cubit/splash_state.dart';
 import '../cubit/auth_cubit.dart';
@@ -15,7 +16,8 @@ import '../cubit/auth_state.dart';
 import 'forgot_password_screen.dart';
 
 class SignInScreen extends StatefulWidget {
-  const SignInScreen({super.key});
+  final bool isFromSignUp;
+  const SignInScreen({super.key, required this.isFromSignUp});
 
   @override
   State<SignInScreen> createState() => _SignInScreenState();
@@ -67,20 +69,15 @@ class _SignInScreenState extends State<SignInScreen> {
                 imageUrl: state.logo.path!,
                 height: 220,
                 fit: BoxFit.contain,
-                placeholder: (context, url) => Center(
-                  child: CircularProgressIndicator(color: colorScheme.primary),
-                ),
+                placeholder: (context, url) =>
+                    Center(child: CircularProgressIndicator(color: colorScheme.primary)),
                 errorWidget: (context, url, error) => Icon(
                   Icons.track_changes_rounded,
                   size: 88,
                   color: colorScheme.primary,
                 ),
               )
-            : Icon(
-                Icons.track_changes_rounded,
-                size: 88,
-                color: colorScheme.primary,
-              ),
+            : Icon(Icons.track_changes_rounded, size: 88, color: colorScheme.primary),
       ),
     );
   }
@@ -108,9 +105,13 @@ class _SignInScreenState extends State<SignInScreen> {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text(l10n.welcome(state.user.user?.email ?? ''))),
             );
-            Navigator.of(context).pushReplacement(
-              MaterialPageRoute(builder: (context) => const AppNavigation()),
-            );
+            widget.isFromSignUp
+                ? Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(builder: (context) => const ChoiceSelector()),
+                  )
+                : Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(builder: (context) => const AppNavigation()),
+                  );
           } else if (state is AuthFailure) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text(state.error.message ?? l10n.loginFailed)),
@@ -200,9 +201,7 @@ class _SignInScreenState extends State<SignInScreen> {
                           ),
                           const SizedBox(height: 32),
                           if (state is AuthLoading)
-                            const Center(
-                              child: CircularProgressIndicator(),
-                            )
+                            const Center(child: CircularProgressIndicator())
                           else
                             CommonButton(
                               onPressed: () => _onLoginPressed(context),

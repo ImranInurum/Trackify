@@ -8,6 +8,7 @@ import 'package:trackify/app/cubit/app_cubit.dart';
 import 'package:trackify/app/cubit/app_state.dart';
 import 'package:trackify/core/theme/app_colors.dart';
 import 'package:trackify/core/widgets/draggable_app_bar.dart';
+import 'package:trackify/feature/add_vehicle_and_device/choice_selector.dart';
 import 'package:trackify/feature/map/data/entity/user_device_model.dart';
 
 import '../../../../core/config/style_manager.dart';
@@ -106,7 +107,9 @@ class _MapScreenState extends State<MapScreen> {
                   icon: const Icon(Icons.settings, color: Colors.black, size: 20),
                 ),
                 onAddVehicle: () {
-                  // navigate to add vehicle screen
+                  Navigator.of(
+                    context,
+                  ).push(MaterialPageRoute(builder: (context) => const ChoiceSelector()));
                 },
                 onDeviceTap: (device) {
                   // handle selected device here

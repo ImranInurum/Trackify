@@ -134,7 +134,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
               context,
             ).showSnackBar(SnackBar(content: Text(l10n.registerSuccess)));
             Navigator.of(context).pushReplacement(
-              MaterialPageRoute(builder: (context) => const SignInScreen()),
+              MaterialPageRoute(
+                builder: (context) => const SignInScreen(isFromSignUp: true),
+              ),
             );
           } else if (state is AuthFailure) {
             ScaffoldMessenger.of(context).showSnackBar(
@@ -274,6 +276,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             }).toList(),
                             onChanged: (value) {
                               selectedRoleNotifier.value = value;
+                              _selectedRole = selectedRoleNotifier.value;
                             },
                             validator: (value) =>
                                 Validators.validateRequired(value, l10n.roleRequired),

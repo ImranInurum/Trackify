@@ -1,10 +1,12 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:cached_network_image/cached_network_image.dart';
+import 'package:trackify/app/app_navigation.dart';
 import 'package:trackify/app/cubit/app_cubit.dart';
 import 'package:trackify/app/cubit/app_state.dart';
 import 'package:trackify/core/utils/shared_preferences.dart';
 import 'package:trackify/core/widgets/square_flat_button.dart';
+import 'package:trackify/feature/add_vehicle_and_device/choice_selector.dart';
 import 'package:trackify/feature/auth/presentation/pages/signin_screen.dart';
 
 import '../../../../l10n/app_localizations.dart';
@@ -30,12 +32,40 @@ class _SelectLanguageScreenState extends State<SelectLanguageScreen> {
   String _selectedLanguageKey = 'English';
 
   void _saveLanguageAndContinue() async {
-    await AppPreference.instance.set(
+    final prefs = AppPreference.instance;
+
+    await prefs.set(
       key: AppPreference.KEY_SELECTED_LANGUAGE,
       value: _selectedLanguageKey,
     );
+
+    final token = await prefs.get(key: AppPreference.KEY_TOKEN);
     if (!mounted) return;
-    Navigator.push(context, MaterialPageRoute(builder: (_) => const SignInScreen()));
+
+    if (token.isNotEmpty) {
+      // Logged in — check whether setup has been completed
+      final setupFlag = await prefs.getBoolNullable(key: AppPreference.KEY_SETUP_COMPLETE);
+      final setupComplete = setupFlag ?? true; // null = old user = treat as done
+      if (!mounted) return;
+
+      if (!setupComplete) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => const ChoiceSelector()),
+        );
+      } else {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => const AppNavigation()),
+        );
+      }
+    } else {
+      // Not logged in → sign-in
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (_) => const SignInScreen(isFromSignUp: false)),
+      );
+    }
   }
 
   Widget _buildLogo(ColorScheme colorScheme, [ImageProvider? imageProvider]) {
@@ -90,26 +120,39 @@ class _SelectLanguageScreenState extends State<SelectLanguageScreen> {
             child: BlocBuilder<SplashCubit, SplashState>(
               builder: (context, splashState) {
                 if (splashState is SplashLoading) {
-                  return  Center(
-                    child: CircularProgressIndicator(color: Theme.of(context).colorScheme.primary),
+                  return Center(
+                    child: CircularProgressIndicator(
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
                   );
                 }
 
                 return BlocBuilder<AppCubit, AppState>(
                   builder: (context, appState) {
                     final l10n = AppLocalizations.of(context)!;
-                    
-                    if (splashState is SplashLoaded && splashState.logo.path != null && splashState.logo.path!.isNotEmpty) {
+
+                    if (splashState is SplashLoaded &&
+                        splashState.logo.path != null &&
+                        splashState.logo.path!.isNotEmpty) {
                       return CachedNetworkImage(
                         imageUrl: splashState.logo.path!,
                         placeholder: (context, url) => Center(
-                          child: CircularProgressIndicator(color: theme.colorScheme.primary),
+                          child: CircularProgressIndicator(
+                            color: theme.colorScheme.primary,
+                          ),
                         ),
-                        errorWidget: (context, url, err) => _buildMainContent(context, theme, appState, l10n, null),
-                        imageBuilder: (context, imageProvider) => _buildMainContent(context, theme, appState, l10n, imageProvider),
+                        errorWidget: (context, url, err) =>
+                            _buildMainContent(context, theme, appState, l10n, null),
+                        imageBuilder: (context, imageProvider) => _buildMainContent(
+                          context,
+                          theme,
+                          appState,
+                          l10n,
+                          imageProvider,
+                        ),
                       );
                     }
-                    
+
                     return _buildMainContent(context, theme, appState, l10n, null);
                   },
                 );
@@ -122,11 +165,11 @@ class _SelectLanguageScreenState extends State<SelectLanguageScreen> {
   }
 
   Widget _buildMainContent(
-    BuildContext context, 
-    ThemeData theme, 
-    AppState appState, 
-    AppLocalizations l10n, 
-    ImageProvider? imageProvider
+    BuildContext context,
+    ThemeData theme,
+    AppState appState,
+    AppLocalizations l10n,
+    ImageProvider? imageProvider,
   ) {
     const primaryTextColor = Colors.white;
     return SingleChildScrollView(
@@ -159,9 +202,7 @@ class _SelectLanguageScreenState extends State<SelectLanguageScreen> {
                     child: GestureDetector(
                       behavior: HitTestBehavior.opaque,
                       onTap: () {
-                        context.read<AppCubit>().changeLocale(
-                          lang['locale'],
-                        );
+                        context.read<AppCubit>().changeLocale(lang['locale']);
                         setState(() {
                           _selectedLanguageKey = lang['key'] as String;
                         });
@@ -178,9 +219,7 @@ class _SelectLanguageScreenState extends State<SelectLanguageScreen> {
                           style: theme.textTheme.titleMedium?.copyWith(
                             fontWeight: FontWeight.w700,
                             fontSize: 14,
-                            color: isSelected
-                                ? theme.colorScheme.primary
-                                : Colors.white,
+                            color: isSelected ? theme.colorScheme.primary : Colors.white,
                           ),
                         ),
                       ),

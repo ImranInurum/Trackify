@@ -87,30 +87,31 @@ class _SettingsPlaceholderState extends State<SettingsPlaceholder> {
           // Buy Device Card
           InkWell(
             onTap: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(builder: (context) => const ProductScreen()),
-              );
+              Navigator.of(
+                context,
+              ).push(MaterialPageRoute(builder: (context) => const ProductScreen()));
             },
             child: Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                  color: Colors.grey.shade100,
-                  borderRadius: BorderRadius.circular(12)),
+                color: Colors.grey.shade100,
+                borderRadius: BorderRadius.circular(12),
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     "Secure your vehicle",
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
+                    style: Theme.of(
+                      context,
+                    ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     "Buy device now for real-time tracking, anti-theft alerts, and more.",
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: Colors.grey.shade600,
-                        ),
+                    style: Theme.of(
+                      context,
+                    ).textTheme.bodySmall?.copyWith(color: Colors.grey.shade600),
                   ),
                 ],
               ),
@@ -119,9 +120,9 @@ class _SettingsPlaceholderState extends State<SettingsPlaceholder> {
           // Install Now Text
           GestureDetector(
             onTap: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(builder: (context) => const ProductScreen()),
-              );
+              Navigator.of(
+                context,
+              ).push(MaterialPageRoute(builder: (context) => const ProductScreen()));
             },
             child: Padding(
               padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -166,9 +167,9 @@ class _SettingsPlaceholderState extends State<SettingsPlaceholder> {
             title: "My Garage",
             subtitle: "View and manage your vehicles",
             onTap: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(builder: (context) => const MyGarageScreen()),
-              );
+              Navigator.of(
+                context,
+              ).push(MaterialPageRoute(builder: (context) => const MyGarageScreen()));
             },
           ),
           OptionTile(
@@ -181,7 +182,7 @@ class _SettingsPlaceholderState extends State<SettingsPlaceholder> {
             subtitle: "Customize app preferences",
             onTap: () => print("Settings tapped"),
           ),
-/*
+          /*
           BlocBuilder<AppCubit, AppState>(
             builder: (context, state) {
               final themeMode = state.themeMode;
@@ -267,7 +268,9 @@ class _SettingsPlaceholderState extends State<SettingsPlaceholder> {
               final prefs = AppPreference.instance;
               prefs.clearAll();
               Navigator.of(context).pushAndRemoveUntil(
-                MaterialPageRoute(builder: (context) => const SignInScreen()),
+                MaterialPageRoute(
+                  builder: (context) => const SignInScreen(isFromSignUp: false),
+                ),
                 (Route<dynamic> route) => false,
               );
             },
