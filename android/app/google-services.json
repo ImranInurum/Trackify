@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "248560151060",
+    "project_id": "trackify-inurum",
+    "storage_bucket": "trackify-inurum.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:248560151060:android:57abe881745cd805b11501",
+        "android_client_info": {
+          "package_name": "com.trackify.mytrackmate.trackify"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "248560151060-bgp6pit5jpqesvb3ni5jj1mrv4bq6ij9.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.trackify.mytrackmate.trackify",
+            "certificate_hash": "0b9708115f2d118c002f9aa31c591fa17ad7bb01"
+          }
+        },
+        {
+          "client_id": "248560151060-ohj6dcjrseubkce2sgtrmsij0e8vd5fd.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyChixUHSpJFXEqa4trgaJZ-KOszbg9spdg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "248560151060-ohj6dcjrseubkce2sgtrmsij0e8vd5fd.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "248560151060-3niec83ho8cfsder8092elnrupu22n8n.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.trackify.mytrackmate.trackify"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

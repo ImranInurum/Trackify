@@ -8,7 +8,7 @@ class CommonButton extends StatelessWidget {
   final void Function()? onPressed;
   final String? iconAsset;
   final IconData? leading;
-  final Color color;
+  final Color? color;
   final double height;
   final double width;
 
@@ -16,7 +16,7 @@ class CommonButton extends StatelessWidget {
     super.key,
     required this.text,
     required this.onPressed,
-    this.color = AppColors.errorLight,
+    this.color,
     this.height = 35.0,
     this.width = double.infinity,
     this.iconAsset,
@@ -32,7 +32,7 @@ class CommonButton extends StatelessWidget {
         style: ElevatedButton.styleFrom(backgroundColor:
               onPressed == null
                   ? Colors.grey
-                  : Theme.of(context).colorScheme.primaryContainer,
+                  : color ?? Theme.of(context).colorScheme.primaryContainer,
             shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(8),
       ),

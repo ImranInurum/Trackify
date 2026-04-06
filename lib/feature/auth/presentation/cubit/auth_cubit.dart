@@ -2,8 +2,10 @@ import 'dart:convert';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../core/services/google_auth_service.dart';
 import '../../../../core/utils/shared_preferences.dart';
 import '../../../../core/widgets/loading_screen_ol.dart';
+import '../../data/entity/login_response_model.dart';
 import '../../domain/usecase/auth_case.dart';
 import 'auth_state.dart';
 
@@ -90,5 +92,54 @@ class AuthCubit extends Cubit<AuthState> {
         emit(ForgotPasswordResetSuccess());
       },
     );
+  }
+
+  Future<void> loginWithGoogle() async {
+    try {
+      LoadingScreenOL().show();
+      emit(AuthLoading());
+
+      final userCredential = await GoogleAuthService.instance.signInWithGoogle();
+
+      if (userCredential != null && userCredential.user != null) {
+        final firebaseUser = userCredential.user!;
+
+        // 1. Get the Firebase ID Token
+        final String? token = await firebaseUser.getIdToken();
+
+        // 2. Map Firebase User to your local 'User' model
+        final localUser = User(
+          id: firebaseUser.uid,
+          name: firebaseUser.displayName ?? "Google User",
+          email: firebaseUser.email,
+          role: "user", // Default role
+        );
+
+        // 3. Create the full LoginResponseModel
+        final loginResponse = LoginResponseModel(
+          status: "success",
+          message: "Google Login Successful",
+          token: token,
+          user: localUser,
+        );
+
+        // 4. Persist Data (Same as your regular login)
+        final prefs = AppPreference.instance;
+        await prefs.set(key: AppPreference.KEY_TOKEN, value: token ?? "");
+        await prefs.set(
+          key: AppPreference.KEY_USER_DETAILS,
+          value: jsonEncode(localUser.toJson()),
+        );
+
+        // 5. Emit success with the correct type (LoginResponseModel)
+        emit(AuthSuccess(loginResponse));
+        LoadingScreenOL().hide();
+      } else {
+        LoadingScreenOL().hide();
+      }
+    } catch (e) {
+      print("Google Login Failed ${e.toString()}");
+      LoadingScreenOL().hide();
+    }
   }
 }

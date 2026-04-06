@@ -134,6 +134,13 @@ class _SignInScreenState extends State<SignInScreen> {
                               Divider(color: Colors.grey[300], thickness: 1)),
                     ],
                   ),
+                  const SizedBox(height: 20),
+                  CommonButton(
+                    onPressed: () => context.read<AuthCubit>().loginWithGoogle(),
+                    text: 'Login with Google',
+                    color: Colors.blue,
+                    leading: Icons.person,
+                  ),
                   const SizedBox(height: 25),
                   Center(
                     child: Row(
