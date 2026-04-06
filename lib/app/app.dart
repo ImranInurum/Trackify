@@ -22,13 +22,8 @@ class MyApp extends StatelessWidget {
         theme: ThemeManager.getApplicationLightTheme(),
         darkTheme: ThemeManager.getApplicationDarkTheme(),
         locale: state.locale,
-        supportedLocales: const [Locale('en'), Locale('hi'), Locale('ar')],
-        localizationsDelegates: const [
-          AppLocalizations.delegate,
-          GlobalMaterialLocalizations.delegate,
-          GlobalWidgetsLocalizations.delegate,
-          GlobalCupertinoLocalizations.delegate,
-        ],
+        supportedLocales: AppLocalizations.supportedLocales,
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
         home: SplashScreen(),
       ),
     );
