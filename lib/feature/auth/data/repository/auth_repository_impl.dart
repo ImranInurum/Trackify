@@ -80,4 +80,18 @@ class AuthRepositoryImpl implements AuthRepository {
       return Left(e);
     }
   }
+
+  @override
+  ResultFuture<LoginResponseModel> socialLogin(Map<String, dynamic> body) async {
+    try {
+      final res =
+          await _apiServices.getPostApiResponse(ApiConstants.socialLogin, body);
+      return res.fold(
+        (error) => Left(error),
+        (data) => Right(LoginResponseModel.fromJson(data)),
+      );
+    } on AppException catch (e) {
+      return Left(e);
+    }
+  }
 }
