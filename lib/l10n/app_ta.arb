@@ -1,0 +1,143 @@
+{
+  "selectLanguage": "உங்கள் மொழியைத் தேர்ந்தெடுக்கவும்",
+  "letsGetStarted": "தொடங்குவோம்",
+  "email": "மின்னஞ்சல்",
+  "password": "கடவுச்சொல்",
+  "emailHint": "example@test.com",
+  "passwordHint": "******",
+  "emailRequired": "மின்னஞ்சல் தேவை",
+  "passwordRequired": "கடவுச்சொல் தேவை",
+  "invalidEmail": "செல்லுபடியாகும் மின்னஞ்சல் முகவரியை உள்ளிடவும்",
+  "forgotPassword": "கடவுச்சொல்லை மறந்துவிட்டீர்களா?",
+  "signIn": "உள்நுழைய",
+  "or": "அல்லது",
+  "dontHaveAccount": "கணக்கு இல்லையா? ",
+  "signUp": "பதிவு செய்யவும்",
+  "welcome": "வரவேற்கிறோம் {email}!",
+  "@welcome": {
+    "placeholders": {
+      "email": {
+        "type": "String"
+      }
+    }
+  },
+  "loginFailed": "உள்நுழைவு தோல்வியடைந்தது",
+  "name": "பெயர்",
+  "nameHint": "ஜான் டோ",
+  "nameRequired": "பெயர் தேவை",
+  "role": "பகிர்வு",
+  "roleRequired": "ஒரு பங்கினைத் தேர்ந்தெடுக்கவும்",
+  "createAccount": "கணக்கை உருவாக்கவும்",
+  "registerSuccess": "பயனர் வெற்றிகரமாக பதிவு செய்யப்பட்டார், தயவுசெய்து உள்நுழையவும்",
+  "signUpFailed": "பதிவு தோல்வியடைந்தது",
+  "otpSent": "OTP வெற்றிகரமாக அனுப்பப்பட்டது",
+  "resetPassword": "கடவுச்சொல்லை மீட்டமைக்கவும்",
+  "resetPasswordDesc": "உங்கள் மின்னஞ்சல் முகவரியை உள்ளிடவும், உங்கள் கடவுச்சொல்லை மீட்டமைக்க ஒரு இணைப்பை அனுப்புவோம்.",
+  "sendResetLink": "மீட்டமைப்பு இணைப்பை அனுப்பவும்",
+  "otpVerified": "OTP வெற்றிகரமாக சரிபார்க்கப்பட்டது",
+  "verifyOtp": "OTP சரிபார்க்கவும்",
+  "otpHeader": "OTP சரிபார்ப்பு",
+  "otpDesc": "{email} க்கு அனுப்பப்பட்ட OTP ஐ உள்ளிடவும்.",
+  "@otpDesc": {
+    "placeholders": {
+      "email": {
+        "type": "String"
+      }
+    }
+  },
+  "otp": "OTP",
+  "otpHint": "123456",
+  "otpRequired": "OTP தேவை",
+  "passwordResetSuccess": "கடவுச்சொல் வெற்றிகரமாக மீட்டமைக்கப்பட்டது",
+  "createNewPassword": "புதிய கடவுச்சொல்லை உருவாக்கவும்",
+  "passwordDesc": "உங்கள் புதிய கடவுச்சொல் முந்தைய கடவுச்சொற்களிலிருந்து வேறுபட்டதாக இருக்க வேண்டும்.",
+  "newPassword": "புதிய கடவுச்சொல்",
+  "newPasswordHint": "உங்கள் புதிய கடவுச்சொல்லை உள்ளிடவும்",
+  "passwordMinLength": "கடவுச்சொல் குறைந்தது 6 எழுத்துகள் இருக்க வேண்டும்",
+  "confirmPassword": "கடவுச்சொல்லை உறுதிப்படுத்தவும்",
+  "confirmPasswordHint": "உங்கள் புதிய கடவுச்சொல்லை உறுதிப்படுத்தவும்",
+  "confirmPasswordRequired": "கடவுச்சொல்லை உறுதிப்படுத்துவது தேவை",
+  "passwordsDoNotMatch": "கடவுச்சொற்கள் பொருந்தவில்லை",
+  "selectDevice": "சாதனத்தைத் தேர்ந்தெடுக்கவும்",
+  "noDevicesFound": "சாதனங்கள் எதுவும் இல்லை.",
+  "proceed": "தொடரவும்",
+  "unknownDevice": "அறியப்படாத சாதனம்",
+  "imeiLabel": "IMEI: {imei}",
+  "@imeiLabel": {
+    "placeholders": {
+      "imei": {
+        "type": "String"
+      }
+    }
+  },
+  "initializeFetch": "சாதனங்களைப் பெற தொடங்கவும்.",
+  "recordRide": "பயணத்தை பதிவு செய்க",
+  "phoneAsGps": "உங்கள் தொலைபேசியை ஜிபிஎஸ் கண்காணிப்பு சாதனமாக மாற்றவும்",
+  "goToDashboard": "டாஷ்போர்டிற்குச் செல்க",
+  "seeFullMap": "முழு வரைபடத்தைப் பார்க்கவும்",
+  "exploreMore": "மேலும் ஆராயுங்கள்",
+  "reachMeSticker": "ReachMe ஸ்டிக்கர்",
+  "products": "தயாரிப்புகள்",
+  "fuelLogs": "எரிபொருள் பதிவுகள்",
+  "locationSharing": "இருப்பிடப் பகிர்வு",
+  "documentFolder": "ஆவணக் கோப்புறை",
+  "voiceMonitoring": "குரல் கண்காணிப்பு",
+  "remoteEngineOff": "ரிமோட் எஞ்சின் ஆஃப்",
+  "networkBooster": "நெட்வொர்க் பூஸ்டர்",
+  "emergency": "அவசரம்",
+  "overspeedAlert": "அதிவேக எச்சரிக்கை",
+  "geoFenceAlert": "ஜியோ-பென்ஸ் எச்சரிக்கை",
+  "more": "மேலும்",
+  "profile": "சுயவிவரம்",
+  "bikeSmartMsg": "1000+ பேர் எங்கள் சாதனம் மூலம் தங்கள் பைக்கை ஸ்மார்ட் ஆக்கியுள்ளனர்",
+  "features": "அம்சங்கள்",
+  "contactUs": "எங்களைத் தொடர்பு கொள்க",
+  "contactUsDesc": "கேள்விகள் உள்ளதா? நாங்கள் உதவ இங்கே இருக்கிறோம்.",
+  "userReviews": "பயனர் விமர்சனங்கள்",
+  "accidentAlert": "விபத்து எச்சரிக்கை",
+  "antiTheftAlert": "திருட்டு எதிர்ப்பு எச்சரிக்கை",
+  "geoFence": "ஜியோ பென்ஸ்",
+  "statistics": "புள்ளிவிவரங்கள்",
+  "myGarage": "எனது கேரேஜ்",
+  "noVehiclesInGarage": "உங்கள் கேரேஜில் வாகனங்கள் எதுவும் இல்லை.",
+  "unknownVehicle": "அறியப்படாத வாகனம்",
+  "status": "நிலை",
+  "active": "செயலில்",
+  "subscription": "சந்தா",
+  "proPlan": "புரோ திட்டம்",
+  "initializeGarage": "உங்கள் கேரேஜை பெற தொடங்கவும்.",
+  "ourProducts": "எங்கள் தயாரிப்புகள்",
+  "proTitle": "Trackify Pro",
+  "proSubtitle": "அதிகபட்ச அம்சங்களுடன் மேம்பட்ட கண்காணிப்பு",
+  "goTitle": "Trackify Go",
+  "goSubtitle": "அன்றாட பயன்பாட்டிற்கான நிலையான கண்காணிப்பு",
+  "liteTitle": "Trackify Lite",
+  "liteSubtitle": "அடிப்படை லொக்கேட்டர் சாதனம்",
+  "realTime1s": "ரியல்-டைம் 1செ கண்காணிப்பு",
+  "remoteEngineCutOff": "ரிமோட் எஞ்சின் கட்-ஆஃப்",
+  "detailedFuelAnalytics": "விரிவான எரிபொருள் பகுப்பாய்வு",
+  "realTime5s": "ரியல்-டைம் 5செ கண்காணிப்பு",
+  "antiTheftAlerts": "திருட்டு எதிர்ப்பு எச்சரிக்கைகள்",
+  "basicJourneyLogs": "அடிப்படை பயண பதிவுகள்",
+  "locationUpdates": "இருப்பிட புதுப்பிப்புகள்",
+  "batteryMonitor": "பேட்டரி மானிட்டர்",
+  "featuresLabel": "அம்சங்கள்:",
+  "addedToCart": "{title} கார்ட்டில் வெற்றிகரமாக சேர்க்கப்பட்டது!",
+  "@addedToCart": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "buyNow": "இப்போது வாங்கவும்",
+  "retry": "மீண்டும் முயற்சி செய்",
+  "errorMsg": "பிழை: {message}",
+  "@errorMsg": {
+    "placeholders": {
+      "message": {
+        "type": "String"
+      }
+    }
+  }
+}

@@ -1,0 +1,246 @@
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../../core/theme/app_colors.dart';
+import '../onboarding/presentation/cubit/splash_cubit.dart';
+import '../onboarding/presentation/cubit/splash_state.dart';
+import 'add_vehicle/presentation/view/add_vehicle_screen.dart';
+
+class ChoiceSelector extends StatefulWidget {
+  const ChoiceSelector({super.key});
+
+  @override
+  State<ChoiceSelector> createState() => _ChoiceSelectorState();
+}
+
+class _ChoiceSelectorState extends State<ChoiceSelector> {
+  Widget _buildLogo(SplashState state, ColorScheme colorScheme) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 0.0),
+        child:
+            (state is SplashLoaded &&
+                state.logo.path != null &&
+                state.logo.path!.isNotEmpty)
+            ? CachedNetworkImage(
+                imageUrl: state.logo.path!,
+                height: 160,
+                fit: BoxFit.contain,
+                placeholder: (context, url) =>
+                    Center(child: CircularProgressIndicator(color: colorScheme.primary)),
+                errorWidget: (context, url, error) => Icon(
+                  Icons.track_changes_rounded,
+                  size: 64,
+                  color: colorScheme.primary,
+                ),
+              )
+            : Icon(Icons.track_changes_rounded, size: 64, color: colorScheme.primary),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: AppColors.backgroundLight,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.black87),
+          onPressed: () {
+            if (Navigator.of(context).canPop()) {
+              Navigator.of(context).pop();
+            }
+          },
+        ),
+      ),
+      body: SafeArea(
+        child: Column(
+          children: [
+            Expanded(
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    const SizedBox(height: 10),
+                    // Logo — dynamic via SplashCubit (same pattern as SignInScreen)
+                    BlocBuilder<SplashCubit, SplashState>(
+                      builder: (context, splashState) {
+                        return _buildLogo(splashState, Theme.of(context).colorScheme);
+                      },
+                    ),
+                    const SizedBox(height: 50),
+
+                    // Cards
+                    _buildChoiceCard(
+                      context: context,
+                      title: 'Install Trackify Device',
+                      subtitle:
+                          'Quickly set up your Ajjas smart device with simple steps',
+                      imagePath: 'assets/images/device_image.png',
+                      imageWidth: 90,
+                      imageHeight: 90,
+                      onTap: () {
+                        // TODO: Navigate to device install
+                      },
+                    ),
+
+                    _buildChoiceCard(
+                      context: context,
+                      title: 'Activate Contact Sticker',
+                      subtitle: 'Simple steps to quickly activate your contact sticker',
+                      imagePath: 'assets/images/scanner_image.png',
+                      imageWidth: 70,
+                      imageHeight: 70,
+                      onTap: () {
+                        // TODO: Navigate to sticker activation
+                      },
+                    ),
+
+                    _buildChoiceCard(
+                      context: context,
+                      title: 'Explore Our Free App',
+                      subtitle:
+                          'Record rides using phone manually & keep track of it using our free app curated for you',
+                      imagePath: 'assets/images/explore_app_image.jpg',
+                      imageWidth: 70,
+                      imageHeight: 90,
+                      onTap: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => const AddVehicleScreen(),
+                          ),
+                        );
+                      },
+                    ),
+                    const SizedBox(height: 30),
+                  ],
+                ),
+              ),
+            ),
+
+            // Logout Button
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 20),
+              child: TextButton.icon(
+                onPressed: () {
+                  // TODO: Handle logout logic
+                },
+                icon: const Icon(Icons.logout, color: Colors.grey, size: 20),
+                label: const Text(
+                  'Logout',
+                  style: TextStyle(
+                    color: Colors.grey,
+                    fontSize: 15,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildChoiceCard({
+    required BuildContext context,
+    required String title,
+    required String subtitle,
+    required String imagePath,
+    double imageWidth = 70,
+    double imageHeight = 70,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        margin: const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: Colors.grey, width: 0.3),
+          gradient: const LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [Color(0xFFF0F2F5), Color(0xFFD2D6DC)],
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.15),
+              blurRadius: 1,
+              offset: const Offset(0, 1),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Icon(Icons.arrow_forward, color: Colors.grey.shade600, size: 20),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(left: 12.0, right: 12.0, bottom: 32.0),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.only(right: 12.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            title,
+                            style: const TextStyle(
+                              color: AppColors.secondaryLight,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            subtitle,
+                            style: const TextStyle(
+                              color: AppColors.textSecondaryLight,
+                              fontSize: 13,
+                              height: 1.4,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(14),
+                        child: SizedBox(
+                          width: imageWidth,
+                          height: imageHeight,
+                          child: Image.asset(
+                            imagePath,
+                            fit: BoxFit.fill,
+                            alignment: Alignment.bottomRight,
+                            errorBuilder: (context, error, stackTrace) => Icon(
+                              Icons.inventory_2_outlined,
+                              size: 40,
+                              color: Colors.grey.shade400,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}

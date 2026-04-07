@@ -49,7 +49,7 @@ class CustomFormField extends StatefulWidget {
     this.padding = const EdgeInsets.all(12.0),
     this.backgroundColor,
     this.focusBorder = InputBorder.none,
-    this.borderColor = Colors.grey,
+    this.borderColor = const Color(0xFFD1D5DB),
     this.onTap,
     this.isReadOnly = false,
     this.prefixText,
@@ -81,10 +81,12 @@ class _CustomFormFieldState extends State<CustomFormField> {
   FocusNode node = FocusNode();
   bool showLabel = true;
   String? errorMessage;
+  late bool _isObscured;
 
   @override
   void initState() {
     super.initState();
+    _isObscured = widget.isPassword;
     node.addListener(() {
       setState(() {
         showLabel = !node.hasFocus;
@@ -119,97 +121,78 @@ class _CustomFormFieldState extends State<CustomFormField> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final primaryColor = theme.colorScheme.primary;
+
     return Container(
-      padding: EdgeInsets.symmetric(
-        vertical: (showLabel && widget.value != null && widget.value!.text.isEmpty)
-            ? 4.0
-            : 12.0,
-        horizontal: 5.0,
-      ),
       decoration: BoxDecoration(
-        color: widget.backgroundColor ?? Theme.of(context).colorScheme.surface,
-        border: Border.all(color: widget.borderColor, width: 1.0),
-        borderRadius: BorderRadius.circular(4.0),
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: Column(
-              children: [
-                TextFormField(
-                  enableInteractiveSelection: widget.enableInteractiveSelection,
-                  enabled: !(widget.disabled ?? false),
-                  style: const TextStyle(/*fontFamily: AssetsConstants.defaultFont*/),
-                  onFieldSubmitted: widget.onFieldSubmitted,
-                  focusNode: node,
-                  inputFormatters: widget.inputFormatters,
-                  autofillHints: widget.autofillHints,
-                  maxLength: widget.maxLength,
-                  autofocus: widget.isFocused!,
-                  onChanged: _handleTextChanged,
-                  readOnly: widget.isReadOnly!,
-                  onTap: widget.onTap,
-                  key: Key(widget.keyName),
-                  validator: widget.validator,
-                  obscureText: widget.isPassword,
-                  controller: widget.value,
-                  minLines: widget.minLines,
-                  maxLines: widget.maxLines,
-                  keyboardType: widget.keyboardType,
-                  decoration: InputDecoration(
-                    hintStyle: const TextStyle(
-                      /*fontFamily: AssetsConstants.defaultFont,*/
-                      overflow: TextOverflow.ellipsis,
-                      color: Colors.grey,
-                    ),
-                    suffixIcon: _buildSuffixIcons(),
-                    counterText: '',
-                    prefixText: widget.prefixText,
-                    contentPadding: widget.isSearch!
-                        ? const EdgeInsets.symmetric(vertical: 12.0, horizontal: 8.0)
-                        : const EdgeInsets.symmetric(horizontal: 8.0),
-                    label: showLabel && widget.value != null && widget.value!.text.isEmpty
-                        ? Row(
-                            children: [
-                              if (widget.isFieldMandatory) ...[
-                                Text('*', style: TextStyle(color: AppColors.errorLight)),
-                                //AppText.body("* ", state: TextState.error)
-                              ],
-                              Expanded(
-                                child: Text(
-                                  widget.header,
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    overflow: TextOverflow.ellipsis,
-                                    color: Colors.grey,
-                                  ),
-                                ),
-                              ),
-                              /*                        Expanded(
-                          child: AppText.body(widget.header,
-                              state: TextState.disabled,
-                              fontsize: 16,
-                              overflow: TextOverflow.ellipsis),
-                        )*/
-                            ],
-                          )
-                        : null,
-                    border: InputBorder.none,
-                    focusedBorder: widget.focusBorder,
-                    errorBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(color: AppColors.errorLight, width: 1.0),
-                    ),
-                    isDense: true,
-                    hintText: widget.hint,
-                    fillColor: Theme.of(context).colorScheme.surface,
-                    focusColor: Theme.of(context).colorScheme.surface,
-                    errorText: errorMessage,
-                  ),
-                ),
-              ],
-            ),
+        boxShadow: [
+          BoxShadow(
+            color: node.hasFocus 
+                ? primaryColor.withOpacity(0.15) 
+                : Colors.black.withOpacity(0.05),
+            blurRadius: node.hasFocus ? 12 : 8,
+            offset: const Offset(0, 4),
+            spreadRadius: node.hasFocus ? 1 : 0,
           ),
         ],
+      ),
+      child: TextFormField(
+        enableInteractiveSelection: widget.enableInteractiveSelection,
+        enabled: !(widget.disabled ?? false),
+        style: const TextStyle(fontSize: 16),
+        onFieldSubmitted: widget.onFieldSubmitted,
+        focusNode: node,
+        inputFormatters: widget.inputFormatters,
+        autofillHints: widget.autofillHints,
+        maxLength: widget.maxLength,
+        autofocus: widget.isFocused!,
+        onChanged: _handleTextChanged,
+        readOnly: widget.isReadOnly!,
+        onTap: widget.onTap,
+        key: Key(widget.keyName),
+        validator: widget.validator,
+        obscureText: _isObscured,
+        controller: widget.value,
+        minLines: widget.minLines,
+        maxLines: widget.maxLines,
+        keyboardType: widget.keyboardType,
+        decoration: InputDecoration(
+          hintText: widget.hint,
+          hintStyle: const TextStyle(
+            overflow: TextOverflow.ellipsis,
+            color: Colors.grey,
+            fontSize: 14,
+          ),
+          filled: true,
+          fillColor: widget.backgroundColor ?? const Color(0xFFF9FAFB),
+          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          prefixText: widget.prefixText,
+          suffixIcon: _buildSuffixIcons(),
+          counterText: '',
+          errorText: errorMessage,
+          errorStyle: const TextStyle(height: 0.8),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8.0),
+            borderSide: BorderSide(color: widget.borderColor),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8.0),
+            borderSide: BorderSide(color: widget.borderColor),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8.0),
+            borderSide: BorderSide(color: primaryColor, width: 1.5),
+          ),
+          errorBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8.0),
+            borderSide: BorderSide(color: AppColors.errorLight),
+          ),
+          focusedErrorBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8.0),
+            borderSide: BorderSide(color: AppColors.errorLight, width: 1.5),
+          ),
+        ),
       ),
     );
   }
@@ -257,6 +240,26 @@ class _CustomFormFieldState extends State<CustomFormField> {
                 size: 30,
                 color: widget.disabled ?? false ? Colors.grey : Colors.black,
               ),
+            ),
+          ),
+        ),
+      );
+    }
+
+    if (widget.isPassword) {
+      icons.add(
+        Padding(
+          padding: const EdgeInsets.only(right: 4.0),
+          child: IconButton(
+            onPressed: () {
+              setState(() {
+                _isObscured = !_isObscured;
+              });
+            },
+            icon: Icon(
+              _isObscured ? Icons.visibility_off_outlined : Icons.visibility_outlined,
+              size: 20,
+              color: Colors.grey,
             ),
           ),
         ),

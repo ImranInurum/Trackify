@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+
+import 'package:trackify/feature/onboarding/presentation/cubit/splash_cubit.dart';
+import 'package:trackify/feature/onboarding/presentation/cubit/splash_state.dart';
 
 import '../../../../core/constants/app_images.dart';
 import '../../../../core/widgets/custom_form_field.dart';
@@ -8,6 +12,7 @@ import '../../../../l10n/app_localizations.dart';
 import '../cubit/auth_cubit.dart';
 import '../cubit/auth_state.dart';
 import 'otp_verification_screen.dart';
+import '../../../../core/utils/validators.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
   const ForgotPasswordScreen({super.key});
@@ -57,8 +62,9 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       },
       child: Scaffold(
         appBar: AppBar(
-          title: Text(AppLocalizations.of(context)!.forgotPassword),
-          centerTitle: true,
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          leading: const BackButton(color: Colors.black),
         ),
         body: _body(),
       ),
@@ -72,34 +78,52 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       child: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Center(child: Image.asset(AppImages.appLogo)),
-            const SizedBox(height: 20),
-            Text(
-              l10n.resetPassword,
-              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                    fontWeight: FontWeight.bold,
+            BlocBuilder<SplashCubit, SplashState>(
+              builder: (context, splashState) {
+                if (splashState is SplashLoaded &&
+                    splashState.logo.path != null &&
+                    splashState.logo.path!.isNotEmpty) {
+                  return Center(
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 20, bottom: 40),
+                      child: CachedNetworkImage(
+                        imageUrl: splashState.logo.path!,
+                        height: 220,
+                        fit: BoxFit.contain,
+                        placeholder: (context, url) => const CircularProgressIndicator(),
+                        errorWidget: (context, url, err) => Icon(Icons.track_changes_rounded, size: 88, color: Theme.of(context).colorScheme.primary),
+                      ),
+                    ),
+                  );
+                }
+                return Center(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 40),
+                    child: Icon(Icons.track_changes_rounded, size: 88, color: Theme.of(context).colorScheme.primary),
                   ),
+                );
+              },
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 10),
             Text(
               l10n.resetPasswordDesc,
+              textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: Colors.grey[700],
+                    color: Colors.grey[600],
                   ),
             ),
-            const SizedBox(height: 25),
+            const SizedBox(height: 35),
             CustomFormField(
               header: l10n.email,
               hint: l10n.emailHint,
               value: _emailController,
-              validator: (value) {
-                if (value?.isEmpty ?? true) {
-                  return l10n.emailRequired;
-                }
-                return null;
-              },
+              validator: (value) => Validators.validateEmail(
+                value,
+                l10n.emailRequired,
+                "Please enter a valid email address",
+              ),
             ),
             const SizedBox(height: 35),
             CommonButton(

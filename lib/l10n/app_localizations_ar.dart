@@ -33,6 +33,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get passwordRequired => 'كلمة المرور مطلوبة';
 
   @override
+  String get invalidEmail => 'Please enter a valid email address';
+
+  @override
   String get forgotPassword => 'هل نسيت كلمة المرور؟';
 
   @override

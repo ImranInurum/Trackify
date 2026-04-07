@@ -8,6 +8,9 @@ import 'package:intl/intl.dart' as intl;
 import 'app_localizations_ar.dart';
 import 'app_localizations_en.dart';
 import 'app_localizations_hi.dart';
+import 'app_localizations_kn.dart';
+import 'app_localizations_mr.dart';
+import 'app_localizations_ta.dart';
 
 // ignore_for_file: type=lint
 
@@ -98,6 +101,9 @@ abstract class AppLocalizations {
     Locale('ar'),
     Locale('en'),
     Locale('hi'),
+    Locale('kn'),
+    Locale('mr'),
+    Locale('ta'),
   ];
 
   /// No description provided for @selectLanguage.
@@ -147,6 +153,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Password required'**
   String get passwordRequired;
+
+  /// No description provided for @invalidEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a valid email address'**
+  String get invalidEmail;
 
   /// No description provided for @forgotPassword.
   ///
@@ -741,8 +753,14 @@ class _AppLocalizationsDelegate
   }
 
   @override
-  bool isSupported(Locale locale) =>
-      <String>['ar', 'en', 'hi'].contains(locale.languageCode);
+  bool isSupported(Locale locale) => <String>[
+    'ar',
+    'en',
+    'hi',
+    'kn',
+    'mr',
+    'ta',
+  ].contains(locale.languageCode);
 
   @override
   bool shouldReload(_AppLocalizationsDelegate old) => false;
@@ -757,6 +775,12 @@ AppLocalizations lookupAppLocalizations(Locale locale) {
       return AppLocalizationsEn();
     case 'hi':
       return AppLocalizationsHi();
+    case 'kn':
+      return AppLocalizationsKn();
+    case 'mr':
+      return AppLocalizationsMr();
+    case 'ta':
+      return AppLocalizationsTa();
   }
 
   throw FlutterError(

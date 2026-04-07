@@ -1,0 +1,143 @@
+{
+  "selectLanguage": "तुमची भाषा निवडा",
+  "letsGetStarted": "सुरुवात करूया",
+  "email": "ईमेल",
+  "password": "पासवर्ड",
+  "emailHint": "example@test.com",
+  "passwordHint": "******",
+  "emailRequired": "ईमेल आवश्यक आहे",
+  "passwordRequired": "पासवर्ड आवश्यक आहे",
+  "invalidEmail": "कृपया वैध ईमेल पत्ता प्रविष्ट करा",
+  "forgotPassword": "पासवर्ड विसरलात?",
+  "signIn": "साइन इन करा",
+  "or": "किंवा",
+  "dontHaveAccount": "खाते नाही? ",
+  "signUp": "साइन अप करा",
+  "welcome": "स्वागत आहे {email}!",
+  "@welcome": {
+    "placeholders": {
+      "email": {
+        "type": "String"
+      }
+    }
+  },
+  "loginFailed": "लॉगिन अयशस्वी झाले",
+  "name": "नाव",
+  "nameHint": "जॉन डो",
+  "nameRequired": "नाव आवश्यक आहे",
+  "role": "भूमिका",
+  "roleRequired": "कृपया एक भूमिका निवडा",
+  "createAccount": "खाते तयार करा",
+  "registerSuccess": "वापरकर्ता यशस्वीरित्या नोंदणीकृत झाला, कृपया लॉगिन करा",
+  "signUpFailed": "साइन अप अयशस्वी झाले",
+  "otpSent": "ओटीपी यशस्वीरित्या पाठवला गेला",
+  "resetPassword": "पासवर्ड रीसेट करा",
+  "resetPasswordDesc": "तुमचा ईमेल पत्ता प्रविष्ट करा आणि आम्ही तुम्हाला तुमचा पासवर्ड रीसेट करण्यासाठी एक लिंक पाठवू.",
+  "sendResetLink": "रीसेट लिंक पाठवा",
+  "otpVerified": "ओटीपी यशस्वीरित्या सत्यापित झाला",
+  "verifyOtp": "ओटीपी सत्यापित करा",
+  "otpHeader": "ओटीपी सत्यापन",
+  "otpDesc": "{email} वर पाठवलेला ओटीपी प्रविष्ट करा.",
+  "@otpDesc": {
+    "placeholders": {
+      "email": {
+        "type": "String"
+      }
+    }
+  },
+  "otp": "ओटीपी",
+  "otpHint": "123456",
+  "otpRequired": "ओटीपी आवश्यक आहे",
+  "passwordResetSuccess": "पासवर्ड यशस्वीरित्या रीसेट झाला",
+  "createNewPassword": "नवीन पासवर्ड तयार करा",
+  "passwordDesc": "तुमचा नवीन पासवर्ड आधी वापरलेल्या पासवर्डपेक्षा वेगळा असला पाहिजे.",
+  "newPassword": "नवीन पासवर्ड",
+  "newPasswordHint": "तुमचा नवीन पासवर्ड प्रविष्ट करा",
+  "passwordMinLength": "पासवर्ड किमान ६ अक्षरांचा असावा",
+  "confirmPassword": "पासवर्डची पुष्टी करा",
+  "confirmPasswordHint": "तुमच्या नवीन पासवर्डची पुष्टी करा",
+  "confirmPasswordRequired": "पासवर्डची पुष्टी करणे आवश्यक आहे",
+  "passwordsDoNotMatch": "पासवर्ड जुळत नाहीत",
+  "selectDevice": "डिव्हाइस निवडा",
+  "noDevicesFound": "कोणतीही डिव्हाइसेस सापडली नाहीत.",
+  "proceed": "पुढे जा",
+  "unknownDevice": "अज्ञात डिव्हाइस",
+  "imeiLabel": "IMEI: {imei}",
+  "@imeiLabel": {
+    "placeholders": {
+      "imei": {
+        "type": "String"
+      }
+    }
+  },
+  "initializeFetch": "डिव्हाइसेस आणण्यासाठी प्रारंभ करा.",
+  "recordRide": "राइड रेकॉर्ड करा",
+  "phoneAsGps": "तुमचा फोन जीपीएस ट्रॅकिंग डिव्हाइस बनवा",
+  "goToDashboard": "डॅशबोर्डवर जा",
+  "seeFullMap": "पूर्ण नकाशा पहा",
+  "exploreMore": "अधिक एक्सप्लोर करा",
+  "reachMeSticker": "रिचमी स्टिकर",
+  "products": "उत्पादने",
+  "fuelLogs": "इंधन लॉग",
+  "locationSharing": "स्थान सामायिकरण",
+  "documentFolder": "दस्तऐवज फोल्डर",
+  "voiceMonitoring": "व्हॉइस मॉनिटरिंग",
+  "remoteEngineOff": "रिमोट इंजिन ऑफ",
+  "networkBooster": "नेटवर्क बूस्टर",
+  "emergency": "आणीबाणी",
+  "overspeedAlert": "ओव्हरस्पीड अलर्ट",
+  "geoFenceAlert": "जिओ-फेन्स अलर्ट",
+  "more": "अधिक",
+  "profile": "प्रोफाइल",
+  "bikeSmartMsg": "१०००+ लोकांनी आमच्या डिव्हाइससह त्यांची बाईक स्मार्ट बनवली",
+  "features": "वैशिष्ट्ये",
+  "contactUs": "आमच्याशी संपर्क साधा",
+  "contactUsDesc": "काही प्रश्न आहेत? आम्ही मदतीसाठी येथे आहोत.",
+  "userReviews": "वापरकर्ता पुनरावलोकने",
+  "accidentAlert": "अपघात अलर्ट",
+  "antiTheftAlert": "अँटी-थेफ्ट अलर्ट",
+  "geoFence": "जिओ फेन्स",
+  "statistics": "आकडेवारी",
+  "myGarage": "माझे गॅरेज",
+  "noVehiclesInGarage": "तुमच्या गॅरेजमध्ये कोणतीही वाहने सापडली नाहीत.",
+  "unknownVehicle": "अज्ञात वाहन",
+  "status": "स्थिती",
+  "active": "सक्रिय",
+  "subscription": "सबस्क्रिप्शन",
+  "proPlan": "प्रो प्लॅन",
+  "initializeGarage": "तुमचे गॅरेज आणण्यासाठी प्रारंभ करा.",
+  "ourProducts": "आमची उत्पादने",
+  "proTitle": "ट्रॅकिफाय प्रो",
+  "proSubtitle": "जास्तीत जास्त वैशिष्ट्यांसह प्रगत ट्रॅकिंग",
+  "goTitle": "ट्रॅकिफाय गो",
+  "goSubtitle": "दैनंदिन वापरासाठी मानक ट्रॅकिंग",
+  "liteTitle": "ट्रॅकिफाय लाइट",
+  "liteSubtitle": "मूलभूत लोकेटर डिव्हाइस",
+  "realTime1s": "रिअल-टाइम १ सेकंद ट्रॅकिंग",
+  "remoteEngineCutOff": "रिमोट इंजिन कट-ऑफ",
+  "detailedFuelAnalytics": "तपशीलवार इंधन विश्लेषण",
+  "realTime5s": "रिअल-टाइम ५ सेकंद ट्रॅकिंग",
+  "antiTheftAlerts": "अँटी-थेफ्ट अलर्ट",
+  "basicJourneyLogs": "मूलभूत प्रवास लॉग",
+  "locationUpdates": "स्थान अपडेट",
+  "batteryMonitor": "बॅटरी मॉनिटर",
+  "featuresLabel": "वैशिष्ट्ये:",
+  "addedToCart": "{title} कार्टमध्ये यशस्वीरित्या जोडले!",
+  "@addedToCart": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "buyNow": "आत्ताच खरेदी करा",
+  "retry": "पुन्हा प्रयत्न करा",
+  "errorMsg": "त्रुटी: {message}",
+  "@errorMsg": {
+    "placeholders": {
+      "message": {
+        "type": "String"
+      }
+    }
+  }
+}

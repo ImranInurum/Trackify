@@ -1,100 +1,26 @@
-// import 'package:flutter/material.dart';
-// import '../theme/app_colors.dart';
-//
-// class ThemeManager {
-//   const ThemeManager._();
-//
-//   ThemeData getApplicationLightTheme() {
-//     return ThemeData();
-//   }
-//
-//   ThemeData getApplicationDarkTheme() {
-//     return ThemeData();
-//   }
-//
-//   static final lightTheme = ThemeData.light().copyWith(
-//     scaffoldBackgroundColor: AppColors.backgroundLight,
-//     colorScheme: ColorScheme.light(
-//       primary: AppColors.primaryLight,
-//       secondary: AppColors.secondaryLight,
-//       surface: AppColors.backgroundLight,
-//       error: AppColors.errorLight,
-//     ),
-//     appBarTheme: const AppBarTheme(
-//       centerTitle: true,
-//       elevation: 0,
-//       backgroundColor: AppColors.backgroundLight,
-//       foregroundColor: Colors.black,
-//     ),
-//     elevatedButtonTheme: ElevatedButtonThemeData(
-//       style: ElevatedButton.styleFrom(
-//         backgroundColor: AppColors.primaryLight,
-//         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-//         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-//       ),
-//     ),
-//   );
-//
-//   static ThemeData darkTheme = ThemeData.dark().copyWith(
-//     brightness: Brightness.dark,
-//     scaffoldBackgroundColor: AppColors.backgroundDark,
-//     colorScheme: ColorScheme.dark(
-//       primary: AppColors.primaryDark,
-//       secondary: AppColors.secondaryDark,
-//       surface: AppColors.surfaceDark,
-//       error: AppColors.errorDark,
-//     ),
-//     appBarTheme: const AppBarTheme(
-//       centerTitle: true,
-//       elevation: 0,
-//       backgroundColor: AppColors.backgroundDark,
-//       foregroundColor: Colors.white,
-//     ),
-//     elevatedButtonTheme: ElevatedButtonThemeData(
-//       style: ElevatedButton.styleFrom(
-//         backgroundColor: AppColors.primaryDark,
-//         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-//         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-//       ),
-//     ),
-//   );
-// }
-
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import '../theme/app_colors.dart';
 
 class ThemeManager {
   const ThemeManager._();
 
-  static ThemeData getApplicationLightTheme() {
-    return ThemeData(
-      colorScheme: ColorScheme.light(
-        primaryContainer: AppColors.secondaryLight,
-        secondaryContainer: AppColors.primaryLightVariant,
-        surface: AppColors.surfaceLight,
-        primary: AppColors.primaryDarkVariant,
-        tertiaryFixed: AppColors.textSecondaryLight,
-        tertiaryFixedDim: AppColors.textPrimaryLight,
-      ),
-      scaffoldBackgroundColor: AppColors.surfaceLight,
-      primaryColor: AppColors.primaryLight,
-      cardTheme: CardThemeData(color: AppColors.surfaceLight),
-    );
-  }
+  static ThemeData getApplicationLightTheme() => lightTheme;
 
-  static ThemeData getApplicationDarkTheme() {
-    return ThemeData(
-      scaffoldBackgroundColor: AppColors.backgroundDark,
-      primaryColor: AppColors.primaryDark,
-      cardTheme: CardThemeData(color: AppColors.surfaceDark),
-    );
-  }
+  static ThemeData getApplicationDarkTheme() => darkTheme;
 
-  static final lightTheme = ThemeData.light().copyWith(
+  static final ThemeData lightTheme = ThemeData(
+    useMaterial3: true,
+    brightness: Brightness.light,
+
+    textTheme: GoogleFonts.robotoTextTheme(),
+    primaryColor: AppColors.primaryLight,
     scaffoldBackgroundColor: AppColors.backgroundLight,
-    colorScheme: ColorScheme.light(
+
+    colorScheme: const ColorScheme.light(
       primary: AppColors.primaryLight,
+      primaryContainer: AppColors.primaryLightVariant,
       secondary: AppColors.secondaryLight,
       surface: AppColors.surfaceLight,
       error: AppColors.errorLight,
@@ -103,11 +29,18 @@ class ThemeManager {
       onSurface: AppColors.textPrimaryLight,
       onError: Colors.white,
     ),
+
     appBarTheme: const AppBarTheme(
       centerTitle: true,
       elevation: 0,
-      backgroundColor: AppColors.backgroundLight,
+      backgroundColor: Colors.white,
       foregroundColor: AppColors.textPrimaryLight,
+      surfaceTintColor: Colors.transparent,
+    ),
+    cardTheme: CardThemeData(
+      color: AppColors.cardLight,
+      elevation: 2,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
     ),
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
@@ -116,11 +49,6 @@ class ThemeManager {
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       ),
-    ),
-    cardTheme: CardThemeData(
-      color: AppColors.cardLight,
-      elevation: 2,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
     ),
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
@@ -140,37 +68,45 @@ class ThemeManager {
     ),
   );
 
-  static ThemeData darkTheme = ThemeData.dark().copyWith(
+  static final ThemeData darkTheme = ThemeData(
+    useMaterial3: true,
     brightness: Brightness.dark,
+
+    textTheme: GoogleFonts.robotoTextTheme(ThemeData.dark().textTheme),
+
+    primaryColor: AppColors.primaryDark,
     scaffoldBackgroundColor: AppColors.backgroundDark,
-    colorScheme: ColorScheme.dark(
+
+    colorScheme: const ColorScheme.dark(
       primary: AppColors.primaryDark,
+      primaryContainer: AppColors.primaryDarkVariant,
       secondary: AppColors.secondaryDark,
       surface: AppColors.surfaceDark,
       error: AppColors.errorDark,
-      onPrimary: Colors.black,
-      onSecondary: Colors.black,
+      onPrimary: Colors.white,
+      onSecondary: Colors.white,
       onSurface: AppColors.textPrimaryDark,
-      onError: Colors.black,
+      onError: Colors.white,
     ),
     appBarTheme: const AppBarTheme(
       centerTitle: true,
       elevation: 0,
       backgroundColor: AppColors.backgroundDark,
       foregroundColor: AppColors.textPrimaryDark,
-    ),
-    elevatedButtonTheme: ElevatedButtonThemeData(
-      style: ElevatedButton.styleFrom(
-        backgroundColor: AppColors.primaryDark,
-        foregroundColor: Colors.black,
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      ),
+      surfaceTintColor: Colors.transparent,
     ),
     cardTheme: CardThemeData(
       color: AppColors.cardDark,
       elevation: 2,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+    ),
+    elevatedButtonTheme: ElevatedButtonThemeData(
+      style: ElevatedButton.styleFrom(
+        backgroundColor: AppColors.primaryDark,
+        foregroundColor: Colors.white,
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      ),
     ),
     inputDecorationTheme: InputDecorationTheme(
       filled: true,

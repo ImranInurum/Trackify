@@ -1,0 +1,143 @@
+{
+  "selectLanguage": "ನಿಮ್ಮ ಭಾಷೆಯನ್ನು ಆಯ್ಕೆ ಮಾಡಿ",
+  "letsGetStarted": "ಪ್ರಾರಂಭಿಸೋಣ",
+  "email": "ಇಮೇಲ್",
+  "password": "ಪಾಸ್ವರ್ಡ್",
+  "emailHint": "example@test.com",
+  "passwordHint": "******",
+  "emailRequired": "ಇಮೇಲ್ ಅಗತ್ಯವಿದೆ",
+  "passwordRequired": "ಪಾಸ್ವರ್ಡ್ ಅಗತ್ಯವಿದೆ",
+  "invalidEmail": "ದಯವಿಟ್ಟು ಮಾನ್ಯವಾದ ಇಮೇಲ್ ವಿಳಾಸವನ್ನು ನಮೂದಿಸಿ",
+  "forgotPassword": "ಪಾಸ್ವರ್ಡ್ ಮರೆತಿದ್ದೀರಾ?",
+  "signIn": "ಸೈನ್ ಇನ್ ಮಾಡಿ",
+  "or": "ಅಥವಾ",
+  "dontHaveAccount": "ಖಾತೆಯನ್ನು ಹೊಂದಿಲ್ಲವೇ? ",
+  "signUp": "ಸೈನ್ ಅಪ್ ಮಾಡಿ",
+  "welcome": "ಸ್ವಾಗತ {email}!",
+  "@welcome": {
+    "placeholders": {
+      "email": {
+        "type": "String"
+      }
+    }
+  },
+  "loginFailed": "ಲಾಗಿನ್ ವಿಫಲವಾಗಿದೆ",
+  "name": "ಹೆಸರು",
+  "nameHint": "ಜಾನ್ ಡೋ",
+  "nameRequired": "ಹೆಸರು ಅಗತ್ಯವಿದೆ",
+  "role": "ಪಾತ್ರ",
+  "roleRequired": "ದಯವಿಟ್ಟು ಪಾತ್ರವನ್ನು ಆಯ್ಕೆ ಮಾಡಿ",
+  "createAccount": "ಖಾತೆಯನ್ನು ರಚಿಸಿ",
+  "registerSuccess": "ಬಳಕೆದಾರರನ್ನು ಯಶಸ್ವಿಯಾಗಿ ನೋಂದಾಯಿಸಲಾಗಿದೆ, ದಯವಿಟ್ಟು ಲಾಗಿನ್ ಮಾಡಿ",
+  "signUpFailed": "ಸೈನ್ ಅಪ್ ವಿಫಲವಾಗಿದೆ",
+  "otpSent": "OTP ಯಶಸ್ವಿಯಾಗಿ ಕಳುಹಿಸಲಾಗಿದೆ",
+  "resetPassword": "ಪಾಸ್ವರ್ಡ್ ಮರುಹೊಂದಿಸಿ",
+  "resetPasswordDesc": "ನಿಮ್ಮ ಇಮೇಲ್ ವಿಳಾಸವನ್ನು ನಮೂದಿಸಿ ಮತ್ತು ನಿಮ್ಮ ಪಾಸ್‌ವರ್ಡ್ ಮರುಹೊಂದಿಸಲು ನಾವು ಲಿಂಕ್ ಕಳುಹಿಸುತ್ತೇವೆ.",
+  "sendResetLink": "ಮರುಹೊಂದಿಸುವ ಲಿಂಕ್ ಅನ್ನು ಕಳುಹಿಸಿ",
+  "otpVerified": "OTP ಯಶಸ್ವಿಯಾಗಿ ಪರಿಶೀಲಿಸಲಾಗಿದೆ",
+  "verifyOtp": "OTP ಪರಿಶೀಲಿಸಿ",
+  "otpHeader": "OTP ಪರಿಶೀಲನೆ",
+  "otpDesc": "{email} ಗೆ ಕಳುಹಿಸಲಾದ OTP ಅನ್ನು ನಮೂದಿಸಿ.",
+  "@otpDesc": {
+    "placeholders": {
+      "email": {
+        "type": "String"
+      }
+    }
+  },
+  "otp": "OTP",
+  "otpHint": "123456",
+  "otpRequired": "OTP ಅಗತ್ಯವಿದೆ",
+  "passwordResetSuccess": "ಪಾಸ್ವರ್ಡ್ ಯಶಸ್ವಿಯಾಗಿ ಮರುಹೊಂದಿಸಲಾಗಿದೆ",
+  "createNewPassword": "ಹೊಸ ಪಾಸ್ವರ್ಡ್ ಅನ್ನು ರಚಿಸಿ",
+  "passwordDesc": "ನಿಮ್ಮ ಹೊಸ ಪಾಸ್‌ವರ್ಡ್ ಹಿಂದಿನ ಪಾಸ್‌ವರ್ಡ್‌ಗಳಿಗಿಂತ ಭಿನ್ನವಾಗಿರಬೇಕು.",
+  "newPassword": "ಹೊಸ ಪಾಸ್ವರ್ಡ್",
+  "newPasswordHint": "ನಿಮ್ಮ ಹೊಸ ಪಾಸ್ವರ್ಡ್ ನಮೂದಿಸಿ",
+  "passwordMinLength": "ಪಾಸ್ವರ್ಡ್ ಕನಿಷ್ಠ 6 ಅಕ್ಷರಗಳಾಗಿರಬೇಕು",
+  "confirmPassword": "ಪಾಸ್ವರ್ಡ್ ದೃಢೀಕರಿಸಿ",
+  "confirmPasswordHint": "ನಿಮ್ಮ ಹೊಸ ಪಾಸ್ವರ್ಡ್ ದೃಢೀಕರಿಸಿ",
+  "confirmPasswordRequired": "ಪಾಸ್ವರ್ಡ್ ದೃಢೀಕರಣದ ಅಗತ್ಯವಿದೆ",
+  "passwordsDoNotMatch": "ಪಾಸ್ವರ್ಡ್ಗಳು ಹೊಂದಾಣಿಕೆಯಾಗುತ್ತಿಲ್ಲ",
+  "selectDevice": "ಸಾಧನವನ್ನು ಆಯ್ಕೆ ಮಾಡಿ",
+  "noDevicesFound": "ಯಾವುದೇ ಸಾಧನಗಳು ಕಂಡುಬಂದಿಲ್ಲ.",
+  "proceed": "ಮುಂದುವರಿಯಿರಿ",
+  "unknownDevice": "ಅಜ್ಞಾತ ಸಾಧನ",
+  "imeiLabel": "IMEI: {imei}",
+  "@imeiLabel": {
+    "placeholders": {
+      "imei": {
+        "type": "String"
+      }
+    }
+  },
+  "initializeFetch": "ಸಾಧನಗಳನ್ನು ಪಡೆಯಲು ಪ್ರಾರಂಭಿಸಿ.",
+  "recordRide": "ಪ್ರಯಾಣವನ್ನು ರೆಕಾರ್ಡ್ ಮಾಡಿ",
+  "phoneAsGps": "ನಿಮ್ಮ ಫೋನ್ ಅನ್ನು ಜಿಪಿಎಸ್ ಟ್ರ್ಯಾಕಿಂಗ್ ಸಾಧನವನ್ನಾಗಿ ಮಾಡಿ",
+  "goToDashboard": "ಡ್ಯಾಶ್‌ಬೋರ್ಡ್‌ಗೆ ಹೋಗಿ",
+  "seeFullMap": "ಪೂರ್ಣ ನಕ್ಷೆಯನ್ನು ನೋಡಿ",
+  "exploreMore": "ಹೆಚ್ಚು ಅನ್ವೇಷಿಸಿ",
+  "reachMeSticker": "ReachMe ಸ್ಟಿಕರ್",
+  "products": "ಉತ್ಪನ್ನಗಳು",
+  "fuelLogs": "ಇಂಧನ ದಾಖಲೆಗಳು",
+  "locationSharing": "ಸ್ಥಳ ಹಂಚಿಕೆ",
+  "documentFolder": "ಡಾಕ್ಯುಮೆಂಟ್ ಫೋಲ್ಡರ್",
+  "voiceMonitoring": "ಧ್ವನಿ ಮಾನಿಟರಿಂಗ್",
+  "remoteEngineOff": "ರಿಮೋಟ್ ಇಂಜಿನ್ ಆಫ್",
+  "networkBooster": "ನೆಟ್‌ವರ್ಕ್ ಬೂಸ್ಟರ್",
+  "emergency": "ತುರ್ತು",
+  "overspeedAlert": "ಅತಿವೇಗದ ಎಚ್ಚರಿಕೆ",
+  "geoFenceAlert": "ಜಿಯೋ-ಫೆನ್ಸ್ ಎಚ್ಚರಿಕೆ",
+  "more": "ಹೆಚ್ಚು",
+  "profile": "ಪ್ರೊಫೈಲ್",
+  "bikeSmartMsg": "1000+ ಜನರು ನಮ್ಮ ಸಾಧನದೊಂದಿಗೆ ತಮ್ಮ ಬೈಕನ್ನು ಸ್ಮಾರ್ಟ್ ಮಾಡಿದ್ದಾರೆ",
+  "features": "ವೈಶಿಷ್ಟ್ಯಗಳು",
+  "contactUs": "ನಮ್ಮನ್ನು ಸಂಪರ್ಕಿಸಿ",
+  "contactUsDesc": "ಪ್ರಶ್ನೆಗಳಿವೆಯೇ? ನಾವು ಸಹಾಯ ಮಾಡಲು ಇಲ್ಲಿದ್ದೇವೆ.",
+  "userReviews": "ಬಳಕೆದಾರರ ವಿಮರ್ಶೆಗಳು",
+  "accidentAlert": "ಅಪಘಾತ ಎಚ್ಚರಿಕೆ",
+  "antiTheftAlert": "ಕಳ್ಳತನ ವಿರೋಧಿ ಎಚ್ಚರಿಕೆ",
+  "geoFence": "ಜಿಯೋ ಫೆನ್ಸ್",
+  "statistics": "ಅಂಕಿಅಂಶಗಳು",
+  "myGarage": "ನನ್ನ ಗ್ಯಾರೇಜ್",
+  "noVehiclesInGarage": "ನಿಮ್ಮ ಗ್ಯಾರೇಜ್‌ನಲ್ಲಿ ಯಾವುದೇ ವಾಹನಗಳು ಕಂಡುಬಂದಿಲ್ಲ.",
+  "unknownVehicle": "ಅಜ್ಞಾತ ವಾಹನ",
+  "status": "ಸ್ಥಿತಿ",
+  "active": "ಸಕ್ರಿಯ",
+  "subscription": "ಚಂದಾದಾರಿಕೆ",
+  "proPlan": "ಪ್ರೊ ಯೋಜನೆ",
+  "initializeGarage": "ನಿಮ್ಮ ಗ್ಯಾರೇಜ್ ಅನ್ನು ಪಡೆಯಲು ಪ್ರಾರಂಭಿಸಿ.",
+  "ourProducts": "ನಮ್ಮ ಉತ್ಪನ್ನಗಳು",
+  "proTitle": "Trackify Pro",
+  "proSubtitle": "ಗರಿಷ್ಠ ವೈಶಿಷ್ಟ್ಯಗಳೊಂದಿಗೆ ಸುಧಾರಿತ ಟ್ರ್ಯಾಕಿಂಗ್",
+  "goTitle": "Trackify Go",
+  "goSubtitle": "ದಿನನಿತ್ಯದ ಬಳಕೆಗಾಗಿ ಪ್ರಮಾಣಿತ ಟ್ರ್ಯಾಕಿಂಗ್",
+  "liteTitle": "Trackify Lite",
+  "liteSubtitle": "ಮೂಲ ಲೊಕೇಟರ್ ಸಾಧನ",
+  "realTime1s": "ರಿಯಲ್-ಟೈಮ್ 1 ಸೆ ಟ್ರ್ಯಾಕಿಂಗ್",
+  "remoteEngineCutOff": "ರಿಮೋಟ್ ಇಂಜಿನ್ ಕಟ್-ಆಫ್",
+  "detailedFuelAnalytics": "ವಿವರವಾದ ಇಂಧನ ವಿಶ್ಲೇಷಣೆ",
+  "realTime5s": "ರಿಯಲ್-ಟೈಮ್ 5 ಸೆ ಟ್ರ್ಯಾಕಿಂಗ್",
+  "antiTheftAlerts": "ಕಳ್ಳತನ ವಿರೋಧಿ ಎಚ್ಚರಿಕೆಗಳು",
+  "basicJourneyLogs": "ಮೂಲ ಪ್ರಯಾಣದ ದಾಖಲೆಗಳು",
+  "locationUpdates": "ಸ್ಥಳದ ಅಪ್ಡೇಟ್ಗಳು",
+  "batteryMonitor": "ಬ್ಯಾಟರಿ ಮಾನಿಟರ್",
+  "featuresLabel": "ವೈಶಿಷ್ಟ್ಯಗಳು:",
+  "addedToCart": "{title} ಅನ್ನು ಕಾರ್ಟ್‌ಗೆ ಯಶಸ್ವಿಯಾಗಿ ಸೇರಿಸಲಾಗಿದೆ!",
+  "@addedToCart": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "buyNow": "ಈಗಲೇ ಖರೀದಿಸಿ",
+  "retry": "ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ",
+  "errorMsg": "ದೋಷ: {message}",
+  "@errorMsg": {
+    "placeholders": {
+      "message": {
+        "type": "String"
+      }
+    }
+  }
+}

@@ -16,22 +16,14 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<AppCubit, AppState>(
       builder: (context, state) => MaterialApp(
+        debugShowCheckedModeBanner: false,
         navigatorKey: rootNavigatorKey,
         themeMode: state.themeMode,
         theme: ThemeManager.getApplicationLightTheme(),
         darkTheme: ThemeManager.getApplicationDarkTheme(),
         locale: state.locale,
-        supportedLocales: const [
-          Locale('en'),
-          Locale('hi'),
-          Locale('ar'),
-        ],
-        localizationsDelegates: const [
-          AppLocalizations.delegate,
-          GlobalMaterialLocalizations.delegate,
-          GlobalWidgetsLocalizations.delegate,
-          GlobalCupertinoLocalizations.delegate,
-        ],
+        supportedLocales: AppLocalizations.supportedLocales,
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
         home: SplashScreen(),
       ),
     );

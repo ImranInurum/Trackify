@@ -95,6 +95,12 @@ class AppCubit extends Cubit<AppState> {
         locale = const Locale('hi');
       } else if (selectedLanguageKey == 'Arabic') {
         locale = const Locale('ar');
+      } else if (selectedLanguageKey == 'Marathi') {
+        locale = const Locale('mr');
+      } else if (selectedLanguageKey == 'Tamil') {
+        locale = const Locale('ta');
+      } else if (selectedLanguageKey == 'Kannada') {
+        locale = const Locale('kn');
       } else {
         locale = const Locale('en');
       }
