@@ -14,4 +14,5 @@ class ApiConstants {
   static const String deviceDataByDate = "$baseUrl/api/device/check-deviceList_byDate";
 
   static const String logoUrl = "$baseUrl/api/logoUrl";
+  static const String socialLogin = "$baseUrl/api/auth/social-login";
 }

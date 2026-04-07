@@ -8,4 +8,5 @@ abstract interface class AuthRepository {
   ResultFuture<dynamic> sendOtp(Map<String, dynamic> body);
   ResultFuture<dynamic> verifyOtp(Map<String, dynamic> body);
   ResultFuture<dynamic> resetPassword(Map<String, dynamic> body);
+  ResultFuture<LoginResponseModel> socialLogin(Map<String, dynamic> body);
 }
