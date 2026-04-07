@@ -27,4 +27,8 @@ class AuthCase {
   ResultFuture<dynamic> resetPasswordCall(Map<String, dynamic> body) {
     return authRepository.resetPassword(body);
   }
+
+  ResultFuture<LoginResponseModel> socialLoginCall(Map<String, dynamic> body) {
+    return authRepository.socialLogin(body);
+  }
 }

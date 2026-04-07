@@ -99,41 +99,38 @@ class AuthCubit extends Cubit<AuthState> {
       LoadingScreenOL().show();
       emit(AuthLoading());
 
-      final userCredential = await GoogleAuthService.instance.signInWithGoogle();
+      final userCredential =
+          await GoogleAuthService.instance.signInWithGoogle();
 
       if (userCredential != null && userCredential.user != null) {
         final firebaseUser = userCredential.user!;
 
-        // 1. Get the Firebase ID Token
-        final String? token = await firebaseUser.getIdToken();
+        final body = {
+          "name": firebaseUser.displayName ?? "Google User",
+          "email": firebaseUser.email,
+          "socialId": firebaseUser.uid,
+        };
 
-        // 2. Map Firebase User to your local 'User' model
-        final localUser = User(
-          id: firebaseUser.uid,
-          name: firebaseUser.displayName ?? "Google User",
-          email: firebaseUser.email,
-          role: "user", // Default role
+        final result = await _authCase.socialLoginCall(body);
+
+        result.fold(
+          (failure) {
+            LoadingScreenOL().hide();
+            emit(AuthFailure(failure));
+          },
+          (user) async {
+            final prefs = AppPreference.instance;
+            await prefs.set(
+                key: AppPreference.KEY_TOKEN, value: user.token ?? "");
+            await prefs.set(
+              key: AppPreference.KEY_USER_DETAILS,
+              value: jsonEncode(user.user?.toJson()),
+            );
+
+            emit(AuthSuccess(user));
+            LoadingScreenOL().hide();
+          },
         );
-
-        // 3. Create the full LoginResponseModel
-        final loginResponse = LoginResponseModel(
-          status: "success",
-          message: "Google Login Successful",
-          token: token,
-          user: localUser,
-        );
-
-        // 4. Persist Data (Same as your regular login)
-        final prefs = AppPreference.instance;
-        await prefs.set(key: AppPreference.KEY_TOKEN, value: token ?? "");
-        await prefs.set(
-          key: AppPreference.KEY_USER_DETAILS,
-          value: jsonEncode(localUser.toJson()),
-        );
-
-        // 5. Emit success with the correct type (LoginResponseModel)
-        emit(AuthSuccess(loginResponse));
-        LoadingScreenOL().hide();
       } else {
         LoadingScreenOL().hide();
       }
