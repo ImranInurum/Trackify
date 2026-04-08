@@ -9,7 +9,7 @@ class DeviceDataByDateResponse {
   DeviceDataByDateResponse.fromJson(Map<String, dynamic> json) {
     status = json['status'];
     message = json['message'];
-    
+
     // Handle the case where the API returns the list inside the 'total' parameter
     if (json['total'] is List) {
       data = <DataByDate>[];
@@ -29,8 +29,20 @@ class DeviceDataByDateResponse {
     }
   }
 
+  DeviceDataByDateResponse copyWith({
+    bool? status,
+    String? message,
+    int? total,
+    List<DataByDate>? data,
+  }) => DeviceDataByDateResponse(
+    status: status ?? this.status,
+    message: message ?? this.message,
+    total: total ?? this.total,
+    data: data ?? this.data,
+  );
+
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
+    final data = <String, dynamic>{};
     data['status'] = status;
     data['message'] = message;
     data['total'] = total;
@@ -90,6 +102,38 @@ class DataByDate {
     deviceName = json['device_name']?.toString();
     createdAt = json['createdAt']?.toString();
   }
+
+  DataByDate copyWith({
+    int? id,
+    String? imei,
+    String? gs,
+    String? dt,
+    String? tm,
+    String? lt,
+    String? ns,
+    String? lg,
+    String? ew,
+    String? sp,
+    String? sg,
+    int? status,
+    String? deviceName,
+    String? createdAt,
+  }) => DataByDate(
+    id: id ?? this.id,
+    imei: imei ?? this.imei,
+    gs: gs ?? this.gs,
+    dt: dt ?? this.dt,
+    tm: tm ?? this.tm,
+    lt: lt ?? this.lt,
+    ns: ns ?? this.ns,
+    lg: lg ?? this.lg,
+    ew: ew ?? this.ew,
+    sp: sp ?? this.sp,
+    sg: sg ?? this.sg,
+    status: status ?? this.status,
+    deviceName: deviceName ?? this.deviceName,
+    createdAt: createdAt ?? this.createdAt,
+  );
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};

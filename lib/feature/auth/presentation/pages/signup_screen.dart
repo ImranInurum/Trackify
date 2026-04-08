@@ -134,9 +134,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
               context,
             ).showSnackBar(SnackBar(content: Text(l10n.registerSuccess)));
             Navigator.of(context).pushReplacement(
-              MaterialPageRoute(
-                builder: (context) => const SignInScreen(isFromSignUp: true),
-              ),
+              MaterialPageRoute(builder: (context) => const SignInScreen()),
             );
           } else if (state is AuthFailure) {
             ScaffoldMessenger.of(context).showSnackBar(

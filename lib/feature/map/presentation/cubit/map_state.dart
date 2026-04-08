@@ -1,8 +1,8 @@
 import 'package:equatable/equatable.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:trackify/feature/map/data/entity/user_device_model.dart';
+import 'package:trackify/feature/map/data/entity/user_vehicles.dart';
 
-import '../../data/entity/device_data_by_date_response.dart';
+import '../../../record_via_phone/data/model/device_data_by_date_response.dart';
 
 abstract class MapState extends Equatable {
   const MapState();
@@ -16,12 +16,12 @@ class MapInitial extends MapState {}
 class MapLoading extends MapState {}
 
 class MapLoaded extends MapState {
-  final UserDeviceList deviceList;
+  final UserVehicles vehicleList;
 
-  const MapLoaded(this.deviceList);
+  const MapLoaded(this.vehicleList);
 
   @override
-  List<Object?> get props => [deviceList];
+  List<Object?> get props => [vehicleList];
 }
 
 class MapDataByDateLoaded extends MapState {

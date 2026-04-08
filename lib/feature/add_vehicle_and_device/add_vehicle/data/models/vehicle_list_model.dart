@@ -4,12 +4,7 @@ class VehicleListResponse {
   final int? count;
   final List<Vehicle>? vehicles;
 
-  VehicleListResponse({
-    this.status,
-    this.message,
-    this.count,
-    this.vehicles,
-  });
+  VehicleListResponse({this.status, this.message, this.count, this.vehicles});
 
   factory VehicleListResponse.fromJson(Map<String, dynamic> json) {
     return VehicleListResponse(
@@ -21,6 +16,18 @@ class VehicleListResponse {
           : null,
     );
   }
+
+  VehicleListResponse copyWith({
+    bool? status,
+    String? message,
+    int? count,
+    List<Vehicle>? vehicles,
+  }) => VehicleListResponse(
+    status: status ?? this.status,
+    message: message ?? this.message,
+    count: count ?? this.count,
+    vehicles: vehicles ?? this.vehicles,
+  );
 
   Map<String, dynamic> toJson() {
     return {
@@ -68,6 +75,28 @@ class Vehicle {
       updatedAt: json['updatedAt'],
     );
   }
+
+  Vehicle copyWith({
+    String? id,
+    String? userId,
+    String? vehicleType,
+    String? fuelType,
+    String? vehicleMaker,
+    String? vehicleNumber,
+    String? vehicleModel,
+    String? createdAt,
+    String? updatedAt,
+  }) => Vehicle(
+    id: id ?? this.id,
+    userId: userId ?? this.userId,
+    vehicleType: vehicleType ?? this.vehicleType,
+    fuelType: fuelType ?? this.fuelType,
+    vehicleMaker: vehicleMaker ?? this.vehicleMaker,
+    vehicleNumber: vehicleNumber ?? this.vehicleNumber,
+    vehicleModel: vehicleModel ?? this.vehicleModel,
+    createdAt: createdAt ?? this.createdAt,
+    updatedAt: updatedAt ?? this.updatedAt,
+  );
 
   Map<String, dynamic> toJson() {
     return {

@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:trackify/core/utils/shared_preferences.dart';
 import 'package:trackify/feature/add_vehicle_and_device/choice_selector.dart';
+import 'package:trackify/feature/auth/presentation/pages/signin_screen.dart';
 import 'package:trackify/feature/onboarding/presentation/cubit/splash_cubit.dart';
 import 'package:trackify/feature/onboarding/presentation/cubit/splash_state.dart';
 import 'package:trackify/feature/onboarding/presentation/pages/select_language_screen.dart';
 
 import '../../../../app/app_navigation.dart';
-import '../../../auth/presentation/pages/signin_screen.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -39,8 +39,11 @@ class _SplashScreenState extends State<SplashScreen> {
     final selectedLanguage = await prefs.get(key: AppPreference.KEY_SELECTED_LANGUAGE);
     if (!mounted) return;
 
+    // ── Step 2: Token check ───────────────────────────────────────────────────
+    final token = await prefs.get(key: AppPreference.KEY_TOKEN);
+    if (!mounted) return;
+
     if (selectedLanguage.isEmpty) {
-      // First-ever launch → pick language first
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (_) => const SelectLanguageScreen()),
@@ -48,25 +51,17 @@ class _SplashScreenState extends State<SplashScreen> {
       return;
     }
 
-    // ── Step 2: Token check ───────────────────────────────────────────────────
-    final token = await prefs.get(key: AppPreference.KEY_TOKEN);
-    if (!mounted) return;
-
     if (token.isEmpty) {
-      // Not logged in → sign-in screen
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (_) => const SignInScreen(isFromSignUp: false)),
+        MaterialPageRoute(builder: (_) => const SignInScreen()),
       );
       return;
     }
 
-    // ── Step 3: Setup-complete check ──────────────────────────────────────────
-    // null  = key never written = existing user from before this feature → treat as done
-    // false = user registered but killed app before finishing ChoiceSelector
-    // true  = fully onboarded
+    // Check setup completion if already signed in
     final setupFlag = await prefs.getBoolNullable(key: AppPreference.KEY_SETUP_COMPLETE);
-    final setupComplete = setupFlag ?? true; // safe default for old users
+    final setupComplete = setupFlag ?? false;
     if (!mounted) return;
 
     if (!setupComplete) {

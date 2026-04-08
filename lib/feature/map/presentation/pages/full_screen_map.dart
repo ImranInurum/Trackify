@@ -4,10 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-
-import '../../../../app/cubit/app_cubit.dart';
-import '../cubit/map_cubit.dart';
-import '../cubit/map_state.dart';
+import 'package:trackify/app/cubit/app_cubit.dart';
+import 'package:trackify/app/cubit/app_state.dart';
+import 'package:trackify/core/theme/app_colors.dart';
+import 'package:trackify/feature/map/presentation/cubit/map_cubit.dart';
+import 'package:trackify/feature/map/presentation/cubit/map_state.dart';
 
 class FullScreenMap extends StatefulWidget {
   const FullScreenMap({super.key});
@@ -20,210 +21,406 @@ class _FullScreenMapState extends State<FullScreenMap> {
   final Completer<GoogleMapController> _controller = Completer<GoogleMapController>();
   String? _lightMapStyle;
   String? _darkMapStyle;
+  bool _showSharedWithMe = false;
 
   @override
   void initState() {
     super.initState();
     _loadMapStyles();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      Future.delayed(const Duration(milliseconds: 100), () {
-        if (mounted) {
-          context.read<MapCubit>().fetchDeviceDataByDate(
-            imei: '860710085959719',
-            startDate: DateTime.now().toIso8601String(),
-            endDate: DateTime.now().toIso8601String(),
-          );
-        }
-      });
-    });
   }
 
   Future<void> _loadMapStyles() async {
-    _lightMapStyle = await rootBundle.loadString('assets/map_styles/light_map.json');
-    _darkMapStyle = await rootBundle.loadString('assets/map_styles/dark_map.json');
-  }
-
-  Future<void> _applyMapTheme(GoogleMapController controller, ThemeMode themeMode) async {
-    if (themeMode == ThemeMode.dark) {
-      await controller.setMapStyle(_darkMapStyle);
-    } else if (themeMode == ThemeMode.light) {
-      await controller.setMapStyle(_lightMapStyle);
-    } else {
-      final brightness = MediaQuery.of(context).platformBrightness;
-      await controller.setMapStyle(
-        brightness == Brightness.dark ? _darkMapStyle : _lightMapStyle,
-      );
+    try {
+      _lightMapStyle = await rootBundle.loadString('assets/map_styles/light_map.json');
+      _darkMapStyle = await rootBundle.loadString('assets/map_styles/dark_map.json');
+    } catch (e) {
+      debugPrint("Error loading map styles: $e");
     }
-  }
-
-  LatLngBounds _boundsFromLatLngList(List<LatLng> list) {
-    double x0 = list.first.latitude,
-        x1 = list.first.latitude,
-        y0 = list.first.longitude,
-        y1 = list.first.longitude;
-    for (LatLng latLng in list) {
-      if (latLng.latitude > x1) x1 = latLng.latitude;
-      if (latLng.latitude < x0) x0 = latLng.latitude;
-      if (latLng.longitude > y1) y1 = latLng.longitude;
-      if (latLng.longitude < y0) y0 = latLng.longitude;
-    }
-    return LatLngBounds(northeast: LatLng(x1, y1), southwest: LatLng(x0, y0));
   }
 
   @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
-      length: 3,
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text("Record via Phone"),
-          centerTitle: false,
-          bottom: const TabBar(
-            tabs: [
-              Tab(text: "Ride Records"),
-              Tab(text: "Past Rides"),
-              Tab(text: "Statistics"),
-            ],
-          ),
-        ),
-        body: TabBarView(
-          physics: const NeverScrollableScrollPhysics(),
-          children: [
-            _recordRides(),
-            _pastRides(),
-            Center(child: Text("Placeholder for Settings")),
-          ],
-        ),
+    return Scaffold(
+      body: Stack(
+        children: [
+          _buildMap(),
+          _buildTopActions(),
+          _buildRightSideActions(),
+          _buildDraggableBottomCard(),
+        ],
       ),
     );
   }
 
-  Widget _recordRides() {
-    return Stack(children: [_mapWidget()]);
-  }
-
-  Widget _pastRides() {
-    return Stack(children: [_mapWidget(), _filterChipBar()]);
-  }
-
-  Widget _mapWidget() {
-    return BlocConsumer<MapCubit, MapState>(
-      listener: (BuildContext context, MapState mapState) async {},
-      builder: (context, mapState) {
-        final currentPos = context.read<AppCubit>().state.currentLocation;
+  Widget _buildMap() {
+    return BlocBuilder<AppCubit, AppState>(
+      builder: (context, appState) {
+        final currentPos = appState.currentLocation;
         if (currentPos == null) {
           return const Center(child: CircularProgressIndicator());
-        }
-        Set<Polyline> polylines = {};
-        if (mapState is MapDataByDateLoaded && mapState.polylines != null) {
-          polylines = mapState.polylines!;
         }
 
         return GoogleMap(
           initialCameraPosition: CameraPosition(
             target: LatLng(currentPos.latitude, currentPos.longitude),
-            zoom: 16,
+            zoom: 15,
           ),
           myLocationEnabled: true,
-          zoomGesturesEnabled: true,
           zoomControlsEnabled: false,
-          polylines: polylines,
-          onMapCreated: (GoogleMapController controller) async {
-            _controller.complete(controller);
-            if (mapState is MapDataByDateLoaded && mapState.polylines != null) {
-              final polyline = mapState.polylines?.first;
-              if (polyline?.points != null) {
-                controller.animateCamera(
-                  CameraUpdate.newLatLngBounds(
-                    _boundsFromLatLngList(polyline!.points),
-                    50,
-                  ),
-                );
-              }
+          mapType: MapType.normal,
+          onMapCreated: (controller) {
+            if (!_controller.isCompleted) {
+              _controller.complete(controller);
             }
+            final style = appState.themeMode == ThemeMode.dark ? _darkMapStyle : _lightMapStyle;
+            if (style != null) controller.setMapStyle(style);
           },
         );
       },
     );
   }
 
-  Widget _filterChipBar() {
-    final filters = ['Today', 'Weekly', 'Monthly', 'Custom'];
-    String selectedFilter = 'Today';
-    DateTimeRange? customRange;
-
-    return StatefulBuilder(
-      builder: (context, setState) {
-        Future<void> _onSelect(String label) async {
-          setState(() => selectedFilter = label);
-
-          final now = DateTime.now();
-          DateTime start, end;
-
-          switch (label) {
-            case 'Today':
-              start = DateTime(now.year, now.month, now.day);
-              end = now;
-              break;
-            case 'Weekly':
-              start = now.subtract(const Duration(days: 7));
-              end = now;
-              break;
-            case 'Monthly':
-              start = DateTime(now.year, now.month - 1, now.day);
-              end = now;
-              break;
-            case 'Custom':
-              final picked = await showDateRangePicker(
-                context: context,
-                firstDate: DateTime(now.year - 1),
-                lastDate: now,
-                initialDateRange:
-                    customRange ??
-                    DateTimeRange(start: now.subtract(const Duration(days: 7)), end: now),
-              );
-              if (picked == null) return;
-              start = picked.start;
-              end = picked.end;
-              customRange = picked;
-              break;
-            default:
-              return;
-          }
-
-          // Trigger your cubit fetch
-          context.read<MapCubit>().fetchDeviceDataByDate(
-            imei: '860710085959719',
-            startDate: start.toIso8601String(),
-            endDate: end.toIso8601String(),
-          );
-        }
-
-        return Align(
-          alignment: AlignmentGeometry.bottomCenter,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: filters.map((label) {
-              final isSelected = selectedFilter == label;
-              return Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 10),
-                child: ChoiceChip(
-                  label: Text(label),
-                  selected: isSelected,
-                  onSelected: (_) => _onSelect(label),
-                  selectedColor: Theme.of(context).colorScheme.primary,
-                  labelStyle: TextStyle(
-                    color: isSelected
-                        ? Theme.of(context).colorScheme.surface
-                        : Theme.of(context).colorScheme.primaryContainer,
-                    fontWeight: FontWeight.w600,
+  Widget _buildTopActions() {
+    return Positioned(
+      top: MediaQuery.of(context).padding.top + 10,
+      left: 10,
+      right: 10,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          _buildRoundButton(Icons.arrow_back, onTap: () => Navigator.pop(context)),
+          Row(
+            children: [
+              if (_showSharedWithMe)
+                TweenAnimationBuilder<double>(
+                  tween: Tween(begin: 0.0, end: 1.0),
+                  duration: const Duration(milliseconds: 200),
+                  builder: (context, value, child) {
+                    return Opacity(
+                      opacity: value,
+                      child: Transform.translate(
+                        offset: Offset(20 * (1 - value), 0),
+                        child: child,
+                      ),
+                    );
+                  },
+                  child: Container(
+                    margin: const EdgeInsets.only(right: 8),
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                    decoration: BoxDecoration(
+                      color: Colors.black.withOpacity(0.85),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: const Text(
+                      "Shared with me",
+                      style: TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w500),
+                    ),
                   ),
                 ),
-              );
-            }).toList(),
+              _buildRoundButton(
+                Icons.more_vert, 
+                onTap: () => setState(() => _showSharedWithMe = !_showSharedWithMe)
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildRightSideActions() {
+    return Positioned(
+      right: 16,
+      bottom: 240, // Adjusted to be above the bottom sheet
+      child: Column(
+        children: [
+          _buildMapActionButton(Icons.motorcycle, hasNotification: true),
+          _buildMapActionButton(Icons.layers_outlined),
+          _buildMapActionButton(Icons.person_pin_circle_outlined),
+          _buildMapActionButton(Icons.my_location),
+          _buildMapActionButton(Icons.fullscreen),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMapActionButton(IconData icon, {bool hasNotification = false}) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Stack(
+        children: [
+          _buildRoundButton(icon),
+          if (hasNotification)
+            Positioned(
+              right: 0,
+              top: 0,
+              child: Container(
+                height: 12,
+                width: 12,
+                decoration: BoxDecoration(
+                  color: Colors.cyan,
+                  shape: BoxShape.circle,
+                  border: Border.all(color: Colors.black, width: 2),
+                ),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildRoundButton(IconData icon, {VoidCallback? onTap}) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        height: 48,
+        width: 48,
+        decoration: BoxDecoration(
+          color: Colors.black.withOpacity(0.7),
+          shape: BoxShape.circle,
+        ),
+        child: Icon(icon, color: Colors.white, size: 24),
+      ),
+    );
+  }
+
+  Widget _buildDraggableBottomCard() {
+    return DraggableScrollableSheet(
+      initialChildSize: 0.18,
+      minChildSize: 0.18,
+      maxChildSize: 0.6,
+      snap: true,
+      snapSizes: const [0.18, 0.38, 0.6],
+      builder: (context, scrollController) {
+        return Container(
+          decoration: const BoxDecoration(
+            color: Color(0xFFF1F4F7), // Lighter background as per screenshots
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(36),
+              topRight: Radius.circular(36),
+            ),
+            boxShadow: [
+              BoxShadow(color: Colors.black12, blurRadius: 15, spreadRadius: 2),
+            ],
+          ),
+          child: SingleChildScrollView(
+            controller: scrollController,
+            physics: const ClampingScrollPhysics(),
+            child: Column(
+              children: [
+                const SizedBox(height: 12),
+                Container(
+                  width: 44,
+                  height: 5,
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade300,
+                    borderRadius: BorderRadius.circular(3),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                  child: Column(
+                    children: [
+                      _buildVehicleHeader(),
+                      const SizedBox(height: 16),
+                      _buildStatusRow(),
+                      
+                      // Mid-Stop content
+                      const SizedBox(height: 30),
+                      _buildStatsGrid(),
+                      
+                      // Fully-Expanded content
+                      const SizedBox(height: 24),
+                      _buildFuelGauge(),
+                      const SizedBox(height: 30),
+                      _buildBottomNavIcons(),
+                      const SizedBox(height: 12),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
         );
       },
+    );
+  }
+
+  Widget _buildVehicleHeader() {
+    return Row(
+      children: [
+        Container(
+          padding: const EdgeInsets.all(4),
+          decoration: BoxDecoration(
+            color: Colors.transparent, // Clean transparent look
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Image.asset(
+            'assets/images/bike2.png',
+            height: 44,
+            width: 44,
+            fit: BoxFit.contain,
+          ),
+        ),
+        const SizedBox(width: 8),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                "SP 125",
+                style: TextStyle(fontSize: 19, fontWeight: FontWeight.bold, color: Color(0xFF2C3E50)),
+              ),
+              Text(
+                "MP09QV8269",
+                style: TextStyle(fontSize: 15, color: Colors.cyan.shade600, fontWeight: FontWeight.bold),
+              ),
+            ],
+          ),
+        ),
+        Column(
+          children: [
+            Icon(Icons.keyboard_arrow_up, color: Colors.grey.shade400, size: 20),
+            Icon(Icons.keyboard_arrow_down, color: Colors.grey.shade400, size: 20),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildStatusRow() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        _buildStatusItem("Parked Since: 07:16 PM, 23 Feb"),
+        _buildStatusItem("0m 0s", isDuration: true),
+      ],
+    );
+  }
+
+  Widget _buildStatusItem(String label, {bool isDuration = false}) {
+    return Column(
+      crossAxisAlignment: isDuration ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Color(0xFF2C3E50)),
+        ),
+        Text(
+          isDuration ? "Duration" : "Status",
+          style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildStatsGrid() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          "Today's Stats",
+          style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.grey),
+        ),
+        const SizedBox(height: 16),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            _buildGridItem("0 km", "Distance"),
+            _buildGridItem("0m 0s", "Duration"),
+            _buildGridItem("0 km/hr", "Avg Speed"),
+            _buildGridItem("Plus", "Top Speed", isPlus: true),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildGridItem(String value, String label, {bool isPlus = false}) {
+    return Column(
+      children: [
+        if (isPlus)
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+            decoration: BoxDecoration(
+              gradient: const LinearGradient(colors: [Color(0xFFDBBE8F), Color(0xFFC5A367)]),
+              borderRadius: BorderRadius.circular(4),
+            ),
+            child: const Text(
+              "Plus",
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: Colors.black87),
+            ),
+          )
+        else
+          Text(
+            value,
+            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Color(0xFF2C3E50)),
+          ),
+        const SizedBox(height: 6),
+        Text(label, style: TextStyle(fontSize: 12, color: Colors.grey.shade600)),
+      ],
+    );
+  }
+
+  Widget _buildFuelGauge() {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.6),
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Row(
+        children: [
+          const Icon(Icons.local_gas_station, size: 20, color: Colors.grey),
+          const SizedBox(width: 8),
+          const Text("E", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Row(
+              children: List.generate(
+                8,
+                (i) => Expanded(
+                  child: Container(
+                    height: 10,
+                    margin: const EdgeInsets.symmetric(horizontal: 1.5),
+                    decoration: BoxDecoration(
+                      color: i < 3 ? Colors.grey.shade500 : Colors.grey.shade300,
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(width: 8),
+          const Text("F", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
+          const SizedBox(width: 12),
+          const Text(
+            "0.0 kms more to go",
+            style: TextStyle(fontSize: 13, color: Colors.grey, fontWeight: FontWeight.w600),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildBottomNavIcons() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      children: [
+        _buildNavIcon(Icons.home_outlined, isSelected: true),
+        _buildNavIcon(Icons.route_outlined),
+        _buildNavIcon(Icons.bar_chart_outlined),
+        _buildNavIcon(Icons.person_outline),
+      ],
+    );
+  }
+
+  Widget _buildNavIcon(IconData icon, {bool isSelected = false}) {
+    return Icon(
+      icon, 
+      color: isSelected ? Colors.cyan.shade700 : Colors.grey.shade600, 
+      size: 28
     );
   }
 }

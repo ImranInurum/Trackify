@@ -6,11 +6,11 @@ import 'package:trackify/core/widgets/custom_card.dart';
 
 import '../../../../core/utils/shared_preferences.dart';
 import '../../../../core/widgets/option_tile.dart';
+import '../../../add_vehicle_and_device/add_vehicle/presentation/cubit/vehicle_list_cubit.dart';
+import '../../../add_vehicle_and_device/add_vehicle/presentation/cubit/vehicle_list_state.dart';
 import '../../../auth/presentation/pages/signin_screen.dart';
 import 'my_garage_screen.dart';
 import 'product_screen.dart';
-import '../../../add_vehicle_and_device/add_vehicle/presentation/cubit/vehicle_list_cubit.dart';
-import '../../../add_vehicle_and_device/add_vehicle/presentation/cubit/vehicle_list_state.dart';
 
 class SettingsPlaceholder extends StatefulWidget {
   const SettingsPlaceholder({super.key});
@@ -87,22 +87,23 @@ class _SettingsPlaceholderState extends State<SettingsPlaceholder> {
               }
               if (state is VehicleListLoaded && state.vehicles.isNotEmpty) {
                 return Column(
-                  children:
-                      state.vehicles.take(2).map((vehicle) {
-                        return OptionTile(
-                          leading: Icon(
-                            vehicle.vehicleType?.toLowerCase() == 'bike'
-                                ? Icons.two_wheeler
-                                : Icons.directions_car,
-                            size: 18,
-                            color: Theme.of(context).colorScheme.primaryContainer,
-                          ),
-                          title: "${vehicle.vehicleMaker} ${vehicle.vehicleModel}",
-                          subtitle: vehicle.vehicleNumber ?? "N/A",
-                          showDivider: state.vehicles.indexOf(vehicle) != state.vehicles.take(2).length - 1,
-                          onTap: () => print("Vehicle details tapped"),
-                        );
-                      }).toList(),
+                  children: state.vehicles.take(2).map((vehicle) {
+                    return OptionTile(
+                      leading: Icon(
+                        vehicle.vehicleType?.toLowerCase() == 'bike'
+                            ? Icons.two_wheeler
+                            : Icons.directions_car,
+                        size: 18,
+                        color: Theme.of(context).colorScheme.primaryContainer,
+                      ),
+                      title: "${vehicle.vehicleMaker} ${vehicle.vehicleModel}",
+                      subtitle: vehicle.vehicleNumber ?? "N/A",
+                      showDivider:
+                          state.vehicles.indexOf(vehicle) !=
+                          state.vehicles.take(2).length - 1,
+                      onTap: () => print("Vehicle details tapped"),
+                    );
+                  }).toList(),
                 );
               }
               if (state is VehicleListLoaded && state.vehicles.isEmpty) {
@@ -307,9 +308,7 @@ class _SettingsPlaceholderState extends State<SettingsPlaceholder> {
               final prefs = AppPreference.instance;
               prefs.clearAll();
               Navigator.of(context).pushAndRemoveUntil(
-                MaterialPageRoute(
-                  builder: (context) => const SignInScreen(isFromSignUp: false),
-                ),
+                MaterialPageRoute(builder: (context) => const SignInScreen()),
                 (Route<dynamic> route) => false,
               );
             },

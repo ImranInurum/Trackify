@@ -16,5 +16,6 @@ class ApiConstants {
   static const String logoUrl = "$baseUrl/api/logoUrl";
   static const String socialLogin = "$baseUrl/api/auth/social-login";
   static const String addVehicle = "$baseUrl/api/vehicle/add-vehicle";
-  static String getVehicles(String userId) => "$baseUrl/api/vehicle/get-vehicles?userId=$userId";
+  static String getVehiclesByUserId(String userId) =>
+      "$baseUrl/api/vehicle/get-vehicles?userId=$userId";
 }

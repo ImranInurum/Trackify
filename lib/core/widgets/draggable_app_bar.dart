@@ -4,7 +4,7 @@
 // import 'package:trackify/core/theme/app_colors.dart';
 // import 'package:trackify/core/widgets/option_tile.dart';
 //
-// import '../../feature/map/data/entity/user_device_model.dart';
+// import '../../feature/map/data/entity/user_vehicle_model.dart';
 //
 // class DraggableAppBar extends StatefulWidget {
 //   final List<UserDevices>? devices;
@@ -517,7 +517,7 @@
 // import 'package:trackify/core/theme/app_colors.dart';
 // import 'package:trackify/core/widgets/option_tile.dart';
 //
-// import '../../feature/map/data/entity/user_device_model.dart';
+// import '../../feature/map/data/entity/user_vehicle_model.dart';
 //
 // class DraggableAppBar extends StatefulWidget {
 //   final List<UserDevices>? devices;
@@ -898,7 +898,7 @@
 // import 'package:trackify/core/theme/app_colors.dart';
 // import 'package:trackify/core/widgets/option_tile.dart';
 //
-// import '../../feature/map/data/entity/user_device_model.dart';
+// import '../../feature/map/data/entity/user_vehicle_model.dart';
 //
 // class DraggableAppBar extends StatefulWidget {
 //   final List<UserDevices>? devices;
@@ -1345,16 +1345,14 @@
 import 'package:flutter/material.dart';
 import 'package:trackify/core/constants/app_images.dart';
 import 'package:trackify/core/theme/app_colors.dart';
-import 'package:trackify/core/widgets/option_tile.dart';
-
-import '../../feature/map/data/entity/user_device_model.dart';
+import 'package:trackify/feature/map/data/entity/user_vehicles.dart';
 
 class DraggableAppBar extends StatefulWidget {
-  final List<UserDevices>? devices;
+  final List<Vehicles>? vehicles;
   final Color? backgroundColor;
   final VoidCallback? onAddVehicle;
-  final ValueChanged<UserDevices>? onDeviceTap;
-  final UserDevices? selectedDevice;
+  final ValueChanged<Vehicles>? onDeviceTap;
+  final Vehicles? selectedDevice;
 
   /// Shown in collapsed mode on the selected device row
   final Widget? collapsedTrailing;
@@ -1364,7 +1362,7 @@ class DraggableAppBar extends StatefulWidget {
 
   const DraggableAppBar({
     super.key,
-    this.devices,
+    this.vehicles,
     this.backgroundColor,
     this.onAddVehicle,
     this.onDeviceTap,
@@ -1383,11 +1381,11 @@ class _DraggableAppBarState extends State<DraggableAppBar>
   late final Animation<double> _expandFactor;
   late final Animation<double> _overlayOpacity;
 
-  List<UserDevices> get _devices => widget.devices ?? [];
+  List<Vehicles> get _vehicles => widget.vehicles ?? [];
 
-  UserDevices? get _selectedDevice {
+  Vehicles? get _selectedDevice {
     if (widget.selectedDevice != null) return widget.selectedDevice;
-    if (_devices.isNotEmpty) return _devices.first;
+    if (_vehicles.isNotEmpty) return _vehicles.first;
     return null;
   }
 
@@ -1530,7 +1528,7 @@ class _DraggableAppBarState extends State<DraggableAppBar>
                                             padding: const EdgeInsets.fromLTRB(
                                               16,
                                               10,
-                                              16,
+                                              4,
                                               8,
                                             ),
                                             child: Row(
@@ -1540,7 +1538,7 @@ class _DraggableAppBarState extends State<DraggableAppBar>
                                                     'My Garage',
                                                     style: TextStyle(
                                                       fontSize: 16,
-                                                      fontWeight: FontWeight.w500,
+                                                      fontWeight: FontWeight.w600,
                                                       color: Colors.black,
                                                     ),
                                                   ),
@@ -1554,85 +1552,10 @@ class _DraggableAppBarState extends State<DraggableAppBar>
                                       ),
 
                                       if (selected != null)
-                                        Container(
-                                          width: double.infinity,
-                                          padding: const EdgeInsets.symmetric(
-                                            horizontal: 16,
-                                            vertical: 8,
-                                          ),
-                                          decoration: BoxDecoration(
-                                            color: _isExpanded
-                                                ? const Color(0xFFDDE6EF)
-                                                : Colors.transparent,
-                                          ),
-                                          child: Row(
-                                            children: [
-                                              SizedBox(
-                                                width: 44,
-                                                height: 44,
-                                                child: Center(
-                                                  child: Image.asset(
-                                                    AppImages.bikeImage,
-                                                    height: 150,
-                                                    width: 150,
-                                                  ),
-                                                ),
-                                              ),
-                                              const SizedBox(width: 12),
-                                              Expanded(
-                                                child: Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: [
-                                                    Text(
-                                                      selected.deviceName
-                                                                  ?.trim()
-                                                                  .isNotEmpty ==
-                                                              true
-                                                          ? selected.deviceName!
-                                                          : 'Unnamed Device',
-                                                      maxLines: 1,
-                                                      overflow: TextOverflow.ellipsis,
-                                                      style: const TextStyle(
-                                                        fontSize: 16,
-                                                        fontWeight: FontWeight.w700,
-                                                        color: Colors.black,
-                                                      ),
-                                                    ),
-                                                    Row(
-                                                      children: [
-                                                        Flexible(
-                                                          child: Text(
-                                                            selected.imei ?? '---',
-                                                            maxLines: 1,
-                                                            overflow:
-                                                                TextOverflow.ellipsis,
-                                                            style: const TextStyle(
-                                                              fontSize: 12,
-                                                              color: Color(0xFF5E636A),
-                                                              fontWeight: FontWeight.w500,
-                                                            ),
-                                                          ),
-                                                        ),
-                                                        const SizedBox(width: 8),
-                                                        const Text(
-                                                          'Lite 4G',
-                                                          style: TextStyle(
-                                                            fontSize: 10,
-                                                            color: AppColors.primaryLight,
-                                                            fontWeight: FontWeight.w600,
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                              if (!_isExpanded &&
-                                                  widget.collapsedTrailing != null)
-                                                widget.collapsedTrailing!,
-                                            ],
-                                          ),
+                                        _buildVehicleRow(
+                                          selected,
+                                          isHeaderRow: true,
+                                          isHighlighted: _isExpanded,
                                         ),
 
                                       ClipRect(
@@ -1642,119 +1565,116 @@ class _DraggableAppBarState extends State<DraggableAppBar>
                                           child: Column(
                                             mainAxisSize: MainAxisSize.min,
                                             children: [
+                                              if (_vehicles.length > 1)
+                                                ListView.builder(
+                                                  shrinkWrap: true,
+                                                  physics:
+                                                      const NeverScrollableScrollPhysics(),
+                                                  padding: EdgeInsets.zero,
+                                                  itemCount: _vehicles.length,
+                                                  itemBuilder: (context, index) {
+                                                    final device = _vehicles[index];
+
+                                                    if (device.vehicleNumber ==
+                                                        selected?.vehicleNumber) {
+                                                      return const SizedBox.shrink(); // skip selected as it's at the top
+                                                    }
+
+                                                    return _buildVehicleRow(
+                                                      device,
+                                                      isHeaderRow: false,
+                                                      isHighlighted: false,
+                                                    );
+                                                  },
+                                                ),
+
                                               if (widget.onAddVehicle != null)
                                                 InkWell(
                                                   onTap: widget.onAddVehicle,
                                                   child: const Padding(
-                                                    padding: EdgeInsets.fromLTRB(
-                                                      18,
-                                                      4,
-                                                      18,
-                                                      0,
+                                                    padding: EdgeInsets.symmetric(
+                                                      horizontal: 18,
+                                                      vertical: 16,
                                                     ),
                                                     child: Row(
                                                       children: [
                                                         Icon(
                                                           Icons.add_box_outlined,
                                                           color: AppColors.primaryLight,
-                                                          size: 16,
+                                                          size: 20,
                                                         ),
-                                                        SizedBox(width: 4),
+                                                        SizedBox(width: 8),
                                                         Text(
                                                           'Add New Vehicle',
                                                           style: TextStyle(
                                                             color: AppColors.primaryLight,
-                                                            fontSize: 12,
-                                                            fontWeight: FontWeight.w700,
+                                                            fontSize: 14,
+                                                            fontWeight: FontWeight.w600,
                                                           ),
                                                         ),
                                                       ],
                                                     ),
                                                   ),
                                                 ),
-                                              if (_devices.length > 1)
-                                                ListView.separated(
-                                                  shrinkWrap: true,
-                                                  physics:
-                                                      const NeverScrollableScrollPhysics(),
-                                                  padding: const EdgeInsets.symmetric(
-                                                    horizontal: 12,
-                                                  ),
-                                                  itemCount: _devices.length,
-                                                  separatorBuilder: (_, __) =>
-                                                      const Divider(height: 1),
-                                                  itemBuilder: (context, index) {
-                                                    final device = _devices[index];
-
-                                                    return OptionTile(
-                                                      leading: const Icon(
-                                                        Icons.motorcycle,
-                                                        size: 28,
-                                                        color: AppColors.primaryLight,
-                                                      ),
-                                                      title:
-                                                          device.deviceName ??
-                                                          'Unnamed Device',
-                                                      subtitle: device.imei ?? '---',
-                                                      trailing: const SizedBox.shrink(),
-                                                      showDivider: false,
-                                                      onTap: () {
-                                                        widget.onDeviceTap?.call(device);
-                                                        _collapse();
-                                                      },
-                                                    );
-                                                  },
-                                                ),
                                             ],
                                           ),
                                         ),
                                       ),
-                                    ],
-                                  ),
-                                ),
 
-                                GestureDetector(
-                                  onTap: _toggle,
-                                  onVerticalDragUpdate: _handleVerticalDragUpdate,
-                                  onVerticalDragEnd: _handleVerticalDragEnd,
-                                  behavior: HitTestBehavior.opaque,
-                                  child: Container(
-                                    width: double.infinity,
-                                    padding: const EdgeInsets.only(top: 0, bottom: 4),
-                                    alignment: Alignment.center,
-                                    decoration: BoxDecoration(
-                                      border: Border(
-                                        bottom: BorderSide(
-                                          color: Colors.grey,
-                                          width: 0.25,
-                                        ),
-                                      ),
-                                    ),
-                                    child: AnimatedSwitcher(
-                                      duration: const Duration(milliseconds: 180),
-                                      transitionBuilder: (child, animation) {
-                                        return FadeTransition(
-                                          opacity: animation,
-                                          child: child,
-                                        );
-                                      },
-                                      child: _isExpanded
-                                          ? Image.asset(
-                                              AppImages.arrowUpIcon,
-                                              height: 60,
-                                              width: 80,
-                                              key: const ValueKey('expanded_handle'),
-                                            )
-                                          : Container(
-                                              key: const ValueKey('collapsed_handle'),
-                                              width: 55,
-                                              height: 2.5,
-                                              decoration: BoxDecoration(
-                                                color: Colors.black,
-                                                borderRadius: BorderRadius.circular(24),
+                                      GestureDetector(
+                                        onTap: _toggle,
+                                        onVerticalDragUpdate: _handleVerticalDragUpdate,
+                                        onVerticalDragEnd: _handleVerticalDragEnd,
+                                        behavior: HitTestBehavior.opaque,
+                                        child: Container(
+                                          width: double.infinity,
+                                          padding: const EdgeInsets.only(
+                                            top: 0,
+                                            bottom: 4,
+                                          ),
+                                          alignment: Alignment.center,
+                                          decoration: BoxDecoration(
+                                            border: Border(
+                                              bottom: BorderSide(
+                                                color: Colors.grey,
+                                                width: 0.25,
                                               ),
                                             ),
-                                    ),
+                                          ),
+                                          child: AnimatedSwitcher(
+                                            duration: const Duration(milliseconds: 180),
+                                            transitionBuilder: (child, animation) {
+                                              return FadeTransition(
+                                                opacity: animation,
+                                                child: child,
+                                              );
+                                            },
+                                            child: _isExpanded
+                                                ? Image.asset(
+                                                    AppImages.arrowUpIcon,
+                                                    height: 60,
+                                                    width: 80,
+                                                    key: const ValueKey(
+                                                      'expanded_handle',
+                                                    ),
+                                                  )
+                                                : Container(
+                                                    key: const ValueKey(
+                                                      'collapsed_handle',
+                                                    ),
+                                                    width: 55,
+                                                    height: 2.5,
+                                                    decoration: BoxDecoration(
+                                                      color: Colors.black,
+                                                      borderRadius: BorderRadius.circular(
+                                                        24,
+                                                      ),
+                                                    ),
+                                                  ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
                               ],
@@ -1801,6 +1721,105 @@ class _DraggableAppBarState extends State<DraggableAppBar>
           ],
         );
       },
+    );
+  }
+
+  Widget _buildVehicleRow(
+    Vehicles device, {
+    required bool isHeaderRow,
+    required bool isHighlighted,
+  }) {
+    return InkWell(
+      onTap: isHeaderRow
+          ? null
+          : () {
+              widget.onDeviceTap?.call(device);
+              _collapse();
+            },
+      child: Container(
+        padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+        color: isHighlighted ? const Color(0xFFF0F4F8) : Colors.transparent,
+        child: Row(
+          children: [
+            // Image
+            Image.asset(AppImages.bikeImage, height: 60, width: 60, fit: BoxFit.contain),
+            const SizedBox(width: 6),
+
+            // Content
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "${device.vehicleMaker} ${device.vehicleModel}",
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w700,
+                      color: Colors.black87,
+                    ),
+                  ),
+                  // const SizedBox(height: 2),
+                  Row(
+                    children: [
+                      Text(
+                        device.vehicleNumber ?? '---',
+                        style: const TextStyle(
+                          fontSize: 13,
+                          color: Colors.grey,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      // Tag
+                      _buildTag(device),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+
+            // Right Side info / icon
+            if (!_isExpanded && isHeaderRow)
+              widget.collapsedTrailing ??
+                  const Icon(Icons.notifications_none_outlined, color: Colors.black87)
+            else if (_isExpanded && isHeaderRow)
+              const Text(
+                '321 days left',
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w700,
+                  color: Colors.green,
+                ),
+              )
+            else if (_isExpanded && !isHeaderRow)
+              Row(
+                children: const [
+                  Icon(Icons.shield, color: Colors.orange, size: 14),
+                  SizedBox(width: 4),
+                  Text(
+                    'Buy Ajjas Device',
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.orange,
+                    ),
+                  ),
+                ],
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTag(Vehicles device) {
+    return Text(
+      "${device.fuelType}", // Default for now
+      style: TextStyle(
+        fontSize: 11,
+        color: AppColors.primaryLight,
+        fontWeight: FontWeight.w700,
+      ),
     );
   }
 
