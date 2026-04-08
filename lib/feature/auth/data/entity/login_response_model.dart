@@ -34,7 +34,7 @@ class User {
   User({this.id, this.name, this.email, this.role});
 
   User.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
+    id = json['id'] ?? json['_id'];
     name = json['name'];
     email = json['email'];
     role = json['role'];
@@ -42,10 +42,10 @@ class User {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
-    data['id'] = this.id;
-    data['name'] = this.name;
-    data['email'] = this.email;
-    data['role'] = this.role;
+    data['_id'] = id;
+    data['name'] = name;
+    data['email'] = email;
+    data['role'] = role;
     return data;
   }
 }

@@ -9,6 +9,8 @@ import '../../../../core/widgets/option_tile.dart';
 import '../../../auth/presentation/pages/signin_screen.dart';
 import 'my_garage_screen.dart';
 import 'product_screen.dart';
+import '../../../add_vehicle_and_device/add_vehicle/presentation/cubit/vehicle_list_cubit.dart';
+import '../../../add_vehicle_and_device/add_vehicle/presentation/cubit/vehicle_list_state.dart';
 
 class SettingsPlaceholder extends StatefulWidget {
   const SettingsPlaceholder({super.key});
@@ -22,6 +24,7 @@ class _SettingsPlaceholderState extends State<SettingsPlaceholder> {
   void initState() {
     super.initState();
     context.read<AppCubit>().loadUserSession();
+    context.read<VehicleListCubit>().fetchVehicles();
   }
 
   @override
@@ -72,16 +75,52 @@ class _SettingsPlaceholderState extends State<SettingsPlaceholder> {
       elevation: 0.7,
       child: Column(
         children: [
-          OptionTile(
-            leading: Icon(
-              Icons.local_taxi_sharp,
-              size: 18,
-              color: Theme.of(context).colorScheme.primaryContainer,
-            ),
-            title: "Yamaha MT-15",
-            subtitle: "KA-05-AB-1234",
-            showDivider: false,
-            onTap: () => print("Bike details tapped"),
+          BlocBuilder<VehicleListCubit, VehicleListState>(
+            builder: (context, state) {
+              if (state is VehicleListLoading) {
+                return const Center(
+                  child: Padding(
+                    padding: EdgeInsets.all(12.0),
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  ),
+                );
+              }
+              if (state is VehicleListLoaded && state.vehicles.isNotEmpty) {
+                return Column(
+                  children:
+                      state.vehicles.take(2).map((vehicle) {
+                        return OptionTile(
+                          leading: Icon(
+                            vehicle.vehicleType?.toLowerCase() == 'bike'
+                                ? Icons.two_wheeler
+                                : Icons.directions_car,
+                            size: 18,
+                            color: Theme.of(context).colorScheme.primaryContainer,
+                          ),
+                          title: "${vehicle.vehicleMaker} ${vehicle.vehicleModel}",
+                          subtitle: vehicle.vehicleNumber ?? "N/A",
+                          showDivider: state.vehicles.indexOf(vehicle) != state.vehicles.take(2).length - 1,
+                          onTap: () => print("Vehicle details tapped"),
+                        );
+                      }).toList(),
+                );
+              }
+              if (state is VehicleListLoaded && state.vehicles.isEmpty) {
+                return const SizedBox.shrink();
+              }
+              // Default fallback if loading fails or initial
+              return OptionTile(
+                leading: Icon(
+                  Icons.local_taxi_sharp,
+                  size: 18,
+                  color: Theme.of(context).colorScheme.primaryContainer,
+                ),
+                title: "Yamaha MT-15",
+                subtitle: "KA-05-AB-1234",
+                showDivider: false,
+                onTap: () => print("Bike details tapped"),
+              );
+            },
           ),
           const SizedBox(height: 12),
           // Buy Device Card

@@ -5,6 +5,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../../core/theme/app_colors.dart';
 import '../../../../onboarding/presentation/cubit/splash_cubit.dart';
 import '../../../../onboarding/presentation/cubit/splash_state.dart';
+import '../cubit/add_vehicle_cubit.dart';
+import '../cubit/add_vehicle_state.dart';
+import '../../../../../core/utils/shared_preferences.dart';
+import '../../../../../app/app_navigation.dart';
 
 // ─── Data models ─────────────────────────────────────────────────────────────
 
@@ -106,7 +110,7 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
                 color: selected ? active : inactive,
                 width: selected ? 2 : 1.5,
               ),
-              color: selected ? active.withOpacity(0.06) : Colors.transparent,
+              color: selected ? active.withValues(alpha: 0.06) : Colors.transparent,
             ),
             child: Icon(icon, color: selected ? active : inactive, size: 28),
           ),
@@ -149,7 +153,7 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
                 color: selected ? active : inactive,
                 width: selected ? 2 : 1.5,
               ),
-              color: selected ? active.withOpacity(0.06) : Colors.transparent,
+              color: selected ? active.withValues(alpha: 0.06) : Colors.transparent,
             ),
             child: Icon(icon, color: selected ? active : inactive, size: 28),
           ),
@@ -255,192 +259,254 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
           ),
         ),
       ),
-      body: Form(
-        key: _formKey,
-        child: Column(
-          children: [
-            Expanded(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // ── Logo ─────────────────────────────────────────────────
-                    BlocBuilder<SplashCubit, SplashState>(
-                      builder: (context, splashState) =>
-                          _buildLogo(splashState, colorScheme),
-                    ),
+      body: BlocListener<AddVehicleCubit, AddVehicleState>(
+        listener: (context, state) {
+          if (state is AddVehicleSuccess) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Vehicle added successfully!'),
+                backgroundColor: Colors.green,
+              ),
+            );
+            // Mark setup as complete in SharedPreferences
+            AppPreference.instance.setBool(key: AppPreference.KEY_SETUP_COMPLETE, value: true);
+            
+            if (context.mounted) {
+              Navigator.of(context).pushAndRemoveUntil(
+                MaterialPageRoute(builder: (context) => const AppNavigation()),
+                (route) => false,
+              );
+            }
+          } else if (state is AddVehicleError) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(state.message),
+                backgroundColor: Colors.red,
+              ),
+            );
+          }
+        },
+        child: Form(
+          key: _formKey,
+          child: Column(
+            children: [
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // ── Logo ─────────────────────────────────────────────────
+                      BlocBuilder<SplashCubit, SplashState>(
+                        builder: (context, splashState) =>
+                            _buildLogo(splashState, colorScheme),
+                      ),
 
-                    const SizedBox(height: 8),
+                      const SizedBox(height: 8),
 
-                    // ── Vehicle Type ──────────────────────────────────────────
-                    _sectionLabel('Vehicle Type'),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        _buildVehicleTypeItem(
-                          type: VehicleType.twoWheeler,
-                          icon: Icons.two_wheeler_rounded,
-                          label: 'Two Wheeler',
-                        ),
-                        _buildVehicleTypeItem(
-                          type: VehicleType.fourWheeler,
-                          icon: Icons.directions_car_rounded,
-                          label: 'Four Wheeler',
-                        ),
-                        _buildVehicleTypeItem(
-                          type: VehicleType.autoRickshaw,
-                          icon: Icons.electric_rickshaw_rounded,
-                          label: 'Auto Rickshaw',
-                        ),
-                        _buildVehicleTypeItem(
-                          type: VehicleType.heavyVehicle,
-                          icon: Icons.local_shipping_rounded,
-                          label: 'Heavy Vehicle',
-                        ),
-                      ],
-                    ),
-
-                    const SizedBox(height: 24),
-
-                    // ── Fuel Type ─────────────────────────────────────────────
-                    _sectionLabel('Fuel Type'),
-                    Row(
-                      children: [
-                        _buildFuelTypeItem(
-                          type: FuelType.petrol,
-                          icon: Icons.water_drop_rounded,
-                          label: 'Petrol',
-                        ),
-                        const SizedBox(width: 24),
-                        _buildFuelTypeItem(
-                          type: FuelType.electric,
-                          icon: Icons.bolt_rounded,
-                          label: 'Electric',
-                        ),
-                      ],
-                    ),
-
-                    const SizedBox(height: 24),
-
-                    // ── Vehicle Make ──────────────────────────────────────────
-                    _buildDropdown(
-                      label: 'Vehicle Make',
-                      value: _selectedMake,
-                      items: _vehicleMakes,
-                      onChanged: (val) => setState(() {
-                        _selectedMake = val;
-                        _selectedModel = null; // reset model when make changes
-                      }),
-                    ),
-
-                    const SizedBox(height: 20),
-
-                    // ── Vehicle Model ─────────────────────────────────────────
-                    _buildDropdown(
-                      label: 'Vehicle Model',
-                      value: _selectedModel,
-                      items: _selectedMake != null
-                          ? (_vehicleModels[_selectedMake] ?? [])
-                          : [],
-                      onChanged: (val) => setState(() => _selectedModel = val),
-                    ),
-
-                    const SizedBox(height: 20),
-
-                    // ── Vehicle Number ────────────────────────────────────────
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          'Vehicle number',
-                          style: TextStyle(
-                            fontSize: 13,
-                            color: AppColors.secondaryLight,
-                            fontWeight: FontWeight.w500,
+                      // ── Vehicle Type ──────────────────────────────────────────
+                      _sectionLabel('Vehicle Type'),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          _buildVehicleTypeItem(
+                            type: VehicleType.twoWheeler,
+                            icon: Icons.two_wheeler_rounded,
+                            label: 'Two Wheeler',
                           ),
-                        ),
-                        const SizedBox(height: 6),
-                        TextFormField(
-                          controller: _vehicleNumberController,
-                          textCapitalization: TextCapitalization.characters,
-                          style: const TextStyle(
-                            fontSize: 14,
-                            color: AppColors.textPrimaryLight,
-                            letterSpacing: 1.2,
+                          _buildVehicleTypeItem(
+                            type: VehicleType.fourWheeler,
+                            icon: Icons.directions_car_rounded,
+                            label: 'Four Wheeler',
                           ),
-                          decoration: InputDecoration(
-                            hintText: 'e.g. MP46MX0743',
-                            hintStyle: const TextStyle(
-                              color: Color(0xFFAAAAAA),
+                          _buildVehicleTypeItem(
+                            type: VehicleType.autoRickshaw,
+                            icon: Icons.electric_rickshaw_rounded,
+                            label: 'Auto Rickshaw',
+                          ),
+                          _buildVehicleTypeItem(
+                            type: VehicleType.heavyVehicle,
+                            icon: Icons.local_shipping_rounded,
+                            label: 'Heavy Vehicle',
+                          ),
+                        ],
+                      ),
+
+                      const SizedBox(height: 24),
+
+                      // ── Fuel Type ─────────────────────────────────────────────
+                      _sectionLabel('Fuel Type'),
+                      Row(
+                        children: [
+                          _buildFuelTypeItem(
+                            type: FuelType.petrol,
+                            icon: Icons.water_drop_rounded,
+                            label: 'Petrol',
+                          ),
+                          const SizedBox(width: 24),
+                          _buildFuelTypeItem(
+                            type: FuelType.electric,
+                            icon: Icons.bolt_rounded,
+                            label: 'Electric',
+                          ),
+                        ],
+                      ),
+
+                      const SizedBox(height: 24),
+
+                      // ── Vehicle Make ──────────────────────────────────────────
+                      _buildDropdown(
+                        label: 'Vehicle Make',
+                        value: _selectedMake,
+                        items: _vehicleMakes,
+                        onChanged: (val) => setState(() {
+                          _selectedMake = val;
+                          _selectedModel = null; // reset model when make changes
+                        }),
+                      ),
+
+                      const SizedBox(height: 20),
+
+                      // ── Vehicle Model ─────────────────────────────────────────
+                      _buildDropdown(
+                        label: 'Vehicle Model',
+                        value: _selectedModel,
+                        items: _selectedMake != null
+                            ? (_vehicleModels[_selectedMake] ?? [])
+                            : [],
+                        onChanged: (val) => setState(() => _selectedModel = val),
+                      ),
+
+                      const SizedBox(height: 20),
+
+                      // ── Vehicle Number ────────────────────────────────────────
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'Vehicle number',
+                            style: TextStyle(
+                              fontSize: 13,
+                              color: AppColors.secondaryLight,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          const SizedBox(height: 6),
+                          TextFormField(
+                            controller: _vehicleNumberController,
+                            textCapitalization: TextCapitalization.characters,
+                            style: const TextStyle(
                               fontSize: 14,
+                              color: AppColors.textPrimaryLight,
+                              letterSpacing: 1.2,
                             ),
-                            filled: true,
-                            fillColor: Colors.white,
-                            contentPadding: const EdgeInsets.symmetric(
-                              horizontal: 14,
-                              vertical: 14,
-                            ),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(8),
-                              borderSide: const BorderSide(color: Color(0xFFE0E0E0)),
-                            ),
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(8),
-                              borderSide: const BorderSide(color: Color(0xFFE0E0E0)),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(8),
-                              borderSide: const BorderSide(
-                                color: AppColors.secondaryLight,
-                                width: 1.5,
+                            decoration: InputDecoration(
+                              hintText: 'e.g. MP46MX0743',
+                              hintStyle: const TextStyle(
+                                color: Color(0xFFAAAAAA),
+                                fontSize: 14,
+                              ),
+                              filled: true,
+                              fillColor: Colors.white,
+                              contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 14,
+                                vertical: 14,
+                              ),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8),
+                                borderSide: const BorderSide(color: Color(0xFFE0E0E0)),
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8),
+                                borderSide: const BorderSide(color: Color(0xFFE0E0E0)),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8),
+                                borderSide: const BorderSide(
+                                  color: AppColors.secondaryLight,
+                                  width: 1.5,
+                                ),
                               ),
                             ),
+                            validator: (val) {
+                              if (val == null || val.trim().isEmpty) {
+                                return 'Please enter vehicle number';
+                              }
+                              return null;
+                            },
                           ),
-                          validator: (val) {
-                            if (val == null || val.trim().isEmpty) {
-                              return 'Please enter vehicle number';
-                            }
-                            return null;
-                          },
+                        ],
+                      ),
+
+                      const SizedBox(height: 32),
+                    ],
+                  ),
+                ),
+              ),
+
+              // ── Submit Button ─────────────────────────────────────────────────
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20, 0, 20, 28),
+                child: SizedBox(
+                  width: double.infinity,
+                  height: 42,
+                  child: BlocBuilder<AddVehicleCubit, AddVehicleState>(
+                    builder: (context, state) {
+                      final isLoading = state is AddVehicleLoading;
+                      return ElevatedButton(
+                        onPressed: isLoading
+                            ? null
+                            : () {
+                                if (_formKey.currentState?.validate() ?? false) {
+                                  final vType = switch (_selectedVehicleType) {
+                                    VehicleType.twoWheeler => 'Bike',
+                                    VehicleType.fourWheeler => 'Car',
+                                    VehicleType.autoRickshaw => 'Auto Rickshaw',
+                                    VehicleType.heavyVehicle => 'Heavy Vehicle',
+                                  };
+
+                                  final fType = switch (_selectedFuelType) {
+                                    FuelType.petrol => 'Petrol',
+                                    FuelType.electric => 'Electric',
+                                  };
+
+                                  context.read<AddVehicleCubit>().addVehicle(
+                                        vehicleType: vType,
+                                        fuelType: fType,
+                                        vehicleMaker: _selectedMake ?? '',
+                                        vehicleNumber: _vehicleNumberController.text.trim(),
+                                        vehicleModel: _selectedModel ?? '',
+                                      );
+                                }
+                              },
+                        style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(vertical: 0),
+                          backgroundColor: AppColors.secondaryLight,
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                          elevation: 0,
+                          disabledBackgroundColor: AppColors.secondaryLight.withValues(alpha: 0.6),
                         ),
-                      ],
-                    ),
-
-                    const SizedBox(height: 32),
-                  ],
-                ),
-              ),
-            ),
-
-            // ── Submit Button ─────────────────────────────────────────────────
-            Padding(
-              padding: const EdgeInsets.fromLTRB(20, 0, 20, 28),
-              child: SizedBox(
-                width: double.infinity,
-                height: 42,
-                child: ElevatedButton(
-                  onPressed: () {
-                    if (_formKey.currentState?.validate() ?? false) {
-                      // TODO: Wire to AddVehicleCubit API call
-                    }
-                  },
-                  style: ElevatedButton.styleFrom(
-                    padding: EdgeInsets.symmetric(vertical: 0),
-
-                    backgroundColor: AppColors.secondaryLight,
-                    foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                    elevation: 0,
-                  ),
-                  child: const Text(
-                    'Add Vehicle/Device',
-                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+                        child: isLoading
+                            ? const SizedBox(
+                                height: 20,
+                                width: 20,
+                                child: CircularProgressIndicator(
+                                  color: Colors.white,
+                                  strokeWidth: 2,
+                                ),
+                              )
+                            : const Text(
+                                'Add Vehicle/Device',
+                                style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+                              ),
+                      );
+                    },
                   ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

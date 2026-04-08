@@ -19,3 +19,12 @@ class AddVehicleError extends AddVehicleState {
   @override
   List<Object?> get props => [message];
 }
+
+class AddVehicleSuccess extends AddVehicleState {
+  final dynamic response;
+
+  const AddVehicleSuccess(this.response);
+
+  @override
+  List<Object?> get props => [response];
+}
