@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:trackify/l10n/app_localizations.dart';
 
-import '../../../map/presentation/cubit/map_cubit.dart';
-import '../../../map/presentation/cubit/map_state.dart';
+import '../../../add_vehicle_and_device/add_vehicle/presentation/cubit/vehicle_list_cubit.dart';
+import '../../../add_vehicle_and_device/add_vehicle/presentation/cubit/vehicle_list_state.dart';
 
 class MyGarageScreen extends StatefulWidget {
   const MyGarageScreen({super.key});
@@ -16,10 +16,10 @@ class _MyGarageScreenState extends State<MyGarageScreen> {
   @override
   void initState() {
     super.initState();
-    // Fetch user devices
+    // Fetch user vehicles
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
-        context.read<MapCubit>().fetchDevices({});
+        context.read<VehicleListCubit>().fetchVehicles();
       }
     });
   }
@@ -32,11 +32,11 @@ class _MyGarageScreenState extends State<MyGarageScreen> {
         title: Text(l10n.myGarage),
         centerTitle: true,
       ),
-      body: BlocBuilder<MapCubit, MapState>(
+      body: BlocBuilder<VehicleListCubit, VehicleListState>(
         builder: (context, state) {
-          if (state is MapLoading) {
+          if (state is VehicleListLoading) {
             return const Center(child: CircularProgressIndicator());
-          } else if (state is MapError) {
+          } else if (state is VehicleListError) {
             return Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -48,16 +48,16 @@ class _MyGarageScreenState extends State<MyGarageScreen> {
                   ),
                   const SizedBox(height: 16),
                   ElevatedButton(
-                    onPressed: () => context.read<MapCubit>().fetchDevices({}),
+                    onPressed: () => context.read<VehicleListCubit>().fetchVehicles(),
                     child: Text(l10n.retry),
                   ),
                 ],
               ),
             );
-          } else if (state is MapLoaded) {
-            final devices = state.deviceList.devices ?? [];
+          } else if (state is VehicleListLoaded) {
+            final vehicles = state.vehicles;
 
-            if (devices.isEmpty) {
+            if (vehicles.isEmpty) {
               return Center(
                 child: Text(l10n.noVehiclesInGarage),
               );
@@ -65,9 +65,9 @@ class _MyGarageScreenState extends State<MyGarageScreen> {
 
             return ListView.builder(
               padding: const EdgeInsets.all(16),
-              itemCount: devices.length,
+              itemCount: vehicles.length,
               itemBuilder: (context, index) {
-                final device = devices[index];
+                final vehicle = vehicles[index];
                 return Card(
                   elevation: 2,
                   shape: RoundedRectangleBorder(
@@ -91,7 +91,9 @@ class _MyGarageScreenState extends State<MyGarageScreen> {
                                 shape: BoxShape.circle,
                               ),
                               child: Icon(
-                                Icons.directions_car,
+                                vehicle.vehicleType?.toLowerCase() == 'bike'
+                                    ? Icons.two_wheeler
+                                    : Icons.directions_car,
                                 color: Theme.of(context).colorScheme.primary,
                                 size: 28,
                               ),
@@ -102,7 +104,7 @@ class _MyGarageScreenState extends State<MyGarageScreen> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    device.deviceName ?? l10n.unknownVehicle,
+                                    "${vehicle.vehicleMaker} ${vehicle.vehicleModel}",
                                     style: Theme.of(context)
                                         .textTheme
                                         .titleLarge
@@ -112,7 +114,7 @@ class _MyGarageScreenState extends State<MyGarageScreen> {
                                   ),
                                   const SizedBox(height: 4),
                                   Text(
-                                    l10n.imeiLabel(device.imei ?? 'N/A'),
+                                    vehicle.vehicleNumber ?? 'N/A',
                                     style: Theme.of(context)
                                         .textTheme
                                         .bodyMedium
@@ -146,10 +148,10 @@ class _MyGarageScreenState extends State<MyGarageScreen> {
                             ),
                             _buildStatusInfo(
                               context,
-                              title: l10n.subscription,
-                              value: l10n.proPlan,
-                              icon: Icons.star,
-                              color: Colors.amber,
+                              title: "Fuel Type",
+                              value: vehicle.fuelType ?? "N/A",
+                              icon: Icons.local_gas_station,
+                              color: Colors.blue,
                             ),
                           ],
                         ),

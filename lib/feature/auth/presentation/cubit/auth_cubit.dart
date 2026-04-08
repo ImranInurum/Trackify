@@ -31,6 +31,7 @@ class AuthCubit extends Cubit<AuthState> {
 
         final prefs = AppPreference.instance;
         await prefs.set(key: AppPreference.KEY_TOKEN, value: user.token ?? "");
+        await prefs.set(key: AppPreference.KEY_USER_ID, value: user.user?.id ?? "");
         await prefs.set(
           key: AppPreference.KEY_USER_DETAILS,
           value: jsonEncode(user.user?.toJson()),
@@ -128,6 +129,8 @@ class AuthCubit extends Cubit<AuthState> {
             final prefs = AppPreference.instance;
             await prefs.set(
                 key: AppPreference.KEY_TOKEN, value: user.token ?? "");
+            await prefs.set(
+                key: AppPreference.KEY_USER_ID, value: user.user?.id ?? "");
             await prefs.set(
               key: AppPreference.KEY_USER_DETAILS,
               value: jsonEncode(user.user?.toJson()),
