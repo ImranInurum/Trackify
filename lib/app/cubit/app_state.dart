@@ -2,6 +2,7 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 
+import '../../core/theme/models/app_theme_model.dart';
 import '../../feature/auth/data/entity/login_response_model.dart';
 
 class AppState extends Equatable {
@@ -12,6 +13,7 @@ class AppState extends Equatable {
   final User? userData;
   final bool isSocketConnected;
   final List<Map<String, dynamic>> devices;
+  final AppThemeModel? dynamicTheme;
 
   const AppState({
     this.themeMode = ThemeMode.light,
@@ -21,6 +23,7 @@ class AppState extends Equatable {
     this.userData,
     this.isSocketConnected = false,
     this.devices = const [],
+    this.dynamicTheme,
   });
 
   AppState copyWith({
@@ -31,6 +34,7 @@ class AppState extends Equatable {
     User? userData,
     bool? isSocketConnected,
     List<Map<String, dynamic>>? devices,
+    AppThemeModel? dynamicTheme,
   }) {
     return AppState(
       themeMode: themeMode ?? this.themeMode,
@@ -40,6 +44,7 @@ class AppState extends Equatable {
       userData: userData ?? this.userData,
       isSocketConnected: isSocketConnected ?? this.isSocketConnected,
       devices: devices ?? this.devices,
+      dynamicTheme: dynamicTheme ?? this.dynamicTheme,
     );
   }
 
@@ -52,5 +57,6 @@ class AppState extends Equatable {
     userData,
     isSocketConnected,
     devices,
+    dynamicTheme,
   ];
 }

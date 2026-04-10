@@ -3,8 +3,8 @@
 // import 'package:flutter/material.dart';
 // import 'package:trackify/core/theme/app_colors.dart';
 // import 'package:trackify/core/widgets/option_tile.dart';
-//
-// import '../../feature/map/data/entity/user_device_model.dart';
+import '../../feature/add_vehicle_and_device/add_vehicle/data/models/vehicle_list_model.dart';
+import '../../feature/map/data/entity/user_device_model.dart';
 //
 // class DraggableAppBar extends StatefulWidget {
 //   final List<UserDevices>? devices;
@@ -1350,11 +1350,11 @@ import 'package:trackify/core/widgets/option_tile.dart';
 import '../../feature/map/data/entity/user_device_model.dart';
 
 class DraggableAppBar extends StatefulWidget {
-  final List<UserDevices>? devices;
+  final List<Vehicle>? vehicles;
   final Color? backgroundColor;
   final VoidCallback? onAddVehicle;
-  final ValueChanged<UserDevices>? onDeviceTap;
-  final UserDevices? selectedDevice;
+  final ValueChanged<Vehicle>? onVehicleTap;
+  final Vehicle? selectedVehicle;
 
   /// Shown in collapsed mode on the selected device row
   final Widget? collapsedTrailing;
@@ -1364,11 +1364,11 @@ class DraggableAppBar extends StatefulWidget {
 
   const DraggableAppBar({
     super.key,
-    this.devices,
+    this.vehicles,
     this.backgroundColor,
     this.onAddVehicle,
-    this.onDeviceTap,
-    this.selectedDevice,
+    this.onVehicleTap,
+    this.selectedVehicle,
     this.collapsedTrailing,
     this.expandedTrailing,
   });
@@ -1383,11 +1383,11 @@ class _DraggableAppBarState extends State<DraggableAppBar>
   late final Animation<double> _expandFactor;
   late final Animation<double> _overlayOpacity;
 
-  List<UserDevices> get _devices => widget.devices ?? [];
+  List<Vehicle> get _vehicles => widget.vehicles ?? [];
 
-  UserDevices? get _selectedDevice {
-    if (widget.selectedDevice != null) return widget.selectedDevice;
-    if (_devices.isNotEmpty) return _devices.first;
+  Vehicle? get _selectedVehicle {
+    if (widget.selectedVehicle != null) return widget.selectedVehicle;
+    if (_vehicles.isNotEmpty) return _vehicles.first;
     return null;
   }
 
@@ -1459,7 +1459,7 @@ class _DraggableAppBarState extends State<DraggableAppBar>
   @override
   Widget build(BuildContext context) {
     final topInset = MediaQuery.of(context).padding.top;
-    final selected = _selectedDevice;
+    final selected = _selectedVehicle;
 
     return AnimatedBuilder(
       animation: _controller,
@@ -1584,47 +1584,44 @@ class _DraggableAppBarState extends State<DraggableAppBar>
                                                   crossAxisAlignment:
                                                       CrossAxisAlignment.start,
                                                   children: [
-                                                    Text(
-                                                      selected.deviceName
-                                                                  ?.trim()
-                                                                  .isNotEmpty ==
-                                                              true
-                                                          ? selected.deviceName!
-                                                          : 'Unnamed Device',
-                                                      maxLines: 1,
-                                                      overflow: TextOverflow.ellipsis,
-                                                      style: const TextStyle(
-                                                        fontSize: 16,
-                                                        fontWeight: FontWeight.w700,
-                                                        color: Colors.black,
+                                                      Text(
+                                                        selected.vehicleMaker != null
+                                                            ? '${selected.vehicleMaker} ${selected.vehicleModel ?? ''}'
+                                                            : 'Unnamed Vehicle',
+                                                        maxLines: 1,
+                                                        overflow: TextOverflow.ellipsis,
+                                                        style: const TextStyle(
+                                                          fontSize: 14,
+                                                          fontWeight: FontWeight.w700,
+                                                          color: Colors.black,
+                                                        ),
                                                       ),
-                                                    ),
-                                                    Row(
-                                                      children: [
-                                                        Flexible(
-                                                          child: Text(
-                                                            selected.imei ?? '---',
-                                                            maxLines: 1,
-                                                            overflow:
-                                                                TextOverflow.ellipsis,
-                                                            style: const TextStyle(
-                                                              fontSize: 12,
-                                                              color: Color(0xFF5E636A),
-                                                              fontWeight: FontWeight.w500,
+                                                      Row(
+                                                        children: [
+                                                          Flexible(
+                                                            child: Text(
+                                                              selected.vehicleNumber ?? '---',
+                                                              maxLines: 1,
+                                                              overflow:
+                                                                  TextOverflow.ellipsis,
+                                                              style: const TextStyle(
+                                                                fontSize: 11,
+                                                                color: Color(0xFF5E636A),
+                                                                fontWeight: FontWeight.w500,
+                                                              ),
                                                             ),
                                                           ),
-                                                        ),
-                                                        const SizedBox(width: 8),
-                                                        const Text(
-                                                          'Lite 4G',
-                                                          style: TextStyle(
-                                                            fontSize: 10,
-                                                            color: AppColors.primaryLight,
-                                                            fontWeight: FontWeight.w600,
+                                                          const SizedBox(width: 8),
+                                                          Text(
+                                                            selected.fuelType ?? 'Petrol',
+                                                            style: const TextStyle(
+                                                              fontSize: 10,
+                                                              color: AppColors.primaryLight,
+                                                              fontWeight: FontWeight.w600,
+                                                            ),
                                                           ),
-                                                        ),
-                                                      ],
-                                                    ),
+                                                        ],
+                                                      ),
                                                   ],
                                                 ),
                                               ),
@@ -1672,7 +1669,7 @@ class _DraggableAppBarState extends State<DraggableAppBar>
                                                     ),
                                                   ),
                                                 ),
-                                              if (_devices.length > 1)
+                                              if (_vehicles.length > 1)
                                                 ListView.separated(
                                                   shrinkWrap: true,
                                                   physics:
@@ -1680,11 +1677,11 @@ class _DraggableAppBarState extends State<DraggableAppBar>
                                                   padding: const EdgeInsets.symmetric(
                                                     horizontal: 12,
                                                   ),
-                                                  itemCount: _devices.length,
+                                                  itemCount: _vehicles.length,
                                                   separatorBuilder: (_, __) =>
                                                       const Divider(height: 1),
                                                   itemBuilder: (context, index) {
-                                                    final device = _devices[index];
+                                                    final vehicle = _vehicles[index];
 
                                                     return OptionTile(
                                                       leading: const Icon(
@@ -1692,14 +1689,14 @@ class _DraggableAppBarState extends State<DraggableAppBar>
                                                         size: 28,
                                                         color: AppColors.primaryLight,
                                                       ),
-                                                      title:
-                                                          device.deviceName ??
-                                                          'Unnamed Device',
-                                                      subtitle: device.imei ?? '---',
+                                                      title: vehicle.vehicleMaker != null
+                                                          ? '${vehicle.vehicleMaker} ${vehicle.vehicleModel ?? ''}'
+                                                          : 'Unnamed Vehicle',
+                                                      subtitle: vehicle.vehicleNumber ?? '---',
                                                       trailing: const SizedBox.shrink(),
                                                       showDivider: false,
                                                       onTap: () {
-                                                        widget.onDeviceTap?.call(device);
+                                                        widget.onVehicleTap?.call(vehicle);
                                                         _collapse();
                                                       },
                                                     );
