@@ -12,6 +12,9 @@ import 'package:trackify/feature/add_vehicle_and_device/choice_selector.dart';
 import 'package:trackify/feature/map/data/entity/user_device_model.dart';
 
 import '../../../../core/config/style_manager.dart';
+import '../../../add_vehicle_and_device/add_vehicle/data/models/vehicle_list_model.dart';
+import '../../../add_vehicle_and_device/add_vehicle/presentation/cubit/vehicle_list_cubit.dart';
+import '../../../add_vehicle_and_device/add_vehicle/presentation/cubit/vehicle_list_state.dart';
 import '../cubit/map_cubit.dart';
 import '../cubit/map_state.dart';
 
@@ -34,9 +37,10 @@ class _MapScreenState extends State<MapScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Future.delayed(const Duration(milliseconds: 100), () {
         if (mounted) {
-          context.read<MapCubit>().fetchDevices({
-            'user_id': context.read<AppCubit>().state.userData?.id,
-          });
+          // context.read<MapCubit>().fetchDevices({
+          //   'user_id': context.read<AppCubit>().state.userData?.id,
+          // });
+          context.read<VehicleListCubit>().fetchVehicles();
         }
       });
     });
@@ -89,30 +93,36 @@ class _MapScreenState extends State<MapScreen> {
                 ),
               ),
 
-              DraggableAppBar(
-                devices: devices,
-                selectedDevice: devices.isNotEmpty ? devices.first : null,
-                collapsedTrailing: IconButton(
-                  onPressed: () {},
-                  icon: const Icon(
-                    Icons.notifications_none_rounded,
-                    color: Colors.black,
-                    size: 26,
-                  ),
-                ),
-                expandedTrailing: IconButton(
-                  alignment: Alignment.centerRight,
-                  padding: EdgeInsets.zero,
-                  onPressed: () {},
-                  icon: const Icon(Icons.settings, color: Colors.black, size: 20),
-                ),
-                onAddVehicle: () {
-                  Navigator.of(
-                    context,
-                  ).push(MaterialPageRoute(builder: (context) => const ChoiceSelector()));
-                },
-                onDeviceTap: (device) {
-                  // handle selected device here
+              BlocBuilder<VehicleListCubit, VehicleListState>(
+                builder: (context, vehicleState) {
+                  final vehicles = vehicleState is VehicleListLoaded ? vehicleState.vehicles : <Vehicle>[];
+                  
+                  return DraggableAppBar(
+                    vehicles: vehicles,
+                    selectedVehicle: vehicles.isNotEmpty ? vehicles.first : null,
+                    collapsedTrailing: IconButton(
+                      onPressed: () {},
+                      icon: const Icon(
+                        Icons.notifications_none_rounded,
+                        color: Colors.black,
+                        size: 26,
+                      ),
+                    ),
+                    expandedTrailing: IconButton(
+                      alignment: Alignment.centerRight,
+                      padding: EdgeInsets.zero,
+                      onPressed: () {},
+                      icon: const Icon(Icons.settings, color: Colors.black, size: 20),
+                    ),
+                    onAddVehicle: () {
+                      Navigator.of(
+                        context,
+                      ).push(MaterialPageRoute(builder: (context) => const ChoiceSelector()));
+                    },
+                    onVehicleTap: (vehicle) {
+                      // handle selected vehicle here
+                    },
+                  );
                 },
               ),
             ],

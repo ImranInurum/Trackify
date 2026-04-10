@@ -7,6 +7,7 @@ import 'package:trackify/feature/onboarding/presentation/cubit/splash_state.dart
 import 'package:trackify/feature/onboarding/presentation/pages/select_language_screen.dart';
 
 import '../../../../app/app_navigation.dart';
+import '../../../../app/cubit/app_cubit.dart';
 import '../../../auth/presentation/pages/signin_screen.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -25,6 +26,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
   Future<void> _initializeApp() async {
     context.read<SplashCubit>().fetchLogo();
+    context.read<AppCubit>().fetchTheme();
 
     // Brief splash display
     await Future.delayed(const Duration(milliseconds: 2000));

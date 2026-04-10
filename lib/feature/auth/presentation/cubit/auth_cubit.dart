@@ -5,7 +5,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/services/google_auth_service.dart';
 import '../../../../core/utils/shared_preferences.dart';
 import '../../../../core/widgets/loading_screen_ol.dart';
-import '../../data/entity/login_response_model.dart';
 import '../../domain/usecase/auth_case.dart';
 import 'auth_state.dart';
 
@@ -103,9 +102,6 @@ class AuthCubit extends Cubit<AuthState> {
 
   Future<void> loginWithGoogle() async {
     try {
-      LoadingScreenOL().show();
-      emit(AuthLoading());
-
       final userCredential =
           await GoogleAuthService.instance.signInWithGoogle();
 
@@ -122,7 +118,6 @@ class AuthCubit extends Cubit<AuthState> {
 
         result.fold(
           (failure) {
-            LoadingScreenOL().hide();
             emit(AuthFailure(failure));
           },
           (user) async {
@@ -135,13 +130,10 @@ class AuthCubit extends Cubit<AuthState> {
               key: AppPreference.KEY_USER_DETAILS,
               value: jsonEncode(user.user?.toJson()),
             );
-
             emit(AuthSuccess(user));
-            LoadingScreenOL().hide();
           },
         );
       } else {
-        LoadingScreenOL().hide();
       }
     } catch (e) {
       print("Google Login Failed ${e.toString()}");
