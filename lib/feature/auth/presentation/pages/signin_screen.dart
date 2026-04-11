@@ -1,16 +1,18 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:trackify/core/utils/shared_preferences.dart';
 import 'package:trackify/feature/add_vehicle_and_device/choice_selector.dart';
 import 'package:trackify/feature/auth/presentation/pages/signup_screen.dart';
 import 'package:trackify/feature/onboarding/presentation/pages/select_language_screen.dart';
 
 import '../../../../app/app_navigation.dart';
+import '../../../../core/utils/shared_preferences.dart';
 import '../../../../core/utils/validators.dart';
 import '../../../../core/widgets/custom_form_field.dart';
 import '../../../../core/widgets/square_flat_button.dart';
 import '../../../../l10n/app_localizations.dart';
+import '../../../map/presentation/cubit/map_cubit.dart';
+import '../../../map/presentation/cubit/map_state.dart';
 import '../../../onboarding/presentation/cubit/splash_cubit.dart';
 import '../../../onboarding/presentation/cubit/splash_state.dart';
 import '../cubit/auth_cubit.dart';
@@ -123,29 +125,37 @@ class _SignInScreenState extends State<SignInScreen> {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(content: Text(l10n.welcome(state.user.user?.email ?? ''))),
               );
-              final prefs = AppPreference.instance;
-              // Check setup completion if already signed in
-              final setupFlag = await prefs.getBoolNullable(
-                key: AppPreference.KEY_SETUP_COMPLETE,
-              );
-              final setupComplete = setupFlag ?? false;
+
+              final userId = state.user.user?.id ?? "";
+              if (userId.isEmpty) {
+                ScaffoldMessenger.of(
+                  context,
+                ).showSnackBar(SnackBar(content: Text(l10n.loginFailed)));
+                await AppPreference.instance.clearAll();
+                return;
+              }
+
+              // Fetch vehicles to determine navigation
+              await context.read<MapCubit>().fetchVehicles();
               if (!context.mounted) return;
 
-              if (!setupComplete) {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (_) => const ChoiceSelector()),
-                );
-              } else {
+              final mapState = context.read<MapCubit>().state;
+              if (mapState is MapLoaded &&
+                  (mapState.vehicleList.vehicles?.isNotEmpty ?? false)) {
                 Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(builder: (_) => const AppNavigation()),
                 );
+              } else {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (_) => const ChoiceSelector()),
+                );
               }
             } else if (state is AuthFailure) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(state.error.message ?? l10n.loginFailed)),
-              );
+              ScaffoldMessenger.of(
+                context,
+              ).showSnackBar(SnackBar(content: Text(state.error.message)));
             }
           },
           builder: (context, state) {
@@ -182,7 +192,7 @@ class _SignInScreenState extends State<SignInScreen> {
                               validator: (value) => Validators.validateEmail(
                                 value,
                                 l10n.emailRequired,
-                                "Please enter a valid email address",
+                                l10n.invalidEmail,
                               ),
                             ),
                             const SizedBox(height: 24),
@@ -205,8 +215,7 @@ class _SignInScreenState extends State<SignInScreen> {
                               validator: (value) => Validators.validatePassword(
                                 value,
                                 l10n.passwordRequired,
-                                l10n.passwordMinLength ??
-                                    "Password must be at least 6 characters",
+                                l10n.passwordMinLength,
                                 minLength: 6,
                               ),
                             ),

@@ -4,6 +4,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:trackify/feature/map/data/repository/map_repository_impl.dart';
 import 'package:trackify/feature/map/domain/usecase/map_case.dart';
 import 'package:trackify/feature/map/presentation/cubit/map_cubit.dart';
+import 'package:trackify/feature/profile/domain/use_case/profile_use_case.dart';
+import 'package:trackify/feature/profile/presentation/cubit/profile_cubit.dart';
 import 'package:trackify/feature/record_via_phone/data/repository/record_via_phone_repository_impl.dart';
 import 'package:trackify/feature/record_via_phone/domain/usecase/record_via_phone_use_case.dart';
 import 'package:trackify/feature/record_via_phone/presentation/cubit/record_via_phone_cubit.dart';
@@ -17,7 +19,6 @@ import 'core/services/socket_service.dart';
 import 'core/utils/shared_preferences.dart';
 import 'feature/add_vehicle_and_device/add_vehicle/data/repository/add_vehicle_repository_impl.dart';
 import 'feature/add_vehicle_and_device/add_vehicle/presentation/cubit/add_vehicle_cubit.dart';
-import 'feature/add_vehicle_and_device/add_vehicle/presentation/cubit/vehicle_list_cubit.dart';
 import 'feature/auth/data/repository/auth_repository_impl.dart';
 import 'feature/auth/domain/usecase/auth_case.dart';
 import 'feature/auth/presentation/cubit/auth_cubit.dart';
@@ -53,7 +54,8 @@ Future<void> main() async {
         BlocProvider(create: (_) => MapCubit(MapCase(MapRepositoryImpl()))),
         BlocProvider(create: (_) => SplashCubit(GetLogoUseCase(SplashRepositoryImpl()))),
         BlocProvider(create: (_) => AddVehicleCubit(AddVehicleRepositoryImpl())),
-        BlocProvider(create: (_) => VehicleListCubit(AddVehicleRepositoryImpl())),
+        BlocProvider(create: (_) => ProfileCubit(ProfileUseCase())),
+        // BlocProvider(create: (_) => VehicleListCubit(AddVehicleRepositoryImpl())),
         BlocProvider(
           create: (_) =>
               RecordViaPhoneCubit(RecordViaPhoneUseCase(RecordViaPhoneRepositoryImpl())),

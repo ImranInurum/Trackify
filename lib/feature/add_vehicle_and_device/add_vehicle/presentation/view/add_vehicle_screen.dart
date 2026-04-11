@@ -2,13 +2,15 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../../app/app_navigation.dart';
 import '../../../../../core/theme/app_colors.dart';
+import '../../../../../core/utils/shared_preferences.dart';
 import '../../../../onboarding/presentation/cubit/splash_cubit.dart';
 import '../../../../onboarding/presentation/cubit/splash_state.dart';
 import '../cubit/add_vehicle_cubit.dart';
 import '../cubit/add_vehicle_state.dart';
-import '../../../../../core/utils/shared_preferences.dart';
-import '../../../../../app/app_navigation.dart';
+import '../../../../../core/widgets/custom_form_field.dart';
+import '../../../../../l10n/app_localizations.dart';
 
 // ─── Data models ─────────────────────────────────────────────────────────────
 
@@ -178,6 +180,7 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
     required String? value,
     required List<String> items,
     required ValueChanged<String?> onChanged,
+    String? hint,
   }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -203,7 +206,7 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
               value: value,
               isExpanded: true,
               hint: Text(
-                'Select $label',
+                hint ?? label,
                 style: const TextStyle(color: Color(0xFFAAAAAA), fontSize: 14),
               ),
               icon: const Icon(Icons.arrow_drop_down, color: AppColors.secondaryLight),
@@ -240,6 +243,7 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
       backgroundColor: AppColors.backgroundLight,
@@ -250,9 +254,9 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
           icon: const Icon(Icons.arrow_back_rounded, color: Colors.black87),
           onPressed: () => Navigator.of(context).pop(),
         ),
-        title: const Text(
-          'Add Vehicle/Device',
-          style: TextStyle(
+        title: Text(
+          l10n.addVehicle,
+          style: const TextStyle(
             color: Colors.black87,
             fontSize: 17,
             fontWeight: FontWeight.w600,
@@ -263,14 +267,11 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
         listener: (context, state) {
           if (state is AddVehicleSuccess) {
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Vehicle added successfully!'),
+              SnackBar(
+                content: Text(l10n.vehicleAdded),
                 backgroundColor: Colors.green,
               ),
             );
-            // Mark setup as complete in SharedPreferences
-            AppPreference.instance.setBool(key: AppPreference.KEY_SETUP_COMPLETE, value: true);
-            
             if (context.mounted) {
               Navigator.of(context).pushAndRemoveUntil(
                 MaterialPageRoute(builder: (context) => const AppNavigation()),
@@ -279,10 +280,7 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
             }
           } else if (state is AddVehicleError) {
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(state.message),
-                backgroundColor: Colors.red,
-              ),
+              SnackBar(content: Text(state.message), backgroundColor: Colors.red),
             );
           }
         },
@@ -305,29 +303,29 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
                       const SizedBox(height: 8),
 
                       // ── Vehicle Type ──────────────────────────────────────────
-                      _sectionLabel('Vehicle Type'),
+                      _sectionLabel(l10n.vehicleType),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           _buildVehicleTypeItem(
                             type: VehicleType.twoWheeler,
                             icon: Icons.two_wheeler_rounded,
-                            label: 'Two Wheeler',
+                            label: l10n.twoWheeler,
                           ),
                           _buildVehicleTypeItem(
                             type: VehicleType.fourWheeler,
                             icon: Icons.directions_car_rounded,
-                            label: 'Four Wheeler',
+                            label: l10n.fourWheeler,
                           ),
                           _buildVehicleTypeItem(
                             type: VehicleType.autoRickshaw,
                             icon: Icons.electric_rickshaw_rounded,
-                            label: 'Auto Rickshaw',
+                            label: l10n.autoRickshaw,
                           ),
                           _buildVehicleTypeItem(
                             type: VehicleType.heavyVehicle,
                             icon: Icons.local_shipping_rounded,
-                            label: 'Heavy Vehicle',
+                            label: l10n.heavyVehicle,
                           ),
                         ],
                       ),
@@ -335,19 +333,19 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
                       const SizedBox(height: 24),
 
                       // ── Fuel Type ─────────────────────────────────────────────
-                      _sectionLabel('Fuel Type'),
+                      _sectionLabel(l10n.fuelType),
                       Row(
                         children: [
                           _buildFuelTypeItem(
                             type: FuelType.petrol,
                             icon: Icons.water_drop_rounded,
-                            label: 'Petrol',
+                            label: l10n.petrol,
                           ),
                           const SizedBox(width: 24),
                           _buildFuelTypeItem(
                             type: FuelType.electric,
                             icon: Icons.bolt_rounded,
-                            label: 'Electric',
+                            label: l10n.electric,
                           ),
                         ],
                       ),
@@ -356,7 +354,8 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
 
                       // ── Vehicle Make ──────────────────────────────────────────
                       _buildDropdown(
-                        label: 'Vehicle Make',
+                        label: l10n.vehicleMake,
+                        hint: l10n.selectMake,
                         value: _selectedMake,
                         items: _vehicleMakes,
                         onChanged: (val) => setState(() {
@@ -369,7 +368,8 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
 
                       // ── Vehicle Model ─────────────────────────────────────────
                       _buildDropdown(
-                        label: 'Vehicle Model',
+                        label: l10n.vehicleModel,
+                        hint: l10n.selectModel,
                         value: _selectedModel,
                         items: _selectedMake != null
                             ? (_vehicleModels[_selectedMake] ?? [])
@@ -380,62 +380,17 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
                       const SizedBox(height: 20),
 
                       // ── Vehicle Number ────────────────────────────────────────
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text(
-                            'Vehicle number',
-                            style: TextStyle(
-                              fontSize: 13,
-                              color: AppColors.secondaryLight,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                          const SizedBox(height: 6),
-                          TextFormField(
-                            controller: _vehicleNumberController,
-                            textCapitalization: TextCapitalization.characters,
-                            style: const TextStyle(
-                              fontSize: 14,
-                              color: AppColors.textPrimaryLight,
-                              letterSpacing: 1.2,
-                            ),
-                            decoration: InputDecoration(
-                              hintText: 'e.g. MP46MX0743',
-                              hintStyle: const TextStyle(
-                                color: Color(0xFFAAAAAA),
-                                fontSize: 14,
-                              ),
-                              filled: true,
-                              fillColor: Colors.white,
-                              contentPadding: const EdgeInsets.symmetric(
-                                horizontal: 14,
-                                vertical: 14,
-                              ),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(8),
-                                borderSide: const BorderSide(color: Color(0xFFE0E0E0)),
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(8),
-                                borderSide: const BorderSide(color: Color(0xFFE0E0E0)),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(8),
-                                borderSide: const BorderSide(
-                                  color: AppColors.secondaryLight,
-                                  width: 1.5,
-                                ),
-                              ),
-                            ),
-                            validator: (val) {
-                              if (val == null || val.trim().isEmpty) {
-                                return 'Please enter vehicle number';
-                              }
-                              return null;
-                            },
-                          ),
-                        ],
+                      CustomFormField(
+                        header: l10n.vehicleNumber,
+                        hint: l10n.vehicleNumberHint,
+                        value: _vehicleNumberController,
+                        textCapitalization: TextCapitalization.characters,
+                        validator: (val) {
+                          if (val == null || val.trim().isEmpty) {
+                            return l10n.pleaseEnterVehicleNumber;
+                          }
+                          return null;
+                        },
                       ),
 
                       const SizedBox(height: 32),
@@ -471,21 +426,25 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
                                   };
 
                                   context.read<AddVehicleCubit>().addVehicle(
-                                        vehicleType: vType,
-                                        fuelType: fType,
-                                        vehicleMaker: _selectedMake ?? '',
-                                        vehicleNumber: _vehicleNumberController.text.trim(),
-                                        vehicleModel: _selectedModel ?? '',
-                                      );
+                                    vehicleType: vType,
+                                    fuelType: fType,
+                                    vehicleMaker: _selectedMake ?? '',
+                                    vehicleNumber: _vehicleNumberController.text.trim(),
+                                    vehicleModel: _selectedModel ?? '',
+                                  );
                                 }
                               },
                         style: ElevatedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(vertical: 0),
                           backgroundColor: AppColors.secondaryLight,
                           foregroundColor: Colors.white,
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
                           elevation: 0,
-                          disabledBackgroundColor: AppColors.secondaryLight.withValues(alpha: 0.6),
+                          disabledBackgroundColor: AppColors.secondaryLight.withValues(
+                            alpha: 0.6,
+                          ),
                         ),
                         child: isLoading
                             ? const SizedBox(
@@ -496,9 +455,12 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
                                   strokeWidth: 2,
                                 ),
                               )
-                            : const Text(
-                                'Add Vehicle/Device',
-                                style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+                            : Text(
+                                l10n.addVehicle,
+                                style: const TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
+                                ),
                               ),
                       );
                     },

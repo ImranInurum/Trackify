@@ -139,5 +139,24 @@
         "type": "String"
       }
     }
-  }
+  },
+  "dataPlan": "டேட்டா திட்டம்",
+  "warranty": "உத்தரவாதம்",
+  "expiresInDays": "{days} நாட்களில் முடிவடைகிறது",
+  "@expiresInDays": {
+    "placeholders": {
+      "days": {
+        "type": "String"
+      }
+    }
+  },
+  "rechargeNow": "இப்போது ரீசார்ஜ் செய்க",
+  "renewNow": "இப்போது புதுப்பிக்கவும்",
+  "secureYourVehicle": "உங்கள் வாகனத்தைப் பாதுகாக்கவும்",
+  "secureYourVehicleDesc": "நிகழ்நேர கண்காணிப்பு மற்றும் மன அமைதிக்காக இப்போது அஜ்ஜாஸ் சாதனத்தை வாங்கவும்.",
+  "boughtDeviceInstallNow": "சாதனத்தை வாங்கினீர்களா? ",
+  "installNow": "இப்போது நிறுவவும்",
+  "buyAjjasDevice": "அஜ்ஜாஸ் சாதனத்தை வாங்கவும்",
+  "lite4G": "லைட் 4ஜி",
+  "swipeToLock": "பூட்ட ஸ்வைப் செய்யவும்"
 }

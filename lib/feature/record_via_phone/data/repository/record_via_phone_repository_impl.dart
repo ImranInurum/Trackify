@@ -1,12 +1,12 @@
 import 'package:fpdart/fpdart.dart';
-import 'package:trackify/core/constants/api_constants.dart';
-import 'package:trackify/core/errors/exceptions.dart';
+import 'package:trackify/core/config/network/api_host.dart';
+import 'package:trackify/core/config/network/base_api_service.dart';
+import 'package:trackify/core/config/network/exceptions.dart';
+import 'package:trackify/core/config/network/network_api_service.dart';
 import 'package:trackify/core/utils/shared_preferences.dart';
 import 'package:trackify/core/utils/typedefs.dart';
 import 'package:trackify/feature/record_via_phone/data/model/device_data_by_date_response.dart';
 
-import '../../../../core/network/base_api_service.dart';
-import '../../../../core/network/network_api_service.dart';
 import '../../domain/repository/record_via_phone_repository.dart';
 
 class RecordViaPhoneRepositoryImpl implements RecordViaPhoneRepository {
@@ -22,7 +22,7 @@ class RecordViaPhoneRepositoryImpl implements RecordViaPhoneRepository {
       requestBody['auth'] = token;
 
       final res = await _apiServices.getPostApiResponse(
-        ApiConstants.deviceDataByDate,
+        ApiURL.deviceDataByDate,
         requestBody,
       );
       return res.fold(

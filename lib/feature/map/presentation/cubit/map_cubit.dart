@@ -9,11 +9,11 @@ class MapCubit extends Cubit<MapState> {
 
   MapCubit(this._mapCase) : super(MapInitial());
 
-  Future<void> fetchVehicles(Map<String, dynamic> body) async {
+  Future<void> fetchVehicles() async {
     LoadingScreenOL().show();
     emit(MapLoading());
 
-    final result = await _mapCase.fetchVehiclesByUserId(body);
+    final result = await _mapCase.fetchVehiclesByUserId();
 
     result.fold(
       (failure) {

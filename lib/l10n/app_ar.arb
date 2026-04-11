@@ -138,5 +138,24 @@
         "type": "String"
       }
     }
-  }
+  },
+  "dataPlan": "خطة البيانات",
+  "warranty": "الضمان",
+  "expiresInDays": "تنتهي خلال {days} يوم",
+  "@expiresInDays": {
+    "placeholders": {
+      "days": {
+        "type": "String"
+      }
+    }
+  },
+  "rechargeNow": "اشحن الآن",
+  "renewNow": "جدد الآن",
+  "secureYourVehicle": "أمن مركبتك",
+  "secureYourVehicleDesc": "اشترِ جهاز أجياس الآن للتتبع الفوري وراحة البال التامة.",
+  "boughtDeviceInstallNow": "هل اشتريت جهازاً؟ ",
+  "installNow": "ثبته الآن",
+  "buyAjjasDevice": "اشترِ جهاز أجياس",
+  "lite4G": "لايت 4G",
+  "swipeToLock": "اسحب للقفل"
 }

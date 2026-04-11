@@ -36,6 +36,7 @@ class CustomFormField extends StatefulWidget {
   final bool? disabled;
   final bool? enableInteractiveSelection;
   final bool? hasClearIcon;
+  final TextCapitalization textCapitalization;
 
   const CustomFormField({
     super.key,
@@ -71,6 +72,7 @@ class CustomFormField extends StatefulWidget {
     this.disabled,
     this.enableInteractiveSelection,
     this.hasClearIcon,
+    this.textCapitalization = TextCapitalization.none,
   });
 
   @override
@@ -124,76 +126,110 @@ class _CustomFormFieldState extends State<CustomFormField> {
     final theme = Theme.of(context);
     final primaryColor = theme.colorScheme.primary;
 
-    return Container(
-      decoration: BoxDecoration(
-        boxShadow: [
-          BoxShadow(
-            color: node.hasFocus 
-                ? primaryColor.withOpacity(0.15) 
-                : Colors.black.withOpacity(0.05),
-            blurRadius: node.hasFocus ? 12 : 8,
-            offset: const Offset(0, 4),
-            spreadRadius: node.hasFocus ? 1 : 0,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        if (widget.header.isNotEmpty) ...[
+          Padding(
+            padding: const EdgeInsets.only(bottom: 8.0, left: 4.0),
+            child: RichText(
+              text: TextSpan(
+                children: [
+                  TextSpan(
+                    text: widget.header,
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.textPrimaryLight,
+                    ),
+                  ),
+                  if (widget.isFieldMandatory)
+                    const TextSpan(
+                      text: ' *',
+                      style: TextStyle(
+                        color: AppColors.errorLight,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                ],
+              ),
+            ),
           ),
         ],
-      ),
-      child: TextFormField(
-        enableInteractiveSelection: widget.enableInteractiveSelection,
-        enabled: !(widget.disabled ?? false),
-        style: const TextStyle(fontSize: 16),
-        onFieldSubmitted: widget.onFieldSubmitted,
-        focusNode: node,
-        inputFormatters: widget.inputFormatters,
-        autofillHints: widget.autofillHints,
-        maxLength: widget.maxLength,
-        autofocus: widget.isFocused!,
-        onChanged: _handleTextChanged,
-        readOnly: widget.isReadOnly!,
-        onTap: widget.onTap,
-        key: Key(widget.keyName),
-        validator: widget.validator,
-        obscureText: _isObscured,
-        controller: widget.value,
-        minLines: widget.minLines,
-        maxLines: widget.maxLines,
-        keyboardType: widget.keyboardType,
-        decoration: InputDecoration(
-          hintText: widget.hint,
-          hintStyle: const TextStyle(
-            overflow: TextOverflow.ellipsis,
-            color: Colors.grey,
-            fontSize: 14,
+        Container(
+          decoration: BoxDecoration(
+            boxShadow: [
+              BoxShadow(
+                color: node.hasFocus 
+                    ? primaryColor.withOpacity(0.15) 
+                    : Colors.black.withOpacity(0.05),
+                blurRadius: node.hasFocus ? 12 : 8,
+                offset: const Offset(0, 4),
+                spreadRadius: node.hasFocus ? 1 : 0,
+              ),
+            ],
           ),
-          filled: true,
-          fillColor: widget.backgroundColor ?? const Color(0xFFF9FAFB),
-          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-          prefixText: widget.prefixText,
-          suffixIcon: _buildSuffixIcons(),
-          counterText: '',
-          errorText: errorMessage,
-          errorStyle: const TextStyle(height: 0.8),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8.0),
-            borderSide: BorderSide(color: widget.borderColor),
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8.0),
-            borderSide: BorderSide(color: widget.borderColor),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8.0),
-            borderSide: BorderSide(color: primaryColor, width: 1.5),
-          ),
-          errorBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8.0),
-            borderSide: BorderSide(color: AppColors.errorLight),
-          ),
-          focusedErrorBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8.0),
-            borderSide: BorderSide(color: AppColors.errorLight, width: 1.5),
+          child: TextFormField(
+            textCapitalization: widget.textCapitalization,
+            enableInteractiveSelection: widget.enableInteractiveSelection,
+            enabled: !(widget.disabled ?? false),
+            style: const TextStyle(fontSize: 16),
+            onFieldSubmitted: widget.onFieldSubmitted,
+            focusNode: node,
+            inputFormatters: widget.inputFormatters,
+            autofillHints: widget.autofillHints,
+            maxLength: widget.maxLength,
+            autofocus: widget.isFocused!,
+            onChanged: _handleTextChanged,
+            readOnly: widget.isReadOnly!,
+            onTap: widget.onTap,
+            key: Key(widget.keyName),
+            validator: widget.validator,
+            obscureText: _isObscured,
+            controller: widget.value,
+            minLines: widget.minLines,
+            maxLines: widget.maxLines,
+            keyboardType: widget.keyboardType,
+            decoration: InputDecoration(
+              hintText: widget.hint,
+              hintStyle: const TextStyle(
+                overflow: TextOverflow.ellipsis,
+                color: Colors.grey,
+                fontSize: 14,
+              ),
+              filled: true,
+              fillColor: widget.backgroundColor ?? const Color(0xFFF9FAFB),
+              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              prefixText: widget.prefixText,
+              suffixIcon: _buildSuffixIcons(),
+              counterText: '',
+              errorText: errorMessage,
+              errorStyle: const TextStyle(height: 0.8),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8.0),
+                borderSide: BorderSide(color: widget.borderColor),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8.0),
+                borderSide: BorderSide(color: widget.borderColor),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8.0),
+                borderSide: BorderSide(color: primaryColor, width: 1.5),
+              ),
+              errorBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8.0),
+                borderSide: BorderSide(color: AppColors.errorLight),
+              ),
+              focusedErrorBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8.0),
+                borderSide: BorderSide(color: AppColors.errorLight, width: 1.5),
+              ),
+            ),
           ),
         ),
-      ),
+      ],
     );
   }
 

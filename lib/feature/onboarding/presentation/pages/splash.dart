@@ -3,6 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:trackify/core/utils/shared_preferences.dart';
 import 'package:trackify/feature/add_vehicle_and_device/choice_selector.dart';
 import 'package:trackify/feature/auth/presentation/pages/signin_screen.dart';
+import 'package:trackify/feature/map/presentation/cubit/map_cubit.dart';
+import 'package:trackify/feature/map/presentation/cubit/map_state.dart';
 import 'package:trackify/feature/onboarding/presentation/cubit/splash_cubit.dart';
 import 'package:trackify/feature/onboarding/presentation/cubit/splash_state.dart';
 import 'package:trackify/feature/onboarding/presentation/pages/select_language_screen.dart';
@@ -41,6 +43,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
     // ── Step 2: Token check ───────────────────────────────────────────────────
     final token = await prefs.get(key: AppPreference.KEY_TOKEN);
+    final userId = await prefs.get(key: AppPreference.KEY_USER_ID);
     if (!mounted) return;
 
     if (selectedLanguage.isEmpty) {
@@ -51,7 +54,11 @@ class _SplashScreenState extends State<SplashScreen> {
       return;
     }
 
-    if (token.isEmpty) {
+    if (token.isEmpty || userId.isEmpty) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("UserId or Token Is Missing!!!")));
+      Future.delayed(const Duration(milliseconds: 300));
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (_) => const SignInScreen()),
@@ -59,20 +66,20 @@ class _SplashScreenState extends State<SplashScreen> {
       return;
     }
 
-    // Check setup completion if already signed in
-    final setupFlag = await prefs.getBoolNullable(key: AppPreference.KEY_SETUP_COMPLETE);
-    final setupComplete = setupFlag ?? false;
+    // Fetch vehicles to determine navigation
+    await context.read<MapCubit>().fetchVehicles();
     if (!mounted) return;
 
-    if (!setupComplete) {
+    final mapState = context.read<MapCubit>().state;
+    if (mapState is MapLoaded && (mapState.vehicleList.vehicles?.isNotEmpty ?? false)) {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (_) => const ChoiceSelector()),
+        MaterialPageRoute(builder: (_) => const AppNavigation()),
       );
     } else {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (_) => const AppNavigation()),
+        MaterialPageRoute(builder: (_) => const ChoiceSelector()),
       );
     }
   }

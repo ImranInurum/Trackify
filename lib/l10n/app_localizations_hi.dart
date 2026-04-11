@@ -68,7 +68,55 @@ class AppLocalizationsHi extends AppLocalizations {
   String get nameRequired => 'नाम आवश्यक है';
 
   @override
+  String get mobileNumber => 'Mobile Number';
+
+  @override
+  String get mobileNumberHint => 'Enter mobile number';
+
+  @override
+  String get mobileNumberRequired => 'Mobile number is required';
+
+  @override
+  String get country => 'Country';
+
+  @override
+  String get countryHint => 'Enter country';
+
+  @override
+  String get countryRequired => 'Country is required';
+
+  @override
+  String get state => 'State';
+
+  @override
+  String get stateHint => 'Enter state';
+
+  @override
+  String get stateRequired => 'State is required';
+
+  @override
+  String get city => 'City';
+
+  @override
+  String get cityHint => 'Enter city';
+
+  @override
+  String get cityRequired => 'City is required';
+
+  @override
+  String get selectProfileImage => 'Select Profile Image';
+
+  @override
   String get role => 'भूमिका';
+
+  @override
+  String get roleAdmin => 'Admin';
+
+  @override
+  String get roleCustomer => 'Customer';
+
+  @override
+  String get selectRoleHint => 'Select Role';
 
   @override
   String get roleRequired => 'कृपया एक भूमिका चुनें';
@@ -339,4 +387,237 @@ class AppLocalizationsHi extends AppLocalizations {
   String errorMsg(String message) {
     return 'त्रुटि: $message';
   }
+
+  @override
+  String get addVehicle => 'Add Vehicle/Device';
+
+  @override
+  String get vehicleAdded => 'Vehicle added successfully!';
+
+  @override
+  String get vehicleType => 'Vehicle Type';
+
+  @override
+  String get twoWheeler => 'Two Wheeler';
+
+  @override
+  String get fourWheeler => 'Four Wheeler';
+
+  @override
+  String get autoRickshaw => 'Auto Rickshaw';
+
+  @override
+  String get heavyVehicle => 'Heavy Vehicle';
+
+  @override
+  String get fuelType => 'Fuel Type';
+
+  @override
+  String get petrol => 'Petrol';
+
+  @override
+  String get electric => 'Electric';
+
+  @override
+  String get vehicleMake => 'Vehicle Make';
+
+  @override
+  String get vehicleModel => 'Vehicle Model';
+
+  @override
+  String get vehicleNumber => 'Vehicle number';
+
+  @override
+  String get vehicleNumberHint => 'e.g. MP46MX0743';
+
+  @override
+  String get pleaseEnterVehicleNumber => 'Please enter vehicle number';
+
+  @override
+  String get selectMake => 'Select Vehicle Make';
+
+  @override
+  String get selectModel => 'Select Vehicle Model';
+
+  @override
+  String get installDevice => 'Install Trackify Device';
+
+  @override
+  String get installDeviceDesc =>
+      'Quickly set up your Ajjas smart device with simple steps';
+
+  @override
+  String get activateSticker => 'Activate Contact Sticker';
+
+  @override
+  String get activateStickerDesc =>
+      'Simple steps to quickly activate your contact sticker';
+
+  @override
+  String get exploreFreeApp => 'Explore Our Free App';
+
+  @override
+  String get exploreFreeAppDesc =>
+      'Record rides using phone manually & keep track of it using our free app curated for you';
+
+  @override
+  String get logout => 'Logout';
+
+  @override
+  String get alreadyHaveAccount => 'Already have an account?';
+
+  @override
+  String get dataPlan => 'डेटा प्लान';
+
+  @override
+  String get warranty => 'वारंटी';
+
+  @override
+  String expiresInDays(String days) {
+    return '$days दिनों में समाप्त हो रहा है';
+  }
+
+  @override
+  String get rechargeNow => 'अभी रिचार्ज करें';
+
+  @override
+  String get renewNow => 'अभी नवीनीकृत करें';
+
+  @override
+  String get secureYourVehicle => 'अपने वाहन को सुरक्षित करें';
+
+  @override
+  String get secureYourVehicleDesc =>
+      'रीअल-टाइम ट्रैकिंग और मन की शांति के लिए अभी अजस डिवाइस खरीदें।';
+
+  @override
+  String get boughtDeviceInstallNow => 'डिवाइस खरीदा है? ';
+
+  @override
+  String get installNow => 'अभी इंस्टॉल करें';
+
+  @override
+  String get buyAjjasDevice => 'अजस डिवाइस खरीदें';
+
+  @override
+  String get lite4G => 'लाइट 4जी';
+
+  @override
+  String get swipeToLock => 'लॉक करने के लिए स्वाइप करें';
+
+  @override
+  String get upgradeToPlus => 'Upgrade to Ajjas Plus';
+
+  @override
+  String get getMoreOutOfAjjas => 'Get more out of Ajjas';
+
+  @override
+  String featuresExploredCount(Object count, Object total) {
+    return 'You\'ve explored $count of $total features - keep going!';
+  }
+
+  @override
+  String get manageVehiclesDesc => 'Manage all your Vehicles here';
+
+  @override
+  String get settingsDesc => 'Language, Account Settings & more';
+
+  @override
+  String get notifications => 'Notifications';
+
+  @override
+  String get helpAndSupport => 'Help & Support';
+
+  @override
+  String get helpAndSupportDesc => 'Get assistance and FAQs';
+
+  @override
+  String get settings => 'Settings';
+
+  @override
+  String get searchForSettings => 'Search for settings';
+
+  @override
+  String get backupAndRestore => 'Backup & Restore';
+
+  @override
+  String get backupAndRestoreDesc =>
+      'Back up your rides data and restore them anytime.';
+
+  @override
+  String get appSettings => 'App Settings';
+
+  @override
+  String get appSettingsDesc => 'App Theme, Ride Heatmap and Emergency Feature';
+
+  @override
+  String get notificationSettings => 'Notification Settings';
+
+  @override
+  String get notificationSettingsDesc =>
+      'Notification preference & Notification sound';
+
+  @override
+  String get privacy => 'Privacy';
+
+  @override
+  String get privacyDesc =>
+      'Change password, manage current session, delete your account';
+
+  @override
+  String get rateUsOnPlayStore => 'Rate us on Play Store';
+
+  @override
+  String get rateUsOnPlayStoreDesc => 'Share your valuable feedback';
+
+  @override
+  String get logoutDesc => 'Logout from this device';
+
+  @override
+  String get helpAndSuggestion => 'Help & Suggestion';
+
+  @override
+  String get reportAnIssue => 'Report an issue';
+
+  @override
+  String get suggestion => 'Suggestion';
+
+  @override
+  String get whatIsYourIssueRelatedTo => 'What is your issue related to ?';
+
+  @override
+  String get shortDescriptionHint =>
+      'Give us a short description (max 200 characters)';
+
+  @override
+  String get selectCallSlot => 'Select Call Slot';
+
+  @override
+  String get myIssues => 'My Issues';
+
+  @override
+  String get whatsApp => 'WhatsApp';
+
+  @override
+  String get forceMigrate => 'Force Migrate';
+
+  @override
+  String get forceMigrateDesc1 =>
+      'Use this option to fix backed up daily rides missed during app update.';
+
+  @override
+  String get forceMigrateDesc2 =>
+      'Please note, this does not bring back your old rides from the server. It only migrates data in your local storage to the new data format for you to view it.';
+
+  @override
+  String get faq => 'Frequently Asked Questions';
+
+  @override
+  String get termsConditions => 'Terms and Conditions';
+
+  @override
+  String get privacyPolicy => 'Privacy policy';
+
+  @override
+  String get changeLog => 'Change log';
 }

@@ -220,11 +220,107 @@ abstract class AppLocalizations {
   /// **'Name is required'**
   String get nameRequired;
 
+  /// No description provided for @mobileNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Mobile Number'**
+  String get mobileNumber;
+
+  /// No description provided for @mobileNumberHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter mobile number'**
+  String get mobileNumberHint;
+
+  /// No description provided for @mobileNumberRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Mobile number is required'**
+  String get mobileNumberRequired;
+
+  /// No description provided for @country.
+  ///
+  /// In en, this message translates to:
+  /// **'Country'**
+  String get country;
+
+  /// No description provided for @countryHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter country'**
+  String get countryHint;
+
+  /// No description provided for @countryRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Country is required'**
+  String get countryRequired;
+
+  /// No description provided for @state.
+  ///
+  /// In en, this message translates to:
+  /// **'State'**
+  String get state;
+
+  /// No description provided for @stateHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter state'**
+  String get stateHint;
+
+  /// No description provided for @stateRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'State is required'**
+  String get stateRequired;
+
+  /// No description provided for @city.
+  ///
+  /// In en, this message translates to:
+  /// **'City'**
+  String get city;
+
+  /// No description provided for @cityHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter city'**
+  String get cityHint;
+
+  /// No description provided for @cityRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'City is required'**
+  String get cityRequired;
+
+  /// No description provided for @selectProfileImage.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Profile Image'**
+  String get selectProfileImage;
+
   /// No description provided for @role.
   ///
   /// In en, this message translates to:
   /// **'Role'**
   String get role;
+
+  /// No description provided for @roleAdmin.
+  ///
+  /// In en, this message translates to:
+  /// **'Admin'**
+  String get roleAdmin;
+
+  /// No description provided for @roleCustomer.
+  ///
+  /// In en, this message translates to:
+  /// **'Customer'**
+  String get roleCustomer;
+
+  /// No description provided for @selectRoleHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Role'**
+  String get selectRoleHint;
 
   /// No description provided for @roleRequired.
   ///
@@ -741,6 +837,444 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Error: {message}'**
   String errorMsg(String message);
+
+  /// No description provided for @addVehicle.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Vehicle/Device'**
+  String get addVehicle;
+
+  /// No description provided for @vehicleAdded.
+  ///
+  /// In en, this message translates to:
+  /// **'Vehicle added successfully!'**
+  String get vehicleAdded;
+
+  /// No description provided for @vehicleType.
+  ///
+  /// In en, this message translates to:
+  /// **'Vehicle Type'**
+  String get vehicleType;
+
+  /// No description provided for @twoWheeler.
+  ///
+  /// In en, this message translates to:
+  /// **'Two Wheeler'**
+  String get twoWheeler;
+
+  /// No description provided for @fourWheeler.
+  ///
+  /// In en, this message translates to:
+  /// **'Four Wheeler'**
+  String get fourWheeler;
+
+  /// No description provided for @autoRickshaw.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto Rickshaw'**
+  String get autoRickshaw;
+
+  /// No description provided for @heavyVehicle.
+  ///
+  /// In en, this message translates to:
+  /// **'Heavy Vehicle'**
+  String get heavyVehicle;
+
+  /// No description provided for @fuelType.
+  ///
+  /// In en, this message translates to:
+  /// **'Fuel Type'**
+  String get fuelType;
+
+  /// No description provided for @petrol.
+  ///
+  /// In en, this message translates to:
+  /// **'Petrol'**
+  String get petrol;
+
+  /// No description provided for @electric.
+  ///
+  /// In en, this message translates to:
+  /// **'Electric'**
+  String get electric;
+
+  /// No description provided for @vehicleMake.
+  ///
+  /// In en, this message translates to:
+  /// **'Vehicle Make'**
+  String get vehicleMake;
+
+  /// No description provided for @vehicleModel.
+  ///
+  /// In en, this message translates to:
+  /// **'Vehicle Model'**
+  String get vehicleModel;
+
+  /// No description provided for @vehicleNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Vehicle number'**
+  String get vehicleNumber;
+
+  /// No description provided for @vehicleNumberHint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. MP46MX0743'**
+  String get vehicleNumberHint;
+
+  /// No description provided for @pleaseEnterVehicleNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter vehicle number'**
+  String get pleaseEnterVehicleNumber;
+
+  /// No description provided for @selectMake.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Vehicle Make'**
+  String get selectMake;
+
+  /// No description provided for @selectModel.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Vehicle Model'**
+  String get selectModel;
+
+  /// No description provided for @installDevice.
+  ///
+  /// In en, this message translates to:
+  /// **'Install Trackify Device'**
+  String get installDevice;
+
+  /// No description provided for @installDeviceDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Quickly set up your Ajjas smart device with simple steps'**
+  String get installDeviceDesc;
+
+  /// No description provided for @activateSticker.
+  ///
+  /// In en, this message translates to:
+  /// **'Activate Contact Sticker'**
+  String get activateSticker;
+
+  /// No description provided for @activateStickerDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Simple steps to quickly activate your contact sticker'**
+  String get activateStickerDesc;
+
+  /// No description provided for @exploreFreeApp.
+  ///
+  /// In en, this message translates to:
+  /// **'Explore Our Free App'**
+  String get exploreFreeApp;
+
+  /// No description provided for @exploreFreeAppDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Record rides using phone manually & keep track of it using our free app curated for you'**
+  String get exploreFreeAppDesc;
+
+  /// No description provided for @logout.
+  ///
+  /// In en, this message translates to:
+  /// **'Logout'**
+  String get logout;
+
+  /// No description provided for @alreadyHaveAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Already have an account?'**
+  String get alreadyHaveAccount;
+
+  /// No description provided for @dataPlan.
+  ///
+  /// In en, this message translates to:
+  /// **'Data Plan'**
+  String get dataPlan;
+
+  /// No description provided for @warranty.
+  ///
+  /// In en, this message translates to:
+  /// **'Warranty'**
+  String get warranty;
+
+  /// No description provided for @expiresInDays.
+  ///
+  /// In en, this message translates to:
+  /// **'Expires in {days} days'**
+  String expiresInDays(String days);
+
+  /// No description provided for @rechargeNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Recharge Now'**
+  String get rechargeNow;
+
+  /// No description provided for @renewNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Renew Now'**
+  String get renewNow;
+
+  /// No description provided for @secureYourVehicle.
+  ///
+  /// In en, this message translates to:
+  /// **'Secure Your Vehicle'**
+  String get secureYourVehicle;
+
+  /// No description provided for @secureYourVehicleDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Buy Ajjas device now for real-time tracking and complete peace of mind.'**
+  String get secureYourVehicleDesc;
+
+  /// No description provided for @boughtDeviceInstallNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Bought a device? '**
+  String get boughtDeviceInstallNow;
+
+  /// No description provided for @installNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Install now'**
+  String get installNow;
+
+  /// No description provided for @buyAjjasDevice.
+  ///
+  /// In en, this message translates to:
+  /// **'Buy Ajjas Device'**
+  String get buyAjjasDevice;
+
+  /// No description provided for @lite4G.
+  ///
+  /// In en, this message translates to:
+  /// **'Lite 4G'**
+  String get lite4G;
+
+  /// No description provided for @swipeToLock.
+  ///
+  /// In en, this message translates to:
+  /// **'SWIPE TO LOCK'**
+  String get swipeToLock;
+
+  /// No description provided for @upgradeToPlus.
+  ///
+  /// In en, this message translates to:
+  /// **'Upgrade to Ajjas Plus'**
+  String get upgradeToPlus;
+
+  /// No description provided for @getMoreOutOfAjjas.
+  ///
+  /// In en, this message translates to:
+  /// **'Get more out of Ajjas'**
+  String get getMoreOutOfAjjas;
+
+  /// No description provided for @featuresExploredCount.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'ve explored {count} of {total} features - keep going!'**
+  String featuresExploredCount(Object count, Object total);
+
+  /// No description provided for @manageVehiclesDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage all your Vehicles here'**
+  String get manageVehiclesDesc;
+
+  /// No description provided for @settingsDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Language, Account Settings & more'**
+  String get settingsDesc;
+
+  /// No description provided for @notifications.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications'**
+  String get notifications;
+
+  /// No description provided for @helpAndSupport.
+  ///
+  /// In en, this message translates to:
+  /// **'Help & Support'**
+  String get helpAndSupport;
+
+  /// No description provided for @helpAndSupportDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Get assistance and FAQs'**
+  String get helpAndSupportDesc;
+
+  /// No description provided for @settings.
+  ///
+  /// In en, this message translates to:
+  /// **'Settings'**
+  String get settings;
+
+  /// No description provided for @searchForSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Search for settings'**
+  String get searchForSettings;
+
+  /// No description provided for @backupAndRestore.
+  ///
+  /// In en, this message translates to:
+  /// **'Backup & Restore'**
+  String get backupAndRestore;
+
+  /// No description provided for @backupAndRestoreDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Back up your rides data and restore them anytime.'**
+  String get backupAndRestoreDesc;
+
+  /// No description provided for @appSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'App Settings'**
+  String get appSettings;
+
+  /// No description provided for @appSettingsDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'App Theme, Ride Heatmap and Emergency Feature'**
+  String get appSettingsDesc;
+
+  /// No description provided for @notificationSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Notification Settings'**
+  String get notificationSettings;
+
+  /// No description provided for @notificationSettingsDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Notification preference & Notification sound'**
+  String get notificationSettingsDesc;
+
+  /// No description provided for @privacy.
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy'**
+  String get privacy;
+
+  /// No description provided for @privacyDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Change password, manage current session, delete your account'**
+  String get privacyDesc;
+
+  /// No description provided for @rateUsOnPlayStore.
+  ///
+  /// In en, this message translates to:
+  /// **'Rate us on Play Store'**
+  String get rateUsOnPlayStore;
+
+  /// No description provided for @rateUsOnPlayStoreDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Share your valuable feedback'**
+  String get rateUsOnPlayStoreDesc;
+
+  /// No description provided for @logoutDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Logout from this device'**
+  String get logoutDesc;
+
+  /// No description provided for @helpAndSuggestion.
+  ///
+  /// In en, this message translates to:
+  /// **'Help & Suggestion'**
+  String get helpAndSuggestion;
+
+  /// No description provided for @reportAnIssue.
+  ///
+  /// In en, this message translates to:
+  /// **'Report an issue'**
+  String get reportAnIssue;
+
+  /// No description provided for @suggestion.
+  ///
+  /// In en, this message translates to:
+  /// **'Suggestion'**
+  String get suggestion;
+
+  /// No description provided for @whatIsYourIssueRelatedTo.
+  ///
+  /// In en, this message translates to:
+  /// **'What is your issue related to ?'**
+  String get whatIsYourIssueRelatedTo;
+
+  /// No description provided for @shortDescriptionHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Give us a short description (max 200 characters)'**
+  String get shortDescriptionHint;
+
+  /// No description provided for @selectCallSlot.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Call Slot'**
+  String get selectCallSlot;
+
+  /// No description provided for @myIssues.
+  ///
+  /// In en, this message translates to:
+  /// **'My Issues'**
+  String get myIssues;
+
+  /// No description provided for @whatsApp.
+  ///
+  /// In en, this message translates to:
+  /// **'WhatsApp'**
+  String get whatsApp;
+
+  /// No description provided for @forceMigrate.
+  ///
+  /// In en, this message translates to:
+  /// **'Force Migrate'**
+  String get forceMigrate;
+
+  /// No description provided for @forceMigrateDesc1.
+  ///
+  /// In en, this message translates to:
+  /// **'Use this option to fix backed up daily rides missed during app update.'**
+  String get forceMigrateDesc1;
+
+  /// No description provided for @forceMigrateDesc2.
+  ///
+  /// In en, this message translates to:
+  /// **'Please note, this does not bring back your old rides from the server. It only migrates data in your local storage to the new data format for you to view it.'**
+  String get forceMigrateDesc2;
+
+  /// No description provided for @faq.
+  ///
+  /// In en, this message translates to:
+  /// **'Frequently Asked Questions'**
+  String get faq;
+
+  /// No description provided for @termsConditions.
+  ///
+  /// In en, this message translates to:
+  /// **'Terms and Conditions'**
+  String get termsConditions;
+
+  /// No description provided for @privacyPolicy.
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy policy'**
+  String get privacyPolicy;
+
+  /// No description provided for @changeLog.
+  ///
+  /// In en, this message translates to:
+  /// **'Change log'**
+  String get changeLog;
 }
 
 class _AppLocalizationsDelegate

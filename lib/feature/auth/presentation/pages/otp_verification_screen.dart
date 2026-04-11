@@ -7,11 +7,11 @@ import 'package:trackify/feature/onboarding/presentation/cubit/splash_state.dart
 import '../../../../core/constants/app_images.dart';
 import '../../../../core/widgets/custom_form_field.dart';
 import '../../../../core/widgets/square_flat_button.dart';
-import '../../../../l10n/app_localizations.dart';
 import '../cubit/auth_cubit.dart';
 import '../cubit/auth_state.dart';
 import 'reset_password_screen.dart';
 import '../../../../core/utils/validators.dart';
+import '../../../../l10n/app_localizations.dart';
 
 class OtpVerificationScreen extends StatefulWidget {
   final String email;

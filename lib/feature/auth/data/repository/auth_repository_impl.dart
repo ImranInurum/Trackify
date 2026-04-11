@@ -1,11 +1,11 @@
 import 'package:fpdart/fpdart.dart';
-import 'package:trackify/core/constants/api_constants.dart';
+import 'package:trackify/core/config/network/api_host.dart';
+import 'package:trackify/core/config/network/base_api_service.dart';
+import 'package:trackify/core/config/network/network_api_service.dart';
 import 'package:trackify/core/utils/typedefs.dart';
 import 'package:trackify/feature/auth/domain/repository/auth_repository.dart';
 
-import '../../../../core/errors/exceptions.dart';
-import '../../../../core/network/base_api_service.dart';
-import '../../../../core/network/network_api_service.dart';
+import '../../../../core/config/network/exceptions.dart';
 import '../entity/login_response_model.dart';
 import '../entity/register_user_model.dart';
 
@@ -17,7 +17,7 @@ class AuthRepositoryImpl implements AuthRepository {
     Map<String, dynamic> body,
   ) async {
     try {
-      final res = await _apiServices.getPostApiResponse(ApiConstants.login, body);
+      final res = await _apiServices.getPostApiResponse(ApiURL.login, body);
       return res.fold(
         (error) => Left(error),
         (data) => Right(LoginResponseModel.fromJson(data)),
@@ -32,7 +32,31 @@ class AuthRepositoryImpl implements AuthRepository {
     Map<String, dynamic> body,
   ) async {
     try {
-      final res = await _apiServices.getPostApiResponse(ApiConstants.registerUser, body);
+      dynamic fileBytes;
+      String fileName = 'profile.jpg';
+      if (body.containsKey('userProfileBytes')) {
+        fileBytes = body.remove('userProfileBytes');
+      }
+      if (body.containsKey('userProfileName')) {
+        fileName = body.remove('userProfileName');
+      }
+
+      final Map<String, String> stringBody = {};
+      body.forEach((key, value) {
+        if (value != null) {
+          stringBody[key] = value.toString();
+        }
+      });
+
+      final res = await _apiServices.getPostUploadMultiPartApiResponse(
+        ApiURL.registerUser,
+        stringBody,
+        fileBytes,
+        fileName,
+        'userProfile',
+        'POST',
+      );
+
       return res.fold(
         (error) => Left(error),
         (data) => Right(RegisterUserModel.fromJson(data)),
@@ -45,11 +69,8 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   ResultFuture<dynamic> sendOtp(Map<String, dynamic> body) async {
     try {
-      final res = await _apiServices.getPostApiResponse(ApiConstants.sendOtp, body);
-      return res.fold(
-        (error) => Left(error),
-        (data) => Right(data),
-      );
+      final res = await _apiServices.getPostApiResponse(ApiURL.sendOtp, body);
+      return res.fold((error) => Left(error), (data) => Right(data));
     } on AppException catch (e) {
       return Left(e);
     }
@@ -58,11 +79,8 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   ResultFuture<dynamic> verifyOtp(Map<String, dynamic> body) async {
     try {
-      final res = await _apiServices.getPostApiResponse(ApiConstants.verifyOtp, body);
-      return res.fold(
-        (error) => Left(error),
-        (data) => Right(data),
-      );
+      final res = await _apiServices.getPostApiResponse(ApiURL.verifyOtp, body);
+      return res.fold((error) => Left(error), (data) => Right(data));
     } on AppException catch (e) {
       return Left(e);
     }
@@ -71,11 +89,8 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   ResultFuture<dynamic> resetPassword(Map<String, dynamic> body) async {
     try {
-      final res = await _apiServices.getPostApiResponse(ApiConstants.resetPassword, body);
-      return res.fold(
-        (error) => Left(error),
-        (data) => Right(data),
-      );
+      final res = await _apiServices.getPostApiResponse(ApiURL.resetPassword, body);
+      return res.fold((error) => Left(error), (data) => Right(data));
     } on AppException catch (e) {
       return Left(e);
     }
@@ -84,8 +99,7 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   ResultFuture<LoginResponseModel> socialLogin(Map<String, dynamic> body) async {
     try {
-      final res =
-          await _apiServices.getPostApiResponse(ApiConstants.socialLogin, body);
+      final res = await _apiServices.getPostApiResponse(ApiURL.socialLogin, body);
       return res.fold(
         (error) => Left(error),
         (data) => Right(LoginResponseModel.fromJson(data)),

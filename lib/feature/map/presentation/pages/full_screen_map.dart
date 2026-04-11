@@ -6,9 +6,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:trackify/app/cubit/app_cubit.dart';
 import 'package:trackify/app/cubit/app_state.dart';
-import 'package:trackify/core/theme/app_colors.dart';
-import 'package:trackify/feature/map/presentation/cubit/map_cubit.dart';
-import 'package:trackify/feature/map/presentation/cubit/map_state.dart';
+import 'package:trackify/core/constants/app_images.dart';
+import 'package:trackify/core/utils/map_utils.dart';
+import 'package:trackify/core/widgets/bouncing_widget.dart';
 
 class FullScreenMap extends StatefulWidget {
   const FullScreenMap({super.key});
@@ -22,20 +22,265 @@ class _FullScreenMapState extends State<FullScreenMap> {
   String? _lightMapStyle;
   String? _darkMapStyle;
   bool _showSharedWithMe = false;
+  BitmapDescriptor? _customMarker;
+
+  // Map Configuration State
+  MapType _mapType = MapType.normal;
+  bool _isTrafficEnabled = false;
+  bool _isLabelsEnabled = true;
+  String _selectedStyleName = 'Dark';
 
   @override
   void initState() {
     super.initState();
     _loadMapStyles();
+    _loadCustomMarker();
   }
 
   Future<void> _loadMapStyles() async {
-    try {
-      _lightMapStyle = await rootBundle.loadString('assets/map_styles/light_map.json');
-      _darkMapStyle = await rootBundle.loadString('assets/map_styles/dark_map.json');
-    } catch (e) {
-      debugPrint("Error loading map styles: $e");
+    _lightMapStyle = await MapUtils.loadStyle('assets/map_styles/light_map.json');
+    _darkMapStyle = await MapUtils.loadStyle('assets/map_styles/full_map_style.json');
+  }
+
+  Future<void> _loadCustomMarker() async {
+    final Uint8List markerIcon = await MapUtils.getBytesFromAsset(
+      AppImages.bikeImage,
+      100,
+    );
+    if (mounted) {
+      setState(() {
+        _customMarker = BitmapDescriptor.fromBytes(markerIcon);
+      });
     }
+  }
+
+  Future<void> _updateMapStyle(GoogleMapController controller) async {
+    if (_mapType == MapType.satellite) {
+      await MapUtils.setStyle(controller, null);
+      return;
+    }
+
+    String? style;
+    if (_selectedStyleName == 'Dark') {
+      style = _darkMapStyle;
+    } else if (_selectedStyleName == 'Light') {
+      style = _lightMapStyle;
+    } else if (_selectedStyleName == 'Simple') {
+      // Load a simple style (minimal labels)
+      style = await MapUtils.loadStyle('assets/map_styles/light_map.json');
+    }
+
+    await MapUtils.setStyle(controller, style);
+  }
+
+  void _showMapStyleSheet() {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.white,
+      barrierColor: Colors.black26,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setSheetState) {
+            return Container(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Center(
+                    child: Container(
+                      width: 44,
+                      height: 5,
+                      decoration: BoxDecoration(
+                        color: Colors.grey.shade300,
+                        borderRadius: BorderRadius.circular(3),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  const Text(
+                    "Map Style",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                      color: Color(0xFF2C3E50),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      _buildStyleOption("Dark", AppImages.darkMapStyle, setSheetState),
+                      _buildStyleOption("Light", AppImages.lightMapStyle, setSheetState),
+                      _buildStyleOption(
+                        "Simple",
+                        AppImages.simpleMapStyle,
+                        setSheetState,
+                      ),
+                      _buildStyleOption(
+                        "Satellite",
+                        AppImages.sateLiteMapStyle,
+                        setSheetState,
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 32),
+                  const Text(
+                    "Map Options",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                      color: Color(0xFF2C3E50),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  Row(
+                    children: [
+                      _buildMapOption(
+                        "Traffic",
+                        AppImages.trafficMapStyle,
+                        _isTrafficEnabled,
+                        (val) {
+                          setState(() => _isTrafficEnabled = val);
+                          setSheetState(() {});
+                        },
+                      ),
+                      const SizedBox(width: 24),
+                      _buildMapOption(
+                        "Labels",
+                        AppImages.darkMapStyle,
+                        _isLabelsEnabled,
+                        (val) {
+                          setState(() => _isLabelsEnabled = val);
+                          setSheetState(() {});
+                        },
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 24),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  Widget _buildStyleOption(String name, String imagePath, StateSetter setSheetState) {
+    final bool isSelected =
+        _selectedStyleName == name ||
+        (_mapType == MapType.satellite && name == "Satellite");
+    return GestureDetector(
+      onTap: () async {
+        setState(() {
+          if (name == "Satellite") {
+            _mapType = MapType.satellite;
+            _selectedStyleName = "Satellite";
+          } else {
+            _mapType = MapType.normal;
+            _selectedStyleName = name;
+          }
+        });
+        setSheetState(() {});
+        final controller = await _controller.future;
+        _updateMapStyle(controller);
+      },
+      child: Column(
+        children: [
+          Container(
+            height: 68,
+            width: 68,
+            decoration: BoxDecoration(
+              image: DecorationImage(image: AssetImage(imagePath), fit: BoxFit.cover),
+              borderRadius: BorderRadius.circular(16),
+              border: isSelected
+                  ? Border.all(color: Colors.cyan, width: 2.5)
+                  : Border.all(color: Colors.grey.shade200),
+              boxShadow: [
+                if (isSelected)
+                  BoxShadow(
+                    color: Colors.cyan.withOpacity(0.2),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
+                  ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            name,
+            style: TextStyle(
+              fontSize: 13,
+              fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+              color: isSelected ? Colors.cyan.shade700 : const Color(0xFF2C3E50),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMapOption(
+    String name,
+    String imagePath,
+    bool isActive,
+    Function(bool) onChanged,
+  ) {
+    return GestureDetector(
+      onTap: () => onChanged(!isActive),
+      child: Column(
+        children: [
+          Stack(
+            children: [
+              Container(
+                height: 68,
+                width: 68,
+                decoration: BoxDecoration(
+                  image: DecorationImage(image: AssetImage(imagePath), fit: BoxFit.cover),
+                  borderRadius: BorderRadius.circular(16),
+                  border: isActive
+                      ? Border.all(color: Colors.cyan, width: 2)
+                      : Border.all(color: Colors.transparent),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.05),
+                      blurRadius: 10,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+              ),
+              if (isActive)
+                Positioned(
+                  right: 8,
+                  top: 8,
+                  child: Container(
+                    padding: const EdgeInsets.all(2),
+                    decoration: const BoxDecoration(
+                      color: Colors.cyan,
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(Icons.check, size: 10, color: Colors.white),
+                  ),
+                ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Text(
+            name,
+            style: const TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.w500,
+              color: Color(0xFF2C3E50),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -65,15 +310,28 @@ class _FullScreenMapState extends State<FullScreenMap> {
             target: LatLng(currentPos.latitude, currentPos.longitude),
             zoom: 15,
           ),
-          myLocationEnabled: true,
+          myLocationEnabled: false,
           zoomControlsEnabled: false,
-          mapType: MapType.normal,
-          onMapCreated: (controller) {
+          myLocationButtonEnabled: false,
+          mapType: _mapType,
+          trafficEnabled: _isTrafficEnabled,
+          markers: {
+            if (currentPos != null)
+              Marker(
+                markerId: const MarkerId('current_location'),
+                position: LatLng(currentPos.latitude, currentPos.longitude),
+                icon: _customMarker ?? BitmapDescriptor.defaultMarker,
+                anchor: const Offset(0.5, 0.5),
+              ),
+          },
+          onMapCreated: (controller) async {
             if (!_controller.isCompleted) {
               _controller.complete(controller);
             }
-            final style = appState.themeMode == ThemeMode.dark ? _darkMapStyle : _lightMapStyle;
-            if (style != null) controller.setMapStyle(style);
+            if (_darkMapStyle == null || _lightMapStyle == null) {
+              await _loadMapStyles();
+            }
+            _updateMapStyle(controller);
           },
         );
       },
@@ -87,10 +345,16 @@ class _FullScreenMapState extends State<FullScreenMap> {
       right: 10,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _buildRoundButton(Icons.arrow_back, onTap: () => Navigator.pop(context)),
-          Row(
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
             children: [
+              _buildRoundButton(
+                Icons.more_vert,
+                onTap: () => setState(() => _showSharedWithMe = !_showSharedWithMe),
+              ),
               if (_showSharedWithMe)
                 TweenAnimationBuilder<double>(
                   tween: Tween(begin: 0.0, end: 1.0),
@@ -99,28 +363,36 @@ class _FullScreenMapState extends State<FullScreenMap> {
                     return Opacity(
                       opacity: value,
                       child: Transform.translate(
-                        offset: Offset(20 * (1 - value), 0),
+                        offset: Offset(0, 10 * value - 10),
                         child: child,
                       ),
                     );
                   },
                   child: Container(
-                    margin: const EdgeInsets.only(right: 8),
+                    margin: const EdgeInsets.only(top: 8),
                     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                     decoration: BoxDecoration(
-                      color: Colors.black.withOpacity(0.85),
+                      color: const Color(0xFF222222).withOpacity(0.95),
                       borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: Colors.white10),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.3),
+                          blurRadius: 10,
+                          spreadRadius: 1,
+                        ),
+                      ],
                     ),
                     child: const Text(
                       "Shared with me",
-                      style: TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w500),
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 13,
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
                   ),
                 ),
-              _buildRoundButton(
-                Icons.more_vert, 
-                onTap: () => setState(() => _showSharedWithMe = !_showSharedWithMe)
-              ),
             ],
           ),
         ],
@@ -135,7 +407,7 @@ class _FullScreenMapState extends State<FullScreenMap> {
       child: Column(
         children: [
           _buildMapActionButton(Icons.motorcycle, hasNotification: true),
-          _buildMapActionButton(Icons.layers_outlined),
+          _buildMapActionButton(Icons.map_outlined, onTap: _showMapStyleSheet),
           _buildMapActionButton(Icons.person_pin_circle_outlined),
           _buildMapActionButton(Icons.my_location),
           _buildMapActionButton(Icons.fullscreen),
@@ -144,12 +416,16 @@ class _FullScreenMapState extends State<FullScreenMap> {
     );
   }
 
-  Widget _buildMapActionButton(IconData icon, {bool hasNotification = false}) {
+  Widget _buildMapActionButton(
+    IconData icon, {
+    bool hasNotification = false,
+    VoidCallback? onTap,
+  }) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: Stack(
         children: [
-          _buildRoundButton(icon),
+          _buildRoundButton(icon, onTap: onTap),
           if (hasNotification)
             Positioned(
               right: 0,
@@ -170,16 +446,17 @@ class _FullScreenMapState extends State<FullScreenMap> {
   }
 
   Widget _buildRoundButton(IconData icon, {VoidCallback? onTap}) {
-    return GestureDetector(
-      onTap: onTap,
+    return BouncingWidget(
+      onTap: onTap ?? () {},
       child: Container(
         height: 48,
         width: 48,
         decoration: BoxDecoration(
-          color: Colors.black.withOpacity(0.7),
+          color: const Color(0xFF222222),
           shape: BoxShape.circle,
+          border: Border.all(color: Colors.black),
         ),
-        child: Icon(icon, color: Colors.white, size: 24),
+        child: Icon(icon, color: Colors.grey.withOpacity(0.85), size: 24),
       ),
     );
   }
@@ -188,9 +465,9 @@ class _FullScreenMapState extends State<FullScreenMap> {
     return DraggableScrollableSheet(
       initialChildSize: 0.18,
       minChildSize: 0.18,
-      maxChildSize: 0.6,
+      maxChildSize: 0.38,
       snap: true,
-      snapSizes: const [0.18, 0.38, 0.6],
+      snapSizes: const [0.18, 0.38],
       builder: (context, scrollController) {
         return Container(
           decoration: const BoxDecoration(
@@ -224,17 +501,14 @@ class _FullScreenMapState extends State<FullScreenMap> {
                       _buildVehicleHeader(),
                       const SizedBox(height: 16),
                       _buildStatusRow(),
-                      
+
                       // Mid-Stop content
                       const SizedBox(height: 30),
                       _buildStatsGrid(),
-                      
+
                       // Fully-Expanded content
                       const SizedBox(height: 24),
                       _buildFuelGauge(),
-                      const SizedBox(height: 30),
-                      _buildBottomNavIcons(),
-                      const SizedBox(height: 12),
                     ],
                   ),
                 ),
@@ -256,7 +530,7 @@ class _FullScreenMapState extends State<FullScreenMap> {
             borderRadius: BorderRadius.circular(12),
           ),
           child: Image.asset(
-            'assets/images/bike2.png',
+            AppImages.bikeImage,
             height: 44,
             width: 44,
             fit: BoxFit.contain,
@@ -269,11 +543,19 @@ class _FullScreenMapState extends State<FullScreenMap> {
             children: [
               const Text(
                 "SP 125",
-                style: TextStyle(fontSize: 19, fontWeight: FontWeight.bold, color: Color(0xFF2C3E50)),
+                style: TextStyle(
+                  fontSize: 19,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF2C3E50),
+                ),
               ),
               Text(
                 "MP09QV8269",
-                style: TextStyle(fontSize: 15, color: Colors.cyan.shade600, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                  fontSize: 15,
+                  color: Colors.cyan.shade600,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ],
           ),
@@ -304,7 +586,11 @@ class _FullScreenMapState extends State<FullScreenMap> {
       children: [
         Text(
           label,
-          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Color(0xFF2C3E50)),
+          style: const TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 14,
+            color: Color(0xFF2C3E50),
+          ),
         ),
         Text(
           isDuration ? "Duration" : "Status",
@@ -343,18 +629,28 @@ class _FullScreenMapState extends State<FullScreenMap> {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
             decoration: BoxDecoration(
-              gradient: const LinearGradient(colors: [Color(0xFFDBBE8F), Color(0xFFC5A367)]),
+              gradient: const LinearGradient(
+                colors: [Color(0xFFDBBE8F), Color(0xFFC5A367)],
+              ),
               borderRadius: BorderRadius.circular(4),
             ),
             child: const Text(
               "Plus",
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: Colors.black87),
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 12,
+                color: Colors.black87,
+              ),
             ),
           )
         else
           Text(
             value,
-            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Color(0xFF2C3E50)),
+            style: const TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 16,
+              color: Color(0xFF2C3E50),
+            ),
           ),
         const SizedBox(height: 6),
         Text(label, style: TextStyle(fontSize: 12, color: Colors.grey.shade600)),
@@ -397,7 +693,11 @@ class _FullScreenMapState extends State<FullScreenMap> {
           const SizedBox(width: 12),
           const Text(
             "0.0 kms more to go",
-            style: TextStyle(fontSize: 13, color: Colors.grey, fontWeight: FontWeight.w600),
+            style: TextStyle(
+              fontSize: 13,
+              color: Colors.grey,
+              fontWeight: FontWeight.w600,
+            ),
           ),
         ],
       ),
@@ -418,9 +718,9 @@ class _FullScreenMapState extends State<FullScreenMap> {
 
   Widget _buildNavIcon(IconData icon, {bool isSelected = false}) {
     return Icon(
-      icon, 
-      color: isSelected ? Colors.cyan.shade700 : Colors.grey.shade600, 
-      size: 28
+      icon,
+      color: isSelected ? Colors.cyan.shade700 : Colors.grey.shade600,
+      size: 28,
     );
   }
 }

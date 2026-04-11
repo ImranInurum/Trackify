@@ -6,13 +6,16 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:trackify/app/cubit/app_cubit.dart';
 import 'package:trackify/app/cubit/app_state.dart';
+import 'package:trackify/core/constants/app_images.dart';
 import 'package:trackify/core/theme/app_colors.dart';
+import 'package:trackify/core/utils/map_utils.dart';
+import 'package:trackify/core/widgets/bouncing_widget.dart';
 import 'package:trackify/core/widgets/draggable_app_bar.dart';
 import 'package:trackify/feature/add_vehicle_and_device/choice_selector.dart';
 import 'package:trackify/feature/map/data/entity/user_vehicles.dart';
 import 'package:trackify/feature/map/presentation/pages/full_screen_map.dart';
+import 'package:trackify/feature/my_garage/presentation/view/my_garage_screen.dart';
 import 'package:trackify/feature/record_via_phone/presentation/pages/record_via_phone_screen.dart';
-import 'package:trackify/feature/settings/presentation/pages/my_garage_screen.dart';
 
 import '../../../../core/config/style_manager.dart';
 import '../cubit/map_cubit.dart';
@@ -30,37 +33,36 @@ class _MapScreenState extends State<MapScreen> {
   String? _lightMapStyle;
   String? _darkMapStyle;
   Vehicles? _selectedDevice;
+  BitmapDescriptor? _customMarker;
 
   @override
   void initState() {
     super.initState();
     _loadMapStyles();
+    _loadCustomMarker();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Future.delayed(const Duration(milliseconds: 100), () {
         if (mounted) {
-          context.read<MapCubit>().fetchVehicles({
-            'user_id': context.read<AppCubit>().state.userData?.id,
-          });
+          context.read<MapCubit>().fetchVehicles();
         }
       });
     });
   }
 
   Future<void> _loadMapStyles() async {
-    _lightMapStyle = await rootBundle.loadString('assets/map_styles/light_map.json');
-    _darkMapStyle = await rootBundle.loadString('assets/map_styles/dark_map.json');
+    _lightMapStyle = await MapUtils.loadStyle('assets/map_styles/light_map.json');
+    _darkMapStyle = await MapUtils.loadStyle('assets/map_styles/dark_map.json');
   }
 
-  Future<void> _applyMapTheme(GoogleMapController controller, ThemeMode themeMode) async {
-    if (themeMode == ThemeMode.dark) {
-      await controller.setMapStyle(_darkMapStyle);
-    } else if (themeMode == ThemeMode.light) {
-      await controller.setMapStyle(_lightMapStyle);
-    } else {
-      final brightness = MediaQuery.of(context).platformBrightness;
-      await controller.setMapStyle(
-        brightness == Brightness.dark ? _darkMapStyle : _lightMapStyle,
-      );
+  Future<void> _loadCustomMarker() async {
+    final Uint8List markerIcon = await MapUtils.getBytesFromAsset(
+      AppImages.bikeImage,
+      100,
+    );
+    if (mounted) {
+      setState(() {
+        _customMarker = BitmapDescriptor.fromBytes(markerIcon);
+      });
     }
   }
 
@@ -139,26 +141,25 @@ class _MapScreenState extends State<MapScreen> {
   }
 
   Widget _buildMapSection() {
-    return GestureDetector(
-      behavior: HitTestBehavior.opaque,
+    return BouncingWidget(
       onTap: () {
         Navigator.of(
           context,
         ).push(MaterialPageRoute(builder: (context) => FullScreenMap()));
       },
       child: Container(
-        height: 340,
-        margin: const EdgeInsets.only(top: 16, bottom: 16, left: 16, right: 16),
-        padding: EdgeInsets.all(4.0),
+        height: 300,
+        margin: const EdgeInsets.all(16),
+        padding: EdgeInsets.all(6.0),
         decoration: BoxDecoration(
           color: AppColors.primaryLightVariant.withOpacity(0.98),
           borderRadius: const BorderRadius.all(Radius.circular(5)),
           border: Border.all(color: Colors.grey.shade300),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.4),
+              color: Colors.black.withOpacity(0.3),
               blurRadius: 2,
-              offset: const Offset(0, 0),
+              offset: const Offset(0, 1),
             ),
           ],
         ),
@@ -173,20 +174,45 @@ class _MapScreenState extends State<MapScreen> {
                 Expanded(
                   child: ClipRRect(
                     borderRadius: BorderRadius.all(Radius.circular(5)),
-                    child: GoogleMap(
-                      initialCameraPosition: CameraPosition(
-                        target: LatLng(currentPos.latitude, currentPos.longitude),
-                        zoom: 15,
+                    child: IgnorePointer(
+                      child: GoogleMap(
+                        initialCameraPosition: CameraPosition(
+                          target: LatLng(currentPos.latitude, currentPos.longitude),
+                          zoom: 15,
+                        ),
+                        myLocationEnabled: false,
+                        zoomControlsEnabled: false,
+                        myLocationButtonEnabled: false,
+                        scrollGesturesEnabled: false,
+                        zoomGesturesEnabled: false,
+                        tiltGesturesEnabled: false,
+                        rotateGesturesEnabled: false,
+                        trafficEnabled: false,
+                        markers: {
+                          if (currentPos != null)
+                            Marker(
+                              markerId: const MarkerId('current_location'),
+                              position: LatLng(currentPos.latitude, currentPos.longitude),
+                              icon: _customMarker ?? BitmapDescriptor.defaultMarker,
+                              anchor: const Offset(0.5, 0.5),
+                            ),
+                        },
+                        onMapCreated: (GoogleMapController controller) async {
+                          if (!_controller.isCompleted) {
+                            _controller.complete(controller);
+                          }
+                          if (_darkMapStyle == null || _lightMapStyle == null) {
+                            await _loadMapStyles();
+                          }
+                          await MapUtils.applyMapTheme(
+                            controller: controller,
+                            themeMode: ThemeMode.dark,
+                            lightStyle: _lightMapStyle,
+                            darkStyle: _darkMapStyle,
+                            context: context,
+                          );
+                        },
                       ),
-                      myLocationEnabled: true,
-                      zoomControlsEnabled: false,
-                      myLocationButtonEnabled: false,
-                      onMapCreated: (GoogleMapController controller) async {
-                        if (!_controller.isCompleted) {
-                          _controller.complete(controller);
-                        }
-                        await _applyMapTheme(controller, state.themeMode);
-                      },
                     ),
                   ),
                 ),
@@ -367,7 +393,9 @@ class _MapScreenState extends State<MapScreen> {
                 onTap: () {
                   if (option["label"] == "Record via\nPhone") {
                     Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) => const RecordViaPhoneScreen()),
+                      MaterialPageRoute(
+                        builder: (context) => const RecordViaPhoneScreen(),
+                      ),
                     );
                   }
                 },
@@ -402,7 +430,11 @@ class _MapScreenState extends State<MapScreen> {
                       Stack(
                         clipBehavior: Clip.none,
                         children: [
-                          Icon(option["icon"] as IconData, size: 28, color: Colors.black87),
+                          Icon(
+                            option["icon"] as IconData,
+                            size: 28,
+                            color: Colors.black87,
+                          ),
                           if (option["badge"] != null)
                             Positioned(
                               top: -10,

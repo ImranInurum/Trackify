@@ -7,7 +7,7 @@ class MapCase {
   final MapRepository mapRepository;
   MapCase(this.mapRepository);
 
-  ResultFuture<UserVehicles> fetchVehiclesByUserId(Map<String, dynamic> body) {
-    return mapRepository.getUserVehicles(body);
+  ResultFuture<UserVehicles> fetchVehiclesByUserId() {
+    return mapRepository.getUserVehicles();
   }
 }

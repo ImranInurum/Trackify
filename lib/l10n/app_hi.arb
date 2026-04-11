@@ -138,5 +138,24 @@
         "type": "String"
       }
     }
-  }
+  },
+  "dataPlan": "डेटा प्लान",
+  "warranty": "वारंटी",
+  "expiresInDays": "{days} दिनों में समाप्त हो रहा है",
+  "@expiresInDays": {
+    "placeholders": {
+      "days": {
+        "type": "String"
+      }
+    }
+  },
+  "rechargeNow": "अभी रिचार्ज करें",
+  "renewNow": "अभी नवीनीकृत करें",
+  "secureYourVehicle": "अपने वाहन को सुरक्षित करें",
+  "secureYourVehicleDesc": "रीअल-टाइम ट्रैकिंग और मन की शांति के लिए अभी अजस डिवाइस खरीदें।",
+  "boughtDeviceInstallNow": "डिवाइस खरीदा है? ",
+  "installNow": "अभी इंस्टॉल करें",
+  "buyAjjasDevice": "अजस डिवाइस खरीदें",
+  "lite4G": "लाइट 4जी",
+  "swipeToLock": "लॉक करने के लिए स्वाइप करें"
 }

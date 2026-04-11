@@ -139,5 +139,24 @@
         "type": "String"
       }
     }
-  }
+  },
+  "dataPlan": "ಡೇಟಾ ಪ್ಲಾನ್",
+  "warranty": "ವಾರಂಟಿ",
+  "expiresInDays": "{days} ದಿನಗಳಲ್ಲಿ ಮುಕ್ತಾಯಗೊಳ್ಳುತ್ತದೆ",
+  "@expiresInDays": {
+    "placeholders": {
+      "days": {
+        "type": "String"
+      }
+    }
+  },
+  "rechargeNow": "ಈಗ ರೀಚಾರ್ಜ್ ಮಾಡಿ",
+  "renewNow": "ಈಗ ನವೀಕರಿಸಿ",
+  "secureYourVehicle": "ನಿಮ್ಮ ವಾಹನವನ್ನು ಸುರಕ್ಷಿತಗೊಳಿಸಿ",
+  "secureYourVehicleDesc": "ನೈಜ-ಸಮಯದ ಟ್ರ್ಯಾಕಿಂಗ್ ಮತ್ತು ಮನಃಶಾಂತಿಗಾಗಿ ಈಗ ಅಜ್ಜಾಸ್ ಸಾಧನವನ್ನು ಖರೀದಿಸಿ.",
+  "boughtDeviceInstallNow": "ಸಾಧನವನ್ನು ಖರೀದಿಸಿದ್ದೀರಾ? ",
+  "installNow": "ಈಗ ಸ್ಥಾಪಿಸಿ",
+  "buyAjjasDevice": "ಅಜ್ಜಾಸ್ ಸಾಧನವನ್ನು ಖರೀದಿಸಿ",
+  "lite4G": "ಲೈಟ್ 4ಜಿ",
+  "swipeToLock": "ಲಾಕ್ ಮಾಡಲು ಸ್ವೈಪ್ ಮಾಡಿ"
 }
