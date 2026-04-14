@@ -1,52 +1,29 @@
-import 'dart:convert';
 import 'package:fpdart/fpdart.dart';
-import 'package:trackify/core/constants/api_constants.dart';
+import 'package:trackify/core/config/network/api_host.dart';
+import 'package:trackify/core/config/network/base_api_service.dart';
+import 'package:trackify/core/config/network/network_api_service.dart';
 import 'package:trackify/core/utils/typedefs.dart';
-import 'package:trackify/feature/map/data/entity/user_device_model.dart';
-import '../../../../core/utils/shared_preferences.dart';
+import 'package:trackify/feature/map/data/entity/user_vehicles.dart';
 
-import '../../../../core/errors/exceptions.dart';
-import '../../../../core/network/base_api_service.dart';
-import '../../../../core/network/network_api_service.dart';
+import '../../../../core/config/network/exceptions.dart';
+import '../../../../core/utils/shared_preferences.dart';
 import '../../domain/repository/map_repository.dart';
-import '../entity/device_data_by_date_response.dart';
 
 class MapRepositoryImpl implements MapRepository {
   static final BaseApiServices _apiServices = NetworkApiService();
 
   @override
-  ResultFuture<UserDeviceList> getUserDevices(Map<String, dynamic> body) async {
+  ResultFuture<UserVehicles> getUserVehicles() async {
     try {
       final prefs = AppPreference.instance;
-      final userData = await prefs.get(key: AppPreference.KEY_USER_DETAILS);
-      String userId = "";
-      if (userData.isNotEmpty) {
-        final userMap = jsonDecode(userData);
-        userId = userMap['id']?.toString() ?? "";
-      }
+      final userId = await prefs.get(key: AppPreference.KEY_USER_ID);
 
-      final res = await _apiServices.getGetApiResponse(ApiConstants.deviceByUserId(userId), body);
-      return res.fold(
-        (error) => Left(error),
-        (data) => Right(UserDeviceList.fromJson(data)),
-      );
-    } on AppException catch (e) {
-      return Left(e);
-    }
-  }
-
-  @override
-  ResultFuture<DeviceDataByDateResponse> getDeviceDataByDate(
-    Map<String, dynamic> body,
-  ) async {
-    try {
-      final res = await _apiServices.getPostApiResponse(
-        ApiConstants.deviceDataByDate,
-        body,
+      final res = await _apiServices.getGetApiResponse(
+        ApiURL.getVehiclesByUserId(userId),
       );
       return res.fold(
         (error) => Left(error),
-        (data) => Right(DeviceDataByDateResponse.fromJson(data)),
+        (data) => Right(UserVehicles.fromJson(data)),
       );
     } on AppException catch (e) {
       return Left(e);

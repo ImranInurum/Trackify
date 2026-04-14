@@ -31,4 +31,8 @@ class AuthCase {
   ResultFuture<LoginResponseModel> socialLoginCall(Map<String, dynamic> body) {
     return authRepository.socialLogin(body);
   }
+
+  ResultFuture<dynamic> saveFcmTokenCall(Map<String, dynamic> body) {
+    return authRepository.saveFcmToken(body);
+  }
 }

@@ -1,82 +1,3 @@
-// import 'package:flutter/material.dart';
-// import 'package:trackify/core/config/style_manager.dart';
-//
-// import '../theme/app_colors.dart';
-//
-// class CommonButton extends StatelessWidget {
-//   final String text;
-//   final void Function()? onPressed;
-//   final String? iconAsset;
-//   final IconData? leading;
-//   final Color color;
-//   final double height;
-//   final double width;
-//
-//   const CommonButton({
-//     super.key,
-//     required this.text,
-//     required this.onPressed,
-//     this.color = AppColors.errorLight,
-//     this.height = 35.0,
-//     this.width = double.infinity,
-//     this.iconAsset,
-//     this.leading,
-//   });
-//   @override
-//   Widget build(BuildContext context) {
-//     return SizedBox(
-//       height: height,
-//       width: width,
-//       child: ElevatedButton(
-//         onPressed: onPressed,
-//         style: ElevatedButton.styleFrom(backgroundColor:
-//               onPressed == null
-//                   ? Colors.grey
-//                   : Theme.of(context).colorScheme.primaryContainer,
-//             shape: RoundedRectangleBorder(
-//             borderRadius: BorderRadius.circular(8),
-//       ),
-//         ),
-//
-//
-//
-//         // style: ButtonStyle(
-//         //   elevation: WidgetStateProperty.all<double>(0.0),
-//         //   shape: WidgetStateProperty.all<RoundedRectangleBorder>(
-//         //     RoundedRectangleBorder(
-//         //       side: BorderSide.none,
-//         //       borderRadius: BorderRadius.circular(4.0),
-//         //     ),
-//         //   ),
-//         //   backgroundColor: WidgetStateProperty.all(
-//         //     onPressed == null
-//         //         ? Colors.grey
-//         //         : Theme.of(context).colorScheme.primaryContainer,
-//         //   ),
-//         // ),
-//         child: Row(
-//           mainAxisAlignment: iconAsset != null || leading != null
-//               ? MainAxisAlignment.spaceEvenly
-//               : MainAxisAlignment.center,
-//           crossAxisAlignment: CrossAxisAlignment.center,
-//           children: [
-//             if (leading != null) ...[
-//               Icon(leading, color: Theme.of(context).colorScheme.surface),
-//             ],
-//
-//             Flexible(
-//               child: Text(
-//                 text,
-//                 style: getRegularStyle(color: Theme.of(context).colorScheme.surface),
-//               ),
-//             ),
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-// }
-
 import 'package:flutter/material.dart';
 import 'package:trackify/core/config/style_manager.dart';
 
@@ -91,6 +12,7 @@ class CommonButton extends StatelessWidget {
   final double width;
   final double borderRadius;
   final EdgeInsetsGeometry? padding;
+  final bool isLoading;
 
   const CommonButton({
     super.key,
@@ -104,6 +26,7 @@ class CommonButton extends StatelessWidget {
     this.width = double.infinity,
     this.borderRadius = 12.0,
     this.padding,
+    this.isLoading = false,
   });
 
   @override
@@ -156,27 +79,38 @@ class CommonButton extends StatelessWidget {
           ),
           elevation: const WidgetStatePropertyAll(0), // Handled by boxshadow
         ),
-        child: Row(
-          mainAxisAlignment: (iconAsset != null || leading != null)
-              ? MainAxisAlignment.center
-              : MainAxisAlignment.center,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            if (leading != null) ...[Icon(leading, size: 18), const SizedBox(width: 8)],
-
-            Flexible(
-              child: Text(
-                text,
-                overflow: TextOverflow.ellipsis,
-                style: getRegularStyle(
-                  color: onPressed == null
-                      ? disabledForegroundColor
-                      : (foregroundColor ?? defaultForegroundColor),
-                ).copyWith(fontWeight: FontWeight.w600),
+        child: isLoading
+            ? SizedBox(
+                height: 20,
+                width: 20,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  color: foregroundColor ?? defaultForegroundColor,
+                ),
+              )
+            : Row(
+                mainAxisAlignment: (iconAsset != null || leading != null)
+                    ? MainAxisAlignment.center
+                    : MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (leading != null) ...[
+                    Icon(leading, size: 18),
+                    const SizedBox(width: 8)
+                  ],
+                  Flexible(
+                    child: Text(
+                      text,
+                      overflow: TextOverflow.ellipsis,
+                      style: getRegularStyle(
+                        color: onPressed == null
+                            ? disabledForegroundColor
+                            : (foregroundColor ?? defaultForegroundColor),
+                      ).copyWith(fontWeight: FontWeight.w600),
+                    ),
+                  ),
+                ],
               ),
-            ),
-          ],
-        ),
       ),
     );
   }

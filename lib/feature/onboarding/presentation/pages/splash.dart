@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:trackify/core/config/network/api_host.dart';
 import 'package:trackify/core/utils/shared_preferences.dart';
 import 'package:trackify/feature/add_vehicle_and_device/choice_selector.dart';
+import 'package:trackify/feature/auth/presentation/pages/signin_screen.dart';
+import 'package:trackify/feature/map/presentation/cubit/map_cubit.dart';
+import 'package:trackify/feature/map/presentation/cubit/map_state.dart';
 import 'package:trackify/feature/onboarding/presentation/cubit/splash_cubit.dart';
 import 'package:trackify/feature/onboarding/presentation/cubit/splash_state.dart';
 import 'package:trackify/feature/onboarding/presentation/pages/select_language_screen.dart';
 
 import '../../../../app/app_navigation.dart';
 import '../../../../app/cubit/app_cubit.dart';
-import '../../../auth/presentation/pages/signin_screen.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -25,11 +28,11 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   Future<void> _initializeApp() async {
-    context.read<SplashCubit>().fetchLogo();
+    final logoFetch = context.read<SplashCubit>().fetchLogo();
     context.read<AppCubit>().fetchTheme();
 
     // Brief splash display
-    await Future.delayed(const Duration(milliseconds: 2000));
+    final splashWait = Future.delayed(const Duration(milliseconds: 2000));
 
     // Init SharedPreferences singleton
     await AppPreference.instance.init();
@@ -37,12 +40,20 @@ class _SplashScreenState extends State<SplashScreen> {
 
     final prefs = AppPreference.instance;
 
-    // ── Step 1: Language check ────────────────────────────────────────────────
     final selectedLanguage = await prefs.get(key: AppPreference.KEY_SELECTED_LANGUAGE);
+    final token = await prefs.get(key: AppPreference.KEY_TOKEN);
+    final userId = await prefs.get(key: AppPreference.KEY_USER_ID);
+
+    if (token.isNotEmpty) {
+      ApiURL.updateAuthToken(token);
+    }
+
+    // Wait for both the minimum splash time and the logo fetch to finish
+    await Future.wait([splashWait, logoFetch]);
+
     if (!mounted) return;
 
     if (selectedLanguage.isEmpty) {
-      // First-ever launch → pick language first
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (_) => const SelectLanguageScreen()),
@@ -50,36 +61,27 @@ class _SplashScreenState extends State<SplashScreen> {
       return;
     }
 
-    // ── Step 2: Token check ───────────────────────────────────────────────────
-    final token = await prefs.get(key: AppPreference.KEY_TOKEN);
-    if (!mounted) return;
-
-    if (token.isEmpty) {
-      // Not logged in → sign-in screen
+    if (token.isEmpty || userId.isEmpty) {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (_) => const SignInScreen(isFromSignUp: false)),
+        MaterialPageRoute(builder: (_) => const SignInScreen()),
       );
       return;
     }
 
-    // ── Step 3: Setup-complete check ──────────────────────────────────────────
-    // null  = key never written = existing user from before this feature → treat as done
-    // false = user registered but killed app before finishing ChoiceSelector
-    // true  = fully onboarded
-    final setupFlag = await prefs.getBoolNullable(key: AppPreference.KEY_SETUP_COMPLETE);
-    final setupComplete = setupFlag ?? true; // safe default for old users
+    await context.read<MapCubit>().fetchVehicles();
     if (!mounted) return;
 
-    if (!setupComplete) {
+    final mapState = context.read<MapCubit>().state;
+    if (mapState is MapLoaded && (mapState.vehicleList.vehicles?.isNotEmpty ?? false)) {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (_) => const ChoiceSelector()),
+        MaterialPageRoute(builder: (_) => const AppNavigation()),
       );
     } else {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (_) => const AppNavigation()),
+        MaterialPageRoute(builder: (_) => const ChoiceSelector()),
       );
     }
   }
@@ -93,7 +95,9 @@ class _SplashScreenState extends State<SplashScreen> {
           builder: (context, state) {
             if (state is SplashLoading) {
               return const CircularProgressIndicator();
-            } else if (state is SplashLoaded && state.logo.path != null) {
+            }
+
+            if (state is SplashLoaded && state.logo.path != null) {
               return Image.network(
                 state.logo.path!,
                 height: 120,

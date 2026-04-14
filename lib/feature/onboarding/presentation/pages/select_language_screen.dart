@@ -1,12 +1,10 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:trackify/app/app_navigation.dart';
 import 'package:trackify/app/cubit/app_cubit.dart';
 import 'package:trackify/app/cubit/app_state.dart';
 import 'package:trackify/core/utils/shared_preferences.dart';
 import 'package:trackify/core/widgets/square_flat_button.dart';
-import 'package:trackify/feature/add_vehicle_and_device/choice_selector.dart';
 import 'package:trackify/feature/auth/presentation/pages/signin_screen.dart';
 
 import '../../../../l10n/app_localizations.dart';
@@ -39,33 +37,9 @@ class _SelectLanguageScreenState extends State<SelectLanguageScreen> {
       value: _selectedLanguageKey,
     );
 
-    final token = await prefs.get(key: AppPreference.KEY_TOKEN);
     if (!mounted) return;
-
-    if (token.isNotEmpty) {
-      // Logged in — check whether setup has been completed
-      final setupFlag = await prefs.getBoolNullable(key: AppPreference.KEY_SETUP_COMPLETE);
-      final setupComplete = setupFlag ?? true; // null = old user = treat as done
-      if (!mounted) return;
-
-      if (!setupComplete) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (_) => const ChoiceSelector()),
-        );
-      } else {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (_) => const AppNavigation()),
-        );
-      }
-    } else {
-      // Not logged in → sign-in
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (_) => const SignInScreen(isFromSignUp: false)),
-      );
-    }
+    // Not logged in → sign-in
+    Navigator.push(context, MaterialPageRoute(builder: (_) => const SignInScreen()));
   }
 
   Widget _buildLogo(ColorScheme colorScheme, [ImageProvider? imageProvider]) {

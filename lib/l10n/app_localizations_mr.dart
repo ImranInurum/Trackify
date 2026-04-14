@@ -68,7 +68,58 @@ class AppLocalizationsMr extends AppLocalizations {
   String get nameRequired => 'नाव आवश्यक आहे';
 
   @override
+  String get mobileNumber => 'मोबाईल नंबर';
+
+  @override
+  String get mobileNumberHint => 'मोबाईल नंबर प्रविष्ट करा';
+
+  @override
+  String get mobileNumberRequired => 'मोबाईल नंबर आवश्यक आहे';
+
+  @override
+  String get invalidMobileNumber => 'कृपया वैध मोबाईल नंबर प्रविष्ट करा';
+
+  @override
+  String get country => 'देश';
+
+  @override
+  String get countryHint => 'देश प्रविष्ट करा';
+
+  @override
+  String get countryRequired => 'देश आवश्यक आहे';
+
+  @override
+  String get state => 'राज्य';
+
+  @override
+  String get stateHint => 'राज्य प्रविष्ट करा';
+
+  @override
+  String get stateRequired => 'राज्य आवश्यक आहे';
+
+  @override
+  String get city => 'शहर';
+
+  @override
+  String get cityHint => 'शहर प्रविष्ट करा';
+
+  @override
+  String get cityRequired => 'शहर आवश्यक आहे';
+
+  @override
+  String get selectProfileImage => 'प्रोफाइल प्रतिमा निवडा';
+
+  @override
   String get role => 'भूमिका';
+
+  @override
+  String get roleAdmin => 'प्रशासक';
+
+  @override
+  String get roleCustomer => 'ग्राहक';
+
+  @override
+  String get selectRoleHint => 'भूमिका निवडा';
 
   @override
   String get roleRequired => 'कृपया एक भूमिका निवडा';
@@ -284,13 +335,13 @@ class AppLocalizationsMr extends AppLocalizations {
   String get proTitle => 'ट्रॅकिफाय प्रो';
 
   @override
-  String get proSubtitle => 'जास्तीत जास्त वैशिष्ट्यांसह प्रगत ट्रॅकिंग';
+  String get proSubtitle => 'प्रगत ट्रॅकिंग';
 
   @override
   String get goTitle => 'ट्रॅकिफाय गो';
 
   @override
-  String get goSubtitle => 'दैनंदिन वापरासाठी मानक ट्रॅकिंग';
+  String get goSubtitle => 'मानक ट्रॅकिंग';
 
   @override
   String get liteTitle => 'ट्रॅकिफाय लाइट';
@@ -302,13 +353,13 @@ class AppLocalizationsMr extends AppLocalizations {
   String get realTime1s => 'रिअल-टाइम १ सेकंद ट्रॅकिंग';
 
   @override
-  String get remoteEngineCutOff => 'रिमोट इंजिन कट-ऑफ';
+  String get remoteEngineCutOff => 'रिअल-टाइम इंजिन कट-ऑफ';
 
   @override
   String get detailedFuelAnalytics => 'तपशीलवार इंधन विश्लेषण';
 
   @override
-  String get realTime5s => 'रिअल-टाइम ५ सेकंद ट्रॅकिंग';
+  String get realTime5s => 'रिअल-टाइम ५ सेकंदांचे ट्रॅकिंग';
 
   @override
   String get antiTheftAlerts => 'अँटी-थेफ्ट अलर्ट';
@@ -327,7 +378,7 @@ class AppLocalizationsMr extends AppLocalizations {
 
   @override
   String addedToCart(String title) {
-    return '$title कार्टमध्ये यशस्वीरित्या जोडले!';
+    return '$title कार्टमध्ये जोडले!';
   }
 
   @override
@@ -340,4 +391,283 @@ class AppLocalizationsMr extends AppLocalizations {
   String errorMsg(String message) {
     return 'त्रुटी: $message';
   }
+
+  @override
+  String get addVehicle => 'वाहन/डिव्हाइस जोडा';
+
+  @override
+  String get vehicleAdded => 'वाहन यशस्वीरित्या जोडले गेले!';
+
+  @override
+  String get vehicleType => 'वाहनाचा प्रकार';
+
+  @override
+  String get twoWheeler => 'दुचाकी';
+
+  @override
+  String get fourWheeler => 'चारचाकी';
+
+  @override
+  String get autoRickshaw => 'ऑटो रिक्ष';
+
+  @override
+  String get heavyVehicle => 'जड वाहन';
+
+  @override
+  String get fuelType => 'इंधनाचा प्रकार';
+
+  @override
+  String get petrol => 'पेट्रोल';
+
+  @override
+  String get electric => 'इलेक्ट्रिक';
+
+  @override
+  String get vehicleMake => 'वाहन मेक';
+
+  @override
+  String get vehicleModel => 'वाहन मॉडेल';
+
+  @override
+  String get vehicleNumber => 'वाहन क्रमांक';
+
+  @override
+  String get vehicleNumberHint => 'उदा: MP46MX0743';
+
+  @override
+  String get pleaseEnterVehicleNumber => 'कृपया वाहन क्रमांक प्रविष्ट करा';
+
+  @override
+  String get selectMake => 'वाहन मेक निवडा';
+
+  @override
+  String get selectModel => 'वाहन मॉडेल निवडा';
+
+  @override
+  String get installDevice => 'Trackify डिव्हाइस स्थापित करा';
+
+  @override
+  String get installDeviceDesc => 'तुमचे Ajjas स्मार्ट डिव्हाइस त्वरित सेट करा';
+
+  @override
+  String get activateSticker => 'संपर्क स्टिकर सक्रिय करा';
+
+  @override
+  String get activateStickerDesc =>
+      'तुमचा संपर्क स्टिकर सक्रिय करण्यासाठी सोप्या पायऱ्या';
+
+  @override
+  String get exploreFreeApp => 'आमचे विनामूल्य अॅप एक्सप्लोर करा';
+
+  @override
+  String get exploreFreeAppDesc =>
+      'आमच्या विनामूल्य अॅपचा वापर करून प्रवासाचा मागोवा ठेवा';
+
+  @override
+  String get logout => 'लॉगआउट';
+
+  @override
+  String get alreadyHaveAccount => 'आधीच खाते आहे?';
+
+  @override
+  String get dataPlan => 'डेटा प्लॅन';
+
+  @override
+  String get warranty => 'वॉरंटी';
+
+  @override
+  String expiresInDays(String days) {
+    return '$days दिवसात संपेल';
+  }
+
+  @override
+  String get rechargeNow => 'आता रिचार्ज करा';
+
+  @override
+  String get renewNow => 'आता नूतनीकरण करा';
+
+  @override
+  String get secureYourVehicle => 'तुमचे वाहन सुरक्षित करा';
+
+  @override
+  String get secureYourVehicleDesc =>
+      'रीअल-टाइम ट्रॅकिंगसाठी आता अजस डिव्हाइस खरेदी करा.';
+
+  @override
+  String get boughtDeviceInstallNow => 'डिव्हाइस विकत घेतले आहे? ';
+
+  @override
+  String get installNow => 'आता स्थापित करा';
+
+  @override
+  String get buyAjjasDevice => 'अजस डिव्हाइस खरेदी करा';
+
+  @override
+  String get lite4G => 'लाईट ४जी';
+
+  @override
+  String get swipeToLock => 'लॉक करण्यासाठी स्वाइप करा';
+
+  @override
+  String get upgradeToPlus => 'Ajjas Plus वर अपग्रेड करा';
+
+  @override
+  String get getMoreOutOfAjjas => 'Ajjas मधून अधिक मिळवा';
+
+  @override
+  String featuresExploredCount(Object count, Object total) {
+    return 'तुम्ही $total पैकी $count वैशिष्ट्ये एक्सप्लोर केली आहेत';
+  }
+
+  @override
+  String get manageVehiclesDesc => 'येथे तुमची सर्व वाहने व्यवस्थापित करा';
+
+  @override
+  String get settingsDesc => 'भाषा, खाते सेटिंग्ज आणि बरेच काही';
+
+  @override
+  String get notifications => 'सूचना';
+
+  @override
+  String get helpAndSupport => 'मदत आणि समर्थन';
+
+  @override
+  String get helpAndSupportDesc => 'मदत आणि वारंवार विचारले जाणारे प्रश्न';
+
+  @override
+  String get settings => 'सेटिंग्ज';
+
+  @override
+  String get searchForSettings => 'सेटिंग्ज शोधा';
+
+  @override
+  String get backupAndRestore => 'बॅकअप आणि पुनर्संचयित करा';
+
+  @override
+  String get backupAndRestoreDesc =>
+      'तुमच्या राइड डेटाचा बॅकअप घ्या आणि कधीही पुनर्संचयित करा.';
+
+  @override
+  String get appSettings => 'अॅप सेटिंग्ज';
+
+  @override
+  String get appSettingsDesc => 'अॅप थीम आणि आणीबाणी वैशिष्ट्य';
+
+  @override
+  String get notificationSettings => 'सूचना सेटिंग्ज';
+
+  @override
+  String get notificationSettingsDesc => 'सूचना प्राधान्ये';
+
+  @override
+  String get privacy => 'गोपनीयता';
+
+  @override
+  String get privacyDesc => 'पासवर्ड बदला, खाते हटवा';
+
+  @override
+  String get rateUsOnPlayStore => 'Play Store वर रेटिंग द्या';
+
+  @override
+  String get rateUsOnPlayStoreDesc => 'तुमचा अमूल्य अभिप्राय सामायिक करा';
+
+  @override
+  String get logoutDesc => 'या डिव्हाइसवरून लॉगआउट करा';
+
+  @override
+  String get helpAndSuggestion => 'मदत आणि सूचना';
+
+  @override
+  String get reportAnIssue => 'समस्या नोंदवा';
+
+  @override
+  String get suggestion => 'सूचना';
+
+  @override
+  String get whatIsYourIssueRelatedTo => 'तुमची समस्या कशाशी संबंधित आहे?';
+
+  @override
+  String get shortDescriptionHint =>
+      'आम्हाला थोडक्यात वर्णन द्या (जास्तीत जास्त २०० अक्षरे)';
+
+  @override
+  String get selectCallSlot => 'कॉलची वेळ निवडा';
+
+  @override
+  String get myIssues => 'माझ्या समस्या';
+
+  @override
+  String get whatsApp => 'WhatsApp';
+
+  @override
+  String get forceMigrate => 'फोर्स मायग्रेट';
+
+  @override
+  String get forceMigrateDesc1 =>
+      'दैनंदिन राइड्स दुरुस्त करण्यासाठी हा पर्याय वापरा.';
+
+  @override
+  String get forceMigrateDesc2 => 'हे केवळ स्थानिकीकृत डेटा स्थलांतरित करते.';
+
+  @override
+  String get faq => 'वारंवार विचारले जाणारे प्रश्न';
+
+  @override
+  String get termsConditions => 'नियम आणि अटी';
+
+  @override
+  String get privacyPolicy => 'गोपनीयता धोरण';
+
+  @override
+  String get changeLog => 'बदल लॉग';
+
+  @override
+  String get todayLabel => '(आज)';
+
+  @override
+  String get ridingBehaviour => 'रायडिंग वर्तणूक';
+
+  @override
+  String get ridingBehaviourVacationDesc =>
+      'निवडलेल्या कालावधीत तुम्ही कोणतीही राइड घेतली नाही';
+
+  @override
+  String get journey => 'प्रवास';
+
+  @override
+  String get distanceTravelled => 'कापलेले अंतर';
+
+  @override
+  String get timeDuration => 'कालावधी';
+
+  @override
+  String get speed => 'वेग';
+
+  @override
+  String get averageSpeed => 'सरासरी वेग';
+
+  @override
+  String get topSpeed => 'कमाल वेग';
+
+  @override
+  String get fuel => 'इंधन';
+
+  @override
+  String get fuelConsumed => 'वापरलेले इंधन';
+
+  @override
+  String get fuelCost => 'इंधनाचा खर्च';
+
+  @override
+  String vsPreviousPeriod(String value) {
+    return 'मागील कालावधीच्या तुलनेत $value%';
+  }
+
+  @override
+  String get vehicleMakeListEmpty =>
+      'Vehicle make list is empty for this selection';
+
+  @override
+  String get vehicleModelListEmpty =>
+      'Vehicle model list is empty for this selection';
 }

@@ -1,340 +1,400 @@
 import 'package:flutter/material.dart';
-import 'package:trackify/l10n/app_localizations.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:trackify/app/cubit/app_cubit.dart';
+import 'package:trackify/app/cubit/app_state.dart';
+import 'package:trackify/core/constants/app_images.dart';
+import 'package:trackify/core/utils/shared_preferences.dart';
+import 'package:trackify/feature/add_vehicle_and_device/choice_selector.dart';
+import 'package:trackify/feature/auth/presentation/pages/signin_screen.dart';
+import 'package:trackify/feature/help_and_support/presentation/pages/help_support_screen.dart';
+import 'package:trackify/feature/my_garage/presentation/view/my_garage_screen.dart';
+import 'package:trackify/feature/my_profile/presentation/pages/my_profile_screen.dart';
+import 'package:trackify/feature/profile/presentation/cubit/profile_cubit.dart';
+import 'package:trackify/feature/profile/presentation/cubit/profile_state.dart';
+import 'package:trackify/feature/settings/presentation/pages/settings_screen.dart';
 
-class ProfilePlaceholder extends StatelessWidget {
-  const ProfilePlaceholder({super.key});
+import '../../../../core/common/widgets/vehicle_card.dart';
+import '../../../../l10n/app_localizations.dart';
+
+class ProfileScreen extends StatefulWidget {
+  const ProfileScreen({super.key});
+
+  @override
+  State<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
+  @override
+  void initState() {
+    super.initState();
+    context.read<AppCubit>().loadUserSession();
+    context.read<ProfileCubit>().fetchVehicles();
+  }
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+
     return Scaffold(
-      appBar: AppBar(
-        title: Text(l10n.profile),
-        centerTitle: true,
-      ),
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Heading Widget
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 30),
-              decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
-              ),
-              child: Column(
-                children: [
-                  const Icon(Icons.two_wheeler,
-                      size: 50, color: Colors.blueAccent),
-                  const SizedBox(height: 16),
-                  Text(
-                    l10n.bikeSmartMsg,
-                    textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: Theme.of(context).colorScheme.primary,
+      backgroundColor: const Color(0xFFF3F4F6),
+      body: BlocBuilder<AppCubit, AppState>(
+        builder: (context, appState) {
+          final user = appState.userData;
+          final userName = user?.name ?? "Guest";
+          final userInitials = userName.isNotEmpty ? userName[0].toUpperCase() : "G";
+          final userMobile =
+              "+918602945222"; // Static for now as per design, but could be user.mobile if exists
+
+          return SingleChildScrollView(
+            child: Column(
+              children: [
+                const SizedBox(height: 60),
+
+                /// 🔹 PROFILE SECTION
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const MyProfileScreen()),
+                    );
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Row(
+                      children: [
+                        Container(
+                          height: 100,
+                          width: 100,
+                          decoration: const BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Color(0xFF1DA1C9),
+                          ),
+                          child: Center(
+                            child: Text(
+                              userInitials,
+                              style: const TextStyle(fontSize: 28, color: Colors.white),
+                            ),
+                          ),
                         ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 24),
-
-            // Features Section
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Text(
-                l10n.features,
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.bold,
+                        const SizedBox(width: 14),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                userName,
+                                style: const TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(userName, style: const TextStyle(color: Colors.grey)),
+                              const SizedBox(height: 2),
+                              Text(
+                                userMobile,
+                                style: const TextStyle(color: Colors.grey),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const Icon(Icons.chevron_right),
+                      ],
                     ),
-              ),
-            ),
-            const SizedBox(height: 12),
-            _buildFeatureList(context),
+                  ),
+                ),
 
-            const SizedBox(height: 32),
+                const SizedBox(height: 20),
 
-            // Contact Us Widget
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: InkWell(
-                onTap: () {
-                  // Handle Contact Us
-                },
-                borderRadius: BorderRadius.circular(12),
-                child: Container(
-                  padding: const EdgeInsets.all(16),
+                /// 🔹 UPGRADE BUTTON
+                GestureDetector(
+                  onTap: () => debugPrint("Upgrade tapped"),
+                  child: Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 68),
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(30),
+                      gradient: const LinearGradient(
+                        colors: [Color(0xFFD6B57B), Color(0xFFE7D0B7), Color(0xFFD6B57B)],
+                      ),
+                    ),
+                    child: Center(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Image.asset(AppImages.kingIcon, height: 20, width: 20),
+                          Text(
+                            " ${l10n.upgradeToPlus}",
+                            style: const TextStyle(fontWeight: FontWeight.w600),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+
+                const SizedBox(height: 16),
+
+                /// 🔹 PROGRESS CARD
+                Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 16),
+                  padding: const EdgeInsets.all(14),
                   decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.surfaceVariant,
-                    borderRadius: BorderRadius.circular(12),
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(16),
                     border: Border.all(color: Colors.grey.shade300),
                   ),
                   child: Row(
                     children: [
-                      Container(
-                        padding: const EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                          color: Theme.of(context)
-                              .colorScheme
-                              .primary
-                              .withOpacity(0.1),
-                          shape: BoxShape.circle,
-                        ),
-                        child: Icon(
-                          Icons.support_agent,
-                          color: Theme.of(context).colorScheme.primary,
-                        ),
+                      Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          SizedBox(
+                            height: 48,
+                            width: 48,
+                            child: CircularProgressIndicator(
+                              value: 0.63,
+                              strokeWidth: 4,
+                              backgroundColor: Colors.grey.shade300,
+                              color: const Color(0xFF1DA1C9),
+                            ),
+                          ),
+                          const Text("63%"),
+                        ],
                       ),
-                      const SizedBox(width: 16),
+                      const SizedBox(width: 12),
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              l10n.contactUs,
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .titleMedium
-                                  ?.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                              l10n.getMoreOutOfAjjas,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.w600,
+                                color: Color(0xFF1DA1C9),
+                              ),
                             ),
                             const SizedBox(height: 4),
                             Text(
-                              l10n.contactUsDesc,
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodyMedium
-                                  ?.copyWith(
-                                    color: Colors.grey.shade600,
-                                  ),
+                              l10n.featuresExploredCount(10, 16),
+                              style: const TextStyle(color: Colors.grey),
                             ),
                           ],
                         ),
                       ),
-                      const Icon(Icons.arrow_forward_ios, size: 16),
+                      const Icon(Icons.chevron_right),
                     ],
                   ),
                 ),
-              ),
-            ),
 
-            const SizedBox(height: 32),
-
-            // User Reviews Section
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Text(
-                l10n.userReviews,
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-              ),
-            ),
-            const SizedBox(height: 16),
-            _buildUserReviews(),
-
-            const SizedBox(height: 40),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildFeatureList(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
-    final features = [
-      {
-        'title': l10n.accidentAlert,
-        'icon': Icons.warning_amber_rounded,
-        'color': Colors.redAccent
-      },
-      {
-        'title': l10n.antiTheftAlert,
-        'icon': Icons.security,
-        'color': Colors.orangeAccent
-      },
-      {
-        'title': l10n.geoFence,
-        'icon': Icons.my_location,
-        'color': Colors.blueAccent
-      },
-      {
-        'title': l10n.overspeedAlert,
-        'icon': Icons.speed,
-        'color': Colors.purpleAccent
-      },
-      {
-        'title': l10n.fuelLogs,
-        'icon': Icons.local_gas_station,
-        'color': Colors.green
-      },
-      {'title': l10n.statistics, 'icon': Icons.bar_chart, 'color': Colors.teal},
-    ];
-
-    return SizedBox(
-      height: 160,
-      child: ListView.separated(
-        scrollDirection: Axis.horizontal,
-        itemCount: features.length,
-        padding: const EdgeInsets.symmetric(horizontal: 20),
-        separatorBuilder: (context, index) => const SizedBox(width: 16),
-        itemBuilder: (context, index) {
-          final feature = features[index];
-          return Container(
-            width: 140,
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: Theme.of(context).cardColor,
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: Colors.grey.shade200),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
-                  blurRadius: 10,
-                  offset: const Offset(0, 4),
-                ),
-              ],
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                CircleAvatar(
-                  backgroundColor: (feature['color'] as Color).withOpacity(0.1),
-                  radius: 28,
-                  child: Icon(
-                    feature['icon'] as IconData,
-                    color: feature['color'] as Color,
-                    size: 28,
-                  ),
-                ),
                 const SizedBox(height: 16),
-                Text(
-                  feature['title'] as String,
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.w600,
-                    fontSize: 14,
+
+                Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade300,
+                    borderRadius: BorderRadius.circular(20),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.2),
+                        blurRadius: 0.5,
+                        offset: const Offset(0, 0.5),
+                      ),
+                    ],
                   ),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ],
-            ),
-          );
-        },
-      ),
-    );
-  }
-
-  Widget _buildUserReviews() {
-    final reviews = [
-      {
-        'name': 'Alex Johnson',
-        'rating': 5,
-        'comment':
-            'Amazing device! It saved my bike from getting stolen last week.',
-      },
-      {
-        'name': 'Sarah Mitchell',
-        'rating': 4,
-        'comment':
-            'The geo-fence feature is exactly what I needed for peace of mind.',
-      },
-      {
-        'name': 'David Chen',
-        'rating': 5,
-        'comment':
-            'Fuel logs and statistics are incredibly accurate. Highly recommended.',
-      },
-      {
-        'name': 'Emily Carter',
-        'rating': 5,
-        'comment':
-            'Customer support was quick to help me set it up. Fantastic experience.',
-      },
-    ];
-
-    return SizedBox(
-      height: 160,
-      child: ListView.separated(
-        padding: const EdgeInsets.symmetric(horizontal: 20),
-        scrollDirection: Axis.horizontal,
-        itemCount: reviews.length,
-        separatorBuilder: (context, index) => const SizedBox(width: 16),
-        itemBuilder: (context, index) {
-          final review = reviews[index];
-          return Container(
-            width: 280,
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: Theme.of(context).cardColor,
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: Colors.grey.shade200),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
-                  blurRadius: 10,
-                  offset: const Offset(0, 4),
-                ),
-              ],
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    CircleAvatar(
-                      backgroundColor: Theme.of(context).colorScheme.primary,
-                      radius: 16,
-                      child: Text(
-                        (review['name'] as String)[0],
-                        style:
-                            const TextStyle(color: Colors.white, fontSize: 14),
+                  child: Column(
+                    children: [
+                      /// 🔹 VEHICLE SECTION (Dynamic)
+                      BlocBuilder<ProfileCubit, ProfileState>(
+                        builder: (context, state) {
+                          if (state is VehiclesLoading) {
+                            return const Center(child: CircularProgressIndicator());
+                          }
+                          if (state is VehiclesLoaded && state.vehicles.isNotEmpty) {
+                            final vehicle = state.vehicles.first;
+                            return VehicleCard(
+                              vehicle: vehicle,
+                              hasDevice: true,
+                              // Assuming first vehicle has device for now
+                              onLock: () => debugPrint("Locked!"),
+                              onRecharge: () => debugPrint("Recharge"),
+                              onRenew: () => debugPrint("Renew"),
+                            );
+                          }
+                          return const SizedBox.shrink();
+                        },
                       ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Text(
-                        review['name'] as String,
-                        style: const TextStyle(fontWeight: FontWeight.bold),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                    Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: List.generate(
-                        5,
-                        (starIndex) => Icon(
-                          starIndex < (review['rating'] as int)
-                              ? Icons.star
-                              : Icons.star_border,
-                          color: Colors.amber,
-                          size: 16,
+
+                      /// 🔹 NOTIFICATIONS
+                      GestureDetector(
+                        onTap: () => debugPrint("Notifications tapped"),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          decoration: BoxDecoration(
+                            color: Colors.grey.shade300,
+                            borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(6),
+                              topRight: Radius.circular(6),
+                              bottomLeft: Radius.circular(14),
+                              bottomRight: Radius.circular(14),
+                            ),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Icon(
+                                Icons.notifications_none_rounded,
+                                color: Color(0xFF1DA1C9),
+                              ),
+                              const SizedBox(width: 4),
+                              Text(
+                                l10n.notifications,
+                                style: const TextStyle(color: Color(0xFF1DA1C9)),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 12),
-                Expanded(
-                  child: Text(
-                    '"${review['comment']}"',
-                    style: TextStyle(
-                      fontStyle: FontStyle.italic,
-                      color: Colors.grey.shade700,
-                    ),
-                    maxLines: 3,
-                    overflow: TextOverflow.ellipsis,
+                    ],
                   ),
                 ),
+
+                const SizedBox(height: 16),
+
+                /// 🔹 MENU LIST
+                Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 16),
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(18),
+                    boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 6)],
+                  ),
+                  child: Column(
+                    children: [
+                      _menu(
+                        l10n.myGarage,
+                        l10n.manageVehiclesDesc,
+                        Icons.home_outlined,
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (_) => const MyGarageScreen()),
+                          );
+                        },
+                      ),
+                      _menu(
+                        l10n.settings,
+                        l10n.settingsDesc,
+                        Icons.settings,
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (_) => const SettingsScreen()),
+                          );
+                        },
+                      ),
+                      _menu(
+                        l10n.helpAndSupport,
+                        l10n.helpAndSupportDesc,
+                        Icons.support_agent,
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const HelpSuggestionScreen(),
+                            ),
+                          );
+                        },
+                      ),
+                      _menu(
+                        l10n.addVehicle,
+                        "Register a new Vehicle or Trackify Device",
+                        // Add translation if available
+                        Icons.add_box_sharp,
+                        isLast: true,
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (_) => const ChoiceSelector()),
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+
+                const SizedBox(height: 24),
               ],
             ),
           );
         },
+      ),
+    );
+  }
+
+  Widget _menu(
+    String title,
+    String sub,
+    IconData icon, {
+    bool isLast = false,
+    VoidCallback? onTap,
+  }) {
+    return Column(
+      children: [
+        InkWell(
+          onTap: onTap,
+          child: Padding(
+            padding: isLast
+                ? const EdgeInsets.symmetric(vertical: 16.0)
+                : const EdgeInsets.only(top: 16.0),
+            child: Row(
+              children: [
+                Icon(icon, color: const Color(0xFF1DA1C9)),
+                const SizedBox(width: 14),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        title,
+                        style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 15),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(sub, style: const TextStyle(color: Colors.grey, fontSize: 13)),
+                    ],
+                  ),
+                ),
+                const Icon(Icons.chevron_right, size: 18),
+              ],
+            ),
+          ),
+        ),
+        if (!isLast)
+          Padding(
+            padding: const EdgeInsets.only(top: 12),
+            child: Divider(height: 1, color: Colors.grey.shade300),
+          ),
+      ],
+    );
+  }
+
+  Widget _logoutButton(AppLocalizations l10n) {
+    return Center(
+      child: TextButton.icon(
+        onPressed: () {
+          final prefs = AppPreference.instance;
+          prefs.clearAll();
+          Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(builder: (context) => const SignInScreen()),
+            (Route<dynamic> route) => false,
+          );
+        },
+        icon: const Icon(Icons.logout, color: Colors.redAccent),
+        label: Text(
+          l10n.logout,
+          style: const TextStyle(color: Colors.redAccent, fontWeight: FontWeight.bold),
+        ),
       ),
     );
   }

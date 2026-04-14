@@ -1,7 +1,11 @@
+import 'dart:io';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:trackify/feature/auth/presentation/pages/signin_screen.dart';
 import 'package:trackify/feature/onboarding/presentation/cubit/splash_cubit.dart';
 import 'package:trackify/feature/onboarding/presentation/cubit/splash_state.dart';
@@ -26,6 +30,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  final _mobileController = TextEditingController();
+  final _countryController = TextEditingController();
+  final _stateController = TextEditingController();
+  final _cityController = TextEditingController();
+
+  File? _userProfile;
   final ValueNotifier<String?> selectedRoleNotifier = ValueNotifier<String?>(null);
   String? _selectedRole;
 
@@ -36,7 +46,21 @@ class _SignUpScreenState extends State<SignUpScreen> {
     _nameController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
+    _mobileController.dispose();
+    _countryController.dispose();
+    _stateController.dispose();
+    _cityController.dispose();
     super.dispose();
+  }
+
+  Future<void> _pickProfileImage() async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      setState(() {
+        _userProfile = File(pickedFile.path);
+      });
+    }
   }
 
   void _onSignUpPressed(BuildContext context) {
@@ -49,12 +73,21 @@ class _SignUpScreenState extends State<SignUpScreen> {
         return;
       }
 
-      final body = {
+      final body = <String, dynamic>{
         'name': _nameController.text.trim(),
         'email': _emailController.text.trim(),
         'password': _passwordController.text.trim(),
         'role': _selectedRole!,
+        'mobile_number': _mobileController.text.trim(),
+        'country': _countryController.text.trim(),
+        'state': _stateController.text.trim(),
+        'city': _cityController.text.trim(),
       };
+
+      if (_userProfile != null) {
+        body['userProfileBytes'] = _userProfile!.readAsBytesSync();
+        body['userProfileName'] = _userProfile!.path.split('/').last;
+      }
 
       context.read<AuthCubit>().registerUser(body); // assuming registerUser exists
     }
@@ -134,9 +167,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
               context,
             ).showSnackBar(SnackBar(content: Text(l10n.registerSuccess)));
             Navigator.of(context).pushReplacement(
-              MaterialPageRoute(
-                builder: (context) => const SignInScreen(isFromSignUp: true),
-              ),
+              MaterialPageRoute(builder: (context) => const SignInScreen()),
             );
           } else if (state is AuthFailure) {
             ScaffoldMessenger.of(context).showSnackBar(
@@ -161,6 +192,33 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       children: [
                         const SizedBox(height: 10),
                         _buildLogo(splashState),
+                        const SizedBox(height: 20),
+                        Center(
+                          child: GestureDetector(
+                            onTap: _pickProfileImage,
+                            child: CircleAvatar(
+                              radius: 50,
+                              backgroundColor: Colors.grey[200],
+                              backgroundImage: _userProfile != null
+                                  ? FileImage(_userProfile!)
+                                  : null,
+                              child: _userProfile == null
+                                  ? const Icon(
+                                      Icons.camera_alt,
+                                      size: 40,
+                                      color: Colors.grey,
+                                    )
+                                  : null,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Center(
+                          child: Text(
+                            l10n.selectProfileImage,
+                            style: textTheme.bodySmall?.copyWith(color: Colors.black54),
+                          ),
+                        ),
                         const SizedBox(height: 30),
                         _buildFieldLabel(l10n.name, textTheme),
                         const SizedBox(height: 8),
@@ -168,6 +226,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           header: '',
                           hint: l10n.nameHint,
                           value: _nameController,
+                          keyboardType: TextInputType.name,
                           validator: (value) =>
                               Validators.validateRequired(value, l10n.nameRequired),
                         ),
@@ -178,10 +237,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           header: '',
                           hint: l10n.emailHint,
                           value: _emailController,
+                          keyboardType: TextInputType.emailAddress,
                           validator: (value) => Validators.validateEmail(
                             value,
                             l10n.emailRequired,
-                            "Please enter a valid email address",
+                            l10n.invalidEmail,
                           ),
                         ),
                         const SizedBox(height: 20),
@@ -195,8 +255,57 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           validator: (value) => Validators.validatePassword(
                             value,
                             l10n.passwordRequired,
-                            l10n.passwordMinLength ?? "At least 6 characters required",
+                            l10n.passwordMinLength,
                           ),
+                        ),
+                        const SizedBox(height: 20),
+                        _buildFieldLabel(l10n.mobileNumber, textTheme),
+                        const SizedBox(height: 8),
+                        CustomFormField(
+                          header: '',
+                          hint: l10n.mobileNumberHint,
+                          value: _mobileController,
+                          keyboardType: TextInputType.phone,
+                          maxLength: 10,
+                          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                          validator: (value) => Validators.validatePhone(
+                            value,
+                            l10n.mobileNumberRequired,
+                            l10n.invalidMobileNumber,
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+                        _buildFieldLabel(l10n.country, textTheme),
+                        const SizedBox(height: 8),
+                        CustomFormField(
+                          header: '',
+                          hint: l10n.countryHint,
+                          value: _countryController,
+                          keyboardType: TextInputType.text,
+                          validator: (value) =>
+                              Validators.validateRequired(value, l10n.countryRequired),
+                        ),
+                        const SizedBox(height: 20),
+                        _buildFieldLabel(l10n.state, textTheme),
+                        const SizedBox(height: 8),
+                        CustomFormField(
+                          header: '',
+                          hint: l10n.stateHint,
+                          value: _stateController,
+                          keyboardType: TextInputType.text,
+                          validator: (value) =>
+                              Validators.validateRequired(value, l10n.stateRequired),
+                        ),
+                        const SizedBox(height: 20),
+                        _buildFieldLabel(l10n.city, textTheme),
+                        const SizedBox(height: 8),
+                        CustomFormField(
+                          header: '',
+                          hint: l10n.cityHint,
+                          value: _cityController,
+                          keyboardType: TextInputType.text,
+                          validator: (value) =>
+                              Validators.validateRequired(value, l10n.cityRequired),
                         ),
                         const SizedBox(height: 20),
                         _buildFieldLabel(l10n.role, textTheme),
@@ -213,9 +322,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           ),
                           child: DropdownButtonFormField2<String>(
                             isExpanded: true,
+                            autovalidateMode: AutovalidateMode.onUserInteraction,
                             valueListenable: selectedRoleNotifier,
                             decoration: InputDecoration(
-                              hintText: "Select Role",
+                              hintText: l10n.selectRoleHint,
                               filled: true,
                               fillColor: const Color(0xFFF9FAFB),
                               contentPadding: const EdgeInsets.symmetric(
@@ -266,7 +376,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               return DropdownItem<String>(
                                 value: role, // if error, change this to: id: role
                                 child: Text(
-                                  role[0].toUpperCase() + role.substring(1).toLowerCase(),
+                                  role == 'admin' ? l10n.roleAdmin : l10n.roleCustomer,
                                   style: const TextStyle(
                                     fontSize: 15,
                                     color: Colors.black87,
@@ -283,25 +393,19 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           ),
                         ),
                         const SizedBox(height: 32),
-                        if (state is AuthLoading)
-                          Center(
-                            child: CircularProgressIndicator(
-                              color: Theme.of(context).colorScheme.primary,
-                            ),
-                          )
-                        else
-                          CommonButton(
-                            onPressed: () => _onSignUpPressed(context),
-                            text: l10n.createAccount,
-                            borderRadius: 8,
-                          ),
+                        CommonButton(
+                          onPressed: state is AuthLoading ? null : () => _onSignUpPressed(context),
+                          text: l10n.createAccount,
+                          borderRadius: 8,
+                          isLoading: state is AuthLoading,
+                        ),
                         const SizedBox(height: 24),
                         Center(
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Text(
-                                "Already have an account?",
+                                l10n.alreadyHaveAccount,
                                 style: const TextStyle(color: Colors.black87),
                               ),
                               TextButton(

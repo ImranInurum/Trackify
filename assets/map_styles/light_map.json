@@ -59,5 +59,14 @@
     "featureType": "water",
     "elementType": "labels.text.fill",
     "stylers": [{"color": "#5a8ec1"}]
+  },
+  {
+    "featureType": "road",
+    "elementType": "labels",
+    "stylers": [{"visibility": "off"}]
+  },
+  {
+    "featureType": "transit",
+    "stylers": [{"visibility": "off"}]
   }
 ]

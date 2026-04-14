@@ -1,10 +1,12 @@
 import 'dart:convert';
 
+import 'package:trackify/core/config/network/api_host.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/services/google_auth_service.dart';
 import '../../../../core/utils/shared_preferences.dart';
 import '../../../../core/widgets/loading_screen_ol.dart';
+import '../../../../core/config/network/exceptions.dart';
 import '../../domain/usecase/auth_case.dart';
 import 'auth_state.dart';
 
@@ -16,31 +18,28 @@ class AuthCubit extends Cubit<AuthState> {
   Future<void> loginUser(Map<String, dynamic> body) async {
     LoadingScreenOL().show();
     emit(AuthLoading());
-    final stopwatch = Stopwatch()..start();
-    final result = await _authCase.loginCall(body);
-    print('Network + decode took: ${stopwatch.elapsedMilliseconds}ms');
-
-    result.fold(
-      (failure) {
-        LoadingScreenOL().hide();
-        emit(AuthFailure(failure));
-      },
-      (user) async {
-        final sw = Stopwatch()..start();
-
-        final prefs = AppPreference.instance;
-        await prefs.set(key: AppPreference.KEY_TOKEN, value: user.token ?? "");
-        await prefs.set(key: AppPreference.KEY_USER_ID, value: user.user?.id ?? "");
-        await prefs.set(
-          key: AppPreference.KEY_USER_DETAILS,
-          value: jsonEncode(user.user?.toJson()),
-        );
-        print('Prefs write took: ${sw.elapsedMilliseconds}ms');
-
-        emit(AuthSuccess(user));
-        LoadingScreenOL().hide();
-      },
-    );
+    try {
+      final result = await _authCase.loginCall(body);
+      await result.fold(
+        (failure) async {
+          emit(AuthFailure(failure));
+        },
+        (user) async {
+          final prefs = AppPreference.instance;
+          await prefs.set(key: AppPreference.KEY_TOKEN, value: user.token ?? "");
+          await prefs.set(key: AppPreference.KEY_USER_ID, value: user.user?.id ?? "");
+          await prefs.set(
+            key: AppPreference.KEY_USER_DETAILS,
+            value: jsonEncode(user.user?.toJson()),
+          );
+          ApiURL.updateAuthToken(user.token ?? "");
+          await _updateFcmToken(user.user?.id ?? "");
+          emit(AuthSuccess(user));
+        },
+      );
+    } finally {
+      LoadingScreenOL().hide();
+    }
   }
 
   Future<void> registerUser(Map<String, dynamic> body) async {
@@ -55,49 +54,55 @@ class AuthCubit extends Cubit<AuthState> {
   Future<void> sendOtp(Map<String, dynamic> body) async {
     LoadingScreenOL().show();
     emit(AuthLoading());
-    final result = await _authCase.sendOtpCall(body);
-    result.fold(
-      (failure) {
-        LoadingScreenOL().hide();
-        emit(AuthFailure(failure));
-      },
-      (data) {
-        LoadingScreenOL().hide();
-        emit(ForgotPasswordOtpSent());
-      },
-    );
+    try {
+      final result = await _authCase.sendOtpCall(body);
+      result.fold(
+        (failure) {
+          emit(AuthFailure(failure));
+        },
+        (data) {
+          emit(ForgotPasswordOtpSent());
+        },
+      );
+    } finally {
+      LoadingScreenOL().hide();
+    }
   }
 
   Future<void> verifyOtp(Map<String, dynamic> body) async {
     LoadingScreenOL().show();
     emit(AuthLoading());
-    final result = await _authCase.verifyOtpCall(body);
-    result.fold(
-      (failure) {
-        LoadingScreenOL().hide();
-        emit(AuthFailure(failure));
-      },
-      (data) {
-        LoadingScreenOL().hide();
-        emit(ForgotPasswordOtpVerified());
-      },
-    );
+    try {
+      final result = await _authCase.verifyOtpCall(body);
+      result.fold(
+        (failure) {
+          emit(AuthFailure(failure));
+        },
+        (data) {
+          emit(ForgotPasswordOtpVerified());
+        },
+      );
+    } finally {
+      LoadingScreenOL().hide();
+    }
   }
 
   Future<void> resetPassword(Map<String, dynamic> body) async {
     LoadingScreenOL().show();
     emit(AuthLoading());
-    final result = await _authCase.resetPasswordCall(body);
-    result.fold(
-      (failure) {
-        LoadingScreenOL().hide();
-        emit(AuthFailure(failure));
-      },
-      (data) {
-        LoadingScreenOL().hide();
-        emit(ForgotPasswordResetSuccess());
-      },
-    );
+    try {
+      final result = await _authCase.resetPasswordCall(body);
+      result.fold(
+        (failure) {
+          emit(AuthFailure(failure));
+        },
+        (data) {
+          emit(ForgotPasswordResetSuccess());
+        },
+      );
+    } finally {
+      LoadingScreenOL().hide();
+    }
   }
 
   Future<void> loginWithGoogle() async {
@@ -130,14 +135,34 @@ class AuthCubit extends Cubit<AuthState> {
               key: AppPreference.KEY_USER_DETAILS,
               value: jsonEncode(user.user?.toJson()),
             );
+            ApiURL.updateAuthToken(user.token ?? "");
+
+            await _updateFcmToken(user.user?.id ?? "");
+
             emit(AuthSuccess(user));
           },
         );
-      } else {
-      }
+      } else {}
     } catch (e) {
       print("Google Login Failed ${e.toString()}");
-      LoadingScreenOL().hide();
+    }
+  }
+
+  Future<void> _updateFcmToken(String userId) async {
+    try {
+      final fcmToken = await AppPreference.instance.get(key: AppPreference.KEY_FCM_TOKEN);
+      if (fcmToken.isNotEmpty && userId.isNotEmpty) {
+        final body = {"userId": userId, "fcmToken": fcmToken};
+        final result = await _authCase.saveFcmTokenCall(body);
+        result.fold(
+          (failure) => print('Failed to save FCM token: $failure'),
+          (data) => print('FCM token saved successfully: $data'),
+        );
+      } else {
+        print('FCM token or userId is empty, skipping save. FCM: $fcmToken, UID: $userId');
+      }
+    } catch (e) {
+      print('Error saving FCM token: $e');
     }
   }
 }

@@ -6,15 +6,18 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:trackify/app/cubit/app_cubit.dart';
 import 'package:trackify/app/cubit/app_state.dart';
+import 'package:trackify/core/constants/app_images.dart';
 import 'package:trackify/core/theme/app_colors.dart';
+import 'package:trackify/core/utils/map_utils.dart';
+import 'package:trackify/core/widgets/bouncing_widget.dart';
 import 'package:trackify/core/widgets/draggable_app_bar.dart';
 import 'package:trackify/feature/add_vehicle_and_device/choice_selector.dart';
-import 'package:trackify/feature/map/data/entity/user_device_model.dart';
+import 'package:trackify/feature/map/data/entity/user_vehicles.dart';
+import 'package:trackify/feature/map/presentation/pages/full_screen_map.dart';
+import 'package:trackify/feature/my_garage/presentation/view/my_garage_screen.dart';
+import 'package:trackify/feature/record_via_phone/presentation/pages/record_via_phone_screen.dart';
 
 import '../../../../core/config/style_manager.dart';
-import '../../../add_vehicle_and_device/add_vehicle/data/models/vehicle_list_model.dart';
-import '../../../add_vehicle_and_device/add_vehicle/presentation/cubit/vehicle_list_cubit.dart';
-import '../../../add_vehicle_and_device/add_vehicle/presentation/cubit/vehicle_list_state.dart';
 import '../cubit/map_cubit.dart';
 import '../cubit/map_state.dart';
 
@@ -29,38 +32,37 @@ class _MapScreenState extends State<MapScreen> {
   final Completer<GoogleMapController> _controller = Completer<GoogleMapController>();
   String? _lightMapStyle;
   String? _darkMapStyle;
+  Vehicles? _selectedDevice;
+  BitmapDescriptor? _customMarker;
 
   @override
   void initState() {
     super.initState();
     _loadMapStyles();
+    _loadCustomMarker();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Future.delayed(const Duration(milliseconds: 100), () {
         if (mounted) {
-          // context.read<MapCubit>().fetchDevices({
-          //   'user_id': context.read<AppCubit>().state.userData?.id,
-          // });
-          context.read<VehicleListCubit>().fetchVehicles();
+          context.read<MapCubit>().fetchVehicles();
         }
       });
     });
   }
 
   Future<void> _loadMapStyles() async {
-    _lightMapStyle = await rootBundle.loadString('assets/map_styles/light_map.json');
-    _darkMapStyle = await rootBundle.loadString('assets/map_styles/dark_map.json');
+    _lightMapStyle = await MapUtils.loadStyle('assets/map_styles/light_map.json');
+    _darkMapStyle = await MapUtils.loadStyle('assets/map_styles/dark_map.json');
   }
 
-  Future<void> _applyMapTheme(GoogleMapController controller, ThemeMode themeMode) async {
-    if (themeMode == ThemeMode.dark) {
-      await controller.setMapStyle(_darkMapStyle);
-    } else if (themeMode == ThemeMode.light) {
-      await controller.setMapStyle(_lightMapStyle);
-    } else {
-      final brightness = MediaQuery.of(context).platformBrightness;
-      await controller.setMapStyle(
-        brightness == Brightness.dark ? _darkMapStyle : _lightMapStyle,
-      );
+  Future<void> _loadCustomMarker() async {
+    final Uint8List markerIcon = await MapUtils.getBytesFromAsset(
+      AppImages.bikeImage,
+      100,
+    );
+    if (mounted) {
+      setState(() {
+        _customMarker = BitmapDescriptor.fromBytes(markerIcon);
+      });
     }
   }
 
@@ -68,231 +70,210 @@ class _MapScreenState extends State<MapScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.backgroundLight,
-      body: BlocConsumer<MapCubit, MapState>(
-        listener: (context, state) {},
-        builder: (context, state) {
-          final devices = state is MapLoaded
-              ? (state.deviceList.devices ?? <UserDevices>[])
-              : <UserDevices>[];
-          final topSpacing = MediaQuery.of(context).padding.top + 64;
+      body: MultiBlocListener(
+        listeners: [
+          BlocListener<MapCubit, MapState>(listener: (context, state) {}),
+          BlocListener<AppCubit, AppState>(
+            listenWhen: (prev, curr) =>
+                prev.mapStyle != curr.mapStyle ||
+                prev.mapType != curr.mapType ||
+                prev.isTrafficEnabled != curr.isTrafficEnabled,
+            listener: (context, state) async {
+              if (_controller.isCompleted) {
+                final controller = await _controller.future;
+                String? style;
+                if (state.mapStyle == 'Dark') {
+                  style = _darkMapStyle;
+                } else if (state.mapStyle == 'Light') {
+                  style = _lightMapStyle;
+                } else if (state.mapStyle == 'Simple') {
+                  style = await MapUtils.loadStyle('assets/map_styles/light_map.json');
+                } else if (state.mapStyle == 'Satellite') {
+                  style = null;
+                }
 
-          return Stack(
-            children: [
-              Positioned.fill(
-                child: SingleChildScrollView(
-                  physics: const BouncingScrollPhysics(),
-                  child: Column(
-                    children: [
-                      SizedBox(height: topSpacing),
-                      _buildMapSection(),
-                      _buildPromoBanner(),
-                      _buildExploreMore(),
-                      const SizedBox(height: 100),
-                    ],
-                  ),
-                ),
-              ),
-
-              BlocBuilder<VehicleListCubit, VehicleListState>(
-                builder: (context, vehicleState) {
-                  final vehicles = vehicleState is VehicleListLoaded ? vehicleState.vehicles : <Vehicle>[];
-                  
-                  return DraggableAppBar(
-                    vehicles: vehicles,
-                    selectedVehicle: vehicles.isNotEmpty ? vehicles.first : null,
-                    collapsedTrailing: IconButton(
-                      onPressed: () {},
-                      icon: const Icon(
-                        Icons.notifications_none_rounded,
-                        color: Colors.black,
-                        size: 26,
-                      ),
-                    ),
-                    expandedTrailing: IconButton(
-                      alignment: Alignment.centerRight,
-                      padding: EdgeInsets.zero,
-                      onPressed: () {},
-                      icon: const Icon(Icons.settings, color: Colors.black, size: 20),
-                    ),
-                    onAddVehicle: () {
-                      Navigator.of(
-                        context,
-                      ).push(MaterialPageRoute(builder: (context) => const ChoiceSelector()));
-                    },
-                    onVehicleTap: (vehicle) {
-                      // handle selected vehicle here
-                    },
-                  );
-                },
-              ),
-            ],
-          );
-        },
-      ),
-    );
-  }
-
-  Widget _buildHeader() {
-    return BlocBuilder<MapCubit, MapState>(
-      buildWhen: (prev, curr) =>
-          curr is MapLoaded || curr is MapLoading || curr is MapError,
-      builder: (context, state) {
-        String deviceName = "No Device";
-        String imei = "---";
-
-        if (state is MapLoaded && state.deviceList.devices?.isNotEmpty == true) {
-          final device = state.deviceList.devices![0]; // Displaying first device for now
-          deviceName = device.deviceName ?? "Unnamed Device";
-          imei = device.imei ?? "---";
-        }
-
-        return Container(
-          padding: EdgeInsets.only(
-            top: MediaQuery.of(context).padding.top + 5,
-            bottom: 12,
-            left: 16,
-            right: 16,
+                await MapUtils.setStyle(controller, style);
+              }
+            },
           ),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: const BorderRadius.only(
-              bottomLeft: Radius.circular(20),
-              bottomRight: Radius.circular(20),
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.03),
-                blurRadius: 10,
-                offset: const Offset(0, 4),
-              ),
-            ],
-          ),
-          child: Row(
-            children: [
-              Container(
-                width: 44,
-                height: 44,
-                decoration: BoxDecoration(
-                  color: Colors.grey.shade50,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: const Icon(
-                  Icons.motorcycle,
-                  color: AppColors.primaryLight,
-                  size: 26,
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      deviceName,
-                      style: getBoldStyle(color: Colors.black, fontSize: 16),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    Row(
+        ],
+        child: BlocBuilder<MapCubit, MapState>(
+          builder: (context, state) {
+            final List<Vehicles> vehicles = state is MapLoaded
+                ? (state.vehicleList.vehicles ?? <Vehicles>[])
+                : <Vehicles>[];
+
+            // Initialize selected device if not set
+            if (_selectedDevice == null && vehicles.isNotEmpty) {
+              _selectedDevice = vehicles.first;
+            }
+
+            final topSpacing = MediaQuery.of(context).padding.top + 78;
+
+            return Stack(
+              children: [
+                Positioned.fill(
+                  child: SingleChildScrollView(
+                    physics: const BouncingScrollPhysics(),
+                    child: Column(
                       children: [
-                        Text(
-                          imei,
-                          style: getMediumStyle(
-                            color: AppColors.textSecondaryLight,
-                            fontSize: 12,
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        Text(
-                          "Lite 4G",
-                          style: getMediumStyle(
-                            color: AppColors.primaryLight,
-                            fontSize: 12,
-                          ),
-                        ),
+                        SizedBox(height: topSpacing),
+                        _buildMapSection(),
+                        _buildPromoBanner(),
+                        _buildExploreMore(),
+                        const SizedBox(height: 20),
                       ],
                     ),
-                  ],
+                  ),
                 ),
-              ),
-              IconButton(
-                icon: const Icon(
-                  Icons.notifications_none_rounded,
-                  color: Colors.black,
-                  size: 26,
+
+                DraggableAppBar(
+                  vehicles: vehicles,
+                  selectedDevice: _selectedDevice,
+                  collapsedTrailing: IconButton(
+                    onPressed: () {},
+                    icon: const Icon(
+                      Icons.notifications_none_rounded,
+                      color: Colors.black,
+                      size: 26,
+                    ),
+                  ),
+                  expandedTrailing: IconButton(
+                    alignment: Alignment.center,
+                    padding: EdgeInsets.zero,
+                    onPressed: () {
+                      Navigator.of(
+                        context,
+                      ).push(MaterialPageRoute(builder: (context) => MyGarageScreen()));
+                    },
+                    icon: const Icon(Icons.settings, color: Colors.black, size: 20),
+                  ),
+                  onAddVehicle: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(builder: (context) => const ChoiceSelector()),
+                    );
+                  },
+                  onDeviceTap: (device) {
+                    setState(() {
+                      _selectedDevice = device;
+                    });
+                  },
                 ),
-                onPressed: () {},
-              ),
-            ],
-          ),
-        );
-      },
+              ],
+            );
+          },
+        ),
+      ),
     );
   }
 
   Widget _buildMapSection() {
-    return Container(
-      height: 340,
-      margin: const EdgeInsets.only(top: 16, bottom: 16, left: 16, right: 16),
-      padding: EdgeInsets.all(4.0),
-      decoration: BoxDecoration(
-        color: AppColors.primaryLightVariant.withOpacity(0.98),
-        borderRadius: const BorderRadius.all(Radius.circular(5)),
-        border: Border.all(color: Colors.grey.shade300),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.4),
-            blurRadius: 2,
-            offset: const Offset(0, 0),
-          ),
-        ],
-      ),
-      child: BlocBuilder<AppCubit, AppState>(
-        builder: (context, state) {
-          final currentPos = state.currentLocation;
-          if (currentPos == null) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          return Column(
-            children: [
-              Expanded(
-                child: ClipRRect(
-                  borderRadius: BorderRadius.all(Radius.circular(5)),
-                  child: GoogleMap(
-                    initialCameraPosition: CameraPosition(
-                      target: LatLng(currentPos.latitude, currentPos.longitude),
-                      zoom: 15,
+    return BouncingWidget(
+      onTap: () {
+        Navigator.of(
+          context,
+        ).push(MaterialPageRoute(builder: (context) => FullScreenMap()));
+      },
+      child: Container(
+        height: 300,
+        margin: const EdgeInsets.all(16),
+        padding: EdgeInsets.all(6.0),
+        decoration: BoxDecoration(
+          color: AppColors.primaryLightVariant.withOpacity(0.98),
+          borderRadius: const BorderRadius.all(Radius.circular(5)),
+          border: Border.all(color: Colors.grey.shade300),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.3),
+              blurRadius: 2,
+              offset: const Offset(0, 1),
+            ),
+          ],
+        ),
+        child: BlocBuilder<AppCubit, AppState>(
+          builder: (context, appState) {
+            final currentPos = appState.currentLocation;
+            if (currentPos == null) {
+              return const Center(child: CircularProgressIndicator());
+            }
+            return Column(
+              children: [
+                Expanded(
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.all(Radius.circular(5)),
+                    child: IgnorePointer(
+                      child: GoogleMap(
+                        initialCameraPosition: CameraPosition(
+                          target: LatLng(currentPos.latitude, currentPos.longitude),
+                          zoom: 15,
+                        ),
+                        myLocationEnabled: false,
+                        zoomControlsEnabled: false,
+                        myLocationButtonEnabled: false,
+                        scrollGesturesEnabled: false,
+                        zoomGesturesEnabled: false,
+                        tiltGesturesEnabled: false,
+                        rotateGesturesEnabled: false,
+                        mapType: appState.mapType == 'satellite'
+                            ? MapType.satellite
+                            : MapType.normal,
+                        trafficEnabled: appState.isTrafficEnabled,
+                        markers: {
+                          if (currentPos != null)
+                            Marker(
+                              markerId: const MarkerId('current_location'),
+                              position: LatLng(currentPos.latitude, currentPos.longitude),
+                              icon: _customMarker ?? BitmapDescriptor.defaultMarker,
+                              anchor: const Offset(0.5, 0.5),
+                            ),
+                        },
+                        onMapCreated: (GoogleMapController controller) async {
+                          if (!_controller.isCompleted) {
+                            _controller.complete(controller);
+                          }
+
+                          final appState = context.read<AppCubit>().state;
+
+                          if (_darkMapStyle == null || _lightMapStyle == null) {
+                            await _loadMapStyles();
+                          }
+
+                          String? style;
+                          if (appState.mapStyle == 'Dark') {
+                            style = _darkMapStyle;
+                          } else if (appState.mapStyle == 'Light') {
+                            style = _lightMapStyle;
+                          } else if (appState.mapStyle == 'Simple') {
+                            style = await MapUtils.loadStyle(
+                              'assets/map_styles/light_map.json',
+                            );
+                          }
+
+                          await MapUtils.setStyle(controller, style);
+                        },
+                      ),
                     ),
-                    myLocationEnabled: true,
-                    zoomControlsEnabled: false,
-                    myLocationButtonEnabled: false,
-                    onMapCreated: (GoogleMapController controller) async {
-                      if (!_controller.isCompleted) {
-                        _controller.complete(controller);
-                      }
-                      await _applyMapTheme(controller, state.themeMode);
-                    },
                   ),
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
-                child: Row(
-                  children: [
-                    Text(
-                      "Today",
-                      style: getBoldStyle(color: AppColors.paletteGreen, fontSize: 10),
-                    ),
-                  ],
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
+                  child: Row(
+                    children: [
+                      Text(
+                        "Today",
+                        style: getBoldStyle(color: AppColors.paletteGreen, fontSize: 10),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                child: _buildStatsRow(),
-              ),
-            ],
-          );
-        },
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: _buildStatsRow(),
+                ),
+              ],
+            );
+          },
+        ),
       ),
     );
   }
@@ -427,8 +408,14 @@ class _MapScreenState extends State<MapScreen> {
       {"icon": null, "label": "Upgrade to\nPlus", "badge": null, "isPlus": true},
     ];
 
-    return Padding(
-      padding: const EdgeInsets.all(16),
+    return Container(
+      margin: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(16.0),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(18),
+        boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 6)],
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -447,71 +434,86 @@ class _MapScreenState extends State<MapScreen> {
             itemCount: options.length,
             itemBuilder: (context, index) {
               final option = options[index];
-              return Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  if (option["isPlus"] == true)
-                    Container(
-                      margin: const EdgeInsets.only(bottom: 6, top: 4),
-                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                      decoration: BoxDecoration(
-                        gradient: const LinearGradient(
-                          colors: [
-                            Color(0xFFD4AF37),
-                            Color(0xFFE1D2B0),
-                            Color(0xFFE2C275),
-                          ],
-                          stops: [0.0, 0.4, 1.0],
-                        ),
-                        borderRadius: BorderRadius.circular(4),
+              return InkWell(
+                onTap: () {
+                  if (option["label"] == "Record via\nPhone") {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => const RecordViaPhoneScreen(),
                       ),
-                      child: const Text(
-                        "Plus",
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 14,
+                    );
+                  }
+                },
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    if (option["isPlus"] == true)
+                      Container(
+                        margin: const EdgeInsets.only(bottom: 6, top: 4),
+                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                        decoration: BoxDecoration(
+                          gradient: const LinearGradient(
+                            colors: [
+                              Color(0xFFD4AF37),
+                              Color(0xFFE1D2B0),
+                              Color(0xFFE2C275),
+                            ],
+                            stops: [0.0, 0.4, 1.0],
+                          ),
+                          borderRadius: BorderRadius.circular(4),
                         ),
-                      ),
-                    )
-                  else
-                    Stack(
-                      clipBehavior: Clip.none,
-                      children: [
-                        Icon(option["icon"] as IconData, size: 28, color: Colors.black87),
-                        if (option["badge"] != null)
-                          Positioned(
-                            top: -10,
-                            right: -36,
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 5,
-                                vertical: 2,
-                              ),
-                              decoration: BoxDecoration(
-                                color: const Color(0xFF00A3E0),
-                                borderRadius: BorderRadius.circular(4),
-                              ),
-                              child: Text(
-                                option["badge"] as String,
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 8,
-                                  fontWeight: FontWeight.bold,
+                        child: const Text(
+                          "Plus",
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14,
+                          ),
+                        ),
+                      )
+                    else
+                      Stack(
+                        clipBehavior: Clip.none,
+                        children: [
+                          Icon(
+                            option["icon"] as IconData,
+                            size: 28,
+                            color: Colors.black87,
+                          ),
+                          if (option["badge"] != null)
+                            Positioned(
+                              top: -10,
+                              right: -36,
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 5,
+                                  vertical: 2,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFF00A3E0),
+                                  borderRadius: BorderRadius.circular(4),
+                                ),
+                                child: Text(
+                                  option["badge"] as String,
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 8,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                      ],
+                        ],
+                      ),
+                    const SizedBox(height: 10),
+                    Text(
+                      option["label"] as String,
+                      textAlign: TextAlign.center,
+                      maxLines: 2,
+                      style: getMediumStyle(color: Colors.black54, fontSize: 11),
                     ),
-                  const SizedBox(height: 10),
-                  Text(
-                    option["label"] as String,
-                    textAlign: TextAlign.center,
-                    maxLines: 2,
-                    style: getMediumStyle(color: Colors.black54, fontSize: 11),
-                  ),
-                ],
+                  ],
+                ),
               );
             },
           ),

@@ -53,11 +53,9 @@ class AppPreference {
   static String KEY_DEVICE_MAC = "KEY_DEVICE_MAC";
   static String KEY_SELECTED_LANGUAGE = "KEY_SELECTED_LANGUAGE";
   static String KEY_DYNAMIC_THEME = "KEY_DYNAMIC_THEME";
+  static String KEY_FCM_TOKEN = "KEY_FCM_TOKEN";
 
-  /// `false`  = user registered but hasn't completed onboarding setup yet
-  /// `true`   = user has completed setup (added vehicle / done choice selector)
-  /// `null`   = key was never written (existing user from before this feature → treat as done)
-  static String KEY_SETUP_COMPLETE = "KEY_SETUP_COMPLETE";
+
 
   // --- Basic Getters/Setters ---
   Future<String> get({required String key}) async => _prefs.getString(key) ?? "";
@@ -67,8 +65,7 @@ class AppPreference {
 
   Future<bool> getBool({required String key}) async => _prefs.getBool(key) ?? false;
 
-  /// Returns `null` when the key has never been written (distinct from explicit `false`).
-  Future<bool?> getBoolNullable({required String key}) async => _prefs.getBool(key);
+
 
   Future<void> setBool({required String key, required bool value}) async =>
       _prefs.setBool(key, value);

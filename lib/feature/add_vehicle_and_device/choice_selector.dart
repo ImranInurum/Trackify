@@ -1,6 +1,10 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:trackify/core/constants/app_images.dart';
+import 'package:trackify/core/utils/shared_preferences.dart';
+import 'package:trackify/feature/auth/presentation/pages/signin_screen.dart';
+import 'package:trackify/l10n/app_localizations.dart';
 
 import '../../core/theme/app_colors.dart';
 import '../onboarding/presentation/cubit/splash_cubit.dart';
@@ -42,6 +46,7 @@ class _ChoiceSelectorState extends State<ChoiceSelector> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: AppColors.backgroundLight,
       appBar: AppBar(
@@ -75,10 +80,9 @@ class _ChoiceSelectorState extends State<ChoiceSelector> {
                     // Cards
                     _buildChoiceCard(
                       context: context,
-                      title: 'Install Trackify Device',
-                      subtitle:
-                          'Quickly set up your Ajjas smart device with simple steps',
-                      imagePath: 'assets/images/device_image.png',
+                      title: l10n.installDevice,
+                      subtitle: l10n.installDeviceDesc,
+                      imagePath: AppImages.installDevices,
                       imageWidth: 90,
                       imageHeight: 90,
                       onTap: () {
@@ -88,9 +92,9 @@ class _ChoiceSelectorState extends State<ChoiceSelector> {
 
                     _buildChoiceCard(
                       context: context,
-                      title: 'Activate Contact Sticker',
-                      subtitle: 'Simple steps to quickly activate your contact sticker',
-                      imagePath: 'assets/images/scanner_image.png',
+                      title: l10n.activateSticker,
+                      subtitle: l10n.activateStickerDesc,
+                      imagePath: AppImages.activateContactSticker,
                       imageWidth: 70,
                       imageHeight: 70,
                       onTap: () {
@@ -100,10 +104,9 @@ class _ChoiceSelectorState extends State<ChoiceSelector> {
 
                     _buildChoiceCard(
                       context: context,
-                      title: 'Explore Our Free App',
-                      subtitle:
-                          'Record rides using phone manually & keep track of it using our free app curated for you',
-                      imagePath: 'assets/images/explore_app_image.jpg',
+                      title: l10n.exploreFreeApp,
+                      subtitle: l10n.exploreFreeAppDesc,
+                      imagePath: AppImages.exploreApp,
                       imageWidth: 70,
                       imageHeight: 90,
                       onTap: () {
@@ -125,12 +128,17 @@ class _ChoiceSelectorState extends State<ChoiceSelector> {
               padding: const EdgeInsets.symmetric(vertical: 20),
               child: TextButton.icon(
                 onPressed: () {
-                  // TODO: Handle logout logic
+                  final prefs = AppPreference.instance;
+                  prefs.clearAll();
+                  Navigator.of(context).pushAndRemoveUntil(
+                    MaterialPageRoute(builder: (context) => const SignInScreen()),
+                    (Route<dynamic> route) => false,
+                  );
                 },
                 icon: const Icon(Icons.logout, color: Colors.grey, size: 20),
-                label: const Text(
-                  'Logout',
-                  style: TextStyle(
+                label: Text(
+                  l10n.logout,
+                  style: const TextStyle(
                     color: Colors.grey,
                     fontSize: 15,
                     fontWeight: FontWeight.w500,

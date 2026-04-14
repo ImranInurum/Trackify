@@ -33,7 +33,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get passwordRequired => 'كلمة المرور مطلوبة';
 
   @override
-  String get invalidEmail => 'Please enter a valid email address';
+  String get invalidEmail => 'يرجى إدخال عنوان بريد إلكتروني صحيح';
 
   @override
   String get forgotPassword => 'هل نسيت كلمة المرور؟';
@@ -68,7 +68,58 @@ class AppLocalizationsAr extends AppLocalizations {
   String get nameRequired => 'الاسم مطلوب';
 
   @override
+  String get mobileNumber => 'رقم الجوال';
+
+  @override
+  String get mobileNumberHint => 'أدخل رقم الجوال';
+
+  @override
+  String get mobileNumberRequired => 'رقم الجوال مطلوب';
+
+  @override
+  String get invalidMobileNumber => 'يرجى إدخال رقم جوال صحيح';
+
+  @override
+  String get country => 'الدولة';
+
+  @override
+  String get countryHint => 'أدخل الدولة';
+
+  @override
+  String get countryRequired => 'الدولة مطلوبة';
+
+  @override
+  String get state => 'المنطقة';
+
+  @override
+  String get stateHint => 'أدخل المنطقة';
+
+  @override
+  String get stateRequired => 'المنطقة مطلوبة';
+
+  @override
+  String get city => 'المدينة';
+
+  @override
+  String get cityHint => 'أدخل المدينة';
+
+  @override
+  String get cityRequired => 'المدينة مطلوبة';
+
+  @override
+  String get selectProfileImage => 'اختر صورة الملف الشخصي';
+
+  @override
   String get role => 'الدور';
+
+  @override
+  String get roleAdmin => 'مدير';
+
+  @override
+  String get roleCustomer => 'عميل';
+
+  @override
+  String get selectRoleHint => 'اختر دوراً';
 
   @override
   String get roleRequired => 'يرجى اختيار دور';
@@ -338,4 +389,284 @@ class AppLocalizationsAr extends AppLocalizations {
   String errorMsg(String message) {
     return 'خطأ: $message';
   }
+
+  @override
+  String get addVehicle => 'إضافة مركبة/جهاز';
+
+  @override
+  String get vehicleAdded => 'تمت إضافة المركبة بنجاح!';
+
+  @override
+  String get vehicleType => 'نوع المركبة';
+
+  @override
+  String get twoWheeler => 'ثنائي العجلات';
+
+  @override
+  String get fourWheeler => 'رباعي العجلات';
+
+  @override
+  String get autoRickshaw => 'ريكشا';
+
+  @override
+  String get heavyVehicle => 'مركبة ثقيلة';
+
+  @override
+  String get fuelType => 'نوع الوقود';
+
+  @override
+  String get petrol => 'بنزين';
+
+  @override
+  String get electric => 'كهربائي';
+
+  @override
+  String get vehicleMake => 'ماركة المركبة';
+
+  @override
+  String get vehicleModel => 'موديل المركبة';
+
+  @override
+  String get vehicleNumber => 'رقم المركبة';
+
+  @override
+  String get vehicleNumberHint => 'مثال: MP46MX0743';
+
+  @override
+  String get pleaseEnterVehicleNumber => 'يرجى إدخال رقم المركبة';
+
+  @override
+  String get selectMake => 'اختر ماركة المركبة';
+
+  @override
+  String get selectModel => 'اختر موديل المركبة';
+
+  @override
+  String get installDevice => 'تثبيت جهاز Trackify';
+
+  @override
+  String get installDeviceDesc =>
+      'قم بإعداد جهاز Ajjas الذكي الخاص بك بسرعة بخطوات بسيطة';
+
+  @override
+  String get activateSticker => 'تفعيل ملصق الاتصال';
+
+  @override
+  String get activateStickerDesc => 'خطوات بسيطة لتفعيل ملصق الاتصال بسرعة';
+
+  @override
+  String get exploreFreeApp => 'استكشف تطبيقنا المجاني';
+
+  @override
+  String get exploreFreeAppDesc =>
+      'سجّل رحلاتك يدوياً باستخدام الهاتف وتتبعها باستخدام تطبيقنا المجاني';
+
+  @override
+  String get logout => 'تسجيل الخروج';
+
+  @override
+  String get alreadyHaveAccount => 'هل لديك حساب بالفعل؟';
+
+  @override
+  String get dataPlan => 'خطة البيانات';
+
+  @override
+  String get warranty => 'الضمان';
+
+  @override
+  String expiresInDays(String days) {
+    return 'تنتهي خلال $days يوم';
+  }
+
+  @override
+  String get rechargeNow => 'اشحن الآن';
+
+  @override
+  String get renewNow => 'جدد الآن';
+
+  @override
+  String get secureYourVehicle => 'أمن مركبتك';
+
+  @override
+  String get secureYourVehicleDesc =>
+      'اشترِ جهاز أجياس الآن للتتبع الفوري وراحة البال التامة.';
+
+  @override
+  String get boughtDeviceInstallNow => 'هل اشتريت جهازاً؟ ';
+
+  @override
+  String get installNow => 'ثبته الآن';
+
+  @override
+  String get buyAjjasDevice => 'اشترِ جهاز أجياس';
+
+  @override
+  String get lite4G => 'لايت 4G';
+
+  @override
+  String get swipeToLock => 'اسحب للقفل';
+
+  @override
+  String get upgradeToPlus => 'ترقية إلى Ajjas Plus';
+
+  @override
+  String get getMoreOutOfAjjas => 'استفد أكثر من Ajjas';
+
+  @override
+  String featuresExploredCount(Object count, Object total) {
+    return 'لقد استكشفت $count من $total ميزات - واصل!';
+  }
+
+  @override
+  String get manageVehiclesDesc => 'إدارة جميع مركباتك هنا';
+
+  @override
+  String get settingsDesc => 'اللغة وإعدادات الحساب والمزيد';
+
+  @override
+  String get notifications => 'الإشعارات';
+
+  @override
+  String get helpAndSupport => 'المساعدة والدعم';
+
+  @override
+  String get helpAndSupportDesc => 'احصل على المساعدة والأسئلة الشائعة';
+
+  @override
+  String get settings => 'الإعدادات';
+
+  @override
+  String get searchForSettings => 'البحث في الإعدادات';
+
+  @override
+  String get backupAndRestore => 'النسخ الاحتياطي والاستعادة';
+
+  @override
+  String get backupAndRestoreDesc =>
+      'احتفظ بنسخة احتياطية من بيانات رحلاتك واستعدها في أي وقت.';
+
+  @override
+  String get appSettings => 'إعدادات التطبيق';
+
+  @override
+  String get appSettingsDesc => 'مظهر التطبيق وخريطة الحرارة وميزة الطوارئ';
+
+  @override
+  String get notificationSettings => 'إعدادات الإشعارات';
+
+  @override
+  String get notificationSettingsDesc => 'تفضيلات الإشعارات وصوت الإشعار';
+
+  @override
+  String get privacy => 'الخصوصية';
+
+  @override
+  String get privacyDesc =>
+      'تغيير كلمة المرور وإدارة الجلسة الحالية وحذف حسابك';
+
+  @override
+  String get rateUsOnPlayStore => 'قيّمنا على Play Store';
+
+  @override
+  String get rateUsOnPlayStoreDesc => 'شارك ملاحظاتك القيمة';
+
+  @override
+  String get logoutDesc => 'تسجيل الخروج من هذا الجهاز';
+
+  @override
+  String get helpAndSuggestion => 'المساعدة والاقتراح';
+
+  @override
+  String get reportAnIssue => 'الإبلاغ عن مشكلة';
+
+  @override
+  String get suggestion => 'اقتراح';
+
+  @override
+  String get whatIsYourIssueRelatedTo => 'بماذا تتعلق مشكلتك؟';
+
+  @override
+  String get shortDescriptionHint => 'أعطنا وصفاً مختصراً (200 حرف كحد أقصى)';
+
+  @override
+  String get selectCallSlot => 'اختر وقت الاتصال';
+
+  @override
+  String get myIssues => 'مشاكلي';
+
+  @override
+  String get whatsApp => 'WhatsApp';
+
+  @override
+  String get forceMigrate => 'ترحيل قسري';
+
+  @override
+  String get forceMigrateDesc1 =>
+      'استخدم هذا الخيار لإصلاح رحلات يومية محفوظة فاتت أثناء تحديث التطبيق.';
+
+  @override
+  String get forceMigrateDesc2 =>
+      'يرجى ملاحظة أن هذا لا يستعيد رحلاتك القديمة من الخادم. يقوم فقط بنقل البيانات في التخزين المحلي إلى التنسيق الجديد.';
+
+  @override
+  String get faq => 'الأسئلة الشائعة';
+
+  @override
+  String get termsConditions => 'الشروط والأحكام';
+
+  @override
+  String get privacyPolicy => 'سياسة الخصوصية';
+
+  @override
+  String get changeLog => 'سجل التغييرات';
+
+  @override
+  String get todayLabel => '(اليوم)';
+
+  @override
+  String get ridingBehaviour => 'سلوك القيادة';
+
+  @override
+  String get ridingBehaviourVacationDesc =>
+      'يبدو أن مركبتك استمتعت بإجازة قصيرة، حيث أنك لم تقم بأي رحلة خلال الفترة الزمنية المحددة';
+
+  @override
+  String get journey => 'رحلة';
+
+  @override
+  String get distanceTravelled => 'المسافة المقطوعة';
+
+  @override
+  String get timeDuration => 'المدة الزمنية';
+
+  @override
+  String get speed => 'السرعة';
+
+  @override
+  String get averageSpeed => 'متوسط السرعة';
+
+  @override
+  String get topSpeed => 'السرعة القصوى';
+
+  @override
+  String get fuel => 'وقود';
+
+  @override
+  String get fuelConsumed => 'الوقود المستهلك';
+
+  @override
+  String get fuelCost => 'تكلفة الوقود';
+
+  @override
+  String vsPreviousPeriod(String value) {
+    return '$value% مقارنة بالفترة السابقة';
+  }
+
+  @override
+  String get vehicleMakeListEmpty =>
+      'Vehicle make list is empty for this selection';
+
+  @override
+  String get vehicleModelListEmpty =>
+      'Vehicle model list is empty for this selection';
 }
