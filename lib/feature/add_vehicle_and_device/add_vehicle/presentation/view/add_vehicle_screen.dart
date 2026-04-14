@@ -1,22 +1,16 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:trackify/feature/add_vehicle_and_device/add_vehicle/data/models/vehicle_config_models.dart';
 
 import '../../../../../app/app_navigation.dart';
 import '../../../../../core/theme/app_colors.dart';
-import '../../../../../core/utils/shared_preferences.dart';
+import '../../../../../core/widgets/custom_form_field.dart';
+import '../../../../../l10n/app_localizations.dart';
 import '../../../../onboarding/presentation/cubit/splash_cubit.dart';
 import '../../../../onboarding/presentation/cubit/splash_state.dart';
 import '../cubit/add_vehicle_cubit.dart';
 import '../cubit/add_vehicle_state.dart';
-import '../../../../../core/widgets/custom_form_field.dart';
-import '../../../../../l10n/app_localizations.dart';
-
-// ─── Data models ─────────────────────────────────────────────────────────────
-
-enum VehicleType { twoWheeler, fourWheeler, autoRickshaw, heavyVehicle }
-
-enum FuelType { petrol, electric }
 
 // ─── Screen ──────────────────────────────────────────────────────────────────
 
@@ -28,33 +22,16 @@ class AddVehicleScreen extends StatefulWidget {
 }
 
 class _AddVehicleScreenState extends State<AddVehicleScreen> {
-  VehicleType _selectedVehicleType = VehicleType.twoWheeler;
-  FuelType _selectedFuelType = FuelType.petrol;
-
-  String? _selectedMake;
-  String? _selectedModel;
-
   final _vehicleNumberController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
-  // ── Sample data (replace with API data later) ──────────────────────────────
-  final List<String> _vehicleMakes = [
-    'Honda',
-    'Hero',
-    'Bajaj',
-    'TVS',
-    'Yamaha',
-    'Suzuki',
-  ];
-
-  final Map<String, List<String>> _vehicleModels = {
-    'Honda': ['SP 125', 'Activa 6G', 'CB Shine', 'Unicorn'],
-    'Hero': ['Splendor Plus', 'HF Deluxe', 'Passion Pro', 'Xtreme 160R'],
-    'Bajaj': ['Pulsar 150', 'CT 110', 'Platina 110', 'Avenger Street 160'],
-    'TVS': ['Apache RTR 160', 'Star City+', 'Jupiter', 'Ntorq 125'],
-    'Yamaha': ['FZ-S FI', 'R15 V4', 'MT-15', 'Fascino 125'],
-    'Suzuki': ['Access 125', 'Gixxer 150', 'Intruder 150', 'Avenis 125'],
-  };
+  @override
+  void initState() {
+    super.initState();
+    final cubit = context.read<AddVehicleCubit>();
+    cubit.reset();
+    cubit.fetchVehicleConfig();
+  }
 
   @override
   void dispose() {
@@ -66,40 +43,40 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
   Widget _buildLogo(SplashState state, ColorScheme colorScheme) {
     return Center(
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 0.0),
+        padding: const EdgeInsets.symmetric(vertical: 20.0),
         child:
             (state is SplashLoaded &&
                 state.logo.path != null &&
                 state.logo.path!.isNotEmpty)
             ? CachedNetworkImage(
                 imageUrl: state.logo.path!,
-                height: 140,
+                height: 220,
                 fit: BoxFit.contain,
                 placeholder: (context, url) =>
                     Center(child: CircularProgressIndicator(color: colorScheme.primary)),
                 errorWidget: (context, url, error) => Icon(
                   Icons.track_changes_rounded,
-                  size: 56,
+                  size: 88,
                   color: colorScheme.primary,
                 ),
               )
-            : Icon(Icons.track_changes_rounded, size: 56, color: colorScheme.primary),
+            : Icon(Icons.track_changes_rounded, size: 88, color: colorScheme.primary),
       ),
     );
   }
 
   // ─── Vehicle-type circular chip ────────────────────────────────────────────
   Widget _buildVehicleTypeItem({
-    required VehicleType type,
+    required VehicleConfig config,
     required IconData icon,
     required String label,
+    required bool selected,
   }) {
-    final bool selected = _selectedVehicleType == type;
     const Color active = AppColors.secondaryLight;
     const Color inactive = Color(0xFFAAAAAA);
 
     return GestureDetector(
-      onTap: () => setState(() => _selectedVehicleType = type),
+      onTap: () => context.read<AddVehicleCubit>().selectVehicleType(config),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -133,16 +110,16 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
 
   // ─── Fuel-type circular chip ───────────────────────────────────────────────
   Widget _buildFuelTypeItem({
-    required FuelType type,
+    required String type,
     required IconData icon,
     required String label,
+    required bool selected,
   }) {
-    final bool selected = _selectedFuelType == type;
     const Color active = AppColors.secondaryLight;
     const Color inactive = Color(0xFFAAAAAA);
 
     return GestureDetector(
-      onTap: () => setState(() => _selectedFuelType = type),
+      onTap: () => context.read<AddVehicleCubit>().selectFuelType(type),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -175,23 +152,36 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
   }
 
   // ─── Labelled dropdown ─────────────────────────────────────────────────────
-  Widget _buildDropdown({
+  Widget _buildDropdown<T>({
     required String label,
-    required String? value,
-    required List<String> items,
-    required ValueChanged<String?> onChanged,
+    required T? value,
+    required List<T> items,
+    required String Function(T) itemLabel,
+    ValueChanged<T?>? onChanged,
+    bool isLoading = false,
     String? hint,
   }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          label,
-          style: const TextStyle(
-            fontSize: 13,
-            color: AppColors.textSecondaryLight,
-            fontWeight: FontWeight.w500,
-          ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              label,
+              style: const TextStyle(
+                fontSize: 13,
+                color: AppColors.textSecondaryLight,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            if (isLoading)
+              const SizedBox(
+                height: 12,
+                width: 12,
+                child: CircularProgressIndicator(strokeWidth: 1.5),
+              ),
+          ],
         ),
         const SizedBox(height: 6),
         Container(
@@ -202,7 +192,7 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
           ),
           padding: const EdgeInsets.symmetric(horizontal: 14),
           child: DropdownButtonHideUnderline(
-            child: DropdownButton<String>(
+            child: DropdownButton<T>(
               value: value,
               isExpanded: true,
               hint: Text(
@@ -214,11 +204,11 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
                   .map(
                     (e) => DropdownMenuItem(
                       value: e,
-                      child: Text(e, style: const TextStyle(fontSize: 14)),
+                      child: Text(itemLabel(e), style: const TextStyle(fontSize: 14)),
                     ),
                   )
                   .toList(),
-              onChanged: onChanged,
+              onChanged: isLoading ? null : onChanged,
             ),
           ),
         ),
@@ -238,6 +228,39 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
       ),
     ),
   );
+
+  IconData _getVehicleIcon(String type) {
+    return switch (type.toLowerCase()) {
+      '2_wheeler' => Icons.two_wheeler_rounded,
+      '4_wheeler' => Icons.directions_car_rounded,
+      'rikshaw' => Icons.electric_rickshaw_rounded,
+      _ => Icons.local_shipping_rounded,
+    };
+  }
+
+  String _getVehicleLabel(String type, AppLocalizations l10n) {
+    return switch (type.toLowerCase()) {
+      '2_wheeler' => l10n.twoWheeler,
+      '4_wheeler' => l10n.fourWheeler,
+      'rikshaw' => l10n.autoRickshaw,
+      _ =>
+        type
+            .replaceAll('_', ' ')
+            .split(' ')
+            .map((e) => e[0].toUpperCase() + e.substring(1))
+            .join(' '),
+    };
+  }
+
+  IconData _getFuelIcon(String fuel) {
+    return switch (fuel.toLowerCase()) {
+      'petrol' => Icons.water_drop_rounded,
+      'electric' => Icons.bolt_rounded,
+      'diesel' => Icons.local_gas_station_rounded,
+      'cng' => Icons.eco_rounded,
+      _ => Icons.opacity_rounded,
+    };
+  }
 
   // ─── Build ─────────────────────────────────────────────────────────────────
   @override
@@ -265,23 +288,19 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
       ),
       body: BlocListener<AddVehicleCubit, AddVehicleState>(
         listener: (context, state) {
-          if (state is AddVehicleSuccess) {
+          if (state.successResponse != null) {
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(l10n.vehicleAdded),
-                backgroundColor: Colors.green,
-              ),
+              SnackBar(content: Text(l10n.vehicleAdded), backgroundColor: Colors.green),
             );
-            if (context.mounted) {
-              Navigator.of(context).pushAndRemoveUntil(
-                MaterialPageRoute(builder: (context) => const AppNavigation()),
-                (route) => false,
-              );
-            }
-          } else if (state is AddVehicleError) {
+            Navigator.of(context).pushAndRemoveUntil(
+              MaterialPageRoute(builder: (context) => const AppNavigation()),
+              (route) => false,
+            );
+          } else if (state.errorMessage != null) {
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(state.message), backgroundColor: Colors.red),
+              SnackBar(content: Text(state.errorMessage!), backgroundColor: Colors.red),
             );
+            context.read<AddVehicleCubit>().clearError();
           }
         },
         child: Form(
@@ -291,110 +310,137 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
               Expanded(
                 child: SingleChildScrollView(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // ── Logo ─────────────────────────────────────────────────
-                      BlocBuilder<SplashCubit, SplashState>(
-                        builder: (context, splashState) =>
-                            _buildLogo(splashState, colorScheme),
-                      ),
+                  child: BlocBuilder<AddVehicleCubit, AddVehicleState>(
+                    builder: (context, state) {
+                      if (state.isLoadingConfig && state.configs.isEmpty) {
+                        return const Padding(
+                          padding: EdgeInsets.only(top: 100),
+                          child: Center(child: CircularProgressIndicator()),
+                        );
+                      }
 
-                      const SizedBox(height: 8),
-
-                      // ── Vehicle Type ──────────────────────────────────────────
-                      _sectionLabel(l10n.vehicleType),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          _buildVehicleTypeItem(
-                            type: VehicleType.twoWheeler,
-                            icon: Icons.two_wheeler_rounded,
-                            label: l10n.twoWheeler,
+                          // ── Logo ─────────────────────────────────────────────────
+                          BlocBuilder<SplashCubit, SplashState>(
+                            builder: (context, splashState) =>
+                                _buildLogo(splashState, colorScheme),
                           ),
-                          _buildVehicleTypeItem(
-                            type: VehicleType.fourWheeler,
-                            icon: Icons.directions_car_rounded,
-                            label: l10n.fourWheeler,
+
+                          const SizedBox(height: 8),
+
+                          // ── Vehicle Type ──────────────────────────────────────────
+                          _sectionLabel(l10n.vehicleType),
+                          SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            child: Row(
+                              children: state.configs.map((config) {
+                                return Padding(
+                                  padding: const EdgeInsets.only(right: 20),
+                                  child: _buildVehicleTypeItem(
+                                    config: config,
+                                    icon: _getVehicleIcon(config.type),
+                                    label: _getVehicleLabel(config.type, l10n),
+                                    selected: state.selectedConfig?.id == config.id,
+                                  ),
+                                );
+                              }).toList(),
+                            ),
                           ),
-                          _buildVehicleTypeItem(
-                            type: VehicleType.autoRickshaw,
-                            icon: Icons.electric_rickshaw_rounded,
-                            label: l10n.autoRickshaw,
+
+                          const SizedBox(height: 24),
+
+                          // ── Fuel Type ─────────────────────────────────────────────
+                          const SizedBox(height: 24),
+                          _sectionLabel(l10n.fuelType),
+                          state.selectedConfig != null
+                              ? SingleChildScrollView(
+                                scrollDirection: Axis.horizontal,
+                                child: Row(
+                                  children: state.selectedConfig!.supportedFuelTypes.map((fuel) {
+                                    return Padding(
+                                      padding: const EdgeInsets.only(right: 24),
+                                      child: _buildFuelTypeItem(
+                                        type: fuel,
+                                        icon: _getFuelIcon(fuel),
+                                        label: fuel[0].toUpperCase() + fuel.substring(1),
+                                        selected: state.selectedFuelType == fuel,
+                                      ),
+                                    );
+                                  }).toList(),
+                                ),
+                              )
+                              : Padding(
+                                padding: const EdgeInsets.only(bottom: 4),
+                                child: Text(
+                                  "Select vehicle type to see fuel options",
+                                  style: TextStyle(
+                                    color: Colors.grey.withValues(alpha: 0.7),
+                                    fontSize: 12,
+                                    fontStyle: FontStyle.italic,
+                                  ),
+                                ),
+                              ),
+
+                          const SizedBox(height: 24),
+
+                          // ── Vehicle Make ──────────────────────────────────────────
+                          _buildDropdown<VehicleMaker>(
+                            label: l10n.vehicleMake,
+                            hint: l10n.selectMake,
+                            value: state.selectedMaker,
+                            items: state.makers,
+                            itemLabel: (m) => m.name,
+                            isLoading: state.isLoadingMakers,
+                            onChanged:
+                                state.selectedFuelType == null
+                                    ? null
+                                    : (val) {
+                                      if (val != null) {
+                                        context.read<AddVehicleCubit>().selectMaker(val);
+                                      }
+                                    },
                           ),
-                          _buildVehicleTypeItem(
-                            type: VehicleType.heavyVehicle,
-                            icon: Icons.local_shipping_rounded,
-                            label: l10n.heavyVehicle,
+                          const SizedBox(height: 20),
+
+                          // ── Vehicle Model ─────────────────────────────────────────
+                          _buildDropdown<VehicleModelInfo>(
+                            label: l10n.vehicleModel,
+                            hint: l10n.selectModel,
+                            value: state.selectedModel,
+                            items: state.models,
+                            itemLabel: (m) => m.modelName,
+                            isLoading: state.isLoadingModels,
+                            onChanged:
+                                state.selectedMaker == null
+                                    ? null
+                                    : (val) {
+                                      if (val != null) {
+                                        context.read<AddVehicleCubit>().selectModel(val);
+                                      }
+                                    },
                           ),
+                          const SizedBox(height: 20),
+
+                          // ── Vehicle Number ────────────────────────────────────────
+                          CustomFormField(
+                            header: l10n.vehicleNumber,
+                            hint: l10n.vehicleNumberHint,
+                            value: _vehicleNumberController,
+                            textCapitalization: TextCapitalization.characters,
+                            validator: (val) {
+                              if (val == null || val.trim().isEmpty) {
+                                return l10n.pleaseEnterVehicleNumber;
+                              }
+                              return null;
+                            },
+                          ),
+
+                          const SizedBox(height: 32),
                         ],
-                      ),
-
-                      const SizedBox(height: 24),
-
-                      // ── Fuel Type ─────────────────────────────────────────────
-                      _sectionLabel(l10n.fuelType),
-                      Row(
-                        children: [
-                          _buildFuelTypeItem(
-                            type: FuelType.petrol,
-                            icon: Icons.water_drop_rounded,
-                            label: l10n.petrol,
-                          ),
-                          const SizedBox(width: 24),
-                          _buildFuelTypeItem(
-                            type: FuelType.electric,
-                            icon: Icons.bolt_rounded,
-                            label: l10n.electric,
-                          ),
-                        ],
-                      ),
-
-                      const SizedBox(height: 24),
-
-                      // ── Vehicle Make ──────────────────────────────────────────
-                      _buildDropdown(
-                        label: l10n.vehicleMake,
-                        hint: l10n.selectMake,
-                        value: _selectedMake,
-                        items: _vehicleMakes,
-                        onChanged: (val) => setState(() {
-                          _selectedMake = val;
-                          _selectedModel = null; // reset model when make changes
-                        }),
-                      ),
-
-                      const SizedBox(height: 20),
-
-                      // ── Vehicle Model ─────────────────────────────────────────
-                      _buildDropdown(
-                        label: l10n.vehicleModel,
-                        hint: l10n.selectModel,
-                        value: _selectedModel,
-                        items: _selectedMake != null
-                            ? (_vehicleModels[_selectedMake] ?? [])
-                            : [],
-                        onChanged: (val) => setState(() => _selectedModel = val),
-                      ),
-
-                      const SizedBox(height: 20),
-
-                      // ── Vehicle Number ────────────────────────────────────────
-                      CustomFormField(
-                        header: l10n.vehicleNumber,
-                        hint: l10n.vehicleNumberHint,
-                        value: _vehicleNumberController,
-                        textCapitalization: TextCapitalization.characters,
-                        validator: (val) {
-                          if (val == null || val.trim().isEmpty) {
-                            return l10n.pleaseEnterVehicleNumber;
-                          }
-                          return null;
-                        },
-                      ),
-
-                      const SizedBox(height: 32),
-                    ],
+                      );
+                    },
                   ),
                 ),
               ),
@@ -407,30 +453,13 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
                   height: 42,
                   child: BlocBuilder<AddVehicleCubit, AddVehicleState>(
                     builder: (context, state) {
-                      final isLoading = state is AddVehicleLoading;
                       return ElevatedButton(
-                        onPressed: isLoading
+                        onPressed: state.isSubmitting
                             ? null
                             : () {
                                 if (_formKey.currentState?.validate() ?? false) {
-                                  final vType = switch (_selectedVehicleType) {
-                                    VehicleType.twoWheeler => 'Bike',
-                                    VehicleType.fourWheeler => 'Car',
-                                    VehicleType.autoRickshaw => 'Auto Rickshaw',
-                                    VehicleType.heavyVehicle => 'Heavy Vehicle',
-                                  };
-
-                                  final fType = switch (_selectedFuelType) {
-                                    FuelType.petrol => 'Petrol',
-                                    FuelType.electric => 'Electric',
-                                  };
-
                                   context.read<AddVehicleCubit>().addVehicle(
-                                    vehicleType: vType,
-                                    fuelType: fType,
-                                    vehicleMaker: _selectedMake ?? '',
                                     vehicleNumber: _vehicleNumberController.text.trim(),
-                                    vehicleModel: _selectedModel ?? '',
                                   );
                                 }
                               },
@@ -446,7 +475,7 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
                             alpha: 0.6,
                           ),
                         ),
-                        child: isLoading
+                        child: state.isSubmitting
                             ? const SizedBox(
                                 height: 20,
                                 width: 20,

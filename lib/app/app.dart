@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:trackify/app/cubit/app_cubit.dart';
 import 'package:trackify/app/cubit/app_state.dart';
 
@@ -15,17 +14,19 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<AppCubit, AppState>(
-      builder: (context, state) => MaterialApp(
-        debugShowCheckedModeBanner: false,
-        navigatorKey: rootNavigatorKey,
-        themeMode: state.themeMode,
-        theme: ThemeManager.getApplicationLightTheme(),
-        darkTheme: ThemeManager.getApplicationDarkTheme(),
-        locale: state.locale,
-        supportedLocales: AppLocalizations.supportedLocales,
-        localizationsDelegates: AppLocalizations.localizationsDelegates,
-        home: SplashScreen(),
-      ),
+      builder: (context, state) {
+        return MaterialApp(
+          debugShowCheckedModeBanner: false,
+          navigatorKey: rootNavigatorKey,
+          themeMode: state.themeMode,
+          theme: ThemeManager.getApplicationLightTheme(),
+          darkTheme: ThemeManager.getApplicationDarkTheme(),
+          locale: state.locale,
+          supportedLocales: AppLocalizations.supportedLocales,
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          home: SplashScreen(),
+        );
+      },
     );
   }
 }

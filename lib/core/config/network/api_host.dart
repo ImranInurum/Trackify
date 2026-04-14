@@ -14,6 +14,9 @@ class ApiURL {
   static const String baseURL = 'http://139.59.1.109:5000';
 
   static String authToken = '';
+  static void updateAuthToken(String token) {
+    authToken = token;
+  }
 
   // -------------------------
   // Social Login
@@ -32,9 +35,21 @@ class ApiURL {
   // -------------------------
   // Vehicle
   // -------------------------
-  static const String addVehicle = "$baseURL/api/vehicle/add-vehicle";
+  static const String addVehicle = "$baseURL/api/vehicle/vehicle";
+
   static String getVehiclesByUserId(String userId) =>
       "$baseURL/api/vehicle/get-vehicles?userId=$userId";
+
+  static const String vehicleConfig = "$baseURL/api/vehicle/vehicle-config";
+
+  static String vehicleMakers(String vehicleType, String fuelType) =>
+      "$baseURL/api/vehicle/makers?vehicleType=$vehicleType&fuelType=$fuelType";
+
+  static String vehicleModels(
+    String vehicleType,
+    String fuelType,
+    String brandId,
+  ) => "$baseURL/api/vehicle/models?vehicleType=$vehicleType&fuelType=$fuelType&brandId=$brandId";
 
   // -------------------------
   // Device

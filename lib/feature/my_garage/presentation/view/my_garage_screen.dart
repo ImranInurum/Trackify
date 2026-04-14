@@ -5,7 +5,7 @@ import 'package:trackify/feature/my_garage/presentation/cubit/my_garage_cubit.da
 import 'package:trackify/feature/my_garage/presentation/cubit/my_garage_state.dart';
 import 'package:trackify/l10n/app_localizations.dart';
 
-import '../widgets/vehicle_card.dart';
+import '../../../../core/common/widgets/vehicle_card.dart';
 
 class MyGarageScreen extends StatefulWidget {
   const MyGarageScreen({super.key});

@@ -625,4 +625,46 @@ class AppLocalizationsTa extends AppLocalizations {
 
   @override
   String get changeLog => 'Change log';
+
+  @override
+  String get todayLabel => '(இன்று)';
+
+  @override
+  String get ridingBehaviour => 'சவாரி நடத்தை';
+
+  @override
+  String get ridingBehaviourVacationDesc =>
+      'நீங்கள் தேர்ந்தெடுத்த காலப்பகுதியில் எந்தப் பயணமும் மேற்கொள்ளாததால், உங்கள் வாகனம் ஒரு சிறிய விடுமுறையை அனுபவித்ததாகத் தெரிகிறது';
+
+  @override
+  String get journey => 'பயணம்';
+
+  @override
+  String get distanceTravelled => 'பயணித்த தூரம்';
+
+  @override
+  String get timeDuration => 'பயண நேரம்';
+
+  @override
+  String get speed => 'வேகம்';
+
+  @override
+  String get averageSpeed => 'சராசரி வேகம்';
+
+  @override
+  String get topSpeed => 'அதிகபட்ச வேகம்';
+
+  @override
+  String get fuel => 'எரிபொருள்';
+
+  @override
+  String get fuelConsumed => 'நுகரப்பட்ட எரிபொருள்';
+
+  @override
+  String get fuelCost => 'எரிபொருள் செலவு';
+
+  @override
+  String vsPreviousPeriod(String value) {
+    return '$value% முந்தைய காலத்துடன் ஒப்பிடுகையில்';
+  }
 }

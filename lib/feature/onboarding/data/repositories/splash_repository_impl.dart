@@ -16,7 +16,9 @@ class SplashRepositoryImpl implements SplashRepository {
     try {
       final res = await _apiServices.getGetApiResponse(ApiURL.logoUrl);
       return res.fold((error) => Left(error), (data) {
-        if (data is List && data.isNotEmpty) {
+        if (data is Map<String, dynamic>) {
+          return Right(LogoModel.fromJson(data));
+        } else if (data is List && data.isNotEmpty) {
           return Right(LogoModel.fromJson(data.first));
         }
         return const Left(FetchDataException("Invalid response format"));

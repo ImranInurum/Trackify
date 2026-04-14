@@ -158,5 +158,25 @@
   "installNow": "ಈಗ ಸ್ಥಾಪಿಸಿ",
   "buyAjjasDevice": "ಅಜ್ಜಾಸ್ ಸಾಧನವನ್ನು ಖರೀದಿಸಿ",
   "lite4G": "ಲೈಟ್ 4ಜಿ",
-  "swipeToLock": "ಲಾಕ್ ಮಾಡಲು ಸ್ವೈಪ್ ಮಾಡಿ"
+  "swipeToLock": "ಲಾಕ್ ಮಾಡಲು ಸ್ವೈಪ್ ಮಾಡಿ",
+  "todayLabel": "(Today)",
+  "ridingBehaviour": "Riding Behaviour",
+  "ridingBehaviourVacationDesc": "Looks like your vehicle enjoyed a little vacation, as you didn't take any ride during the selected time period",
+  "journey": "Journey",
+  "distanceTravelled": "Distance Travelled",
+  "timeDuration": "Time Duration",
+  "speed": "Speed",
+  "averageSpeed": "Average Speed",
+  "topSpeed": "Top Speed",
+  "fuel": "Fuel",
+  "fuelConsumed": "Fuel Consumed",
+  "fuelCost": "Fuel Cost",
+  "vsPreviousPeriod": "{value}% vs previous period",
+  "@vsPreviousPeriod": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  }
 }

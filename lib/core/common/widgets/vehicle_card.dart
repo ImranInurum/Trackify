@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:trackify/core/constants/app_images.dart';
-import 'package:trackify/l10n/app_localizations.dart';
-import '../../../../../core/common/models/vehicle_list_model.dart';
+
+import '../../../core/constants/app_images.dart';
+import '../../../l10n/app_localizations.dart';
+import '../models/vehicle_list_model.dart';
 import 'interactive_swipe_button.dart';
 import 'secure_banner.dart';
 
@@ -25,7 +26,7 @@ class VehicleCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     return Container(
-      margin: const EdgeInsets.only(bottom: 10),
+      // margin: const EdgeInsets.only(bottom: 10),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(20),
@@ -164,10 +165,7 @@ class VehicleCard extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 2),
-              Text(
-                subtitle,
-                style: TextStyle(fontSize: 13, color: Colors.grey.shade500),
-              ),
+              Text(subtitle, style: TextStyle(fontSize: 13, color: Colors.grey.shade500)),
             ],
           ),
           SizedBox(

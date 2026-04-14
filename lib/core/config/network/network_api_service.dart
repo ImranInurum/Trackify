@@ -36,26 +36,21 @@ class NetworkApiService implements BaseApiServices {
     return headers;
   }
 
-  Map<String, dynamic> _normalizeBody(dynamic raw) {
-    if (raw == null) return <String, dynamic>{};
+  dynamic _decodeResponse(dynamic raw) {
+    if (raw == null) return null;
 
-    if (raw is Map<String, dynamic>) return raw;
+    if (raw is Map || raw is List) return raw;
 
-    if (raw is Map) {
-      return raw.map((key, value) => MapEntry(key.toString(), value));
-    }
-
-    if (raw is String) {
+    if (raw is String && raw.isNotEmpty) {
       try {
-        final decoded = jsonDecode(raw);
-        if (decoded is Map<String, dynamic>) return decoded;
-        if (decoded is Map) {
-          return decoded.map((key, value) => MapEntry(key.toString(), value));
-        }
-      } catch (_) {}
+        return jsonDecode(raw);
+      } catch (e) {
+        if (kDebugMode) debugPrint("Error decoding response: $e");
+        return raw;
+      }
     }
 
-    return <String, dynamic>{};
+    return raw;
   }
 
   String _extractToken(Map<String, dynamic> body) => body['auth']?.toString() ?? '';
@@ -112,57 +107,63 @@ class NetworkApiService implements BaseApiServices {
   //   return _parseBodyStatusResponse<T>(response, response.body);
   // }
 
+
+
   Either<AppException, T> _parseBodyStatusResponse<T>(
-    dynamic response,
+    http.Response response,
     dynamic responseBody,
   ) {
     final statusCode = response.statusCode;
-    final body = _normalizeBody(responseBody);
+    final decodedBody = _decodeResponse(responseBody);
+    
     if (kDebugMode) {
-      debugPrint("statusCode: $statusCode responseData:$body");
+      debugPrint("statusCode: $statusCode responseData:$decodedBody");
     }
+
+    final bodyIsMap = decodedBody is Map<String, dynamic>;
+    final mapBody = bodyIsMap ? decodedBody : <String, dynamic>{};
 
     switch (statusCode) {
       case 200:
       case 201:
       case 204:
-        return Right(body as T);
+        return Right(decodedBody as T);
       case 400:
         return Left(
-          BadRequestException(_readMessage(body, fallback: "Bad request"), 400),
+          BadRequestException(_readMessage(mapBody, fallback: "Bad request"), 400),
         );
       case 401:
         return Left(
-          UnauthorisedException(_readMessage(body, fallback: "Unauthorized"), 401),
+          UnauthorisedException(_readMessage(mapBody, fallback: "Unauthorized"), 401),
         );
       case 403:
-        return Left(ForbiddenException(_readMessage(body, fallback: "Forbidden"), 403));
+        return Left(ForbiddenException(_readMessage(mapBody, fallback: "Forbidden"), 403));
       case 404:
-        return Left(NotFoundException(_readMessage(body, fallback: "Not found"), 404));
+        return Left(NotFoundException(_readMessage(mapBody, fallback: "Not found"), 404));
       case 500:
         return Left(
           InternalServerException(
-            _readMessage(body, fallback: "Server error. Please try again."),
+            _readMessage(mapBody, fallback: "Server error. Please try again."),
             500,
           ),
         );
       case 502:
         return Left(
           InternalServerException(
-            _readMessage(body, fallback: "Service temporarily unstable."),
+            _readMessage(mapBody, fallback: "Service temporarily unstable."),
             502,
           ),
         );
       case 503:
         return Left(
           InternalServerException(
-            _readMessage(body, fallback: "Service unavailable. Try later."),
+            _readMessage(mapBody, fallback: "Service unavailable. Try later."),
             503,
           ),
         );
       default:
         return Left(
-          FetchDataException(_readMessage(body, fallback: "Unexpected server error")),
+          FetchDataException(_readMessage(mapBody, fallback: "Unexpected server error")),
         );
     }
   }
@@ -190,45 +191,42 @@ class NetworkApiService implements BaseApiServices {
   @override
   ResultFuture<dynamic> getPostApiResponse(String url, Map<String, dynamic> body) {
     final headers = _buildHeaders();
-    final requestBody = _normalizeBody(body);
 
     return _safeRequest(
       request: () =>
-          http.post(Uri.parse(url), headers: headers, body: jsonEncode(requestBody)),
+          http.post(Uri.parse(url), headers: headers, body: jsonEncode(body)),
       method: 'POST',
       url: url,
       headers: headers,
-      body: requestBody,
+      body: body,
     );
   }
 
   @override
   ResultFuture<dynamic> getPutApiResponse(String url, Map<String, dynamic> body) {
     final headers = _buildHeaders();
-    final requestBody = _normalizeBody(body);
 
     return _safeRequest(
       request: () =>
-          http.put(Uri.parse(url), headers: headers, body: jsonEncode(requestBody)),
+          http.put(Uri.parse(url), headers: headers, body: jsonEncode(body)),
       method: 'PUT',
       url: url,
       headers: headers,
-      body: requestBody,
+      body: body,
     );
   }
 
   @override
   ResultFuture<dynamic> patchApiResponse(String url, Map<String, dynamic> body) {
     final headers = _buildHeaders();
-    final requestBody = _normalizeBody(body);
 
     return _safeRequest(
       request: () =>
-          http.patch(Uri.parse(url), headers: headers, body: jsonEncode(requestBody)),
+          http.patch(Uri.parse(url), headers: headers, body: jsonEncode(body)),
       method: 'PATCH',
       url: url,
       headers: headers,
-      body: requestBody,
+      body: body,
     );
   }
 
@@ -245,15 +243,14 @@ class NetworkApiService implements BaseApiServices {
   @override
   ResultFuture<dynamic> getDeleteApiResponse(String url, Map<String, dynamic> body) {
     final headers = _buildHeaders();
-    final requestBody = _normalizeBody(body);
 
     return _safeRequest(
       request: () =>
-          http.delete(Uri.parse(url), headers: headers, body: jsonEncode(requestBody)),
+          http.delete(Uri.parse(url), headers: headers, body: jsonEncode(body)),
       method: 'DELETE',
       url: url,
       headers: headers,
-      body: requestBody,
+      body: body,
     );
   }
 

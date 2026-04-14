@@ -157,5 +157,18 @@
   "installNow": "ثبته الآن",
   "buyAjjasDevice": "اشترِ جهاز أجياس",
   "lite4G": "لايت 4G",
-  "swipeToLock": "اسحب للقفل"
+  "swipeToLock": "اسحب للقفل",
+  "todayLabel": "(اليوم)",
+  "ridingBehaviour": "سلوك القيادة",
+  "ridingBehaviourVacationDesc": "يبدو أن مركبتك استمتعت بإجازة قصيرة، حيث أنك لم تقم بأي رحلة خلال الفترة الزمنية المحددة",
+  "journey": "رحلة",
+  "distanceTravelled": "المسافة المقطوعة",
+  "timeDuration": "المدة الزمنية",
+  "speed": "السرعة",
+  "averageSpeed": "متوسط السرعة",
+  "topSpeed": "السرعة القصوى",
+  "fuel": "وقود",
+  "fuelConsumed": "الوقود المستهلك",
+  "fuelCost": "تكلفة الوقود",
+  "vsPreviousPeriod": "{value}% مقارنة بالفترة السابقة"
 }

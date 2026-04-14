@@ -1,3 +1,111 @@
+// import 'package:flutter/material.dart';
+// import '../../../../l10n/app_localizations.dart';
+//
+// class InteractiveSwipeButton extends StatefulWidget {
+//   final VoidCallback onSwipe;
+//   const InteractiveSwipeButton({super.key, required this.onSwipe});
+//
+//   @override
+//   State<InteractiveSwipeButton> createState() => _InteractiveSwipeButtonState();
+// }
+//
+// class _InteractiveSwipeButtonState extends State<InteractiveSwipeButton> {
+//   double _dragValue = 0.0;
+//   bool _isSuccess = false;
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     final l10n = AppLocalizations.of(context)!;
+//     return Padding(
+//       padding: const EdgeInsets.symmetric(horizontal: 16),
+//       child: Container(
+//         height: 50,
+//         decoration: BoxDecoration(
+//           borderRadius: BorderRadius.circular(30),
+//           gradient: const LinearGradient(
+//             colors: [Color(0xFFD5DDE5), Color(0xFFB6C7D8)],
+//           ),
+//         ),
+//         child: LayoutBuilder(
+//           builder: (context, constraints) {
+//             final double maxWidth = constraints.maxWidth;
+//             final double buttonSize = 46.0;
+//             final double endPadding = 4.0;
+//             final double totalDragDistance = maxWidth - buttonSize - (endPadding * 2);
+//
+//             return Stack(
+//               children: [
+//                 Center(
+//                   child: Text(
+//                     l10n.swipeToLock,
+//                     style: TextStyle(
+//                       color: Colors.grey.shade800,
+//                       fontWeight: FontWeight.w700,
+//                       fontSize: 13,
+//                       letterSpacing: 0.8,
+//                     ),
+//                   ),
+//                 ),
+//                 Positioned(
+//                   left: endPadding + (_dragValue * totalDragDistance),
+//                   top: 2,
+//                   child: GestureDetector(
+//                     onHorizontalDragUpdate: (details) {
+//                       if (_isSuccess) return;
+//                       setState(() {
+//                         _dragValue += details.primaryDelta! / totalDragDistance;
+//                         _dragValue = _dragValue.clamp(0.0, 1.0);
+//                       });
+//                     },
+//                     onHorizontalDragEnd: (details) {
+//                       if (_isSuccess) return;
+//                       if (_dragValue > 0.8) {
+//                         setState(() {
+//                           _dragValue = 1.0;
+//                           _isSuccess = true;
+//                         });
+//                         widget.onSwipe();
+//                         Future.delayed(const Duration(seconds: 2), () {
+//                           if (mounted) {
+//                             setState(() {
+//                               _dragValue = 0.0;
+//                               _isSuccess = false;
+//                             });
+//                           }
+//                         });
+//                       } else {
+//                         setState(() {
+//                           _dragValue = 0.0;
+//                         });
+//                       }
+//                     },
+//                     child: Container(
+//                       width: buttonSize,
+//                       height: buttonSize,
+//                       decoration: const BoxDecoration(
+//                         color: Colors.white,
+//                         shape: BoxShape.circle,
+//                         boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 4)],
+//                       ),
+//                       child: Center(
+//                         child: Icon(
+//                           _isSuccess ? Icons.lock_rounded : Icons.lock_open_rounded,
+//                           color: _isSuccess ? Colors.green : Colors.redAccent,
+//                           size: 20,
+//                         ),
+//                       ),
+//                     ),
+//                   ),
+//                 ),
+//               ],
+//             );
+//           },
+//         ),
+//       ),
+//     );
+//   }
+// }
+
 import 'package:flutter/material.dart';
 import 'package:trackify/l10n/app_localizations.dart';
 
@@ -198,10 +306,7 @@ class _InteractiveSwipeButtonState extends State<InteractiveSwipeButton> {
                       decoration: BoxDecoration(
                         color: Colors.transparent,
                         shape: BoxShape.circle,
-                        border: Border.all(
-                          color: Colors.black,
-                          width: 1.5,
-                        ),
+                        border: Border.all(color: Colors.black, width: 1.5),
                       ),
                       child: const Icon(
                         Icons.lock_open_rounded,

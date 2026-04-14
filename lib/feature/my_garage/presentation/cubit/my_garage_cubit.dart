@@ -5,9 +5,9 @@ import 'package:trackify/feature/my_garage/presentation/cubit/my_garage_state.da
 import '../../../../../core/utils/shared_preferences.dart';
 
 class MyGarageCubit extends Cubit<MyGarageState> {
-  final MyGarageUseCase _myGarageUseCase = MyGarageUseCase();
+  final MyGarageUseCase _myGarageUseCase;
 
-  MyGarageCubit() : super(MyGarageInitial());
+  MyGarageCubit(this._myGarageUseCase) : super(MyGarageInitial());
 
   Future<void> fetchVehicles() async {
     emit(VehiclesLoading());

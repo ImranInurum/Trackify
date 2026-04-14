@@ -2,6 +2,8 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:trackify/core/constants/app_images.dart';
+import 'package:trackify/core/utils/shared_preferences.dart';
+import 'package:trackify/feature/auth/presentation/pages/signin_screen.dart';
 import 'package:trackify/l10n/app_localizations.dart';
 
 import '../../core/theme/app_colors.dart';
@@ -126,7 +128,12 @@ class _ChoiceSelectorState extends State<ChoiceSelector> {
               padding: const EdgeInsets.symmetric(vertical: 20),
               child: TextButton.icon(
                 onPressed: () {
-                  // TODO: Handle logout logic
+                  final prefs = AppPreference.instance;
+                  prefs.clearAll();
+                  Navigator.of(context).pushAndRemoveUntil(
+                    MaterialPageRoute(builder: (context) => const SignInScreen()),
+                    (Route<dynamic> route) => false,
+                  );
                 },
                 icon: const Icon(Icons.logout, color: Colors.grey, size: 20),
                 label: Text(

@@ -158,5 +158,18 @@
   "installNow": "आता स्थापित करा",
   "buyAjjasDevice": "अजस डिव्हाइस खरेदी करा",
   "lite4G": "लाईट ४जी",
-  "swipeToLock": "लॉक करण्यासाठी स्वाइप करा"
+  "swipeToLock": "लॉक करण्यासाठी स्वाइप करा",
+  "todayLabel": "(आज)",
+  "ridingBehaviour": "रायडिंग वर्तणूक",
+  "ridingBehaviourVacationDesc": "असे वाटते की तुमच्या वाहनाने थोडी सुट्टी घेतली आहे, कारण तुम्ही निवडलेल्या कालावधीत कोणतीही राइड घेतली नाही",
+  "journey": "प्रवास",
+  "distanceTravelled": "कापलेले अंतर",
+  "timeDuration": "कालावधी",
+  "speed": "वेग",
+  "averageSpeed": "सरासरी वेग",
+  "topSpeed": "कमाल वेग",
+  "fuel": "इंधन",
+  "fuelConsumed": "वापरलेले इंधन",
+  "fuelCost": "इंधनाचा खर्च",
+  "vsPreviousPeriod": "{value}% मागील कालावधीच्या तुलनेत"
 }

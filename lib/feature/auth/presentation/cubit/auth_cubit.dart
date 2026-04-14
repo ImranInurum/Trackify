@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:trackify/core/config/network/api_host.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/services/google_auth_service.dart';
@@ -36,6 +37,7 @@ class AuthCubit extends Cubit<AuthState> {
           key: AppPreference.KEY_USER_DETAILS,
           value: jsonEncode(user.user?.toJson()),
         );
+        ApiURL.updateAuthToken(user.token ?? "");
         print('Prefs write took: ${sw.elapsedMilliseconds}ms');
 
         emit(AuthSuccess(user));
@@ -135,6 +137,7 @@ class AuthCubit extends Cubit<AuthState> {
               key: AppPreference.KEY_USER_DETAILS,
               value: jsonEncode(user.user?.toJson()),
             );
+            ApiURL.updateAuthToken(user.token ?? "");
 
             emit(AuthSuccess(user));
             LoadingScreenOL().hide();

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:trackify/core/config/network/api_host.dart';
 import 'package:trackify/core/utils/shared_preferences.dart';
 import 'package:trackify/feature/add_vehicle_and_device/choice_selector.dart';
 import 'package:trackify/feature/auth/presentation/pages/signin_screen.dart';
@@ -26,24 +27,25 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   Future<void> _initializeApp() async {
-    context.read<SplashCubit>().fetchLogo();
+    // Start fetching logo early so it's ready when we navigate
+    final logoFetch = context.read<SplashCubit>().fetchLogo();
 
-    // Brief splash display
-    await Future.delayed(const Duration(milliseconds: 2000));
-
-    // Init SharedPreferences singleton
-    await AppPreference.instance.init();
-    if (!mounted) return;
+    // Ensure splash shows for at least 2 seconds
+    final splashWait = Future.delayed(const Duration(milliseconds: 2000));
 
     final prefs = AppPreference.instance;
 
-    // ── Step 1: Language check ────────────────────────────────────────────────
     final selectedLanguage = await prefs.get(key: AppPreference.KEY_SELECTED_LANGUAGE);
-    if (!mounted) return;
-
-    // ── Step 2: Token check ───────────────────────────────────────────────────
     final token = await prefs.get(key: AppPreference.KEY_TOKEN);
     final userId = await prefs.get(key: AppPreference.KEY_USER_ID);
+
+    if (token.isNotEmpty) {
+      ApiURL.updateAuthToken(token);
+    }
+
+    // Wait for both the minimum splash time and the logo fetch to finish
+    await Future.wait([splashWait, logoFetch]);
+
     if (!mounted) return;
 
     if (selectedLanguage.isEmpty) {
@@ -55,10 +57,6 @@ class _SplashScreenState extends State<SplashScreen> {
     }
 
     if (token.isEmpty || userId.isEmpty) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text("UserId or Token Is Missing!!!")));
-      Future.delayed(const Duration(milliseconds: 300));
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (_) => const SignInScreen()),
@@ -66,7 +64,6 @@ class _SplashScreenState extends State<SplashScreen> {
       return;
     }
 
-    // Fetch vehicles to determine navigation
     await context.read<MapCubit>().fetchVehicles();
     if (!mounted) return;
 
@@ -93,7 +90,9 @@ class _SplashScreenState extends State<SplashScreen> {
           builder: (context, state) {
             if (state is SplashLoading) {
               return const CircularProgressIndicator();
-            } else if (state is SplashLoaded && state.logo.path != null) {
+            }
+
+            if (state is SplashLoaded && state.logo.path != null) {
               return Image.network(
                 state.logo.path!,
                 height: 120,

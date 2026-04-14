@@ -1,17 +1,17 @@
 class AddVehicleRequest {
   final String vehicleType;
   final String fuelType;
-  final String vehicleMaker;
+  final String brandId;
+  final String modelId;
   final String vehicleNumber;
-  final String vehicleModel;
   final String userId;
 
   AddVehicleRequest({
     required this.vehicleType,
     required this.fuelType,
-    required this.vehicleMaker,
+    required this.brandId,
+    required this.modelId,
     required this.vehicleNumber,
-    required this.vehicleModel,
     required this.userId,
   });
 
@@ -19,9 +19,9 @@ class AddVehicleRequest {
     return {
       'vehicleType': vehicleType,
       'fuelType': fuelType,
-      'vehicleMaker': vehicleMaker,
+      'brandId': brandId,
+      'modelId': modelId,
       'vehicleNumber': vehicleNumber,
-      'vehicleModel': vehicleModel,
       'userId': userId,
     };
   }

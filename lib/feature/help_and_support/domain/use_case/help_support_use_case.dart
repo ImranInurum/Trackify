@@ -2,5 +2,6 @@ import 'package:trackify/feature/help_and_support/data/repository_impl/help_supp
 import 'package:trackify/feature/help_and_support/domain/repository/help_support_repository.dart';
 
 class HelpSupportUseCase {
-  final HelpSupportRepository repository = HelpSupportRepositoryImpl();
+  final HelpSupportRepository repository;
+  HelpSupportUseCase(this.repository);
 }

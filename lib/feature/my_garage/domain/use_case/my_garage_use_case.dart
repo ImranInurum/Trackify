@@ -4,7 +4,8 @@ import 'package:trackify/feature/my_garage/data/repository_impl/my_garage_repo_i
 import 'package:trackify/feature/my_garage/domain/repository/my_garage_repository.dart';
 
 class MyGarageUseCase {
-  final MyGarageRepository repository = MyGarageRepoImpl();
+  final MyGarageRepository repository;
+  MyGarageUseCase(this.repository);
 
   ResultFuture<VehicleListResponse> getVehicles({required String userId}) async {
     return await repository.getVehicles(userId);

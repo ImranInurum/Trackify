@@ -619,4 +619,46 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get changeLog => 'Change log';
+
+  @override
+  String get todayLabel => '(Today)';
+
+  @override
+  String get ridingBehaviour => 'Riding Behaviour';
+
+  @override
+  String get ridingBehaviourVacationDesc =>
+      'Looks like your vehicle enjoyed a little vacation, as you didn\'t take any ride during the selected time period';
+
+  @override
+  String get journey => 'Journey';
+
+  @override
+  String get distanceTravelled => 'Distance Travelled';
+
+  @override
+  String get timeDuration => 'Time Duration';
+
+  @override
+  String get speed => 'Speed';
+
+  @override
+  String get averageSpeed => 'Average Speed';
+
+  @override
+  String get topSpeed => 'Top Speed';
+
+  @override
+  String get fuel => 'Fuel';
+
+  @override
+  String get fuelConsumed => 'Fuel Consumed';
+
+  @override
+  String get fuelCost => 'Fuel Cost';
+
+  @override
+  String vsPreviousPeriod(String value) {
+    return '$value% vs previous period';
+  }
 }

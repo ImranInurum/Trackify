@@ -621,4 +621,46 @@ class AppLocalizationsMr extends AppLocalizations {
 
   @override
   String get changeLog => 'Change log';
+
+  @override
+  String get todayLabel => '(आज)';
+
+  @override
+  String get ridingBehaviour => 'रायडिंग वर्तणूक';
+
+  @override
+  String get ridingBehaviourVacationDesc =>
+      'असे वाटते की तुमच्या वाहनाने थोडी सुट्टी घेतली आहे, कारण तुम्ही निवडलेल्या कालावधीत कोणतीही राइड घेतली नाही';
+
+  @override
+  String get journey => 'प्रवास';
+
+  @override
+  String get distanceTravelled => 'कापलेले अंतर';
+
+  @override
+  String get timeDuration => 'कालावधी';
+
+  @override
+  String get speed => 'वेग';
+
+  @override
+  String get averageSpeed => 'सरासरी वेग';
+
+  @override
+  String get topSpeed => 'कमाल वेग';
+
+  @override
+  String get fuel => 'इंधन';
+
+  @override
+  String get fuelConsumed => 'वापरलेले इंधन';
+
+  @override
+  String get fuelCost => 'इंधनाचा खर्च';
+
+  @override
+  String vsPreviousPeriod(String value) {
+    return '$value% मागील कालावधीच्या तुलनेत';
+  }
 }

@@ -1275,6 +1275,84 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Change log'**
   String get changeLog;
+
+  /// No description provided for @todayLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'(Today)'**
+  String get todayLabel;
+
+  /// No description provided for @ridingBehaviour.
+  ///
+  /// In en, this message translates to:
+  /// **'Riding Behaviour'**
+  String get ridingBehaviour;
+
+  /// No description provided for @ridingBehaviourVacationDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Looks like your vehicle enjoyed a little vacation, as you didn\'t take any ride during the selected time period'**
+  String get ridingBehaviourVacationDesc;
+
+  /// No description provided for @journey.
+  ///
+  /// In en, this message translates to:
+  /// **'Journey'**
+  String get journey;
+
+  /// No description provided for @distanceTravelled.
+  ///
+  /// In en, this message translates to:
+  /// **'Distance Travelled'**
+  String get distanceTravelled;
+
+  /// No description provided for @timeDuration.
+  ///
+  /// In en, this message translates to:
+  /// **'Time Duration'**
+  String get timeDuration;
+
+  /// No description provided for @speed.
+  ///
+  /// In en, this message translates to:
+  /// **'Speed'**
+  String get speed;
+
+  /// No description provided for @averageSpeed.
+  ///
+  /// In en, this message translates to:
+  /// **'Average Speed'**
+  String get averageSpeed;
+
+  /// No description provided for @topSpeed.
+  ///
+  /// In en, this message translates to:
+  /// **'Top Speed'**
+  String get topSpeed;
+
+  /// No description provided for @fuel.
+  ///
+  /// In en, this message translates to:
+  /// **'Fuel'**
+  String get fuel;
+
+  /// No description provided for @fuelConsumed.
+  ///
+  /// In en, this message translates to:
+  /// **'Fuel Consumed'**
+  String get fuelConsumed;
+
+  /// No description provided for @fuelCost.
+  ///
+  /// In en, this message translates to:
+  /// **'Fuel Cost'**
+  String get fuelCost;
+
+  /// No description provided for @vsPreviousPeriod.
+  ///
+  /// In en, this message translates to:
+  /// **'{value}% vs previous period'**
+  String vsPreviousPeriod(String value);
 }
 
 class _AppLocalizationsDelegate

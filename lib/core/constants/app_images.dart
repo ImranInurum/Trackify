@@ -7,11 +7,21 @@ class AppImages {
   static const String bikeImage = '$icons/bike2.png';
   static const String appLogo = '$icons/appLogo.png';
 
+  static const String kingIcon = "$icons/king.png";
   //DashBoard Icons
   static const String homeIcon = "$icons/homeIcon.png";
   static const String tripsIcon = "$icons/tripIcon.png";
   static const String statesIcon = "$icons/statesIcon.png";
   static const String profileIcon = "$icons/profileIcon.png";
+
+  //Statistics Screen Icons
+  static const String averageSpeedIcon = "$icons/averageSpeedIcon.png";
+  static const String topSpeedIcon = "$icons/topSpeedIcon.png";
+  static const String fuelIcon = "$icons/fuel.png";
+  static const String fuelCostIcon = "$icons/fuelCost.png";
+  static const String distanceTravelledIcon = "$icons/distanceTravelled.png";
+  static const String blackWhiteBikeIcon = "$icons/blackWhiteBikeIcon.png";
+  static const String timeDurationIcon = "$icons/timeDurationIcon.png";
 
   //Choice Selector Screen Images
   static const String installDevices = "$icons/device_image.png";

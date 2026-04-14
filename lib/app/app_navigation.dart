@@ -4,6 +4,7 @@ import 'package:trackify/core/theme/app_colors.dart';
 import 'package:trackify/feature/profile/presentation/pages/profile_screen.dart';
 
 import '../feature/map/presentation/pages/map_screen.dart';
+import '../feature/statistics/presentation/pages/statistics_screen.dart';
 import '../feature/trips/presentation/view/trip_screen.dart';
 
 class AppNavigation extends StatefulWidget {
@@ -19,7 +20,7 @@ class _AppNavigationState extends State<AppNavigation> {
   final List<Widget> _pages = [
     const MapScreen(),
     const TripScreen(),
-    const Center(child: Text("Stats Screen")),
+    const StatisticsScreen(),
     const ProfileScreen(),
   ];
 
