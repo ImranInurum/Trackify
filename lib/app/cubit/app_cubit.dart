@@ -5,13 +5,13 @@ import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 
+import '../../core/config/network/api_host.dart';
+import '../../core/config/network/base_api_service.dart';
+import '../../core/config/network/network_api_service.dart';
 import '../../core/services/connectivity_service.dart';
 import '../../core/services/location_service.dart';
 import '../../core/services/socket_service.dart';
 import '../../core/utils/shared_preferences.dart';
-import '../../core/constants/api_constants.dart';
-import '../../core/network/base_api_service.dart';
-import '../../core/network/network_api_service.dart';
 import '../../core/theme/models/app_theme_model.dart';
 import '../../feature/auth/data/entity/login_response_model.dart';
 import 'app_state.dart';
@@ -66,7 +66,7 @@ class AppCubit extends Cubit<AppState> {
 
   Future<void> fetchTheme() async {
     try {
-      final result = await _apiServices.getGetApiResponse(ApiConstants.theme, {});
+      final result = await _apiServices.getGetApiResponse(ApiURL.theme);
       
       result.fold(
         (error) => print('Error fetching theme: ${error.message}'),
