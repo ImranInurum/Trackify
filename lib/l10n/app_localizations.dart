@@ -238,6 +238,12 @@ abstract class AppLocalizations {
   /// **'Mobile number is required'**
   String get mobileNumberRequired;
 
+  /// No description provided for @invalidMobileNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a valid mobile number'**
+  String get invalidMobileNumber;
+
   /// No description provided for @country.
   ///
   /// In en, this message translates to:
@@ -1353,6 +1359,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{value}% vs previous period'**
   String vsPreviousPeriod(String value);
+
+  /// No description provided for @vehicleMakeListEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Vehicle make list is empty for this selection'**
+  String get vehicleMakeListEmpty;
+
+  /// No description provided for @vehicleModelListEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Vehicle model list is empty for this selection'**
+  String get vehicleModelListEmpty;
 }
 
 class _AppLocalizationsDelegate

@@ -24,12 +24,6 @@ class _FullScreenMapState extends State<FullScreenMap> {
   bool _showSharedWithMe = false;
   BitmapDescriptor? _customMarker;
 
-  // Map Configuration State
-  MapType _mapType = MapType.normal;
-  bool _isTrafficEnabled = false;
-  bool _isLabelsEnabled = true;
-  String _selectedStyleName = 'Dark';
-
   @override
   void initState() {
     super.initState();
@@ -55,18 +49,19 @@ class _FullScreenMapState extends State<FullScreenMap> {
   }
 
   Future<void> _updateMapStyle(GoogleMapController controller) async {
-    if (_mapType == MapType.satellite) {
+    final appConfig = context.read<AppCubit>().state;
+    
+    if (appConfig.mapType == 'satellite') {
       await MapUtils.setStyle(controller, null);
       return;
     }
 
     String? style;
-    if (_selectedStyleName == 'Dark') {
+    if (appConfig.mapStyle == 'Dark') {
       style = _darkMapStyle;
-    } else if (_selectedStyleName == 'Light') {
+    } else if (appConfig.mapStyle == 'Light') {
       style = _lightMapStyle;
-    } else if (_selectedStyleName == 'Simple') {
-      // Load a simple style (minimal labels)
+    } else if (appConfig.mapStyle == 'Simple') {
       style = await MapUtils.loadStyle('assets/map_styles/light_map.json');
     }
 
@@ -82,8 +77,8 @@ class _FullScreenMapState extends State<FullScreenMap> {
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
       builder: (context) {
-        return StatefulBuilder(
-          builder: (context, setSheetState) {
+        return BlocBuilder<AppCubit, AppState>(
+          builder: (context, state) {
             return Container(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
               child: Column(
@@ -113,17 +108,17 @@ class _FullScreenMapState extends State<FullScreenMap> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      _buildStyleOption("Dark", AppImages.darkMapStyle, setSheetState),
-                      _buildStyleOption("Light", AppImages.lightMapStyle, setSheetState),
+                      _buildStyleOption("Dark", AppImages.darkMapStyle, state),
+                      _buildStyleOption("Light", AppImages.lightMapStyle, state),
                       _buildStyleOption(
                         "Simple",
                         AppImages.simpleMapStyle,
-                        setSheetState,
+                        state,
                       ),
                       _buildStyleOption(
                         "Satellite",
                         AppImages.sateLiteMapStyle,
-                        setSheetState,
+                        state,
                       ),
                     ],
                   ),
@@ -142,21 +137,15 @@ class _FullScreenMapState extends State<FullScreenMap> {
                       _buildMapOption(
                         "Traffic",
                         AppImages.trafficMapStyle,
-                        _isTrafficEnabled,
-                        (val) {
-                          setState(() => _isTrafficEnabled = val);
-                          setSheetState(() {});
-                        },
+                        state.isTrafficEnabled,
+                        (val) => context.read<AppCubit>().updateMapConfig(isTrafficEnabled: val),
                       ),
                       const SizedBox(width: 24),
                       _buildMapOption(
                         "Labels",
                         AppImages.darkMapStyle,
-                        _isLabelsEnabled,
-                        (val) {
-                          setState(() => _isLabelsEnabled = val);
-                          setSheetState(() {});
-                        },
+                        state.isLabelsEnabled,
+                        (val) => context.read<AppCubit>().updateMapConfig(isLabelsEnabled: val),
                       ),
                     ],
                   ),
@@ -170,22 +159,18 @@ class _FullScreenMapState extends State<FullScreenMap> {
     );
   }
 
-  Widget _buildStyleOption(String name, String imagePath, StateSetter setSheetState) {
+  Widget _buildStyleOption(String name, String imagePath, AppState appState) {
     final bool isSelected =
-        _selectedStyleName == name ||
-        (_mapType == MapType.satellite && name == "Satellite");
+        appState.mapStyle == name ||
+        (appState.mapType == 'satellite' && name == "Satellite");
     return GestureDetector(
       onTap: () async {
-        setState(() {
-          if (name == "Satellite") {
-            _mapType = MapType.satellite;
-            _selectedStyleName = "Satellite";
-          } else {
-            _mapType = MapType.normal;
-            _selectedStyleName = name;
-          }
-        });
-        setSheetState(() {});
+        if (name == "Satellite") {
+          context.read<AppCubit>().updateMapConfig(mapType: 'satellite', mapStyle: 'Satellite');
+        } else {
+          context.read<AppCubit>().updateMapConfig(mapType: 'normal', mapStyle: name);
+        }
+        
         final controller = await _controller.future;
         _updateMapStyle(controller);
       },
@@ -313,8 +298,8 @@ class _FullScreenMapState extends State<FullScreenMap> {
           myLocationEnabled: false,
           zoomControlsEnabled: false,
           myLocationButtonEnabled: false,
-          mapType: _mapType,
-          trafficEnabled: _isTrafficEnabled,
+          mapType: appState.mapType == 'satellite' ? MapType.satellite : MapType.normal,
+          trafficEnabled: appState.isTrafficEnabled,
           markers: {
             if (currentPos != null)
               Marker(

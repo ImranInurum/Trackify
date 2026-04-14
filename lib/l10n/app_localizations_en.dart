@@ -77,6 +77,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get mobileNumberRequired => 'Mobile number is required';
 
   @override
+  String get invalidMobileNumber => 'Please enter a valid mobile number';
+
+  @override
   String get country => 'Country';
 
   @override
@@ -661,4 +664,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String vsPreviousPeriod(String value) {
     return '$value% vs previous period';
   }
+
+  @override
+  String get vehicleMakeListEmpty =>
+      'Vehicle make list is empty for this selection';
+
+  @override
+  String get vehicleModelListEmpty =>
+      'Vehicle model list is empty for this selection';
 }

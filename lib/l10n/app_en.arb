@@ -28,6 +28,7 @@
   "mobileNumber": "Mobile Number",
   "mobileNumberHint": "Enter mobile number",
   "mobileNumberRequired": "Mobile number is required",
+  "invalidMobileNumber": "Please enter a valid mobile number",
   "country": "Country",
   "countryHint": "Enter country",
   "countryRequired": "Country is required",
@@ -255,5 +256,7 @@
         "type": "String"
       }
     }
-  }
+  },
+  "vehicleMakeListEmpty": "Vehicle make list is empty for this selection",
+  "vehicleModelListEmpty": "Vehicle model list is empty for this selection"
 }

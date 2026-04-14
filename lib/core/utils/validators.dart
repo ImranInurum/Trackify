@@ -42,4 +42,19 @@ class Validators {
     }
     return null;
   }
+
+  /// Validates that the input is a valid phone number format.
+  static String? validatePhone(String? value, String emptyMessage, String invalidMessage) {
+    if (value == null || value.trim().isEmpty) {
+      return emptyMessage;
+    }
+    
+    // Regular expression for phone number validation (basic)
+    final phoneRegex = RegExp(r"^\+?[0-9]{10,15}$");
+    
+    if (!phoneRegex.hasMatch(value)) {
+      return invalidMessage;
+    }
+    return null;
+  }
 }

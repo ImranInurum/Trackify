@@ -128,9 +128,14 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
               ),
             ),
             const SizedBox(height: 35),
-            CommonButton(
-              onPressed: () => _onVerifyPressed(context),
-              text: l10n.verifyOtp,
+            BlocBuilder<AuthCubit, AuthState>(
+              builder: (context, state) {
+                return CommonButton(
+                  onPressed: state is AuthLoading ? null : () => _onVerifyPressed(context),
+                  text: l10n.verifyOtp,
+                  isLoading: state is AuthLoading,
+                );
+              },
             ),
           ],
         ),
