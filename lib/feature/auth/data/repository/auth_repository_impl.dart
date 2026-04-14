@@ -108,4 +108,14 @@ class AuthRepositoryImpl implements AuthRepository {
       return Left(e);
     }
   }
+
+  @override
+  ResultFuture<dynamic> saveFcmToken(Map<String, dynamic> body) async {
+    try {
+      final res = await _apiServices.getPostApiResponse(ApiURL.saveFcmToken, body);
+      return res.fold((error) => Left(error), (data) => Right(data));
+    } on AppException catch (e) {
+      return Left(e);
+    }
+  }
 }

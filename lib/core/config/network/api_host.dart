@@ -31,6 +31,7 @@ class ApiURL {
   static const String verifyOtp = "$baseURL/api/auth/verify-otp";
   static const String resetPassword = "$baseURL/api/auth/reset-password";
   static const String sendOtp = "$baseURL/api/auth/send-otp";
+  static const String saveFcmToken = "$baseURL/user/save-fcm-token";
 
   // -------------------------
   // Vehicle

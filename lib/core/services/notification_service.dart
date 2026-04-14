@@ -1,6 +1,7 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import '../utils/shared_preferences.dart';
 
 @pragma('vm:entry-point')
 Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
@@ -94,9 +95,11 @@ class NotificationService {
       final token = await FirebaseMessaging.instance.getToken();
       if (token != null) {
         debugPrint('FCM TOKEN: $token');
+        await AppPreference.instance.set(key: AppPreference.KEY_FCM_TOKEN, value: token);
       }
-      FirebaseMessaging.instance.onTokenRefresh.listen((t) {
+      FirebaseMessaging.instance.onTokenRefresh.listen((t) async {
         debugPrint('FCM TOKEN REFRESH: $t');
+        await AppPreference.instance.set(key: AppPreference.KEY_FCM_TOKEN, value: t);
       });
     } on Exception catch (e) {
       debugPrint('FCM TOKEN ERROR: $e');
