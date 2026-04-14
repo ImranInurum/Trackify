@@ -9,6 +9,10 @@ import '../../core/services/connectivity_service.dart';
 import '../../core/services/location_service.dart';
 import '../../core/services/socket_service.dart';
 import '../../core/utils/shared_preferences.dart';
+import '../../core/constants/api_constants.dart';
+import '../../core/network/base_api_service.dart';
+import '../../core/network/network_api_service.dart';
+import '../../core/theme/models/app_theme_model.dart';
 import '../../feature/auth/data/entity/login_response_model.dart';
 import 'app_state.dart';
 
@@ -16,6 +20,7 @@ class AppCubit extends Cubit<AppState> {
   final ConnectivityService _connectivityService;
   final LocationService _locationService;
   final SocketService _socketService;
+  final BaseApiServices _apiServices = NetworkApiService();
 
   StreamSubscription<bool>? _connectivitySubscription;
   StreamSubscription<Position>? _locationSubscription;
@@ -35,12 +40,56 @@ class AppCubit extends Cubit<AppState> {
   Future<void> initialize() async {
     print("initialize App Cubit");
     try {
+      await AppPreference.instance.init();
+      await loadThemeFromCache();
       _initializeConnectivity();
       await _initializeLocation();
       await loadUserSession();
       // await _initializeSocket();
     } catch (e) {
       print('Initialization error: $e');
+    }
+  }
+
+  Future<void> loadThemeFromCache() async {
+    final prefs = AppPreference.instance;
+    final themeData = await prefs.get(key: AppPreference.KEY_DYNAMIC_THEME);
+    if (themeData.isNotEmpty) {
+      try {
+        final theme = AppThemeModel.fromJson(jsonDecode(themeData));
+        emit(state.copyWith(dynamicTheme: theme));
+      } catch (e) {
+        print('Error parsing cached theme: $e');
+      }
+    }
+  }
+
+  Future<void> fetchTheme() async {
+    try {
+      final result = await _apiServices.getGetApiResponse(ApiConstants.theme, {});
+      
+      result.fold(
+        (error) => print('Error fetching theme: ${error.message}'),
+        (data) async {
+          try {
+            final theme = AppThemeModel.fromJson(data);
+            
+            // Update state
+            emit(state.copyWith(dynamicTheme: theme));
+            
+            // Cache theme
+            await AppPreference.instance.set(
+              key: AppPreference.KEY_DYNAMIC_THEME,
+              value: jsonEncode(data),
+            );
+            print('Theme fetched and updated successfully from API');
+          } catch (e) {
+            print('Error parsing theme JSON: $e');
+          }
+        },
+      );
+    } catch (e) {
+      print('Unexpected error fetching theme: $e');
     }
   }
 

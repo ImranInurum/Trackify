@@ -14,19 +14,17 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<AppCubit, AppState>(
-      builder: (context, state) {
-        return MaterialApp(
-          debugShowCheckedModeBanner: false,
-          navigatorKey: rootNavigatorKey,
-          themeMode: state.themeMode,
-          theme: ThemeManager.getApplicationLightTheme(),
-          darkTheme: ThemeManager.getApplicationDarkTheme(),
-          locale: state.locale,
-          supportedLocales: AppLocalizations.supportedLocales,
-          localizationsDelegates: AppLocalizations.localizationsDelegates,
-          home: SplashScreen(),
-        );
-      },
+      builder: (context, state) => MaterialApp(
+        debugShowCheckedModeBanner: false,
+        navigatorKey: rootNavigatorKey,
+        themeMode: state.themeMode,
+        theme: ThemeManager.getApplicationLightTheme(state.dynamicTheme),
+        darkTheme: ThemeManager.getApplicationDarkTheme(state.dynamicTheme),
+        locale: state.locale,
+        supportedLocales: AppLocalizations.supportedLocales,
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        home: SplashScreen(),
+      ),
     );
   }
 }

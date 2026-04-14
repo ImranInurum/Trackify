@@ -1,5 +1,5 @@
 class LoginResponseModel {
-  String? status;
+  bool? status;
   String? message;
   String? token;
   User? user;
@@ -7,7 +7,9 @@ class LoginResponseModel {
   LoginResponseModel({this.status, this.message, this.token, this.user});
 
   LoginResponseModel.fromJson(Map<String, dynamic> json) {
-    status = json['status'];
+    status = json['status'] is bool
+        ? json['status']
+        : json['status']?.toString().toLowerCase() == 'true';
     message = json['message'];
     token = json['token'];
     user = json['user'] != null ? new User.fromJson(json['user']) : null;

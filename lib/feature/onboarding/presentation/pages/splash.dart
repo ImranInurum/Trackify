@@ -11,6 +11,8 @@ import 'package:trackify/feature/onboarding/presentation/cubit/splash_state.dart
 import 'package:trackify/feature/onboarding/presentation/pages/select_language_screen.dart';
 
 import '../../../../app/app_navigation.dart';
+import '../../../../app/cubit/app_cubit.dart';
+import '../../../auth/presentation/pages/signin_screen.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -27,11 +29,15 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   Future<void> _initializeApp() async {
-    // Start fetching logo early so it's ready when we navigate
     final logoFetch = context.read<SplashCubit>().fetchLogo();
+    context.read<AppCubit>().fetchTheme();
 
-    // Ensure splash shows for at least 2 seconds
-    final splashWait = Future.delayed(const Duration(milliseconds: 2000));
+    // Brief splash display
+    final splashWait = await Future.delayed(const Duration(milliseconds: 2000));
+
+    // Init SharedPreferences singleton
+    await AppPreference.instance.init();
+    if (!mounted) return;
 
     final prefs = AppPreference.instance;
 

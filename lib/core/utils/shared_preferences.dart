@@ -52,6 +52,7 @@ class AppPreference {
   static String KEY_DEVICE_NAME = "KEY_DEVICE_NAME";
   static String KEY_DEVICE_MAC = "KEY_DEVICE_MAC";
   static String KEY_SELECTED_LANGUAGE = "KEY_SELECTED_LANGUAGE";
+  static String KEY_DYNAMIC_THEME = "KEY_DYNAMIC_THEME";
 
 
 
