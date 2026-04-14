@@ -19,7 +19,7 @@ class LoadingScreenOL {
     if (_loadingCount == 1 && _overlayEntry == null) {
       _overlayEntry = OverlayEntry(
         builder: (context) => const Material(
-          color: Colors.transparent,
+          color: Colors.black45,
           child: Center(
             child: Column(
               children: [

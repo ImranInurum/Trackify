@@ -12,6 +12,7 @@ class CommonButton extends StatelessWidget {
   final double width;
   final double borderRadius;
   final EdgeInsetsGeometry? padding;
+  final bool isLoading;
 
   const CommonButton({
     super.key,
@@ -25,6 +26,7 @@ class CommonButton extends StatelessWidget {
     this.width = double.infinity,
     this.borderRadius = 12.0,
     this.padding,
+    this.isLoading = false,
   });
 
   @override
@@ -77,27 +79,38 @@ class CommonButton extends StatelessWidget {
           ),
           elevation: const WidgetStatePropertyAll(0), // Handled by boxshadow
         ),
-        child: Row(
-          mainAxisAlignment: (iconAsset != null || leading != null)
-              ? MainAxisAlignment.center
-              : MainAxisAlignment.center,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            if (leading != null) ...[Icon(leading, size: 18), const SizedBox(width: 8)],
-
-            Flexible(
-              child: Text(
-                text,
-                overflow: TextOverflow.ellipsis,
-                style: getRegularStyle(
-                  color: onPressed == null
-                      ? disabledForegroundColor
-                      : (foregroundColor ?? defaultForegroundColor),
-                ).copyWith(fontWeight: FontWeight.w600),
+        child: isLoading
+            ? SizedBox(
+                height: 20,
+                width: 20,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  color: foregroundColor ?? defaultForegroundColor,
+                ),
+              )
+            : Row(
+                mainAxisAlignment: (iconAsset != null || leading != null)
+                    ? MainAxisAlignment.center
+                    : MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (leading != null) ...[
+                    Icon(leading, size: 18),
+                    const SizedBox(width: 8)
+                  ],
+                  Flexible(
+                    child: Text(
+                      text,
+                      overflow: TextOverflow.ellipsis,
+                      style: getRegularStyle(
+                        color: onPressed == null
+                            ? disabledForegroundColor
+                            : (foregroundColor ?? defaultForegroundColor),
+                      ).copyWith(fontWeight: FontWeight.w600),
+                    ),
+                  ),
+                ],
               ),
-            ),
-          ],
-        ),
       ),
     );
   }

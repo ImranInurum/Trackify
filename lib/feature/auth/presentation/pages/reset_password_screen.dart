@@ -136,9 +136,14 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
               ),
             ),
             const SizedBox(height: 35),
-            CommonButton(
-              onPressed: () => _onResetPressed(context),
-              text: l10n.resetPassword,
+            BlocBuilder<AuthCubit, AuthState>(
+              builder: (context, state) {
+                return CommonButton(
+                  onPressed: state is AuthLoading ? null : () => _onResetPressed(context),
+                  text: l10n.resetPassword,
+                  isLoading: state is AuthLoading,
+                );
+              },
             ),
           ],
         ),

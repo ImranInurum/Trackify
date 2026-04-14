@@ -126,9 +126,14 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
               ),
             ),
             const SizedBox(height: 35),
-            CommonButton(
-              onPressed: () => _onSubmitPressed(context),
-              text: l10n.sendResetLink,
+            BlocBuilder<AuthCubit, AuthState>(
+              builder: (context, state) {
+                return CommonButton(
+                  onPressed: state is AuthLoading ? null : () => _onSubmitPressed(context),
+                  text: l10n.sendResetLink,
+                  isLoading: state is AuthLoading,
+                );
+              },
             ),
           ],
         ),

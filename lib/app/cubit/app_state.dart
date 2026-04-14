@@ -15,6 +15,11 @@ class AppState extends Equatable {
   final List<Map<String, dynamic>> devices;
   final AppThemeModel? dynamicTheme;
 
+  final String mapStyle; // 'Dark', 'Light', 'Simple'
+  final String mapType; // 'normal', 'satellite'
+  final bool isTrafficEnabled;
+  final bool isLabelsEnabled;
+
   const AppState({
     this.themeMode = ThemeMode.light,
     this.locale = const Locale('en'),
@@ -24,6 +29,10 @@ class AppState extends Equatable {
     this.isSocketConnected = false,
     this.devices = const [],
     this.dynamicTheme,
+    this.mapStyle = 'Dark',
+    this.mapType = 'normal',
+    this.isTrafficEnabled = false,
+    this.isLabelsEnabled = true,
   });
 
   AppState copyWith({
@@ -35,6 +44,10 @@ class AppState extends Equatable {
     bool? isSocketConnected,
     List<Map<String, dynamic>>? devices,
     AppThemeModel? dynamicTheme,
+    String? mapStyle,
+    String? mapType,
+    bool? isTrafficEnabled,
+    bool? isLabelsEnabled,
   }) {
     return AppState(
       themeMode: themeMode ?? this.themeMode,
@@ -45,6 +58,10 @@ class AppState extends Equatable {
       isSocketConnected: isSocketConnected ?? this.isSocketConnected,
       devices: devices ?? this.devices,
       dynamicTheme: dynamicTheme ?? this.dynamicTheme,
+      mapStyle: mapStyle ?? this.mapStyle,
+      mapType: mapType ?? this.mapType,
+      isTrafficEnabled: isTrafficEnabled ?? this.isTrafficEnabled,
+      isLabelsEnabled: isLabelsEnabled ?? this.isLabelsEnabled,
     );
   }
 
@@ -58,5 +75,9 @@ class AppState extends Equatable {
     isSocketConnected,
     devices,
     dynamicTheme,
+    mapStyle,
+    mapType,
+    isTrafficEnabled,
+    isLabelsEnabled,
   ];
 }

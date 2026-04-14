@@ -33,7 +33,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get passwordRequired => 'كلمة المرور مطلوبة';
 
   @override
-  String get invalidEmail => 'Please enter a valid email address';
+  String get invalidEmail => 'يرجى إدخال عنوان بريد إلكتروني صحيح';
 
   @override
   String get forgotPassword => 'هل نسيت كلمة المرور؟';
@@ -68,55 +68,58 @@ class AppLocalizationsAr extends AppLocalizations {
   String get nameRequired => 'الاسم مطلوب';
 
   @override
-  String get mobileNumber => 'Mobile Number';
+  String get mobileNumber => 'رقم الجوال';
 
   @override
-  String get mobileNumberHint => 'Enter mobile number';
+  String get mobileNumberHint => 'أدخل رقم الجوال';
 
   @override
-  String get mobileNumberRequired => 'Mobile number is required';
+  String get mobileNumberRequired => 'رقم الجوال مطلوب';
 
   @override
-  String get country => 'Country';
+  String get invalidMobileNumber => 'يرجى إدخال رقم جوال صحيح';
 
   @override
-  String get countryHint => 'Enter country';
+  String get country => 'الدولة';
 
   @override
-  String get countryRequired => 'Country is required';
+  String get countryHint => 'أدخل الدولة';
 
   @override
-  String get state => 'State';
+  String get countryRequired => 'الدولة مطلوبة';
 
   @override
-  String get stateHint => 'Enter state';
+  String get state => 'المنطقة';
 
   @override
-  String get stateRequired => 'State is required';
+  String get stateHint => 'أدخل المنطقة';
 
   @override
-  String get city => 'City';
+  String get stateRequired => 'المنطقة مطلوبة';
 
   @override
-  String get cityHint => 'Enter city';
+  String get city => 'المدينة';
 
   @override
-  String get cityRequired => 'City is required';
+  String get cityHint => 'أدخل المدينة';
 
   @override
-  String get selectProfileImage => 'Select Profile Image';
+  String get cityRequired => 'المدينة مطلوبة';
+
+  @override
+  String get selectProfileImage => 'اختر صورة الملف الشخصي';
 
   @override
   String get role => 'الدور';
 
   @override
-  String get roleAdmin => 'Admin';
+  String get roleAdmin => 'مدير';
 
   @override
-  String get roleCustomer => 'Customer';
+  String get roleCustomer => 'عميل';
 
   @override
-  String get selectRoleHint => 'Select Role';
+  String get selectRoleHint => 'اختر دوراً';
 
   @override
   String get roleRequired => 'يرجى اختيار دور';
@@ -388,82 +391,81 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
-  String get addVehicle => 'Add Vehicle/Device';
+  String get addVehicle => 'إضافة مركبة/جهاز';
 
   @override
-  String get vehicleAdded => 'Vehicle added successfully!';
+  String get vehicleAdded => 'تمت إضافة المركبة بنجاح!';
 
   @override
-  String get vehicleType => 'Vehicle Type';
+  String get vehicleType => 'نوع المركبة';
 
   @override
-  String get twoWheeler => 'Two Wheeler';
+  String get twoWheeler => 'ثنائي العجلات';
 
   @override
-  String get fourWheeler => 'Four Wheeler';
+  String get fourWheeler => 'رباعي العجلات';
 
   @override
-  String get autoRickshaw => 'Auto Rickshaw';
+  String get autoRickshaw => 'ريكشا';
 
   @override
-  String get heavyVehicle => 'Heavy Vehicle';
+  String get heavyVehicle => 'مركبة ثقيلة';
 
   @override
-  String get fuelType => 'Fuel Type';
+  String get fuelType => 'نوع الوقود';
 
   @override
-  String get petrol => 'Petrol';
+  String get petrol => 'بنزين';
 
   @override
-  String get electric => 'Electric';
+  String get electric => 'كهربائي';
 
   @override
-  String get vehicleMake => 'Vehicle Make';
+  String get vehicleMake => 'ماركة المركبة';
 
   @override
-  String get vehicleModel => 'Vehicle Model';
+  String get vehicleModel => 'موديل المركبة';
 
   @override
-  String get vehicleNumber => 'Vehicle number';
+  String get vehicleNumber => 'رقم المركبة';
 
   @override
-  String get vehicleNumberHint => 'e.g. MP46MX0743';
+  String get vehicleNumberHint => 'مثال: MP46MX0743';
 
   @override
-  String get pleaseEnterVehicleNumber => 'Please enter vehicle number';
+  String get pleaseEnterVehicleNumber => 'يرجى إدخال رقم المركبة';
 
   @override
-  String get selectMake => 'Select Vehicle Make';
+  String get selectMake => 'اختر ماركة المركبة';
 
   @override
-  String get selectModel => 'Select Vehicle Model';
+  String get selectModel => 'اختر موديل المركبة';
 
   @override
-  String get installDevice => 'Install Trackify Device';
+  String get installDevice => 'تثبيت جهاز Trackify';
 
   @override
   String get installDeviceDesc =>
-      'Quickly set up your Ajjas smart device with simple steps';
+      'قم بإعداد جهاز Ajjas الذكي الخاص بك بسرعة بخطوات بسيطة';
 
   @override
-  String get activateSticker => 'Activate Contact Sticker';
+  String get activateSticker => 'تفعيل ملصق الاتصال';
 
   @override
-  String get activateStickerDesc =>
-      'Simple steps to quickly activate your contact sticker';
+  String get activateStickerDesc => 'خطوات بسيطة لتفعيل ملصق الاتصال بسرعة';
 
   @override
-  String get exploreFreeApp => 'Explore Our Free App';
+  String get exploreFreeApp => 'استكشف تطبيقنا المجاني';
 
   @override
   String get exploreFreeAppDesc =>
-      'Record rides using phone manually & keep track of it using our free app curated for you';
+      'سجّل رحلاتك يدوياً باستخدام الهاتف وتتبعها باستخدام تطبيقنا المجاني';
 
   @override
-  String get logout => 'Logout';
+  String get logout => 'تسجيل الخروج';
 
   @override
-  String get alreadyHaveAccount => 'Already have an account?';
+  String get alreadyHaveAccount => 'هل لديك حساب بالفعل؟';
 
   @override
   String get dataPlan => 'خطة البيانات';
@@ -505,120 +507,118 @@ class AppLocalizationsAr extends AppLocalizations {
   String get swipeToLock => 'اسحب للقفل';
 
   @override
-  String get upgradeToPlus => 'Upgrade to Ajjas Plus';
+  String get upgradeToPlus => 'ترقية إلى Ajjas Plus';
 
   @override
-  String get getMoreOutOfAjjas => 'Get more out of Ajjas';
+  String get getMoreOutOfAjjas => 'استفد أكثر من Ajjas';
 
   @override
   String featuresExploredCount(Object count, Object total) {
-    return 'You\'ve explored $count of $total features - keep going!';
+    return 'لقد استكشفت $count من $total ميزات - واصل!';
   }
 
   @override
-  String get manageVehiclesDesc => 'Manage all your Vehicles here';
+  String get manageVehiclesDesc => 'إدارة جميع مركباتك هنا';
 
   @override
-  String get settingsDesc => 'Language, Account Settings & more';
+  String get settingsDesc => 'اللغة وإعدادات الحساب والمزيد';
 
   @override
-  String get notifications => 'Notifications';
+  String get notifications => 'الإشعارات';
 
   @override
-  String get helpAndSupport => 'Help & Support';
+  String get helpAndSupport => 'المساعدة والدعم';
 
   @override
-  String get helpAndSupportDesc => 'Get assistance and FAQs';
+  String get helpAndSupportDesc => 'احصل على المساعدة والأسئلة الشائعة';
 
   @override
-  String get settings => 'Settings';
+  String get settings => 'الإعدادات';
 
   @override
-  String get searchForSettings => 'Search for settings';
+  String get searchForSettings => 'البحث في الإعدادات';
 
   @override
-  String get backupAndRestore => 'Backup & Restore';
+  String get backupAndRestore => 'النسخ الاحتياطي والاستعادة';
 
   @override
   String get backupAndRestoreDesc =>
-      'Back up your rides data and restore them anytime.';
+      'احتفظ بنسخة احتياطية من بيانات رحلاتك واستعدها في أي وقت.';
 
   @override
-  String get appSettings => 'App Settings';
+  String get appSettings => 'إعدادات التطبيق';
 
   @override
-  String get appSettingsDesc => 'App Theme, Ride Heatmap and Emergency Feature';
+  String get appSettingsDesc => 'مظهر التطبيق وخريطة الحرارة وميزة الطوارئ';
 
   @override
-  String get notificationSettings => 'Notification Settings';
+  String get notificationSettings => 'إعدادات الإشعارات';
 
   @override
-  String get notificationSettingsDesc =>
-      'Notification preference & Notification sound';
+  String get notificationSettingsDesc => 'تفضيلات الإشعارات وصوت الإشعار';
 
   @override
-  String get privacy => 'Privacy';
+  String get privacy => 'الخصوصية';
 
   @override
   String get privacyDesc =>
-      'Change password, manage current session, delete your account';
+      'تغيير كلمة المرور وإدارة الجلسة الحالية وحذف حسابك';
 
   @override
-  String get rateUsOnPlayStore => 'Rate us on Play Store';
+  String get rateUsOnPlayStore => 'قيّمنا على Play Store';
 
   @override
-  String get rateUsOnPlayStoreDesc => 'Share your valuable feedback';
+  String get rateUsOnPlayStoreDesc => 'شارك ملاحظاتك القيمة';
 
   @override
-  String get logoutDesc => 'Logout from this device';
+  String get logoutDesc => 'تسجيل الخروج من هذا الجهاز';
 
   @override
-  String get helpAndSuggestion => 'Help & Suggestion';
+  String get helpAndSuggestion => 'المساعدة والاقتراح';
 
   @override
-  String get reportAnIssue => 'Report an issue';
+  String get reportAnIssue => 'الإبلاغ عن مشكلة';
 
   @override
-  String get suggestion => 'Suggestion';
+  String get suggestion => 'اقتراح';
 
   @override
-  String get whatIsYourIssueRelatedTo => 'What is your issue related to ?';
+  String get whatIsYourIssueRelatedTo => 'بماذا تتعلق مشكلتك؟';
 
   @override
-  String get shortDescriptionHint =>
-      'Give us a short description (max 200 characters)';
+  String get shortDescriptionHint => 'أعطنا وصفاً مختصراً (200 حرف كحد أقصى)';
 
   @override
-  String get selectCallSlot => 'Select Call Slot';
+  String get selectCallSlot => 'اختر وقت الاتصال';
 
   @override
-  String get myIssues => 'My Issues';
+  String get myIssues => 'مشاكلي';
 
   @override
   String get whatsApp => 'WhatsApp';
 
   @override
-  String get forceMigrate => 'Force Migrate';
+  String get forceMigrate => 'ترحيل قسري';
 
   @override
   String get forceMigrateDesc1 =>
-      'Use this option to fix backed up daily rides missed during app update.';
+      'استخدم هذا الخيار لإصلاح رحلات يومية محفوظة فاتت أثناء تحديث التطبيق.';
 
   @override
   String get forceMigrateDesc2 =>
-      'Please note, this does not bring back your old rides from the server. It only migrates data in your local storage to the new data format for you to view it.';
+      'يرجى ملاحظة أن هذا لا يستعيد رحلاتك القديمة من الخادم. يقوم فقط بنقل البيانات في التخزين المحلي إلى التنسيق الجديد.';
 
   @override
-  String get faq => 'Frequently Asked Questions';
+  String get faq => 'الأسئلة الشائعة';
 
   @override
-  String get termsConditions => 'Terms and Conditions';
+  String get termsConditions => 'الشروط والأحكام';
 
   @override
-  String get privacyPolicy => 'Privacy policy';
+  String get privacyPolicy => 'سياسة الخصوصية';
 
   @override
-  String get changeLog => 'Change log';
+  String get changeLog => 'سجل التغييرات';
 
   @override
   String get todayLabel => '(اليوم)';
@@ -661,4 +661,12 @@ class AppLocalizationsAr extends AppLocalizations {
   String vsPreviousPeriod(String value) {
     return '$value% مقارنة بالفترة السابقة';
   }
+
+  @override
+  String get vehicleMakeListEmpty =>
+      'Vehicle make list is empty for this selection';
+
+  @override
+  String get vehicleModelListEmpty =>
+      'Vehicle model list is empty for this selection';
 }

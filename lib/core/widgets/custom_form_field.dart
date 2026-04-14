@@ -82,7 +82,6 @@ class CustomFormField extends StatefulWidget {
 class _CustomFormFieldState extends State<CustomFormField> {
   FocusNode node = FocusNode();
   bool showLabel = true;
-  String? errorMessage;
   late bool _isObscured;
 
   @override
@@ -112,12 +111,6 @@ class _CustomFormFieldState extends State<CustomFormField> {
 
     if (widget.onChanged != null) {
       widget.onChanged!(newText);
-    }
-
-    if (widget.validator != null) {
-      setState(() {
-        errorMessage = widget.validator!(newText);
-      });
     }
   }
 
@@ -185,6 +178,7 @@ class _CustomFormFieldState extends State<CustomFormField> {
             readOnly: widget.isReadOnly!,
             onTap: widget.onTap,
             key: Key(widget.keyName),
+            autovalidateMode: AutovalidateMode.onUserInteraction,
             validator: widget.validator,
             obscureText: _isObscured,
             controller: widget.value,
@@ -204,7 +198,6 @@ class _CustomFormFieldState extends State<CustomFormField> {
               prefixText: widget.prefixText,
               suffixIcon: _buildSuffixIcons(),
               counterText: '',
-              errorText: errorMessage,
               errorStyle: const TextStyle(height: 0.8),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(8.0),

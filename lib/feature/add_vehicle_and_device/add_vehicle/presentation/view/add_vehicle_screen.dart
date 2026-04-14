@@ -160,6 +160,7 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
     ValueChanged<T?>? onChanged,
     bool isLoading = false,
     String? hint,
+    VoidCallback? onDisabledTap,
   }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -184,31 +185,35 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
           ],
         ),
         const SizedBox(height: 6),
-        Container(
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(8),
-            border: Border.all(color: const Color(0xFFE0E0E0)),
-          ),
-          padding: const EdgeInsets.symmetric(horizontal: 14),
-          child: DropdownButtonHideUnderline(
-            child: DropdownButton<T>(
-              value: value,
-              isExpanded: true,
-              hint: Text(
-                hint ?? label,
-                style: const TextStyle(color: Color(0xFFAAAAAA), fontSize: 14),
+        GestureDetector(
+          onTap: (onChanged == null || items.isEmpty) && !isLoading ? onDisabledTap : null,
+          behavior: HitTestBehavior.opaque,
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: const Color(0xFFE0E0E0)),
+            ),
+            padding: const EdgeInsets.symmetric(horizontal: 14),
+            child: DropdownButtonHideUnderline(
+              child: DropdownButton<T>(
+                value: value,
+                isExpanded: true,
+                hint: Text(
+                  hint ?? label,
+                  style: const TextStyle(color: Color(0xFFAAAAAA), fontSize: 14),
+                ),
+                icon: const Icon(Icons.arrow_drop_down, color: AppColors.secondaryLight),
+                items: items
+                    .map(
+                      (e) => DropdownMenuItem(
+                        value: e,
+                        child: Text(itemLabel(e), style: const TextStyle(fontSize: 14)),
+                      ),
+                    )
+                    .toList(),
+                onChanged: isLoading ? null : onChanged,
               ),
-              icon: const Icon(Icons.arrow_drop_down, color: AppColors.secondaryLight),
-              items: items
-                  .map(
-                    (e) => DropdownMenuItem(
-                      value: e,
-                      child: Text(itemLabel(e), style: const TextStyle(fontSize: 14)),
-                    ),
-                  )
-                  .toList(),
-              onChanged: isLoading ? null : onChanged,
             ),
           ),
         ),
@@ -287,7 +292,21 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
         ),
       ),
       body: BlocListener<AddVehicleCubit, AddVehicleState>(
+        listenWhen: (previous, current) =>
+            previous.selectedConfig?.id != current.selectedConfig?.id ||
+            previous.successResponse != current.successResponse ||
+            previous.errorMessage != current.errorMessage,
         listener: (context, state) {
+          // If vehicle type changed, reset the vehicle number controller
+          final cubit = context.read<AddVehicleCubit>();
+          // Note: We don't want to reset on initial load or if both are null
+          // but if previous was something and current is different, or if current is just different from what we had.
+          // However, the simplest way is to check the cubit's selectVehicleType logic which clears other fields.
+
+          // We can use a simpler approach: if selectedConfig changed, clear controller.
+          // But wait, the standard BlocListener doesn't easily give 'previous' unless we use listenWhen.
+          // But I already added 'listenWhen' above!
+
           if (state.successResponse != null) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text(l10n.vehicleAdded), backgroundColor: Colors.green),
@@ -303,200 +322,231 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
             context.read<AddVehicleCubit>().clearError();
           }
         },
-        child: Form(
-          key: _formKey,
-          child: Column(
-            children: [
-              Expanded(
-                child: SingleChildScrollView(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: BlocBuilder<AddVehicleCubit, AddVehicleState>(
-                    builder: (context, state) {
-                      if (state.isLoadingConfig && state.configs.isEmpty) {
-                        return const Padding(
-                          padding: EdgeInsets.only(top: 100),
-                          child: Center(child: CircularProgressIndicator()),
-                        );
-                      }
+        child: BlocListener<AddVehicleCubit, AddVehicleState>(
+          listenWhen: (prev, curr) => prev.selectedConfig?.id != curr.selectedConfig?.id,
+          listener: (context, state) {
+            _vehicleNumberController.clear();
+            FocusScope.of(context).unfocus();
+          },
+          child: Form(
+            key: _formKey,
+            child: Column(
+              children: [
+                Expanded(
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: BlocBuilder<AddVehicleCubit, AddVehicleState>(
+                      builder: (context, state) {
+                        if (state.isLoadingConfig && state.configs.isEmpty) {
+                          return const Padding(
+                            padding: EdgeInsets.only(top: 100),
+                            child: Center(child: CircularProgressIndicator()),
+                          );
+                        }
 
-                      return Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          // ── Logo ─────────────────────────────────────────────────
-                          BlocBuilder<SplashCubit, SplashState>(
-                            builder: (context, splashState) =>
-                                _buildLogo(splashState, colorScheme),
-                          ),
-
-                          const SizedBox(height: 8),
-
-                          // ── Vehicle Type ──────────────────────────────────────────
-                          _sectionLabel(l10n.vehicleType),
-                          SingleChildScrollView(
-                            scrollDirection: Axis.horizontal,
-                            child: Row(
-                              children: state.configs.map((config) {
-                                return Padding(
-                                  padding: const EdgeInsets.only(right: 20),
-                                  child: _buildVehicleTypeItem(
-                                    config: config,
-                                    icon: _getVehicleIcon(config.type),
-                                    label: _getVehicleLabel(config.type, l10n),
-                                    selected: state.selectedConfig?.id == config.id,
-                                  ),
-                                );
-                              }).toList(),
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            // ── Logo ─────────────────────────────────────────────────
+                            BlocBuilder<SplashCubit, SplashState>(
+                              builder: (context, splashState) =>
+                                  _buildLogo(splashState, colorScheme),
                             ),
-                          ),
 
-                          const SizedBox(height: 24),
+                            const SizedBox(height: 8),
 
-                          // ── Fuel Type ─────────────────────────────────────────────
-                          const SizedBox(height: 24),
-                          _sectionLabel(l10n.fuelType),
-                          state.selectedConfig != null
-                              ? SingleChildScrollView(
-                                scrollDirection: Axis.horizontal,
-                                child: Row(
-                                  children: state.selectedConfig!.supportedFuelTypes.map((fuel) {
-                                    return Padding(
-                                      padding: const EdgeInsets.only(right: 24),
-                                      child: _buildFuelTypeItem(
-                                        type: fuel,
-                                        icon: _getFuelIcon(fuel),
-                                        label: fuel[0].toUpperCase() + fuel.substring(1),
-                                        selected: state.selectedFuelType == fuel,
-                                      ),
-                                    );
-                                  }).toList(),
-                                ),
-                              )
-                              : Padding(
-                                padding: const EdgeInsets.only(bottom: 4),
-                                child: Text(
-                                  "Select vehicle type to see fuel options",
-                                  style: TextStyle(
-                                    color: Colors.grey.withValues(alpha: 0.7),
-                                    fontSize: 12,
-                                    fontStyle: FontStyle.italic,
-                                  ),
-                                ),
+                            // ── Vehicle Type ──────────────────────────────────────────
+                            _sectionLabel(l10n.vehicleType),
+                            SingleChildScrollView(
+                              scrollDirection: Axis.horizontal,
+                              child: Row(
+                                children: state.configs.map((config) {
+                                  return Padding(
+                                    padding: const EdgeInsets.only(right: 20),
+                                    child: _buildVehicleTypeItem(
+                                      config: config,
+                                      icon: _getVehicleIcon(config.type),
+                                      label: _getVehicleLabel(config.type, l10n),
+                                      selected: state.selectedConfig?.id == config.id,
+                                    ),
+                                  );
+                                }).toList(),
                               ),
+                            ),
 
-                          const SizedBox(height: 24),
+                            const SizedBox(height: 24),
 
-                          // ── Vehicle Make ──────────────────────────────────────────
-                          _buildDropdown<VehicleMaker>(
-                            label: l10n.vehicleMake,
-                            hint: l10n.selectMake,
-                            value: state.selectedMaker,
-                            items: state.makers,
-                            itemLabel: (m) => m.name,
-                            isLoading: state.isLoadingMakers,
-                            onChanged:
-                                state.selectedFuelType == null
-                                    ? null
-                                    : (val) {
+                            // ── Fuel Type ─────────────────────────────────────────────
+                            const SizedBox(height: 24),
+                            _sectionLabel(l10n.fuelType),
+                            state.selectedConfig != null
+                                ? SingleChildScrollView(
+                                    scrollDirection: Axis.horizontal,
+                                    child: Row(
+                                      children: state.selectedConfig!.supportedFuelTypes
+                                          .map((fuel) {
+                                            return Padding(
+                                              padding: const EdgeInsets.only(right: 24),
+                                              child: _buildFuelTypeItem(
+                                                type: fuel,
+                                                icon: _getFuelIcon(fuel),
+                                                label:
+                                                    fuel[0].toUpperCase() +
+                                                    fuel.substring(1),
+                                                selected: state.selectedFuelType == fuel,
+                                              ),
+                                            );
+                                          })
+                                          .toList(),
+                                    ),
+                                  )
+                                : Padding(
+                                    padding: const EdgeInsets.only(bottom: 4),
+                                    child: Text(
+                                      "Select vehicle type to see fuel options",
+                                      style: TextStyle(
+                                        color: Colors.grey.withValues(alpha: 0.7),
+                                        fontSize: 12,
+                                        fontStyle: FontStyle.italic,
+                                      ),
+                                    ),
+                                  ),
+
+                            const SizedBox(height: 24),
+
+                            // ── Vehicle Make ──────────────────────────────────────────
+                            _buildDropdown<VehicleMaker>(
+                              label: l10n.vehicleMake,
+                              hint: l10n.selectMake,
+                              value: state.selectedMaker,
+                              items: state.makers,
+                              itemLabel: (m) => m.name,
+                              isLoading: state.isLoadingMakers,
+                              onChanged: state.selectedFuelType == null
+                                  ? null
+                                  : (val) {
                                       if (val != null) {
                                         context.read<AddVehicleCubit>().selectMaker(val);
                                       }
                                     },
-                          ),
-                          const SizedBox(height: 20),
+                              onDisabledTap: () {
+                                if (state.selectedFuelType == null) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(content: Text("Please select fuel type first")),
+                                  );
+                                } else if (state.makers.isEmpty) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(content: Text(l10n.vehicleMakeListEmpty)),
+                                  );
+                                }
+                              },
+                            ),
+                            const SizedBox(height: 20),
 
-                          // ── Vehicle Model ─────────────────────────────────────────
-                          _buildDropdown<VehicleModelInfo>(
-                            label: l10n.vehicleModel,
-                            hint: l10n.selectModel,
-                            value: state.selectedModel,
-                            items: state.models,
-                            itemLabel: (m) => m.modelName,
-                            isLoading: state.isLoadingModels,
-                            onChanged:
-                                state.selectedMaker == null
-                                    ? null
-                                    : (val) {
+                            // ── Vehicle Model ─────────────────────────────────────────
+                            _buildDropdown<VehicleModelInfo>(
+                              label: l10n.vehicleModel,
+                              hint: l10n.selectModel,
+                              value: state.selectedModel,
+                              items: state.models,
+                              itemLabel: (m) => m.modelName,
+                              isLoading: state.isLoadingModels,
+                              onChanged: state.selectedMaker == null
+                                  ? null
+                                  : (val) {
                                       if (val != null) {
                                         context.read<AddVehicleCubit>().selectModel(val);
                                       }
                                     },
-                          ),
-                          const SizedBox(height: 20),
-
-                          // ── Vehicle Number ────────────────────────────────────────
-                          CustomFormField(
-                            header: l10n.vehicleNumber,
-                            hint: l10n.vehicleNumberHint,
-                            value: _vehicleNumberController,
-                            textCapitalization: TextCapitalization.characters,
-                            validator: (val) {
-                              if (val == null || val.trim().isEmpty) {
-                                return l10n.pleaseEnterVehicleNumber;
-                              }
-                              return null;
-                            },
-                          ),
-
-                          const SizedBox(height: 32),
-                        ],
-                      );
-                    },
-                  ),
-                ),
-              ),
-
-              // ── Submit Button ─────────────────────────────────────────────────
-              Padding(
-                padding: const EdgeInsets.fromLTRB(20, 0, 20, 28),
-                child: SizedBox(
-                  width: double.infinity,
-                  height: 42,
-                  child: BlocBuilder<AddVehicleCubit, AddVehicleState>(
-                    builder: (context, state) {
-                      return ElevatedButton(
-                        onPressed: state.isSubmitting
-                            ? null
-                            : () {
-                                if (_formKey.currentState?.validate() ?? false) {
-                                  context.read<AddVehicleCubit>().addVehicle(
-                                    vehicleNumber: _vehicleNumberController.text.trim(),
+                              onDisabledTap: () {
+                                if (state.selectedMaker == null) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(content: Text("Please select vehicle make first")),
+                                  );
+                                } else if (state.models.isEmpty) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(content: Text(l10n.vehicleModelListEmpty)),
                                   );
                                 }
                               },
-                        style: ElevatedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(vertical: 0),
-                          backgroundColor: AppColors.secondaryLight,
-                          foregroundColor: Colors.white,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          elevation: 0,
-                          disabledBackgroundColor: AppColors.secondaryLight.withValues(
-                            alpha: 0.6,
-                          ),
-                        ),
-                        child: state.isSubmitting
-                            ? const SizedBox(
-                                height: 20,
-                                width: 20,
-                                child: CircularProgressIndicator(
-                                  color: Colors.white,
-                                  strokeWidth: 2,
-                                ),
-                              )
-                            : Text(
-                                l10n.addVehicle,
-                                style: const TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                      );
-                    },
+                            ),
+                            const SizedBox(height: 20),
+
+                            // ── Vehicle Number ────────────────────────────────────────
+                            CustomFormField(
+                              header: l10n.vehicleNumber,
+                              hint: l10n.vehicleNumberHint,
+                              value: _vehicleNumberController,
+                              textCapitalization: TextCapitalization.characters,
+                              validator: (val) {
+                                if (val == null || val.trim().isEmpty) {
+                                  return l10n.pleaseEnterVehicleNumber;
+                                }
+                                return null;
+                              },
+                            ),
+
+                            const SizedBox(height: 32),
+                          ],
+                        );
+                      },
+                    ),
                   ),
                 ),
-              ),
-            ],
+
+                // ── Submit Button ─────────────────────────────────────────────────
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 0, 20, 28),
+                  child: SizedBox(
+                    width: double.infinity,
+                    height: 42,
+                    child: BlocBuilder<AddVehicleCubit, AddVehicleState>(
+                      builder: (context, state) {
+                        return ElevatedButton(
+                          onPressed: state.isSubmitting
+                              ? null
+                              : () {
+                                  if (_formKey.currentState?.validate() ?? false) {
+                                    context.read<AddVehicleCubit>().addVehicle(
+                                      vehicleNumber: _vehicleNumberController.text.trim(),
+                                    );
+                                  }
+                                },
+                          style: ElevatedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(vertical: 0),
+                            backgroundColor: AppColors.secondaryLight,
+                            foregroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            elevation: 0,
+                            disabledBackgroundColor: AppColors.secondaryLight.withValues(
+                              alpha: 0.6,
+                            ),
+                          ),
+                          child: state.isSubmitting
+                              ? const SizedBox(
+                                  height: 20,
+                                  width: 20,
+                                  child: CircularProgressIndicator(
+                                    color: Colors.white,
+                                    strokeWidth: 2,
+                                  ),
+                                )
+                              : Text(
+                                  l10n.addVehicle,
+                                  style: const TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                        );
+                      },
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

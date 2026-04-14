@@ -8,6 +8,7 @@ import 'package:trackify/feature/add_vehicle_and_device/choice_selector.dart';
 import 'package:trackify/feature/auth/presentation/pages/signin_screen.dart';
 import 'package:trackify/feature/help_and_support/presentation/pages/help_support_screen.dart';
 import 'package:trackify/feature/my_garage/presentation/view/my_garage_screen.dart';
+import 'package:trackify/feature/my_profile/presentation/pages/my_profile_screen.dart';
 import 'package:trackify/feature/profile/presentation/cubit/profile_cubit.dart';
 import 'package:trackify/feature/profile/presentation/cubit/profile_state.dart';
 import 'package:trackify/feature/settings/presentation/pages/settings_screen.dart';
@@ -50,45 +51,56 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 const SizedBox(height: 60),
 
                 /// 🔹 PROFILE SECTION
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: Row(
-                    children: [
-                      Container(
-                        height: 70,
-                        width: 70,
-                        decoration: const BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: Color(0xFF1DA1C9),
-                        ),
-                        child: Center(
-                          child: Text(
-                            userInitials,
-                            style: const TextStyle(fontSize: 28, color: Colors.white),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const MyProfileScreen()),
+                    );
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Row(
+                      children: [
+                        Container(
+                          height: 100,
+                          width: 100,
+                          decoration: const BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Color(0xFF1DA1C9),
+                          ),
+                          child: Center(
+                            child: Text(
+                              userInitials,
+                              style: const TextStyle(fontSize: 28, color: Colors.white),
+                            ),
                           ),
                         ),
-                      ),
-                      const SizedBox(width: 14),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              userName,
-                              style: const TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.w600,
+                        const SizedBox(width: 14),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                userName,
+                                style: const TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w600,
+                                ),
                               ),
-                            ),
-                            const SizedBox(height: 4),
-                            Text(userName, style: const TextStyle(color: Colors.grey)),
-                            const SizedBox(height: 2),
-                            Text(userMobile, style: const TextStyle(color: Colors.grey)),
-                          ],
+                              const SizedBox(height: 4),
+                              Text(userName, style: const TextStyle(color: Colors.grey)),
+                              const SizedBox(height: 2),
+                              Text(
+                                userMobile,
+                                style: const TextStyle(color: Colors.grey),
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                      const Icon(Icons.chevron_right),
-                    ],
+                        const Icon(Icons.chevron_right),
+                      ],
+                    ),
                   ),
                 ),
 
@@ -98,12 +110,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 GestureDetector(
                   onTap: () => debugPrint("Upgrade tapped"),
                   child: Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 16),
+                    margin: const EdgeInsets.symmetric(horizontal: 68),
                     padding: const EdgeInsets.symmetric(vertical: 14),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(30),
                       gradient: const LinearGradient(
-                        colors: [Color(0xFFD6B57B), Color(0xFFB38B59)],
+                        colors: [Color(0xFFD6B57B), Color(0xFFE7D0B7), Color(0xFFD6B57B)],
                       ),
                     ),
                     child: Center(
@@ -202,8 +214,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             final vehicle = state.vehicles.first;
                             return VehicleCard(
                               vehicle: vehicle,
-                              hasDevice:
-                                  true, // Assuming first vehicle has device for now
+                              hasDevice: true,
+                              // Assuming first vehicle has device for now
                               onLock: () => debugPrint("Locked!"),
                               onRecharge: () => debugPrint("Recharge"),
                               onRenew: () => debugPrint("Renew"),
@@ -297,7 +309,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                       _menu(
                         l10n.addVehicle,
-                        "Register a new Vehicle or Trackify Device", // Add translation if available
+                        "Register a new Vehicle or Trackify Device",
+                        // Add translation if available
                         Icons.add_box_sharp,
                         isLast: true,
                         onTap: () {

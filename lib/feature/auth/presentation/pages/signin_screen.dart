@@ -240,14 +240,12 @@ class _SignInScreenState extends State<SignInScreen> {
                               ),
                             ),
                             const SizedBox(height: 32),
-                            if (state is AuthLoading)
-                              const Center(child: CircularProgressIndicator())
-                            else
-                              CommonButton(
-                                onPressed: () => _onLoginPressed(context),
-                                text: l10n.signIn,
-                                borderRadius: 8,
-                              ),
+                            CommonButton(
+                              onPressed: state is AuthLoading ? null : () => _onLoginPressed(context),
+                              text: l10n.signIn,
+                              borderRadius: 8,
+                              isLoading: state is AuthLoading,
+                            ),
                             const SizedBox(height: 32),
                             Row(
                               children: [

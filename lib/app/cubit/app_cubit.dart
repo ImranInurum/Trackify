@@ -226,6 +226,21 @@ class AppCubit extends Cubit<AppState> {
     // Optional: Save to local storage
   }
 
+  /// Update Map Configuration
+  void updateMapConfig({
+    String? mapStyle,
+    String? mapType,
+    bool? isTrafficEnabled,
+    bool? isLabelsEnabled,
+  }) {
+    emit(state.copyWith(
+      mapStyle: mapStyle,
+      mapType: mapType,
+      isTrafficEnabled: isTrafficEnabled,
+      isLabelsEnabled: isLabelsEnabled,
+    ));
+  }
+
   /// Get current location once
   Future<Position?> getCurrentLocation() async {
     try {

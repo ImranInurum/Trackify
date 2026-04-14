@@ -2,17 +2,18 @@ import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:trackify/feature/auth/presentation/pages/signin_screen.dart';
 import 'package:trackify/feature/onboarding/presentation/cubit/splash_cubit.dart';
 import 'package:trackify/feature/onboarding/presentation/cubit/splash_state.dart';
 
-import '../../../../l10n/app_localizations.dart';
 import '../../../../core/utils/validators.dart';
 import '../../../../core/widgets/custom_form_field.dart';
 import '../../../../core/widgets/square_flat_button.dart';
+import '../../../../l10n/app_localizations.dart';
 import '../cubit/auth_cubit.dart';
 import '../cubit/auth_state.dart';
 
@@ -198,9 +199,15 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             child: CircleAvatar(
                               radius: 50,
                               backgroundColor: Colors.grey[200],
-                              backgroundImage: _userProfile != null ? FileImage(_userProfile!) : null,
+                              backgroundImage: _userProfile != null
+                                  ? FileImage(_userProfile!)
+                                  : null,
                               child: _userProfile == null
-                                  ? const Icon(Icons.camera_alt, size: 40, color: Colors.grey)
+                                  ? const Icon(
+                                      Icons.camera_alt,
+                                      size: 40,
+                                      color: Colors.grey,
+                                    )
                                   : null,
                             ),
                           ),
@@ -219,6 +226,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           header: '',
                           hint: l10n.nameHint,
                           value: _nameController,
+                          keyboardType: TextInputType.name,
                           validator: (value) =>
                               Validators.validateRequired(value, l10n.nameRequired),
                         ),
@@ -229,6 +237,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           header: '',
                           hint: l10n.emailHint,
                           value: _emailController,
+                          keyboardType: TextInputType.emailAddress,
                           validator: (value) => Validators.validateEmail(
                             value,
                             l10n.emailRequired,
@@ -257,8 +266,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           hint: l10n.mobileNumberHint,
                           value: _mobileController,
                           keyboardType: TextInputType.phone,
-                          validator: (value) =>
-                              Validators.validateRequired(value, l10n.mobileNumberRequired),
+                          maxLength: 10,
+                          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                          validator: (value) => Validators.validatePhone(
+                            value,
+                            l10n.mobileNumberRequired,
+                            l10n.invalidMobileNumber,
+                          ),
                         ),
                         const SizedBox(height: 20),
                         _buildFieldLabel(l10n.country, textTheme),
@@ -267,6 +281,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           header: '',
                           hint: l10n.countryHint,
                           value: _countryController,
+                          keyboardType: TextInputType.text,
                           validator: (value) =>
                               Validators.validateRequired(value, l10n.countryRequired),
                         ),
@@ -277,6 +292,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           header: '',
                           hint: l10n.stateHint,
                           value: _stateController,
+                          keyboardType: TextInputType.text,
                           validator: (value) =>
                               Validators.validateRequired(value, l10n.stateRequired),
                         ),
@@ -287,6 +303,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           header: '',
                           hint: l10n.cityHint,
                           value: _cityController,
+                          keyboardType: TextInputType.text,
                           validator: (value) =>
                               Validators.validateRequired(value, l10n.cityRequired),
                         ),
@@ -305,6 +322,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           ),
                           child: DropdownButtonFormField2<String>(
                             isExpanded: true,
+                            autovalidateMode: AutovalidateMode.onUserInteraction,
                             valueListenable: selectedRoleNotifier,
                             decoration: InputDecoration(
                               hintText: l10n.selectRoleHint,
@@ -370,25 +388,17 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               selectedRoleNotifier.value = value;
                               _selectedRole = selectedRoleNotifier.value;
                             },
-                            validator: (value) => Validators.validateRequired(
-                              value,
-                              l10n.roleRequired,
-                            ),
+                            validator: (value) =>
+                                Validators.validateRequired(value, l10n.roleRequired),
                           ),
                         ),
                         const SizedBox(height: 32),
-                        if (state is AuthLoading)
-                          Center(
-                            child: CircularProgressIndicator(
-                              color: Theme.of(context).colorScheme.primary,
-                            ),
-                          )
-                        else
-                          CommonButton(
-                            onPressed: () => _onSignUpPressed(context),
-                            text: l10n.createAccount,
-                            borderRadius: 8,
-                          ),
+                        CommonButton(
+                          onPressed: state is AuthLoading ? null : () => _onSignUpPressed(context),
+                          text: l10n.createAccount,
+                          borderRadius: 8,
+                          isLoading: state is AuthLoading,
+                        ),
                         const SizedBox(height: 24),
                         Center(
                           child: Row(
