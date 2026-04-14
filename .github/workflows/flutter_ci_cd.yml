@@ -1,0 +1,58 @@
+name: Android CI/CD (FVM)
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # 1. Setup Java 11 (Matches your build.gradle.kts compatibility)
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'
+          java-version: '11'
+
+      # 2. Setup Flutter 3.35.0 (Matches your FVM config)
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.35.0'
+          channel: 'stable'
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      # 3. Recreate Firebase Config
+      - name: Create google-services.json
+        run: echo '${{ secrets.GOOGLE_SERVICES_JSON }}' > android/app/google-services.json
+
+      # 4. Create key.properties in the android/ directory
+      - name: Create key.properties
+        run: echo "${{ secrets.KEY_PROPERTIES }}" > android/key.properties
+
+      # 5. Decode Keystore into android/app/ (Matches your storeFile path)
+      - name: Decode Keystore
+        run: |
+          echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > android/app/upload-keystore.jks
+
+      # 6. Build Signed APK
+      # Your build.gradle.kts will now find key.properties and the .jks file correctly
+      - name: Build APK
+        run: flutter build apk --release
+
+      # 7. Upload the signed APK as a GitHub Artifact
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-apk
+          path: build/app/outputs/flutter-apk/app-release.apk
