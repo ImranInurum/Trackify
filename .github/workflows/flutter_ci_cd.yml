@@ -19,7 +19,8 @@ jobs:
         uses: actions/setup-java@v3
         with:
           distribution: 'zulu'
-          java-version: '11'
+          java-version: '17'
+          cache: 'gradle'
 
       # 2. Setup Flutter 3.35.0 (Matches your FVM config)
       - name: Setup Flutter
