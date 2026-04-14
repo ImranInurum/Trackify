@@ -22,6 +22,14 @@
           }
         },
         {
+          "client_id": "248560151060-ptee6o23nngkie0t8vf7thgs5hsm2q5n.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.trackify.mytrackmate.trackify",
+            "certificate_hash": "4084def68e7fa5c8615020d69ed168418641173d"
+          }
+        },
+        {
           "client_id": "248560151060-ohj6dcjrseubkce2sgtrmsij0e8vd5fd.apps.googleusercontent.com",
           "client_type": 3
         }
