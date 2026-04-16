@@ -13,20 +13,19 @@ Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
     NotificationService._androidChannelId,
     NotificationService._androidChannelName,
     channelDescription: NotificationService._androidChannelDesc,
-    importance: Importance.high,
-    priority: Priority.high,
+    importance: Importance.max,
+    priority: Priority.max,
   );
-  const ios = DarwinNotificationDetails();
+  const ios = DarwinNotificationDetails(
+    presentAlert: true,
+    presentBadge: true,
+    presentSound: true,
+  );
   const details = NotificationDetails(android: android, iOS: ios);
   final title = message.data['title'];
   final body = message.data['body'];
   if (title != null && body != null) {
-    await plugin.show(
-      DateTime.now().millisecondsSinceEpoch % 100000,
-      title,
-      body,
-      details,
-    );
+    await plugin.show(DateTime.now().millisecondsSinceEpoch % 100000, title, body, details);
   }
 }
 
@@ -50,14 +49,14 @@ class NotificationService {
     await _plugin.initialize(initSettings);
 
     // Ensure Android channel exists and request notifications permission (Android 13+)
-    final androidPlugin =
-    _plugin.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>();
+    final androidPlugin = _plugin
+        .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>();
     await androidPlugin?.createNotificationChannel(
       const AndroidNotificationChannel(
         _androidChannelId,
         _androidChannelName,
         description: _androidChannelDesc,
-        importance: Importance.high,
+        importance: Importance.max,
       ),
     );
     await androidPlugin?.requestNotificationsPermission();
@@ -77,15 +76,11 @@ class NotificationService {
     );
 
     FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
+      debugPrint("Foreground message received: ${message.notification?.title}"); // ADD THIS
       final title = message.notification?.title ?? message.data['title'];
       final body = message.notification?.body ?? message.data['body'];
       if (title != null && body != null) {
-        await _plugin.show(
-          DateTime.now().millisecondsSinceEpoch % 100000,
-          title,
-          body,
-          _details(),
-        );
+        await _plugin.show(DateTime.now().millisecondsSinceEpoch % 100000, title, body, _details());
       }
     });
 
@@ -111,17 +106,18 @@ class NotificationService {
       _androidChannelId,
       _androidChannelName,
       channelDescription: _androidChannelDesc,
-      importance: Importance.high,
-      priority: Priority.high,
+      importance: Importance.max,
+      priority: Priority.max,
     );
-    const ios = DarwinNotificationDetails();
+    const ios = DarwinNotificationDetails(
+      presentAlert: true,
+      presentBadge: true,
+      presentSound: true,
+    );
     return const NotificationDetails(android: android, iOS: ios);
   }
 
-  static Future<void> showNow({
-    required String title,
-    required String body,
-  }) async {
+  static Future<void> showNow({required String title, required String body}) async {
     await _plugin.show(DateTime.now().millisecondsSinceEpoch % 100000, title, body, _details());
   }
 

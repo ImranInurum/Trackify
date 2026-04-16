@@ -7,6 +7,8 @@ import 'package:trackify/core/utils/shared_preferences.dart';
 import 'package:trackify/core/widgets/square_flat_button.dart';
 import 'package:trackify/feature/auth/presentation/pages/signin_screen.dart';
 
+import '../../../../core/constants/app_images.dart';
+import '../../../../core/constants/app_languages.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../cubit/splash_cubit.dart';
 import '../cubit/splash_state.dart';
@@ -19,77 +21,27 @@ class SelectLanguageScreen extends StatefulWidget {
 }
 
 class _SelectLanguageScreenState extends State<SelectLanguageScreen> {
-  final List<Map<String, dynamic>> _languages = [
-    {'key': 'English', 'name': 'English', 'locale': const Locale('en')},
-    {'key': 'Hindi', 'name': 'हिंदी', 'locale': const Locale('hi')},
-    {'key': 'Marathi', 'name': 'मराठी', 'locale': const Locale('mr')},
-    {'key': 'Tamil', 'name': 'தமிழ்', 'locale': const Locale('ta')},
-    {'key': 'Kannada', 'name': 'ಕನ್ನಡ', 'locale': const Locale('kn')},
-  ];
-
+  final _languages = AppLanguages.languages;
   String _selectedLanguageKey = 'English';
 
   void _saveLanguageAndContinue() async {
     final prefs = AppPreference.instance;
 
-    await prefs.set(
-      key: AppPreference.KEY_SELECTED_LANGUAGE,
-      value: _selectedLanguageKey,
-    );
+    await prefs.set(key: AppPreference.KEY_SELECTED_LANGUAGE, value: _selectedLanguageKey);
 
     if (!mounted) return;
-    // Not logged in → sign-in
     Navigator.push(context, MaterialPageRoute(builder: (_) => const SignInScreen()));
-  }
-
-  Widget _buildLogo(ColorScheme colorScheme, [ImageProvider? imageProvider]) {
-    return Container(
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 20,
-            spreadRadius: 2,
-          ),
-        ],
-      ),
-      child: imageProvider != null
-          ? Image(image: imageProvider, height: 220, fit: BoxFit.contain)
-          : Icon(Icons.track_changes_rounded, size: 88, color: colorScheme.primary),
-    );
   }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final textTheme = theme.textTheme;
-    final isDark = theme.brightness == Brightness.dark;
-
-    final overlayTop = Colors.black.withOpacity(isDark ? 0.35 : 0.20);
-    final overlayBottom = Colors.black.withOpacity(isDark ? 0.55 : 0.35);
-
-    const primaryTextColor = Colors.white;
-
     return Scaffold(
       body: Stack(
         fit: StackFit.expand,
         children: [
-          Image.asset('assets/images/road.jpg', fit: BoxFit.cover),
-          DecoratedBox(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
-                  overlayTop,
-                  Colors.black.withOpacity(isDark ? 0.20 : 0.70),
-                  overlayBottom,
-                ],
-              ),
-            ),
-          ),
+          _backgroundImage(),
+          _overlay(),
           SafeArea(
             child: BlocBuilder<SplashCubit, SplashState>(
               builder: (context, splashState) {
@@ -152,7 +104,7 @@ class _SelectLanguageScreenState extends State<SelectLanguageScreen> {
         padding: const EdgeInsets.symmetric(horizontal: 24.0),
         child: Column(
           children: [
-            SizedBox(height: MediaQuery.of(context).size.height * 0.30),
+            SizedBox(height: MediaQuery.of(context).size.height * 0.25),
             _buildLogo(theme.colorScheme, imageProvider),
             SizedBox(height: MediaQuery.of(context).size.height * 0.15),
             Text(
@@ -210,6 +162,41 @@ class _SelectLanguageScreenState extends State<SelectLanguageScreen> {
             ),
             const SizedBox(height: 48),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildLogo(ColorScheme colorScheme, [ImageProvider? imageProvider]) {
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 20, spreadRadius: 2),
+        ],
+      ),
+      child: imageProvider != null
+          ? Image(image: imageProvider, height: 220, fit: BoxFit.contain)
+          : Icon(Icons.track_changes_rounded, size: 88, color: colorScheme.primary),
+    );
+  }
+
+  Widget _backgroundImage() {
+    return Image.asset(AppImages.roadImage, fit: BoxFit.cover);
+  }
+
+  Widget _overlay() {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final overlayTop = Colors.black.withOpacity(isDark ? 0.35 : 0.20);
+    final overlayBottom = Colors.black.withOpacity(isDark ? 0.55 : 0.35);
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [overlayTop, Colors.black.withOpacity(isDark ? 0.20 : 0.70), overlayBottom],
         ),
       ),
     );

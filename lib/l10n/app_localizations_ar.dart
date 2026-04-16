@@ -527,6 +527,15 @@ class AppLocalizationsAr extends AppLocalizations {
   String get notifications => 'الإشعارات';
 
   @override
+  String get noNotifications => 'لا توجد إشعارات';
+
+  @override
+  String get notificationsFetchedSuccessfully => 'تم جلب الإشعارات بنجاح';
+
+  @override
+  String get errorFetchingNotifications => 'خطأ في جلب الإشعارات';
+
+  @override
   String get helpAndSupport => 'المساعدة والدعم';
 
   @override

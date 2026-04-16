@@ -16,6 +16,7 @@ import 'package:trackify/feature/map/data/entity/user_vehicles.dart';
 import 'package:trackify/feature/map/presentation/pages/full_screen_map.dart';
 import 'package:trackify/feature/my_garage/presentation/view/my_garage_screen.dart';
 import 'package:trackify/feature/record_via_phone/presentation/pages/record_via_phone_screen.dart';
+import '../../../notifications/presentation/screen/notification_list_screen.dart';
 
 import '../../../../core/config/style_manager.dart';
 import '../cubit/map_cubit.dart';
@@ -131,7 +132,13 @@ class _MapScreenState extends State<MapScreen> {
                   vehicles: vehicles,
                   selectedDevice: _selectedDevice,
                   collapsedTrailing: IconButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => const NotificationListScreen(),
+                        ),
+                      );
+                    },
                     icon: const Icon(
                       Icons.notifications_none_rounded,
                       color: Colors.black,

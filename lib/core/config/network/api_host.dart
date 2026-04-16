@@ -64,6 +64,11 @@ class ApiURL {
   static const String logoUrl = "$baseURL/api/logoUrl";
   static const String theme = "$baseURL/api/theme";
 
+  // -------------------------
+  // Notification
+  // -------------------------
+  static String notifications(String userId) => "$baseURL/api/notification/$userId";
+
 
 // NEED TO IMPLEMENT CORRECT API
   // static const String logout = '$baseURL/users/logout';

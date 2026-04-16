@@ -246,7 +246,7 @@ class _SignInScreenState extends State<SignInScreen> {
                               borderRadius: 8,
                               isLoading: state is AuthLoading,
                             ),
-                            const SizedBox(height: 32),
+                            const SizedBox(height: 15),
                             Row(
                               children: [
                                 const Expanded(child: Divider()),
@@ -260,7 +260,7 @@ class _SignInScreenState extends State<SignInScreen> {
                                 const Expanded(child: Divider()),
                               ],
                             ),
-                            const SizedBox(height: 32),
+                            const SizedBox(height: 15),
                             InkWell(
                               onTap: () => context.read<AuthCubit>().loginWithGoogle(),
                               child: Center(

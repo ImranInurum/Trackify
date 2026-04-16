@@ -526,6 +526,16 @@ class AppLocalizationsTa extends AppLocalizations {
   String get notifications => 'அறிவிப்புகள்';
 
   @override
+  String get noNotifications => 'அறிவிப்புகள் எதுவும் இல்லை';
+
+  @override
+  String get notificationsFetchedSuccessfully =>
+      'அறிவிப்புகள் வெற்றிகரமாகப் பெறப்பட்டன';
+
+  @override
+  String get errorFetchingNotifications => 'அறிவிப்புகளைப் பெறுவதில் பிழை';
+
+  @override
   String get helpAndSupport => 'உதவி';
 
   @override
