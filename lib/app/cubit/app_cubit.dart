@@ -110,6 +110,8 @@ class AppCubit extends Cubit<AppState> {
   Future<void> _initializeLocation() async {
     try {
       await _locationService.initialize();
+      final position = await _locationService.getCurrentLocation();
+      emit(state.copyWith(currentLocation: position));
       _locationService.startTracking();
       _locationSubscription = _locationService.locationStream.listen(
         (position) {

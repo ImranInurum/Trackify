@@ -528,6 +528,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get notifications => 'Notifications';
 
   @override
+  String get noNotifications => 'No notifications found';
+
+  @override
+  String get notificationsFetchedSuccessfully =>
+      'Notifications fetched successfully';
+
+  @override
+  String get errorFetchingNotifications => 'Error fetching notifications';
+
+  @override
   String get helpAndSupport => 'Help & Support';
 
   @override

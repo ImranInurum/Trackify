@@ -529,6 +529,16 @@ class AppLocalizationsHi extends AppLocalizations {
   String get notifications => 'सूचनाएं';
 
   @override
+  String get noNotifications => 'कोई अधिसूचना नहीं मिली';
+
+  @override
+  String get notificationsFetchedSuccessfully =>
+      'अधिसूचनाएं सफलतापूर्वक प्राप्त की गईं';
+
+  @override
+  String get errorFetchingNotifications => 'अधिसूचनाएं प्राप्त करने में त्रुटि';
+
+  @override
   String get helpAndSupport => 'सहायता और समर्थन';
 
   @override

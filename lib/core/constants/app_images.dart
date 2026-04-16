@@ -36,4 +36,7 @@ class AppImages {
   static const String sateLiteMapStyle = "$images/sateLiteStyle.png";
   static const String simpleMapStyle = "$images/simpleStyle.png";
   static const String trafficMapStyle = "$images/trafficStyle.png";
+
+  static const String roadImage = "$images/road.jpg";
+
 }

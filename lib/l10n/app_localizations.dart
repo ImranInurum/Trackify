@@ -1102,6 +1102,24 @@ abstract class AppLocalizations {
   /// **'Notifications'**
   String get notifications;
 
+  /// No description provided for @noNotifications.
+  ///
+  /// In en, this message translates to:
+  /// **'No notifications found'**
+  String get noNotifications;
+
+  /// No description provided for @notificationsFetchedSuccessfully.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications fetched successfully'**
+  String get notificationsFetchedSuccessfully;
+
+  /// No description provided for @errorFetchingNotifications.
+  ///
+  /// In en, this message translates to:
+  /// **'Error fetching notifications'**
+  String get errorFetchingNotifications;
+
   /// No description provided for @helpAndSupport.
   ///
   /// In en, this message translates to:

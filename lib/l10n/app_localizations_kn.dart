@@ -532,6 +532,16 @@ class AppLocalizationsKn extends AppLocalizations {
   String get notifications => 'ಅಧಿಸೂಚನೆಗಳು';
 
   @override
+  String get noNotifications => 'ಯಾವುದೇ ಅಧಿಸೂಚನೆಗಳು ಕಂಡುಬಂದಿಲ್ಲ';
+
+  @override
+  String get notificationsFetchedSuccessfully =>
+      'ಅಧಿಸೂಚನೆಗಳನ್ನು ಯಶಸ್ವಿಯಾಗಿ ಪಡೆಯಲಾಗಿದೆ';
+
+  @override
+  String get errorFetchingNotifications => 'ಅಧಿಸೂಚನೆಗಳನ್ನು ಪಡೆಯುವಲ್ಲಿ ದೋಷ';
+
+  @override
   String get helpAndSupport => 'ಸಹಾಯ ಮತ್ತು ಬೆಂಬಲ';
 
   @override

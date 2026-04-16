@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:trackify/l10n/app_localizations.dart';
 
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../../app/cubit/app_cubit.dart';
+import '../../../../app/cubit/app_state.dart';
 import '../../../../core/utils/shared_preferences.dart';
 import '../../../auth/presentation/pages/signin_screen.dart';
 
@@ -80,6 +83,39 @@ class SettingsScreen extends StatelessWidget {
               showArrow: true,
               onTap: () => debugPrint("Notification Settings tapped"),
             ),
+            BlocBuilder<AppCubit, AppState>(
+              builder: (context, state) {
+                final themeMode = state.themeMode;
+                final isDarkMode = themeMode == ThemeMode.dark;
+
+                return _buildItem(
+                  icon: isDarkMode ? Icons.dark_mode : Icons.light_mode,
+                  title: isDarkMode ? "Dark Mode" : "Light Theme",
+                  subtitle: "Switch between light and dark themes",
+                  showArrow: false,
+
+                  trailing: Transform.scale(
+                    scale: 0.7,
+                    child: Switch(
+                      value: isDarkMode,
+                      activeThumbColor: Theme.of(context).colorScheme.surface,
+                      activeTrackColor: Theme.of(context).colorScheme.tertiary,
+                      onChanged: (value) {
+                        context.read<AppCubit>().changeTheme(
+                          value ? ThemeMode.dark : ThemeMode.light,
+                        );
+                      },
+                    ),
+                  ),
+
+                  onTap: () {
+                    context.read<AppCubit>().changeTheme(
+                      isDarkMode ? ThemeMode.light : ThemeMode.dark,
+                    );
+                  },
+                );
+              },
+            ),
             _buildItem(
               icon: Icons.person_outline,
               title: l10n.privacy,
@@ -121,6 +157,7 @@ class SettingsScreen extends StatelessWidget {
     required String subtitle,
     required bool showArrow,
     required VoidCallback onTap,
+    Widget? trailing,
   }) {
     return ListTile(
       contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
@@ -130,7 +167,7 @@ class SettingsScreen extends StatelessWidget {
         style: const TextStyle(
           fontWeight: FontWeight.w500,
           fontSize: 16,
-          color: Colors.black87,
+          color: Colors.black87
         ),
       ),
       subtitle: Padding(
@@ -142,7 +179,7 @@ class SettingsScreen extends StatelessWidget {
       ),
       trailing: showArrow
           ? Icon(Icons.arrow_forward_ios, size: 14, color: Colors.grey.shade400)
-          : null,
+          : trailing,
       onTap: onTap,
     );
   }
