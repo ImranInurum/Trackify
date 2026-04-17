@@ -36,7 +36,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF3F4F6),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: BlocBuilder<AppCubit, AppState>(
         builder: (context, appState) {
           final user = appState.userData;
@@ -65,14 +65,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         Container(
                           height: 100,
                           width: 100,
-                          decoration: const BoxDecoration(
+                          decoration: BoxDecoration(
                             shape: BoxShape.circle,
-                            color: Color(0xFF1DA1C9),
+                            color: Theme.of(context).colorScheme.primary,
                           ),
                           child: Center(
                             child: Text(
                               userInitials,
-                              style: const TextStyle(fontSize: 28, color: Colors.white),
+                              style: TextStyle(
+                                fontSize: 28,
+                                color: Theme.of(context).colorScheme.onPrimary,
+                              ),
                             ),
                           ),
                         ),
@@ -83,22 +86,29 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             children: [
                               Text(
                                 userName,
-                                style: const TextStyle(
+                                style: TextStyle(
+                                  color: Theme.of(context).colorScheme.onSurface,
                                   fontSize: 18,
                                   fontWeight: FontWeight.w600,
                                 ),
                               ),
                               const SizedBox(height: 4),
-                              Text(userName, style: const TextStyle(color: Colors.grey)),
+                              Text(
+                                userName,
+                                style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6)),
+                              ),
                               const SizedBox(height: 2),
                               Text(
                                 userMobile,
-                                style: const TextStyle(color: Colors.grey),
+                                style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6)),
                               ),
                             ],
                           ),
                         ),
-                        const Icon(Icons.chevron_right),
+                        Icon(
+                          Icons.chevron_right,
+                          color: Theme.of(context).colorScheme.onSurface.withOpacity(0.3),
+                        ),
                       ],
                     ),
                   ),
@@ -125,7 +135,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           Image.asset(AppImages.kingIcon, height: 20, width: 20),
                           Text(
                             " ${l10n.upgradeToPlus}",
-                            style: const TextStyle(fontWeight: FontWeight.w600),
+                            style: TextStyle(
+                              fontWeight: FontWeight.w600,
+                              color: Colors.black87,
+                            ),
                           ),
                         ],
                       ),
@@ -140,9 +153,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   margin: const EdgeInsets.symmetric(horizontal: 16),
                   padding: const EdgeInsets.all(14),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: Theme.of(context).cardColor,
                     borderRadius: BorderRadius.circular(16),
-                    border: Border.all(color: Colors.grey.shade300),
+                    border: Border.all(color: Theme.of(context).dividerColor),
                   ),
                   child: Row(
                     children: [
@@ -155,11 +168,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             child: CircularProgressIndicator(
                               value: 0.63,
                               strokeWidth: 4,
-                              backgroundColor: Colors.grey.shade300,
-                              color: const Color(0xFF1DA1C9),
+                              backgroundColor: Theme.of(context).dividerColor,
+                              color: Theme.of(context).colorScheme.primary,
                             ),
                           ),
-                          const Text("63%"),
+                          Text(
+                            "63%",
+                            style: TextStyle(
+                              color: Theme.of(context).colorScheme.onSurface,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 12,
+                            ),
+                          ),
                         ],
                       ),
                       const SizedBox(width: 12),
@@ -169,20 +189,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           children: [
                             Text(
                               l10n.getMoreOutOfAjjas,
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontWeight: FontWeight.w600,
-                                color: Color(0xFF1DA1C9),
+                                color: Theme.of(context).colorScheme.primary,
                               ),
                             ),
                             const SizedBox(height: 4),
-                            Text(
-                              l10n.featuresExploredCount(10, 16),
-                              style: const TextStyle(color: Colors.grey),
-                            ),
+                              Text(
+                                l10n.featuresExploredCount(10, 16),
+                                style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6)),
+                              ),
                           ],
                         ),
                       ),
-                      const Icon(Icons.chevron_right),
+                      Icon(
+                        Icons.chevron_right,
+                        color: Theme.of(context).colorScheme.onSurface.withOpacity(0.3),
+                      ),
                     ],
                   ),
                 ),
@@ -192,11 +215,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 Container(
                   margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
                   decoration: BoxDecoration(
-                    color: Colors.grey.shade300,
+                    color: Theme.of(context).colorScheme.surface,
                     borderRadius: BorderRadius.circular(20),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.2),
+                        color: Colors.black.withOpacity(0.1),
                         blurRadius: 0.5,
                         offset: const Offset(0, 0.5),
                       ),
@@ -213,6 +236,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           if (state is VehiclesLoaded && state.vehicles.isNotEmpty) {
                             final vehicle = state.vehicles.first;
                             return VehicleCard(
+                              context: context,
                               vehicle: vehicle,
                               hasDevice: true,
                               // Assuming first vehicle has device for now
@@ -231,25 +255,28 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         child: Container(
                           padding: const EdgeInsets.symmetric(vertical: 14),
                           decoration: BoxDecoration(
-                            color: Colors.grey.shade300,
-                            borderRadius: BorderRadius.only(
+                            color: Theme.of(context).colorScheme.primaryContainer,
+                            borderRadius: const BorderRadius.only(
                               topLeft: Radius.circular(6),
                               topRight: Radius.circular(6),
-                              bottomLeft: Radius.circular(14),
-                              bottomRight: Radius.circular(14),
+                              bottomLeft: Radius.circular(20),
+                              bottomRight: Radius.circular(20),
                             ),
                           ),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              const Icon(
+                              Icon(
                                 Icons.notifications_none_rounded,
-                                color: Color(0xFF1DA1C9),
+                                color: Theme.of(context).colorScheme.primary,
                               ),
                               const SizedBox(width: 4),
                               Text(
                                 l10n.notifications,
-                                style: const TextStyle(color: Color(0xFF1DA1C9)),
+                                style: TextStyle(
+                                  color: Theme.of(context).colorScheme.primary,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                             ],
                           ),
@@ -266,7 +293,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   margin: const EdgeInsets.symmetric(horizontal: 16),
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: Theme.of(context).cardColor,
                     borderRadius: BorderRadius.circular(18),
                     boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 6)],
                   ),
@@ -350,22 +377,36 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 : const EdgeInsets.only(top: 16.0),
             child: Row(
               children: [
-                Icon(icon, color: const Color(0xFF1DA1C9)),
+                Icon(icon, color: Theme.of(context).colorScheme.primary),
                 const SizedBox(width: 14),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        title,
-                        style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 15),
-                      ),
-                      const SizedBox(height: 2),
-                      Text(sub, style: const TextStyle(color: Colors.grey, fontSize: 13)),
+                        Text(
+                          title,
+                          style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 15,
+                            color: Theme.of(context).colorScheme.onSurface,
+                          ),
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          sub,
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+                            fontSize: 13,
+                          ),
+                        ),
                     ],
                   ),
                 ),
-                const Icon(Icons.chevron_right, size: 18),
+                Icon(
+                  Icons.chevron_right,
+                  size: 18,
+                  color: Theme.of(context).colorScheme.onSurface.withOpacity(0.3),
+                ),
               ],
             ),
           ),
@@ -373,7 +414,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         if (!isLast)
           Padding(
             padding: const EdgeInsets.only(top: 12),
-            child: Divider(height: 1, color: Colors.grey.shade300),
+            child: Divider(height: 1, color: Theme.of(context).dividerColor),
           ),
       ],
     );
@@ -390,10 +431,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
             (Route<dynamic> route) => false,
           );
         },
-        icon: const Icon(Icons.logout, color: Colors.redAccent),
+        icon: Icon(Icons.logout, color: Theme.of(context).colorScheme.error),
         label: Text(
           l10n.logout,
-          style: const TextStyle(color: Colors.redAccent, fontWeight: FontWeight.bold),
+          style: TextStyle(color: Theme.of(context).colorScheme.error, fontWeight: FontWeight.bold),
         ),
       ),
     );

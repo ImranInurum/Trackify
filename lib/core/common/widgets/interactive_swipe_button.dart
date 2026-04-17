@@ -133,9 +133,9 @@ class _InteractiveSwipeButtonState extends State<InteractiveSwipeButton> {
           height: _sliderHeight,
           margin: const EdgeInsets.symmetric(horizontal: 16),
           decoration: BoxDecoration(
-            color: const Color(0xFFD6E9F3),
+            color: Theme.of(context).colorScheme.primaryContainer.withOpacity(0.5),
             borderRadius: BorderRadius.circular(_sliderHeight / 2),
-            border: Border.all(color: Colors.white.withOpacity(0.5), width: 1.5),
+            border: Border.all(color: Colors.white.withOpacity(0.2), width: 1.5),
           ),
           child: Stack(
             alignment: Alignment.center,
@@ -148,9 +148,9 @@ class _InteractiveSwipeButtonState extends State<InteractiveSwipeButton> {
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(Icons.chevron_right, color: Colors.grey.shade400, size: 20),
-                        Icon(Icons.chevron_right, color: Colors.grey.shade500, size: 20),
-                        Icon(Icons.chevron_right, color: Colors.grey.shade600, size: 20),
+                        Icon(Icons.chevron_right, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.2), size: 20),
+                        Icon(Icons.chevron_right, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.3), size: 20),
+                        Icon(Icons.chevron_right, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.4), size: 20),
                       ],
                     ),
                   ),
@@ -164,10 +164,10 @@ class _InteractiveSwipeButtonState extends State<InteractiveSwipeButton> {
                     opacity: (1.0 - (_dragPosition / maxDrag)).clamp(0.0, 1.0),
                     child: Text(
                       l10n.swipeToLock,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.bold,
-                        color: Color(0xFF444444),
+                        color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
                         letterSpacing: 0.5,
                       ),
                     ),
@@ -186,24 +186,24 @@ class _InteractiveSwipeButtonState extends State<InteractiveSwipeButton> {
                           Container(
                             width: 38,
                             height: 38,
-                            decoration: const BoxDecoration(
-                              color: Colors.white,
+                            decoration: BoxDecoration(
+                              color: Theme.of(context).colorScheme.surface,
                               shape: BoxShape.circle,
                             ),
-                            child: const Icon(
+                            child: Icon(
                               Icons.close,
-                              color: Colors.black54,
+                              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
                               size: 20,
                             ),
                           ),
-                          const Expanded(
+                          Expanded(
                             child: Center(
                               child: Text(
                                 "WAITING...",
                                 style: TextStyle(
                                   fontSize: 11,
                                   fontWeight: FontWeight.bold,
-                                  color: Color(0xFF444444),
+                                  color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
                                 ),
                               ),
                             ),
@@ -223,8 +223,8 @@ class _InteractiveSwipeButtonState extends State<InteractiveSwipeButton> {
                       Container(
                         width: 38,
                         height: 38,
-                        decoration: const BoxDecoration(
-                          color: Colors.white,
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.surface,
                           shape: BoxShape.circle,
                         ),
                         child: Center(
@@ -235,22 +235,22 @@ class _InteractiveSwipeButtonState extends State<InteractiveSwipeButton> {
                                 _dragPosition = 0;
                               });
                             },
-                            child: const Icon(
+                            child: Icon(
                               Icons.close,
-                              color: Colors.black54,
+                              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
                               size: 20,
                             ),
                           ),
                         ),
                       ),
-                      const Expanded(
+                      Expanded(
                         child: Center(
                           child: Text(
                             "WAITING TO LOCK",
                             style: TextStyle(
                               fontSize: 12,
                               fontWeight: FontWeight.bold,
-                              color: Color(0xFF444444),
+                              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
                               letterSpacing: 0.5,
                             ),
                           ),
@@ -260,7 +260,7 @@ class _InteractiveSwipeButtonState extends State<InteractiveSwipeButton> {
                         width: 38,
                         height: 38,
                         decoration: BoxDecoration(
-                          color: Colors.white,
+                          color: Theme.of(context).colorScheme.surface,
                           shape: BoxShape.circle,
                           border: Border.all(
                             color: const Color(0xFFC7514D).withOpacity(0.3),
@@ -304,9 +304,9 @@ class _InteractiveSwipeButtonState extends State<InteractiveSwipeButton> {
                       width: _handleSize,
                       height: _handleSize,
                       decoration: BoxDecoration(
-                        color: Colors.transparent,
+                        color: Theme.of(context).colorScheme.surface,
                         shape: BoxShape.circle,
-                        border: Border.all(color: Colors.black, width: 1.5),
+                        border: Border.all(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5), width: 1.5),
                       ),
                       child: const Icon(
                         Icons.lock_open_rounded,

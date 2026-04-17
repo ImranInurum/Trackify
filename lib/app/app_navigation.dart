@@ -44,19 +44,19 @@ class _AppNavigationState extends State<AppNavigation> {
       body: _pages[_currentIndex],
       bottomNavigationBar: Container(
         decoration: ShapeDecoration(
-          color: Colors.white,
+          color: Theme.of(context).cardColor,
           shape: RoundedRectangleBorder(
             borderRadius: const BorderRadius.only(
               topLeft: Radius.circular(26),
               topRight: Radius.circular(26),
             ),
-            side: BorderSide(color: Colors.grey.shade300, width: 0.8),
+            side: BorderSide(color: Theme.of(context).dividerColor.withOpacity(0.5), width: 0.8),
           ),
           shadows: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.15),
-              blurRadius: 1,
-              offset: const Offset(1, 0),
+              color: Colors.black.withOpacity(Theme.of(context).brightness == Brightness.dark ? 0.3 : 0.1),
+              blurRadius: 10,
+              offset: const Offset(0, -2),
             ),
           ],
         ),
@@ -90,9 +90,9 @@ class _AppNavigationState extends State<AppNavigation> {
                           begin: Alignment.bottomCenter,
                           end: Alignment.topCenter,
                           colors: [
-                            AppColors.primaryLightVariant.withOpacity(0.05),
-                            AppColors.primaryLightVariant.withOpacity(0.55),
-                            AppColors.primaryLightVariant.withOpacity(0.75),
+                            Theme.of(context).colorScheme.primaryContainer.withOpacity(0.02),
+                            Theme.of(context).colorScheme.primaryContainer.withOpacity(0.2),
+                            Theme.of(context).colorScheme.primaryContainer.withOpacity(0.4),
                           ],
                         ),
                       ),
@@ -206,7 +206,9 @@ class _RippleNavItemState extends State<_RippleNavItem>
 
   @override
   Widget build(BuildContext context) {
-    final iconColor = widget.isSelected ? AppColors.secondaryLight : Colors.grey.shade400;
+    final iconColor = widget.isSelected
+        ? Theme.of(context).colorScheme.primary
+        : Theme.of(context).colorScheme.onSurface.withOpacity(0.4);
 
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
@@ -230,7 +232,7 @@ class _RippleNavItemState extends State<_RippleNavItem>
                         height: 22,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          border: Border.all(color: AppColors.secondaryLight, width: 1.2),
+                          border: Border.all(color: Theme.of(context).colorScheme.primary, width: 1.2),
                         ),
                       ),
                     ),

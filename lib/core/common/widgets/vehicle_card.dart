@@ -12,6 +12,7 @@ class VehicleCard extends StatelessWidget {
   final VoidCallback onLock;
   final VoidCallback onRecharge;
   final VoidCallback onRenew;
+  final BuildContext context;
 
   const VehicleCard({
     super.key,
@@ -20,19 +21,20 @@ class VehicleCard extends StatelessWidget {
     required this.onLock,
     required this.onRecharge,
     required this.onRenew,
+    required this.context,
   });
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     return Container(
-      // margin: const EdgeInsets.only(bottom: 10),
+      margin: const EdgeInsets.only(bottom: 10),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.2),
+            color: Colors.black.withOpacity(0.1),
             blurRadius: 0.5,
             offset: const Offset(0, 0.5),
           ),
@@ -57,10 +59,10 @@ class VehicleCard extends StatelessWidget {
                     children: [
                       Text(
                         "${vehicle.vehicleMaker} ${vehicle.vehicleModel}",
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 17,
                           fontWeight: FontWeight.bold,
-                          color: Color(0xFF1F1F1F),
+                          color: Theme.of(context).colorScheme.onSurface,
                         ),
                       ),
                       const SizedBox(height: 4),
@@ -70,7 +72,7 @@ class VehicleCard extends StatelessWidget {
                             vehicle.vehicleNumber?.toUpperCase() ?? 'N/A',
                             style: TextStyle(
                               fontSize: 14,
-                              color: Colors.grey.shade600,
+                              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
                               fontWeight: FontWeight.w500,
                             ),
                           ),
@@ -78,9 +80,9 @@ class VehicleCard extends StatelessWidget {
                           if (hasDevice)
                             Text(
                               l10n.lite4G,
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontSize: 13,
-                                color: Color(0xFF1CA5D4),
+                                color: Theme.of(context).colorScheme.primary,
                                 fontWeight: FontWeight.bold,
                               ),
                             )
@@ -89,7 +91,7 @@ class VehicleCard extends StatelessWidget {
                               children: [
                                 const Icon(
                                   Icons.verified_user_rounded,
-                                  color: Color(0xFFD48A1C),
+                                  color: Colors.orange,
                                   size: 14,
                                 ),
                                 const SizedBox(width: 4),
@@ -97,7 +99,7 @@ class VehicleCard extends StatelessWidget {
                                   l10n.buyAjjasDevice,
                                   style: const TextStyle(
                                     fontSize: 12,
-                                    color: Color(0xFFD48A1C),
+                                    color: Colors.orange,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
@@ -108,7 +110,11 @@ class VehicleCard extends StatelessWidget {
                     ],
                   ),
                 ),
-                Icon(Icons.chevron_right, color: Colors.grey.shade400, size: 24),
+                Icon(
+                  Icons.chevron_right,
+                  color: Theme.of(context).colorScheme.onSurface.withOpacity(0.3),
+                  size: 24,
+                ),
               ],
             ),
           ),
@@ -158,14 +164,14 @@ class VehicleCard extends StatelessWidget {
             children: [
               Text(
                 title,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
-                  color: Color(0xFF333333),
+                  color: Theme.of(context).colorScheme.onSurface,
                 ),
               ),
               const SizedBox(height: 2),
-              Text(subtitle, style: TextStyle(fontSize: 13, color: Colors.grey.shade500)),
+              Text(subtitle, style: TextStyle(fontSize: 13, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5))),
             ],
           ),
           SizedBox(
@@ -173,7 +179,7 @@ class VehicleCard extends StatelessWidget {
             child: OutlinedButton(
               onPressed: onTap,
               style: OutlinedButton.styleFrom(
-                side: const BorderSide(color: Color(0xFF333333)),
+                side: BorderSide(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.12)),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
                 padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 0),
                 minimumSize: const Size(0, 34),
@@ -181,9 +187,9 @@ class VehicleCard extends StatelessWidget {
               child: Text(
                 btnText,
                 textAlign: TextAlign.center,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 12,
-                  color: Color(0xFF333333),
+                  color: Theme.of(context).colorScheme.onSurface,
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -200,13 +206,13 @@ class VehicleCard extends StatelessWidget {
       children: [
         Text(
           l10n.boughtDeviceInstallNow,
-          style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
+          style: TextStyle(fontSize: 14, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6)),
         ),
         Text(
           l10n.installNow,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 14,
-            color: Color(0xFF1CA5D4),
+            color: Theme.of(context).colorScheme.primary,
             fontWeight: FontWeight.bold,
           ),
         ),
