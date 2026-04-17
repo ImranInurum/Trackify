@@ -11,19 +11,19 @@ class SecureBanner extends StatelessWidget {
       margin: const EdgeInsets.symmetric(horizontal: 16),
       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
       decoration: BoxDecoration(
-        color: const Color(0xFFFCF4E9),
+        color: Theme.of(context).colorScheme.secondaryContainer.withOpacity(0.5),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
         children: [
-          const Icon(Icons.shield_rounded, color: Color(0xFFD48A1C), size: 20),
+          Icon(Icons.shield_rounded, color: Theme.of(context).colorScheme.secondary, size: 20),
           const SizedBox(width: 10),
           Expanded(
             child: Text(
               l10n.secureYourVehicleDesc,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 12,
-                color: Color(0xFFD48A1C),
+                color: Theme.of(context).colorScheme.secondary,
                 fontWeight: FontWeight.w500,
               ),
             ),

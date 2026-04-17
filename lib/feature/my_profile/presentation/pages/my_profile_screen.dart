@@ -13,18 +13,19 @@ class MyProfileScreen extends StatelessWidget {
     // final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F9FA),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          icon: Icon(Icons.arrow_back, color: Theme.of(context).colorScheme.onSurface),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text(
+        title: Text(
           "My profile",
-          style: TextStyle(color: Colors.black, fontSize: 18, fontWeight: FontWeight.normal),
+          style: TextStyle(color: Theme.of(context).colorScheme.onSurface, fontSize: 18, fontWeight: FontWeight.normal),
         ),
-        backgroundColor: Colors.white,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         elevation: 0,
+        surfaceTintColor: Colors.transparent,
         centerTitle: false,
       ),
       body: BlocBuilder<AppCubit, AppState>(
@@ -49,24 +50,24 @@ class MyProfileScreen extends StatelessWidget {
                       Container(
                         height: 90,
                         width: 90,
-                        decoration: const BoxDecoration(
+                        decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          color: Color(0xFF1DA1C9),
+                          color: Theme.of(context).colorScheme.primary,
                         ),
                         child: Center(
                           child: Text(
                             userInitials,
-                            style: const TextStyle(fontSize: 36, color: Colors.white),
+                            style: TextStyle(fontSize: 36, color: Theme.of(context).colorScheme.onPrimary),
                           ),
                         ),
                       ),
                       const SizedBox(height: 12),
                       Text(
                         userName.toLowerCase().replaceAll(' ', ''),
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
-                          color: Colors.black87,
+                          color: Theme.of(context).colorScheme.onSurface,
                         ),
                       ),
                     ],
@@ -75,13 +76,13 @@ class MyProfileScreen extends StatelessWidget {
                 const SizedBox(height: 24),
 
                 /// 🔹 PROFILE COMPLETENESS CARD
-                _buildCard(
+                _buildCard(context: context,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
+                      Text(
                         "Profile completeness",
-                        style: TextStyle(color: Colors.grey, fontSize: 13),
+                        style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6), fontSize: 13),
                       ),
                       const SizedBox(height: 12),
                       Row(
@@ -92,7 +93,7 @@ class MyProfileScreen extends StatelessWidget {
                                 Container(
                                   height: 6,
                                   decoration: BoxDecoration(
-                                    color: Colors.grey.shade300,
+                                    color: Theme.of(context).dividerColor,
                                     borderRadius: BorderRadius.circular(3),
                                   ),
                                 ),
@@ -101,7 +102,7 @@ class MyProfileScreen extends StatelessWidget {
                                   child: Container(
                                     height: 6,
                                     decoration: BoxDecoration(
-                                      color: Colors.redAccent,
+                                      color: Theme.of(context).colorScheme.error,
                                       borderRadius: BorderRadius.circular(3),
                                     ),
                                   ),
@@ -110,18 +111,18 @@ class MyProfileScreen extends StatelessWidget {
                             ),
                           ),
                           const SizedBox(width: 12),
-                          const Icon(Icons.check_circle_outline, size: 24, color: Colors.grey),
+                          Icon(Icons.check_circle_outline, size: 24, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.3)),
                           const SizedBox(width: 4),
-                          const Text(
+                          Text(
                             "36%",
-                            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Theme.of(context).colorScheme.onSurface),
                           ),
                         ],
                       ),
                       const SizedBox(height: 12),
-                      const Text(
+                      Text(
                         "Last updated on 23 Feb 2026",
-                        style: TextStyle(color: Colors.grey, fontSize: 12),
+                        style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.4), fontSize: 12),
                       ),
                       const SizedBox(height: 16),
                       Row(
@@ -130,18 +131,18 @@ class MyProfileScreen extends StatelessWidget {
                             padding: const EdgeInsets.all(8),
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
-                              border: Border.all(color: const Color(0xFF1DA1C9)),
+                              border: Border.all(color: Theme.of(context).colorScheme.primary),
                             ),
-                            child: const Icon(
+                            child: Icon(
                               Icons.person_outline,
                               size: 20,
-                              color: Color(0xFF1DA1C9),
+                              color: Theme.of(context).colorScheme.primary,
                             ),
                           ),
                           const SizedBox(width: 12),
-                          const Text(
+                          Text(
                             "Add your profile picture",
-                            style: TextStyle(fontSize: 14, fontWeight: FontWeight.normal),
+                            style: TextStyle(fontSize: 14, fontWeight: FontWeight.normal, color: Theme.of(context).colorScheme.onSurface),
                           ),
                         ],
                       ),
@@ -151,8 +152,8 @@ class MyProfileScreen extends StatelessWidget {
                         child: ElevatedButton(
                           onPressed: () {},
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFF1DA1C9),
-                            foregroundColor: Colors.white,
+                            backgroundColor: Theme.of(context).colorScheme.primary,
+                            foregroundColor: Theme.of(context).colorScheme.onPrimary,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(8),
                             ),
@@ -170,33 +171,34 @@ class MyProfileScreen extends StatelessWidget {
 
                 /// 🔹 PERSONAL DETAILS CARD
                 _buildCard(
+                  context: context,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          const Text(
+                          Text(
                             "Personal details",
-                            style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                            style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onSurface),
                           ),
                           Container(
                             padding: const EdgeInsets.all(4),
-                            decoration: const BoxDecoration(
+                            decoration: BoxDecoration(
                               shape: BoxShape.circle,
-                              color: Color(0xFF1DA1C9),
+                              color: Theme.of(context).colorScheme.primary,
                             ),
-                            child: const Icon(Icons.edit, size: 14, color: Colors.white),
+                            child: Icon(Icons.edit, size: 14, color: Theme.of(context).colorScheme.onPrimary),
                           ),
                         ],
                       ),
                       const SizedBox(height: 20),
-                      _detailRow("Name", userName),
-                      _detailRow("Email address", userEmail),
-                      _detailRow("Mobile Number", userMobile),
-                      _detailRow("Country", userCountry),
-                      _detailRow("State", userState),
-                      _detailRow("City", userCity),
+                      _detailRow("Name", userName,context),
+                      _detailRow("Email address", userEmail,context),
+                      _detailRow("Mobile Number", userMobile,context),
+                      _detailRow("Country", userCountry,context),
+                      _detailRow("State", userState,context),
+                      _detailRow("City", userCity,context),
                     ],
                   ),
                 ),
@@ -205,12 +207,13 @@ class MyProfileScreen extends StatelessWidget {
 
                 /// 🔹 MEDICAL INSURANCE CARD
                 _buildCard(
+                  context: context,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
+                      Text(
                         "Medical insurance information",
-                        style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                        style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onSurface),
                       ),
                       const SizedBox(height: 24),
                       Center(
@@ -221,14 +224,14 @@ class MyProfileScreen extends StatelessWidget {
                               width: 50,
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(8),
-                                border: Border.all(color: const Color(0xFF1DA1C9), width: 1),
+                                border: Border.all(color: Theme.of(context).colorScheme.primary, width: 1),
                               ),
-                              child: const Icon(Icons.add, color: Color(0xFF1DA1C9), size: 30),
+                              child: Icon(Icons.add, color: Theme.of(context).colorScheme.primary, size: 30),
                             ),
                             const SizedBox(height: 12),
-                            const Text(
+                            Text(
                               "Add Medical insurance information",
-                              style: TextStyle(color: Colors.grey, fontSize: 13),
+                              style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.4), fontSize: 13),
                             ),
                           ],
                         ),
@@ -241,21 +244,22 @@ class MyProfileScreen extends StatelessWidget {
 
                 /// 🔹 VEHICLE INSURANCE CARD (Informational)
                 _buildCard(
+                  context: context,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
+                      Text(
                         "Vehicle insurance information",
-                        style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                        style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onSurface),
                       ),
                       const SizedBox(height: 8),
-                      const Text(
+                      Text(
                         "Edit and view vehicle insurance details in vehicle settings.",
-                        style: TextStyle(color: Colors.grey, fontSize: 13),
+                        style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5), fontSize: 13),
                       ),
-                      const Text(
+                      Text(
                         "My Garage > Vehicle",
-                        style: TextStyle(color: Colors.grey, fontSize: 13),
+                        style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5), fontSize: 13),
                       ),
                     ],
                   ),
@@ -265,21 +269,22 @@ class MyProfileScreen extends StatelessWidget {
 
                 /// 🔹 EMERGENCY CONTACTS CARD (Informational)
                 _buildCard(
+                  context: context,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
+                      Text(
                         "Emergency Contacts",
-                        style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                        style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onSurface),
                       ),
                       const SizedBox(height: 8),
-                      const Text(
+                      Text(
                         "Add and edit emergency contact list in vehicle settings.",
-                        style: TextStyle(color: Colors.grey, fontSize: 13),
+                        style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5), fontSize: 13),
                       ),
-                      const Text(
+                      Text(
                         "My Garage > Vehicle",
-                        style: TextStyle(color: Colors.grey, fontSize: 13),
+                        style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5), fontSize: 13),
                       ),
                     ],
                   ),
@@ -293,14 +298,14 @@ class MyProfileScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildCard({required Widget child}) {
+  Widget _buildCard({required Widget child,required BuildContext context}) {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey.shade200),
+        border: Border.all(color: Theme.of(context).dividerColor),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.02),
@@ -313,7 +318,7 @@ class MyProfileScreen extends StatelessWidget {
     );
   }
 
-  Widget _detailRow(String label, String value) {
+  Widget _detailRow(String label, String value,BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 14),
       child: Row(
@@ -323,15 +328,15 @@ class MyProfileScreen extends StatelessWidget {
             flex: 2,
             child: Text(
               label,
-              style: const TextStyle(color: Colors.grey, fontSize: 14),
+              style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5), fontSize: 14),
             ),
           ),
           Expanded(
             flex: 3,
             child: Text(
               value,
-              style: const TextStyle(
-                color: Colors.black87,
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.onSurface,
                 fontSize: 14,
                 fontWeight: FontWeight.normal,
               ),

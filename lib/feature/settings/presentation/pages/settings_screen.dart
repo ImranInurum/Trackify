@@ -15,18 +15,19 @@ class SettingsScreen extends StatelessWidget {
     final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          icon: Icon(Icons.arrow_back, color: Theme.of(context).colorScheme.onSurface),
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: Text(
           l10n.settings,
-          style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+          style: TextStyle(color: Theme.of(context).colorScheme.onSurface, fontWeight: FontWeight.bold),
         ),
+        surfaceTintColor: Colors.transparent,
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -37,9 +38,9 @@ class SettingsScreen extends StatelessWidget {
               child: Container(
                 height: 50,
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: Theme.of(context).cardColor,
                   borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: Colors.grey.shade200),
+                  border: Border.all(color: Theme.of(context).dividerColor),
                   boxShadow: [
                     BoxShadow(
                       color: Colors.black.withOpacity(0.03),
@@ -49,11 +50,14 @@ class SettingsScreen extends StatelessWidget {
                   ],
                 ),
                 child: TextField(
-                  decoration: InputDecoration(
+                  style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
+                  decoration: InputDecoration(filled: false,
                     hintText: l10n.searchForSettings,
-                    hintStyle: const TextStyle(color: Colors.grey, fontSize: 14),
-                    prefixIcon: const Icon(Icons.search, color: Colors.grey),
+                    hintStyle: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.4), fontSize: 14),
+                    prefixIcon: Icon(Icons.search, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.4)),
                     border: InputBorder.none,
+                    enabledBorder: InputBorder.none,
+                    focusedBorder: InputBorder.none,
                     contentPadding: const EdgeInsets.symmetric(vertical: 14),
                   ),
                 ),
@@ -63,6 +67,7 @@ class SettingsScreen extends StatelessWidget {
             const SizedBox(height: 10),
 
             _buildItem(
+              context: context,
               icon: Icons.cloud_upload_outlined,
               title: l10n.backupAndRestore,
               subtitle: l10n.backupAndRestoreDesc,
@@ -70,6 +75,7 @@ class SettingsScreen extends StatelessWidget {
               onTap: () => debugPrint("Backup & Restore tapped"),
             ),
             _buildItem(
+              context: context,
               icon: Icons.settings_outlined,
               title: l10n.appSettings,
               subtitle: l10n.appSettingsDesc,
@@ -77,6 +83,7 @@ class SettingsScreen extends StatelessWidget {
               onTap: () => debugPrint("App Settings tapped"),
             ),
             _buildItem(
+              context: context,
               icon: Icons.notifications_none_outlined,
               title: l10n.notificationSettings,
               subtitle: l10n.notificationSettingsDesc,
@@ -89,6 +96,7 @@ class SettingsScreen extends StatelessWidget {
                 final isDarkMode = themeMode == ThemeMode.dark;
 
                 return _buildItem(
+                  context: context,
                   icon: isDarkMode ? Icons.dark_mode : Icons.light_mode,
                   title: isDarkMode ? "Dark Mode" : "Light Theme",
                   subtitle: "Switch between light and dark themes",
@@ -117,6 +125,7 @@ class SettingsScreen extends StatelessWidget {
               },
             ),
             _buildItem(
+              context: context,
               icon: Icons.person_outline,
               title: l10n.privacy,
               subtitle: l10n.privacyDesc,
@@ -124,6 +133,7 @@ class SettingsScreen extends StatelessWidget {
               onTap: () => debugPrint("Privacy tapped"),
             ),
             _buildItem(
+              context: context,
               icon: Icons.play_arrow_outlined,
               title: l10n.rateUsOnPlayStore,
               subtitle: l10n.rateUsOnPlayStoreDesc,
@@ -131,6 +141,7 @@ class SettingsScreen extends StatelessWidget {
               onTap: () => debugPrint("Rate us tapped"),
             ),
             _buildItem(
+              context: context,
               icon: Icons.logout_outlined,
               title: l10n.logout,
               subtitle: l10n.logoutDesc,
@@ -152,6 +163,7 @@ class SettingsScreen extends StatelessWidget {
   }
 
   Widget _buildItem({
+    required BuildContext context,
     required IconData icon,
     required String title,
     required String subtitle,
@@ -161,24 +173,24 @@ class SettingsScreen extends StatelessWidget {
   }) {
     return ListTile(
       contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
-      leading: Icon(icon, color: Colors.grey.shade700, size: 28),
+      leading: Icon(icon, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7), size: 28),
       title: Text(
         title,
-        style: const TextStyle(
+        style: TextStyle(
           fontWeight: FontWeight.w500,
           fontSize: 16,
-          color: Colors.black87
+          color: Theme.of(context).colorScheme.onSurface,
         ),
       ),
       subtitle: Padding(
         padding: const EdgeInsets.only(top: 4),
         child: Text(
           subtitle,
-          style: TextStyle(color: Colors.grey.shade500, fontSize: 13, height: 1.3),
+          style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5), fontSize: 13, height: 1.3),
         ),
       ),
       trailing: showArrow
-          ? Icon(Icons.arrow_forward_ios, size: 14, color: Colors.grey.shade400)
+          ? Icon(Icons.arrow_forward_ios, size: 14, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.3))
           : trailing,
       onTap: onTap,
     );

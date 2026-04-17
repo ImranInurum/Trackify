@@ -16,17 +16,18 @@ class _HelpSuggestionScreenState extends State<HelpSuggestionScreen> {
     final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F5F5),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0.5,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        elevation: 0,
+        surfaceTintColor: Colors.transparent,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          icon: Icon(Icons.arrow_back, color: Theme.of(context).colorScheme.onSurface),
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: Text(
           l10n.helpAndSuggestion,
-          style: const TextStyle(color: Colors.black, fontSize: 18, fontWeight: FontWeight.w500),
+          style: TextStyle(color: Theme.of(context).colorScheme.onSurface, fontSize: 18, fontWeight: FontWeight.w500),
         ),
       ),
       body: SingleChildScrollView(
@@ -58,9 +59,9 @@ class _HelpSuggestionScreenState extends State<HelpSuggestionScreen> {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: Colors.grey.shade300),
+        border: Border.all(color: Theme.of(context).dividerColor),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -69,7 +70,7 @@ class _HelpSuggestionScreenState extends State<HelpSuggestionScreen> {
           Container(
             height: 48,
             decoration: BoxDecoration(
-              border: Border.all(color: Colors.black87),
+              border: Border.all(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5)),
               borderRadius: BorderRadius.circular(4),
             ),
             child: Row(
@@ -80,33 +81,33 @@ class _HelpSuggestionScreenState extends State<HelpSuggestionScreen> {
                     child: Container(
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
-                        color: isReportIssue ? Colors.white : Colors.transparent,
+                        color: isReportIssue ? Theme.of(context).cardColor : Colors.transparent,
                         borderRadius: const BorderRadius.horizontal(left: Radius.circular(3)),
                       ),
                       child: Text(
                         l10n.reportAnIssue,
                         style: TextStyle(
-                          color: isReportIssue ? const Color(0xFF00B4D8) : Colors.black87,
+                          color: isReportIssue ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.onSurface,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                     ),
                   ),
                 ),
-                const VerticalDivider(width: 1, color: Colors.black87),
+                VerticalDivider(width: 1, color: Theme.of(context).dividerColor),
                 Expanded(
                   child: InkWell(
                     onTap: () => setState(() => isReportIssue = false),
                     child: Container(
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
-                        color: !isReportIssue ? Colors.white : Colors.transparent,
+                        color: !isReportIssue ? Theme.of(context).cardColor : Colors.transparent,
                         borderRadius: const BorderRadius.horizontal(right: Radius.circular(3)),
                       ),
                       child: Text(
                         l10n.suggestion,
                         style: TextStyle(
-                          color: !isReportIssue ? const Color(0xFF00B4D8) : Colors.black87,
+                          color: !isReportIssue ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.onSurface,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -123,18 +124,22 @@ class _HelpSuggestionScreenState extends State<HelpSuggestionScreen> {
           ),
           const SizedBox(height: 16),
           TextField(
+            style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
             decoration: InputDecoration(
               hintText: l10n.whatIsYourIssueRelatedTo,
-              hintStyle: const TextStyle(color: Colors.grey, fontSize: 14),
-              enabledBorder: const UnderlineInputBorder(borderSide: BorderSide(color: Colors.black38)),
+              hintStyle: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.4), fontSize: 14),
+              enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.3))),
+              focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: Theme.of(context).colorScheme.primary)),
             ),
           ),
           const SizedBox(height: 16),
           TextField(
+            style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
             decoration: InputDecoration(
               hintText: l10n.shortDescriptionHint,
-              hintStyle: const TextStyle(color: Colors.grey, fontSize: 14),
-              enabledBorder: const UnderlineInputBorder(borderSide: BorderSide(color: Colors.black38)),
+              hintStyle: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.4), fontSize: 14),
+              enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.3))),
+              focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: Theme.of(context).colorScheme.primary)),
             ),
           ),
           const SizedBox(height: 20),
@@ -144,7 +149,7 @@ class _HelpSuggestionScreenState extends State<HelpSuggestionScreen> {
               onPressed: () {},
               child: Text(
                 l10n.selectCallSlot,
-                style: const TextStyle(color: Color(0xFF00B4D8), fontWeight: FontWeight.bold),
+                style: TextStyle(color: Theme.of(context).colorScheme.primary, fontWeight: FontWeight.bold),
               ),
             ),
           ),
@@ -159,15 +164,15 @@ class _HelpSuggestionScreenState extends State<HelpSuggestionScreen> {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: Theme.of(context).cardColor,
           borderRadius: BorderRadius.circular(8),
-          border: Border.all(color: Colors.grey.shade300),
+          border: Border.all(color: Theme.of(context).dividerColor),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(title, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
-            const Icon(Icons.arrow_forward_ios, size: 18, color: Colors.black87),
+            Text(title, style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: Theme.of(context).colorScheme.onSurface)),
+            Icon(Icons.arrow_forward_ios, size: 18, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6)),
           ],
         ),
       ),
@@ -179,16 +184,16 @@ class _HelpSuggestionScreenState extends State<HelpSuggestionScreen> {
       width: double.infinity,
       padding: const EdgeInsets.symmetric(vertical: 14),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: Colors.grey.shade300),
+        border: Border.all(color: Theme.of(context).dividerColor),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           const Icon(Icons.chat_bubble_outline, color: Color(0xFF25D366), size: 20),
           const SizedBox(width: 8),
-          Text(l10n.whatsApp, style: const TextStyle(fontSize: 16, color: Colors.black87)),
+          Text(l10n.whatsApp, style: TextStyle(fontSize: 16, color: Theme.of(context).colorScheme.onSurface)),
         ],
       ),
     );
@@ -202,12 +207,12 @@ class _HelpSuggestionScreenState extends State<HelpSuggestionScreen> {
         const SizedBox(height: 12),
         Text(
           l10n.forceMigrateDesc1,
-          style: const TextStyle(color: Colors.black54, fontSize: 14, height: 1.4),
+          style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6), fontSize: 14, height: 1.4),
         ),
         const SizedBox(height: 8),
         Text(
           l10n.forceMigrateDesc2,
-          style: const TextStyle(color: Colors.black54, fontSize: 14, height: 1.4),
+          style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6), fontSize: 14, height: 1.4),
         ),
         const SizedBox(height: 20),
         SizedBox(
@@ -216,12 +221,12 @@ class _HelpSuggestionScreenState extends State<HelpSuggestionScreen> {
           child: ElevatedButton(
             onPressed: () {},
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF00AEEF),
+              backgroundColor: Theme.of(context).colorScheme.primary,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
             ),
             child: Text(
               l10n.forceMigrate,
-              style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16),
+              style: TextStyle(color: Theme.of(context).colorScheme.onPrimary, fontWeight: FontWeight.bold, fontSize: 16),
             ),
           ),
         ),
@@ -248,8 +253,8 @@ class _HelpSuggestionScreenState extends State<HelpSuggestionScreen> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(title, style: const TextStyle(fontSize: 16, color: Colors.black87)),
-            const Icon(Icons.arrow_forward_ios, size: 14, color: Colors.black54),
+            Text(title, style: TextStyle(fontSize: 16, color: Theme.of(context).colorScheme.onSurface)),
+            Icon(Icons.arrow_forward_ios, size: 14, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.4)),
           ],
         ),
       ),
@@ -257,11 +262,11 @@ class _HelpSuggestionScreenState extends State<HelpSuggestionScreen> {
   }
 
   Widget _buildVersionInfo() {
-    return const Align(
+    return  Align(
       alignment: Alignment.centerRight,
       child: Text(
         "B3000507.V19.7.1.J406",
-        style: TextStyle(color: Colors.grey, fontSize: 12),
+        style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.4), fontSize: 12),
       ),
     );
   }

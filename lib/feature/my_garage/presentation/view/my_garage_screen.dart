@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:trackify/core/theme/app_colors.dart';
 import 'package:trackify/feature/my_garage/presentation/cubit/my_garage_cubit.dart';
 import 'package:trackify/feature/my_garage/presentation/cubit/my_garage_state.dart';
 import 'package:trackify/l10n/app_localizations.dart';
@@ -30,20 +29,20 @@ class _MyGarageScreenState extends State<MyGarageScreen> {
     final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
-      backgroundColor: AppColors.backgroundLight,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         centerTitle: false,
         elevation: 0,
-        backgroundColor: Colors.white,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black, size: 24),
+          icon: Icon(Icons.arrow_back, color: Theme.of(context).colorScheme.onSurface, size: 24),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
           l10n.myGarage,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 18,
-            color: Colors.black87,
+            color: Theme.of(context).colorScheme.onSurface,
             fontWeight: FontWeight.w600,
           ),
         ),
@@ -65,12 +64,14 @@ class _MyGarageScreenState extends State<MyGarageScreen> {
               return Center(
                 child: Text(
                   l10n.noVehiclesInGarage,
-                  style: TextStyle(color: Colors.grey.shade600),
+                  style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6)),
                 ),
               );
             }
 
             return RefreshIndicator(
+              color: Theme.of(context).colorScheme.primary,
+              backgroundColor: Theme.of(context).cardColor,
               onRefresh: () => context.read<MyGarageCubit>().fetchVehicles(),
               child: ListView.builder(
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
@@ -82,6 +83,7 @@ class _MyGarageScreenState extends State<MyGarageScreen> {
                   final bool hasDevice = index == 0;
 
                   return VehicleCard(
+                    context: context,
                     vehicle: vehicle,
                     hasDevice: hasDevice,
                     onLock: () => _handleVehicleLock(context, vehicle),
@@ -110,17 +112,17 @@ class _MyGarageScreenState extends State<MyGarageScreen> {
             const SizedBox(height: 16),
             Text(
               l10n.errorMsg(message),
-              style: const TextStyle(color: Colors.red),
+              style: TextStyle(color: Theme.of(context).colorScheme.error),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 24),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.black87,
+                backgroundColor: Theme.of(context).colorScheme.onSurface,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
               ),
               onPressed: () => context.read<MyGarageCubit>().fetchVehicles(),
-              child: Text(l10n.retry, style: const TextStyle(color: Colors.white)),
+              child: Text(l10n.retry, style: TextStyle(color: Theme.of(context).colorScheme.surface)),
             ),
           ],
         ),
