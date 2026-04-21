@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:trackify/feature/device_installation/presentation/pages/device_installation_screen.dart';
 
 import '../../../core/constants/app_images.dart';
 import '../../../l10n/app_localizations.dart';
@@ -139,7 +140,12 @@ class VehicleCard extends StatelessWidget {
           ] else ...[
             const SecureBanner(),
             const SizedBox(height: 16),
-            _buildInstallLink(l10n),
+            _buildInstallLink(l10n,(){
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => DeviceInstallationScreen( vehicleId:  vehicle.id,)),
+              );
+            }),
           ],
           const SizedBox(height: 16),
         ],
@@ -200,7 +206,7 @@ class VehicleCard extends StatelessWidget {
     );
   }
 
-  Widget _buildInstallLink(AppLocalizations l10n) {
+  Widget _buildInstallLink(AppLocalizations l10n, Function onTap) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -208,12 +214,15 @@ class VehicleCard extends StatelessWidget {
           l10n.boughtDeviceInstallNow,
           style: TextStyle(fontSize: 14, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6)),
         ),
-        Text(
-          l10n.installNow,
-          style: TextStyle(
-            fontSize: 14,
-            color: Theme.of(context).colorScheme.primary,
-            fontWeight: FontWeight.bold,
+        InkWell(
+          onTap: () => onTap(),
+          child: Text(
+            l10n.installNow,
+            style: TextStyle(
+              fontSize: 14,
+              color: Theme.of(context).colorScheme.primary,
+              fontWeight: FontWeight.bold,
+            ),
           ),
         ),
       ],

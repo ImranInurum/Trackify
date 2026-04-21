@@ -13,6 +13,8 @@ class CommonButton extends StatelessWidget {
   final double borderRadius;
   final EdgeInsetsGeometry? padding;
   final bool isLoading;
+  final Color? disabledBackgroundColor;
+  final Color? disabledForegroundColor;
 
   const CommonButton({
     super.key,
@@ -27,6 +29,8 @@ class CommonButton extends StatelessWidget {
     this.borderRadius = 12.0,
     this.padding,
     this.isLoading = false,
+    this.disabledBackgroundColor,
+    this.disabledForegroundColor,
   });
 
   @override
@@ -36,10 +40,11 @@ class CommonButton extends StatelessWidget {
 
     final defaultBackgroundColor = theme.colorScheme.primary;
     final defaultForegroundColor = theme.colorScheme.onPrimary;
-    final disabledBackgroundColor = theme.disabledColor.withOpacity(0.2);
-    final disabledForegroundColor =
-        theme.textTheme.bodyMedium?.color?.withOpacity(0.5) ??
-        theme.colorScheme.onSurface.withOpacity(0.5);
+    final finalDisabledBackgroundColor = disabledBackgroundColor ??
+        theme.disabledColor.withValues(alpha: 0.2);
+    final finalDisabledForegroundColor = disabledForegroundColor ??
+        theme.textTheme.bodyMedium?.color?.withValues(alpha: 0.5) ??
+        theme.colorScheme.onSurface.withValues(alpha: 0.5);
 
     return Container(
       height: height,
@@ -50,7 +55,7 @@ class CommonButton extends StatelessWidget {
             ? []
             : [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
+                  color: Colors.black.withValues(alpha: 0.05),
                   blurRadius: 8,
                   offset: const Offset(0, 4),
                 ),
@@ -61,13 +66,13 @@ class CommonButton extends StatelessWidget {
         style: elevatedButtonStyle?.copyWith(
           backgroundColor: WidgetStateProperty.resolveWith<Color>((states) {
             if (states.contains(WidgetState.disabled)) {
-              return disabledBackgroundColor;
+              return finalDisabledBackgroundColor;
             }
             return backgroundColor ?? defaultBackgroundColor;
           }),
           foregroundColor: WidgetStateProperty.resolveWith<Color>((states) {
             if (states.contains(WidgetState.disabled)) {
-              return disabledForegroundColor;
+              return finalDisabledForegroundColor;
             }
             return foregroundColor ?? defaultForegroundColor;
           }),
@@ -104,7 +109,7 @@ class CommonButton extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                       style: getRegularStyle(
                         color: onPressed == null
-                            ? disabledForegroundColor
+                            ? finalDisabledForegroundColor
                             : (foregroundColor ?? defaultForegroundColor),
                       ).copyWith(fontWeight: FontWeight.w600),
                     ),
