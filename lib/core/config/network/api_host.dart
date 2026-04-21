@@ -50,13 +50,16 @@ class ApiURL {
     String vehicleType,
     String fuelType,
     String brandId,
-  ) => "$baseURL/api/vehicle/models?vehicleType=$vehicleType&fuelType=$fuelType&brandId=$brandId";
+  ) =>
+      "$baseURL/api/vehicle/models?vehicleType=$vehicleType&fuelType=$fuelType&brandId=$brandId";
 
   // -------------------------
   // Device
   // -------------------------
   static String deviceByUserId(String userId) => "$baseURL/api/devices/$userId";
-  static const String deviceDataByDate = "$baseURL/api/device/check-deviceList_byDate";
+  static const String deviceDataByDate =
+      "$baseURL/api/device/check-deviceList_byDate";
+  static const String assignDevices = "$baseURL/api/assign-devices";
 
   // -------------------------
   // LogoURL
@@ -67,10 +70,10 @@ class ApiURL {
   // -------------------------
   // Notification
   // -------------------------
-  static String notifications(String userId) => "$baseURL/api/notification/$userId";
+  static String notifications(String userId) =>
+      "$baseURL/api/notification/$userId";
 
-
-// NEED TO IMPLEMENT CORRECT API
+  // NEED TO IMPLEMENT CORRECT API
   // static const String logout = '$baseURL/users/logout';
   // static const String userDetails = '$baseURL/users/get-details';
   // static const String updateUserDetails = '$baseURL/users/update-user-details';

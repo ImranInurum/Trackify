@@ -682,4 +682,45 @@ class AppLocalizationsHi extends AppLocalizations {
   @override
   String get vehicleModelListEmpty =>
       'Vehicle model list is empty for this selection';
+
+  @override
+  String get deviceInstallation => 'Device Installation';
+
+  @override
+  String get scanActivationCode => 'Scan activation code';
+
+  @override
+  String get enterActivationCodeManually => 'Enter activation code manually';
+
+  @override
+  String get openAjjasBoxInstruction =>
+      'Open Ajjas box for the activation QR code.';
+
+  @override
+  String get continueText => 'Continue';
+
+  @override
+  String get enterUID => 'Enter UID';
+
+  @override
+  String get enterIMEINumber => 'Enter IMEI number';
+
+  @override
+  String get close => 'Close';
+
+  @override
+  String get uidRequired => 'UID is required';
+
+  @override
+  String get imeiRequired => 'IMEI number is required';
+
+  @override
+  String get deviceAssignedSuccess =>
+      'Device successfully assigned to vehicle!';
+
+  @override
+  String get assigningDevice => 'Assigning device...';
+
+  @override
+  String get invalidImeiError => 'Please enter a valid 15-digit IMEI number';
 }

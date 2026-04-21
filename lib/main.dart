@@ -36,6 +36,9 @@ import 'feature/auth/presentation/cubit/auth_cubit.dart';
 import 'feature/onboarding/data/repositories/splash_repository_impl.dart';
 import 'feature/onboarding/domain/usecases/get_logo_usecase.dart';
 import 'feature/onboarding/presentation/cubit/splash_cubit.dart';
+import 'feature/device_installation/data/repository/device_installation_repository_impl.dart';
+import 'feature/device_installation/domain/usecase/assign_device_use_case.dart';
+import 'feature/device_installation/presentation/cubit/device_installation_cubit.dart';
 import 'firebase_options.dart';
 
 final GlobalKey<NavigatorState> rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -45,7 +48,9 @@ Future<void> main() async {
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   await _setUp();
 
-  runApp(MultiBlocProvider(providers: _buildBlocProviders(), child: const MyApp()));
+  runApp(
+    MultiBlocProvider(providers: _buildBlocProviders(), child: const MyApp()),
+  );
 }
 
 /// One-time app bootstrapping.
@@ -71,27 +76,40 @@ List<BlocProvider> _buildBlocProviders() {
         socketService: socketService,
       )..initialize(),
     ),
-    BlocProvider<AuthCubit>(create: (_) => AuthCubit(AuthCase(AuthRepositoryImpl()))),
-    BlocProvider<MapCubit>(create: (_) => MapCubit(MapCase(MapRepositoryImpl()))),
+    BlocProvider<AuthCubit>(
+      create: (_) => AuthCubit(AuthCase(AuthRepositoryImpl())),
+    ),
+    BlocProvider<MapCubit>(
+      create: (_) => MapCubit(MapCase(MapRepositoryImpl())),
+    ),
     BlocProvider<SplashCubit>(
       create: (_) => SplashCubit(GetLogoUseCase(SplashRepositoryImpl())),
     ),
     BlocProvider<AddVehicleCubit>(
-      create: (_) => AddVehicleCubit(AddVehicleUseCase(AddVehicleRepositoryImpl())),
+      create: (_) =>
+          AddVehicleCubit(AddVehicleUseCase(AddVehicleRepositoryImpl())),
     ),
     BlocProvider<ProfileCubit>(create: (_) => ProfileCubit(ProfileUseCase())),
     BlocProvider<RecordViaPhoneCubit>(
-      create: (_) =>
-          RecordViaPhoneCubit(RecordViaPhoneUseCase(RecordViaPhoneRepositoryImpl())),
+      create: (_) => RecordViaPhoneCubit(
+        RecordViaPhoneUseCase(RecordViaPhoneRepositoryImpl()),
+      ),
     ),
     BlocProvider<MyProfileCubit>(
-      create: (_) => MyProfileCubit(MyProfileUseCase(MyProfileRepositoryImpl())),
+      create: (_) =>
+          MyProfileCubit(MyProfileUseCase(MyProfileRepositoryImpl())),
     ),
     BlocProvider<MyGarageCubit>(
       create: (_) => MyGarageCubit(MyGarageUseCase(MyGarageRepoImpl())),
     ),
     BlocProvider<HelpSupportCubit>(
-      create: (_) => HelpSupportCubit(HelpSupportUseCase(HelpSupportRepositoryImpl())),
+      create: (_) =>
+          HelpSupportCubit(HelpSupportUseCase(HelpSupportRepositoryImpl())),
+    ),
+    BlocProvider<DeviceInstallationCubit>(
+      create: (_) => DeviceInstallationCubit(
+        AssignDeviceUseCase(DeviceInstallationRepositoryImpl()),
+      ),
     ),
   ];
 }

@@ -1389,6 +1389,84 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Vehicle model list is empty for this selection'**
   String get vehicleModelListEmpty;
+
+  /// No description provided for @deviceInstallation.
+  ///
+  /// In en, this message translates to:
+  /// **'Device Installation'**
+  String get deviceInstallation;
+
+  /// No description provided for @scanActivationCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan activation code'**
+  String get scanActivationCode;
+
+  /// No description provided for @enterActivationCodeManually.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter activation code manually'**
+  String get enterActivationCodeManually;
+
+  /// No description provided for @openAjjasBoxInstruction.
+  ///
+  /// In en, this message translates to:
+  /// **'Open Ajjas box for the activation QR code.'**
+  String get openAjjasBoxInstruction;
+
+  /// No description provided for @continueText.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue'**
+  String get continueText;
+
+  /// No description provided for @enterUID.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter UID'**
+  String get enterUID;
+
+  /// No description provided for @enterIMEINumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter IMEI number'**
+  String get enterIMEINumber;
+
+  /// No description provided for @close.
+  ///
+  /// In en, this message translates to:
+  /// **'Close'**
+  String get close;
+
+  /// No description provided for @uidRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'UID is required'**
+  String get uidRequired;
+
+  /// No description provided for @imeiRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'IMEI number is required'**
+  String get imeiRequired;
+
+  /// No description provided for @deviceAssignedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Device successfully assigned to vehicle!'**
+  String get deviceAssignedSuccess;
+
+  /// No description provided for @assigningDevice.
+  ///
+  /// In en, this message translates to:
+  /// **'Assigning device...'**
+  String get assigningDevice;
+
+  /// No description provided for @invalidImeiError.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a valid 15-digit IMEI number'**
+  String get invalidImeiError;
 }
 
 class _AppLocalizationsDelegate
