@@ -10,20 +10,20 @@ class TripTooltip extends StatelessWidget {
       children: [
         CustomPaint(
           size: const Size(20, 10),
-          painter: _TopTrianglePainter(),
+          painter: _TopTrianglePainter(color: Theme.of(context).cardColor),
         ),
         Container(
           width: 250,
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: Theme.of(context).cardColor,
             borderRadius: BorderRadius.circular(16),
-            boxShadow: const [
+            boxShadow: [
               BoxShadow(
-                color: Colors.black12,
+                color: Colors.black.withOpacity(0.15),
                 blurRadius: 15,
                 spreadRadius: 2,
-                offset: Offset(0, 6),
+                offset: const Offset(0, 6),
               ),
             ],
           ),
@@ -44,7 +44,6 @@ class TripTooltip extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 13,
                   fontWeight: FontWeight.w500,
-                  color: Colors.black87,
                 ),
               ),
               const SizedBox(height: 12),
@@ -77,9 +76,12 @@ class TripTooltip extends StatelessWidget {
 }
 
 class _TopTrianglePainter extends CustomPainter {
+  final Color color;
+  _TopTrianglePainter({required this.color});
+
   @override
   void paint(Canvas canvas, Size size) {
-    final paint = Paint()..color = Colors.white;
+    final paint = Paint()..color = color;
 
     final path = Path();
     path.moveTo(size.width / 2, 0);

@@ -10,11 +10,11 @@ class RideCard extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: Colors.black.withOpacity(0.1),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -45,7 +45,7 @@ class RideCard extends StatelessWidget {
                     child: Container(
                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.9),
+                        color: Theme.of(context).cardColor.withOpacity(0.9),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Text(
@@ -73,16 +73,16 @@ class RideCard extends StatelessWidget {
                   children: [
                     Text(
                       ride.date,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontWeight: FontWeight.w700,
                         fontSize: 15,
-                        color: Colors.black,
+                        color: Theme.of(context).colorScheme.onSurface,
                       ),
                     ),
                     Text(
                       "${ride.startTime} - ${ride.endTime}",
                       style: TextStyle(
-                        color: Colors.grey.shade600,
+                        color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
                         fontSize: 13,
                         fontWeight: FontWeight.w500,
                       ),
@@ -98,9 +98,9 @@ class RideCard extends StatelessWidget {
                     _buildStat(context, Icons.bolt, "${ride.topSpeed} km/h", "Top Speed"),
                   ],
                 ),
-                const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 12),
-                  child: Divider(height: 1, color: Color(0xFFEEEEEE)),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  child: Divider(height: 1, color: Theme.of(context).dividerColor),
                 ),
                 Row(
                   children: [
@@ -111,7 +111,7 @@ class RideCard extends StatelessWidget {
                         ride.startLocation,
                         style: TextStyle(
                           fontSize: 12,
-                          color: Colors.grey.shade700,
+                          color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
                           overflow: TextOverflow.ellipsis,
                         ),
                       ),
@@ -127,7 +127,7 @@ class RideCard extends StatelessWidget {
                         ride.endLocation,
                         style: TextStyle(
                           fontSize: 12,
-                          color: Colors.grey.shade700,
+                          color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
                           overflow: TextOverflow.ellipsis,
                         ),
                       ),
@@ -152,10 +152,10 @@ class RideCard extends StatelessWidget {
             const SizedBox(width: 4),
             Text(
               value,
-              style: const TextStyle(
+              style: TextStyle(
                 fontWeight: FontWeight.w700,
                 fontSize: 13,
-                color: Colors.black,
+                color: Theme.of(context).colorScheme.onSurface,
               ),
             ),
           ],
@@ -164,7 +164,7 @@ class RideCard extends StatelessWidget {
         Text(
           label,
           style: TextStyle(
-            color: Colors.grey.shade500,
+            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
             fontSize: 10,
             fontWeight: FontWeight.w500,
           ),

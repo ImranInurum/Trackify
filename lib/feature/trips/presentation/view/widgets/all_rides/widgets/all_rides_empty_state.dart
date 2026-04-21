@@ -10,14 +10,18 @@ class AllRidesEmptyState extends StatelessWidget {
       children: [
         Image.asset("assets/images/allRidesMap.png", height: 140),
         const SizedBox(height: 30),
-        const Text(
+        Text(
           "No daily rides to show",
-          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w500,
+            color: Theme.of(context).colorScheme.onSurface,
+          ),
         ),
         const SizedBox(height: 8),
-        const Text(
+        Text(
           "Get started by taking your first ride",
-          style: TextStyle(color: Colors.grey),
+          style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6)),
         ),
       ],
     );
