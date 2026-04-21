@@ -10,13 +10,13 @@ class TripEmptyState extends StatelessWidget {
       children: [
         Image.asset("assets/images/tripScreenBike.png", height: 160),
         const SizedBox(height: 20),
-        const Padding(
+         Padding(
           padding: EdgeInsets.symmetric(horizontal: 30),
           child: Text(
             "“Group your rides into trips, add memories, and relive the journey”",
             textAlign: TextAlign.center,
             style: TextStyle(
-              color: Color(0xFF777777),
+              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
               fontSize: 13,
               fontStyle: FontStyle.italic,
             ),
@@ -28,18 +28,18 @@ class TripEmptyState extends StatelessWidget {
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
           decoration: BoxDecoration(
-            color: const Color(0xFFE5E5E5),
+            color: Theme.of(context).dividerColor,
             borderRadius: BorderRadius.circular(10),
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(Icons.lock, size: 18, color: Color(0xFF555555)),
+              Icon(Icons.lock, size: 18, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5)),
               const SizedBox(width: 10),
               Text(
                 "Rides completed: 0/3",
                 style: TextStyle(
-                  color: Colors.grey.shade700,
+                  color: Theme.of(context).colorScheme.onSurface.withOpacity(0.8),
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
                 ),
@@ -48,9 +48,9 @@ class TripEmptyState extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 12),
-        const Text(
+        Text(
           "You need at least 3 rides to unlock trips",
-          style: TextStyle(color: Color(0xFF888888), fontSize: 12),
+          style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5), fontSize: 12),
         ),
         const SizedBox(height: 50),
       ],

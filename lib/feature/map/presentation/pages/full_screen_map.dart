@@ -71,16 +71,24 @@ class _FullScreenMapState extends State<FullScreenMap> {
   void _showMapStyleSheet() {
     showModalBottomSheet(
       context: context,
-      backgroundColor: Colors.white,
-      barrierColor: Colors.black26,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      barrierColor: Colors.black45,
+      shape:  RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(36),
       ),
       builder: (context) {
         return BlocBuilder<AppCubit, AppState>(
           builder: (context, state) {
             return Container(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+              decoration: BoxDecoration(            boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.1),
+                  blurRadius: 15,
+                  spreadRadius: 2,
+                ),
+              ],),
+
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -90,18 +98,18 @@ class _FullScreenMapState extends State<FullScreenMap> {
                       width: 44,
                       height: 5,
                       decoration: BoxDecoration(
-                        color: Colors.grey.shade300,
+                        color: Theme.of(context).dividerColor,
                         borderRadius: BorderRadius.circular(3),
                       ),
                     ),
                   ),
                   const SizedBox(height: 24),
-                  const Text(
+                  Text(
                     "Map Style",
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 16,
-                      color: Color(0xFF2C3E50),
+                      color: Theme.of(context).colorScheme.onSurface,
                     ),
                   ),
                   const SizedBox(height: 20),
@@ -123,12 +131,12 @@ class _FullScreenMapState extends State<FullScreenMap> {
                     ],
                   ),
                   const SizedBox(height: 32),
-                  const Text(
+                  Text(
                     "Map Options",
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 16,
-                      color: Color(0xFF2C3E50),
+                      color: Theme.of(context).colorScheme.onSurface,
                     ),
                   ),
                   const SizedBox(height: 20),
@@ -183,12 +191,12 @@ class _FullScreenMapState extends State<FullScreenMap> {
               image: DecorationImage(image: AssetImage(imagePath), fit: BoxFit.cover),
               borderRadius: BorderRadius.circular(16),
               border: isSelected
-                  ? Border.all(color: Colors.cyan, width: 2.5)
-                  : Border.all(color: Colors.grey.shade200),
+                  ? Border.all(color: Theme.of(context).colorScheme.primary, width: 2.5)
+                  : Border.all(color: Theme.of(context).dividerColor),
               boxShadow: [
                 if (isSelected)
                   BoxShadow(
-                    color: Colors.cyan.withOpacity(0.2),
+                    color: Theme.of(context).colorScheme.primary.withOpacity(0.2),
                     blurRadius: 10,
                     offset: const Offset(0, 4),
                   ),
@@ -201,7 +209,9 @@ class _FullScreenMapState extends State<FullScreenMap> {
             style: TextStyle(
               fontSize: 13,
               fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-              color: isSelected ? Colors.cyan.shade700 : const Color(0xFF2C3E50),
+              color: isSelected
+                  ? Theme.of(context).colorScheme.primary
+                  : Theme.of(context).colorScheme.onSurface,
             ),
           ),
         ],
@@ -228,7 +238,7 @@ class _FullScreenMapState extends State<FullScreenMap> {
                   image: DecorationImage(image: AssetImage(imagePath), fit: BoxFit.cover),
                   borderRadius: BorderRadius.circular(16),
                   border: isActive
-                      ? Border.all(color: Colors.cyan, width: 2)
+                      ? Border.all(color: Theme.of(context).colorScheme.primary, width: 2)
                       : Border.all(color: Colors.transparent),
                   boxShadow: [
                     BoxShadow(
@@ -245,8 +255,8 @@ class _FullScreenMapState extends State<FullScreenMap> {
                   top: 8,
                   child: Container(
                     padding: const EdgeInsets.all(2),
-                    decoration: const BoxDecoration(
-                      color: Colors.cyan,
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.primary,
                       shape: BoxShape.circle,
                     ),
                     child: const Icon(Icons.check, size: 10, color: Colors.white),
@@ -257,10 +267,10 @@ class _FullScreenMapState extends State<FullScreenMap> {
           const SizedBox(height: 8),
           Text(
             name,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 13,
               fontWeight: FontWeight.w500,
-              color: Color(0xFF2C3E50),
+              color: Theme.of(context).colorScheme.onSurface,
             ),
           ),
         ],
@@ -357,9 +367,9 @@ class _FullScreenMapState extends State<FullScreenMap> {
                     margin: const EdgeInsets.only(top: 8),
                     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF222222).withOpacity(0.95),
+                      color: Theme.of(context).cardColor.withOpacity(0.95),
                       borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: Colors.white10),
+                      border: Border.all(color: Theme.of(context).dividerColor),
                       boxShadow: [
                         BoxShadow(
                           color: Colors.black.withOpacity(0.3),
@@ -368,10 +378,10 @@ class _FullScreenMapState extends State<FullScreenMap> {
                         ),
                       ],
                     ),
-                    child: const Text(
+                    child: Text(
                       "Shared with me",
                       style: TextStyle(
-                        color: Colors.white,
+                        color: Theme.of(context).colorScheme.onSurface,
                         fontSize: 13,
                         fontWeight: FontWeight.w500,
                       ),
@@ -419,9 +429,9 @@ class _FullScreenMapState extends State<FullScreenMap> {
                 height: 12,
                 width: 12,
                 decoration: BoxDecoration(
-                  color: Colors.cyan,
+                  color: Theme.of(context).colorScheme.primary,
                   shape: BoxShape.circle,
-                  border: Border.all(color: Colors.black, width: 2),
+                  border: Border.all(color: Theme.of(context).cardColor, width: 2),
                 ),
               ),
             ),
@@ -437,11 +447,22 @@ class _FullScreenMapState extends State<FullScreenMap> {
         height: 48,
         width: 48,
         decoration: BoxDecoration(
-          color: const Color(0xFF222222),
+          color: Theme.of(context).cardColor,
           shape: BoxShape.circle,
-          border: Border.all(color: Colors.black),
+          border: Border.all(color: Theme.of(context).dividerColor),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 4,
+              offset: const Offset(0, 2),
+            ),
+          ],
         ),
-        child: Icon(icon, color: Colors.grey.withOpacity(0.85), size: 24),
+        child: Icon(
+          icon,
+          color: Theme.of(context).colorScheme.onSurface.withOpacity(0.85),
+          size: 24,
+        ),
       ),
     );
   }
@@ -455,14 +476,18 @@ class _FullScreenMapState extends State<FullScreenMap> {
       snapSizes: const [0.18, 0.38],
       builder: (context, scrollController) {
         return Container(
-          decoration: const BoxDecoration(
-            color: Color(0xFFF1F4F7), // Lighter background as per screenshots
-            borderRadius: BorderRadius.only(
+          decoration: BoxDecoration(
+            color: Theme.of(context).scaffoldBackgroundColor,
+            borderRadius: const BorderRadius.only(
               topLeft: Radius.circular(36),
               topRight: Radius.circular(36),
             ),
             boxShadow: [
-              BoxShadow(color: Colors.black12, blurRadius: 15, spreadRadius: 2),
+              BoxShadow(
+                color: Colors.black.withOpacity(0.1),
+                blurRadius: 15,
+                spreadRadius: 2,
+              ),
             ],
           ),
           child: SingleChildScrollView(
@@ -475,7 +500,7 @@ class _FullScreenMapState extends State<FullScreenMap> {
                   width: 44,
                   height: 5,
                   decoration: BoxDecoration(
-                    color: Colors.grey.shade300,
+                    color: Theme.of(context).dividerColor,
                     borderRadius: BorderRadius.circular(3),
                   ),
                 ),
@@ -531,14 +556,13 @@ class _FullScreenMapState extends State<FullScreenMap> {
                 style: TextStyle(
                   fontSize: 19,
                   fontWeight: FontWeight.bold,
-                  color: Color(0xFF2C3E50),
                 ),
               ),
               Text(
                 "MP09QV8269",
                 style: TextStyle(
                   fontSize: 15,
-                  color: Colors.cyan.shade600,
+                  color: Theme.of(context).colorScheme.primary,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -571,15 +595,18 @@ class _FullScreenMapState extends State<FullScreenMap> {
       children: [
         Text(
           label,
-          style: const TextStyle(
+          style: TextStyle(
             fontWeight: FontWeight.bold,
             fontSize: 14,
-            color: Color(0xFF2C3E50),
+            color: Theme.of(context).colorScheme.onSurface,
           ),
         ),
         Text(
           isDuration ? "Duration" : "Status",
-          style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+          style: TextStyle(
+            fontSize: 12,
+            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+          ),
         ),
       ],
     );
@@ -638,7 +665,13 @@ class _FullScreenMapState extends State<FullScreenMap> {
             ),
           ),
         const SizedBox(height: 6),
-        Text(label, style: TextStyle(fontSize: 12, color: Colors.grey.shade600)),
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: 12,
+            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+          ),
+        ),
       ],
     );
   }
@@ -647,8 +680,9 @@ class _FullScreenMapState extends State<FullScreenMap> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.6),
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: Theme.of(context).dividerColor),
       ),
       child: Row(
         children: [
@@ -665,7 +699,9 @@ class _FullScreenMapState extends State<FullScreenMap> {
                     height: 10,
                     margin: const EdgeInsets.symmetric(horizontal: 1.5),
                     decoration: BoxDecoration(
-                      color: i < 3 ? Colors.grey.shade500 : Colors.grey.shade300,
+                      color: i < 3
+                          ? Theme.of(context).colorScheme.onSurface.withOpacity(0.4)
+                          : Theme.of(context).dividerColor,
                       borderRadius: BorderRadius.circular(2),
                     ),
                   ),
@@ -704,7 +740,9 @@ class _FullScreenMapState extends State<FullScreenMap> {
   Widget _buildNavIcon(IconData icon, {bool isSelected = false}) {
     return Icon(
       icon,
-      color: isSelected ? Colors.cyan.shade700 : Colors.grey.shade600,
+      color: isSelected
+          ? Theme.of(context).colorScheme.primary
+          : Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
       size: 28,
     );
   }

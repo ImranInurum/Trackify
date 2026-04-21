@@ -141,13 +141,16 @@ class _DraggableAppBarState extends State<DraggableAppBar>
                   child: Container(
                     width: double.infinity,
                     decoration: ShapeDecoration(
-                      color: widget.backgroundColor ?? Colors.white,
+                      color: widget.backgroundColor ?? Theme.of(context).cardColor,
                       shape: RoundedRectangleBorder(
                         borderRadius: const BorderRadius.only(
                           bottomLeft: Radius.circular(26),
                           bottomRight: Radius.circular(26),
                         ),
-                        side: BorderSide(color: Colors.grey.shade300, width: 0.8),
+                        side: BorderSide(
+                          color: Theme.of(context).dividerColor,
+                          width: 0.8,
+                        ),
                       ),
                       shadows: [
                         BoxShadow(
@@ -189,13 +192,13 @@ class _DraggableAppBarState extends State<DraggableAppBar>
                                             ),
                                             child: Row(
                                               children: [
-                                                const Expanded(
+                                                 Expanded(
                                                   child: Text(
                                                     'My Garage',
                                                     style: TextStyle(
                                                       fontSize: 16,
                                                       fontWeight: FontWeight.w600,
-                                                      color: Colors.black,
+                                                      color: Theme.of(context).colorScheme.onSurface,
                                                     ),
                                                   ),
                                                 ),
@@ -247,7 +250,7 @@ class _DraggableAppBarState extends State<DraggableAppBar>
                                               if (widget.onAddVehicle != null)
                                                 InkWell(
                                                   onTap: widget.onAddVehicle,
-                                                  child: const Padding(
+                                                  child:  Padding(
                                                     padding: EdgeInsets.symmetric(
                                                       horizontal: 18,
                                                       vertical: 16,
@@ -256,14 +259,14 @@ class _DraggableAppBarState extends State<DraggableAppBar>
                                                       children: [
                                                         Icon(
                                                           Icons.add_box_outlined,
-                                                          color: AppColors.primaryLight,
+                                                          color: Theme.of(context).colorScheme.primary,
                                                           size: 20,
                                                         ),
-                                                        SizedBox(width: 8),
+                                                        const SizedBox(width: 8),
                                                         Text(
                                                           'Add New Vehicle',
                                                           style: TextStyle(
-                                                            color: AppColors.primaryLight,
+                                                            color: Theme.of(context).colorScheme.primary,
                                                             fontSize: 14,
                                                             fontWeight: FontWeight.w600,
                                                           ),
@@ -292,7 +295,7 @@ class _DraggableAppBarState extends State<DraggableAppBar>
                                           decoration: BoxDecoration(
                                             border: Border(
                                               bottom: BorderSide(
-                                                color: Colors.grey,
+                                                color: Theme.of(context).dividerColor,
                                                 width: 0.25,
                                               ),
                                             ),
@@ -321,7 +324,7 @@ class _DraggableAppBarState extends State<DraggableAppBar>
                                                     width: 55,
                                                     height: 2.5,
                                                     decoration: BoxDecoration(
-                                                      color: Colors.black,
+                                                      color: Theme.of(context).colorScheme.onSurface.withOpacity(0.2),
                                                       borderRadius: BorderRadius.circular(
                                                         24,
                                                       ),
@@ -346,11 +349,14 @@ class _DraggableAppBarState extends State<DraggableAppBar>
                                 height: 26,
                                 decoration: BoxDecoration(
                                   border: Border(
-                                    bottom: BorderSide(color: Colors.grey, width: 0.15),
+                                    bottom: BorderSide(
+                                      color: Theme.of(context).dividerColor,
+                                      width: 0.15,
+                                    ),
                                   ),
                                   boxShadow: [
                                     BoxShadow(
-                                      color: Colors.black.withOpacity(0.15),
+                                      color: Colors.black.withOpacity(0.1),
                                       blurRadius: 20,
                                       offset: const Offset(0, 0),
                                     ),
@@ -359,8 +365,8 @@ class _DraggableAppBarState extends State<DraggableAppBar>
                                     begin: Alignment.bottomCenter,
                                     end: Alignment.topCenter,
                                     colors: [
-                                      AppColors.primaryLightVariant.withOpacity(0.75),
-                                      AppColors.primaryLightVariant.withOpacity(0.05),
+                                      Theme.of(context).colorScheme.primaryContainer.withOpacity(0.75),
+                                      Theme.of(context).colorScheme.primaryContainer.withOpacity(0.05),
                                     ],
                                   ),
                                 ),
@@ -394,7 +400,9 @@ class _DraggableAppBarState extends State<DraggableAppBar>
             },
       child: Container(
         padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
-        color: isHighlighted ? const Color(0xFFF0F4F8) : Colors.transparent,
+        color: isHighlighted
+            ? Theme.of(context).colorScheme.primary.withOpacity(0.08)
+            : Colors.transparent,
         child: Row(
           children: [
             // Image
@@ -408,10 +416,10 @@ class _DraggableAppBarState extends State<DraggableAppBar>
                 children: [
                   Text(
                     "${device.vehicleMaker} ${device.vehicleModel}",
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.w700,
-                      color: Colors.black87,
+                      color: Theme.of(context).colorScheme.onSurface,
                     ),
                   ),
                   // const SizedBox(height: 2),
@@ -419,9 +427,9 @@ class _DraggableAppBarState extends State<DraggableAppBar>
                     children: [
                       Text(
                         device.vehicleNumber ?? '---',
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 13,
-                          color: Colors.grey,
+                          color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
                           fontWeight: FontWeight.w500,
                         ),
                       ),
@@ -437,7 +445,10 @@ class _DraggableAppBarState extends State<DraggableAppBar>
             // Right Side info / icon
             if (!_isExpanded && isHeaderRow)
               widget.collapsedTrailing ??
-                  const Icon(Icons.notifications_none_outlined, color: Colors.black87)
+                  Icon(
+                    Icons.notifications_none_outlined,
+                    color: Theme.of(context).colorScheme.onSurface,
+                  )
             else if (_isExpanded && isHeaderRow)
               const Text(
                 '321 days left',
@@ -473,7 +484,7 @@ class _DraggableAppBarState extends State<DraggableAppBar>
       "${device.fuelType}", // Default for now
       style: TextStyle(
         fontSize: 11,
-        color: AppColors.primaryLight,
+        color: Theme.of(context).colorScheme.primary,
         fontWeight: FontWeight.w700,
       ),
     );

@@ -48,12 +48,12 @@ class _ChoiceSelectorState extends State<ChoiceSelector> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     return Scaffold(
-      backgroundColor: AppColors.backgroundLight,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black87),
+          icon: Icon(Icons.arrow_back, color: Theme.of(context).colorScheme.onSurface),
           onPressed: () {
             if (Navigator.of(context).canPop()) {
               Navigator.of(context).pop();
@@ -135,11 +135,15 @@ class _ChoiceSelectorState extends State<ChoiceSelector> {
                     (Route<dynamic> route) => false,
                   );
                 },
-                icon: const Icon(Icons.logout, color: Colors.grey, size: 20),
+                icon: Icon(
+                  Icons.logout,
+                  color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
+                  size: 20,
+                ),
                 label: Text(
                   l10n.logout,
-                  style: const TextStyle(
-                    color: Colors.grey,
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
                     fontSize: 15,
                     fontWeight: FontWeight.w500,
                   ),
@@ -167,17 +171,20 @@ class _ChoiceSelectorState extends State<ChoiceSelector> {
         margin: const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: Colors.grey, width: 0.3),
-          gradient: const LinearGradient(
+          border: Border.all(color: Theme.of(context).dividerColor),
+          gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [Color(0xFFF0F2F5), Color(0xFFD2D6DC)],
+            colors: [
+              Theme.of(context).cardColor,
+              Theme.of(context).cardColor.withOpacity(0.8),
+            ],
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.15),
-              blurRadius: 1,
-              offset: const Offset(0, 1),
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 4,
+              offset: const Offset(0, 2),
             ),
           ],
         ),
@@ -186,7 +193,11 @@ class _ChoiceSelectorState extends State<ChoiceSelector> {
           children: [
             Padding(
               padding: const EdgeInsets.all(8.0),
-              child: Icon(Icons.arrow_forward, color: Colors.grey.shade600, size: 20),
+              child: Icon(
+                Icons.arrow_forward,
+                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.4),
+                size: 20,
+              ),
             ),
             Padding(
               padding: const EdgeInsets.only(left: 12.0, right: 12.0, bottom: 32.0),
@@ -201,17 +212,17 @@ class _ChoiceSelectorState extends State<ChoiceSelector> {
                         children: [
                           Text(
                             title,
-                            style: const TextStyle(
-                              color: AppColors.secondaryLight,
+                            style: TextStyle(
+                              color: Theme.of(context).colorScheme.onSurface,
                               fontSize: 16,
-                              fontWeight: FontWeight.w600,
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
                           const SizedBox(height: 8),
                           Text(
                             subtitle,
-                            style: const TextStyle(
-                              color: AppColors.textSecondaryLight,
+                            style: TextStyle(
+                              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
                               fontSize: 13,
                               height: 1.4,
                             ),

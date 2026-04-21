@@ -33,12 +33,13 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
       firstDate: DateTime(2000),
       lastDate: DateTime(2101),
       builder: (context, child) {
+        final theme = Theme.of(context);
         return Theme(
-          data: Theme.of(context).copyWith(
-            colorScheme: ColorScheme.light(
-              primary: AppColors.secondaryLight,
-              onPrimary: Colors.white,
-              onSurface: AppColors.textPrimaryLight,
+          data: theme.copyWith(
+            colorScheme: theme.colorScheme.copyWith(
+              primary: theme.colorScheme.primary,
+              onPrimary: theme.colorScheme.onPrimary,
+              onSurface: theme.colorScheme.onSurface,
             ),
           ),
           child: child!,
@@ -56,12 +57,12 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     return Scaffold(
-      backgroundColor: AppColors.backgroundLight,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         title: Text(
           l10n.statistics,
-          style: const TextStyle(
-            color: Colors.black,
+          style: TextStyle(
+            color: Theme.of(context).colorScheme.onSurface,
             fontWeight: FontWeight.bold,
             fontSize: 20,
           ),
@@ -123,11 +124,11 @@ class _DatePickerBar extends StatelessWidget {
     final l10n = AppLocalizations.of(context)!;
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: AppColors.shadowColor.withOpacity(0.3),
+            color: Colors.black.withOpacity(0.1),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -142,11 +143,19 @@ class _DatePickerBar extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             child: Row(
               children: [
-                const Icon(Icons.calendar_today_outlined, size: 20, color: Colors.grey),
+                Icon(
+                  Icons.calendar_today_outlined,
+                  size: 20,
+                  color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+                ),
                 const SizedBox(width: 12),
                 Text(
                   _formatDate(context, selectedDate),
-                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                    color: Theme.of(context).colorScheme.onSurface,
+                  ),
                 ),
                 const Spacer(),
                 GestureDetector(
@@ -187,7 +196,7 @@ class _ArrowButton extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
         child: Container(
           padding: const EdgeInsets.all(4),
-          child: Icon(icon, size: 28, color: Colors.black),
+          child: Icon(icon, size: 28, color: Theme.of(context).colorScheme.onSurface),
         ),
       ),
     );
@@ -203,11 +212,11 @@ class _RidingBehaviourCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: AppColors.shadowColor.withOpacity(0.2),
+            color: Colors.black.withOpacity(0.1),
             blurRadius: 8,
             offset: const Offset(0, 4),
           ),
@@ -218,7 +227,11 @@ class _RidingBehaviourCard extends StatelessWidget {
         children: [
           Text(
             l10n.ridingBehaviour,
-            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
           ),
           const SizedBox(height: 16),
           Row(
@@ -236,9 +249,9 @@ class _RidingBehaviourCard extends StatelessWidget {
               Expanded(
                 child: Text(
                   l10n.ridingBehaviourVacationDesc,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 13,
-                    color: AppColors.textSecondaryLight,
+                    color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
                     height: 1.4,
                   ),
                 ),
@@ -340,11 +353,11 @@ class _StatSectionCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: AppColors.shadowColor.withOpacity(0.2),
+            color: Colors.black.withOpacity(0.1),
             blurRadius: 8,
             offset: const Offset(0, 4),
           ),
@@ -358,16 +371,24 @@ class _StatSectionCard extends StatelessWidget {
             children: [
               Text(
                 title,
-                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
               ),
-              const Icon(Icons.chevron_right_rounded, color: Colors.grey, size: 20),
+              Icon(
+                Icons.chevron_right_rounded,
+                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.3),
+                size: 20,
+              ),
             ],
           ),
           const SizedBox(height: 16),
           Row(
             children: [
               Expanded(child: metrics[0]),
-              Container(width: 1, height: 60, color: Colors.grey.withOpacity(0.1)),
+              Container(width: 1, height: 60, color: Theme.of(context).dividerColor),
               Expanded(child: metrics[1]),
             ],
           ),
@@ -418,9 +439,9 @@ class _MetricItem extends StatelessWidget {
               Expanded(
                 child: Text(
                   label,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 11,
-                    color: AppColors.textSecondaryLight,
+                    color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
                     fontWeight: FontWeight.w400,
                   ),
                   maxLines: 1,
@@ -432,10 +453,10 @@ class _MetricItem extends StatelessWidget {
           const SizedBox(height: 12),
           Text(
             value,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 22,
               fontWeight: FontWeight.bold,
-              color: Colors.black,
+              color: Theme.of(context).colorScheme.onSurface,
             ),
           ),
           const SizedBox(height: 4),
@@ -448,7 +469,7 @@ class _MetricItem extends StatelessWidget {
                   l10n.vsPreviousPeriod('0'),
                   style: TextStyle(
                     fontSize: 10,
-                    color: Colors.grey.shade600,
+                    color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
                     fontWeight: FontWeight.w400,
                   ),
                   maxLines: 1,

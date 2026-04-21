@@ -70,7 +70,7 @@ class _MapScreenState extends State<MapScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.backgroundLight,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: MultiBlocListener(
         listeners: [
           BlocListener<MapCubit, MapState>(listener: (context, state) {}),
@@ -139,9 +139,9 @@ class _MapScreenState extends State<MapScreen> {
                         ),
                       );
                     },
-                    icon: const Icon(
+                    icon: Icon(
                       Icons.notifications_none_rounded,
-                      color: Colors.black,
+                      color: Theme.of(context).colorScheme.onSurface,
                       size: 26,
                     ),
                   ),
@@ -153,7 +153,11 @@ class _MapScreenState extends State<MapScreen> {
                         context,
                       ).push(MaterialPageRoute(builder: (context) => MyGarageScreen()));
                     },
-                    icon: const Icon(Icons.settings, color: Colors.black, size: 20),
+                    icon: Icon(
+                      Icons.settings,
+                      color: Theme.of(context).colorScheme.onSurface,
+                      size: 20,
+                    ),
                   ),
                   onAddVehicle: () {
                     Navigator.of(context).push(
@@ -186,12 +190,11 @@ class _MapScreenState extends State<MapScreen> {
         margin: const EdgeInsets.all(16),
         padding: EdgeInsets.all(6.0),
         decoration: BoxDecoration(
-          color: AppColors.primaryLightVariant.withOpacity(0.98),
+          color: Theme.of(context).cardColor,
           borderRadius: const BorderRadius.all(Radius.circular(5)),
-          border: Border.all(color: Colors.grey.shade300),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.3),
+              color: Colors.black.withOpacity(0.1),
               blurRadius: 2,
               offset: const Offset(0, 1),
             ),
@@ -304,7 +307,6 @@ class _MapScreenState extends State<MapScreen> {
                 ],
               ),
             ),
-            Spacer(),
             Expanded(
               child: Column(
                 children: [
@@ -323,14 +325,24 @@ class _MapScreenState extends State<MapScreen> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        Text("$label:", style: getRegularStyle(color: Colors.black54, fontSize: 11)),
-        SizedBox(width: 4),
         Text(
-          value,
-          style: getThinStyle(
-            color: Colors.black87,
-            fontSize: 13,
-          ).copyWith(fontWeight: FontWeight.w500),
+          "$label:",
+          style: getRegularStyle(
+            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+            fontSize: 11,
+          ),
+        ),
+        const SizedBox(width: 4),
+        Flexible(
+          child: Text(
+            value,
+            style: getThinStyle(
+              color: Theme.of(context).colorScheme.onSurface,
+              fontSize: 13,
+            ).copyWith(fontWeight: FontWeight.w500),
+            overflow: TextOverflow.ellipsis,
+            maxLines: 1,
+          ),
         ),
       ],
     );
@@ -341,9 +353,9 @@ class _MapScreenState extends State<MapScreen> {
       margin: const EdgeInsets.symmetric(horizontal: 16),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.grey.shade100),
+        border: Border.all(color: Theme.of(context).dividerColor.withOpacity(0.5)),
       ),
       child: Row(
         children: [
@@ -356,10 +368,13 @@ class _MapScreenState extends State<MapScreen> {
                 CircularProgressIndicator(
                   value: 0.63,
                   strokeWidth: 3.5,
-                  backgroundColor: Colors.grey.shade100,
-                  valueColor: const AlwaysStoppedAnimation<Color>(Colors.cyan),
+                  backgroundColor: Theme.of(context).dividerColor,
+                  valueColor: AlwaysStoppedAnimation<Color>(Theme.of(context).colorScheme.primary),
                 ),
-                Text("63%", style: getBoldStyle(color: Colors.cyan, fontSize: 10)),
+                Text(
+                  "63%",
+                  style: getBoldStyle(color: Theme.of(context).colorScheme.primary, fontSize: 10),
+                ),
               ],
             ),
           ),
@@ -372,19 +387,33 @@ class _MapScreenState extends State<MapScreen> {
                   children: [
                     Text(
                       "Get more out of Trackify",
-                      style: getBoldStyle(color: Colors.cyan.shade800, fontSize: 14),
+                      style: getBoldStyle(
+                        color: Theme.of(context).colorScheme.primary,
+                        fontSize: 14,
+                      ),
                     ),
-                    const Icon(Icons.chevron_right, color: Colors.cyan, size: 18),
+                    Icon(
+                      Icons.chevron_right,
+                      color: Theme.of(context).colorScheme.primary,
+                      size: 18,
+                    ),
                   ],
                 ),
                 Text(
                   "Discover more — awesome things await!",
-                  style: getRegularStyle(color: Colors.grey.shade600, fontSize: 11),
+                  style: getRegularStyle(
+                    color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+                    fontSize: 11,
+                  ),
                 ),
               ],
             ),
           ),
-          const Icon(Icons.close, color: Colors.grey, size: 18),
+          Icon(
+            Icons.close,
+            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.4),
+            size: 18,
+          ),
         ],
       ),
     );
@@ -419,14 +448,25 @@ class _MapScreenState extends State<MapScreen> {
       margin: const EdgeInsets.all(16),
       padding: const EdgeInsets.all(16.0),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(18),
-        boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 6)],
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 6,
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text("Explore more", style: getBoldStyle(color: Colors.black87, fontSize: 17)),
+          Text(
+            "Explore more",
+            style: getBoldStyle(
+              color: Theme.of(context).colorScheme.onSurface,
+              fontSize: 17,
+            ),
+          ),
           const SizedBox(height: 24),
           GridView.builder(
             shrinkWrap: true,
@@ -485,7 +525,7 @@ class _MapScreenState extends State<MapScreen> {
                           Icon(
                             option["icon"] as IconData,
                             size: 28,
-                            color: Colors.black87,
+                            color: Theme.of(context).colorScheme.onSurface,
                           ),
                           if (option["badge"] != null)
                             Positioned(
@@ -497,7 +537,7 @@ class _MapScreenState extends State<MapScreen> {
                                   vertical: 2,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: const Color(0xFF00A3E0),
+                                  color: Theme.of(context).colorScheme.primary,
                                   borderRadius: BorderRadius.circular(4),
                                 ),
                                 child: Text(
@@ -517,7 +557,10 @@ class _MapScreenState extends State<MapScreen> {
                       option["label"] as String,
                       textAlign: TextAlign.center,
                       maxLines: 2,
-                      style: getMediumStyle(color: Colors.black54, fontSize: 11),
+                      style: getMediumStyle(
+                        color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+                        fontSize: 11,
+                      ),
                     ),
                   ],
                 ),

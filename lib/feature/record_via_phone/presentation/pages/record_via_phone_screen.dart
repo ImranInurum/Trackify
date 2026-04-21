@@ -68,7 +68,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
       child: DefaultTabController(
         length: 3,
         child: Scaffold(
-          backgroundColor: AppColors.backgroundLight,
+          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
           appBar: AppBar(
             elevation: 0,
             backgroundColor: Colors.transparent,
@@ -76,14 +76,14 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
               "Phone Tracking",
               style: theme.textTheme.headlineSmall?.copyWith(
                 fontWeight: FontWeight.bold,
-                color: AppColors.textPrimaryLight,
+                color: Theme.of(context).colorScheme.onSurface,
               ),
             ),
             bottom: TabBar(
-              indicatorColor: AppColors.primaryLight,
+              indicatorColor: Theme.of(context).colorScheme.primary,
               indicatorWeight: 3,
-              labelColor: AppColors.primaryLight,
-              unselectedLabelColor: AppColors.textSecondaryLight,
+              labelColor: Theme.of(context).colorScheme.primary,
+              unselectedLabelColor: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
               labelStyle: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
               tabs: const [
                 Tab(text: "Live Record"),
@@ -118,7 +118,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
                   Polyline(
                     polylineId: const PolylineId("live_ride"),
                     points: state.currentRidePoints,
-                    color: AppColors.primaryLight,
+                    color: Theme.of(context).colorScheme.primary,
                     width: 5,
                     jointType: JointType.round,
                     startCap: Cap.roundCap,
@@ -151,7 +151,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: Theme.of(context).cardColor,
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
@@ -176,10 +176,23 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
   Widget _buildStatItem(String label, String value, IconData icon) {
     return Column(
       children: [
-        Icon(icon, color: AppColors.primaryLight, size: 20),
+        Icon(icon, color: Theme.of(context).colorScheme.primary, size: 20),
         const SizedBox(height: 4),
-        Text(value, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-        Text(label, style: TextStyle(color: Colors.grey.shade600, fontSize: 12)),
+        Text(
+          value,
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 16,
+            color: Theme.of(context).colorScheme.onSurface,
+          ),
+        ),
+        Text(
+          label,
+          style: TextStyle(
+            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+            fontSize: 12,
+          ),
+        ),
       ],
     );
   }
@@ -198,11 +211,11 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
         height: 80,
         width: 80,
         decoration: BoxDecoration(
-          color: isRecording ? Colors.red : AppColors.primaryLight,
+          color: isRecording ? Colors.red : Theme.of(context).colorScheme.primary,
           shape: BoxShape.circle,
           boxShadow: [
             BoxShadow(
-              color: (isRecording ? Colors.red : AppColors.primaryLight).withOpacity(0.4),
+              color: (isRecording ? Colors.red : Theme.of(context).colorScheme.primary).withOpacity(0.4),
               blurRadius: 15,
               spreadRadius: 2,
             ),
@@ -247,7 +260,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
         decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.9),
+          color: Theme.of(context).cardColor.withOpacity(0.95),
           borderRadius: BorderRadius.circular(30),
           boxShadow: [
             BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10),
@@ -294,7 +307,11 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         child: Text(
           label,
-          style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
+          style: TextStyle(
+            fontWeight: FontWeight.w600,
+            fontSize: 13,
+            color: Theme.of(context).colorScheme.onSurface,
+          ),
         ),
       ),
     );
@@ -311,7 +328,11 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
           const SizedBox(height: 25),
           Text(
             "Quick Stats",
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.grey.shade800),
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
           ),
           const SizedBox(height: 15),
           GridView.count(
@@ -339,14 +360,17 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [AppColors.primaryLight, AppColors.secondaryLight],
+          colors: [
+            Theme.of(context).colorScheme.primary,
+            Theme.of(context).colorScheme.primary.withOpacity(0.8),
+          ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: AppColors.primaryLight.withOpacity(0.3),
+            color: Theme.of(context).colorScheme.primary.withOpacity(0.3),
             blurRadius: 20,
             offset: const Offset(0, 10),
           ),
@@ -391,10 +415,13 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
-          BoxShadow(color: Colors.black.withOpacity(0.03), blurRadius: 10),
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+          ),
         ],
       ),
       child: Column(
@@ -406,8 +433,21 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
             child: Icon(icon, color: color, size: 24),
           ),
           const SizedBox(height: 12),
-          Text(value, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-          Text(label, style: TextStyle(color: Colors.grey.shade500, fontSize: 13)),
+          Text(
+            value,
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
+          ),
+          Text(
+            label,
+            style: TextStyle(
+              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
+              fontSize: 13,
+            ),
+          ),
         ],
       ),
     );

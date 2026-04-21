@@ -30,30 +30,47 @@ class _TripScreenState extends State<TripScreen> with SingleTickerProviderStateM
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF6F6F6),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
 
       /// APP BAR
       appBar: AppBar(
-        elevation: 2,
-        shadowColor: Colors.black12,
-        backgroundColor: Colors.white,
-        title: const Text(
+        elevation: 1,
+        shadowColor: Colors.black.withOpacity(0.1),
+        backgroundColor: Theme.of(context).cardColor,
+        title: Text(
           "Journey",
-          style: TextStyle(color: Colors.black, fontWeight: FontWeight.w600),
+          style: TextStyle(
+            color: Theme.of(context).colorScheme.onSurface,
+            fontWeight: FontWeight.w600,
+          ),
         ),
         actions: [
           PopupMenuButton<String>(
             elevation: 8,
+            color: Theme.of(context).cardColor,
+            surfaceTintColor: Colors.transparent,
             onSelected: (value) {
               ScaffoldMessenger.of(
                 context,
               ).showSnackBar(SnackBar(content: Text("$value Clicked")));
             },
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-            icon: const Icon(Icons.more_vert, color: Colors.black),
-            itemBuilder: (context) => const [
-              PopupMenuItem(value: "Shared Rides", child: Text("Shared Rides")),
-              PopupMenuItem(value: "Saved Rides", child: Text("Saved Rides")),
+            icon: Icon(Icons.more_vert, color: Theme.of(context).colorScheme.onSurface),
+            itemBuilder: (context) => [
+              PopupMenuItem(
+                value: "Shared Rides",
+                child: Text(
+                  "Shared Rides",
+                  style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
+                ),
+              ),
+              PopupMenuItem(
+                value: "Saved Rides",
+                child: Text(
+                  "Saved Rides",
+                  style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
+                ),
+              ),
             ],
           ),
         ],
@@ -83,8 +100,9 @@ class _TripScreenState extends State<TripScreen> with SingleTickerProviderStateM
       margin: const EdgeInsets.all(16),
       padding: const EdgeInsets.all(4),
       decoration: BoxDecoration(
-        color: const Color(0xFFEFEFEF),
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(30),
+        border: Border.all(color: Theme.of(context).dividerColor),
       ),
       child: Row(
         children: [
@@ -112,7 +130,9 @@ class _TripScreenState extends State<TripScreen> with SingleTickerProviderStateM
               label,
               style: TextStyle(
                 fontWeight: FontWeight.w700,
-                color: isSelected ? theme.colorScheme.primary : Colors.black,
+                color: isSelected
+                    ? theme.colorScheme.primary
+                    : theme.colorScheme.onSurface.withOpacity(0.5),
               ),
             ),
           ),
