@@ -138,7 +138,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
         label,
         style: textTheme.bodySmall?.copyWith(
           fontWeight: FontWeight.bold,
-          color: Colors.black54,
+          color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
         ),
       ),
     );
@@ -150,12 +150,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
     final textTheme = theme.textTheme;
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_rounded, color: Colors.black87),
+          icon: Icon(Icons.arrow_back_rounded, color: Theme.of(context).colorScheme.onSurface),
           onPressed: () => Navigator.of(context).pop(),
         ),
       ),
@@ -198,15 +198,15 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             onTap: _pickProfileImage,
                             child: CircleAvatar(
                               radius: 50,
-                              backgroundColor: Colors.grey[200],
+                              backgroundColor: Theme.of(context).cardColor,
                               backgroundImage: _userProfile != null
                                   ? FileImage(_userProfile!)
                                   : null,
                               child: _userProfile == null
-                                  ? const Icon(
+                                  ? Icon(
                                       Icons.camera_alt,
                                       size: 40,
-                                      color: Colors.grey,
+                                      color: Theme.of(context).colorScheme.onSurface.withOpacity(0.4),
                                     )
                                   : null,
                             ),
@@ -216,7 +216,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         Center(
                           child: Text(
                             l10n.selectProfileImage,
-                            style: textTheme.bodySmall?.copyWith(color: Colors.black54),
+                            style: textTheme.bodySmall?.copyWith(
+                              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
+                            ),
                           ),
                         ),
                         const SizedBox(height: 30),
@@ -327,18 +329,18 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             decoration: InputDecoration(
                               hintText: l10n.selectRoleHint,
                               filled: true,
-                              fillColor: const Color(0xFFF9FAFB),
+                              fillColor: theme.inputDecorationTheme.fillColor ?? theme.cardColor,
                               contentPadding: const EdgeInsets.symmetric(
                                 horizontal: 0,
                                 vertical: 14,
                               ),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
-                                borderSide: const BorderSide(color: Color(0xFFE5E7EB)),
+                                borderSide: BorderSide(color: Theme.of(context).dividerColor),
                               ),
                               enabledBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
-                                borderSide: const BorderSide(color: Color(0xFFE5E7EB)),
+                                borderSide: BorderSide(color: Theme.of(context).dividerColor),
                               ),
                               focusedBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
@@ -348,16 +350,16 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                 ),
                               ),
                             ),
-                            iconStyleData: const IconStyleData(
+                            iconStyleData: IconStyleData(
                               icon: Icon(
                                 Icons.keyboard_arrow_down_rounded,
-                                color: Colors.grey,
+                                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
                                 size: 24,
                               ),
                             ),
                             dropdownStyleData: DropdownStyleData(
                               decoration: BoxDecoration(
-                                color: Colors.white,
+                                color: Theme.of(context).cardColor,
                                 borderRadius: BorderRadius.circular(12),
                                 boxShadow: [
                                   BoxShadow(
@@ -377,9 +379,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                 value: role, // if error, change this to: id: role
                                 child: Text(
                                   role == 'admin' ? l10n.roleAdmin : l10n.roleCustomer,
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     fontSize: 15,
-                                    color: Colors.black87,
+                                    color: Theme.of(context).colorScheme.onSurface,
                                   ),
                                 ),
                               );
@@ -406,7 +408,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             children: [
                               Text(
                                 l10n.alreadyHaveAccount,
-                                style: const TextStyle(color: Colors.black87),
+                                style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
                               ),
                               TextButton(
                                 onPressed: () {

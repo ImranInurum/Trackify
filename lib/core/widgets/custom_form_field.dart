@@ -131,17 +131,17 @@ class _CustomFormFieldState extends State<CustomFormField> {
                 children: [
                   TextSpan(
                     text: widget.header,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
-                      color: AppColors.textPrimaryLight,
+                      color: Theme.of(context).colorScheme.onSurface,
                     ),
                   ),
                   if (widget.isFieldMandatory)
-                    const TextSpan(
+                    TextSpan(
                       text: ' *',
                       style: TextStyle(
-                        color: AppColors.errorLight,
+                        color: Theme.of(context).colorScheme.error,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -167,7 +167,10 @@ class _CustomFormFieldState extends State<CustomFormField> {
             textCapitalization: widget.textCapitalization,
             enableInteractiveSelection: widget.enableInteractiveSelection,
             enabled: !(widget.disabled ?? false),
-            style: const TextStyle(fontSize: 16),
+            style: TextStyle(
+              fontSize: 16,
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
             onFieldSubmitted: widget.onFieldSubmitted,
             focusNode: node,
             inputFormatters: widget.inputFormatters,
@@ -187,13 +190,13 @@ class _CustomFormFieldState extends State<CustomFormField> {
             keyboardType: widget.keyboardType,
             decoration: InputDecoration(
               hintText: widget.hint,
-              hintStyle: const TextStyle(
+              hintStyle: TextStyle(
                 overflow: TextOverflow.ellipsis,
-                color: Colors.grey,
+                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
                 fontSize: 14,
               ),
               filled: true,
-              fillColor: widget.backgroundColor ?? const Color(0xFFF9FAFB),
+              fillColor: widget.backgroundColor ?? theme.inputDecorationTheme.fillColor ?? theme.cardColor,
               contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               prefixText: widget.prefixText,
               suffixIcon: _buildSuffixIcons(),
@@ -213,11 +216,11 @@ class _CustomFormFieldState extends State<CustomFormField> {
               ),
               errorBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(8.0),
-                borderSide: BorderSide(color: AppColors.errorLight),
+                borderSide: BorderSide(color: Theme.of(context).colorScheme.error),
               ),
               focusedErrorBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(8.0),
-                borderSide: BorderSide(color: AppColors.errorLight, width: 1.5),
+                borderSide: BorderSide(color: Theme.of(context).colorScheme.error, width: 1.5),
               ),
             ),
           ),
@@ -235,7 +238,11 @@ class _CustomFormFieldState extends State<CustomFormField> {
           padding: const EdgeInsets.only(right: 4.0),
           child: IconButton(
             onPressed: widget.onSearch,
-            icon: const Icon(Icons.search, size: 30),
+            icon: Icon(
+              Icons.search,
+              size: 30,
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
           ),
         ),
       );
@@ -250,7 +257,11 @@ class _CustomFormFieldState extends State<CustomFormField> {
               widget.value?.clear();
               _handleTextChanged('');
             },
-            icon: const Icon(Icons.clear_rounded, size: 14),
+            icon: Icon(
+              Icons.clear_rounded,
+              size: 14,
+              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
+            ),
           ),
         ),
       );
@@ -267,7 +278,9 @@ class _CustomFormFieldState extends State<CustomFormField> {
               child: Icon(
                 Icons.attach_file,
                 size: 30,
-                color: widget.disabled ?? false ? Colors.grey : Colors.black,
+                color: widget.disabled ?? false 
+                    ? Theme.of(context).disabledColor 
+                    : Theme.of(context).colorScheme.onSurface,
               ),
             ),
           ),
@@ -288,7 +301,7 @@ class _CustomFormFieldState extends State<CustomFormField> {
             icon: Icon(
               _isObscured ? Icons.visibility_off_outlined : Icons.visibility_outlined,
               size: 20,
-              color: Colors.grey,
+              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
             ),
           ),
         ),
