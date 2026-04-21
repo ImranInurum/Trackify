@@ -13,6 +13,7 @@ import '../../core/services/location_service.dart';
 import '../../core/services/socket_service.dart';
 import '../../core/utils/shared_preferences.dart';
 import '../../core/theme/models/app_theme_model.dart';
+import '../../core/constants/app_languages.dart';
 import '../../feature/auth/data/entity/login_response_model.dart';
 import 'app_state.dart';
 
@@ -141,21 +142,16 @@ class AppCubit extends Cubit<AppState> {
     }
 
     if (selectedLanguageKey.isNotEmpty) {
-      Locale? locale;
-      if (selectedLanguageKey == 'Hindi') {
-        locale = const Locale('hi');
-      } else if (selectedLanguageKey == 'Arabic') {
-        locale = const Locale('ar');
-      } else if (selectedLanguageKey == 'Marathi') {
-        locale = const Locale('mr');
-      } else if (selectedLanguageKey == 'Tamil') {
-        locale = const Locale('ta');
-      } else if (selectedLanguageKey == 'Kannada') {
-        locale = const Locale('kn');
-      } else {
-        locale = const Locale('en');
+      try {
+        final language = AppLanguages.languages.firstWhere(
+          (lang) => (lang['key'] as String).toLowerCase() == selectedLanguageKey.toLowerCase(),
+          orElse: () => AppLanguages.languages.first,
+        );
+        emit(state.copyWith(locale: language['locale'] as Locale));
+      } catch (e) {
+        print("Error setting initial locale: $e");
+        emit(state.copyWith(locale: const Locale('en')));
       }
-      emit(state.copyWith(locale: locale));
     }
   }
 
@@ -223,9 +219,12 @@ class AppCubit extends Cubit<AppState> {
   }
 
   /// Change app locale/language
-  void changeLocale(Locale locale) {
+  void changeLocale(Locale locale, String languageKey) async {
     emit(state.copyWith(locale: locale));
-    // Optional: Save to local storage
+    await AppPreference.instance.set(
+      key: AppPreference.KEY_SELECTED_LANGUAGE,
+      value: languageKey,
+    );
   }
 
   /// Update Map Configuration

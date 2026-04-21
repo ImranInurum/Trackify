@@ -68,7 +68,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
         appBar: AppBar(
           backgroundColor: Colors.transparent,
           elevation: 0,
-          leading: const BackButton(color: Colors.black),
+          leading: BackButton(color: Theme.of(context).colorScheme.onSurface),
         ),
         body: _body(),
       ),
@@ -103,7 +103,11 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                 return Center(
                   child: Padding(
                     padding: const EdgeInsets.symmetric(vertical: 40),
-                    child: Image.asset(AppImages.appLogo, height: 120),
+                    child: Icon(
+                      Icons.track_changes_rounded,
+                      size: 88,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
                   ),
                 );
               },
@@ -113,7 +117,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
               l10n.otpDesc(widget.email),
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: Colors.grey[600],
+                    color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
                   ),
             ),
             const SizedBox(height: 35),

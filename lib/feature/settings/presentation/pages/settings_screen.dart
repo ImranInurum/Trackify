@@ -4,6 +4,7 @@ import 'package:trackify/l10n/app_localizations.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../app/cubit/app_cubit.dart';
 import '../../../../app/cubit/app_state.dart';
+import '../../../../core/constants/app_languages.dart';
 import '../../../../core/utils/shared_preferences.dart';
 import '../../../auth/presentation/pages/signin_screen.dart';
 
@@ -95,32 +96,45 @@ class SettingsScreen extends StatelessWidget {
                 final themeMode = state.themeMode;
                 final isDarkMode = themeMode == ThemeMode.dark;
 
-                return _buildItem(
-                  context: context,
-                  icon: isDarkMode ? Icons.dark_mode : Icons.light_mode,
-                  title: isDarkMode ? "Dark Mode" : "Light Theme",
-                  subtitle: "Switch between light and dark themes",
-                  showArrow: false,
-
-                  trailing: Transform.scale(
-                    scale: 0.7,
-                    child: Switch(
-                      value: isDarkMode,
-                      activeThumbColor: Theme.of(context).colorScheme.surface,
-                      activeTrackColor: Theme.of(context).colorScheme.tertiary,
-                      onChanged: (value) {
+                return Column(
+                  children: [
+                    _buildItem(
+                      context: context,
+                      icon: isDarkMode ? Icons.dark_mode : Icons.light_mode,
+                      title: isDarkMode ? "Dark Mode" : "Light Theme",
+                      subtitle: "Switch between light and dark themes",
+                      showArrow: false,
+                      trailing: Transform.scale(
+                        scale: 0.7,
+                        child: Switch(
+                          value: isDarkMode,
+                          activeThumbColor: Theme.of(context).colorScheme.surface,
+                          activeTrackColor: Theme.of(context).colorScheme.tertiary,
+                          onChanged: (value) {
+                            context.read<AppCubit>().changeTheme(
+                                  value ? ThemeMode.dark : ThemeMode.light,
+                                );
+                          },
+                        ),
+                      ),
+                      onTap: () {
                         context.read<AppCubit>().changeTheme(
-                          value ? ThemeMode.dark : ThemeMode.light,
-                        );
+                              isDarkMode ? ThemeMode.light : ThemeMode.dark,
+                            );
                       },
                     ),
-                  ),
-
-                  onTap: () {
-                    context.read<AppCubit>().changeTheme(
-                      isDarkMode ? ThemeMode.light : ThemeMode.dark,
-                    );
-                  },
+                    _buildItem(
+                      context: context,
+                      icon: Icons.language,
+                      title: l10n.selectLanguage,
+                      subtitle: AppLanguages.languages.firstWhere(
+                            (lang) => lang['locale'] == state.locale,
+                            orElse: () => AppLanguages.languages.first,
+                          )['name'] as String,
+                      showArrow: true,
+                      onTap: () => _showLanguagePicker(context),
+                    ),
+                  ],
                 );
               },
             ),
@@ -159,6 +173,67 @@ class SettingsScreen extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+
+  void _showLanguagePicker(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) {
+        return BlocBuilder<AppCubit, AppState>(
+          builder: (context, state) {
+            return Container(
+              padding: const EdgeInsets.symmetric(vertical: 20),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 20),
+                    child: Text(
+                      AppLocalizations.of(context)!.selectLanguage,
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  ...AppLanguages.languages.map((lang) {
+                    final isSelected = state.locale == lang['locale'];
+                    return ListTile(
+                      leading: Icon(
+                        Icons.language,
+                        color: isSelected ? Theme.of(context).colorScheme.primary : null,
+                      ),
+                      title: Text(
+                        lang['name'] as String,
+                        style: TextStyle(
+                          color: isSelected ? Theme.of(context).colorScheme.primary : null,
+                          fontWeight: isSelected ? FontWeight.bold : null,
+                        ),
+                      ),
+                      trailing: isSelected
+                          ? Icon(Icons.check_circle, color: Theme.of(context).colorScheme.primary)
+                          : null,
+                      onTap: () {
+                        context.read<AppCubit>().changeLocale(
+                              lang['locale'] as Locale,
+                              lang['key'] as String,
+                            );
+                        Navigator.pop(context);
+                      },
+                    );
+                  }).toList(),
+                  const SizedBox(height: 20),
+                ],
+              ),
+            );
+          },
+        );
+      },
     );
   }
 

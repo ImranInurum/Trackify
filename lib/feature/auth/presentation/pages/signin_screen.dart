@@ -102,12 +102,12 @@ class _SignInScreenState extends State<SignInScreen> {
         );
       },
       child: Scaffold(
-        backgroundColor: Colors.white,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         appBar: AppBar(
           backgroundColor: Colors.transparent,
           elevation: 0,
           leading: IconButton(
-            icon: const Icon(Icons.arrow_back_rounded, color: Colors.black87),
+            icon: Icon(Icons.arrow_back_rounded, color: Theme.of(context).colorScheme.onSurface),
             onPressed: () {
               if (Navigator.of(context).canPop()) {
                 Navigator.of(context).pop();
@@ -181,7 +181,7 @@ class _SignInScreenState extends State<SignInScreen> {
                                 l10n.email,
                                 style: textTheme.bodySmall?.copyWith(
                                   fontWeight: FontWeight.bold,
-                                  color: Colors.black54,
+                                  color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
                                 ),
                               ),
                             ),
@@ -203,7 +203,7 @@ class _SignInScreenState extends State<SignInScreen> {
                                 l10n.password,
                                 style: textTheme.bodySmall?.copyWith(
                                   fontWeight: FontWeight.bold,
-                                  color: Colors.black54,
+                                  color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
                                 ),
                               ),
                             ),
@@ -254,7 +254,7 @@ class _SignInScreenState extends State<SignInScreen> {
                                   padding: const EdgeInsets.symmetric(horizontal: 16),
                                   child: Text(
                                     l10n.or,
-                                    style: const TextStyle(color: Colors.grey),
+                                    style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5)),
                                   ),
                                 ),
                                 const Expanded(child: Divider()),
@@ -279,7 +279,7 @@ class _SignInScreenState extends State<SignInScreen> {
                                 children: [
                                   Text(
                                     l10n.dontHaveAccount,
-                                    style: const TextStyle(color: Colors.black87),
+                                    style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
                                   ),
                                   TextButton(
                                     onPressed: () {
