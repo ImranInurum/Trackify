@@ -128,7 +128,10 @@ class _SelectLanguageScreenState extends State<SelectLanguageScreen> {
                     child: GestureDetector(
                       behavior: HitTestBehavior.opaque,
                       onTap: () {
-                        context.read<AppCubit>().changeLocale(lang['locale']);
+                        context.read<AppCubit>().changeLocale(
+                              lang['locale'] as Locale,
+                              lang['key'] as String,
+                            );
                         setState(() {
                           _selectedLanguageKey = lang['key'] as String;
                         });
