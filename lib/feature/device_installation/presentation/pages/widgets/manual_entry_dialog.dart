@@ -16,7 +16,6 @@ class _ManualEntryDialogState extends State<ManualEntryDialog> {
   final TextEditingController _uidController = TextEditingController();
   final TextEditingController _imeiController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
-  bool _isLoading = true;
 
   @override
   void initState() {
@@ -30,7 +29,6 @@ class _ManualEntryDialogState extends State<ManualEntryDialog> {
     if (mounted) {
       setState(() {
         _uidController.text = userId;
-        _isLoading = false;
       });
     }
   }
@@ -45,13 +43,15 @@ class _ManualEntryDialogState extends State<ManualEntryDialog> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
     final bottomInset = MediaQuery.of(context).viewInsets.bottom;
 
     return AnimatedPadding(
       duration: const Duration(milliseconds: 200),
       padding: EdgeInsets.only(bottom: bottomInset),
       child: Dialog(
-        backgroundColor: const Color(0xFF1E1E1E),
+        backgroundColor: colorScheme.surface,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         insetPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
         child: SingleChildScrollView(
@@ -63,6 +63,7 @@ class _ManualEntryDialogState extends State<ManualEntryDialog> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   _buildTextField(
+                    context,
                     controller: _uidController,
                     hintText: l10n.enterUID,
                     keyboardType: TextInputType.text,
@@ -71,6 +72,7 @@ class _ManualEntryDialogState extends State<ManualEntryDialog> {
                   ),
                   const SizedBox(height: 12),
                   _buildTextField(
+                    context,
                     controller: _imeiController,
                     hintText: l10n.enterIMEINumber,
                     keyboardType: TextInputType.number,
@@ -88,8 +90,10 @@ class _ManualEntryDialogState extends State<ManualEntryDialog> {
                         onPressed: () => Navigator.pop(context),
                         child: Text(
                           l10n.close,
-                          style: const TextStyle(
-                              color: Colors.white, fontSize: 16),
+                          style: TextStyle(
+                            color: colorScheme.onSurface.withValues(alpha: 0.7),
+                            fontSize: 16,
+                          ),
                         ),
                       ),
                       TextButton(
@@ -125,40 +129,43 @@ class _ManualEntryDialogState extends State<ManualEntryDialog> {
     );
   }
 
-  Widget _buildTextField({
+  Widget _buildTextField(
+    BuildContext context, {
     required TextEditingController controller,
     required String hintText,
     TextInputType keyboardType = TextInputType.text,
     String? Function(String?)? validator,
   }) {
+    final theme = Theme.of(context);
     return TextFormField(
       controller: controller,
       validator: validator,
       keyboardType: keyboardType,
-      style: const TextStyle(color: Colors.white),
+      style: theme.textTheme.bodyLarge,
       decoration: InputDecoration(
         hintText: hintText,
-        hintStyle: const TextStyle(color: Colors.white38),
+        hintStyle: theme.textTheme.bodyMedium?.copyWith(
+          color: theme.hintColor,
+        ),
         filled: true,
-        fillColor: Colors.white.withValues(alpha: 0.05),
+        fillColor: theme.dividerColor.withValues(alpha: 0.05),
         contentPadding:
             const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         enabledBorder: OutlineInputBorder(
-          borderSide: const BorderSide(color: Colors.white24),
+          borderSide: BorderSide(color: theme.dividerColor),
           borderRadius: BorderRadius.circular(4),
         ),
         focusedBorder: OutlineInputBorder(
-          borderSide:
-              const BorderSide(color: Color(0xFFFFA000), width: 1.5),
+          borderSide: const BorderSide(color: Color(0xFFFFA000), width: 1.5),
           borderRadius: BorderRadius.circular(4),
         ),
         errorBorder: OutlineInputBorder(
-          borderSide: const BorderSide(color: Colors.redAccent),
+          borderSide: BorderSide(color: theme.colorScheme.error),
           borderRadius: BorderRadius.circular(4),
         ),
         focusedErrorBorder: OutlineInputBorder(
           borderSide:
-              const BorderSide(color: Colors.redAccent, width: 1.5),
+              BorderSide(color: theme.colorScheme.error, width: 1.5),
           borderRadius: BorderRadius.circular(4),
         ),
       ),

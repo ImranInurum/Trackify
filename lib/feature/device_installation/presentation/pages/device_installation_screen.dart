@@ -64,6 +64,8 @@ class _DeviceInstallationScreenState extends State<DeviceInstallationScreen>
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
 
     return BlocListener<DeviceInstallationCubit, DeviceInstallationState>(
       listener: (context, state) {
@@ -90,26 +92,24 @@ class _DeviceInstallationScreenState extends State<DeviceInstallationScreen>
         }
       },
       child: Scaffold(
-        backgroundColor: const Color(0xFF1A1A1A),
+        backgroundColor: theme.scaffoldBackgroundColor,
         appBar: AppBar(
-          backgroundColor: const Color(0xFF1A1A1A),
+          backgroundColor: theme.appBarTheme.backgroundColor,
           elevation: 0,
           centerTitle: false,
           leading: IconButton(
-            icon: const Icon(Icons.arrow_back, color: Colors.white),
+            icon: Icon(Icons.arrow_back, color: colorScheme.onSurface),
             onPressed: () => Navigator.pop(context),
           ),
           title: Text(
             l10n.deviceInstallation,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 18,
+            style: theme.textTheme.titleLarge?.copyWith(
               fontWeight: FontWeight.bold,
             ),
           ),
           actions: [
             IconButton(
-              icon: const Icon(Icons.more_vert, color: Colors.white),
+              icon: Icon(Icons.more_vert, color: colorScheme.onSurface),
               onPressed: () {},
             ),
           ],
@@ -127,17 +127,15 @@ class _DeviceInstallationScreenState extends State<DeviceInstallationScreen>
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const Icon(
+                          Icon(
                             Icons.qr_code_scanner,
-                            color: Colors.white,
+                            color: colorScheme.onSurface,
                             size: 22,
                           ),
                           const SizedBox(width: 10),
                           Text(
                             l10n.scanActivationCode,
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 17,
+                            style: theme.textTheme.titleMedium?.copyWith(
                               fontWeight: FontWeight.w500,
                             ),
                           ),
@@ -234,18 +232,14 @@ class _DeviceInstallationScreenState extends State<DeviceInstallationScreen>
                                     ),
 
                                     // Loading overlay
-                                    BlocBuilder<
-                                      DeviceInstallationCubit,
-                                      DeviceInstallationState
-                                    >(
+                                    BlocBuilder<DeviceInstallationCubit,
+                                        DeviceInstallationState>(
                                       builder: (context, state) {
-                                        if (state
-                                            is DeviceInstallationLoading) {
+                                        if (state is DeviceInstallationLoading) {
                                           return Container(
                                             decoration: BoxDecoration(
-                                              color: Colors.black.withValues(
-                                                alpha: 0.6,
-                                              ),
+                                              color: theme.colorScheme.surface
+                                                  .withValues(alpha: 0.8),
                                               borderRadius:
                                                   BorderRadius.circular(12),
                                             ),
@@ -259,9 +253,13 @@ class _DeviceInstallationScreenState extends State<DeviceInstallationScreen>
                                                   const SizedBox(height: 12),
                                                   Text(
                                                     l10n.assigningDevice,
-                                                    style: const TextStyle(
-                                                      color: Colors.white70,
-                                                      fontSize: 14,
+                                                    style: theme
+                                                        .textTheme.bodyMedium
+                                                        ?.copyWith(
+                                                      color: colorScheme
+                                                          .onSurface
+                                                          .withValues(
+                                                              alpha: 0.7),
                                                     ),
                                                   ),
                                                 ],
@@ -316,9 +314,8 @@ class _DeviceInstallationScreenState extends State<DeviceInstallationScreen>
                   children: [
                     Text(
                       l10n.openAjjasBoxInstruction,
-                      style: const TextStyle(
-                        color: Colors.white54,
-                        fontSize: 14,
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        color: colorScheme.onSurface.withValues(alpha: 0.54),
                       ),
                     ),
                     const SizedBox(height: 16),
