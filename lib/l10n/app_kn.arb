@@ -259,5 +259,142 @@
         "type": "String"
       }
     }
-  }
+  },
+  "vehicleMakeListEmpty": "ಈ ಆಯ್ಕೆಗೆ ವಾಹನ ತಯಾರಕರ ಪಟ್ಟಿ ಖಾಲಿ ಇದೆ",
+  "vehicleModelListEmpty": "ಈ ಆಯ್ಕೆಗೆ ವಾಹನ ಮಾದರಿ ಪಟ್ಟಿ ಖಾಲಿ ಇದೆ",
+  "deviceInstallation": "ಸಾಧನ ಸ್ಥಾಪನೆ",
+  "scanActivationCode": "ಸಕ್ರಿಯಗೊಳಿಸುವ ಕೋಡ್ ಅನ್ನು ಸ್ಕ್ಯಾನ್ ಮಾಡಿ",
+  "enterActivationCodeManually": "ಸಕ್ರಿಯಗೊಳಿಸುವ ಕೋಡ್ ಅನ್ನು ಹಸ್ತಚಾಲಿತವಾಗಿ ನಮೂದಿಸಿ",
+  "openAjjasBoxInstruction": "ಸಕ್ರಿಯಗೊಳಿಸುವ QR ಕೋಡ್‌ಗಾಗಿ Ajjas ಬಾಕ್ಸ್ ತೆರೆಯಿರಿ.",
+  "continueText": "ಮುಂದುವರಿಸಿ",
+  "enterUID": "UID ನಮೂದಿಸಿ",
+  "enterIMEINumber": "IMEI ಸಂಖ್ಯೆಯನ್ನು ನಮೂದಿಸಿ",
+  "close": "ಮುಚ್ಚಿ",
+  "uidRequired": "UID ಅಗತ್ಯವಿದೆ",
+  "imeiRequired": "IMEI ಸಂಖ್ಯೆ ಅಗತ್ಯವಿದೆ",
+  "deviceAssignedSuccess": "ಸಾಧನವನ್ನು ವಾಹನಕ್ಕೆ ಯಶಸ್ವಿಯಾಗಿ ನಿಯೋಜಿಸಲಾಗಿದೆ!",
+  "assigningDevice": "ಸಾಧನವನ್ನು ನಿಯೋಜಿಸಲಾಗುತ್ತಿದೆ...",
+  "invalidImeiError": "ದಯವಿಟ್ಟು ಮಾನ್ಯವಾದ 15-ಅಂಕಿಯ IMEI ಸಂಖ್ಯೆಯನ್ನು ನಮೂದಿಸಿ",
+  "sharedRides": "ಸಹಭಾಗಿತ್ವದ ರೈಡ್‌ಗಳು",
+  "savedRides": "Saved Rides",
+  "allRides": "ALL RIDES",
+  "trips": "TRIPS",
+  "clicked": "{value} Clicked",
+  "@clicked": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "noDailyRides": "No daily rides to show",
+  "getStartedFirstRide": "Get started by taking your first ride",
+  "durationLabel": "Duration",
+  "km": "km",
+  "kmh": "km/h",
+  "tripEmptyQuote": "“Group your rides into trips, add memories, and relive the journey”",
+  "ridesCompletedCount": "Rides completed: {completed}/{total}",
+  "@ridesCompletedCount": {
+    "placeholders": {
+      "completed": {
+        "type": "String"
+      },
+      "total": {
+        "type": "String"
+      }
+    }
+  },
+  "unlockTripsRequirement": "You need at least 3 rides to unlock trips",
+  "createNewTrip": "Create a New Trip",
+  "startByCreatingTrip": "Start by creating a New Trip",
+  "skip": "Skip",
+  "todayText": "ಇಂದು",
+  "distanceLabel": "ದೂರ",
+  "rideDuration": "ರೈಡ್ ಅವಧಿ",
+  "speedLabel": "ವೇಗ",
+  "minutesShort": "ನಿ",
+  "secondsShort": "ಸೆ",
+  "getMoreOutOfTrackify": "Trackify ನಿಂದ ಹೆಚ್ಚಿನದನ್ನು ಪಡೆಯಿರಿ",
+  "discoverMoreDesc": "ಇನ್ನಷ್ಟು ಅನ್ವೇಷಿಸಿ — ಅದ್ಭುತ ವಿಷಯಗಳು ಕಾಯುತ್ತಿವೆ!",
+  "serviceLogs": "ಸರ್ವಿಸ್ ಲಾಗ್ಸ್",
+  "safeParking": "ಸುರಕ್ಷಿತ ಪಾರ್ಕಿಂಗ್",
+  "appUpdates": "ಅಪ್ಲಿಕೇಶನ್ ನವೀಕರಣಗಳು",
+  "deviceDataPlanLabel": "ಸಾಧನ ಡೇಟಾ ಪ್ಲಾನ್",
+  "deviceWarrantyLabel": "ಸಾಧನ ವಾರಂಟಿ",
+  "videoTutorials": "ವಿಡಿಯೋ ಟ್ಯುಟೋರಿಯಲ್ಸ್",
+  "exploreNow": "ಈಗ ಅನ್ವೇಷಿಸಿ",
+  "plusLabel": "ಪ್ಲಸ್",
+  "mapStyleLabel": "ಮ್ಯಾಪ್ ಶೈಲಿ",
+  "darkStyle": "ಕಪ್ಪು",
+  "lightStyle": "ಬೆಳಕು",
+  "simpleStyle": "ಸರಳ",
+  "satelliteStyle": "ಉಪಗ್ರಹ",
+  "mapOptionsLabel": "ಮ್ಯಾಪ್ ಆಯ್ಕೆಗಳು",
+  "trafficLabel": "ಟ್ರಾಫಿಕ್",
+  "labelsLabel": "ಲೇಬಲ್ಗಳು",
+  "sharedWithMe": "ನನ್ನೊಂದಿಗೆ ಹಂಚಿಕೊಳ್ಳಲಾಗಿದೆ",
+  "todaysStats": "ಇಂದಿನ ಅಂಕಿಅಂಶಗಳು",
+  "parkedSinceTime": "ನಿಂದ ಪಾರ್ಕ್ ಮಾಡಲಾಗಿದೆ: {time}",
+  "@parkedSinceTime": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "kmsMoreToGo": "{value} ಕಿಮೀ ದೂರ ಹೋಗಬೇಕಿದೆ",
+  "@kmsMoreToGo": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "buyTrackifyDevice": "Trackify ಸಾಧನವನ್ನು ಖರೀದಿಸಿ",
+  "recordViaPhone": "ಫೋನ್ ಮೂಲಕ ರೆಕಾರ್ಡ್ ಮಾಡಿ",
+  "progressPercentage": "{value}%",
+  "@progressPercentage": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "labelColon": "{label}:",
+  "@labelColon": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      }
+    }
+  },
+  "fuelEmpty": "ಇ",
+  "fuelFull": "ಎಫ್",
+  "vehicleNamePlaceholder": "SP 125",
+  "vehicleNumberPlaceholder": "MP09QV8269",
+  "myProfile": "ನನ್ನ ಪ್ರೊಫೈಲ್",
+  "profileCompleteness": "ಪ್ರೊಫೈಲ್ ಸಂಪೂರ್ಣತೆ",
+  "lastUpdatedOn": "{date} ರಂದು ಕೊನೆಯದಾಗಿ ನವೀಕರಿಸಲಾಗಿದೆ",
+  "@lastUpdatedOn": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "addProfilePicture": "ನಿಮ್ಮ ಪ್ರೊಫೈಲ್ ಚಿತ್ರವನ್ನು ಸೇರಿಸಿ",
+  "personalDetails": "ವೈಯಕ್ತಿಕ ವಿವರಗಳು",
+  "userNameLabel": "ಹೆಸರು",
+  "emailAddressLabel": "ಇಮೇಲ್ ವಿಳಾಸ",
+  "mobileNumberLabel": "ಮೊಬೈಲ್ ಸಂಖ್ಯೆ",
+  "countryLabel": "ದೇಶ",
+  "stateLabel": "ರಾಜ್ಯ",
+  "cityLabel": "ನಗರ",
+  "medicalInsuranceInfo": "ವೈದ್ಯಕೀಯ ವಿಮೆ ಮಾಹಿತಿ",
+  "addMedicalInsuranceInfo": "ವೈದ್ಯಕೀಯ ವಿಮೆ ಮಾಹಿತಿಯನ್ನು ಸೇರಿಸಿ",
+  "vehicleInsuranceInfo": "ವಾಹನ ವಿಮೆ ಮಾಹಿತಿ",
+  "editViewVehicleInsuranceDesc": "ವಾಹನ ಸೆಟ್ಟಿಂಗ್‌ಗಳಲ್ಲಿ ವಾಹನ ವಿಮೆ ವಿವರಗಳನ್ನು ಎಡಿಟ್ ಮಾಡಿ ಮತ್ತು ವೀಕ್ಷಿಸಿ.",
+  "myGarageVehiclePath": "ನನ್ನ ಗ್ಯಾರೇಜ್ > ವಾಹನ",
+  "emergencyContacts": "ತುರ್ತು ಸಂಪರ್ಕಗಳು",
+  "addEditEmergencyContactDesc": "ವಾಹನ ಸೆಟ್ಟಿಂಗ್‌ಗಳಲ್ಲಿ ತುರ್ತು ಸಂಪರ್ಕ ಪಟ್ಟಿಯನ್ನು ಸೇರಿಸಿ ಮತ್ತು ಎಡಿಟ್ ಮಾಡಿ."
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:trackify/feature/trips/presentation/view/widgets/all_rides/all_rides_view.dart';
 import 'package:trackify/feature/trips/presentation/view/widgets/trips/trips_view.dart';
+import '../../../../l10n/app_localizations.dart';
 
 class TripScreen extends StatefulWidget {
   const TripScreen({super.key});
@@ -29,6 +30,7 @@ class _TripScreenState extends State<TripScreen> with SingleTickerProviderStateM
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
 
@@ -38,7 +40,7 @@ class _TripScreenState extends State<TripScreen> with SingleTickerProviderStateM
         shadowColor: Colors.black.withOpacity(0.1),
         backgroundColor: Theme.of(context).cardColor,
         title: Text(
-          "Journey",
+          l10n.journey,
           style: TextStyle(
             color: Theme.of(context).colorScheme.onSurface,
             fontWeight: FontWeight.w600,
@@ -52,22 +54,22 @@ class _TripScreenState extends State<TripScreen> with SingleTickerProviderStateM
             onSelected: (value) {
               ScaffoldMessenger.of(
                 context,
-              ).showSnackBar(SnackBar(content: Text("$value Clicked")));
+              ).showSnackBar(SnackBar(content: Text(l10n.clicked(value))));
             },
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
             icon: Icon(Icons.more_vert, color: Theme.of(context).colorScheme.onSurface),
             itemBuilder: (context) => [
               PopupMenuItem(
-                value: "Shared Rides",
+                value: l10n.sharedRides,
                 child: Text(
-                  "Shared Rides",
+                  l10n.sharedRides,
                   style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
                 ),
               ),
               PopupMenuItem(
-                value: "Saved Rides",
+                value: l10n.savedRides,
                 child: Text(
-                  "Saved Rides",
+                  l10n.savedRides,
                   style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
                 ),
               ),
@@ -96,6 +98,7 @@ class _TripScreenState extends State<TripScreen> with SingleTickerProviderStateM
   }
 
   Widget _buildCustomTabBar() {
+    final l10n = AppLocalizations.of(context)!;
     return Container(
       margin: const EdgeInsets.all(16),
       padding: const EdgeInsets.all(4),
@@ -106,8 +109,8 @@ class _TripScreenState extends State<TripScreen> with SingleTickerProviderStateM
       ),
       child: Row(
         children: [
-          _buildTab("ALL RIDES", 0),
-          _buildTab("TRIPS", 1),
+          _buildTab(l10n.allRides, 0),
+          _buildTab(l10n.trips, 1),
         ],
       ),
     );

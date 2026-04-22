@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:trackify/core/constants/app_images.dart';
 import 'package:trackify/core/theme/app_colors.dart';
 import 'package:trackify/feature/map/data/entity/user_vehicles.dart';
+import '../../l10n/app_localizations.dart';
 
 class DraggableAppBar extends StatefulWidget {
   final List<Vehicles>? vehicles;
@@ -194,7 +195,7 @@ class _DraggableAppBarState extends State<DraggableAppBar>
                                               children: [
                                                  Expanded(
                                                   child: Text(
-                                                    'My Garage',
+                                                    AppLocalizations.of(context)!.myGarage,
                                                     style: TextStyle(
                                                       fontSize: 16,
                                                       fontWeight: FontWeight.w600,
@@ -264,7 +265,7 @@ class _DraggableAppBarState extends State<DraggableAppBar>
                                                         ),
                                                         const SizedBox(width: 8),
                                                         Text(
-                                                          'Add New Vehicle',
+                                                          AppLocalizations.of(context)!.addVehicle,
                                                           style: TextStyle(
                                                             color: Theme.of(context).colorScheme.primary,
                                                             fontSize: 14,
@@ -450,9 +451,9 @@ class _DraggableAppBarState extends State<DraggableAppBar>
                     color: Theme.of(context).colorScheme.onSurface,
                   )
             else if (_isExpanded && isHeaderRow)
-              const Text(
-                '321 days left',
-                style: TextStyle(
+              Text(
+                AppLocalizations.of(context)!.expiresInDays('321'),
+                style: const TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.w700,
                   color: Colors.green,
@@ -460,12 +461,12 @@ class _DraggableAppBarState extends State<DraggableAppBar>
               )
             else if (_isExpanded && !isHeaderRow)
               Row(
-                children: const [
-                  Icon(Icons.shield, color: Colors.orange, size: 14),
-                  SizedBox(width: 4),
+                children: [
+                  const Icon(Icons.shield, color: Colors.orange, size: 14),
+                  const SizedBox(width: 4),
                   Text(
-                    'Buy Trackify Device',
-                    style: TextStyle(
+                    AppLocalizations.of(context)!.buyTrackifyDevice,
+                    style: const TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.bold,
                       color: Colors.orange,

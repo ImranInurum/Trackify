@@ -259,5 +259,142 @@
         "type": "String"
       }
     }
-  }
+  },
+  "vehicleMakeListEmpty": "قائمة ماركات المركبات فارغة لهذا الاختيار",
+  "vehicleModelListEmpty": "قائمة موديلات المركبات فارغة لهذا الاختيار",
+  "deviceInstallation": "تثبيت الجهاز",
+  "scanActivationCode": "مسح رمز التفعيل",
+  "enterActivationCodeManually": "إدخال رمز التفعيل يدوياً",
+  "openAjjasBoxInstruction": "افتح صندوق Ajjas للحصول على رمز QR للتفعيل.",
+  "continueText": "متابعة",
+  "enterUID": "أدخل UID",
+  "enterIMEINumber": "أدخل رقم IMEI",
+  "close": "إغلاق",
+  "uidRequired": "UID مطلوب",
+  "imeiRequired": "رقم IMEI مطلوب",
+  "deviceAssignedSuccess": "تم تخصيص الجهاز للمركبة بنجاح!",
+  "assigningDevice": "جاري تخصيص الجهاز...",
+  "invalidImeiError": "يرجى إدخال رقم IMEI صالِح مكون من 15 رقماً",
+  "sharedRides": "الرحلات المشتركة",
+  "savedRides": "Saved Rides",
+  "allRides": "ALL RIDES",
+  "trips": "TRIPS",
+  "clicked": "{value} Clicked",
+  "@clicked": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "noDailyRides": "No daily rides to show",
+  "getStartedFirstRide": "Get started by taking your first ride",
+  "durationLabel": "Duration",
+  "km": "km",
+  "kmh": "km/h",
+  "tripEmptyQuote": "“Group your rides into trips, add memories, and relive the journey”",
+  "ridesCompletedCount": "Rides completed: {completed}/{total}",
+  "@ridesCompletedCount": {
+    "placeholders": {
+      "completed": {
+        "type": "String"
+      },
+      "total": {
+        "type": "String"
+      }
+    }
+  },
+  "unlockTripsRequirement": "You need at least 3 rides to unlock trips",
+  "createNewTrip": "Create a New Trip",
+  "startByCreatingTrip": "Start by creating a New Trip",
+  "skip": "Skip",
+  "todayText": "اليوم",
+  "distanceLabel": "المسافة",
+  "rideDuration": "مدة الرحلة",
+  "speedLabel": "السرعة",
+  "minutesShort": "د",
+  "secondsShort": "ث",
+  "getMoreOutOfTrackify": "احصل على المزيد مع Trackify",
+  "discoverMoreDesc": "اكتشف المزيد — أشياء رائعة في انتظارك!",
+  "serviceLogs": "سجلات الخدمة",
+  "safeParking": "ركن آمن",
+  "appUpdates": "تحديثات التطبيق",
+  "deviceDataPlanLabel": "خطة بيانات الجهاز",
+  "deviceWarrantyLabel": "ضمان الجهاز",
+  "videoTutorials": "دروس الفيديو",
+  "exploreNow": "استكشف الآن",
+  "plusLabel": "بلس",
+  "mapStyleLabel": "نمط الخريطة",
+  "darkStyle": "داكن",
+  "lightStyle": "فاتح",
+  "simpleStyle": "بسيط",
+  "satelliteStyle": "قمر صناعي",
+  "mapOptionsLabel": "خيارات الخريطة",
+  "trafficLabel": "حركة المرور",
+  "labelsLabel": "العلامات",
+  "sharedWithMe": "تمت مشاركتها معي",
+  "todaysStats": "إحصائيات اليوم",
+  "parkedSinceTime": "مركون منذ: {time}",
+  "@parkedSinceTime": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "kmsMoreToGo": "بقي {value} كم للوصول",
+  "@kmsMoreToGo": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "buyTrackifyDevice": "شراء جهاز Trackify",
+  "recordViaPhone": "سجل عبر الهاتف",
+  "progressPercentage": "{value}%",
+  "@progressPercentage": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "labelColon": "{label}:",
+  "@labelColon": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      }
+    }
+  },
+  "fuelEmpty": "ف",
+  "fuelFull": "م",
+  "vehicleNamePlaceholder": "SP 125",
+  "vehicleNumberPlaceholder": "MP09QV8269",
+  "myProfile": "ملفي الشخصي",
+  "profileCompleteness": "اكتمال الملف الشخصي",
+  "lastUpdatedOn": "آخر تحديث في {date}",
+  "@lastUpdatedOn": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "addProfilePicture": "أضف صورتك الشخصية",
+  "personalDetails": "التفاصيل الشخصية",
+  "userNameLabel": "الاسم",
+  "emailAddressLabel": "البريد الإلكتروني",
+  "mobileNumberLabel": "رقم الهاتف المحمول",
+  "countryLabel": "الدولة",
+  "stateLabel": "الولاية/المقاطعة",
+  "cityLabel": "المدينة",
+  "medicalInsuranceInfo": "معلومات التأمين الطبي",
+  "addMedicalInsuranceInfo": "إضافة معلومات التأمين الطبي",
+  "vehicleInsuranceInfo": "معلومات تأمين المركبة",
+  "editViewVehicleInsuranceDesc": "تعديل وعرض تفاصيل تأمين مركبتك في إعدادات المركبة.",
+  "myGarageVehiclePath": "كراجي > مركبة",
+  "emergencyContacts": "جهات اتصال الطوارئ",
+  "addEditEmergencyContactDesc": "إضافة وتعديل قائمة جهات اتصال الطوارئ في إعدادات المركبة."
 }

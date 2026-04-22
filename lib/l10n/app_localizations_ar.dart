@@ -673,50 +673,277 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get vehicleMakeListEmpty =>
-      'Vehicle make list is empty for this selection';
+      'قائمة ماركات المركبات فارغة لهذا الاختيار';
 
   @override
   String get vehicleModelListEmpty =>
-      'Vehicle model list is empty for this selection';
+      'قائمة موديلات المركبات فارغة لهذا الاختيار';
 
   @override
-  String get deviceInstallation => 'Device Installation';
+  String get deviceInstallation => 'تثبيت الجهاز';
 
   @override
-  String get scanActivationCode => 'Scan activation code';
+  String get scanActivationCode => 'مسح رمز التفعيل';
 
   @override
-  String get enterActivationCodeManually => 'Enter activation code manually';
+  String get enterActivationCodeManually => 'إدخال رمز التفعيل يدوياً';
 
   @override
   String get openAjjasBoxInstruction =>
-      'Open Ajjas box for the activation QR code.';
+      'افتح صندوق Ajjas للحصول على رمز QR للتفعيل.';
 
   @override
-  String get continueText => 'Continue';
+  String get continueText => 'متابعة';
 
   @override
-  String get enterUID => 'Enter UID';
+  String get enterUID => 'أدخل UID';
 
   @override
-  String get enterIMEINumber => 'Enter IMEI number';
+  String get enterIMEINumber => 'أدخل رقم IMEI';
 
   @override
-  String get close => 'Close';
+  String get close => 'إغلاق';
 
   @override
-  String get uidRequired => 'UID is required';
+  String get uidRequired => 'UID مطلوب';
 
   @override
-  String get imeiRequired => 'IMEI number is required';
+  String get imeiRequired => 'رقم IMEI مطلوب';
 
   @override
-  String get deviceAssignedSuccess =>
-      'Device successfully assigned to vehicle!';
+  String get deviceAssignedSuccess => 'تم تخصيص الجهاز للمركبة بنجاح!';
 
   @override
-  String get assigningDevice => 'Assigning device...';
+  String get assigningDevice => 'جاري تخصيص الجهاز...';
 
   @override
-  String get invalidImeiError => 'Please enter a valid 15-digit IMEI number';
+  String get invalidImeiError => 'يرجى إدخال رقم IMEI صالِح مكون من 15 رقماً';
+
+  @override
+  String get sharedRides => 'الرحلات المشتركة';
+
+  @override
+  String get savedRides => 'Saved Rides';
+
+  @override
+  String get allRides => 'ALL RIDES';
+
+  @override
+  String get trips => 'TRIPS';
+
+  @override
+  String clicked(String value) {
+    return '$value Clicked';
+  }
+
+  @override
+  String get noDailyRides => 'No daily rides to show';
+
+  @override
+  String get getStartedFirstRide => 'Get started by taking your first ride';
+
+  @override
+  String get durationLabel => 'Duration';
+
+  @override
+  String get km => 'km';
+
+  @override
+  String get kmh => 'km/h';
+
+  @override
+  String get tripEmptyQuote =>
+      '“Group your rides into trips, add memories, and relive the journey”';
+
+  @override
+  String ridesCompletedCount(String completed, String total) {
+    return 'Rides completed: $completed/$total';
+  }
+
+  @override
+  String get unlockTripsRequirement =>
+      'You need at least 3 rides to unlock trips';
+
+  @override
+  String get createNewTrip => 'Create a New Trip';
+
+  @override
+  String get startByCreatingTrip => 'Start by creating a New Trip';
+
+  @override
+  String get skip => 'Skip';
+
+  @override
+  String get todayText => 'اليوم';
+
+  @override
+  String get distanceLabel => 'المسافة';
+
+  @override
+  String get rideDuration => 'مدة الرحلة';
+
+  @override
+  String get speedLabel => 'السرعة';
+
+  @override
+  String get minutesShort => 'د';
+
+  @override
+  String get secondsShort => 'ث';
+
+  @override
+  String get getMoreOutOfTrackify => 'احصل على المزيد مع Trackify';
+
+  @override
+  String get discoverMoreDesc => 'اكتشف المزيد — أشياء رائعة في انتظارك!';
+
+  @override
+  String get serviceLogs => 'سجلات الخدمة';
+
+  @override
+  String get safeParking => 'ركن آمن';
+
+  @override
+  String get appUpdates => 'تحديثات التطبيق';
+
+  @override
+  String get deviceDataPlanLabel => 'خطة بيانات الجهاز';
+
+  @override
+  String get deviceWarrantyLabel => 'ضمان الجهاز';
+
+  @override
+  String get videoTutorials => 'دروس الفيديو';
+
+  @override
+  String get exploreNow => 'استكشف الآن';
+
+  @override
+  String get plusLabel => 'بلس';
+
+  @override
+  String get mapStyleLabel => 'نمط الخريطة';
+
+  @override
+  String get darkStyle => 'داكن';
+
+  @override
+  String get lightStyle => 'فاتح';
+
+  @override
+  String get simpleStyle => 'بسيط';
+
+  @override
+  String get satelliteStyle => 'قمر صناعي';
+
+  @override
+  String get mapOptionsLabel => 'خيارات الخريطة';
+
+  @override
+  String get trafficLabel => 'حركة المرور';
+
+  @override
+  String get labelsLabel => 'العلامات';
+
+  @override
+  String get sharedWithMe => 'تمت مشاركتها معي';
+
+  @override
+  String get todaysStats => 'إحصائيات اليوم';
+
+  @override
+  String parkedSinceTime(String time) {
+    return 'مركون منذ: $time';
+  }
+
+  @override
+  String kmsMoreToGo(String value) {
+    return 'بقي $value كم للوصول';
+  }
+
+  @override
+  String get buyTrackifyDevice => 'شراء جهاز Trackify';
+
+  @override
+  String get recordViaPhone => 'سجل عبر الهاتف';
+
+  @override
+  String progressPercentage(String value) {
+    return '$value%';
+  }
+
+  @override
+  String labelColon(String label) {
+    return '$label:';
+  }
+
+  @override
+  String get fuelEmpty => 'ف';
+
+  @override
+  String get fuelFull => 'م';
+
+  @override
+  String get vehicleNamePlaceholder => 'SP 125';
+
+  @override
+  String get vehicleNumberPlaceholder => 'MP09QV8269';
+
+  @override
+  String get myProfile => 'ملفي الشخصي';
+
+  @override
+  String get profileCompleteness => 'اكتمال الملف الشخصي';
+
+  @override
+  String lastUpdatedOn(String date) {
+    return 'آخر تحديث في $date';
+  }
+
+  @override
+  String get addProfilePicture => 'أضف صورتك الشخصية';
+
+  @override
+  String get personalDetails => 'التفاصيل الشخصية';
+
+  @override
+  String get userNameLabel => 'الاسم';
+
+  @override
+  String get emailAddressLabel => 'البريد الإلكتروني';
+
+  @override
+  String get mobileNumberLabel => 'رقم الهاتف المحمول';
+
+  @override
+  String get countryLabel => 'الدولة';
+
+  @override
+  String get stateLabel => 'الولاية/المقاطعة';
+
+  @override
+  String get cityLabel => 'المدينة';
+
+  @override
+  String get medicalInsuranceInfo => 'معلومات التأمين الطبي';
+
+  @override
+  String get addMedicalInsuranceInfo => 'إضافة معلومات التأمين الطبي';
+
+  @override
+  String get vehicleInsuranceInfo => 'معلومات تأمين المركبة';
+
+  @override
+  String get editViewVehicleInsuranceDesc =>
+      'تعديل وعرض تفاصيل تأمين مركبتك في إعدادات المركبة.';
+
+  @override
+  String get myGarageVehiclePath => 'كراجي > مركبة';
+
+  @override
+  String get emergencyContacts => 'جهات اتصال الطوارئ';
+
+  @override
+  String get addEditEmergencyContactDesc =>
+      'إضافة وتعديل قائمة جهات اتصال الطوارئ في إعدادات المركبة.';
 }

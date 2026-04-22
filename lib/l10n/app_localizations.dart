@@ -1467,6 +1467,426 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Please enter a valid 15-digit IMEI number'**
   String get invalidImeiError;
+
+  /// No description provided for @sharedRides.
+  ///
+  /// In en, this message translates to:
+  /// **'Shared Rides'**
+  String get sharedRides;
+
+  /// No description provided for @savedRides.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved Rides'**
+  String get savedRides;
+
+  /// No description provided for @allRides.
+  ///
+  /// In en, this message translates to:
+  /// **'ALL RIDES'**
+  String get allRides;
+
+  /// No description provided for @trips.
+  ///
+  /// In en, this message translates to:
+  /// **'TRIPS'**
+  String get trips;
+
+  /// No description provided for @clicked.
+  ///
+  /// In en, this message translates to:
+  /// **'{value} Clicked'**
+  String clicked(String value);
+
+  /// No description provided for @noDailyRides.
+  ///
+  /// In en, this message translates to:
+  /// **'No daily rides to show'**
+  String get noDailyRides;
+
+  /// No description provided for @getStartedFirstRide.
+  ///
+  /// In en, this message translates to:
+  /// **'Get started by taking your first ride'**
+  String get getStartedFirstRide;
+
+  /// No description provided for @durationLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Duration'**
+  String get durationLabel;
+
+  /// No description provided for @km.
+  ///
+  /// In en, this message translates to:
+  /// **'km'**
+  String get km;
+
+  /// No description provided for @kmh.
+  ///
+  /// In en, this message translates to:
+  /// **'km/h'**
+  String get kmh;
+
+  /// No description provided for @tripEmptyQuote.
+  ///
+  /// In en, this message translates to:
+  /// **'“Group your rides into trips, add memories, and relive the journey”'**
+  String get tripEmptyQuote;
+
+  /// No description provided for @ridesCompletedCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Rides completed: {completed}/{total}'**
+  String ridesCompletedCount(String completed, String total);
+
+  /// No description provided for @unlockTripsRequirement.
+  ///
+  /// In en, this message translates to:
+  /// **'You need at least 3 rides to unlock trips'**
+  String get unlockTripsRequirement;
+
+  /// No description provided for @createNewTrip.
+  ///
+  /// In en, this message translates to:
+  /// **'Create a New Trip'**
+  String get createNewTrip;
+
+  /// No description provided for @startByCreatingTrip.
+  ///
+  /// In en, this message translates to:
+  /// **'Start by creating a New Trip'**
+  String get startByCreatingTrip;
+
+  /// No description provided for @skip.
+  ///
+  /// In en, this message translates to:
+  /// **'Skip'**
+  String get skip;
+
+  /// No description provided for @todayText.
+  ///
+  /// In en, this message translates to:
+  /// **'Today'**
+  String get todayText;
+
+  /// No description provided for @distanceLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Distance'**
+  String get distanceLabel;
+
+  /// No description provided for @rideDuration.
+  ///
+  /// In en, this message translates to:
+  /// **'Ride Duration'**
+  String get rideDuration;
+
+  /// No description provided for @speedLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Speed'**
+  String get speedLabel;
+
+  /// No description provided for @minutesShort.
+  ///
+  /// In en, this message translates to:
+  /// **'m'**
+  String get minutesShort;
+
+  /// No description provided for @secondsShort.
+  ///
+  /// In en, this message translates to:
+  /// **'s'**
+  String get secondsShort;
+
+  /// No description provided for @getMoreOutOfTrackify.
+  ///
+  /// In en, this message translates to:
+  /// **'Get more out of Trackify'**
+  String get getMoreOutOfTrackify;
+
+  /// No description provided for @discoverMoreDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Discover more — awesome things await!'**
+  String get discoverMoreDesc;
+
+  /// No description provided for @serviceLogs.
+  ///
+  /// In en, this message translates to:
+  /// **'Service Logs'**
+  String get serviceLogs;
+
+  /// No description provided for @safeParking.
+  ///
+  /// In en, this message translates to:
+  /// **'Safe Parking'**
+  String get safeParking;
+
+  /// No description provided for @appUpdates.
+  ///
+  /// In en, this message translates to:
+  /// **'App Updates'**
+  String get appUpdates;
+
+  /// No description provided for @deviceDataPlanLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Device Data Plan'**
+  String get deviceDataPlanLabel;
+
+  /// No description provided for @deviceWarrantyLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Device Warranty'**
+  String get deviceWarrantyLabel;
+
+  /// No description provided for @videoTutorials.
+  ///
+  /// In en, this message translates to:
+  /// **'Video Tutorials'**
+  String get videoTutorials;
+
+  /// No description provided for @exploreNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Explore Now'**
+  String get exploreNow;
+
+  /// No description provided for @plusLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Plus'**
+  String get plusLabel;
+
+  /// No description provided for @mapStyleLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Map Style'**
+  String get mapStyleLabel;
+
+  /// No description provided for @darkStyle.
+  ///
+  /// In en, this message translates to:
+  /// **'Dark'**
+  String get darkStyle;
+
+  /// No description provided for @lightStyle.
+  ///
+  /// In en, this message translates to:
+  /// **'Light'**
+  String get lightStyle;
+
+  /// No description provided for @simpleStyle.
+  ///
+  /// In en, this message translates to:
+  /// **'Simple'**
+  String get simpleStyle;
+
+  /// No description provided for @satelliteStyle.
+  ///
+  /// In en, this message translates to:
+  /// **'Satellite'**
+  String get satelliteStyle;
+
+  /// No description provided for @mapOptionsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Map Options'**
+  String get mapOptionsLabel;
+
+  /// No description provided for @trafficLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Traffic'**
+  String get trafficLabel;
+
+  /// No description provided for @labelsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Labels'**
+  String get labelsLabel;
+
+  /// No description provided for @sharedWithMe.
+  ///
+  /// In en, this message translates to:
+  /// **'Shared with me'**
+  String get sharedWithMe;
+
+  /// No description provided for @todaysStats.
+  ///
+  /// In en, this message translates to:
+  /// **'Today\'s Stats'**
+  String get todaysStats;
+
+  /// No description provided for @parkedSinceTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Parked Since: {time}'**
+  String parkedSinceTime(String time);
+
+  /// No description provided for @kmsMoreToGo.
+  ///
+  /// In en, this message translates to:
+  /// **'{value} kms more to go'**
+  String kmsMoreToGo(String value);
+
+  /// No description provided for @buyTrackifyDevice.
+  ///
+  /// In en, this message translates to:
+  /// **'Buy Trackify Device'**
+  String get buyTrackifyDevice;
+
+  /// No description provided for @recordViaPhone.
+  ///
+  /// In en, this message translates to:
+  /// **'Record via Phone'**
+  String get recordViaPhone;
+
+  /// No description provided for @progressPercentage.
+  ///
+  /// In en, this message translates to:
+  /// **'{value}%'**
+  String progressPercentage(String value);
+
+  /// No description provided for @labelColon.
+  ///
+  /// In en, this message translates to:
+  /// **'{label}:'**
+  String labelColon(String label);
+
+  /// No description provided for @fuelEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'E'**
+  String get fuelEmpty;
+
+  /// No description provided for @fuelFull.
+  ///
+  /// In en, this message translates to:
+  /// **'F'**
+  String get fuelFull;
+
+  /// No description provided for @vehicleNamePlaceholder.
+  ///
+  /// In en, this message translates to:
+  /// **'SP 125'**
+  String get vehicleNamePlaceholder;
+
+  /// No description provided for @vehicleNumberPlaceholder.
+  ///
+  /// In en, this message translates to:
+  /// **'MP09QV8269'**
+  String get vehicleNumberPlaceholder;
+
+  /// No description provided for @myProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'My profile'**
+  String get myProfile;
+
+  /// No description provided for @profileCompleteness.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile completeness'**
+  String get profileCompleteness;
+
+  /// No description provided for @lastUpdatedOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Last updated on {date}'**
+  String lastUpdatedOn(String date);
+
+  /// No description provided for @addProfilePicture.
+  ///
+  /// In en, this message translates to:
+  /// **'Add your profile picture'**
+  String get addProfilePicture;
+
+  /// No description provided for @personalDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Personal details'**
+  String get personalDetails;
+
+  /// No description provided for @userNameLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Name'**
+  String get userNameLabel;
+
+  /// No description provided for @emailAddressLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Email address'**
+  String get emailAddressLabel;
+
+  /// No description provided for @mobileNumberLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Mobile Number'**
+  String get mobileNumberLabel;
+
+  /// No description provided for @countryLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Country'**
+  String get countryLabel;
+
+  /// No description provided for @stateLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'State'**
+  String get stateLabel;
+
+  /// No description provided for @cityLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'City'**
+  String get cityLabel;
+
+  /// No description provided for @medicalInsuranceInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Medical insurance information'**
+  String get medicalInsuranceInfo;
+
+  /// No description provided for @addMedicalInsuranceInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Medical insurance information'**
+  String get addMedicalInsuranceInfo;
+
+  /// No description provided for @vehicleInsuranceInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Vehicle insurance information'**
+  String get vehicleInsuranceInfo;
+
+  /// No description provided for @editViewVehicleInsuranceDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit and view vehicle insurance details in vehicle settings.'**
+  String get editViewVehicleInsuranceDesc;
+
+  /// No description provided for @myGarageVehiclePath.
+  ///
+  /// In en, this message translates to:
+  /// **'My Garage > Vehicle'**
+  String get myGarageVehiclePath;
+
+  /// No description provided for @emergencyContacts.
+  ///
+  /// In en, this message translates to:
+  /// **'Emergency Contacts'**
+  String get emergencyContacts;
+
+  /// No description provided for @addEditEmergencyContactDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Add and edit emergency contact list in vehicle settings.'**
+  String get addEditEmergencyContactDesc;
 }
 
 class _AppLocalizationsDelegate

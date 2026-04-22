@@ -21,6 +21,7 @@ import '../../../notifications/presentation/screen/notification_list_screen.dart
 import '../../../../core/config/style_manager.dart';
 import '../cubit/map_cubit.dart';
 import '../cubit/map_state.dart';
+import '../../../../l10n/app_localizations.dart';
 
 class MapScreen extends StatefulWidget {
   const MapScreen({super.key});
@@ -109,6 +110,7 @@ class _MapScreenState extends State<MapScreen> {
               _selectedDevice = vehicles.first;
             }
 
+            final l10n = AppLocalizations.of(context)!;
             final topSpacing = MediaQuery.of(context).padding.top + 78;
 
             return Stack(
@@ -179,6 +181,7 @@ class _MapScreenState extends State<MapScreen> {
   }
 
   Widget _buildMapSection() {
+    final l10n = AppLocalizations.of(context)!;
     return BouncingWidget(
       onTap: () {
         Navigator.of(
@@ -270,7 +273,7 @@ class _MapScreenState extends State<MapScreen> {
                   child: Row(
                     children: [
                       Text(
-                        "Today",
+                        l10n.todayText,
                         style: getBoldStyle(color: AppColors.paletteGreen, fontSize: 10),
                       ),
                     ],
@@ -289,12 +292,13 @@ class _MapScreenState extends State<MapScreen> {
   }
 
   Widget _buildStatsRow() {
+    final l10n = AppLocalizations.of(context)!;
     return BlocBuilder<MapCubit, MapState>(
       builder: (context, state) {
-        String distance = "0.0 km";
-        String speed = "0 km/hr";
-        String duration = "0m 0s";
-        String topSpeed = "0 km/hr";
+        String distance = "0.0 ${l10n.km}";
+        String speed = "0 ${l10n.kmh}";
+        String duration = "0${l10n.minutesShort} 0${l10n.secondsShort}";
+        String topSpeed = "0 ${l10n.kmh}";
 
         return Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -302,16 +306,16 @@ class _MapScreenState extends State<MapScreen> {
             Expanded(
               child: Column(
                 children: [
-                  _buildStatItem("Distance", distance),
-                  _buildStatItem("Ride Duration", duration),
+                  _buildStatItem(l10n.distanceLabel, distance),
+                  _buildStatItem(l10n.rideDuration, duration),
                 ],
               ),
             ),
             Expanded(
               child: Column(
                 children: [
-                  _buildStatItem("Speed", speed),
-                  _buildStatItem("Top Speed", topSpeed),
+                  _buildStatItem(l10n.speedLabel, speed),
+                  _buildStatItem(l10n.topSpeed, topSpeed),
                 ],
               ),
             ),
@@ -322,11 +326,12 @@ class _MapScreenState extends State<MapScreen> {
   }
 
   Widget _buildStatItem(String label, String value) {
+    final l10n = AppLocalizations.of(context)!;
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
         Text(
-          "$label:",
+          l10n.labelColon(label),
           style: getRegularStyle(
             color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
             fontSize: 11,
@@ -349,6 +354,7 @@ class _MapScreenState extends State<MapScreen> {
   }
 
   Widget _buildPromoBanner() {
+    final l10n = AppLocalizations.of(context)!;
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16),
       padding: const EdgeInsets.all(12),
@@ -372,7 +378,7 @@ class _MapScreenState extends State<MapScreen> {
                   valueColor: AlwaysStoppedAnimation<Color>(Theme.of(context).colorScheme.primary),
                 ),
                 Text(
-                  "63%",
+                  l10n.progressPercentage("63"),
                   style: getBoldStyle(color: Theme.of(context).colorScheme.primary, fontSize: 10),
                 ),
               ],
@@ -386,7 +392,7 @@ class _MapScreenState extends State<MapScreen> {
                 Row(
                   children: [
                     Text(
-                      "Get more out of Trackify",
+                      l10n.getMoreOutOfTrackify,
                       style: getBoldStyle(
                         color: Theme.of(context).colorScheme.primary,
                         fontSize: 14,
@@ -400,7 +406,7 @@ class _MapScreenState extends State<MapScreen> {
                   ],
                 ),
                 Text(
-                  "Discover more — awesome things await!",
+                  l10n.discoverMoreDesc,
                   style: getRegularStyle(
                     color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
                     fontSize: 11,
@@ -420,28 +426,28 @@ class _MapScreenState extends State<MapScreen> {
   }
 
   Widget _buildExploreMore() {
-    // final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context)!;
     final options = [
       {
         "icon": Icons.qr_code_scanner,
-        "label": "ReachMe\nSticker",
-        "badge": "Explore Now",
+        "label": l10n.reachMeSticker.replaceAll(' ', '\n'),
+        "badge": l10n.exploreNow,
       },
-      {"icon": Icons.phone_android_rounded, "label": "Record via\nPhone", "badge": null},
-      {"icon": Icons.handyman_outlined, "label": "Service Logs", "badge": null},
-      {"icon": Icons.share_outlined, "label": "Location\nSharing", "badge": null},
-      {"icon": Icons.local_parking_rounded, "label": "Safe Parking", "badge": null},
-      {"icon": Icons.campaign_outlined, "label": "App Updates", "badge": null},
-      {"icon": Icons.local_gas_station_outlined, "label": "Fuel Logs", "badge": null},
-      {"icon": Icons.location_on_outlined, "label": "Geo-fence\nAlert", "badge": null},
-      {"icon": Icons.speed_outlined, "label": "Overspeed\nAlert", "badge": null},
-      {"icon": Icons.folder_open_outlined, "label": "Document\nFolder", "badge": null},
-      {"icon": Icons.list_alt_rounded, "label": "Device\nData Plan", "badge": null},
-      {"icon": Icons.gpp_good_outlined, "label": "Device\nWarranty", "badge": null},
-      {"icon": Icons.chat_outlined, "label": "Help &\nSupport", "badge": null},
-      {"icon": Icons.sos_outlined, "label": "Emergency", "badge": null},
-      {"icon": Icons.play_arrow_outlined, "label": "Video\nTutorials", "badge": null},
-      {"icon": null, "label": "Upgrade to\nPlus", "badge": null, "isPlus": true},
+      {"icon": Icons.phone_android_rounded, "label": l10n.recordViaPhone.replaceAll(' ', '\n'), "badge": null},
+      {"icon": Icons.handyman_outlined, "label": l10n.serviceLogs.replaceAll(' ', '\n'), "badge": null},
+      {"icon": Icons.share_outlined, "label": l10n.locationSharing.replaceAll(' ', '\n'), "badge": null},
+      {"icon": Icons.local_parking_rounded, "label": l10n.safeParking.replaceAll(' ', '\n'), "badge": null},
+      {"icon": Icons.campaign_outlined, "label": l10n.appUpdates.replaceAll(' ', '\n'), "badge": null},
+      {"icon": Icons.local_gas_station_outlined, "label": l10n.fuelLogs.replaceAll(' ', '\n'), "badge": null},
+      {"icon": Icons.location_on_outlined, "label": l10n.geoFenceAlert.replaceAll(' ', '\n'), "badge": null},
+      {"icon": Icons.speed_outlined, "label": l10n.overspeedAlert.replaceAll(' ', '\n'), "badge": null},
+      {"icon": Icons.folder_open_outlined, "label": l10n.documentFolder.replaceAll(' ', '\n'), "badge": null},
+      {"icon": Icons.list_alt_rounded, "label": l10n.deviceDataPlanLabel.replaceAll(' ', '\n'), "badge": null},
+      {"icon": Icons.gpp_good_outlined, "label": l10n.deviceWarrantyLabel.replaceAll(' ', '\n'), "badge": null},
+      {"icon": Icons.chat_outlined, "label": l10n.helpAndSupport.replaceAll(' ', '\n'), "badge": null},
+      {"icon": Icons.sos_outlined, "label": l10n.emergency.replaceAll(' ', '\n'), "badge": null},
+      {"icon": Icons.play_arrow_outlined, "label": l10n.videoTutorials.replaceAll(' ', '\n'), "badge": null},
+      {"icon": null, "label": l10n.upgradeToPlus.replaceAll(' ', '\n'), "badge": null, "isPlus": true},
     ];
 
     return Container(
@@ -461,7 +467,7 @@ class _MapScreenState extends State<MapScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            "Explore more",
+            l10n.exploreMore,
             style: getBoldStyle(
               color: Theme.of(context).colorScheme.onSurface,
               fontSize: 17,
@@ -482,15 +488,15 @@ class _MapScreenState extends State<MapScreen> {
             itemBuilder: (context, index) {
               final option = options[index];
               return InkWell(
-                onTap: () {
-                  if (option["label"] == "Record via\nPhone") {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) => const RecordViaPhoneScreen(),
-                      ),
-                    );
-                  }
-                },
+                  onTap: () {
+                    if (option["label"] == l10n.recordViaPhone.replaceAll(' ', '\n')) {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => const RecordViaPhoneScreen(),
+                        ),
+                      );
+                    }
+                  },
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
@@ -509,12 +515,12 @@ class _MapScreenState extends State<MapScreen> {
                           ),
                           borderRadius: BorderRadius.circular(4),
                         ),
-                        child: const Text(
-                          "Plus",
-                          style: TextStyle(
-                            color: Colors.black,
+                        child: Text(
+                          l10n.plusLabel,
+                          style: const TextStyle(
                             fontWeight: FontWeight.bold,
-                            fontSize: 14,
+                            fontSize: 12,
+                            color: Colors.black87,
                           ),
                         ),
                       )

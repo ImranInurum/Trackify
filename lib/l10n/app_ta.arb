@@ -259,5 +259,142 @@
         "type": "String"
       }
     }
-  }
+  },
+  "vehicleMakeListEmpty": "இந்தத் தேர்வுக்கு வாகன பிராண்ட் பட்டியல் காலியாக உள்ளது",
+  "vehicleModelListEmpty": "இந்தத் தேர்வுக்கு வாகன மாடல் பட்டியல் காலியாக உள்ளது",
+  "deviceInstallation": "சாதன நிறுவல்",
+  "scanActivationCode": "செயல்படுத்தும் குறியீட்டை ஸ்கேன் செய்யவும்",
+  "enterActivationCodeManually": "செயல்படுத்தும் குறியீட்டை கைமுறையாக உள்ளிடவும்",
+  "openAjjasBoxInstruction": "செயல்படுத்தும் QR குறியீட்டிற்கு Ajjas பெட்டியைத் திறக்கவும்.",
+  "continueText": "தொடரவும்",
+  "enterUID": "UID ஐ உள்ளிடவும்",
+  "enterIMEINumber": "IMEI எண்ணை உள்ளிடவும்",
+  "close": "மூடு",
+  "uidRequired": "UID தேவை",
+  "imeiRequired": "IMEI எண் தேவை",
+  "deviceAssignedSuccess": "சாதனம் வெற்றிகரமாக வாகனத்துடன் இணைக்கப்பட்டது!",
+  "assigningDevice": "சாதனம் இணைக்கப்படுகிறது...",
+  "invalidImeiError": "தயவுசெய்து செல்லுபடியாகும் 15-இலக்க IMEI எண்ணை உள்ளிடவும்",
+  "sharedRides": "பகிரப்பட்ட பயணங்கள்",
+  "savedRides": "Saved Rides",
+  "allRides": "ALL RIDES",
+  "trips": "TRIPS",
+  "clicked": "{value} Clicked",
+  "@clicked": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "noDailyRides": "No daily rides to show",
+  "getStartedFirstRide": "Get started by taking your first ride",
+  "durationLabel": "Duration",
+  "km": "km",
+  "kmh": "km/h",
+  "tripEmptyQuote": "“Group your rides into trips, add memories, and relive the journey”",
+  "ridesCompletedCount": "Rides completed: {completed}/{total}",
+  "@ridesCompletedCount": {
+    "placeholders": {
+      "completed": {
+        "type": "String"
+      },
+      "total": {
+        "type": "String"
+      }
+    }
+  },
+  "unlockTripsRequirement": "You need at least 3 rides to unlock trips",
+  "createNewTrip": "Create a New Trip",
+  "startByCreatingTrip": "Start by creating a New Trip",
+  "skip": "Skip",
+  "todayText": "இன்று",
+  "distanceLabel": "தூரம்",
+  "rideDuration": "பயண கால அளவு",
+  "speedLabel": "வேகம்",
+  "minutesShort": "நி",
+  "secondsShort": "வி",
+  "getMoreOutOfTrackify": "Trackify-லிருந்து கூடுதல் பலன்களைப் பெறுங்கள்",
+  "discoverMoreDesc": "மேலும் பலவற்றை ಅನ್ವೇಷಿಸಿ — அருமையான விஷயங்கள் காத்திருக்கின்றன!",
+  "serviceLogs": "சேவை பதிவுகள்",
+  "safeParking": "பாதுகாப்பான நிறுத்தம்",
+  "appUpdates": "செயலி புதுப்பிப்புகள்",
+  "deviceDataPlanLabel": "சாதன தரவு திட்டம்",
+  "deviceWarrantyLabel": "சாதன உத்தரவாதம்",
+  "videoTutorials": "வீடியோ பயிற்சிகள்",
+  "exploreNow": "இப்போது ஆராயுங்கள்",
+  "plusLabel": "பிளஸ்",
+  "mapStyleLabel": "வரைபட நடை",
+  "darkStyle": "டார்க்",
+  "lightStyle": "லைட்",
+  "simpleStyle": "சிம்பிள்",
+  "satelliteStyle": "சேட்டிலைட்",
+  "mapOptionsLabel": "வரைபட விருப்பங்கள்",
+  "trafficLabel": "போக்குவரத்து",
+  "labelsLabel": "லேபிள்கள்",
+  "sharedWithMe": "என்னுடன் பகிரப்பட்டது",
+  "todaysStats": "இன்றைய புள்ளிவிவரங்கள்",
+  "parkedSinceTime": "முதல் நிறுத்தப்பட்டுள்ளது: {time}",
+  "@parkedSinceTime": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "kmsMoreToGo": "இன்னும் {value} கிமீ தூரம் செல்ல வேண்டியுள்ளது",
+  "@kmsMoreToGo": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "buyTrackifyDevice": "Trackify சாதனத்தை வாங்கவும்",
+  "recordViaPhone": "தொலைபேசி வழியாகப் பதிவு செய்யவும்",
+  "progressPercentage": "{value}%",
+  "@progressPercentage": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "labelColon": "{label}:",
+  "@labelColon": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      }
+    }
+  },
+  "fuelEmpty": "இ",
+  "fuelFull": "எஃப்",
+  "vehicleNamePlaceholder": "SP 125",
+  "vehicleNumberPlaceholder": "MP09QV8269",
+  "myProfile": "எனது சுயவிவரம்",
+  "profileCompleteness": "சுயவிவர நிறைவு",
+  "lastUpdatedOn": "கடைசியாக {date} அன்று புதுப்பிக்கப்பட்டது",
+  "@lastUpdatedOn": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "addProfilePicture": "உங்கள் சுயவிவரப் படத்தைச் சேர்க்கவும்",
+  "personalDetails": "தனிப்பட்ட விவரங்கள்",
+  "userNameLabel": "பெயர்",
+  "emailAddressLabel": "மின்னஞ்சல் முகவரி",
+  "mobileNumberLabel": "மொபைல் எண்",
+  "countryLabel": "நாடு",
+  "stateLabel": "மாநிலம்",
+  "cityLabel": "நகரம்",
+  "medicalInsuranceInfo": "மருத்துவ காப்பீடு தகவல்",
+  "addMedicalInsuranceInfo": "மருத்துவ காப்பீடு தகவலைச் சேர்க்கவும்",
+  "vehicleInsuranceInfo": "வாகன காப்பீடு தகவல்",
+  "editViewVehicleInsuranceDesc": "வாகன அமைப்புகளில் வாகன காப்பீடு விவரங்களைத் திருத்தவும் மற்றும் பார்க்கவும்.",
+  "myGarageVehiclePath": "எனது கேரேஜ் > வாகனம்",
+  "emergencyContacts": "அவசர தொடர்புகள்",
+  "addEditEmergencyContactDesc": "வாகன அமைப்புகளில் அவசர தொடர்பு பட்டியலைச் சேர்க்கவும் மற்றும் திருத்தவும்."
 }
