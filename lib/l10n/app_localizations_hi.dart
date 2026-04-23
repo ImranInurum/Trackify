@@ -1015,7 +1015,6 @@ class AppLocalizationsHi extends AppLocalizations {
   @override
   String get preventFrustrationDamageDesc =>
       'अनुचित पार्किंग से होने वाले संघर्षों और वाहन की क्षति से बचें।';
-      'वाहन सेटिंग में आपातकालीन संपर्क सूची जोड़ें और संपादित करें विधायक।';
 
   @override
   String get liveTab => 'लाइव';

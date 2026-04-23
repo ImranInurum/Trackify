@@ -1016,79 +1016,80 @@ class AppLocalizationsMr extends AppLocalizations {
       'अयोग्य पार्किंगमुळे होणारे संघर्ष आणि वाहनाचे नुकसान टाळा.';
 
   @override
-  String get liveTab => 'लाईव्ह';
+  String get liveTab => 'LIVE';
 
   @override
-  String get historyTab => 'इतिहास';
+  String get historyTab => 'HISTORY';
 
   @override
-  String get liveLocationSharingActive => 'लाईव्ह लोकेशन शेअरिंग सक्रिय आहे';
+  String get liveLocationSharingActive => 'Live Location Sharing Active';
 
   @override
-  String get noLiveLocationShared => 'कोणतीही लाईव्ह लोकेशन शेअर केलेली नाही';
+  String get noLiveLocationShared => 'No live location shared';
 
   @override
   String get realTimeSharingDesc =>
-      'तुमची लोकेशन निवडक संपर्कांशी रिअल-टाइममध्ये शेअर केली जात आहे.';
+      'Your location is being shared in real-time with selected contacts.';
 
   @override
   String get startSharingPhoneDesc =>
-      'इतरांना तुम्हाला ट्रॅक करण्यात मदत करण्यासाठी तुमच्या फोनची लोकेशन शेअर करणे सुरू करा';
+      'Start sharing your phone\'s location to help others track you';
 
   @override
-  String get noHistoryAvailable => 'कोणताही इतिहास उपलब्ध नाही';
+  String get noHistoryAvailable => 'No history available';
 
   @override
-  String get historyDesc => 'मागील लोकेशन शेअर पूर्ण झाल्यानंतर येथे दिसतील.';
+  String get historyDesc =>
+      'Past location shares will appear here once they are completed.';
 
   @override
-  String get stopSharing => 'शेयरिंग थांबवा';
+  String get stopSharing => 'Stop Sharing';
 
   @override
-  String get shareLocation => 'लोकेशन शेअर करा';
+  String get shareLocation => 'Share Location';
 
   @override
-  String get startSharing => 'शेअर करणे सुरू करा';
+  String get startSharing => 'Start Sharing';
 
   @override
-  String get phoneTracking => 'फोन ट्रॅकिंग';
+  String get phoneTracking => 'Phone Tracking';
 
   @override
-  String get liveRecordTab => 'लाइव रेकॉर्ड';
+  String get liveRecordTab => 'Live Record';
 
   @override
-  String get statsTab => 'आकडेवारी';
+  String get statsTab => 'Stats';
 
   @override
-  String get timeLabel => 'वेळ';
+  String get timeLabel => 'Time';
 
   @override
-  String get weekly => 'साप्ताहिक';
+  String get weekly => 'Weekly';
 
   @override
-  String get monthly => 'मासिक';
+  String get monthly => 'Monthly';
 
   @override
-  String get custom => 'कस्टम';
+  String get custom => 'Custom';
 
   @override
-  String get quickStats => 'त्वरित आकडेवारी';
+  String get quickStats => 'Quick Stats';
 
   @override
-  String get totalRides => 'एकूण राइड्स';
+  String get totalRides => 'Total Rides';
 
   @override
-  String get avgSpeed => 'सरासरी वेग';
+  String get avgSpeed => 'Avg Speed';
 
   @override
-  String get totalFuel => 'एकूण इंधन';
+  String get totalFuel => 'Total Fuel';
 
   @override
-  String get overallDistance => 'एकूण अंतर';
+  String get overallDistance => 'Overall Distance';
 
   @override
-  String get drivingTime => 'ड्रायव्हिंग वेळ';
+  String get drivingTime => 'Driving Time';
 
   @override
-  String get safetyScore => 'सुरक्षा स्कोअर';
+  String get safetyScore => 'Safety Score';
 }

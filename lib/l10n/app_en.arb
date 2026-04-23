@@ -415,8 +415,7 @@
   "controlWhatOthersSee": "Control What Others See",
   "controlWhatOthersSeeDesc": "Customize the details shown when someone scans the QR.",
   "preventFrustrationDamage": "Prevent Frustration & Damage",
-  "preventFrustrationDamageDesc": "Avoid conflicts and vehicle damage from improper parking."
-  "addEditEmergencyContactDesc": "Add and edit emergency contact list in vehicle settings.",
+  "preventFrustrationDamageDesc": "Avoid conflicts and vehicle damage from improper parking.",
   "liveTab": "LIVE",
   "historyTab": "HISTORY",
   "liveLocationSharingActive": "Live Location Sharing Active",

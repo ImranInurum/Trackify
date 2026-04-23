@@ -415,8 +415,7 @@
   "controlWhatOthersSee": "التحكم فيما يراه الآخرون",
   "controlWhatOthersSeeDesc": "تخصيص التفاصيل المعروضة عندما يقوم شخص ما بمسح رمز QR.",
   "preventFrustrationDamage": "منع الإحباط والضرر",
-  "preventFrustrationDamageDesc": "تجنب النزاعات وتلف المركبات الناتج عن وقوف السيارات غير الصحيح."
-  "addEditEmergencyContactDesc": "إضافة وتعديل قائمة جهات اتصال الطوارئ في إعدادات المركبة.",
+  "preventFrustrationDamageDesc": "تجنب النزاعات وتلف المركبات الناتج عن وقوف السيارات غير الصحيح.",
   "liveTab": "مباشر",
   "historyTab": "السجل",
   "liveLocationSharingActive": "مشاركة الموقع المباشر نشطة",

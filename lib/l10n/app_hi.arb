@@ -415,8 +415,7 @@
   "controlWhatOthersSee": "नियंत्रित करें कि दूसरे क्या देखते हैं",
   "controlWhatOthersSeeDesc": "जब कोई क्यूआर स्कैन करता है तो दिखाए गए विवरणों को अनुकूलित करें।",
   "preventFrustrationDamage": "निराशा और क्षति को रोकें",
-  "preventFrustrationDamageDesc": "अनुचित पार्किंग से होने वाले संघर्षों और वाहन की क्षति से बचें।"
-  "addEditEmergencyContactDesc": "वाहन सेटिंग में आपातकालीन संपर्क सूची जोड़ें और संपादित करें विधायक।",
+  "preventFrustrationDamageDesc": "अनुचित पार्किंग से होने वाले संघर्षों और वाहन की क्षति से बचें।",
   "liveTab": "लाइव",
   "historyTab": "इतिहास",
   "liveLocationSharingActive": "लाइव लोकेशन शेयरिंग सक्रिय है",
