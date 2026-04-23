@@ -43,79 +43,73 @@ class UserVehicles {
 }
 
 class Vehicles {
-  String? sId;
-  String? userId;
-  String? vehicleType;
-  String? fuelType;
-  String? vehicleMaker;
-  String? vehicleNumber;
-  String? vehicleModel;
-  String? createdAt;
-  String? updatedAt;
-  int? iV;
+  final String id;
+  final String userId;
+  final String vehicleType;
+  final String fuelType;
+  final String brandId;
+  final String vehicleMaker;
+  final String modelId;
+  final String vehicleModel;
+  final String vehicleNumber;
+  final String? imei;
+  final DateTime? createdAt;
+  final DateTime? updatedAt;
+  final int version;
 
   Vehicles({
-    this.sId,
-    this.userId,
-    this.vehicleType,
-    this.fuelType,
-    this.vehicleMaker,
-    this.vehicleNumber,
-    this.vehicleModel,
-    this.createdAt,
-    this.updatedAt,
-    this.iV,
+    required this.id,
+    required this.userId,
+    required this.vehicleType,
+    required this.fuelType,
+    required this.brandId,
+    required this.vehicleMaker,
+    required this.modelId,
+    required this.vehicleModel,
+    required this.vehicleNumber,
+    required this.imei,
+    required this.createdAt,
+    required this.updatedAt,
+    required this.version,
   });
 
-  Vehicles.fromJson(Map<String, dynamic> json) {
-    sId = json['_id'];
-    userId = json['userId'];
-    vehicleType = json['vehicleType'];
-    fuelType = json['fuelType'];
-    vehicleMaker = json['vehicleMaker'];
-    vehicleNumber = json['vehicleNumber'];
-    vehicleModel = json['vehicleModel'];
-    createdAt = json['createdAt'];
-    updatedAt = json['updatedAt'];
-    iV = json['__v'];
+  factory Vehicles.fromJson(Map<String, dynamic>? json) {
+    return Vehicles(
+      id: json?['_id'] ?? '',
+      userId: json?['userId'] ?? '',
+      vehicleType: json?['vehicleType'] ?? '',
+      fuelType: json?['fuelType'] ?? '',
+      brandId: json?['brandId'] ?? '',
+      vehicleMaker: json?['vehicleMaker'] ?? '',
+      modelId: json?['modelId'] ?? '',
+      vehicleModel: json?['vehicleModel'] ?? '',
+      vehicleNumber: json?['vehicleNumber'] ?? '',
+      imei: json?['imei'] ?? '',
+      createdAt: json?['createdAt'] != null
+          ? DateTime.tryParse(json?['createdAt'])
+          : null,
+      updatedAt: json?['updatedAt'] != null
+          ? DateTime.tryParse(json?['updatedAt'])
+          : null,
+      version: json?['__v'] ?? 0,
+    );
   }
 
-  Vehicles copyWith({
-    String? sId,
-    String? userId,
-    String? vehicleType,
-    String? fuelType,
-    String? vehicleMaker,
-    String? vehicleNumber,
-    String? vehicleModel,
-    String? createdAt,
-    String? updatedAt,
-    int? iV,
-  }) => Vehicles(
-    sId: sId ?? this.sId,
-    userId: userId ?? this.userId,
-    vehicleType: vehicleType ?? this.vehicleType,
-    fuelType: fuelType ?? this.fuelType,
-    vehicleMaker: vehicleMaker ?? this.vehicleMaker,
-    vehicleNumber: vehicleNumber ?? this.vehicleNumber,
-    vehicleModel: vehicleModel ?? this.vehicleModel,
-    createdAt: createdAt ?? this.vehicleModel,
-    updatedAt: updatedAt ?? this.updatedAt,
-    iV: iV ?? this.iV,
-  );
-
   Map<String, dynamic> toJson() {
-    final data = <String, dynamic>{};
-    data['_id'] = sId;
-    data['userId'] = userId;
-    data['vehicleType'] = vehicleType;
-    data['fuelType'] = fuelType;
-    data['vehicleMaker'] = vehicleMaker;
-    data['vehicleNumber'] = vehicleNumber;
-    data['vehicleModel'] = vehicleModel;
-    data['createdAt'] = createdAt;
-    data['updatedAt'] = updatedAt;
-    data['__v'] = iV;
-    return data;
+    return {
+      '_id': id,
+      'userId': userId,
+      'vehicleType': vehicleType,
+      'fuelType': fuelType,
+      'brandId': brandId,
+      'vehicleMaker': vehicleMaker,
+      'modelId': modelId,
+      'vehicleModel': vehicleModel,
+      'vehicleNumber': vehicleNumber,
+      'imei': imei,
+      'createdAt': createdAt?.toIso8601String(),
+      'updatedAt': updatedAt?.toIso8601String(),
+      '__v': version,
+    };
   }
 }

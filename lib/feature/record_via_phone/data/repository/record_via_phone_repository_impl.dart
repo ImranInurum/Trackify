@@ -25,6 +25,7 @@ class RecordViaPhoneRepositoryImpl implements RecordViaPhoneRepository {
         ApiURL.deviceDataByDate,
         requestBody,
       );
+      print('phone >>>>>>>$res');
       return res.fold(
         (error) => Left(error),
         (data) => Right(DeviceDataByDateResponse.fromJson(data)),

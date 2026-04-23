@@ -121,7 +121,7 @@ class _MapScreenState extends State<MapScreen> {
                         SizedBox(height: topSpacing),
                         _buildMapSection(),
                         _buildPromoBanner(),
-                        _buildExploreMore(),
+                        _buildExploreMore(_selectedDevice),
                         const SizedBox(height: 20),
                       ],
                     ),
@@ -419,7 +419,7 @@ class _MapScreenState extends State<MapScreen> {
     );
   }
 
-  Widget _buildExploreMore() {
+  Widget _buildExploreMore(Vehicles? selectedDevice) {
     // final l10n = AppLocalizations.of(context)!;
     final options = [
       {
@@ -484,11 +484,23 @@ class _MapScreenState extends State<MapScreen> {
               return InkWell(
                 onTap: () {
                   if (option["label"] == "Record via\nPhone") {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) => const RecordViaPhoneScreen(),
-                      ),
-                    );
+                    if( selectedDevice?.imei == null) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text("No device found for this vehicle."),
+                          backgroundColor: Colors.red,
+                        ),
+                      );
+                      return;
+
+                    }else{
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) =>  RecordViaPhoneScreen(imei: selectedDevice?.imei??''),
+                        ),
+                      );
+                    }
+
                   }
                 },
                 child: Column(
