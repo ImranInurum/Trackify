@@ -17,6 +17,8 @@ abstract class RecordViaPhoneState extends Equatable {
     this.currentSpeed = 0.0,
   });
 
+  Set<Polyline>? get polylines => null;
+
   @override
   List<Object?> get props => [
     isRecording,
