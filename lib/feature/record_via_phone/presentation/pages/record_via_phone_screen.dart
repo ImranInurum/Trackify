@@ -12,7 +12,8 @@ import 'package:trackify/feature/record_via_phone/presentation/cubit/record_via_
 import 'package:trackify/feature/record_via_phone/presentation/cubit/record_via_phone_state.dart';
 
 class RecordViaPhoneScreen extends StatefulWidget {
-  const RecordViaPhoneScreen({super.key});
+  final String imei;
+  const RecordViaPhoneScreen({super.key,required this.imei});
 
   @override
   State<RecordViaPhoneScreen> createState() => _RecordViaPhoneScreenState();
@@ -34,7 +35,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
       final now = DateTime.now();
       final today = DateFormat('yyyy-MM-dd').format(now);
       context.read<RecordViaPhoneCubit>().fetchDeviceDataByDate(
-        imei: '860710085959719',
+        imei: widget.imei,
         startDate: today,
         endDate: today,
       );
