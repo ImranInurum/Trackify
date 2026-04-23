@@ -111,8 +111,8 @@ class _ManualEntryDialogState extends State<ManualEntryDialog> {
                         },
                         child: Text(
                           l10n.continueText,
-                          style: const TextStyle(
-                            color: Color(0xFFFFA000),
+                          style: TextStyle(
+                            color: colorScheme.secondary,
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
                           ),
@@ -156,7 +156,7 @@ class _ManualEntryDialogState extends State<ManualEntryDialog> {
           borderRadius: BorderRadius.circular(4),
         ),
         focusedBorder: OutlineInputBorder(
-          borderSide: const BorderSide(color: Color(0xFFFFA000), width: 1.5),
+          borderSide: BorderSide(color: theme.colorScheme.secondary, width: 1.5),
           borderRadius: BorderRadius.circular(4),
         ),
         errorBorder: OutlineInputBorder(

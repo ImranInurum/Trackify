@@ -4,7 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:trackify/feature/add_vehicle_and_device/add_vehicle/data/models/vehicle_config_models.dart';
 
 import '../../../../../app/app_navigation.dart';
-import '../../../../../core/theme/app_colors.dart';
+import '../../../../../core/theme/app_theme_extension.dart';
 import '../../../../../core/widgets/custom_form_field.dart';
 import '../../../../../l10n/app_localizations.dart';
 import '../../../../onboarding/presentation/cubit/splash_cubit.dart';
@@ -72,8 +72,9 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
     required String label,
     required bool selected,
   }) {
-    const Color active = AppColors.secondaryLight;
-    const Color inactive = Color(0xFFAAAAAA);
+    final theme = Theme.of(context);
+    final Color active = theme.colorScheme.secondary;
+    final Color inactive = theme.hintColor.withOpacity(0.4);
 
     return GestureDetector(
       onTap: () => context.read<AddVehicleCubit>().selectVehicleType(config),
@@ -115,8 +116,9 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
     required String label,
     required bool selected,
   }) {
-    const Color active = AppColors.secondaryLight;
-    const Color inactive = Color(0xFFAAAAAA);
+    final theme = Theme.of(context);
+    final Color active = theme.colorScheme.secondary;
+    final Color inactive = theme.hintColor.withOpacity(0.4);
 
     return GestureDetector(
       onTap: () => context.read<AddVehicleCubit>().selectFuelType(type),
@@ -162,6 +164,7 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
     String? hint,
     VoidCallback? onDisabledTap,
   }) {
+    final theme = Theme.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -170,17 +173,16 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
           children: [
             Text(
               label,
-              style: const TextStyle(
-                fontSize: 13,
-                color: AppColors.textSecondaryLight,
+              style: theme.textTheme.labelMedium?.copyWith(
                 fontWeight: FontWeight.w500,
+                color: theme.colorScheme.onSurface.withOpacity(0.6),
               ),
             ),
             if (isLoading)
-              const SizedBox(
+              SizedBox(
                 height: 12,
                 width: 12,
-                child: CircularProgressIndicator(strokeWidth: 1.5),
+                child: CircularProgressIndicator(strokeWidth: 1.5, color: theme.colorScheme.primary),
               ),
           ],
         ),
@@ -190,25 +192,26 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
           behavior: HitTestBehavior.opaque,
           child: Container(
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: theme.cardColor,
               borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: const Color(0xFFE0E0E0)),
+              border: Border.all(color: theme.dividerColor),
             ),
             padding: const EdgeInsets.symmetric(horizontal: 14),
             child: DropdownButtonHideUnderline(
               child: DropdownButton<T>(
+                dropdownColor: theme.cardColor,
                 value: value,
                 isExpanded: true,
                 hint: Text(
                   hint ?? label,
-                  style: const TextStyle(color: Color(0xFFAAAAAA), fontSize: 14),
+                  style: TextStyle(color: theme.hintColor, fontSize: 14),
                 ),
-                icon: const Icon(Icons.arrow_drop_down, color: AppColors.secondaryLight),
+                icon: Icon(Icons.arrow_drop_down, color: theme.colorScheme.secondary),
                 items: items
                     .map(
                       (e) => DropdownMenuItem(
                         value: e,
-                        child: Text(itemLabel(e), style: const TextStyle(fontSize: 14)),
+                        child: Text(itemLabel(e), style: TextStyle(color: theme.colorScheme.onSurface, fontSize: 14)),
                       ),
                     )
                     .toList(),
@@ -222,14 +225,13 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
   }
 
   // ─── Section label ─────────────────────────────────────────────────────────
-  Widget _sectionLabel(String text) => Padding(
+  Widget _sectionLabel(String text, ThemeData theme) => Padding(
     padding: const EdgeInsets.only(bottom: 12),
     child: Text(
       text,
-      style: const TextStyle(
-        fontSize: 14,
+      style: theme.textTheme.titleSmall?.copyWith(
         fontWeight: FontWeight.w600,
-        color: AppColors.textPrimaryLight,
+        color: theme.colorScheme.onSurface,
       ),
     ),
   );
@@ -270,22 +272,24 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
   // ─── Build ─────────────────────────────────────────────────────────────────
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
     final l10n = AppLocalizations.of(context)!;
+    final appColors = theme.extension<AppColorsExtension>();
 
     return Scaffold(
-      backgroundColor: AppColors.backgroundLight,
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_rounded, color: Colors.black87),
+          icon: Icon(Icons.arrow_back_rounded, color: theme.appBarTheme.foregroundColor),
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: Text(
           l10n.addVehicle,
-          style: const TextStyle(
-            color: Colors.black87,
+          style: TextStyle(
+            color: theme.appBarTheme.foregroundColor,
             fontSize: 17,
             fontWeight: FontWeight.w600,
           ),
@@ -309,7 +313,10 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
 
           if (state.successResponse != null) {
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(l10n.vehicleAdded), backgroundColor: Colors.green),
+              SnackBar(
+                content: Text(l10n.vehicleAdded), 
+                backgroundColor: appColors?.success ?? Colors.green,
+              ),
             );
             Navigator.of(context).pushAndRemoveUntil(
               MaterialPageRoute(builder: (context) => const AppNavigation()),
@@ -317,7 +324,10 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
             );
           } else if (state.errorMessage != null) {
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(state.errorMessage!), backgroundColor: Colors.red),
+              SnackBar(
+                content: Text(state.errorMessage!), 
+                backgroundColor: theme.colorScheme.error,
+              ),
             );
             context.read<AddVehicleCubit>().clearError();
           }
@@ -356,7 +366,7 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
                             const SizedBox(height: 8),
 
                             // ── Vehicle Type ──────────────────────────────────────────
-                            _sectionLabel(l10n.vehicleType),
+                            _sectionLabel(l10n.vehicleType, theme),
                             SingleChildScrollView(
                               scrollDirection: Axis.horizontal,
                               child: Row(
@@ -378,7 +388,7 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
 
                             // ── Fuel Type ─────────────────────────────────────────────
                             const SizedBox(height: 24),
-                            _sectionLabel(l10n.fuelType),
+                            _sectionLabel(l10n.fuelType, theme),
                             state.selectedConfig != null
                                 ? SingleChildScrollView(
                                     scrollDirection: Axis.horizontal,
@@ -405,7 +415,7 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
                                     child: Text(
                                       "Select vehicle type to see fuel options",
                                       style: TextStyle(
-                                        color: Colors.grey.withValues(alpha: 0.7),
+                                        color: theme.hintColor.withOpacity(0.7),
                                         fontSize: 12,
                                         fontStyle: FontStyle.italic,
                                       ),
@@ -514,15 +524,13 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
                                 },
                           style: ElevatedButton.styleFrom(
                             padding: const EdgeInsets.symmetric(vertical: 0),
-                            backgroundColor: AppColors.secondaryLight,
-                            foregroundColor: Colors.white,
+                            backgroundColor: theme.colorScheme.secondary,
+                            foregroundColor: theme.colorScheme.onSecondary,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(8),
                             ),
                             elevation: 0,
-                            disabledBackgroundColor: AppColors.secondaryLight.withValues(
-                              alpha: 0.6,
-                            ),
+                            disabledBackgroundColor: theme.colorScheme.secondary.withOpacity(0.6),
                           ),
                           child: state.isSubmitting
                               ? const SizedBox(

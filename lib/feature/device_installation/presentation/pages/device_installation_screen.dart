@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
+import '../../../../core/theme/app_theme_extension.dart';
 import '../../../../core/widgets/square_flat_button.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../cubit/device_installation_cubit.dart';
@@ -65,7 +66,7 @@ class _DeviceInstallationScreenState extends State<DeviceInstallationScreen>
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
+    final appColors = theme.extension<AppColorsExtension>();
 
     return BlocListener<DeviceInstallationCubit, DeviceInstallationState>(
       listener: (context, state) {
@@ -73,7 +74,7 @@ class _DeviceInstallationScreenState extends State<DeviceInstallationScreen>
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(l10n.deviceAssignedSuccess),
-              backgroundColor: Colors.green,
+              backgroundColor: appColors?.success ?? Colors.green,
             ),
           );
           Navigator.pop(context);
@@ -86,7 +87,7 @@ class _DeviceInstallationScreenState extends State<DeviceInstallationScreen>
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(state.exception.message),
-              backgroundColor: Colors.redAccent,
+              backgroundColor: theme.colorScheme.error,
             ),
           );
         }
@@ -98,7 +99,7 @@ class _DeviceInstallationScreenState extends State<DeviceInstallationScreen>
           elevation: 0,
           centerTitle: false,
           leading: IconButton(
-            icon: Icon(Icons.arrow_back, color: colorScheme.onSurface),
+            icon: Icon(Icons.arrow_back, color: theme.colorScheme.onSurface),
             onPressed: () => Navigator.pop(context),
           ),
           title: Text(
@@ -109,7 +110,7 @@ class _DeviceInstallationScreenState extends State<DeviceInstallationScreen>
           ),
           actions: [
             IconButton(
-              icon: Icon(Icons.more_vert, color: colorScheme.onSurface),
+              icon: Icon(Icons.more_vert, color: theme.colorScheme.onSurface),
               onPressed: () {},
             ),
           ],
@@ -129,7 +130,7 @@ class _DeviceInstallationScreenState extends State<DeviceInstallationScreen>
                         children: [
                           Icon(
                             Icons.qr_code_scanner,
-                            color: colorScheme.onSurface,
+                            color: theme.colorScheme.onSurface,
                             size: 22,
                           ),
                           const SizedBox(width: 10),
@@ -202,21 +203,14 @@ class _DeviceInstallationScreenState extends State<DeviceInstallationScreen>
                                                   child: Container(
                                                     height: 3,
                                                     decoration: BoxDecoration(
-                                                      color: const Color(
-                                                        0xFFFFA000,
-                                                      ),
+                                                      color: theme.colorScheme.secondary,
                                                       borderRadius:
                                                           BorderRadius.circular(
                                                             2,
                                                           ),
                                                       boxShadow: [
                                                         BoxShadow(
-                                                          color:
-                                                              const Color(
-                                                                0xFFFFA000,
-                                                              ).withValues(
-                                                                alpha: 0.6,
-                                                              ),
+                                                          color: theme.colorScheme.secondary.withOpacity(0.6),
                                                           blurRadius: 12,
                                                           spreadRadius: 3,
                                                         ),
@@ -248,7 +242,7 @@ class _DeviceInstallationScreenState extends State<DeviceInstallationScreen>
                                                 mainAxisSize: MainAxisSize.min,
                                                 children: [
                                                   const CircularProgressIndicator(
-                                                    color: Color(0xFFFFA000),
+                                                    color: Colors.white,
                                                   ),
                                                   const SizedBox(height: 12),
                                                   Text(
@@ -256,8 +250,7 @@ class _DeviceInstallationScreenState extends State<DeviceInstallationScreen>
                                                     style: theme
                                                         .textTheme.bodyMedium
                                                         ?.copyWith(
-                                                      color: colorScheme
-                                                          .onSurface
+                                                      color: theme.colorScheme.onSurface
                                                           .withValues(
                                                               alpha: 0.7),
                                                     ),
@@ -289,8 +282,8 @@ class _DeviceInstallationScreenState extends State<DeviceInstallationScreen>
                             onTap: () => _showManualEntryDialog(context),
                             child: Text(
                               l10n.enterActivationCodeManually,
-                              style: const TextStyle(
-                                color: Color(0xFFFFA000),
+                              style: TextStyle(
+                                color: theme.colorScheme.secondary,
                                 fontSize: 14,
                                 fontWeight: FontWeight.w600,
                               ),
@@ -315,16 +308,16 @@ class _DeviceInstallationScreenState extends State<DeviceInstallationScreen>
                     Text(
                       l10n.openAjjasBoxInstruction,
                       style: theme.textTheme.bodyMedium?.copyWith(
-                        color: colorScheme.onSurface.withValues(alpha: 0.54),
+                        color: theme.colorScheme.onSurface.withValues(alpha: 0.54),
                       ),
                     ),
                     const SizedBox(height: 16),
                     CommonButton(
                       text: l10n.continueText,
-                      backgroundColor: const Color(0xFFFFA000),
-                      disabledBackgroundColor: Colors.grey.withValues(alpha: 0.5),
+                      backgroundColor: theme.colorScheme.secondary,
+                      disabledBackgroundColor: theme.hintColor.withOpacity(0.3),
                       disabledForegroundColor: Colors.white54,
-                      foregroundColor: Colors.white,
+                      foregroundColor: theme.colorScheme.onSecondary,
                       borderRadius: 8,
                       onPressed: _scannedImei != null
                           ? () {

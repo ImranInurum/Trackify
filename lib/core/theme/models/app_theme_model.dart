@@ -79,9 +79,12 @@ class ThemeConfig {
 class ThemeColors {
   final Color primary;
   final Color primaryVariant;
+  final Color onPrimary;
   final Color secondary;
+  final Color onSecondary;
   final Color background;
   final Color surface;
+  final Color onSurface;
   final Color card;
   final Color textPrimary;
   final Color textSecondary;
@@ -89,14 +92,18 @@ class ThemeColors {
   final Color border;
   final Color divider;
   final Color error;
+  final Color onError;
   final Color? shadow;
 
   ThemeColors({
     required this.primary,
     required this.primaryVariant,
+    required this.onPrimary,
     required this.secondary,
+    required this.onSecondary,
     required this.background,
     required this.surface,
+    required this.onSurface,
     required this.card,
     required this.textPrimary,
     required this.textSecondary,
@@ -104,6 +111,7 @@ class ThemeColors {
     required this.border,
     required this.divider,
     required this.error,
+    required this.onError,
     this.shadow,
   });
 
@@ -111,9 +119,12 @@ class ThemeColors {
     return ThemeColors(
       primary: HexColor(json['primary']),
       primaryVariant: HexColor(json['primary_variant']),
+      onPrimary: HexColor(json['on_primary'] ?? '#FFFFFF'),
       secondary: HexColor(json['secondary']),
+      onSecondary: HexColor(json['on_secondary'] ?? '#FFFFFF'),
       background: HexColor(json['background']),
       surface: HexColor(json['surface']),
+      onSurface: HexColor(json['on_surface'] ?? json['text_primary']),
       card: HexColor(json['card']),
       textPrimary: HexColor(json['text_primary']),
       textSecondary: HexColor(json['text_secondary']),
@@ -121,6 +132,7 @@ class ThemeColors {
       border: HexColor(json['border']),
       divider: HexColor(json['divider']),
       error: HexColor(json['error']),
+      onError: HexColor(json['on_error'] ?? '#FFFFFF'),
       shadow: json['shadow'] != null ? HexColor(json['shadow']) : null,
     );
   }
@@ -129,9 +141,12 @@ class ThemeColors {
     return {
       'primary': primary.toHex(),
       'primary_variant': primaryVariant.toHex(),
+      'on_primary': onPrimary.toHex(),
       'secondary': secondary.toHex(),
+      'on_secondary': onSecondary.toHex(),
       'background': background.toHex(),
       'surface': surface.toHex(),
+      'on_surface': onSurface.toHex(),
       'card': card.toHex(),
       'text_primary': textPrimary.toHex(),
       'text_secondary': textSecondary.toHex(),
@@ -139,6 +154,7 @@ class ThemeColors {
       'border': border.toHex(),
       'divider': divider.toHex(),
       'error': error.toHex(),
+      'on_error': onError.toHex(),
       'shadow': shadow?.toHex(),
     };
   }
