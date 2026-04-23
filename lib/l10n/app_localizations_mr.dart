@@ -1014,4 +1014,81 @@ class AppLocalizationsMr extends AppLocalizations {
   @override
   String get preventFrustrationDamageDesc =>
       'अयोग्य पार्किंगमुळे होणारे संघर्ष आणि वाहनाचे नुकसान टाळा.';
+
+  @override
+  String get liveTab => 'लाईव्ह';
+
+  @override
+  String get historyTab => 'इतिहास';
+
+  @override
+  String get liveLocationSharingActive => 'लाईव्ह लोकेशन शेअरिंग सक्रिय आहे';
+
+  @override
+  String get noLiveLocationShared => 'कोणतीही लाईव्ह लोकेशन शेअर केलेली नाही';
+
+  @override
+  String get realTimeSharingDesc =>
+      'तुमची लोकेशन निवडक संपर्कांशी रिअल-टाइममध्ये शेअर केली जात आहे.';
+
+  @override
+  String get startSharingPhoneDesc =>
+      'इतरांना तुम्हाला ट्रॅक करण्यात मदत करण्यासाठी तुमच्या फोनची लोकेशन शेअर करणे सुरू करा';
+
+  @override
+  String get noHistoryAvailable => 'कोणताही इतिहास उपलब्ध नाही';
+
+  @override
+  String get historyDesc => 'मागील लोकेशन शेअर पूर्ण झाल्यानंतर येथे दिसतील.';
+
+  @override
+  String get stopSharing => 'शेयरिंग थांबवा';
+
+  @override
+  String get shareLocation => 'लोकेशन शेअर करा';
+
+  @override
+  String get startSharing => 'शेअर करणे सुरू करा';
+
+  @override
+  String get phoneTracking => 'फोन ट्रॅकिंग';
+
+  @override
+  String get liveRecordTab => 'लाइव रेकॉर्ड';
+
+  @override
+  String get statsTab => 'आकडेवारी';
+
+  @override
+  String get timeLabel => 'वेळ';
+
+  @override
+  String get weekly => 'साप्ताहिक';
+
+  @override
+  String get monthly => 'मासिक';
+
+  @override
+  String get custom => 'कस्टम';
+
+  @override
+  String get quickStats => 'त्वरित आकडेवारी';
+
+  @override
+  String get totalRides => 'एकूण राइड्स';
+
+  @override
+  String get avgSpeed => 'सरासरी वेग';
+
+  @override
+  String get totalFuel => 'एकूण इंधन';
+
+  @override
+  String get overallDistance => 'एकूण अंतर';
+
+  @override
+  String get drivingTime => 'ड्रायव्हिंग वेळ';
+
+  @override
+  String get safetyScore => 'सुरक्षा स्कोअर';
 }

@@ -6,6 +6,7 @@ import 'package:trackify/core/config/network/network_api_service.dart';
 import 'package:trackify/core/utils/typedefs.dart';
 
 import '../../domain/repository/ride_history_repository.dart';
+import '../entity/ride_history_response_model.dart';
 import '../entity/ride_model.dart';
 
 
@@ -13,33 +14,36 @@ import '../entity/ride_model.dart';
 class RideHistoryRepositoryImpl implements RideHistoryRepository {
   final NetworkApiService _apiService = NetworkApiService();
 
-  final List<Ride> rideHistoryList = [
-    Ride(
-      id: "1",
-      date: "Thursday, Apr 02, 2026",
-      startTime: "09:12 AM",
-      endTime: "10:04 AM",
-      distance: 12.4,
-      duration: "52m",
-      avgSpeed: 23.8,
-      topSpeed: 45.2,
-      startLocation: "Indiranagar, Bangalore",
-      endLocation: "MG Road, Bangalore",
-      mapImageUrl: "https://api.placeholder.com/400/200",
-    ),
-  ];
-
   @override
   ResultFuture<List<Ride>> rideHistory(Map<String, dynamic> body) async {
     try {
-      debugPrint('Assigning device with request: $body');
-      // final response = await _apiService.getPostApiResponse(
-      //   ApiURL.assignDevices,
-      //   body,
-      // );
-      // debugPrint('ride history response: $response');
-      // NetworkApiService's getPostApiResponse already returns an Either<AppException, dynamic>
-      return  Right(rideHistoryList) ;
+      debugPrint('ride history request body: $body');
+      final result = await _apiService.getPostApiResponse(
+        ApiURL.journeyRideHistory,
+        body,
+      );
+
+      return result.fold(
+        (exception) => Left(exception),
+        (response) {
+          debugPrint('ride history response received: $response');
+          try {
+            final historyResponse = RideHistoryResponseModel.fromJson(response);
+            
+            // If the API returns a status: true and has a summary, map it to a Ride entity.
+            // For now, we take the summary as one 'Ride' entry in the list.
+            if (historyResponse.status == true && historyResponse.summary != null) {
+              final ride = Ride.fromSummary("1", historyResponse.summary!);
+              return Right([ride]);
+            }
+            
+            return const Right([]);
+          } catch (e) {
+            debugPrint('Error parsing ride history: $e');
+            return Left(FetchDataException('Parsing error: $e'));
+          }
+        },
+      );
     } on AppException catch (e) {
       return Left(e);
     } catch (e) {

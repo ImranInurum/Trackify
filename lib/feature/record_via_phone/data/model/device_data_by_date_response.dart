@@ -1,51 +1,40 @@
 class DeviceDataByDateResponse {
   bool? status;
   String? message;
-  int? total;
+  int? count;
   List<DataByDate>? data;
 
-  DeviceDataByDateResponse({this.status, this.message, this.total, this.data});
+  DeviceDataByDateResponse({this.status, this.message, this.count, this.data});
 
   DeviceDataByDateResponse.fromJson(Map<String, dynamic> json) {
     status = json['status'];
     message = json['message'];
-
-    // Handle the case where the API returns the list inside the 'total' parameter
-    if (json['total'] is List) {
+    count = json['count'];
+    if (json['data'] != null) {
       data = <DataByDate>[];
-      json['total'].forEach((v) {
+      json['data'].forEach((v) {
         data!.add(DataByDate.fromJson(v));
       });
-      total = data!.length;
-    } else {
-      // The original parsing logic
-      total = json['total'];
-      if (json['data'] != null) {
-        data = <DataByDate>[];
-        json['data'].forEach((v) {
-          data!.add(DataByDate.fromJson(v));
-        });
-      }
     }
   }
 
   DeviceDataByDateResponse copyWith({
     bool? status,
     String? message,
-    int? total,
+    int? count,
     List<DataByDate>? data,
   }) => DeviceDataByDateResponse(
     status: status ?? this.status,
     message: message ?? this.message,
-    total: total ?? this.total,
+    count: count ?? this.count,
     data: data ?? this.data,
   );
 
   Map<String, dynamic> toJson() {
-    final data = <String, dynamic>{};
+    final Map<String, dynamic> data = <String, dynamic>{};
     data['status'] = status;
     data['message'] = message;
-    data['total'] = total;
+    data['count'] = count;
     if (this.data != null) {
       data['data'] = this.data!.map((v) => v.toJson()).toList();
     }
@@ -54,7 +43,7 @@ class DeviceDataByDateResponse {
 }
 
 class DataByDate {
-  int? id;
+  String? id;
   String? imei;
   String? gs;
   String? dt;
@@ -63,11 +52,11 @@ class DataByDate {
   String? ns;
   String? lg;
   String? ew;
-  String? sp;
-  String? sg;
-  int? status;
-  String? deviceName;
+  double? sp;
+  int? sg;
   String? createdAt;
+  String? updatedAt;
+  int? v;
 
   DataByDate({
     this.id,
@@ -81,30 +70,30 @@ class DataByDate {
     this.ew,
     this.sp,
     this.sg,
-    this.status,
-    this.deviceName,
     this.createdAt,
+    this.updatedAt,
+    this.v,
   });
 
   DataByDate.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
+    id = json['_id'];
     imei = json['imei']?.toString();
     gs = json['gs']?.toString();
     dt = json['dt']?.toString();
     tm = json['tm']?.toString();
-    lt = json['lat']?.toString();
+    lt = json['lt']?.toString();
     ns = json['ns']?.toString();
-    lg = json['lng']?.toString();
+    lg = json['lg']?.toString();
     ew = json['ew']?.toString();
-    sp = json['sp']?.toString();
-    sg = json['sg']?.toString();
-    status = json['status'];
-    deviceName = json['device_name']?.toString();
+    sp = (json['sp'] as num?)?.toDouble();
+    sg = (json['sg'] as num?)?.toInt();
     createdAt = json['createdAt']?.toString();
+    updatedAt = json['updatedAt']?.toString();
+    v = (json['__v'] as num?)?.toInt();
   }
 
   DataByDate copyWith({
-    int? id,
+    String? id,
     String? imei,
     String? gs,
     String? dt,
@@ -113,11 +102,11 @@ class DataByDate {
     String? ns,
     String? lg,
     String? ew,
-    String? sp,
-    String? sg,
-    int? status,
-    String? deviceName,
+    double? sp,
+    int? sg,
     String? createdAt,
+    String? updatedAt,
+    int? v,
   }) => DataByDate(
     id: id ?? this.id,
     imei: imei ?? this.imei,
@@ -130,14 +119,14 @@ class DataByDate {
     ew: ew ?? this.ew,
     sp: sp ?? this.sp,
     sg: sg ?? this.sg,
-    status: status ?? this.status,
-    deviceName: deviceName ?? this.deviceName,
     createdAt: createdAt ?? this.createdAt,
+    updatedAt: updatedAt ?? this.updatedAt,
+    v: v ?? this.v,
   );
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
-    data['id'] = id;
+    data['_id'] = id;
     data['imei'] = imei;
     data['gs'] = gs;
     data['dt'] = dt;
@@ -148,9 +137,9 @@ class DataByDate {
     data['ew'] = ew;
     data['sp'] = sp;
     data['sg'] = sg;
-    data['status'] = status;
-    data['device_name'] = deviceName;
-    data['created_at'] = createdAt;
+    data['createdAt'] = createdAt;
+    data['updatedAt'] = updatedAt;
+    data['__v'] = v;
     return data;
   }
 }

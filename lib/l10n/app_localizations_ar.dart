@@ -1007,4 +1007,81 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get preventFrustrationDamageDesc =>
       'تجنب النزاعات وتلف المركبات الناتج عن وقوف السيارات غير الصحيح.';
+
+  @override
+  String get liveTab => 'مباشر';
+
+  @override
+  String get historyTab => 'السجل';
+
+  @override
+  String get liveLocationSharingActive => 'مشاركة الموقع المباشر نشطة';
+
+  @override
+  String get noLiveLocationShared => 'لم يتم مشاركة موقع مباشر';
+
+  @override
+  String get realTimeSharingDesc =>
+      'تتم مشاركة موقعك في الوقت الفعلي مع جهات اتصال مختارة.';
+
+  @override
+  String get startSharingPhoneDesc =>
+      'ابدأ بمشاركة موقع هاتفك لمساعدة الآخرين على تتبعك';
+
+  @override
+  String get noHistoryAvailable => 'لا يوجد سجل متاح';
+
+  @override
+  String get historyDesc => 'ستظهر مشاركات الموقع السابقة هنا بمجرد اكتمالها.';
+
+  @override
+  String get stopSharing => 'إيقاف المشاركة';
+
+  @override
+  String get shareLocation => 'مشاركة الموقع';
+
+  @override
+  String get startSharing => 'بدء المشاركة';
+
+  @override
+  String get phoneTracking => 'تتبع الهاتف';
+
+  @override
+  String get liveRecordTab => 'تسجيل مباشر';
+
+  @override
+  String get statsTab => 'إحصائيات';
+
+  @override
+  String get timeLabel => 'الوقت';
+
+  @override
+  String get weekly => 'أسبوعي';
+
+  @override
+  String get monthly => 'شهري';
+
+  @override
+  String get custom => 'مخصص';
+
+  @override
+  String get quickStats => 'إحصائيات سريعة';
+
+  @override
+  String get totalRides => 'إجمالي الرحلات';
+
+  @override
+  String get avgSpeed => 'متوسط السرعة';
+
+  @override
+  String get totalFuel => 'إجمالي الوقود';
+
+  @override
+  String get overallDistance => 'المسافة الإجمالية';
+
+  @override
+  String get drivingTime => 'وقت القيادة';
+
+  @override
+  String get safetyScore => 'درجة السلامة';
 }

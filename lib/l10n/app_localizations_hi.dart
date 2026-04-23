@@ -1015,4 +1015,83 @@ class AppLocalizationsHi extends AppLocalizations {
   @override
   String get preventFrustrationDamageDesc =>
       'अनुचित पार्किंग से होने वाले संघर्षों और वाहन की क्षति से बचें।';
+      'वाहन सेटिंग में आपातकालीन संपर्क सूची जोड़ें और संपादित करें विधायक।';
+
+  @override
+  String get liveTab => 'लाइव';
+
+  @override
+  String get historyTab => 'इतिहास';
+
+  @override
+  String get liveLocationSharingActive => 'लाइव लोकेशन शेयरिंग सक्रिय है';
+
+  @override
+  String get noLiveLocationShared => 'कोई लाइव लोकेशन साझा नहीं की गई है';
+
+  @override
+  String get realTimeSharingDesc =>
+      'आपकी लोकेशन चुनिंदा संपर्कों के साथ रीयल-टाइम में साझा की जा रही है।';
+
+  @override
+  String get startSharingPhoneDesc =>
+      'दूसरों को आपको ट्रैक करने में मदद करने के लिए अपने फ़ोन की लोकेशन साझा करना शुरू करें';
+
+  @override
+  String get noHistoryAvailable => 'कोई इतिहास उपलब्ध नहीं है';
+
+  @override
+  String get historyDesc =>
+      'पिछले लोकेशन शेयर पूरा होने के बाद यहां दिखाई देंगे।';
+
+  @override
+  String get stopSharing => 'शेयरिंग बंद करें';
+
+  @override
+  String get shareLocation => 'लोकेशन शेयर करें';
+
+  @override
+  String get startSharing => 'शेयर करना शुरू करें';
+
+  @override
+  String get phoneTracking => 'फोन ट्रैकिंग';
+
+  @override
+  String get liveRecordTab => 'लाइव रिकॉर्ड';
+
+  @override
+  String get statsTab => 'आंकड़े';
+
+  @override
+  String get timeLabel => 'समय';
+
+  @override
+  String get weekly => 'साप्ताहिक';
+
+  @override
+  String get monthly => 'मासिक';
+
+  @override
+  String get custom => 'कस्टम';
+
+  @override
+  String get quickStats => 'त्वरित आंकड़े';
+
+  @override
+  String get totalRides => 'कुल राइड्स';
+
+  @override
+  String get avgSpeed => 'औसत गति';
+
+  @override
+  String get totalFuel => 'कुल ईंधन';
+
+  @override
+  String get overallDistance => 'कुल दूरी';
+
+  @override
+  String get drivingTime => 'ड्राइविंग समय';
+
+  @override
+  String get safetyScore => 'सुरक्षा स्कोर';
 }

@@ -2001,6 +2001,156 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Avoid conflicts and vehicle damage from improper parking.'**
   String get preventFrustrationDamageDesc;
+
+  /// No description provided for @liveTab.
+  ///
+  /// In en, this message translates to:
+  /// **'LIVE'**
+  String get liveTab;
+
+  /// No description provided for @historyTab.
+  ///
+  /// In en, this message translates to:
+  /// **'HISTORY'**
+  String get historyTab;
+
+  /// No description provided for @liveLocationSharingActive.
+  ///
+  /// In en, this message translates to:
+  /// **'Live Location Sharing Active'**
+  String get liveLocationSharingActive;
+
+  /// No description provided for @noLiveLocationShared.
+  ///
+  /// In en, this message translates to:
+  /// **'No live location shared'**
+  String get noLiveLocationShared;
+
+  /// No description provided for @realTimeSharingDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Your location is being shared in real-time with selected contacts.'**
+  String get realTimeSharingDesc;
+
+  /// No description provided for @startSharingPhoneDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Start sharing your phone\'s location to help others track you'**
+  String get startSharingPhoneDesc;
+
+  /// No description provided for @noHistoryAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'No history available'**
+  String get noHistoryAvailable;
+
+  /// No description provided for @historyDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Past location shares will appear here once they are completed.'**
+  String get historyDesc;
+
+  /// No description provided for @stopSharing.
+  ///
+  /// In en, this message translates to:
+  /// **'Stop Sharing'**
+  String get stopSharing;
+
+  /// No description provided for @shareLocation.
+  ///
+  /// In en, this message translates to:
+  /// **'Share Location'**
+  String get shareLocation;
+
+  /// No description provided for @startSharing.
+  ///
+  /// In en, this message translates to:
+  /// **'Start Sharing'**
+  String get startSharing;
+
+  /// No description provided for @phoneTracking.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone Tracking'**
+  String get phoneTracking;
+
+  /// No description provided for @liveRecordTab.
+  ///
+  /// In en, this message translates to:
+  /// **'Live Record'**
+  String get liveRecordTab;
+
+  /// No description provided for @statsTab.
+  ///
+  /// In en, this message translates to:
+  /// **'Stats'**
+  String get statsTab;
+
+  /// No description provided for @timeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Time'**
+  String get timeLabel;
+
+  /// No description provided for @weekly.
+  ///
+  /// In en, this message translates to:
+  /// **'Weekly'**
+  String get weekly;
+
+  /// No description provided for @monthly.
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly'**
+  String get monthly;
+
+  /// No description provided for @custom.
+  ///
+  /// In en, this message translates to:
+  /// **'Custom'**
+  String get custom;
+
+  /// No description provided for @quickStats.
+  ///
+  /// In en, this message translates to:
+  /// **'Quick Stats'**
+  String get quickStats;
+
+  /// No description provided for @totalRides.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Rides'**
+  String get totalRides;
+
+  /// No description provided for @avgSpeed.
+  ///
+  /// In en, this message translates to:
+  /// **'Avg Speed'**
+  String get avgSpeed;
+
+  /// No description provided for @totalFuel.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Fuel'**
+  String get totalFuel;
+
+  /// No description provided for @overallDistance.
+  ///
+  /// In en, this message translates to:
+  /// **'Overall Distance'**
+  String get overallDistance;
+
+  /// No description provided for @drivingTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Driving Time'**
+  String get drivingTime;
+
+  /// No description provided for @safetyScore.
+  ///
+  /// In en, this message translates to:
+  /// **'Safety Score'**
+  String get safetyScore;
 }
 
 class _AppLocalizationsDelegate

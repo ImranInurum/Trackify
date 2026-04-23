@@ -1013,4 +1013,83 @@ class AppLocalizationsTa extends AppLocalizations {
   @override
   String get preventFrustrationDamageDesc =>
       'தவறான பார்க்கிங்கால் ஏற்படும் மோதல்கள் மற்றும் வாகன சேதத்தைத் தவிர்க்கவும்.';
+
+  @override
+  String get liveTab => 'நேரலை';
+
+  @override
+  String get historyTab => 'வரலாறு';
+
+  @override
+  String get liveLocationSharingActive =>
+      'நேரலை இருப்பிடப் பகிர்வு செயலில் உள்ளது';
+
+  @override
+  String get noLiveLocationShared => 'நேரலை இருப்பிடம் எதுவும் பகிரப்படவில்லை';
+
+  @override
+  String get realTimeSharingDesc =>
+      'உங்கள் இருப்பிடம் தேர்ந்தெடுக்கப்பட்ட தொடர்புகளுடன் நிகழ்நேரத்தில் பகிரப்படுகிறது.';
+
+  @override
+  String get startSharingPhoneDesc =>
+      'மற்றவர்கள் உங்களைக் கண்காணிக்க உதவ உங்கள் தொலைபேசியின் இருப்பிடத்தைப் பகிரத் தொடங்குங்கள்';
+
+  @override
+  String get noHistoryAvailable => 'வரலாறு எதுவும் இல்லை';
+
+  @override
+  String get historyDesc =>
+      'கடந்த இருப்பிடப் பகிர்வுகள் முடிந்ததும் இங்கே தோன்றும்.';
+
+  @override
+  String get stopSharing => 'பகிர்வதை நிறுத்து';
+
+  @override
+  String get shareLocation => 'இருப்பிடத்தைப் பகிர்';
+
+  @override
+  String get startSharing => 'பகிரத் தொடங்கு';
+
+  @override
+  String get phoneTracking => 'போன் டிராக்கிங்';
+
+  @override
+  String get liveRecordTab => 'நேரடி பதிவு';
+
+  @override
+  String get statsTab => 'புள்ளிவிவரங்கள்';
+
+  @override
+  String get timeLabel => 'நேரம்';
+
+  @override
+  String get weekly => 'வாராந்திர';
+
+  @override
+  String get monthly => 'மாதாந்திர';
+
+  @override
+  String get custom => 'தனிப்பயன்';
+
+  @override
+  String get quickStats => 'விரைவான புள்ளிவிவரங்கள்';
+
+  @override
+  String get totalRides => 'மொத்த சவாரிகள்';
+
+  @override
+  String get avgSpeed => 'சராசரி வேகம்';
+
+  @override
+  String get totalFuel => 'மொத்த எரிபொருள்';
+
+  @override
+  String get overallDistance => 'மொத்த தூரம்';
+
+  @override
+  String get drivingTime => 'ஓட்டுநர் நேரம்';
+
+  @override
+  String get safetyScore => 'பாதுகாப்பு மதிப்பெண்';
 }
