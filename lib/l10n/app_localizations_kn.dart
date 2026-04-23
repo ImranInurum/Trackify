@@ -954,4 +954,69 @@ class AppLocalizationsKn extends AppLocalizations {
   @override
   String get addEditEmergencyContactDesc =>
       'ವಾಹನ ಸೆಟ್ಟಿಂಗ್‌ಗಳಲ್ಲಿ ತುರ್ತು ಸಂಪರ್ಕ ಪಟ್ಟಿಯನ್ನು ಸೇರಿಸಿ ಮತ್ತು ಎಡಿಟ್ ಮಾಡಿ.';
+
+  @override
+  String get smartContactSticker => 'ಸ್ಮಾರ್ಟ್ ಸಂಪರ್ಕ ಸ್ಟಿಕ್ಕರ್';
+
+  @override
+  String get stickerSubtitle =>
+      'ನಿಮ್ಮ ವಾಹನವನ್ನು ಸುರಕ್ಷಿತ ಮತ್ತು ಸ್ಮಾರ್ಟ್ ಮಾಡಲು ಒಂದು ಹೆಜ್ಜೆ ಮುಂದೆ';
+
+  @override
+  String get activateContactSticker => 'ಸಂಪರ್ಕ ಸ್ಟಿಕ್ಕರ್ ಸಕ್ರಿಯಗೊಳಿಸಿ';
+
+  @override
+  String get buyNewContactSticker => 'ಹೊಸ ಸಂಪರ್ಕ ಸ್ಟಿಕ್ಕರ್ ಖರೀದಿಸಿ';
+
+  @override
+  String get beyondParkingProblems => 'ಪಾರ್ಕಿಂಗ್ ಸಮಸ್ಯೆಗಳನ್ನು ಮೀರಿ';
+
+  @override
+  String get noParkings => 'ನೋ ಪಾರ್ಕಿಂಗ್';
+
+  @override
+  String get emergencies => 'ತುರ್ತು ಪರಿಸ್ಥಿತಿಗಳು';
+
+  @override
+  String get vehicleTowing => 'ವಾಹನ ಟೋಯಿಂಗ್';
+
+  @override
+  String get getInformedStayConnected =>
+      'ಮಾಹಿತಿ ಪಡೆಯಿರಿ ಮತ್ತು ನಿಮ್ಮ ವಾಹನದೊಂದಿಗೆ\nಸಂಪರ್ಕದಲ್ಲಿರಿ';
+
+  @override
+  String get securedCalls => 'ಸುರಕ್ಷಿತ ಕರೆಗಳು';
+
+  @override
+  String get securedCallsDesc =>
+      'ಇಂಟರ್ನೆಟ್-ಮಾಸ್ಕ್ ಮಾಡಿದ ಕರೆಗಳು - ನಿಮ್ಮ ಫೋನ್ ಸಂಖ್ಯೆಯನ್ನು ಖಾಸಗಿಯಾಗಿರಿಸುತ್ತದೆ.';
+
+  @override
+  String get notificationHistory => 'ಅಧಿಸೂಚನೆ ಇತಿಹಾಸ';
+
+  @override
+  String get notificationHistoryDesc =>
+      'ಎಲ್ಲಾ ಪ್ರಸ್ತುತ ಮತ್ತು ಹಿಂದಿನ ಅಧಿಸೂಚನೆಗಳನ್ನು ಟ್ರ್ಯಾಕ್ ಮಾಡಿ';
+
+  @override
+  String get beInformed => 'ಮಾಹಿತಿ ಪಡೆಯಿರಿ';
+
+  @override
+  String get beInformedDesc =>
+      'ಯಾರಾದರೂ ನಿಮ್ಮ QR ಕೋಡ್ ಅನ್ನು ಸ್ಕ್ಯಾನ್ ಮಾಡಿದಾಗ ತಕ್ಷಣ ತಿಳಿಯಿರಿ ಮತ್ತು ಅವರು ನಿಮಗೆ ಕರೆ ಮಾಡಿದಾಗ ಪ್ರಾಂಪ್ಟ್ ಕ್ರಮ ತೆಗೆದುಕೊಳ್ಳಿ.';
+
+  @override
+  String get controlWhatOthersSee =>
+      'ಇತರರು ಏನನ್ನು ನೋಡುತ್ತಾರೆ ಎಂಬುದನ್ನು ನಿಯಂತ್ರಿಸಿ';
+
+  @override
+  String get controlWhatOthersSeeDesc =>
+      'ಯಾರಾದರೂ QR ಸ್ಕ್ಯಾನ್ ಮಾಡಿದಾಗ ತೋರಿಸಲಾದ ವಿವರಗಳನ್ನು ಕಸ್ಟಮೈಸ್ ಮಾಡಿ.';
+
+  @override
+  String get preventFrustrationDamage => 'ಹತಾಶೆ ಮತ್ತು ಹಾನಿಯನ್ನು ತಡೆಯಿರಿ';
+
+  @override
+  String get preventFrustrationDamageDesc =>
+      'ಅಸಮರ್ಪಕ ಪಾರ್ಕಿಂಗ್‌ನಿಂದ ಸಂಘರ್ಷಗಳು ಮತ್ತು ವಾಹನದ ಹಾನಿಯನ್ನು ತಪ್ಪಿಸಿ.';
 }

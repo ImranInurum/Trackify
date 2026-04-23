@@ -950,4 +950,68 @@ class AppLocalizationsMr extends AppLocalizations {
   @override
   String get addEditEmergencyContactDesc =>
       'वाहन सेटिंग्जमध्ये आणीबाणीच्या संपर्कांची यादी जोडा आणि संपादित करा.';
+
+  @override
+  String get smartContactSticker => 'स्मार्ट संपर्क स्टिकर';
+
+  @override
+  String get stickerSubtitle =>
+      'तुमच्या वाहनाला सुरक्षित आणि स्मार्ट बनवण्याच्या दिशेने एक पाऊल';
+
+  @override
+  String get activateContactSticker => 'संपर्क स्टिकर सक्रिय करा';
+
+  @override
+  String get buyNewContactSticker => 'नवीन संपर्क स्टिकर खरेदी करा';
+
+  @override
+  String get beyondParkingProblems => 'पार्किंगच्या समस्यांच्या पलीकडे';
+
+  @override
+  String get noParkings => 'नो पार्किंग';
+
+  @override
+  String get emergencies => 'आणीबाणी';
+
+  @override
+  String get vehicleTowing => 'वाहन टोइंग';
+
+  @override
+  String get getInformedStayConnected =>
+      'माहिती मिळवा आणि तुमच्या वाहनाशी\nकनेक्ट रहा';
+
+  @override
+  String get securedCalls => 'सुरक्षित कॉल';
+
+  @override
+  String get securedCallsDesc =>
+      'इंटरनेट-मास्क्ड कॉल - तुमचा फोन नंबर खाजगी ठेवतो.';
+
+  @override
+  String get notificationHistory => 'सूचना इतिहास';
+
+  @override
+  String get notificationHistoryDesc =>
+      'सर्व वर्तमान आणि मागील सूचनांचा मागोवा ठेवा';
+
+  @override
+  String get beInformed => 'माहिती मिळवा';
+
+  @override
+  String get beInformedDesc =>
+      'जेव्हा कोणी तुमचा QR कोड स्कॅन करेल तेव्हा त्वरित जाणून घ्या आणि जेव्हा ते तुम्हाला कॉल करतील तेव्हा त्वरित कृती करा.';
+
+  @override
+  String get controlWhatOthersSee => 'दुसरे काय पाहतात ते नियंत्रित करा';
+
+  @override
+  String get controlWhatOthersSeeDesc =>
+      'जेव्हा कोणी QR स्कॅन करते तेव्हा दर्शविलेले तपशील सानुकूलित करा.';
+
+  @override
+  String get preventFrustrationDamage => 'निराशा आणि नुकसान टाळा';
+
+  @override
+  String get preventFrustrationDamageDesc =>
+      'अयोग्य पार्किंगमुळे होणारे संघर्ष आणि वाहनाचे नुकसान टाळा.';
 }

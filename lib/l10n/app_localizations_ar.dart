@@ -946,4 +946,65 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get addEditEmergencyContactDesc =>
       'إضافة وتعديل قائمة جهات اتصال الطوارئ في إعدادات المركبة.';
+
+  @override
+  String get smartContactSticker => 'ملصق جهة اتصال ذكي';
+
+  @override
+  String get stickerSubtitle => 'خطوة للأمام لجعل مركبتك آمنة وذكية';
+
+  @override
+  String get activateContactSticker => 'تفعيل ملصق الاتصال';
+
+  @override
+  String get buyNewContactSticker => 'شراء ملصق اتصال جديد';
+
+  @override
+  String get beyondParkingProblems => 'ما وراء مشاكل وقوف السيارات';
+
+  @override
+  String get noParkings => 'ممنوع الوقوف';
+
+  @override
+  String get emergencies => 'حالات الطوارئ';
+
+  @override
+  String get vehicleTowing => 'سحب المركبات';
+
+  @override
+  String get getInformedStayConnected => 'ابق على اطلاع\nوعلى اتصال بمركبتك';
+
+  @override
+  String get securedCalls => 'مكالمات آمنة';
+
+  @override
+  String get securedCallsDesc =>
+      'مكالمات مقنعة عبر الإنترنت - تحافظ على خصوصية رقم هاتفك.';
+
+  @override
+  String get notificationHistory => 'سجل التنبيهات';
+
+  @override
+  String get notificationHistoryDesc => 'تتبع جميع التنبيهات الحالية والسابقة';
+
+  @override
+  String get beInformed => 'كن على علم';
+
+  @override
+  String get beInformedDesc =>
+      'اعرف فوراً عندما يقوم شخص ما بمسح رمز QR الخاص بك واتخذ إجراءات فورية عندما يتصلون بك.';
+
+  @override
+  String get controlWhatOthersSee => 'التحكم فيما يراه الآخرون';
+
+  @override
+  String get controlWhatOthersSeeDesc =>
+      'تخصيص التفاصيل المعروضة عندما يقوم شخص ما بمسح رمز QR.';
+
+  @override
+  String get preventFrustrationDamage => 'منع الإحباط والضرر';
+
+  @override
+  String get preventFrustrationDamageDesc =>
+      'تجنب النزاعات وتلف المركبات الناتج عن وقوف السيارات غير الصحيح.';
 }

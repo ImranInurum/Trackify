@@ -1887,6 +1887,120 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Add and edit emergency contact list in vehicle settings.'**
   String get addEditEmergencyContactDesc;
+
+  /// No description provided for @smartContactSticker.
+  ///
+  /// In en, this message translates to:
+  /// **'Smart Contact Sticker'**
+  String get smartContactSticker;
+
+  /// No description provided for @stickerSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'A step forward to make your vehicle SAFE and SMART'**
+  String get stickerSubtitle;
+
+  /// No description provided for @activateContactSticker.
+  ///
+  /// In en, this message translates to:
+  /// **'Activate contact sticker'**
+  String get activateContactSticker;
+
+  /// No description provided for @buyNewContactSticker.
+  ///
+  /// In en, this message translates to:
+  /// **'Buy a new contact sticker'**
+  String get buyNewContactSticker;
+
+  /// No description provided for @beyondParkingProblems.
+  ///
+  /// In en, this message translates to:
+  /// **'Beyond parking problems'**
+  String get beyondParkingProblems;
+
+  /// No description provided for @noParkings.
+  ///
+  /// In en, this message translates to:
+  /// **'No Parkings'**
+  String get noParkings;
+
+  /// No description provided for @emergencies.
+  ///
+  /// In en, this message translates to:
+  /// **'Emergencies'**
+  String get emergencies;
+
+  /// No description provided for @vehicleTowing.
+  ///
+  /// In en, this message translates to:
+  /// **'Vehicle towing'**
+  String get vehicleTowing;
+
+  /// No description provided for @getInformedStayConnected.
+  ///
+  /// In en, this message translates to:
+  /// **'Get informed & stay connected\nwith your vehicle'**
+  String get getInformedStayConnected;
+
+  /// No description provided for @securedCalls.
+  ///
+  /// In en, this message translates to:
+  /// **'Secured Calls'**
+  String get securedCalls;
+
+  /// No description provided for @securedCallsDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Internet-masked calls-keeps your phone number private.'**
+  String get securedCallsDesc;
+
+  /// No description provided for @notificationHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'Notification History'**
+  String get notificationHistory;
+
+  /// No description provided for @notificationHistoryDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep track of all the current and previous notifications'**
+  String get notificationHistoryDesc;
+
+  /// No description provided for @beInformed.
+  ///
+  /// In en, this message translates to:
+  /// **'Be Informed'**
+  String get beInformed;
+
+  /// No description provided for @beInformedDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Know instantly when someone scans your QR code & take prompt actions when they call you.'**
+  String get beInformedDesc;
+
+  /// No description provided for @controlWhatOthersSee.
+  ///
+  /// In en, this message translates to:
+  /// **'Control What Others See'**
+  String get controlWhatOthersSee;
+
+  /// No description provided for @controlWhatOthersSeeDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Customize the details shown when someone scans the QR.'**
+  String get controlWhatOthersSeeDesc;
+
+  /// No description provided for @preventFrustrationDamage.
+  ///
+  /// In en, this message translates to:
+  /// **'Prevent Frustration & Damage'**
+  String get preventFrustrationDamage;
+
+  /// No description provided for @preventFrustrationDamageDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Avoid conflicts and vehicle damage from improper parking.'**
+  String get preventFrustrationDamageDesc;
 }
 
 class _AppLocalizationsDelegate

@@ -15,6 +15,7 @@ import 'package:trackify/feature/add_vehicle_and_device/choice_selector.dart';
 import 'package:trackify/feature/map/data/entity/user_vehicles.dart';
 import 'package:trackify/feature/map/presentation/pages/full_screen_map.dart';
 import 'package:trackify/feature/my_garage/presentation/view/my_garage_screen.dart';
+import 'package:trackify/feature/reach_me_sticker/presentation/screens/reach_me_sticker_screen.dart';
 import 'package:trackify/feature/record_via_phone/presentation/pages/record_via_phone_screen.dart';
 import '../../../notifications/presentation/screen/notification_list_screen.dart';
 
@@ -31,7 +32,8 @@ class MapScreen extends StatefulWidget {
 }
 
 class _MapScreenState extends State<MapScreen> {
-  final Completer<GoogleMapController> _controller = Completer<GoogleMapController>();
+  final Completer<GoogleMapController> _controller =
+      Completer<GoogleMapController>();
   String? _lightMapStyle;
   String? _darkMapStyle;
   Vehicles? _selectedDevice;
@@ -52,7 +54,9 @@ class _MapScreenState extends State<MapScreen> {
   }
 
   Future<void> _loadMapStyles() async {
-    _lightMapStyle = await MapUtils.loadStyle('assets/map_styles/light_map.json');
+    _lightMapStyle = await MapUtils.loadStyle(
+      'assets/map_styles/light_map.json',
+    );
     _darkMapStyle = await MapUtils.loadStyle('assets/map_styles/dark_map.json');
   }
 
@@ -89,7 +93,9 @@ class _MapScreenState extends State<MapScreen> {
                 } else if (state.mapStyle == 'Light') {
                   style = _lightMapStyle;
                 } else if (state.mapStyle == 'Simple') {
-                  style = await MapUtils.loadStyle('assets/map_styles/light_map.json');
+                  style = await MapUtils.loadStyle(
+                    'assets/map_styles/light_map.json',
+                  );
                 } else if (state.mapStyle == 'Satellite') {
                   style = null;
                 }
@@ -151,9 +157,11 @@ class _MapScreenState extends State<MapScreen> {
                     alignment: Alignment.center,
                     padding: EdgeInsets.zero,
                     onPressed: () {
-                      Navigator.of(
-                        context,
-                      ).push(MaterialPageRoute(builder: (context) => MyGarageScreen()));
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => MyGarageScreen(),
+                        ),
+                      );
                     },
                     icon: Icon(
                       Icons.settings,
@@ -163,7 +171,9 @@ class _MapScreenState extends State<MapScreen> {
                   ),
                   onAddVehicle: () {
                     Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) => const ChoiceSelector()),
+                      MaterialPageRoute(
+                        builder: (context) => const ChoiceSelector(),
+                      ),
                     );
                   },
                   onDeviceTap: (device) {
@@ -217,7 +227,10 @@ class _MapScreenState extends State<MapScreen> {
                     child: IgnorePointer(
                       child: GoogleMap(
                         initialCameraPosition: CameraPosition(
-                          target: LatLng(currentPos.latitude, currentPos.longitude),
+                          target: LatLng(
+                            currentPos.latitude,
+                            currentPos.longitude,
+                          ),
                           zoom: 15,
                         ),
                         myLocationEnabled: false,
@@ -235,8 +248,13 @@ class _MapScreenState extends State<MapScreen> {
                           if (currentPos != null)
                             Marker(
                               markerId: const MarkerId('current_location'),
-                              position: LatLng(currentPos.latitude, currentPos.longitude),
-                              icon: _customMarker ?? BitmapDescriptor.defaultMarker,
+                              position: LatLng(
+                                currentPos.latitude,
+                                currentPos.longitude,
+                              ),
+                              icon:
+                                  _customMarker ??
+                                  BitmapDescriptor.defaultMarker,
                               anchor: const Offset(0.5, 0.5),
                             ),
                         },
@@ -269,12 +287,18 @@ class _MapScreenState extends State<MapScreen> {
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8.0,
+                    vertical: 8.0,
+                  ),
                   child: Row(
                     children: [
                       Text(
                         l10n.todayText,
-                        style: getBoldStyle(color: AppColors.paletteGreen, fontSize: 10),
+                        style: getBoldStyle(
+                          color: AppColors.paletteGreen,
+                          fontSize: 10,
+                        ),
                       ),
                     ],
                   ),
@@ -361,7 +385,9 @@ class _MapScreenState extends State<MapScreen> {
       decoration: BoxDecoration(
         color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Theme.of(context).dividerColor.withOpacity(0.5)),
+        border: Border.all(
+          color: Theme.of(context).dividerColor.withOpacity(0.5),
+        ),
       ),
       child: Row(
         children: [
@@ -375,11 +401,16 @@ class _MapScreenState extends State<MapScreen> {
                   value: 0.63,
                   strokeWidth: 3.5,
                   backgroundColor: Theme.of(context).dividerColor,
-                  valueColor: AlwaysStoppedAnimation<Color>(Theme.of(context).colorScheme.primary),
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                    Theme.of(context).colorScheme.primary,
+                  ),
                 ),
                 Text(
                   l10n.progressPercentage("63"),
-                  style: getBoldStyle(color: Theme.of(context).colorScheme.primary, fontSize: 10),
+                  style: getBoldStyle(
+                    color: Theme.of(context).colorScheme.primary,
+                    fontSize: 10,
+                  ),
                 ),
               ],
             ),
@@ -408,7 +439,9 @@ class _MapScreenState extends State<MapScreen> {
                 Text(
                   l10n.discoverMoreDesc,
                   style: getRegularStyle(
-                    color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.onSurface.withOpacity(0.6),
                     fontSize: 11,
                   ),
                 ),
@@ -433,21 +466,82 @@ class _MapScreenState extends State<MapScreen> {
         "label": l10n.reachMeSticker.replaceAll(' ', '\n'),
         "badge": l10n.exploreNow,
       },
-      {"icon": Icons.phone_android_rounded, "label": l10n.recordViaPhone.replaceAll(' ', '\n'), "badge": null},
-      {"icon": Icons.handyman_outlined, "label": l10n.serviceLogs.replaceAll(' ', '\n'), "badge": null},
-      {"icon": Icons.share_outlined, "label": l10n.locationSharing.replaceAll(' ', '\n'), "badge": null},
-      {"icon": Icons.local_parking_rounded, "label": l10n.safeParking.replaceAll(' ', '\n'), "badge": null},
-      {"icon": Icons.campaign_outlined, "label": l10n.appUpdates.replaceAll(' ', '\n'), "badge": null},
-      {"icon": Icons.local_gas_station_outlined, "label": l10n.fuelLogs.replaceAll(' ', '\n'), "badge": null},
-      {"icon": Icons.location_on_outlined, "label": l10n.geoFenceAlert.replaceAll(' ', '\n'), "badge": null},
-      {"icon": Icons.speed_outlined, "label": l10n.overspeedAlert.replaceAll(' ', '\n'), "badge": null},
-      {"icon": Icons.folder_open_outlined, "label": l10n.documentFolder.replaceAll(' ', '\n'), "badge": null},
-      {"icon": Icons.list_alt_rounded, "label": l10n.deviceDataPlanLabel.replaceAll(' ', '\n'), "badge": null},
-      {"icon": Icons.gpp_good_outlined, "label": l10n.deviceWarrantyLabel.replaceAll(' ', '\n'), "badge": null},
-      {"icon": Icons.chat_outlined, "label": l10n.helpAndSupport.replaceAll(' ', '\n'), "badge": null},
-      {"icon": Icons.sos_outlined, "label": l10n.emergency.replaceAll(' ', '\n'), "badge": null},
-      {"icon": Icons.play_arrow_outlined, "label": l10n.videoTutorials.replaceAll(' ', '\n'), "badge": null},
-      {"icon": null, "label": l10n.upgradeToPlus.replaceAll(' ', '\n'), "badge": null, "isPlus": true},
+      {
+        "icon": Icons.phone_android_rounded,
+        "label": l10n.recordViaPhone.replaceAll(' ', '\n'),
+        "badge": null,
+      },
+      {
+        "icon": Icons.handyman_outlined,
+        "label": l10n.serviceLogs.replaceAll(' ', '\n'),
+        "badge": null,
+      },
+      {
+        "icon": Icons.share_outlined,
+        "label": l10n.locationSharing.replaceAll(' ', '\n'),
+        "badge": null,
+      },
+      {
+        "icon": Icons.local_parking_rounded,
+        "label": l10n.safeParking.replaceAll(' ', '\n'),
+        "badge": null,
+      },
+      {
+        "icon": Icons.campaign_outlined,
+        "label": l10n.appUpdates.replaceAll(' ', '\n'),
+        "badge": null,
+      },
+      {
+        "icon": Icons.local_gas_station_outlined,
+        "label": l10n.fuelLogs.replaceAll(' ', '\n'),
+        "badge": null,
+      },
+      {
+        "icon": Icons.location_on_outlined,
+        "label": l10n.geoFenceAlert.replaceAll(' ', '\n'),
+        "badge": null,
+      },
+      {
+        "icon": Icons.speed_outlined,
+        "label": l10n.overspeedAlert.replaceAll(' ', '\n'),
+        "badge": null,
+      },
+      {
+        "icon": Icons.folder_open_outlined,
+        "label": l10n.documentFolder.replaceAll(' ', '\n'),
+        "badge": null,
+      },
+      {
+        "icon": Icons.list_alt_rounded,
+        "label": l10n.deviceDataPlanLabel.replaceAll(' ', '\n'),
+        "badge": null,
+      },
+      {
+        "icon": Icons.gpp_good_outlined,
+        "label": l10n.deviceWarrantyLabel.replaceAll(' ', '\n'),
+        "badge": null,
+      },
+      {
+        "icon": Icons.chat_outlined,
+        "label": l10n.helpAndSupport.replaceAll(' ', '\n'),
+        "badge": null,
+      },
+      {
+        "icon": Icons.sos_outlined,
+        "label": l10n.emergency.replaceAll(' ', '\n'),
+        "badge": null,
+      },
+      {
+        "icon": Icons.play_arrow_outlined,
+        "label": l10n.videoTutorials.replaceAll(' ', '\n'),
+        "badge": null,
+      },
+      {
+        "icon": null,
+        "label": l10n.upgradeToPlus.replaceAll(' ', '\n'),
+        "badge": null,
+        "isPlus": true,
+      },
     ];
 
     return Container(
@@ -457,10 +551,7 @@ class _MapScreenState extends State<MapScreen> {
         color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(18),
         boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 6,
-          ),
+          BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 6),
         ],
       ),
       child: Column(
@@ -489,8 +580,9 @@ class _MapScreenState extends State<MapScreen> {
               final option = options[index];
               return InkWell(
                 onTap: () {
-                  if (option["label"] == l10n.recordViaPhone.replaceAll(' ', '\n')) {
-                    if( selectedDevice?.imei == null) {
+                  if (option["label"] ==
+                      l10n.recordViaPhone.replaceAll(' ', '\n')) {
+                    if (selectedDevice?.imei == null) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
                           content: Text("No device found for this vehicle."),
@@ -498,15 +590,24 @@ class _MapScreenState extends State<MapScreen> {
                         ),
                       );
                       return;
-
-                    }else{
+                    } else {
                       Navigator.of(context).push(
                         MaterialPageRoute(
-                          builder: (context) =>  RecordViaPhoneScreen(imei: selectedDevice?.imei??''),
+                          builder: (context) => RecordViaPhoneScreen(
+                            imei: selectedDevice?.imei ?? '',
+                          ),
                         ),
                       );
                     }
+                  }
 
+                  if (option["label"] ==
+                      l10n.reachMeSticker.replaceAll(' ', '\n')) {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => ReachMeStickerScreen(),
+                      ),
+                    );
                   }
                 },
                 child: Column(
@@ -515,7 +616,10 @@ class _MapScreenState extends State<MapScreen> {
                     if (option["isPlus"] == true)
                       Container(
                         margin: const EdgeInsets.only(bottom: 6, top: 4),
-                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 6,
+                          vertical: 2,
+                        ),
                         decoration: BoxDecoration(
                           gradient: const LinearGradient(
                             colors: [
@@ -576,7 +680,9 @@ class _MapScreenState extends State<MapScreen> {
                       textAlign: TextAlign.center,
                       maxLines: 2,
                       style: getMediumStyle(
-                        color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.onSurface.withOpacity(0.7),
                         fontSize: 11,
                       ),
                     ),
