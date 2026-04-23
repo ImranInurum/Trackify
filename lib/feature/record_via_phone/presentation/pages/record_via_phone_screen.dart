@@ -37,7 +37,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
       final now = DateTime.now();
       final today = DateFormat('yyyy-MM-dd').format(now);
       context.read<RecordViaPhoneCubit>().fetchDeviceDataByDate(
-        imei: widget.imei,
+        imei: '860710085959719',
         startDate: today,
         endDate: today,
       );
@@ -71,6 +71,44 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
               context.read<RecordViaPhoneCubit>().updateRecordingData(
                 appState.currentLocation!,
               );
+            }
+          },
+        ),
+        BlocListener<RecordViaPhoneCubit, RecordViaPhoneState>(
+          listenWhen: (prev, curr) =>
+              curr is MapDataByDateLoaded ||
+              (curr.isRecording &&
+                  curr.currentRidePoints.length != prev.currentRidePoints.length),
+          listener: (context, state) {
+            if (state is MapDataByDateLoaded &&
+                state.polylines != null &&
+                state.polylines!.isNotEmpty) {
+              final points = state.polylines!.first.points;
+              if (points.isNotEmpty) {
+                // Animate History map to fit bounds (non-blocking)
+                _pastMapController.future.then((controller) {
+                  final bounds = _getBounds(points);
+                  controller.animateCamera(
+                    CameraUpdate.newLatLngBounds(bounds, 50),
+                  );
+                });
+
+                // Jump live map to the last known position (non-blocking)
+                if (!state.isRecording) {
+                  _rideMapController.future.then((controller) {
+                    controller.animateCamera(
+                      CameraUpdate.newLatLngZoom(points.last, 15),
+                    );
+                  });
+                }
+              }
+            } else if (state.isRecording && state.currentRidePoints.isNotEmpty) {
+              // Follow the current recording path
+              _rideMapController.future.then((controller) {
+                controller.animateCamera(
+                  CameraUpdate.newLatLng(state.currentRidePoints.last),
+                );
+              });
             }
           },
         ),
@@ -123,10 +161,34 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
   Widget _buildLiveRecordView() {
     return BlocBuilder<RecordViaPhoneCubit, RecordViaPhoneState>(
       builder: (context, state) {
+        Set<Marker> markers = {};
+        LatLng? lastPos;
+
+        if (state is MapDataByDateLoaded &&
+            state.polylines != null &&
+            state.polylines!.isNotEmpty) {
+          final points = state.polylines!.first.points;
+          if (points.isNotEmpty) {
+            lastPos = points.last;
+            markers.add(
+              Marker(
+                markerId: const MarkerId("last_api_pos"),
+                position: lastPos,
+                infoWindow: const InfoWindow(title: "Last Reported Position"),
+                icon: BitmapDescriptor.defaultMarkerWithHue(
+                  BitmapDescriptor.hueAzure,
+                ),
+              ),
+            );
+          }
+        }
+
         return Stack(
           children: [
             _buildMap(
               controller: _rideMapController,
+              markers: markers,
+              initialTarget: lastPos,
               polylines: {
                 if (state.currentRidePoints.isNotEmpty)
                   Polyline(
@@ -268,12 +330,46 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
         BlocBuilder<RecordViaPhoneCubit, RecordViaPhoneState>(
           builder: (context, state) {
             Set<Polyline> polylines = {};
-            if (state is MapDataByDateLoaded && state.polylines != null) {
-              polylines = state.polylines!;
+            Set<Marker> markers = {};
+
+            if (state is MapDataByDateLoaded &&
+                state.polylines != null &&
+                state.polylines!.isNotEmpty) {
+              final originalPolyline = state.polylines!.first;
+              final points = originalPolyline.points;
+
+              if (points.isNotEmpty) {
+                polylines = {
+                  originalPolyline.copyWith(
+                    colorParam: Theme.of(context).colorScheme.primary,
+                    widthParam: 5,
+                  ),
+                };
+
+                markers = {
+                  Marker(
+                    markerId: const MarkerId("start"),
+                    position: points.first,
+                    infoWindow: const InfoWindow(title: "Start"),
+                    icon: BitmapDescriptor.defaultMarkerWithHue(
+                      BitmapDescriptor.hueGreen,
+                    ),
+                  ),
+                  Marker(
+                    markerId: const MarkerId("end"),
+                    position: points.last,
+                    infoWindow: const InfoWindow(title: "End"),
+                    icon: BitmapDescriptor.defaultMarkerWithHue(
+                      BitmapDescriptor.hueRed,
+                    ),
+                  ),
+                };
+              }
             }
             return _buildMap(
               controller: _pastMapController,
               polylines: polylines,
+              markers: markers,
             );
           },
         ),
@@ -522,25 +618,28 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
   Widget _buildMap({
     required Completer<GoogleMapController> controller,
     Set<Polyline> polylines = const {},
+    Set<Marker> markers = const {},
+    LatLng? initialTarget,
   }) {
     return BlocBuilder<AppCubit, AppState>(
       builder: (context, appState) {
         final currentPos = appState.currentLocation;
         final themeMode = appState.themeMode;
 
-        if (currentPos == null) {
+        if (currentPos == null && initialTarget == null) {
           return const Center(child: CircularProgressIndicator());
         }
 
+        final target = initialTarget ??
+            LatLng(currentPos!.latitude, currentPos.longitude);
+
         return GoogleMap(
-          initialCameraPosition: CameraPosition(
-            target: LatLng(currentPos.latitude, currentPos.longitude),
-            zoom: 15,
-          ),
+          initialCameraPosition: CameraPosition(target: target, zoom: 15),
           myLocationEnabled: true,
           zoomControlsEnabled: false,
           mapType: MapType.normal,
           polylines: polylines,
+          markers: markers,
           onMapCreated: (GoogleMapController googleMapController) async {
             if (!controller.isCompleted) {
               controller.complete(googleMapController);
@@ -563,6 +662,25 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
           },
         );
       },
+    );
+  }
+
+  LatLngBounds _getBounds(List<LatLng> points) {
+    double minLat = points.first.latitude;
+    double maxLat = points.first.latitude;
+    double minLng = points.first.longitude;
+    double maxLng = points.first.longitude;
+
+    for (final p in points) {
+      if (p.latitude < minLat) minLat = p.latitude;
+      if (p.latitude > maxLat) maxLat = p.latitude;
+      if (p.longitude < minLng) minLng = p.longitude;
+      if (p.longitude > maxLng) maxLng = p.longitude;
+    }
+
+    return LatLngBounds(
+      southwest: LatLng(minLat, minLng),
+      northeast: LatLng(maxLat, maxLng),
     );
   }
 

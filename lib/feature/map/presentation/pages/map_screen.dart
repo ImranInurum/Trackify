@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:intl/intl.dart';
 import 'package:trackify/app/cubit/app_cubit.dart';
 import 'package:trackify/app/cubit/app_state.dart';
 import 'package:trackify/core/constants/app_images.dart';
@@ -17,6 +18,8 @@ import 'package:trackify/feature/map/presentation/pages/full_screen_map.dart';
 import 'package:trackify/feature/my_garage/presentation/view/my_garage_screen.dart';
 import 'package:trackify/feature/reach_me_sticker/presentation/screens/reach_me_sticker_screen.dart';
 import 'package:trackify/feature/record_via_phone/presentation/pages/record_via_phone_screen.dart';
+import 'package:trackify/feature/record_via_phone/presentation/cubit/record_via_phone_cubit.dart';
+import 'package:trackify/feature/record_via_phone/presentation/cubit/record_via_phone_state.dart' hide MapDataByDateLoaded;
 import '../../../../core/utils/shared_preferences.dart';
 import '../../../location_sharing/presentation/pages/location_sharing_screen.dart';
 import '../../../notifications/presentation/screen/notification_list_screen.dart';
@@ -34,8 +37,7 @@ class MapScreen extends StatefulWidget {
 }
 
 class _MapScreenState extends State<MapScreen> {
-  final Completer<GoogleMapController> _controller =
-      Completer<GoogleMapController>();
+  GoogleMapController? _mapController;
   String? _lightMapStyle;
   String? _darkMapStyle;
   Vehicles? _selectedDevice;
@@ -75,21 +77,58 @@ class _MapScreenState extends State<MapScreen> {
     }
   }
 
+  void _fetchTodayTrackingData(String? imei) {
+    if (imei == null || imei.isEmpty) return;
+    final today = DateFormat('yyyy-MM-dd').format(DateTime.now());
+    context.read<RecordViaPhoneCubit>().fetchDeviceDataByDate(
+      imei: '860710085959719',
+      startDate: today,
+      endDate: today,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: MultiBlocListener(
         listeners: [
-          BlocListener<MapCubit, MapState>(listener: (context, state) {}),
+          BlocListener<MapCubit, MapState>(
+            listener: (context, state) {
+              if (state is MapLoaded) {
+                final vehicles = state.vehicleList.vehicles ?? [];
+                if (vehicles.isNotEmpty && _selectedDevice == null) {
+                  final firstVehicle = vehicles.first;
+                  setState(() {
+                    _selectedDevice = firstVehicle;
+                  });
+                  _fetchTodayTrackingData(firstVehicle.imei);
+                }
+              }
+            },
+          ),
+          BlocListener<RecordViaPhoneCubit, RecordViaPhoneState>(
+            listenWhen: (prev, curr) => curr is MapDataByDateLoaded,
+            listener: (context, state) {
+              if (state is MapDataByDateLoaded &&
+                  state.polylines != null &&
+                  state.polylines!.isNotEmpty) {
+                final points = state.polylines!.first.points;
+                if (points.isNotEmpty && _mapController != null) {
+                  _mapController!.animateCamera(
+                    CameraUpdate.newLatLngZoom(points.last, 15),
+                  );
+                }
+              }
+            },
+          ),
           BlocListener<AppCubit, AppState>(
             listenWhen: (prev, curr) =>
                 prev.mapStyle != curr.mapStyle ||
                 prev.mapType != curr.mapType ||
                 prev.isTrafficEnabled != curr.isTrafficEnabled,
             listener: (context, state) async {
-              if (_controller.isCompleted) {
-                final controller = await _controller.future;
+              if (_mapController != null) {
                 String? style;
                 if (state.mapStyle == 'Dark') {
                   style = _darkMapStyle;
@@ -103,7 +142,7 @@ class _MapScreenState extends State<MapScreen> {
                   style = null;
                 }
 
-                await MapUtils.setStyle(controller, style);
+                await MapUtils.setStyle(_mapController!, style);
               }
             },
           ),
@@ -113,12 +152,6 @@ class _MapScreenState extends State<MapScreen> {
             final List<Vehicles> vehicles = state is MapLoaded
                 ? (state.vehicleList.vehicles ?? <Vehicles>[])
                 : <Vehicles>[];
-
-            // Initialize selected device if not set
-            if (_selectedDevice == null && vehicles.isNotEmpty) {
-              _selectedDevice = vehicles.first;
-
-            }
 
             final l10n = AppLocalizations.of(context)!;
             final topSpacing = MediaQuery.of(context).padding.top + 78;
@@ -185,6 +218,9 @@ class _MapScreenState extends State<MapScreen> {
                       key: AppPreference.IMEI,
                       value: device.imei ?? '',
                     );
+                    if (mounted) {
+                      _fetchTodayTrackingData(device.imei);
+                    }
                     setState(() {
                       _selectedDevice = device;
                     });
@@ -227,69 +263,89 @@ class _MapScreenState extends State<MapScreen> {
             if (currentPos == null) {
               return const Center(child: CircularProgressIndicator());
             }
-            return Column(
-              children: [
-                Expanded(
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.all(Radius.circular(5)),
-                    child: IgnorePointer(
-                      child: GoogleMap(
-                        initialCameraPosition: CameraPosition(
-                          target: LatLng(
-                            currentPos.latitude,
-                            currentPos.longitude,
-                          ),
-                          zoom: 15,
-                        ),
-                        myLocationEnabled: false,
-                        zoomControlsEnabled: false,
-                        myLocationButtonEnabled: false,
-                        scrollGesturesEnabled: false,
-                        zoomGesturesEnabled: false,
-                        tiltGesturesEnabled: false,
-                        rotateGesturesEnabled: false,
-                        mapType: appState.mapType == 'satellite'
-                            ? MapType.satellite
-                            : MapType.normal,
-                        trafficEnabled: appState.isTrafficEnabled,
-                        markers: {
-                          if (currentPos != null)
-                            Marker(
-                              markerId: const MarkerId('current_location'),
-                              position: LatLng(
-                                currentPos.latitude,
-                                currentPos.longitude,
-                              ),
-                              icon:
-                                  _customMarker ??
-                                  BitmapDescriptor.defaultMarker,
-                              anchor: const Offset(0.5, 0.5),
+            return BlocBuilder<RecordViaPhoneCubit, RecordViaPhoneState>(
+              builder: (context, recordState) {
+                LatLng? bestPos;
+                final rState = recordState;
+                if (rState.isRecording && rState.currentRidePoints.isNotEmpty) {
+                  bestPos = rState.currentRidePoints.last;
+                } else if (rState.polylines != null &&
+                    rState.polylines!.isNotEmpty &&
+                    rState.polylines!.first.points.isNotEmpty) {
+                  bestPos = rState.polylines!.first.points.last;
+                }
+
+                bestPos ??= LatLng(currentPos.latitude, currentPos.longitude);
+
+                return Column(
+                  children: [
+                    Expanded(
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.all(Radius.circular(5)),
+                        child: IgnorePointer(
+                          child: GoogleMap(
+                            key: ValueKey(bestPos),
+                            initialCameraPosition: CameraPosition(
+                              target: bestPos,
+                              zoom: 15,
                             ),
-                        },
-                        onMapCreated: (GoogleMapController controller) async {
-                          if (!_controller.isCompleted) {
-                            _controller.complete(controller);
-                          }
+                            myLocationEnabled: false,
+                            zoomControlsEnabled: false,
+                            myLocationButtonEnabled: false,
+                            scrollGesturesEnabled: false,
+                            zoomGesturesEnabled: false,
+                            tiltGesturesEnabled: false,
+                            rotateGesturesEnabled: false,
+                            mapType:
+                                appState.mapType == 'satellite'
+                                    ? MapType.satellite
+                                    : MapType.normal,
+                            trafficEnabled: appState.isTrafficEnabled,
+                            markers: {
+                              Marker(
+                                markerId: const MarkerId('current_location'),
+                                position: bestPos,
+                                icon:
+                                    _customMarker ??
+                                    BitmapDescriptor.defaultMarker,
+                                anchor: const Offset(0.5, 0.5),
+                              ),
+                            },
+                            onMapCreated: (GoogleMapController controller) async {
+                              _mapController = controller;
 
-                          final appState = context.read<AppCubit>().state;
+                              final recordState =
+                                  context.read<RecordViaPhoneCubit>().state;
+                              if (recordState.polylines != null &&
+                                  recordState.polylines!.isNotEmpty) {
+                                final points =
+                                    recordState.polylines!.first.points;
+                                if (points.isNotEmpty) {
+                                  controller.moveCamera(
+                                    CameraUpdate.newLatLngZoom(points.last, 15),
+                                  );
+                                }
+                              }
 
-                          if (_darkMapStyle == null || _lightMapStyle == null) {
-                            await _loadMapStyles();
-                          }
+                              final appState = context.read<AppCubit>().state;
+                              if (_darkMapStyle == null ||
+                                  _lightMapStyle == null) {
+                                await _loadMapStyles();
+                              }
 
-                          String? style;
-                          if (appState.mapStyle == 'Dark') {
-                            style = _darkMapStyle;
-                          } else if (appState.mapStyle == 'Light') {
-                            style = _lightMapStyle;
-                          } else if (appState.mapStyle == 'Simple') {
-                            style = await MapUtils.loadStyle(
-                              'assets/map_styles/light_map.json',
-                            );
-                          }
+                              String? style;
+                              if (appState.mapStyle == 'Dark') {
+                                style = _darkMapStyle;
+                              } else if (appState.mapStyle == 'Light') {
+                                style = _lightMapStyle;
+                              } else if (appState.mapStyle == 'Simple') {
+                                style = await MapUtils.loadStyle(
+                                  'assets/map_styles/light_map.json',
+                                );
+                              }
 
-                          await MapUtils.setStyle(controller, style);
-                        },
+                              await MapUtils.setStyle(controller, style);
+                            },
                       ),
                     ),
                   ),
@@ -311,11 +367,13 @@ class _MapScreenState extends State<MapScreen> {
                     ],
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  child: _buildStatsRow(),
-                ),
-              ],
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                      child: _buildStatsRow(),
+                    ),
+                  ],
+                );
+              },
             );
           },
         ),
@@ -708,7 +766,5 @@ class _MapScreenState extends State<MapScreen> {
             },
           ),
         ],
-      ),
-    );
-  }
-}
+      ));
+}}

@@ -9,6 +9,8 @@ import 'package:trackify/app/cubit/app_state.dart';
 import 'package:trackify/core/constants/app_images.dart';
 import 'package:trackify/core/utils/map_utils.dart';
 import 'package:trackify/core/widgets/bouncing_widget.dart';
+import 'package:trackify/feature/record_via_phone/presentation/cubit/record_via_phone_cubit.dart';
+import 'package:trackify/feature/record_via_phone/presentation/cubit/record_via_phone_state.dart';
 import '../../../../l10n/app_localizations.dart';
 
 class FullScreenMap extends StatefulWidget {
@@ -19,7 +21,7 @@ class FullScreenMap extends StatefulWidget {
 }
 
 class _FullScreenMapState extends State<FullScreenMap> {
-  final Completer<GoogleMapController> _controller = Completer<GoogleMapController>();
+  GoogleMapController? _mapController;
   String? _lightMapStyle;
   String? _darkMapStyle;
   bool _showSharedWithMe = false;
@@ -181,8 +183,9 @@ class _FullScreenMapState extends State<FullScreenMap> {
           context.read<AppCubit>().updateMapConfig(mapType: 'normal', mapStyle: name);
         }
         
-        final controller = await _controller.future;
-        _updateMapStyle(controller);
+        if (_mapController != null) {
+          _updateMapStyle(_mapController!);
+        }
       },
       child: Column(
         children: [
@@ -283,13 +286,32 @@ class _FullScreenMapState extends State<FullScreenMap> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(
-        children: [
-          _buildMap(),
-          _buildTopActions(),
-          _buildRightSideActions(),
-          _buildDraggableBottomCard(),
+      body: MultiBlocListener(
+        listeners: [
+          BlocListener<RecordViaPhoneCubit, RecordViaPhoneState>(
+            listenWhen: (prev, curr) => curr is MapDataByDateLoaded,
+            listener: (context, state) {
+              if (state is MapDataByDateLoaded &&
+                  state.polylines != null &&
+                  state.polylines!.isNotEmpty) {
+                final points = state.polylines!.first.points;
+                if (points.isNotEmpty && _mapController != null) {
+                  _mapController!.animateCamera(
+                    CameraUpdate.newLatLngZoom(points.last, 15),
+                  );
+                }
+              }
+            },
+          ),
         ],
+        child: Stack(
+          children: [
+            _buildMap(),
+            _buildTopActions(),
+            _buildRightSideActions(),
+            _buildDraggableBottomCard(),
+          ],
+        ),
       ),
     );
   }
@@ -302,33 +324,62 @@ class _FullScreenMapState extends State<FullScreenMap> {
           return const Center(child: CircularProgressIndicator());
         }
 
-        return GoogleMap(
-          initialCameraPosition: CameraPosition(
-            target: LatLng(currentPos.latitude, currentPos.longitude),
-            zoom: 15,
-          ),
-          myLocationEnabled: false,
-          zoomControlsEnabled: false,
-          myLocationButtonEnabled: false,
-          mapType: appState.mapType == 'satellite' ? MapType.satellite : MapType.normal,
-          trafficEnabled: appState.isTrafficEnabled,
-          markers: {
-            if (currentPos != null)
-              Marker(
-                markerId: const MarkerId('current_location'),
-                position: LatLng(currentPos.latitude, currentPos.longitude),
-                icon: _customMarker ?? BitmapDescriptor.defaultMarker,
-                anchor: const Offset(0.5, 0.5),
+        return BlocBuilder<RecordViaPhoneCubit, RecordViaPhoneState>(
+          builder: (context, recordState) {
+            LatLng? bestPos;
+            final rState = recordState;
+            if (rState.isRecording && rState.currentRidePoints.isNotEmpty) {
+              bestPos = rState.currentRidePoints.last;
+            } else if (rState.polylines != null &&
+                rState.polylines!.isNotEmpty &&
+                rState.polylines!.first.points.isNotEmpty) {
+              bestPos = rState.polylines!.first.points.last;
+            }
+
+            bestPos ??= LatLng(currentPos.latitude, currentPos.longitude);
+
+            return GoogleMap(
+              key: ValueKey(bestPos),
+              initialCameraPosition: CameraPosition(
+                target: bestPos,
+                zoom: 15,
               ),
-          },
-          onMapCreated: (controller) async {
-            if (!_controller.isCompleted) {
-              _controller.complete(controller);
-            }
-            if (_darkMapStyle == null || _lightMapStyle == null) {
-              await _loadMapStyles();
-            }
-            _updateMapStyle(controller);
+              myLocationEnabled: false,
+              zoomControlsEnabled: false,
+              myLocationButtonEnabled: false,
+              mapType:
+                  appState.mapType == 'satellite'
+                      ? MapType.satellite
+                      : MapType.normal,
+              trafficEnabled: appState.isTrafficEnabled,
+              markers: {
+                Marker(
+                  markerId: const MarkerId('current_location'),
+                  position: bestPos,
+                  icon: _customMarker ?? BitmapDescriptor.defaultMarker,
+                  anchor: const Offset(0.5, 0.5),
+                ),
+              },
+              onMapCreated: (controller) async {
+                _mapController = controller;
+
+                final recordState = context.read<RecordViaPhoneCubit>().state;
+                if (recordState.polylines != null &&
+                    recordState.polylines!.isNotEmpty) {
+                  final points = recordState.polylines!.first.points;
+                  if (points.isNotEmpty) {
+                    controller.moveCamera(
+                      CameraUpdate.newLatLngZoom(points.last, 15),
+                    );
+                  }
+                }
+
+                if (_darkMapStyle == null || _lightMapStyle == null) {
+                  await _loadMapStyles();
+                }
+                _updateMapStyle(controller);
+              },
+            );
           },
         );
       },

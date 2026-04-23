@@ -110,19 +110,24 @@ class RecordViaPhoneCubit extends Cubit<RecordViaPhoneState> {
         final list = deviceDataByDate.data ?? [];
         final List<LatLng> points = [];
 
-        for (var item in list) {
-          try {
-            if (item.gs == 'B') continue;
+        for (var item in list.reversed) {
+          final lat = double.tryParse(item.lt ?? '');
+          final lng = double.tryParse(item.lg ?? '');
 
-            final double? lat = double.tryParse(item.lt ?? '');
-            final double? lng = double.tryParse(item.lg ?? '');
-            if (lat == null || lng == null) continue;
+          if (lat == null || lng == null) continue;
 
-            double correctedLat = item.ns == 'S' ? -lat : lat;
-            double correctedLng = item.ew == 'W' ? -lng : lng;
+          final ns = (item.ns ?? '').toUpperCase();
+          final ew = (item.ew ?? '').toUpperCase();
 
-            points.add(LatLng(correctedLat, correctedLng));
-          } catch (e) {}
+          double finalLat = ns == 'S' ? -lat.abs() : lat.abs();
+          double finalLng = ew == 'W' ? -lng.abs() : lng.abs();
+
+          if (finalLat < 10 || finalLat > 40) continue;
+          if (finalLng < 60 || finalLng > 100) continue;
+
+          if (finalLat == 0 || finalLng == 0) continue;
+
+          points.add(LatLng(finalLat, finalLng));
         }
       print("points for the selected date range.${points.length} ");
         final Set<Polyline> polylines = {
