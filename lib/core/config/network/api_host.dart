@@ -61,6 +61,8 @@ class ApiURL {
       "$baseURL/api/device/check-deviceList_byDate";
   static const String assignDevices = "$baseURL/api/assign-devices";
 
+  static const String journeyRideHistory = "$baseURL/api/journey/ride-history";
+
   // -------------------------
   // LogoURL
   // -------------------------

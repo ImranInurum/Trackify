@@ -124,7 +124,7 @@ class RecordViaPhoneCubit extends Cubit<RecordViaPhoneState> {
             points.add(LatLng(correctedLat, correctedLng));
           } catch (e) {}
         }
-
+      print("points for the selected date range.${points.length} ");
         final Set<Polyline> polylines = {
           Polyline(
             polylineId: const PolylineId("ride_path"),

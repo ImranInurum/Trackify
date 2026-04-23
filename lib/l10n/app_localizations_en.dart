@@ -1015,4 +1015,82 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get preventFrustrationDamageDesc =>
       'Avoid conflicts and vehicle damage from improper parking.';
+
+  @override
+  String get liveTab => 'LIVE';
+
+  @override
+  String get historyTab => 'HISTORY';
+
+  @override
+  String get liveLocationSharingActive => 'Live Location Sharing Active';
+
+  @override
+  String get noLiveLocationShared => 'No live location shared';
+
+  @override
+  String get realTimeSharingDesc =>
+      'Your location is being shared in real-time with selected contacts.';
+
+  @override
+  String get startSharingPhoneDesc =>
+      'Start sharing your phone\'s location to help others track you';
+
+  @override
+  String get noHistoryAvailable => 'No history available';
+
+  @override
+  String get historyDesc =>
+      'Past location shares will appear here once they are completed.';
+
+  @override
+  String get stopSharing => 'Stop Sharing';
+
+  @override
+  String get shareLocation => 'Share Location';
+
+  @override
+  String get startSharing => 'Start Sharing';
+
+  @override
+  String get phoneTracking => 'Phone Tracking';
+
+  @override
+  String get liveRecordTab => 'Live Record';
+
+  @override
+  String get statsTab => 'Stats';
+
+  @override
+  String get timeLabel => 'Time';
+
+  @override
+  String get weekly => 'Weekly';
+
+  @override
+  String get monthly => 'Monthly';
+
+  @override
+  String get custom => 'Custom';
+
+  @override
+  String get quickStats => 'Quick Stats';
+
+  @override
+  String get totalRides => 'Total Rides';
+
+  @override
+  String get avgSpeed => 'Avg Speed';
+
+  @override
+  String get totalFuel => 'Total Fuel';
+
+  @override
+  String get overallDistance => 'Overall Distance';
+
+  @override
+  String get drivingTime => 'Driving Time';
+
+  @override
+  String get safetyScore => 'Safety Score';
 }

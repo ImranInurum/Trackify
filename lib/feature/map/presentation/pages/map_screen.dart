@@ -17,6 +17,8 @@ import 'package:trackify/feature/map/presentation/pages/full_screen_map.dart';
 import 'package:trackify/feature/my_garage/presentation/view/my_garage_screen.dart';
 import 'package:trackify/feature/reach_me_sticker/presentation/screens/reach_me_sticker_screen.dart';
 import 'package:trackify/feature/record_via_phone/presentation/pages/record_via_phone_screen.dart';
+import '../../../../core/utils/shared_preferences.dart';
+import '../../../location_sharing/presentation/pages/location_sharing_screen.dart';
 import '../../../notifications/presentation/screen/notification_list_screen.dart';
 
 import '../../../../core/config/style_manager.dart';
@@ -38,6 +40,7 @@ class _MapScreenState extends State<MapScreen> {
   String? _darkMapStyle;
   Vehicles? _selectedDevice;
   BitmapDescriptor? _customMarker;
+  final prefs = AppPreference.instance;
 
   @override
   void initState() {
@@ -114,6 +117,7 @@ class _MapScreenState extends State<MapScreen> {
             // Initialize selected device if not set
             if (_selectedDevice == null && vehicles.isNotEmpty) {
               _selectedDevice = vehicles.first;
+
             }
 
             final l10n = AppLocalizations.of(context)!;
@@ -176,7 +180,11 @@ class _MapScreenState extends State<MapScreen> {
                       ),
                     );
                   },
-                  onDeviceTap: (device) {
+                  onDeviceTap: (device) async {
+                    await prefs.set(
+                      key: AppPreference.IMEI,
+                      value: device.imei ?? '',
+                    );
                     setState(() {
                       _selectedDevice = device;
                     });
@@ -606,6 +614,14 @@ class _MapScreenState extends State<MapScreen> {
                     Navigator.of(context).push(
                       MaterialPageRoute(
                         builder: (context) => ReachMeStickerScreen(),
+                      ),
+                    );
+                  }
+                  if (option["label"] ==
+                      l10n.locationSharing.replaceAll(' ', '\n')) {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => LocationSharingScreen(),
                       ),
                     );
                   }

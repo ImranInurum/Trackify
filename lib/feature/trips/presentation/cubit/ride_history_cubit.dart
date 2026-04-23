@@ -10,14 +10,14 @@ class RideHistoryCubit extends Cubit<RideHistoryState> {
   final RideHistoryUseCase _assignDeviceUseCase;
 
   RideHistoryCubit(this._assignDeviceUseCase) : super(RideHistoryInitial());
-
+  final prefs = AppPreference.instance;
   Future<void> getRideHistoryData() async {
     emit(RideHistoryLoading());
     await Future.delayed(const Duration(seconds: 2));
     final userId = await AppPreference.instance.get(key: AppPreference.KEY_USER_ID);
-
+    final iMEI = await prefs.get(key: AppPreference.IMEI);
     final request = {
-      'user_id': userId,
+      'imei': iMEI ,
     };
     debugPrint('Assigning device with request: $request');
     final result = await _assignDeviceUseCase.getRideHistory(body: request);

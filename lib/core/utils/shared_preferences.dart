@@ -54,6 +54,7 @@ class AppPreference {
   static String KEY_SELECTED_LANGUAGE = "KEY_SELECTED_LANGUAGE";
   static String KEY_DYNAMIC_THEME = "KEY_DYNAMIC_THEME";
   static String KEY_FCM_TOKEN = "KEY_FCM_TOKEN";
+  static String IMEI = "IMEI";
 
 
 

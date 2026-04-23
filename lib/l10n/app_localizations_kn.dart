@@ -1019,4 +1019,82 @@ class AppLocalizationsKn extends AppLocalizations {
   @override
   String get preventFrustrationDamageDesc =>
       'ಅಸಮರ್ಪಕ ಪಾರ್ಕಿಂಗ್‌ನಿಂದ ಸಂಘರ್ಷಗಳು ಮತ್ತು ವಾಹನದ ಹಾನಿಯನ್ನು ತಪ್ಪಿಸಿ.';
+
+  @override
+  String get liveTab => 'ಲೈವ್';
+
+  @override
+  String get historyTab => 'ಇತಿಹಾಸ';
+
+  @override
+  String get liveLocationSharingActive => 'ಲೈವ್ ಸ್ಥಳ ಹಂಚಿಕೆ ಸಕ್ರಿಯವಾಗಿದೆ';
+
+  @override
+  String get noLiveLocationShared => 'ಯಾವುದೇ ಲೈವ್ ಸ್ಥಳವನ್ನು ಹಂಚಿಕೊಳ್ಳಲಾಗಿಲ್ಲ';
+
+  @override
+  String get realTimeSharingDesc =>
+      'ಆಯ್ದ ಸಂಪರ್ಕಗಳೊಂದಿಗೆ ನಿಮ್ಮ ಸ್ಥಳವನ್ನು ನೈಜ ಸಮಯದಲ್ಲಿ ಹಂಚಿಕೊಳ್ಳಲಾಗುತ್ತಿದೆ.';
+
+  @override
+  String get startSharingPhoneDesc =>
+      'ಇತರರು ನಿಮ್ಮನ್ನು ಟ್ರ್ಯಾಕ್ ಮಾಡಲು ಸಹಾಯ ಮಾಡಲು ನಿಮ್ಮ ಫೋನ್‌ನ ಸ್ಥಳವನ್ನು ಹಂಚಿಕೊಳ್ಳಲು ಪ್ರಾರಂಭಿಸಿ';
+
+  @override
+  String get noHistoryAvailable => 'ಯಾವುದೇ ಇತಿಹಾಸ ಲಭ್ಯವಿಲ್ಲ';
+
+  @override
+  String get historyDesc =>
+      'ಹಿಂದಿನ ಸ್ಥಳ ಹಂಚಿಕೆಗಳು ಪೂರ್ಣಗೊಂಡ ನಂತರ ಇಲ್ಲಿ ಗೋಚರಿಸುತ್ತವೆ.';
+
+  @override
+  String get stopSharing => 'ಹಂಚಿಕೆಯನ್ನು ನಿಲ್ಲಿಸಿ';
+
+  @override
+  String get shareLocation => 'ಸ್ಥಳವನ್ನು ಹಂಚಿಕೊಳ್ಳಿ';
+
+  @override
+  String get startSharing => 'ಹಂಚಿಕೊಳ್ಳಲು ಪ್ರಾರಂಭಿಸಿ';
+
+  @override
+  String get phoneTracking => 'ಫೋನ್ ಟ್ರ್ಯಾಕಿಂಗ್';
+
+  @override
+  String get liveRecordTab => 'ಲೈವ್ ರೆಕಾರ್ಡ್';
+
+  @override
+  String get statsTab => 'ಅಂಕಿಅಂಶಗಳು';
+
+  @override
+  String get timeLabel => 'ಸಮಯ';
+
+  @override
+  String get weekly => 'ವಾರಕ್ಕೊಮ್ಮೆ';
+
+  @override
+  String get monthly => 'ಮಾಸಿಕ';
+
+  @override
+  String get custom => 'ಕಸ್ಟಮ್';
+
+  @override
+  String get quickStats => 'ತ್ವರಿತ ಅಂಕಿಅಂಶಗಳು';
+
+  @override
+  String get totalRides => 'ಒಟ್ಟು ಸವಾರಿಗಳು';
+
+  @override
+  String get avgSpeed => 'ಸರಾಸರಿ ವೇಗ';
+
+  @override
+  String get totalFuel => 'ಒಟ್ಟು ಇಂಧನ';
+
+  @override
+  String get overallDistance => 'ಒಟ್ಟು ದೂರ';
+
+  @override
+  String get drivingTime => 'ಚಾಲನಾ ಸಮಯ';
+
+  @override
+  String get safetyScore => 'ಸುರಕ್ಷತೆ ಸ್ಕೋರ್';
 }

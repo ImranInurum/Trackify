@@ -13,15 +13,17 @@ import 'package:trackify/feature/record_via_phone/presentation/cubit/record_via_
 
 class RecordViaPhoneScreen extends StatefulWidget {
   final String imei;
-  const RecordViaPhoneScreen({super.key,required this.imei});
+  const RecordViaPhoneScreen({super.key, required this.imei});
 
   @override
   State<RecordViaPhoneScreen> createState() => _RecordViaPhoneScreenState();
 }
 
 class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
-  final Completer<GoogleMapController> _rideMapController = Completer<GoogleMapController>();
-  final Completer<GoogleMapController> _pastMapController = Completer<GoogleMapController>();
+  final Completer<GoogleMapController> _rideMapController =
+      Completer<GoogleMapController>();
+  final Completer<GoogleMapController> _pastMapController =
+      Completer<GoogleMapController>();
   String? _lightMapStyle;
   String? _darkMapStyle;
 
@@ -29,7 +31,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
   void initState() {
     super.initState();
     _loadMapStyles();
-    
+
     // Pre-fetch today's history
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final now = DateTime.now();
@@ -44,8 +46,12 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
 
   Future<void> _loadMapStyles() async {
     try {
-      _lightMapStyle = await rootBundle.loadString('assets/map_styles/light_map.json');
-      _darkMapStyle = await rootBundle.loadString('assets/map_styles/dark_map.json');
+      _lightMapStyle = await rootBundle.loadString(
+        'assets/map_styles/light_map.json',
+      );
+      _darkMapStyle = await rootBundle.loadString(
+        'assets/map_styles/dark_map.json',
+      );
     } catch (e) {
       debugPrint("Error loading map styles: $e");
     }
@@ -54,14 +60,17 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return MultiBlocListener(
       listeners: [
         BlocListener<AppCubit, AppState>(
-          listenWhen: (prev, curr) => prev.currentLocation != curr.currentLocation,
+          listenWhen: (prev, curr) =>
+              prev.currentLocation != curr.currentLocation,
           listener: (context, appState) {
             if (appState.currentLocation != null) {
-              context.read<RecordViaPhoneCubit>().updateRecordingData(appState.currentLocation!);
+              context.read<RecordViaPhoneCubit>().updateRecordingData(
+                appState.currentLocation!,
+              );
             }
           },
         ),
@@ -84,8 +93,12 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
               indicatorColor: Theme.of(context).colorScheme.primary,
               indicatorWeight: 3,
               labelColor: Theme.of(context).colorScheme.primary,
-              unselectedLabelColor: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
-              labelStyle: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
+              unselectedLabelColor: Theme.of(
+                context,
+              ).colorScheme.onSurface.withOpacity(0.5),
+              labelStyle: theme.textTheme.titleSmall?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
               tabs: const [
                 Tab(text: "Live Record"),
                 Tab(text: "History"),
@@ -132,9 +145,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
               bottom: 30,
               left: 0,
               right: 0,
-              child: Center(
-                child: _buildRecordButton(state),
-              ),
+              child: Center(child: _buildRecordButton(state)),
             ),
           ],
         );
@@ -143,7 +154,8 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
   }
 
   Widget _buildRecordingOverlay(RecordViaPhoneState state) {
-    if (!state.isRecording && state.rideDuration == Duration.zero) return const SizedBox.shrink();
+    if (!state.isRecording && state.rideDuration == Duration.zero)
+      return const SizedBox.shrink();
 
     return Positioned(
       top: 20,
@@ -165,9 +177,21 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            _buildStatItem("Time", _formatDuration(state.rideDuration), Icons.timer_outlined),
-            _buildStatItem("Distance", "${state.rideDistance.toStringAsFixed(2)} km", Icons.route_outlined),
-            _buildStatItem("Speed", "${state.currentSpeed.toStringAsFixed(1)} km/h", Icons.speed),
+            _buildStatItem(
+              "Time",
+              _formatDuration(state.rideDuration),
+              Icons.timer_outlined,
+            ),
+            _buildStatItem(
+              "Distance",
+              "${state.rideDistance.toStringAsFixed(2)} km",
+              Icons.route_outlined,
+            ),
+            _buildStatItem(
+              "Speed",
+              "${state.currentSpeed.toStringAsFixed(1)} km/h",
+              Icons.speed,
+            ),
           ],
         ),
       ),
@@ -212,11 +236,17 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
         height: 80,
         width: 80,
         decoration: BoxDecoration(
-          color: isRecording ? Colors.red : Theme.of(context).colorScheme.primary,
+          color: isRecording
+              ? Colors.red
+              : Theme.of(context).colorScheme.primary,
           shape: BoxShape.circle,
           boxShadow: [
             BoxShadow(
-              color: (isRecording ? Colors.red : Theme.of(context).colorScheme.primary).withOpacity(0.4),
+              color:
+                  (isRecording
+                          ? Colors.red
+                          : Theme.of(context).colorScheme.primary)
+                      .withOpacity(0.4),
               blurRadius: 15,
               spreadRadius: 2,
             ),
@@ -297,7 +327,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
             end = picked.end;
           }
         }
-        
+
         context.read<RecordViaPhoneCubit>().fetchDeviceDataByDate(
           imei: '860710085959719',
           startDate: DateFormat('yyyy-MM-dd').format(start),
@@ -344,10 +374,25 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
             crossAxisSpacing: 15,
             childAspectRatio: 1.2,
             children: [
-              _buildStatCard("Total Rides", "24", Icons.directions_car, Colors.blue),
-              _buildStatCard("Avg Speed", "42 km/h", Icons.speed, Colors.orange),
+              _buildStatCard(
+                "Total Rides",
+                "24",
+                Icons.directions_car,
+                Colors.blue,
+              ),
+              _buildStatCard(
+                "Avg Speed",
+                "42 km/h",
+                Icons.speed,
+                Colors.orange,
+              ),
               _buildStatCard("Top Speed", "85 km/h", Icons.bolt, Colors.purple),
-              _buildStatCard("Total Fuel", "12.5 L", Icons.local_gas_station, Colors.green),
+              _buildStatCard(
+                "Total Fuel",
+                "12.5 L",
+                Icons.local_gas_station,
+                Colors.green,
+              ),
             ],
           ),
         ],
@@ -387,7 +432,11 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
           const SizedBox(height: 8),
           const Text(
             "1,248.50 km",
-            style: TextStyle(color: Colors.white, fontSize: 32, fontWeight: FontWeight.bold),
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 32,
+              fontWeight: FontWeight.bold,
+            ),
           ),
           const SizedBox(height: 20),
           Row(
@@ -406,23 +455,35 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(val, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18)),
-        Text(label, style: const TextStyle(color: Colors.white60, fontSize: 12)),
+        Text(
+          val,
+          style: const TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+            fontSize: 18,
+          ),
+        ),
+        Text(
+          label,
+          style: const TextStyle(color: Colors.white60, fontSize: 12),
+        ),
       ],
     );
   }
 
-  Widget _buildStatCard(String label, String value, IconData icon, Color color) {
+  Widget _buildStatCard(
+    String label,
+    String value,
+    IconData icon,
+    Color color,
+  ) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-          ),
+          BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10),
         ],
       ),
       child: Column(
@@ -430,7 +491,10 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
         children: [
           Container(
             padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(color: color.withOpacity(0.1), shape: BoxShape.circle),
+            decoration: BoxDecoration(
+              color: color.withOpacity(0.1),
+              shape: BoxShape.circle,
+            ),
             child: Icon(icon, color: color, size: 24),
           ),
           const SizedBox(height: 12),
@@ -455,7 +519,10 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
   }
 
   // --- Common Widgets ---
-  Widget _buildMap({required Completer<GoogleMapController> controller, Set<Polyline> polylines = const {}}) {
+  Widget _buildMap({
+    required Completer<GoogleMapController> controller,
+    Set<Polyline> polylines = const {},
+  }) {
     return BlocBuilder<AppCubit, AppState>(
       builder: (context, appState) {
         final currentPos = appState.currentLocation;
@@ -478,12 +545,12 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
             if (!controller.isCompleted) {
               controller.complete(googleMapController);
             }
-            
+
             // Apply theme-aware style
-            final style = (themeMode == ThemeMode.dark) 
-                ? _darkMapStyle 
+            final style = (themeMode == ThemeMode.dark)
+                ? _darkMapStyle
                 : _lightMapStyle;
-            
+
             if (style != null) {
               googleMapController.setMapStyle(style);
             } else {
