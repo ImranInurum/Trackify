@@ -951,4 +951,68 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get addEditEmergencyContactDesc =>
       'Add and edit emergency contact list in vehicle settings.';
+
+  @override
+  String get smartContactSticker => 'Smart Contact Sticker';
+
+  @override
+  String get stickerSubtitle =>
+      'A step forward to make your vehicle SAFE and SMART';
+
+  @override
+  String get activateContactSticker => 'Activate contact sticker';
+
+  @override
+  String get buyNewContactSticker => 'Buy a new contact sticker';
+
+  @override
+  String get beyondParkingProblems => 'Beyond parking problems';
+
+  @override
+  String get noParkings => 'No Parkings';
+
+  @override
+  String get emergencies => 'Emergencies';
+
+  @override
+  String get vehicleTowing => 'Vehicle towing';
+
+  @override
+  String get getInformedStayConnected =>
+      'Get informed & stay connected\nwith your vehicle';
+
+  @override
+  String get securedCalls => 'Secured Calls';
+
+  @override
+  String get securedCallsDesc =>
+      'Internet-masked calls-keeps your phone number private.';
+
+  @override
+  String get notificationHistory => 'Notification History';
+
+  @override
+  String get notificationHistoryDesc =>
+      'Keep track of all the current and previous notifications';
+
+  @override
+  String get beInformed => 'Be Informed';
+
+  @override
+  String get beInformedDesc =>
+      'Know instantly when someone scans your QR code & take prompt actions when they call you.';
+
+  @override
+  String get controlWhatOthersSee => 'Control What Others See';
+
+  @override
+  String get controlWhatOthersSeeDesc =>
+      'Customize the details shown when someone scans the QR.';
+
+  @override
+  String get preventFrustrationDamage => 'Prevent Frustration & Damage';
+
+  @override
+  String get preventFrustrationDamageDesc =>
+      'Avoid conflicts and vehicle damage from improper parking.';
 }

@@ -951,4 +951,68 @@ class AppLocalizationsHi extends AppLocalizations {
   @override
   String get addEditEmergencyContactDesc =>
       'वाहन सेटिंग में आपातकालीन संपर्क सूची जोड़ें और संपादित करें।';
+
+  @override
+  String get smartContactSticker => 'स्मार्ट कॉन्टैक्ट स्टिकर';
+
+  @override
+  String get stickerSubtitle =>
+      'अपने वाहन को सुरक्षित और स्मार्ट बनाने की दिशा में एक कदम';
+
+  @override
+  String get activateContactSticker => 'कॉन्टैक्ट स्टिकर सक्रिय करें';
+
+  @override
+  String get buyNewContactSticker => 'नया कॉन्टैक्ट स्टिकर खरीदें';
+
+  @override
+  String get beyondParkingProblems => 'पार्किंग की समस्याओं से परे';
+
+  @override
+  String get noParkings => 'नो पार्किंग';
+
+  @override
+  String get emergencies => 'आपात स्थिति';
+
+  @override
+  String get vehicleTowing => 'वाहन टोइंग';
+
+  @override
+  String get getInformedStayConnected =>
+      'सूचित रहें और अपने वाहन से\nजुड़े रहें';
+
+  @override
+  String get securedCalls => 'सुरक्षित कॉल';
+
+  @override
+  String get securedCallsDesc =>
+      'इंटरनेट-मास्क्ड कॉल - आपके फोन नंबर को निजी रखता है।';
+
+  @override
+  String get notificationHistory => 'अधिसूचना इतिहास';
+
+  @override
+  String get notificationHistoryDesc =>
+      'सभी वर्तमान और पिछली सूचनाओं पर नज़र रखें';
+
+  @override
+  String get beInformed => 'सूचित रहें';
+
+  @override
+  String get beInformedDesc =>
+      'जब कोई आपका क्यूआर कोड स्कैन करे तो तुरंत जानें और जब वे आपको कॉल करें तो तुरंत कार्रवाई करें।';
+
+  @override
+  String get controlWhatOthersSee => 'नियंत्रित करें कि दूसरे क्या देखते हैं';
+
+  @override
+  String get controlWhatOthersSeeDesc =>
+      'जब कोई क्यूआर स्कैन करता है तो दिखाए गए विवरणों को अनुकूलित करें।';
+
+  @override
+  String get preventFrustrationDamage => 'निराशा और क्षति को रोकें';
+
+  @override
+  String get preventFrustrationDamageDesc =>
+      'अनुचित पार्किंग से होने वाले संघर्षों और वाहन की क्षति से बचें।';
 }

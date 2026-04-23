@@ -947,4 +947,70 @@ class AppLocalizationsTa extends AppLocalizations {
   @override
   String get addEditEmergencyContactDesc =>
       'வாகன அமைப்புகளில் அவசர தொடர்பு பட்டியலைச் சேர்க்கவும் மற்றும் திருத்தவும்.';
+
+  @override
+  String get smartContactSticker => 'ஸ்மார்ட் தொடர்பு ஸ்டிக்கர்';
+
+  @override
+  String get stickerSubtitle =>
+      'உங்கள் வாகனத்தைப் பாதுகாப்பாகவும் புத்திசாலித்தனமாகவும் மாற்ற ஒரு படி முன்னே';
+
+  @override
+  String get activateContactSticker => 'தொடர்பு ஸ்டிக்கரைச் செயல்படுத்தவும்';
+
+  @override
+  String get buyNewContactSticker => 'புதிய தொடர்பு ஸ்டிக்கரை வாங்கவும்';
+
+  @override
+  String get beyondParkingProblems => 'பார்க்கிங் பிரச்சனைகளுக்கு அப்பால்';
+
+  @override
+  String get noParkings => 'பார்க்கிங் இல்லை';
+
+  @override
+  String get emergencies => 'அவசரநிலைகள்';
+
+  @override
+  String get vehicleTowing => 'வாகன டோயிಂಗ್';
+
+  @override
+  String get getInformedStayConnected =>
+      'தகவல் பெறுங்கள் மற்றும் உங்கள் வாகனத்துடன்\nஇணைந்திருங்கள்';
+
+  @override
+  String get securedCalls => 'பாதுகாப்பான அழைப்புகள்';
+
+  @override
+  String get securedCallsDesc =>
+      'இணையம்-மறைக்கப்பட்ட அழைப்புகள் - உங்கள் தொலைபேசி எண்ணைத் தனிப்பட்டதாக வைத்திருக்கும்.';
+
+  @override
+  String get notificationHistory => 'அறிவிப்பு வரலாறு';
+
+  @override
+  String get notificationHistoryDesc =>
+      'தற்போதைய மற்றும் முந்தைய அனைத்து அறிவிப்புகளையும் கண்காணிக்கவும்';
+
+  @override
+  String get beInformed => 'தகவலுடன் இருங்கள்';
+
+  @override
+  String get beInformedDesc =>
+      'யாராவது உங்கள் QR குறியீட்டை ஸ்கேன் செய்யும்போது உடனடியாகத் தெரிந்துகொள்ளுங்கள் மற்றும் அவர்கள் உங்களை அழைக்கும்போது உடனடி நடவடிக்கை எடுக்கவும்.';
+
+  @override
+  String get controlWhatOthersSee =>
+      'மற்றவர்கள் எதைப் பார்க்கிறார்கள் என்பதைக் கட்டுப்படுத்தவும்';
+
+  @override
+  String get controlWhatOthersSeeDesc =>
+      'யாராவது QR ஐ ஸ்கேன் செய்யும்போது காண்பிக்கப்படும் விவரங்களைத் தனிப்பயனாக்கவும்.';
+
+  @override
+  String get preventFrustrationDamage =>
+      'ஏமாற்றம் மற்றும் சேதத்தைத் தடுக்கவும்';
+
+  @override
+  String get preventFrustrationDamageDesc =>
+      'தவறான பார்க்கிங்கால் ஏற்படும் மோதல்கள் மற்றும் வாகன சேதத்தைத் தவிர்க்கவும்.';
 }
