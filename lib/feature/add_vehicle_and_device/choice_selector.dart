@@ -177,12 +177,12 @@ class _ChoiceSelectorState extends State<ChoiceSelector> {
             end: Alignment.bottomRight,
             colors: [
               Theme.of(context).cardColor,
-              Theme.of(context).cardColor.withOpacity(0.8),
+              Theme.of(context).cardColor.withOpacity(0.9),
             ],
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.1),
+              color: Theme.of(context).shadowColor.withOpacity(0.1),
               blurRadius: 4,
               offset: const Offset(0, 2),
             ),
@@ -247,7 +247,7 @@ class _ChoiceSelectorState extends State<ChoiceSelector> {
                             errorBuilder: (context, error, stackTrace) => Icon(
                               Icons.inventory_2_outlined,
                               size: 40,
-                              color: Colors.grey.shade400,
+                              color: Theme.of(context).hintColor.withOpacity(0.5),
                             ),
                           ),
                         ),

@@ -1,19 +1,21 @@
 import 'package:flutter/material.dart';
+import '../../../../../../../l10n/app_localizations.dart';
 
 class TripEmptyState extends StatelessWidget {
   const TripEmptyState({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Image.asset("assets/images/tripScreenBike.png", height: 160),
         const SizedBox(height: 20),
          Padding(
-          padding: EdgeInsets.symmetric(horizontal: 30),
+          padding: const EdgeInsets.symmetric(horizontal: 30),
           child: Text(
-            "“Group your rides into trips, add memories, and relive the journey”",
+            l10n.tripEmptyQuote,
             textAlign: TextAlign.center,
             style: TextStyle(
               color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
@@ -37,7 +39,7 @@ class TripEmptyState extends StatelessWidget {
               Icon(Icons.lock, size: 18, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5)),
               const SizedBox(width: 10),
               Text(
-                "Rides completed: 0/3",
+                l10n.ridesCompletedCount("0", "3"),
                 style: TextStyle(
                   color: Theme.of(context).colorScheme.onSurface.withOpacity(0.8),
                   fontSize: 14,
@@ -49,7 +51,7 @@ class TripEmptyState extends StatelessWidget {
         ),
         const SizedBox(height: 12),
         Text(
-          "You need at least 3 rides to unlock trips",
+          l10n.unlockTripsRequirement,
           style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5), fontSize: 12),
         ),
         const SizedBox(height: 50),

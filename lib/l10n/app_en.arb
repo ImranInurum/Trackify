@@ -274,5 +274,127 @@
   "imeiRequired": "IMEI number is required",
   "deviceAssignedSuccess": "Device successfully assigned to vehicle!",
   "assigningDevice": "Assigning device...",
-  "invalidImeiError": "Please enter a valid 15-digit IMEI number"
+  "invalidImeiError": "Please enter a valid 15-digit IMEI number",
+  "sharedRides": "Shared Rides",
+  "savedRides": "Saved Rides",
+  "allRides": "ALL RIDES",
+  "trips": "TRIPS",
+  "clicked": "{value} Clicked",
+  "@clicked": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "noDailyRides": "No daily rides to show",
+  "getStartedFirstRide": "Get started by taking your first ride",
+  "durationLabel": "Duration",
+  "km": "km",
+  "kmh": "km/h",
+  "tripEmptyQuote": "“Group your rides into trips, add memories, and relive the journey”",
+  "ridesCompletedCount": "Rides completed: {completed}/{total}",
+  "@ridesCompletedCount": {
+    "placeholders": {
+      "completed": {
+        "type": "String"
+      },
+      "total": {
+        "type": "String"
+      }
+    }
+  },
+  "unlockTripsRequirement": "You need at least 3 rides to unlock trips",
+  "createNewTrip": "Create a New Trip",
+  "startByCreatingTrip": "Start by creating a New Trip",
+  "skip": "Skip",
+  "todayText": "Today",
+  "distanceLabel": "Distance",
+  "rideDuration": "Ride Duration",
+  "speedLabel": "Speed",
+  "minutesShort": "m",
+  "secondsShort": "s",
+  "getMoreOutOfTrackify": "Get more out of Trackify",
+  "discoverMoreDesc": "Discover more — awesome things await!",
+  "serviceLogs": "Service Logs",
+  "safeParking": "Safe Parking",
+  "appUpdates": "App Updates",
+  "deviceDataPlanLabel": "Device Data Plan",
+  "deviceWarrantyLabel": "Device Warranty",
+  "videoTutorials": "Video Tutorials",
+  "exploreNow": "Explore Now",
+  "plusLabel": "Plus",
+  "mapStyleLabel": "Map Style",
+  "darkStyle": "Dark",
+  "lightStyle": "Light",
+  "simpleStyle": "Simple",
+  "satelliteStyle": "Satellite",
+  "mapOptionsLabel": "Map Options",
+  "trafficLabel": "Traffic",
+  "labelsLabel": "Labels",
+  "sharedWithMe": "Shared with me",
+  "todaysStats": "Today's Stats",
+  "parkedSinceTime": "Parked Since: {time}",
+  "@parkedSinceTime": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "kmsMoreToGo": "{value} kms more to go",
+  "@kmsMoreToGo": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "buyTrackifyDevice": "Buy Trackify Device",
+  "recordViaPhone": "Record via Phone",
+  "progressPercentage": "{value}%",
+  "@progressPercentage": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "labelColon": "{label}:",
+  "@labelColon": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      }
+    }
+  },
+  "fuelEmpty": "E",
+  "fuelFull": "F",
+  "vehicleNamePlaceholder": "SP 125",
+  "vehicleNumberPlaceholder": "MP09QV8269",
+  "myProfile": "My profile",
+  "profileCompleteness": "Profile completeness",
+  "lastUpdatedOn": "Last updated on {date}",
+  "@lastUpdatedOn": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "addProfilePicture": "Add your profile picture",
+  "personalDetails": "Personal details",
+  "userNameLabel": "Name",
+  "emailAddressLabel": "Email address",
+  "mobileNumberLabel": "Mobile Number",
+  "countryLabel": "Country",
+  "stateLabel": "State",
+  "cityLabel": "City",
+  "medicalInsuranceInfo": "Medical insurance information",
+  "addMedicalInsuranceInfo": "Add Medical insurance information",
+  "vehicleInsuranceInfo": "Vehicle insurance information",
+  "editViewVehicleInsuranceDesc": "Edit and view vehicle insurance details in vehicle settings.",
+  "myGarageVehiclePath": "My Garage > Vehicle",
+  "emergencyContacts": "Emergency Contacts",
+  "addEditEmergencyContactDesc": "Add and edit emergency contact list in vehicle settings."
 }

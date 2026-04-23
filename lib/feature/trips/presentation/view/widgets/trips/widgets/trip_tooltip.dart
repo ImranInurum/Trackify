@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 
+import '../../../../../../../l10n/app_localizations.dart';
+
 class TripTooltip extends StatelessWidget {
   final VoidCallback onSkip;
   const TripTooltip({super.key, required this.onSkip});
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Column(
       children: [
         CustomPaint(
@@ -31,7 +34,7 @@ class TripTooltip extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                "Create a New Trip",
+                l10n.createNewTrip,
                 style: TextStyle(
                   color: Theme.of(context).colorScheme.primary,
                   fontWeight: FontWeight.w700,
@@ -39,9 +42,9 @@ class TripTooltip extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 8),
-              const Text(
-                "Start by creating a New Trip",
-                style: TextStyle(
+              Text(
+                l10n.startByCreatingTrip,
+                style: const TextStyle(
                   fontSize: 13,
                   fontWeight: FontWeight.w500,
                 ),
@@ -57,7 +60,7 @@ class TripTooltip extends StatelessWidget {
                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                     color: Colors.transparent, // Increases tap area
                     child: Text(
-                      "Skip",
+                      l10n.skip,
                       style: TextStyle(
                         color: Theme.of(context).colorScheme.primary,
                         fontWeight: FontWeight.w700,

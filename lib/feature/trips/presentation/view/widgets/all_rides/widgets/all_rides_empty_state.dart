@@ -1,17 +1,20 @@
 import 'package:flutter/material.dart';
 
+import '../../../../../../../l10n/app_localizations.dart';
+
 class AllRidesEmptyState extends StatelessWidget {
   const AllRidesEmptyState({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Image.asset("assets/images/allRidesMap.png", height: 140),
         const SizedBox(height: 30),
         Text(
-          "No daily rides to show",
+          l10n.noDailyRides,
           style: TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w500,
@@ -20,7 +23,7 @@ class AllRidesEmptyState extends StatelessWidget {
         ),
         const SizedBox(height: 8),
         Text(
-          "Get started by taking your first ride",
+          l10n.getStartedFirstRide,
           style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6)),
         ),
       ],

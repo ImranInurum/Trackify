@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:trackify/feature/trips/data/entity/ride_model.dart';
 
+import '../../../../../../../l10n/app_localizations.dart';
+
 class RideCard extends StatelessWidget {
   final Ride ride;
   const RideCard({super.key, required this.ride});
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
@@ -49,7 +52,7 @@ class RideCard extends StatelessWidget {
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Text(
-                        "${ride.distance} km",
+                        "${ride.distance} ${l10n.km}",
                         style: TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.bold,
@@ -93,9 +96,9 @@ class RideCard extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    _buildStat(context, Icons.timer_outlined, ride.duration, "Duration"),
-                    _buildStat(context, Icons.speed, "${ride.avgSpeed} km/h", "Avg Speed"),
-                    _buildStat(context, Icons.bolt, "${ride.topSpeed} km/h", "Top Speed"),
+                    _buildStat(context, Icons.timer_outlined, ride.duration, l10n.durationLabel),
+                    _buildStat(context, Icons.speed, "${ride.avgSpeed} ${l10n.kmh}", l10n.averageSpeed),
+                    _buildStat(context, Icons.bolt, "${ride.topSpeed} ${l10n.kmh}", l10n.topSpeed),
                   ],
                 ),
                 Padding(

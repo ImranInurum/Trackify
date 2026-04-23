@@ -678,51 +678,280 @@ class AppLocalizationsKn extends AppLocalizations {
   }
 
   @override
-  String get vehicleMakeListEmpty =>
-      'Vehicle make list is empty for this selection';
+  String get vehicleMakeListEmpty => 'ಈ ಆಯ್ಕೆಗೆ ವಾಹನ ತಯಾರಕರ ಪಟ್ಟಿ ಖಾಲಿ ಇದೆ';
 
   @override
-  String get vehicleModelListEmpty =>
-      'Vehicle model list is empty for this selection';
+  String get vehicleModelListEmpty => 'ಈ ಆಯ್ಕೆಗೆ ವಾಹನ ಮಾದರಿ ಪಟ್ಟಿ ಖಾಲಿ ಇದೆ';
 
   @override
-  String get deviceInstallation => 'Device Installation';
+  String get deviceInstallation => 'ಸಾಧನ ಸ್ಥಾಪನೆ';
 
   @override
-  String get scanActivationCode => 'Scan activation code';
+  String get scanActivationCode => 'ಸಕ್ರಿಯಗೊಳಿಸುವ ಕೋಡ್ ಅನ್ನು ಸ್ಕ್ಯಾನ್ ಮಾಡಿ';
 
   @override
-  String get enterActivationCodeManually => 'Enter activation code manually';
+  String get enterActivationCodeManually =>
+      'ಸಕ್ರಿಯಗೊಳಿಸುವ ಕೋಡ್ ಅನ್ನು ಹಸ್ತಚಾಲಿತವಾಗಿ ನಮೂದಿಸಿ';
 
   @override
   String get openAjjasBoxInstruction =>
-      'Open Ajjas box for the activation QR code.';
+      'ಸಕ್ರಿಯಗೊಳಿಸುವ QR ಕೋಡ್‌ಗಾಗಿ Ajjas ಬಾಕ್ಸ್ ತೆರೆಯಿರಿ.';
 
   @override
-  String get continueText => 'Continue';
+  String get continueText => 'ಮುಂದುವರಿಸಿ';
 
   @override
-  String get enterUID => 'Enter UID';
+  String get enterUID => 'UID ನಮೂದಿಸಿ';
 
   @override
-  String get enterIMEINumber => 'Enter IMEI number';
+  String get enterIMEINumber => 'IMEI ಸಂಖ್ಯೆಯನ್ನು ನಮೂದಿಸಿ';
 
   @override
-  String get close => 'Close';
+  String get close => 'ಮುಚ್ಚಿ';
 
   @override
-  String get uidRequired => 'UID is required';
+  String get uidRequired => 'UID ಅಗತ್ಯವಿದೆ';
 
   @override
-  String get imeiRequired => 'IMEI number is required';
+  String get imeiRequired => 'IMEI ಸಂಖ್ಯೆ ಅಗತ್ಯವಿದೆ';
 
   @override
   String get deviceAssignedSuccess =>
-      'Device successfully assigned to vehicle!';
+      'ಸಾಧನವನ್ನು ವಾಹನಕ್ಕೆ ಯಶಸ್ವಿಯಾಗಿ ನಿಯೋಜಿಸಲಾಗಿದೆ!';
 
   @override
-  String get assigningDevice => 'Assigning device...';
+  String get assigningDevice => 'ಸಾಧನವನ್ನು ನಿಯೋಜಿಸಲಾಗುತ್ತಿದೆ...';
 
   @override
-  String get invalidImeiError => 'Please enter a valid 15-digit IMEI number';
+  String get invalidImeiError =>
+      'ದಯವಿಟ್ಟು ಮಾನ್ಯವಾದ 15-ಅಂಕಿಯ IMEI ಸಂಖ್ಯೆಯನ್ನು ನಮೂದಿಸಿ';
+
+  @override
+  String get sharedRides => 'ಸಹಭಾಗಿತ್ವದ ರೈಡ್‌ಗಳು';
+
+  @override
+  String get savedRides => 'Saved Rides';
+
+  @override
+  String get allRides => 'ALL RIDES';
+
+  @override
+  String get trips => 'TRIPS';
+
+  @override
+  String clicked(String value) {
+    return '$value Clicked';
+  }
+
+  @override
+  String get noDailyRides => 'No daily rides to show';
+
+  @override
+  String get getStartedFirstRide => 'Get started by taking your first ride';
+
+  @override
+  String get durationLabel => 'Duration';
+
+  @override
+  String get km => 'km';
+
+  @override
+  String get kmh => 'km/h';
+
+  @override
+  String get tripEmptyQuote =>
+      '“Group your rides into trips, add memories, and relive the journey”';
+
+  @override
+  String ridesCompletedCount(String completed, String total) {
+    return 'Rides completed: $completed/$total';
+  }
+
+  @override
+  String get unlockTripsRequirement =>
+      'You need at least 3 rides to unlock trips';
+
+  @override
+  String get createNewTrip => 'Create a New Trip';
+
+  @override
+  String get startByCreatingTrip => 'Start by creating a New Trip';
+
+  @override
+  String get skip => 'Skip';
+
+  @override
+  String get todayText => 'ಇಂದು';
+
+  @override
+  String get distanceLabel => 'ದೂರ';
+
+  @override
+  String get rideDuration => 'ರೈಡ್ ಅವಧಿ';
+
+  @override
+  String get speedLabel => 'ವೇಗ';
+
+  @override
+  String get minutesShort => 'ನಿ';
+
+  @override
+  String get secondsShort => 'ಸೆ';
+
+  @override
+  String get getMoreOutOfTrackify => 'Trackify ನಿಂದ ಹೆಚ್ಚಿನದನ್ನು ಪಡೆಯಿರಿ';
+
+  @override
+  String get discoverMoreDesc =>
+      'ಇನ್ನಷ್ಟು ಅನ್ವೇಷಿಸಿ — ಅದ್ಭುತ ವಿಷಯಗಳು ಕಾಯುತ್ತಿವೆ!';
+
+  @override
+  String get serviceLogs => 'ಸರ್ವಿಸ್ ಲಾಗ್ಸ್';
+
+  @override
+  String get safeParking => 'ಸುರಕ್ಷಿತ ಪಾರ್ಕಿಂಗ್';
+
+  @override
+  String get appUpdates => 'ಅಪ್ಲಿಕೇಶನ್ ನವೀಕರಣಗಳು';
+
+  @override
+  String get deviceDataPlanLabel => 'ಸಾಧನ ಡೇಟಾ ಪ್ಲಾನ್';
+
+  @override
+  String get deviceWarrantyLabel => 'ಸಾಧನ ವಾರಂಟಿ';
+
+  @override
+  String get videoTutorials => 'ವಿಡಿಯೋ ಟ್ಯುಟೋರಿಯಲ್ಸ್';
+
+  @override
+  String get exploreNow => 'ಈಗ ಅನ್ವೇಷಿಸಿ';
+
+  @override
+  String get plusLabel => 'ಪ್ಲಸ್';
+
+  @override
+  String get mapStyleLabel => 'ಮ್ಯಾಪ್ ಶೈಲಿ';
+
+  @override
+  String get darkStyle => 'ಕಪ್ಪು';
+
+  @override
+  String get lightStyle => 'ಬೆಳಕು';
+
+  @override
+  String get simpleStyle => 'ಸರಳ';
+
+  @override
+  String get satelliteStyle => 'ಉಪಗ್ರಹ';
+
+  @override
+  String get mapOptionsLabel => 'ಮ್ಯಾಪ್ ಆಯ್ಕೆಗಳು';
+
+  @override
+  String get trafficLabel => 'ಟ್ರಾಫಿಕ್';
+
+  @override
+  String get labelsLabel => 'ಲೇಬಲ್ಗಳು';
+
+  @override
+  String get sharedWithMe => 'ನನ್ನೊಂದಿಗೆ ಹಂಚಿಕೊಳ್ಳಲಾಗಿದೆ';
+
+  @override
+  String get todaysStats => 'ಇಂದಿನ ಅಂಕಿಅಂಶಗಳು';
+
+  @override
+  String parkedSinceTime(String time) {
+    return 'ನಿಂದ ಪಾರ್ಕ್ ಮಾಡಲಾಗಿದೆ: $time';
+  }
+
+  @override
+  String kmsMoreToGo(String value) {
+    return '$value ಕಿಮೀ ದೂರ ಹೋಗಬೇಕಿದೆ';
+  }
+
+  @override
+  String get buyTrackifyDevice => 'Trackify ಸಾಧನವನ್ನು ಖರೀದಿಸಿ';
+
+  @override
+  String get recordViaPhone => 'ಫೋನ್ ಮೂಲಕ ರೆಕಾರ್ಡ್ ಮಾಡಿ';
+
+  @override
+  String progressPercentage(String value) {
+    return '$value%';
+  }
+
+  @override
+  String labelColon(String label) {
+    return '$label:';
+  }
+
+  @override
+  String get fuelEmpty => 'ಇ';
+
+  @override
+  String get fuelFull => 'ಎಫ್';
+
+  @override
+  String get vehicleNamePlaceholder => 'SP 125';
+
+  @override
+  String get vehicleNumberPlaceholder => 'MP09QV8269';
+
+  @override
+  String get myProfile => 'ನನ್ನ ಪ್ರೊಫೈಲ್';
+
+  @override
+  String get profileCompleteness => 'ಪ್ರೊಫೈಲ್ ಸಂಪೂರ್ಣತೆ';
+
+  @override
+  String lastUpdatedOn(String date) {
+    return '$date ರಂದು ಕೊನೆಯದಾಗಿ ನವೀಕರಿಸಲಾಗಿದೆ';
+  }
+
+  @override
+  String get addProfilePicture => 'ನಿಮ್ಮ ಪ್ರೊಫೈಲ್ ಚಿತ್ರವನ್ನು ಸೇರಿಸಿ';
+
+  @override
+  String get personalDetails => 'ವೈಯಕ್ತಿಕ ವಿವರಗಳು';
+
+  @override
+  String get userNameLabel => 'ಹೆಸರು';
+
+  @override
+  String get emailAddressLabel => 'ಇಮೇಲ್ ವಿಳಾಸ';
+
+  @override
+  String get mobileNumberLabel => 'ಮೊಬೈಲ್ ಸಂಖ್ಯೆ';
+
+  @override
+  String get countryLabel => 'ದೇಶ';
+
+  @override
+  String get stateLabel => 'ರಾಜ್ಯ';
+
+  @override
+  String get cityLabel => 'ನಗರ';
+
+  @override
+  String get medicalInsuranceInfo => 'ವೈದ್ಯಕೀಯ ವಿಮೆ ಮಾಹಿತಿ';
+
+  @override
+  String get addMedicalInsuranceInfo => 'ವೈದ್ಯಕೀಯ ವಿಮೆ ಮಾಹಿತಿಯನ್ನು ಸೇರಿಸಿ';
+
+  @override
+  String get vehicleInsuranceInfo => 'ವಾಹನ ವಿಮೆ ಮಾಹಿತಿ';
+
+  @override
+  String get editViewVehicleInsuranceDesc =>
+      'ವಾಹನ ಸೆಟ್ಟಿಂಗ್‌ಗಳಲ್ಲಿ ವಾಹನ ವಿಮೆ ವಿವರಗಳನ್ನು ಎಡಿಟ್ ಮಾಡಿ ಮತ್ತು ವೀಕ್ಷಿಸಿ.';
+
+  @override
+  String get myGarageVehiclePath => 'ನನ್ನ ಗ್ಯಾರೇಜ್ > ವಾಹನ';
+
+  @override
+  String get emergencyContacts => 'ತುರ್ತು ಸಂಪರ್ಕಗಳು';
+
+  @override
+  String get addEditEmergencyContactDesc =>
+      'ವಾಹನ ಸೆಟ್ಟಿಂಗ್‌ಗಳಲ್ಲಿ ತುರ್ತು ಸಂಪರ್ಕ ಪಟ್ಟಿಯನ್ನು ಸೇರಿಸಿ ಮತ್ತು ಎಡಿಟ್ ಮಾಡಿ.';
 }

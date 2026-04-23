@@ -13,24 +13,23 @@ class NotificationListScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
 
     return BlocProvider(
       create: (context) => NotificationCubit(NotificationRepositoryImpl())..fetchNotifications(),
       child: Scaffold(
-        backgroundColor: isDark ? Colors.black : Colors.white,
+        backgroundColor: theme.scaffoldBackgroundColor,
         appBar: AppBar(
-          backgroundColor: isDark ? Colors.black : Colors.white,
+          backgroundColor: theme.appBarTheme.backgroundColor,
           elevation: 0,
           leading: IconButton(
             icon: Icon(Icons.arrow_back_ios_new_rounded, 
-              color: isDark ? Colors.white : Colors.black, size: 20),
+              color: theme.appBarTheme.foregroundColor, size: 20),
             onPressed: () => Navigator.of(context).pop(),
           ),
           title: Text(
             l10n.notifications,
             style: TextStyle(
-              color: isDark ? Colors.white : Colors.black,
+              color: theme.appBarTheme.foregroundColor,
               fontWeight: FontWeight.bold,
               fontSize: 18,
             ),
@@ -46,7 +45,7 @@ class NotificationListScreen extends StatelessWidget {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.error_outline_rounded, color: Colors.red[300], size: 60),
+                    Icon(Icons.error_outline_rounded, color: theme.colorScheme.error, size: 60),
                     const SizedBox(height: 16),
                     Text(
                       state.message,
@@ -69,11 +68,11 @@ class NotificationListScreen extends StatelessWidget {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.notifications_off_outlined, color: Colors.grey[400], size: 80),
+                      Icon(Icons.notifications_off_outlined, color: theme.hintColor.withOpacity(0.4), size: 80),
                       const SizedBox(height: 16),
                       Text(
                         l10n.noNotifications,
-                        style: theme.textTheme.titleMedium?.copyWith(color: Colors.grey),
+                        style: theme.textTheme.titleMedium?.copyWith(color: theme.hintColor),
                       ),
                     ],
                   ),

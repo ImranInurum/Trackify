@@ -723,4 +723,232 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get invalidImeiError => 'Please enter a valid 15-digit IMEI number';
+
+  @override
+  String get sharedRides => 'Shared Rides';
+
+  @override
+  String get savedRides => 'Saved Rides';
+
+  @override
+  String get allRides => 'ALL RIDES';
+
+  @override
+  String get trips => 'TRIPS';
+
+  @override
+  String clicked(String value) {
+    return '$value Clicked';
+  }
+
+  @override
+  String get noDailyRides => 'No daily rides to show';
+
+  @override
+  String get getStartedFirstRide => 'Get started by taking your first ride';
+
+  @override
+  String get durationLabel => 'Duration';
+
+  @override
+  String get km => 'km';
+
+  @override
+  String get kmh => 'km/h';
+
+  @override
+  String get tripEmptyQuote =>
+      '“Group your rides into trips, add memories, and relive the journey”';
+
+  @override
+  String ridesCompletedCount(String completed, String total) {
+    return 'Rides completed: $completed/$total';
+  }
+
+  @override
+  String get unlockTripsRequirement =>
+      'You need at least 3 rides to unlock trips';
+
+  @override
+  String get createNewTrip => 'Create a New Trip';
+
+  @override
+  String get startByCreatingTrip => 'Start by creating a New Trip';
+
+  @override
+  String get skip => 'Skip';
+
+  @override
+  String get todayText => 'Today';
+
+  @override
+  String get distanceLabel => 'Distance';
+
+  @override
+  String get rideDuration => 'Ride Duration';
+
+  @override
+  String get speedLabel => 'Speed';
+
+  @override
+  String get minutesShort => 'm';
+
+  @override
+  String get secondsShort => 's';
+
+  @override
+  String get getMoreOutOfTrackify => 'Get more out of Trackify';
+
+  @override
+  String get discoverMoreDesc => 'Discover more — awesome things await!';
+
+  @override
+  String get serviceLogs => 'Service Logs';
+
+  @override
+  String get safeParking => 'Safe Parking';
+
+  @override
+  String get appUpdates => 'App Updates';
+
+  @override
+  String get deviceDataPlanLabel => 'Device Data Plan';
+
+  @override
+  String get deviceWarrantyLabel => 'Device Warranty';
+
+  @override
+  String get videoTutorials => 'Video Tutorials';
+
+  @override
+  String get exploreNow => 'Explore Now';
+
+  @override
+  String get plusLabel => 'Plus';
+
+  @override
+  String get mapStyleLabel => 'Map Style';
+
+  @override
+  String get darkStyle => 'Dark';
+
+  @override
+  String get lightStyle => 'Light';
+
+  @override
+  String get simpleStyle => 'Simple';
+
+  @override
+  String get satelliteStyle => 'Satellite';
+
+  @override
+  String get mapOptionsLabel => 'Map Options';
+
+  @override
+  String get trafficLabel => 'Traffic';
+
+  @override
+  String get labelsLabel => 'Labels';
+
+  @override
+  String get sharedWithMe => 'Shared with me';
+
+  @override
+  String get todaysStats => 'Today\'s Stats';
+
+  @override
+  String parkedSinceTime(String time) {
+    return 'Parked Since: $time';
+  }
+
+  @override
+  String kmsMoreToGo(String value) {
+    return '$value kms more to go';
+  }
+
+  @override
+  String get buyTrackifyDevice => 'Buy Trackify Device';
+
+  @override
+  String get recordViaPhone => 'Record via Phone';
+
+  @override
+  String progressPercentage(String value) {
+    return '$value%';
+  }
+
+  @override
+  String labelColon(String label) {
+    return '$label:';
+  }
+
+  @override
+  String get fuelEmpty => 'E';
+
+  @override
+  String get fuelFull => 'F';
+
+  @override
+  String get vehicleNamePlaceholder => 'SP 125';
+
+  @override
+  String get vehicleNumberPlaceholder => 'MP09QV8269';
+
+  @override
+  String get myProfile => 'My profile';
+
+  @override
+  String get profileCompleteness => 'Profile completeness';
+
+  @override
+  String lastUpdatedOn(String date) {
+    return 'Last updated on $date';
+  }
+
+  @override
+  String get addProfilePicture => 'Add your profile picture';
+
+  @override
+  String get personalDetails => 'Personal details';
+
+  @override
+  String get userNameLabel => 'Name';
+
+  @override
+  String get emailAddressLabel => 'Email address';
+
+  @override
+  String get mobileNumberLabel => 'Mobile Number';
+
+  @override
+  String get countryLabel => 'Country';
+
+  @override
+  String get stateLabel => 'State';
+
+  @override
+  String get cityLabel => 'City';
+
+  @override
+  String get medicalInsuranceInfo => 'Medical insurance information';
+
+  @override
+  String get addMedicalInsuranceInfo => 'Add Medical insurance information';
+
+  @override
+  String get vehicleInsuranceInfo => 'Vehicle insurance information';
+
+  @override
+  String get editViewVehicleInsuranceDesc =>
+      'Edit and view vehicle insurance details in vehicle settings.';
+
+  @override
+  String get myGarageVehiclePath => 'My Garage > Vehicle';
+
+  @override
+  String get emergencyContacts => 'Emergency Contacts';
+
+  @override
+  String get addEditEmergencyContactDesc =>
+      'Add and edit emergency contact list in vehicle settings.';
 }

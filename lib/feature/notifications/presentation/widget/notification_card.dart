@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../core/theme/app_theme_extension.dart';
 import '../../data/entity/notification_model.dart';
 
 class NotificationCard extends StatelessWidget {
@@ -9,7 +10,7 @@ class NotificationCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
+    final appColors = theme.extension<AppColorsExtension>();
 
     // Determine icon based on title
     IconData iconData = Icons.notifications_active_outlined;
@@ -17,26 +18,26 @@ class NotificationCard extends StatelessWidget {
 
     if (notification.title?.toLowerCase().contains("vehicle") ?? false) {
       iconData = Icons.directions_car_filled_outlined;
-      iconColor = Colors.blue;
+      iconColor = appColors?.info ?? Colors.blue;
     } else if (notification.title?.toLowerCase().contains("alert") ?? false) {
       iconData = Icons.warning_amber_rounded;
-      iconColor = Colors.orange;
+      iconColor = appColors?.warning ?? Colors.orange;
     }
 
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
-        color: isDark ? Colors.grey[900] : Colors.white,
+        color: theme.cardColor,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: theme.shadowColor.withOpacity(0.05),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
         ],
         border: Border.all(
-          color: isDark ? Colors.grey[800]! : Colors.grey[100]!,
+          color: theme.dividerColor,
           width: 1,
         ),
       ),
@@ -64,7 +65,7 @@ class NotificationCard extends StatelessWidget {
                       Text(
                         _formatDate(notification.createdAt!),
                         style: theme.textTheme.labelSmall?.copyWith(
-                          color: Colors.grey,
+                          color: theme.hintColor,
                         ),
                       ),
                   ],
@@ -87,14 +88,13 @@ class NotificationCard extends StatelessWidget {
                                   notification.title ?? "Notification",
                                   style: theme.textTheme.titleMedium?.copyWith(
                                     fontWeight: FontWeight.bold,
-                                    color: isDark ? Colors.white : Colors.black87,
                                   ),
                                 ),
                                 Text(
                                   notification.vehicleId?.vehicleNumber != null ? ' (${notification.vehicleId!.vehicleNumber})' : '',
                                   style: theme.textTheme.titleSmall?.copyWith(
                                     fontWeight: FontWeight.w400,
-                                    color: isDark ? Colors.white : Colors.grey,
+                                    color: theme.primaryColor,
                                   ),
                                 ),
                               ],
@@ -105,9 +105,7 @@ class NotificationCard extends StatelessWidget {
                       const SizedBox(height: 6),
                       Text(
                         notification.description ?? "",
-                        style: theme.textTheme.bodyMedium?.copyWith(
-                          color: isDark ? Colors.grey[400] : Colors.grey[600],
-                        ),
+                        style: theme.textTheme.bodyMedium,
                       ),
                     ],
                   ),

@@ -259,5 +259,142 @@
         "type": "String"
       }
     }
-  }
+  },
+  "vehicleMakeListEmpty": "इस चयन के लिए वाहन निर्माता सूची खाली है",
+  "vehicleModelListEmpty": "इस चयन के लिए वाहन मॉडल सूची खाली है",
+  "deviceInstallation": "डिवाइस इंस्टालेशन",
+  "scanActivationCode": "एक्टिवेशन कोड स्कैन करें",
+  "enterActivationCodeManually": "एक्टिवेशन कोड मैन्युअल रूप से दर्ज करें",
+  "openAjjasBoxInstruction": "एक्टिवेशन QR कोड के लिए Ajjas बॉक्स खोलें।",
+  "continueText": "जारी रखें",
+  "enterUID": "UID दर्ज करें",
+  "enterIMEINumber": "IMEI नंबर दर्ज करें",
+  "close": "बंद करें",
+  "uidRequired": "UID आवश्यक है",
+  "imeiRequired": "IMEI नंबर आवश्यक है",
+  "deviceAssignedSuccess": "डिवाइस सफलतापूर्वक वाहन को असाइन किया गया!",
+  "assigningDevice": "डिवाइस असाइन किया जा रहा है...",
+  "invalidImeiError": "कृपया एक मान्य 15-अंकीय IMEI नंबर दर्ज करें",
+  "sharedRides": "साझा की गई राइड्स",
+  "savedRides": "सुरक्षित की गई राइड्स",
+  "allRides": "सभी राइड्स",
+  "trips": "ट्रिप्स",
+  "clicked": "{value} पर क्लिक किया गया",
+  "@clicked": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "noDailyRides": "दिखाने के लिए कोई दैनिक राइड नहीं है",
+  "getStartedFirstRide": "अपनी पहली राइड लेकर शुरुआत करें",
+  "durationLabel": "अवधि",
+  "km": "किमी",
+  "kmh": "किमी/घंटा",
+  "tripEmptyQuote": "“अपनी राइड्स को ट्रिप्स में समूहबद्ध करें, यादें जोड़ें और यात्रा को फिर से जिएं”",
+  "ridesCompletedCount": "पूरी की गई राइड्स: {completed}/{total}",
+  "@ridesCompletedCount": {
+    "placeholders": {
+      "completed": {
+        "type": "String"
+      },
+      "total": {
+        "type": "String"
+      }
+    }
+  },
+  "unlockTripsRequirement": "ट्रिप्स अनलॉक करने के लिए आपको कम से कम 3 राइड्स की आवश्यकता है",
+  "createNewTrip": "एक नई ट्रिप बनाएं",
+  "startByCreatingTrip": "एक नई ट्रिप बनाकर शुरुआत करें",
+  "skip": "छोड़ें",
+  "todayText": "आज",
+  "distanceLabel": "दूरी",
+  "rideDuration": "राइड की अवधि",
+  "speedLabel": "गति",
+  "minutesShort": "मि",
+  "secondsShort": "से",
+  "getMoreOutOfTrackify": "Trackify से और अधिक पाएं",
+  "discoverMoreDesc": "और खोजें — शानदार चीज़ें प्रतीक्षा कर रही हैं!",
+  "serviceLogs": "सर्विस लॉग",
+  "safeParking": "सुरक्षित पार्किंग",
+  "appUpdates": "ऐप अपडेट",
+  "deviceDataPlanLabel": "डिवाइस डेटा प्लान",
+  "deviceWarrantyLabel": "डिवाइस वारंटी",
+  "videoTutorials": "वीडियो ट्यूटोरियल",
+  "exploreNow": "अभी खोजें",
+  "plusLabel": "प्लस",
+  "mapStyleLabel": "मैप स्टाइल",
+  "darkStyle": "डार्क",
+  "lightStyle": "लाइट",
+  "simpleStyle": "सिंपल",
+  "satelliteStyle": "सैटेलाइट",
+  "mapOptionsLabel": "मैप विकल्प",
+  "trafficLabel": "ट्रैफिक",
+  "labelsLabel": "लेबल",
+  "sharedWithMe": "मेरे साथ साझा किया गया",
+  "todaysStats": "आज के आंकड़े",
+  "parkedSinceTime": "पार्क किया गया तब से: {time}",
+  "@parkedSinceTime": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "kmsMoreToGo": "{value} किमी और जाना है",
+  "@kmsMoreToGo": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "buyTrackifyDevice": "Trackify डिवाइस खरीदें",
+  "recordViaPhone": "फोन से रिकॉर्ड करें",
+  "progressPercentage": "{value}%",
+  "@progressPercentage": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "labelColon": "{label}:",
+  "@labelColon": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      }
+    }
+  },
+  "fuelEmpty": "ई",
+  "fuelFull": "एफ",
+  "vehicleNamePlaceholder": "SP 125",
+  "vehicleNumberPlaceholder": "MP09QV8269",
+  "myProfile": "मेरी प्रोफाइल",
+  "profileCompleteness": "प्रोफ़ाइल पूर्णता",
+  "lastUpdatedOn": "अंतिम बार {date} को अपडेट किया गया",
+  "@lastUpdatedOn": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "addProfilePicture": "अपनी प्रोफ़ाइल तस्वीर जोड़ें",
+  "personalDetails": "व्यक्तिगत विवरण",
+  "userNameLabel": "नाम",
+  "emailAddressLabel": "ईमेल पता",
+  "mobileNumberLabel": "मोबाइल नंबर",
+  "countryLabel": "देश",
+  "stateLabel": "राज्य",
+  "cityLabel": "शहर",
+  "medicalInsuranceInfo": "चिकित्सा बीमा जानकारी",
+  "addMedicalInsuranceInfo": "चिकित्सा बीमा जानकारी जोड़ें",
+  "vehicleInsuranceInfo": "वाहन बीमा जानकारी",
+  "editViewVehicleInsuranceDesc": "वाहन सेटिंग में अपनी वाहन बीमा विवरण संपादित करें और देखें।",
+  "myGarageVehiclePath": "My Garage > Vehicle",
+  "emergencyContacts": "आपातकालीन संपर्क",
+  "addEditEmergencyContactDesc": "वाहन सेटिंग में आपातकालीन संपर्क सूची जोड़ें और संपादित करें।"
 }

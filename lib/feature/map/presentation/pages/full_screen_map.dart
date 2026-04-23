@@ -9,6 +9,7 @@ import 'package:trackify/app/cubit/app_state.dart';
 import 'package:trackify/core/constants/app_images.dart';
 import 'package:trackify/core/utils/map_utils.dart';
 import 'package:trackify/core/widgets/bouncing_widget.dart';
+import '../../../../l10n/app_localizations.dart';
 
 class FullScreenMap extends StatefulWidget {
   const FullScreenMap({super.key});
@@ -79,6 +80,7 @@ class _FullScreenMapState extends State<FullScreenMap> {
       builder: (context) {
         return BlocBuilder<AppCubit, AppState>(
           builder: (context, state) {
+            final l10n = AppLocalizations.of(context)!;
             return Container(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
               decoration: BoxDecoration(            boxShadow: [
@@ -105,7 +107,7 @@ class _FullScreenMapState extends State<FullScreenMap> {
                   ),
                   const SizedBox(height: 24),
                   Text(
-                    "Map Style",
+                    l10n.mapStyleLabel,
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 16,
@@ -116,15 +118,15 @@ class _FullScreenMapState extends State<FullScreenMap> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      _buildStyleOption("Dark", AppImages.darkMapStyle, state),
-                      _buildStyleOption("Light", AppImages.lightMapStyle, state),
+                      _buildStyleOption(l10n.darkStyle, AppImages.darkMapStyle, state),
+                      _buildStyleOption(l10n.lightStyle, AppImages.lightMapStyle, state),
                       _buildStyleOption(
-                        "Simple",
+                        l10n.simpleStyle,
                         AppImages.simpleMapStyle,
                         state,
                       ),
                       _buildStyleOption(
-                        "Satellite",
+                        l10n.satelliteStyle,
                         AppImages.sateLiteMapStyle,
                         state,
                       ),
@@ -132,7 +134,7 @@ class _FullScreenMapState extends State<FullScreenMap> {
                   ),
                   const SizedBox(height: 32),
                   Text(
-                    "Map Options",
+                    l10n.mapOptionsLabel,
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 16,
@@ -143,14 +145,14 @@ class _FullScreenMapState extends State<FullScreenMap> {
                   Row(
                     children: [
                       _buildMapOption(
-                        "Traffic",
+                        l10n.trafficLabel,
                         AppImages.trafficMapStyle,
                         state.isTrafficEnabled,
                         (val) => context.read<AppCubit>().updateMapConfig(isTrafficEnabled: val),
                       ),
                       const SizedBox(width: 24),
                       _buildMapOption(
-                        "Labels",
+                        l10n.labelsLabel,
                         AppImages.darkMapStyle,
                         state.isLabelsEnabled,
                         (val) => context.read<AppCubit>().updateMapConfig(isLabelsEnabled: val),
@@ -379,7 +381,7 @@ class _FullScreenMapState extends State<FullScreenMap> {
                       ],
                     ),
                     child: Text(
-                      "Shared with me",
+                      AppLocalizations.of(context)!.sharedWithMe,
                       style: TextStyle(
                         color: Theme.of(context).colorScheme.onSurface,
                         fontSize: 13,
@@ -551,15 +553,15 @@ class _FullScreenMapState extends State<FullScreenMap> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
-                "SP 125",
-                style: TextStyle(
+              Text(
+                AppLocalizations.of(context)!.vehicleNamePlaceholder,
+                style: const TextStyle(
                   fontSize: 19,
                   fontWeight: FontWeight.bold,
                 ),
               ),
               Text(
-                "MP09QV8269",
+                AppLocalizations.of(context)!.vehicleNumberPlaceholder,
                 style: TextStyle(
                   fontSize: 15,
                   color: Theme.of(context).colorScheme.primary,
@@ -580,11 +582,12 @@ class _FullScreenMapState extends State<FullScreenMap> {
   }
 
   Widget _buildStatusRow() {
+    final l10n = AppLocalizations.of(context)!;
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        _buildStatusItem("Parked Since: 07:16 PM, 23 Feb"),
-        _buildStatusItem("0m 0s", isDuration: true),
+        _buildStatusItem(l10n.parkedSinceTime("07:16 PM, 23 Feb")),
+        _buildStatusItem("0${l10n.minutesShort} 0${l10n.secondsShort}", isDuration: true),
       ],
     );
   }
@@ -602,7 +605,7 @@ class _FullScreenMapState extends State<FullScreenMap> {
           ),
         ),
         Text(
-          isDuration ? "Duration" : "Status",
+          isDuration ? AppLocalizations.of(context)!.durationLabel : AppLocalizations.of(context)!.status,
           style: TextStyle(
             fontSize: 12,
             color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
@@ -616,18 +619,18 @@ class _FullScreenMapState extends State<FullScreenMap> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          "Today's Stats",
-          style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.grey),
+        Text(
+          AppLocalizations.of(context)!.todaysStats,
+          style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.grey),
         ),
         const SizedBox(height: 16),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            _buildGridItem("0 km", "Distance"),
-            _buildGridItem("0m 0s", "Duration"),
-            _buildGridItem("0 km/hr", "Avg Speed"),
-            _buildGridItem("Plus", "Top Speed", isPlus: true),
+            _buildGridItem("0 ${AppLocalizations.of(context)!.km}", AppLocalizations.of(context)!.distanceLabel),
+            _buildGridItem("0${AppLocalizations.of(context)!.minutesShort} 0${AppLocalizations.of(context)!.secondsShort}", AppLocalizations.of(context)!.durationLabel),
+            _buildGridItem("0 ${AppLocalizations.of(context)!.kmh}", AppLocalizations.of(context)!.averageSpeed),
+            _buildGridItem(AppLocalizations.of(context)!.plusLabel, AppLocalizations.of(context)!.topSpeed, isPlus: true),
           ],
         ),
       ],
@@ -646,9 +649,9 @@ class _FullScreenMapState extends State<FullScreenMap> {
               ),
               borderRadius: BorderRadius.circular(4),
             ),
-            child: const Text(
-              "Plus",
-              style: TextStyle(
+            child: Text(
+              AppLocalizations.of(context)!.plusLabel,
+              style: const TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 12,
                 color: Colors.black87,
@@ -686,9 +689,9 @@ class _FullScreenMapState extends State<FullScreenMap> {
       ),
       child: Row(
         children: [
-          const Icon(Icons.local_gas_station, size: 20, color: Colors.grey),
+          Icon(Icons.local_gas_station, size: 20, color: Colors.grey),
           const SizedBox(width: 8),
-          const Text("E", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
+          Text(AppLocalizations.of(context)!.fuelEmpty, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
           const SizedBox(width: 8),
           Expanded(
             child: Row(
@@ -710,11 +713,11 @@ class _FullScreenMapState extends State<FullScreenMap> {
             ),
           ),
           const SizedBox(width: 8),
-          const Text("F", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
-          const SizedBox(width: 12),
-          const Text(
-            "0.0 kms more to go",
-            style: TextStyle(
+          Text(AppLocalizations.of(context)!.fuelFull, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
+          const SizedBox(width: 8),
+          Text(
+            AppLocalizations.of(context)!.kmsMoreToGo("0.0"),
+            style: const TextStyle(
               fontSize: 13,
               color: Colors.grey,
               fontWeight: FontWeight.w600,

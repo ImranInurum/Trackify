@@ -10,7 +10,7 @@ class MyProfileScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
@@ -20,7 +20,7 @@ class MyProfileScreen extends StatelessWidget {
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
-          "My profile",
+          l10n.myProfile,
           style: TextStyle(color: Theme.of(context).colorScheme.onSurface, fontSize: 18, fontWeight: FontWeight.normal),
         ),
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
@@ -81,7 +81,7 @@ class MyProfileScreen extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        "Profile completeness",
+                        l10n.profileCompleteness,
                         style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6), fontSize: 13),
                       ),
                       const SizedBox(height: 12),
@@ -121,7 +121,7 @@ class MyProfileScreen extends StatelessWidget {
                       ),
                       const SizedBox(height: 12),
                       Text(
-                        "Last updated on 23 Feb 2026",
+                        l10n.lastUpdatedOn("23 Feb 2026"),
                         style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.4), fontSize: 12),
                       ),
                       const SizedBox(height: 16),
@@ -141,7 +141,7 @@ class MyProfileScreen extends StatelessWidget {
                           ),
                           const SizedBox(width: 12),
                           Text(
-                            "Add your profile picture",
+                            l10n.addProfilePicture,
                             style: TextStyle(fontSize: 14, fontWeight: FontWeight.normal, color: Theme.of(context).colorScheme.onSurface),
                           ),
                         ],
@@ -160,7 +160,7 @@ class MyProfileScreen extends StatelessWidget {
                             elevation: 0,
                             padding: const EdgeInsets.symmetric(vertical: 12),
                           ),
-                          child: const Text("Add your profile picture"),
+                          child: Text(l10n.addProfilePicture),
                         ),
                       ),
                     ],
@@ -179,7 +179,7 @@ class MyProfileScreen extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            "Personal details",
+                            l10n.personalDetails,
                             style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onSurface),
                           ),
                           Container(
@@ -193,12 +193,12 @@ class MyProfileScreen extends StatelessWidget {
                         ],
                       ),
                       const SizedBox(height: 20),
-                      _detailRow("Name", userName,context),
-                      _detailRow("Email address", userEmail,context),
-                      _detailRow("Mobile Number", userMobile,context),
-                      _detailRow("Country", userCountry,context),
-                      _detailRow("State", userState,context),
-                      _detailRow("City", userCity,context),
+                      _detailRow(l10n.userNameLabel, userName, context),
+                      _detailRow(l10n.emailAddressLabel, userEmail, context),
+                      _detailRow(l10n.mobileNumberLabel, userMobile, context),
+                      _detailRow(l10n.countryLabel, userCountry, context),
+                      _detailRow(l10n.stateLabel, userState, context),
+                      _detailRow(l10n.cityLabel, userCity, context),
                     ],
                   ),
                 ),
@@ -212,7 +212,7 @@ class MyProfileScreen extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        "Medical insurance information",
+                        l10n.medicalInsuranceInfo,
                         style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onSurface),
                       ),
                       const SizedBox(height: 24),
@@ -230,7 +230,7 @@ class MyProfileScreen extends StatelessWidget {
                             ),
                             const SizedBox(height: 12),
                             Text(
-                              "Add Medical insurance information",
+                              l10n.addMedicalInsuranceInfo,
                               style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.4), fontSize: 13),
                             ),
                           ],
@@ -249,16 +249,16 @@ class MyProfileScreen extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        "Vehicle insurance information",
+                        l10n.vehicleInsuranceInfo,
                         style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onSurface),
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        "Edit and view vehicle insurance details in vehicle settings.",
+                        l10n.editViewVehicleInsuranceDesc,
                         style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5), fontSize: 13),
                       ),
                       Text(
-                        "My Garage > Vehicle",
+                        l10n.myGarageVehiclePath,
                         style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5), fontSize: 13),
                       ),
                     ],
@@ -274,16 +274,16 @@ class MyProfileScreen extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        "Emergency Contacts",
+                        l10n.emergencyContacts,
                         style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onSurface),
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        "Add and edit emergency contact list in vehicle settings.",
+                        l10n.addEditEmergencyContactDesc,
                         style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5), fontSize: 13),
                       ),
                       Text(
-                        "My Garage > Vehicle",
+                        l10n.myGarageVehiclePath,
                         style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5), fontSize: 13),
                       ),
                     ],
