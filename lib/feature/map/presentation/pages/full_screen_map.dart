@@ -9,12 +9,12 @@ import 'package:trackify/app/cubit/app_state.dart';
 import 'package:trackify/core/constants/app_images.dart';
 import 'package:trackify/core/utils/map_utils.dart';
 import 'package:trackify/core/widgets/bouncing_widget.dart';
-import 'package:trackify/feature/record_via_phone/presentation/cubit/record_via_phone_cubit.dart';
-import 'package:trackify/feature/record_via_phone/presentation/cubit/record_via_phone_state.dart';
+import 'package:trackify/feature/map/data/entity/user_vehicles.dart';
 import '../../../../l10n/app_localizations.dart';
 
 class FullScreenMap extends StatefulWidget {
-  const FullScreenMap({super.key});
+  final Vehicles? selectedVehicle;
+  const FullScreenMap({super.key, this.selectedVehicle});
 
   @override
   State<FullScreenMap> createState() => _FullScreenMapState();
@@ -286,32 +286,13 @@ class _FullScreenMapState extends State<FullScreenMap> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: MultiBlocListener(
-        listeners: [
-          BlocListener<RecordViaPhoneCubit, RecordViaPhoneState>(
-            listenWhen: (prev, curr) => curr is MapDataByDateLoaded,
-            listener: (context, state) {
-              if (state is MapDataByDateLoaded &&
-                  state.polylines != null &&
-                  state.polylines!.isNotEmpty) {
-                final points = state.polylines!.first.points;
-                if (points.isNotEmpty && _mapController != null) {
-                  _mapController!.animateCamera(
-                    CameraUpdate.newLatLngZoom(points.last, 15),
-                  );
-                }
-              }
-            },
-          ),
+      body: Stack(
+        children: [
+          _buildMap(),
+          _buildTopActions(),
+          _buildRightSideActions(),
+          _buildDraggableBottomCard(),
         ],
-        child: Stack(
-          children: [
-            _buildMap(),
-            _buildTopActions(),
-            _buildRightSideActions(),
-            _buildDraggableBottomCard(),
-          ],
-        ),
       ),
     );
   }
@@ -324,62 +305,47 @@ class _FullScreenMapState extends State<FullScreenMap> {
           return const Center(child: CircularProgressIndicator());
         }
 
-        return BlocBuilder<RecordViaPhoneCubit, RecordViaPhoneState>(
-          builder: (context, recordState) {
-            LatLng? bestPos;
-            final rState = recordState;
-            if (rState.isRecording && rState.currentRidePoints.isNotEmpty) {
-              bestPos = rState.currentRidePoints.last;
-            } else if (rState.polylines != null &&
-                rState.polylines!.isNotEmpty &&
-                rState.polylines!.first.points.isNotEmpty) {
-              bestPos = rState.polylines!.first.points.last;
+        LatLng? bestPos;
+        if (widget.selectedVehicle?.currentLocation != null &&
+            widget.selectedVehicle!.currentLocation!.lat != null &&
+            widget.selectedVehicle!.currentLocation!.lng != null) {
+          bestPos = LatLng(
+            widget.selectedVehicle!.currentLocation!.lat!,
+            widget.selectedVehicle!.currentLocation!.lng!,
+          );
+        }
+
+        bestPos ??= LatLng(currentPos.latitude, currentPos.longitude);
+
+        return GoogleMap(
+          key: ValueKey(widget.selectedVehicle?.id),
+          initialCameraPosition: CameraPosition(
+            target: bestPos,
+            zoom: 15,
+          ),
+          myLocationEnabled: false,
+          zoomControlsEnabled: false,
+          myLocationButtonEnabled: false,
+          mapType:
+              appState.mapType == 'satellite'
+                  ? MapType.satellite
+                  : MapType.normal,
+          trafficEnabled: appState.isTrafficEnabled,
+          markers: {
+            Marker(
+              markerId: const MarkerId('current_location'),
+              position: bestPos,
+              icon: _customMarker ?? BitmapDescriptor.defaultMarker,
+              anchor: const Offset(0.5, 0.5),
+            ),
+          },
+          onMapCreated: (controller) async {
+            _mapController = controller;
+
+            if (_darkMapStyle == null || _lightMapStyle == null) {
+              await _loadMapStyles();
             }
-
-            bestPos ??= LatLng(currentPos.latitude, currentPos.longitude);
-
-            return GoogleMap(
-              key: ValueKey(bestPos),
-              initialCameraPosition: CameraPosition(
-                target: bestPos,
-                zoom: 15,
-              ),
-              myLocationEnabled: false,
-              zoomControlsEnabled: false,
-              myLocationButtonEnabled: false,
-              mapType:
-                  appState.mapType == 'satellite'
-                      ? MapType.satellite
-                      : MapType.normal,
-              trafficEnabled: appState.isTrafficEnabled,
-              markers: {
-                Marker(
-                  markerId: const MarkerId('current_location'),
-                  position: bestPos,
-                  icon: _customMarker ?? BitmapDescriptor.defaultMarker,
-                  anchor: const Offset(0.5, 0.5),
-                ),
-              },
-              onMapCreated: (controller) async {
-                _mapController = controller;
-
-                final recordState = context.read<RecordViaPhoneCubit>().state;
-                if (recordState.polylines != null &&
-                    recordState.polylines!.isNotEmpty) {
-                  final points = recordState.polylines!.first.points;
-                  if (points.isNotEmpty) {
-                    controller.moveCamera(
-                      CameraUpdate.newLatLngZoom(points.last, 15),
-                    );
-                  }
-                }
-
-                if (_darkMapStyle == null || _lightMapStyle == null) {
-                  await _loadMapStyles();
-                }
-                _updateMapStyle(controller);
-              },
-            );
+            _updateMapStyle(controller);
           },
         );
       },
@@ -605,14 +571,14 @@ class _FullScreenMapState extends State<FullScreenMap> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                AppLocalizations.of(context)!.vehicleNamePlaceholder,
+                widget.selectedVehicle?.vehicleMaker ?? AppLocalizations.of(context)!.vehicleNamePlaceholder,
                 style: const TextStyle(
                   fontSize: 19,
                   fontWeight: FontWeight.bold,
                 ),
               ),
               Text(
-                AppLocalizations.of(context)!.vehicleNumberPlaceholder,
+                widget.selectedVehicle?.vehicleNumber ?? AppLocalizations.of(context)!.vehicleNumberPlaceholder,
                 style: TextStyle(
                   fontSize: 15,
                   color: Theme.of(context).colorScheme.primary,
@@ -680,7 +646,7 @@ class _FullScreenMapState extends State<FullScreenMap> {
           children: [
             _buildGridItem("0 ${AppLocalizations.of(context)!.km}", AppLocalizations.of(context)!.distanceLabel),
             _buildGridItem("0${AppLocalizations.of(context)!.minutesShort} 0${AppLocalizations.of(context)!.secondsShort}", AppLocalizations.of(context)!.durationLabel),
-            _buildGridItem("0 ${AppLocalizations.of(context)!.kmh}", AppLocalizations.of(context)!.averageSpeed),
+            _buildGridItem("${widget.selectedVehicle?.currentLocation?.speed ?? 0} ${AppLocalizations.of(context)!.kmh}", AppLocalizations.of(context)!.averageSpeed),
             _buildGridItem(AppLocalizations.of(context)!.plusLabel, AppLocalizations.of(context)!.topSpeed, isPlus: true),
           ],
         ),

@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:intl/intl.dart';
 import 'package:trackify/app/cubit/app_cubit.dart';
 import 'package:trackify/app/cubit/app_state.dart';
 import 'package:trackify/core/constants/app_images.dart';
@@ -18,8 +17,6 @@ import 'package:trackify/feature/map/presentation/pages/full_screen_map.dart';
 import 'package:trackify/feature/my_garage/presentation/view/my_garage_screen.dart';
 import 'package:trackify/feature/reach_me_sticker/presentation/screens/reach_me_sticker_screen.dart';
 import 'package:trackify/feature/record_via_phone/presentation/pages/record_via_phone_screen.dart';
-import 'package:trackify/feature/record_via_phone/presentation/cubit/record_via_phone_cubit.dart';
-import 'package:trackify/feature/record_via_phone/presentation/cubit/record_via_phone_state.dart' hide MapDataByDateLoaded;
 import '../../../../core/utils/shared_preferences.dart';
 import '../../../location_sharing/presentation/pages/location_sharing_screen.dart';
 import '../../../notifications/presentation/screen/notification_list_screen.dart';
@@ -77,15 +74,6 @@ class _MapScreenState extends State<MapScreen> {
     }
   }
 
-  void _fetchTodayTrackingData(String? imei) {
-    if (imei == null || imei.isEmpty) return;
-    final today = DateFormat('yyyy-MM-dd').format(DateTime.now());
-    context.read<RecordViaPhoneCubit>().fetchDeviceDataByDate(
-      imei: '860710085959719',
-      startDate: today,
-      endDate: today,
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -98,26 +86,17 @@ class _MapScreenState extends State<MapScreen> {
               if (state is MapLoaded) {
                 final vehicles = state.vehicleList.vehicles ?? [];
                 if (vehicles.isNotEmpty && _selectedDevice == null) {
-                  final firstVehicle = vehicles.first;
-                  setState(() {
-                    _selectedDevice = firstVehicle;
+                  prefs.get(key: AppPreference.IMEI).then((savedImei) {
+                    if (mounted) {
+                      final savedVehicle = vehicles.firstWhere(
+                        (v) => v.imei == savedImei,
+                        orElse: () => vehicles.first,
+                      );
+                      setState(() {
+                        _selectedDevice = savedVehicle;
+                      });
+                    }
                   });
-                  _fetchTodayTrackingData(firstVehicle.imei);
-                }
-              }
-            },
-          ),
-          BlocListener<RecordViaPhoneCubit, RecordViaPhoneState>(
-            listenWhen: (prev, curr) => curr is MapDataByDateLoaded,
-            listener: (context, state) {
-              if (state is MapDataByDateLoaded &&
-                  state.polylines != null &&
-                  state.polylines!.isNotEmpty) {
-                final points = state.polylines!.first.points;
-                if (points.isNotEmpty && _mapController != null) {
-                  _mapController!.animateCamera(
-                    CameraUpdate.newLatLngZoom(points.last, 15),
-                  );
                 }
               }
             },
@@ -218,12 +197,22 @@ class _MapScreenState extends State<MapScreen> {
                       key: AppPreference.IMEI,
                       value: device.imei ?? '',
                     );
-                    if (mounted) {
-                      _fetchTodayTrackingData(device.imei);
-                    }
                     setState(() {
                       _selectedDevice = device;
                     });
+                    if (_mapController != null &&
+                        device.currentLocation?.lat != null &&
+                        device.currentLocation?.lng != null) {
+                      _mapController!.animateCamera(
+                        CameraUpdate.newLatLngZoom(
+                          LatLng(
+                            device.currentLocation!.lat!,
+                            device.currentLocation!.lng!,
+                          ),
+                          15,
+                        ),
+                      );
+                    }
                   },
                 ),
               ],
@@ -240,7 +229,7 @@ class _MapScreenState extends State<MapScreen> {
       onTap: () {
         Navigator.of(
           context,
-        ).push(MaterialPageRoute(builder: (context) => FullScreenMap()));
+        ).push(MaterialPageRoute(builder: (context) => FullScreenMap(selectedVehicle: _selectedDevice)));
       },
       child: Container(
         height: 300,
@@ -263,16 +252,14 @@ class _MapScreenState extends State<MapScreen> {
             if (currentPos == null) {
               return const Center(child: CircularProgressIndicator());
             }
-            return BlocBuilder<RecordViaPhoneCubit, RecordViaPhoneState>(
-              builder: (context, recordState) {
                 LatLng? bestPos;
-                final rState = recordState;
-                if (rState.isRecording && rState.currentRidePoints.isNotEmpty) {
-                  bestPos = rState.currentRidePoints.last;
-                } else if (rState.polylines != null &&
-                    rState.polylines!.isNotEmpty &&
-                    rState.polylines!.first.points.isNotEmpty) {
-                  bestPos = rState.polylines!.first.points.last;
+                if (_selectedDevice?.currentLocation != null &&
+                    _selectedDevice!.currentLocation!.lat != null &&
+                    _selectedDevice!.currentLocation!.lng != null) {
+                  bestPos = LatLng(
+                    _selectedDevice!.currentLocation!.lat!,
+                    _selectedDevice!.currentLocation!.lng!,
+                  );
                 }
 
                 bestPos ??= LatLng(currentPos.latitude, currentPos.longitude);
@@ -284,7 +271,7 @@ class _MapScreenState extends State<MapScreen> {
                         borderRadius: BorderRadius.all(Radius.circular(5)),
                         child: IgnorePointer(
                           child: GoogleMap(
-                            key: ValueKey(bestPos),
+                            key: ValueKey(_selectedDevice?.id),
                             initialCameraPosition: CameraPosition(
                               target: bestPos,
                               zoom: 15,
@@ -314,19 +301,6 @@ class _MapScreenState extends State<MapScreen> {
                             onMapCreated: (GoogleMapController controller) async {
                               _mapController = controller;
 
-                              final recordState =
-                                  context.read<RecordViaPhoneCubit>().state;
-                              if (recordState.polylines != null &&
-                                  recordState.polylines!.isNotEmpty) {
-                                final points =
-                                    recordState.polylines!.first.points;
-                                if (points.isNotEmpty) {
-                                  controller.moveCamera(
-                                    CameraUpdate.newLatLngZoom(points.last, 15),
-                                  );
-                                }
-                              }
-
                               final appState = context.read<AppCubit>().state;
                               if (_darkMapStyle == null ||
                                   _lightMapStyle == null) {
@@ -346,35 +320,33 @@ class _MapScreenState extends State<MapScreen> {
 
                               await MapUtils.setStyle(controller, style);
                             },
-                      ),
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 8.0,
-                    vertical: 8.0,
-                  ),
-                  child: Row(
-                    children: [
-                      Text(
-                        l10n.todayText,
-                        style: getBoldStyle(
-                          color: AppColors.paletteGreen,
-                          fontSize: 10,
+                          ),
                         ),
                       ),
-                    ],
-                  ),
-                ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8.0,
+                        vertical: 8.0,
+                      ),
+                      child: Row(
+                        children: [
+                          Text(
+                            l10n.todayText,
+                            style: getBoldStyle(
+                              color: AppColors.paletteGreen,
+                              fontSize: 10,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 8.0),
                       child: _buildStatsRow(),
                     ),
                   ],
                 );
-              },
-            );
           },
         ),
       ),
@@ -386,7 +358,7 @@ class _MapScreenState extends State<MapScreen> {
     return BlocBuilder<MapCubit, MapState>(
       builder: (context, state) {
         String distance = "0.0 ${l10n.km}";
-        String speed = "0 ${l10n.kmh}";
+        String speed = "${_selectedDevice?.currentLocation?.speed ?? 0} ${l10n.kmh}";
         String duration = "0${l10n.minutesShort} 0${l10n.secondsShort}";
         String topSpeed = "0 ${l10n.kmh}";
 
