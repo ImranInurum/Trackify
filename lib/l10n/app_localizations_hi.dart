@@ -1017,6 +1017,43 @@ class AppLocalizationsHi extends AppLocalizations {
       'अनुचित पार्किंग से होने वाले संघर्षों और वाहन की क्षति से बचें।';
 
   @override
+  String get serviceLogsSubtitle =>
+      'वाहन सर्विस कभी न चूकें। अपने वाहन को बेहतरीन स्थिति में रखने के लिए रिमाइंडर प्राप्त करें और खर्चों को ट्रैक करें।';
+
+  @override
+  String get addServiceLogs => 'सर्विस लॉग्स जोड़ें';
+
+  @override
+  String get uploadServicingBill => 'सर्विसिंग बिल अपलोड करें';
+
+  @override
+  String get addImage => 'छवि जोड़ें';
+
+  @override
+  String get maxFileSizeNote => 'नोट: अधिकतम फ़ाइल आकार 5MB है';
+
+  @override
+  String get serviceDate => 'सर्विस की तारीख';
+
+  @override
+  String get billingAmount => 'बिलिंग राशि';
+
+  @override
+  String get serviceCenterName => 'सर्विस सेंटर का नाम';
+
+  @override
+  String get serviceCenterContact => 'सर्विस सेंटर का संपर्क';
+
+  @override
+  String get additionalNote => 'अतिरिक्त नोट';
+
+  @override
+  String get saveDetails => 'विवरण सहेजें';
+
+  @override
+  String get selectVehicle => 'वाहन चुनें';
+
+  @override
   String get liveTab => 'लाइव';
 
   @override
@@ -1093,4 +1130,35 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get safetyScore => 'सुरक्षा स्कोर';
+
+  @override
+  String get speedAlertInput => 'गति चेतावनी इनपुट';
+
+  @override
+  String get alertTitle => 'चेतावनी शीर्षक';
+
+  @override
+  String get speedLimitKmH => 'गति सीमा (किमी/घंटा)';
+
+  @override
+  String get timeDurationSec => 'समय अवधि (सेकंड)';
+
+  @override
+  String get selectYourVehicle => 'अपना वाहन चुनें';
+
+  @override
+  String get submit => 'जमा करें';
+
+  @override
+  String get selectVehiclesOverspeedAlert =>
+      'वह वाहन चुनें जिस पर गति चेतावनी लगानी है';
+
+  @override
+  String get selected => 'चयनित';
+
+  @override
+  String get sec => 'सेकंड';
+
+  @override
+  String get kmHr => 'किमी/घंटा';
 }

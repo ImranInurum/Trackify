@@ -1021,6 +1021,43 @@ class AppLocalizationsKn extends AppLocalizations {
       'ಅಸಮರ್ಪಕ ಪಾರ್ಕಿಂಗ್‌ನಿಂದ ಸಂಘರ್ಷಗಳು ಮತ್ತು ವಾಹನದ ಹಾನಿಯನ್ನು ತಪ್ಪಿಸಿ.';
 
   @override
+  String get serviceLogsSubtitle =>
+      'ವಾಹನ ಸೇವೆಯನ್ನು ಎಂದಿಗೂ ತಪ್ಪಿಸಿಕೊಳ್ಳಬೇಡಿ. ನಿಮ್ಮ ವಾಹನವನ್ನು ಉತ್ತಮ ಸ್ಥಿತಿಯಲ್ಲಿಡಲು ಜ್ಞಾಪನೆಗಳನ್ನು ಪಡೆಯಿರಿ ಮತ್ತು ವೆಚ್ಚಗಳನ್ನು ಟ್ರ್ಯಾಕ್ ಮಾಡಿ.';
+
+  @override
+  String get addServiceLogs => 'ಸೇವೆ ಲಾಗ್‌ಗಳನ್ನು ಸೇರಿಸಿ';
+
+  @override
+  String get uploadServicingBill => 'ಸರ್ವಿಸಿಂಗ್ ಬಿಲ್ ಅಪ್‌ಲೋಡ್ ಮಾಡಿ';
+
+  @override
+  String get addImage => 'ಚಿತ್ರ ಸೇರಿಸಿ';
+
+  @override
+  String get maxFileSizeNote => 'ಸೂಚನೆ: ಗರಿಷ್ಠ ಫೈಲ್ ಗಾತ್ರ 5MB';
+
+  @override
+  String get serviceDate => 'ಸೇವೆ ದಿನಾಂಕ';
+
+  @override
+  String get billingAmount => 'ಬಿಲ್ಲಿಂಗ್ ಮೊತ್ತ';
+
+  @override
+  String get serviceCenterName => 'ಸೇವಾ ಕೇಂದ್ರದ ಹೆಸರು';
+
+  @override
+  String get serviceCenterContact => 'ಸೇವಾ ಕೇಂದ್ರದ ಸಂಪರ್ಕ';
+
+  @override
+  String get additionalNote => 'ಹೆಚ್ಚುವರಿ ಟಿಪ್ಪಣಿ';
+
+  @override
+  String get saveDetails => 'ವಿವರಗಳನ್ನು ಉಳಿಸಿ';
+
+  @override
+  String get selectVehicle => 'ವಾಹನ ಆಯ್ಕೆಮಾಡಿ';
+
+  @override
   String get liveTab => 'ಲೈವ್';
 
   @override
@@ -1097,4 +1134,35 @@ class AppLocalizationsKn extends AppLocalizations {
 
   @override
   String get safetyScore => 'ಸುರಕ್ಷತೆ ಸ್ಕೋರ್';
+
+  @override
+  String get speedAlertInput => 'ವೇಗದ ಎಚ್ಚರಿಕೆ ಇನ್‌ಪುಟ್';
+
+  @override
+  String get alertTitle => 'ಎಚ್ಚರಿಕೆಯ ಶೀರ್ಷಿಕೆ';
+
+  @override
+  String get speedLimitKmH => 'ವೇಗದ ಮಿತಿ (ಕಿಮೀ/ಗಂ)';
+
+  @override
+  String get timeDurationSec => 'ಸಮಯದ ಅವಧಿ (ಸೆಕೆಂಡು)';
+
+  @override
+  String get selectYourVehicle => 'ನಿಮ್ಮ ವಾಹನವನ್ನು ಆಯ್ಕೆಮಾಡಿ';
+
+  @override
+  String get submit => 'ಸಲ್ಲಿಸು';
+
+  @override
+  String get selectVehiclesOverspeedAlert =>
+      'ಅತಿವೇಗದ ಎಚ್ಚರಿಕೆಯನ್ನು ಸೇರಿಸಲು ವಾಹನಗಳನ್ನು ಆಯ್ಕೆಮಾಡಿ';
+
+  @override
+  String get selected => 'ಆಯ್ಕೆಮಾಡಲಾಗಿದೆ';
+
+  @override
+  String get sec => 'ಸೆಕೆಂಡು';
+
+  @override
+  String get kmHr => 'ಕಿಮೀ/ಗಂ';
 }

@@ -1999,8 +1999,80 @@ abstract class AppLocalizations {
   /// No description provided for @preventFrustrationDamageDesc.
   ///
   /// In en, this message translates to:
-  /// **'Avoid conflicts and vehicle damage from improper parking.'**
+  /// **'Avoid conflicts and vehicle damage caused by incorrect parking.'**
   String get preventFrustrationDamageDesc;
+
+  /// No description provided for @serviceLogsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Never miss a vehicle service. Get reminders and track expenses to keep your vehicle in top condition.'**
+  String get serviceLogsSubtitle;
+
+  /// No description provided for @addServiceLogs.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Service Logs'**
+  String get addServiceLogs;
+
+  /// No description provided for @uploadServicingBill.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload Servicing bill'**
+  String get uploadServicingBill;
+
+  /// No description provided for @addImage.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Image'**
+  String get addImage;
+
+  /// No description provided for @maxFileSizeNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Note: Maximum File Size is 5MB'**
+  String get maxFileSizeNote;
+
+  /// No description provided for @serviceDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Service Date'**
+  String get serviceDate;
+
+  /// No description provided for @billingAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Billing Amount'**
+  String get billingAmount;
+
+  /// No description provided for @serviceCenterName.
+  ///
+  /// In en, this message translates to:
+  /// **'Service Center Name'**
+  String get serviceCenterName;
+
+  /// No description provided for @serviceCenterContact.
+  ///
+  /// In en, this message translates to:
+  /// **'Service Center Contact'**
+  String get serviceCenterContact;
+
+  /// No description provided for @additionalNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Additional Note'**
+  String get additionalNote;
+
+  /// No description provided for @saveDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Save Details'**
+  String get saveDetails;
+
+  /// No description provided for @selectVehicle.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Vehicle'**
+  String get selectVehicle;
 
   /// No description provided for @liveTab.
   ///
@@ -2151,6 +2223,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Safety Score'**
   String get safetyScore;
+
+  /// No description provided for @speedAlertInput.
+  ///
+  /// In en, this message translates to:
+  /// **'Speed alert input'**
+  String get speedAlertInput;
+
+  /// No description provided for @alertTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Alert title'**
+  String get alertTitle;
+
+  /// No description provided for @speedLimitKmH.
+  ///
+  /// In en, this message translates to:
+  /// **'Speed limit (km/h)'**
+  String get speedLimitKmH;
+
+  /// No description provided for @timeDurationSec.
+  ///
+  /// In en, this message translates to:
+  /// **'Time Duration (sec)'**
+  String get timeDurationSec;
+
+  /// No description provided for @selectYourVehicle.
+  ///
+  /// In en, this message translates to:
+  /// **'Select your vehicle'**
+  String get selectYourVehicle;
+
+  /// No description provided for @submit.
+  ///
+  /// In en, this message translates to:
+  /// **'Submit'**
+  String get submit;
+
+  /// No description provided for @selectVehiclesOverspeedAlert.
+  ///
+  /// In en, this message translates to:
+  /// **'Select vehicles on which to add overspeed alert'**
+  String get selectVehiclesOverspeedAlert;
+
+  /// No description provided for @selected.
+  ///
+  /// In en, this message translates to:
+  /// **'Selected'**
+  String get selected;
+
+  /// No description provided for @sec.
+  ///
+  /// In en, this message translates to:
+  /// **'sec'**
+  String get sec;
+
+  /// No description provided for @kmHr.
+  ///
+  /// In en, this message translates to:
+  /// **'km/hr'**
+  String get kmHr;
 }
 
 class _AppLocalizationsDelegate

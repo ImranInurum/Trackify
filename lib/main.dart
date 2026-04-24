@@ -23,6 +23,7 @@ import 'package:trackify/feature/record_via_phone/presentation/cubit/record_via_
 
 import 'app/app.dart';
 import 'app/cubit/app_cubit.dart';
+import 'package:trackify/feature/overspeed_alert/presentation/cubit/overspeed_alert_cubit.dart';
 import 'core/services/connectivity_service.dart';
 import 'core/services/location_service.dart';
 import 'core/services/notification_service.dart';
@@ -42,6 +43,9 @@ import 'feature/device_installation/presentation/cubit/device_installation_cubit
 import 'feature/trips/data/repository/ride_history_repository_impl.dart';
 import 'feature/trips/domain/usecase/ride_history_use_case.dart';
 import 'feature/trips/presentation/cubit/ride_history_cubit.dart';
+import 'package:trackify/feature/service_logs/presentation/cubit/service_logs_cubit.dart';
+import 'package:trackify/core/common/repositories/common_repo_impl.dart';
+import 'package:trackify/core/common/usecase/get_user_vehicles_usecase.dart';
 import 'firebase_options.dart';
 
 final GlobalKey<NavigatorState> rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -117,6 +121,16 @@ List<BlocProvider> _buildBlocProviders() {
     BlocProvider<RideHistoryCubit>(
       create: (_) => RideHistoryCubit(
         RideHistoryUseCase(RideHistoryRepositoryImpl()),
+      ),
+    ),
+    BlocProvider<ServiceLogsCubit>(
+      create: (_) => ServiceLogsCubit(
+        GetUserVehiclesUsecase(CommonRepositoryImpl()),
+      ),
+    ),
+    BlocProvider<OverspeedAlertCubit>(
+      create: (_) => OverspeedAlertCubit(
+        getUserVehiclesUsecase: GetUserVehiclesUsecase(CommonRepositoryImpl()),
       ),
     ),
   ];

@@ -15,10 +15,15 @@ import 'package:trackify/feature/add_vehicle_and_device/choice_selector.dart';
 import 'package:trackify/feature/map/data/entity/user_vehicles.dart';
 import 'package:trackify/feature/map/presentation/pages/full_screen_map.dart';
 import 'package:trackify/feature/my_garage/presentation/view/my_garage_screen.dart';
+import 'package:trackify/feature/overspeed_alert/presentation/screens/overspeed_alert_screen.dart';
 import 'package:trackify/feature/reach_me_sticker/presentation/screens/reach_me_sticker_screen.dart';
 import 'package:trackify/feature/record_via_phone/presentation/pages/record_via_phone_screen.dart';
+import 'package:trackify/feature/record_via_phone/presentation/cubit/record_via_phone_cubit.dart';
+import 'package:trackify/feature/record_via_phone/presentation/cubit/record_via_phone_state.dart'
+    hide MapDataByDateLoaded;
 import '../../../../core/utils/shared_preferences.dart';
 import '../../../location_sharing/presentation/pages/location_sharing_screen.dart';
+import 'package:trackify/feature/service_logs/presentation/screens/service_logs_screen.dart';
 import '../../../notifications/presentation/screen/notification_list_screen.dart';
 
 import '../../../../core/config/style_manager.dart';
@@ -283,10 +288,9 @@ class _MapScreenState extends State<MapScreen> {
                             zoomGesturesEnabled: false,
                             tiltGesturesEnabled: false,
                             rotateGesturesEnabled: false,
-                            mapType:
-                                appState.mapType == 'satellite'
-                                    ? MapType.satellite
-                                    : MapType.normal,
+                            mapType: appState.mapType == 'satellite'
+                                ? MapType.satellite
+                                : MapType.normal,
                             trafficEnabled: appState.isTrafficEnabled,
                             markers: {
                               Marker(
@@ -307,16 +311,16 @@ class _MapScreenState extends State<MapScreen> {
                                 await _loadMapStyles();
                               }
 
-                              String? style;
-                              if (appState.mapStyle == 'Dark') {
-                                style = _darkMapStyle;
-                              } else if (appState.mapStyle == 'Light') {
-                                style = _lightMapStyle;
-                              } else if (appState.mapStyle == 'Simple') {
-                                style = await MapUtils.loadStyle(
-                                  'assets/map_styles/light_map.json',
-                                );
-                              }
+                                  String? style;
+                                  if (appState.mapStyle == 'Dark') {
+                                    style = _darkMapStyle;
+                                  } else if (appState.mapStyle == 'Light') {
+                                    style = _lightMapStyle;
+                                  } else if (appState.mapStyle == 'Simple') {
+                                    style = await MapUtils.loadStyle(
+                                      'assets/map_styles/light_map.json',
+                                    );
+                                  }
 
                               await MapUtils.setStyle(controller, style);
                             },
@@ -655,6 +659,24 @@ class _MapScreenState extends State<MapScreen> {
                       ),
                     );
                   }
+
+                  if (option["label"] ==
+                      l10n.serviceLogs.replaceAll(' ', '\n')) {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => const ServiceLogsScreen(),
+                      ),
+                    );
+                  }
+
+                  if (option["label"] ==
+                      l10n.overspeedAlert.replaceAll(' ', '\n')) {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => OverSpeedAlertScreen(),
+                      ),
+                    );
+                  }
                 },
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
@@ -738,5 +760,7 @@ class _MapScreenState extends State<MapScreen> {
             },
           ),
         ],
-      ));
-}}
+      ),
+    );
+  }
+}
