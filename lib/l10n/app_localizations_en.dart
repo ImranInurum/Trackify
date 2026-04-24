@@ -1014,7 +1014,44 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get preventFrustrationDamageDesc =>
-      'Avoid conflicts and vehicle damage from improper parking.';
+      'Avoid conflicts and vehicle damage caused by incorrect parking.';
+
+  @override
+  String get serviceLogsSubtitle =>
+      'Never miss a vehicle service. Get reminders and track expenses to keep your vehicle in top condition.';
+
+  @override
+  String get addServiceLogs => 'Add Service Logs';
+
+  @override
+  String get uploadServicingBill => 'Upload Servicing bill';
+
+  @override
+  String get addImage => 'Add Image';
+
+  @override
+  String get maxFileSizeNote => 'Note: Maximum File Size is 5MB';
+
+  @override
+  String get serviceDate => 'Service Date';
+
+  @override
+  String get billingAmount => 'Billing Amount';
+
+  @override
+  String get serviceCenterName => 'Service Center Name';
+
+  @override
+  String get serviceCenterContact => 'Service Center Contact';
+
+  @override
+  String get additionalNote => 'Additional Note';
+
+  @override
+  String get saveDetails => 'Save Details';
+
+  @override
+  String get selectVehicle => 'Select Vehicle';
 
   @override
   String get liveTab => 'LIVE';
@@ -1093,4 +1130,35 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get safetyScore => 'Safety Score';
+
+  @override
+  String get speedAlertInput => 'Speed alert input';
+
+  @override
+  String get alertTitle => 'Alert title';
+
+  @override
+  String get speedLimitKmH => 'Speed limit (km/h)';
+
+  @override
+  String get timeDurationSec => 'Time Duration (sec)';
+
+  @override
+  String get selectYourVehicle => 'Select your vehicle';
+
+  @override
+  String get submit => 'Submit';
+
+  @override
+  String get selectVehiclesOverspeedAlert =>
+      'Select vehicles on which to add overspeed alert';
+
+  @override
+  String get selected => 'Selected';
+
+  @override
+  String get sec => 'sec';
+
+  @override
+  String get kmHr => 'km/hr';
 }

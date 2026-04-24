@@ -1015,6 +1015,43 @@ class AppLocalizationsTa extends AppLocalizations {
       'தவறான பார்க்கிங்கால் ஏற்படும் மோதல்கள் மற்றும் வாகன சேதத்தைத் தவிர்க்கவும்.';
 
   @override
+  String get serviceLogsSubtitle =>
+      'வாகன சேவையை ஒருபோதும் தவறவிடாதீர்கள். உங்கள் வாகனத்தை சிறந்த நிலையில் வைத்திருக்க நினைவூட்டல்களைப் பெறவும் மற்றும் செலவுகளைக் கண்காணிக்கவும்.';
+
+  @override
+  String get addServiceLogs => 'சேவை பதிவுகளைச் சேர்';
+
+  @override
+  String get uploadServicingBill => 'சேவை மசோதாவை பதிவேற்றவும்';
+
+  @override
+  String get addImage => 'படம் சேர்';
+
+  @override
+  String get maxFileSizeNote => 'குறிப்பு: அதிகபட்ச கோப்பு அளவு 5MB ஆகும்';
+
+  @override
+  String get serviceDate => 'சேவை தேதி';
+
+  @override
+  String get billingAmount => 'பில்லிங் தொகை';
+
+  @override
+  String get serviceCenterName => 'சேவை மையத்தின் பெயர்';
+
+  @override
+  String get serviceCenterContact => 'சேவை மைய தொடர்பு';
+
+  @override
+  String get additionalNote => 'கூடுதல் குறிப்பு';
+
+  @override
+  String get saveDetails => 'விவரங்களைச் சேமி';
+
+  @override
+  String get selectVehicle => 'வாகனத்தைத் தேர்ந்தெடுக்கவும்';
+
+  @override
   String get liveTab => 'நேரலை';
 
   @override
@@ -1092,4 +1129,35 @@ class AppLocalizationsTa extends AppLocalizations {
 
   @override
   String get safetyScore => 'பாதுகாப்பு மதிப்பெண்';
+
+  @override
+  String get speedAlertInput => 'வேக எச்சரிக்கை உள்ளீடு';
+
+  @override
+  String get alertTitle => 'எச்சரிக்கை தலைப்பு';
+
+  @override
+  String get speedLimitKmH => 'வேக வரம்பு (கிமீ/மணி)';
+
+  @override
+  String get timeDurationSec => 'நேர காலம் (வினாடி)';
+
+  @override
+  String get selectYourVehicle => 'உங்கள் வாகனத்தைத் தேர்ந்தெடுக்கவும்';
+
+  @override
+  String get submit => 'சமர்ப்பி';
+
+  @override
+  String get selectVehiclesOverspeedAlert =>
+      'அதிக வேக எச்சரிக்கையை சேர்க்க வேண்டிய வாகனங்களைத் தேர்ந்தெடுக்கவும்';
+
+  @override
+  String get selected => 'தேர்ந்தெடுக்கப்பட்டது';
+
+  @override
+  String get sec => 'வினாடி';
+
+  @override
+  String get kmHr => 'கிமீ/மணி';
 }

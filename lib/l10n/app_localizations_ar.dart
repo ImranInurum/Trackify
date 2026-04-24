@@ -1009,6 +1009,43 @@ class AppLocalizationsAr extends AppLocalizations {
       'تجنب النزاعات وتلف المركبات الناتج عن وقوف السيارات غير الصحيح.';
 
   @override
+  String get serviceLogsSubtitle =>
+      'لا تفوت خدمة المركبة أبدًا. احصل على تذكيرات وتتبع النفقات للحفاظ على سيارتك في أفضل حالة.';
+
+  @override
+  String get addServiceLogs => 'إضافة سجلات الخدمة';
+
+  @override
+  String get uploadServicingBill => 'تحميل فاتورة الخدمة';
+
+  @override
+  String get addImage => 'إضافة صورة';
+
+  @override
+  String get maxFileSizeNote => 'ملاحظة: الحد الأقصى لحجم الملف هو 5 ميغابايت';
+
+  @override
+  String get serviceDate => 'تاريخ الخدمة';
+
+  @override
+  String get billingAmount => 'مبلغ الفاتورة';
+
+  @override
+  String get serviceCenterName => 'اسم مركز الخدمة';
+
+  @override
+  String get serviceCenterContact => 'جهة اتصال مركز الخدمة';
+
+  @override
+  String get additionalNote => 'ملاحظة إضافية';
+
+  @override
+  String get saveDetails => 'حفظ التفاصيل';
+
+  @override
+  String get selectVehicle => 'حدد المركبة';
+
+  @override
   String get liveTab => 'مباشر';
 
   @override
@@ -1084,4 +1121,35 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get safetyScore => 'درجة السلامة';
+
+  @override
+  String get speedAlertInput => 'Speed alert input';
+
+  @override
+  String get alertTitle => 'Alert title';
+
+  @override
+  String get speedLimitKmH => 'Speed limit (km/h)';
+
+  @override
+  String get timeDurationSec => 'Time Duration (sec)';
+
+  @override
+  String get selectYourVehicle => 'Select your vehicle';
+
+  @override
+  String get submit => 'Submit';
+
+  @override
+  String get selectVehiclesOverspeedAlert =>
+      'Select vehicles on which to add overspeed alert';
+
+  @override
+  String get selected => 'Selected';
+
+  @override
+  String get sec => 'sec';
+
+  @override
+  String get kmHr => 'km/hr';
 }

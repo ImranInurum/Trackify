@@ -978,7 +978,7 @@ class AppLocalizationsMr extends AppLocalizations {
 
   @override
   String get getInformedStayConnected =>
-      'माहिती मिळवा आणि तुमच्या वाहनाशी\nकनेक्ट रहा';
+      'माहिती मिळवा आणि तुमच्या वाहनाशी कनेक्ट रहा';
 
   @override
   String get securedCalls => 'सुरक्षित कॉल';
@@ -1014,6 +1014,43 @@ class AppLocalizationsMr extends AppLocalizations {
   @override
   String get preventFrustrationDamageDesc =>
       'अयोग्य पार्किंगमुळे होणारे संघर्ष आणि वाहनाचे नुकसान टाळा.';
+
+  @override
+  String get serviceLogsSubtitle =>
+      'वाहनाची सर्व्हिस कधीही चुकवू नका. वेळेवर स्मरणपत्रे मिळवा आणि खर्चाचा मागोवा ठेवा, ज्यामुळे तुमचे वाहन उत्तम स्थितीत राहील.';
+
+  @override
+  String get addServiceLogs => 'सर्व्हिस नोंदी जोडा';
+
+  @override
+  String get uploadServicingBill => 'सर्व्हिस बिल अपलोड करा';
+
+  @override
+  String get addImage => 'प्रतिमा जोडा';
+
+  @override
+  String get maxFileSizeNote => 'टीप: कमाल फाइल आकार 5MB आहे';
+
+  @override
+  String get serviceDate => 'सर्व्हिस दिनांक';
+
+  @override
+  String get billingAmount => 'बिल रक्कम';
+
+  @override
+  String get serviceCenterName => 'सर्व्हिस सेंटरचे नाव';
+
+  @override
+  String get serviceCenterContact => 'सर्व्हिस सेंटर संपर्क';
+
+  @override
+  String get additionalNote => 'अतिरिक्त नोंद';
+
+  @override
+  String get saveDetails => 'तपशील जतन करा';
+
+  @override
+  String get selectVehicle => 'वाहन निवडा';
 
   @override
   String get liveTab => 'LIVE';
@@ -1092,4 +1129,35 @@ class AppLocalizationsMr extends AppLocalizations {
 
   @override
   String get safetyScore => 'Safety Score';
+
+  @override
+  String get speedAlertInput => 'वेग इशारा इनपुट';
+
+  @override
+  String get alertTitle => 'इशारा शीर्षक';
+
+  @override
+  String get speedLimitKmH => 'वेग मर्यादा (किमी/तास)';
+
+  @override
+  String get timeDurationSec => 'वेळ कालावधी (सेकंद)';
+
+  @override
+  String get selectYourVehicle => 'तुमचे वाहन निवडा';
+
+  @override
+  String get submit => 'सबमिट करा';
+
+  @override
+  String get selectVehiclesOverspeedAlert =>
+      'अतिवेग इशारा देण्यासाठी वाहने निवडा';
+
+  @override
+  String get selected => 'निवडले';
+
+  @override
+  String get sec => 'सेकंद';
+
+  @override
+  String get kmHr => 'किमी/तास';
 }
