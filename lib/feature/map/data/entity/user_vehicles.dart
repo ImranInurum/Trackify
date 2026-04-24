@@ -56,6 +56,7 @@ class Vehicles {
   final DateTime? createdAt;
   final DateTime? updatedAt;
   final int version;
+  final CurrentLocation? currentLocation;
 
   Vehicles({
     required this.id,
@@ -71,6 +72,7 @@ class Vehicles {
     required this.createdAt,
     required this.updatedAt,
     required this.version,
+    this.currentLocation,
   });
 
   factory Vehicles.fromJson(Map<String, dynamic>? json) {
@@ -92,6 +94,9 @@ class Vehicles {
           ? DateTime.tryParse(json?['updatedAt'])
           : null,
       version: json?['__v'] ?? 0,
+      currentLocation: json?['currentLocation'] != null
+          ? CurrentLocation.fromJson(json?['currentLocation'])
+          : null,
     );
   }
 
@@ -110,6 +115,36 @@ class Vehicles {
       'createdAt': createdAt?.toIso8601String(),
       'updatedAt': updatedAt?.toIso8601String(),
       '__v': version,
+      'currentLocation': currentLocation?.toJson(),
+    };
+  }
+}
+
+class CurrentLocation {
+  final double? lat;
+  final double? lng;
+  final double? speed;
+  final String? time;
+
+  CurrentLocation({this.lat, this.lng, this.speed, this.time});
+
+  factory CurrentLocation.fromJson(Map<String, dynamic> json) {
+    return CurrentLocation(
+      lat: json['lat'] != null ? double.tryParse(json['lat'].toString()) : null,
+      lng: json['lng'] != null ? double.tryParse(json['lng'].toString()) : null,
+      speed: json['speed'] != null
+          ? double.tryParse(json['speed'].toString())
+          : null,
+      time: json['time'],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'lat': lat?.toString(),
+      'lng': lng?.toString(),
+      'speed': speed,
+      'time': time,
     };
   }
 }
