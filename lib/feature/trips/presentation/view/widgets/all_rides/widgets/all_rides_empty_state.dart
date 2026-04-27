@@ -11,7 +11,11 @@ class AllRidesEmptyState extends StatelessWidget {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Image.asset("assets/images/allRidesMap.png", height: 140),
+        Icon(
+          Icons.map_outlined,
+          size: 100,
+          color: Theme.of(context).colorScheme.primary.withOpacity(0.4),
+        ),
         const SizedBox(height: 30),
         Text(
           l10n.noDailyRides,
@@ -24,7 +28,9 @@ class AllRidesEmptyState extends StatelessWidget {
         const SizedBox(height: 8),
         Text(
           l10n.getStartedFirstRide,
-          style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6)),
+          style: TextStyle(
+            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+          ),
         ),
       ],
     );

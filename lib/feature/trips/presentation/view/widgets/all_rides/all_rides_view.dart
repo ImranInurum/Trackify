@@ -5,6 +5,8 @@ import '../../../cubit/ride_history_cubit.dart';
 import '../../../cubit/ride_history_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import 'package:trackify/feature/trips/presentation/view/ride_history_details/ride_history_details_screen.dart';
+
 class AllRides extends StatefulWidget {
   const AllRides({super.key});
 
@@ -34,10 +36,18 @@ class _AllRidesState extends State<AllRides> {
                   padding: const EdgeInsets.all(16),
                   itemCount: state.rides.length,
                   itemBuilder: (context, index) {
-                    return RideCard(ride: state.rides[index],onTap: () {
-                      print("Tapped on ride with ID: ${state.rides[index].polylinePoints}");
-                      print("Tapped on ride with ID: ${state.rides[index].points}");
-                    },);
+                    final ride = state.rides[index];
+                    return RideCard(
+                      ride: ride,
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => RideHistoryDetailsScreen(ride: ride),
+                          ),
+                        );
+                      },
+                    );
                   },
                 );
         }

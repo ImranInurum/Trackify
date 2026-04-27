@@ -42,7 +42,7 @@ class RideCard extends StatelessWidget {
                 top: Radius.circular(16),
               ),
               child: Container(
-                height: 180,
+                height: 220,
                 width: double.infinity,
                 child: Stack(
                   children: [
