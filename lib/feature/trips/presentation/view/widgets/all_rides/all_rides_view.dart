@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:trackify/feature/trips/presentation/view/widgets/all_rides/widgets/all_rides_empty_state.dart';
 import 'package:trackify/feature/trips/presentation/view/widgets/all_rides/widgets/ride_card.dart';
-import '../../../../data/entity/ride_model.dart';
 import '../../../cubit/ride_history_cubit.dart';
 import '../../../cubit/ride_history_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -35,7 +34,10 @@ class _AllRidesState extends State<AllRides> {
                   padding: const EdgeInsets.all(16),
                   itemCount: state.rides.length,
                   itemBuilder: (context, index) {
-                    return RideCard(ride: state.rides[index]);
+                    return RideCard(ride: state.rides[index],onTap: () {
+                      print("Tapped on ride with ID: ${state.rides[index].polylinePoints}");
+                      print("Tapped on ride with ID: ${state.rides[index].points}");
+                    },);
                   },
                 );
         }
