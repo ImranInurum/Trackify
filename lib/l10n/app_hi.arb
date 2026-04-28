@@ -463,5 +463,14 @@
   "close": "बंद करें",
   "selected": "चयनित",
   "sec": "सेकंड",
-  "kmHr": "किमी/घंटा"
+  "kmHr": "किमी/घंटा",
+  "viewMore": "और देखें",
+  "viewLess": "कम देखें",
+  "previousRides": "पिछली सवारी",
+  "seeAll": "सभी देखें",
+  "videosYouMightLike": "वीडियो जो आपको पसंद आ सकते हैं",
+  "scrollToTop": "ऊपर जाएं",
+  "noRecentRidesFound": "कोई हालिया सवारी नहीं मिली",
+  "failedToLoadRides": "सवारी लोड करने में विफल",
+  "hrMin": "घंटा:मिनट"
 }

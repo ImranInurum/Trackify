@@ -438,5 +438,14 @@
   "close": "बंद करा",
   "selected": "निवडले",
   "sec": "सेकंद",
-  "kmHr": "किमी/तास"
+  "kmHr": "किमी/तास",
+  "viewMore": "आणखी पहा",
+  "viewLess": "कमी पहा",
+  "previousRides": "मागील प्रवास",
+  "seeAll": "सर्व पहा",
+  "videosYouMightLike": "तुम्हाला आवडतील असे व्हिडिओ",
+  "scrollToTop": "वर जा",
+  "noRecentRidesFound": "कोणताही अलीकडील प्रवास सापडला नाही",
+  "failedToLoadRides": "प्रवास लोड करण्यात अयशस्वी",
+  "hrMin": "तास:मिनट"
 }

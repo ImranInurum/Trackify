@@ -115,7 +115,7 @@ class RideDataPointModel {
     return RideDataPointModel(
       lt: (json['lt'] ?? json['lat'] ?? json['latitude'])?.toString(),
       lg: (json['lg'] ?? json['lng'] ?? json['longitude'])?.toString(),
-      sp: (json['sp'] ?? json['speed'] as num?)?.toDouble(),
+      sp: double.tryParse((json['sp'] ?? json['speed'] ?? "0").toString()),
       createdAt: json['createdAt'] as String?,
     );
   }

@@ -452,5 +452,14 @@
   "totalFuel": "إجمالي الوقود",
   "overallDistance": "المسافة الإجمالية",
   "drivingTime": "وقت القيادة",
-  "safetyScore": "درجة السلامة"
+  "safetyScore": "درجة السلامة",
+  "viewMore": "عرض المزيد",
+  "viewLess": "عرض أقل",
+  "previousRides": "الرحلات السابقة",
+  "seeAll": "عرض الكل",
+  "videosYouMightLike": "فيديوهات قد تعجبك",
+  "scrollToTop": "العودة إلى الأعلى",
+  "noRecentRidesFound": "لم يتم العثور على رحلات حديثة",
+  "failedToLoadRides": "فشل في تحميل الرحلات",
+  "hrMin": "ساعة:دقيقة"
 }
