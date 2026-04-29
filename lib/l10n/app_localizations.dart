@@ -2432,6 +2432,102 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'hr:min'**
   String get hrMin;
+
+  /// No description provided for @warranty_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Device Warranty'**
+  String get warranty_title;
+
+  /// No description provided for @warranty_extend.
+  ///
+  /// In en, this message translates to:
+  /// **'Extend warranty of your Trackify Lite by 1 year @ ₹1/day'**
+  String get warranty_extend;
+
+  /// No description provided for @warranty_vehicle.
+  ///
+  /// In en, this message translates to:
+  /// **'Vehicle'**
+  String get warranty_vehicle;
+
+  /// No description provided for @warranty_expiry.
+  ///
+  /// In en, this message translates to:
+  /// **'Warranty expiry date'**
+  String get warranty_expiry;
+
+  /// No description provided for @warranty_daysLeft.
+  ///
+  /// In en, this message translates to:
+  /// **'{days} days left'**
+  String warranty_daysLeft(Object days);
+
+  /// No description provided for @warranty_benefitsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Benefits you do not want to miss'**
+  String get warranty_benefitsTitle;
+
+  /// No description provided for @benefit1_highlight.
+  ///
+  /// In en, this message translates to:
+  /// **'Guaranteed replacement '**
+  String get benefit1_highlight;
+
+  /// No description provided for @benefit1_normal.
+  ///
+  /// In en, this message translates to:
+  /// **'in case of failure'**
+  String get benefit1_normal;
+
+  /// No description provided for @benefit2_highlight.
+  ///
+  /// In en, this message translates to:
+  /// **'Save upto ₹1200 '**
+  String get benefit2_highlight;
+
+  /// No description provided for @benefit2_normal.
+  ///
+  /// In en, this message translates to:
+  /// **'on device repair'**
+  String get benefit2_normal;
+
+  /// No description provided for @benefit3_highlight.
+  ///
+  /// In en, this message translates to:
+  /// **'Instant support '**
+  String get benefit3_highlight;
+
+  /// No description provided for @benefit3_normal.
+  ///
+  /// In en, this message translates to:
+  /// **'for device related issues'**
+  String get benefit3_normal;
+
+  /// No description provided for @benefit4_highlight.
+  ///
+  /// In en, this message translates to:
+  /// **'Free extended subscription upto ₹2000 '**
+  String get benefit4_highlight;
+
+  /// No description provided for @benefit4_normal.
+  ///
+  /// In en, this message translates to:
+  /// **'for faulty period'**
+  String get benefit4_normal;
+
+  /// No description provided for @warranty_button.
+  ///
+  /// In en, this message translates to:
+  /// **'Extend warranty now @ ₹365 '**
+  String get warranty_button;
+
+  /// No description provided for @warranty_button_old.
+  ///
+  /// In en, this message translates to:
+  /// **'₹730'**
+  String get warranty_button_old;
 }
 
 class _AppLocalizationsDelegate

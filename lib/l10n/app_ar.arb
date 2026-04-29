@@ -462,4 +462,36 @@
   "noRecentRidesFound": "لم يتم العثور على رحلات حديثة",
   "failedToLoadRides": "فشل في تحميل الرحلات",
   "hrMin": "ساعة:دقيقة"
+  "safetyScore": "درجة السلامة",
+
+
+
+
+    "warranty_title": "ضمان الجهاز",
+    "warranty_extend": "قم بتمديد ضمان Trackify Lite لمدة سنة واحدة مقابل ₹1/يوم",
+    "warranty_vehicle": "المركبة",
+    "warranty_expiry": "تاريخ انتهاء الضمان",
+    "warranty_daysLeft": "متبقي {days} يوم",
+
+     "warranty_benefitsTitle": "तुम्ही चुकवू नये असे फायदे",
+
+     "benefit1_highlight": "استبدال مضمون ",
+     "benefit1_normal": "في حال حدوث عطل",
+
+     "benefit2_highlight": "وفّر حتى ₹1200 ",
+     "benefit2_normal": "على إصلاح الجهاز",
+
+     "benefit3_highlight": "دعم فوري ",
+     "benefit3_normal": "لمشاكل الجهاز",
+
+     "benefit4_highlight": "اشتراك ممتد مجاني حتى ₹2000 ",
+     "benefit4_normal": "خلال فترة العطل",
+
+     "warranty_button": "مدد الضمان الآن مقابل ₹365 ",
+     "warranty_button_old": "₹730"
+
+
+
+
+
 }

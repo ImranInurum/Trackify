@@ -505,4 +505,37 @@
   "noRecentRidesFound": "कोई हालिया सवारी नहीं मिली",
   "failedToLoadRides": "सवारी लोड करने में विफल",
   "hrMin": "घंटा:मिनट"
+  "kmHr": "किमी/घंटा",
+
+
+
+
+    "warranty_title": "डिवाइस वारंटी",
+    "warranty_extend": "अपनी Trackify Lite की वारंटी 1 साल के लिए बढ़ाएं @ ₹1/दिन",
+    "warranty_vehicle": "वाहन",
+    "warranty_expiry": "वारंटी समाप्ति तिथि",
+    "warranty_daysLeft": "{days} दिन बाकी",
+
+
+
+     "warranty_benefitsTitle": "ऐसे फायदे जिन्हें आप मिस नहीं करना चाहेंगे",
+     "benefit1_highlight": "गारंटीड रिप्लेसमेंट ",
+     "benefit1_normal": "खराब होने की स्थिति में",
+
+     "benefit2_highlight": "₹1200 तक बचत ",
+     "benefit2_normal": "डिवाइस रिपेयर पर",
+
+     "benefit3_highlight": "तुरंत सहायता ",
+     "benefit3_normal": "डिवाइस से जुड़ी समस्याओं के लिए",
+
+     "benefit4_highlight": "₹2000 तक फ्री एक्सटेंडेड सब्सक्रिप्शन ",
+     "benefit4_normal": "खराब अवधि के लिए",
+
+     "warranty_button": "अभी वारंटी बढ़ाएं @ ₹365 ",
+     "warranty_button_old": "₹730"
+
+
+
+
+
 }

@@ -474,4 +474,37 @@
   "noRecentRidesFound": "No recent rides found",
   "failedToLoadRides": "Failed to load rides",
   "hrMin": "hr:min"
+  "kmHr": "km/hr",
+
+
+
+    "warranty_title": "Device Warranty",
+    "warranty_extend": "Extend warranty of your Trackify Lite by 1 year @ ₹1/day",
+    "warranty_vehicle": "Vehicle",
+    "warranty_expiry": "Warranty expiry date",
+    "warranty_daysLeft": "{days} days left",
+
+    "warranty_benefitsTitle": "Benefits you do not want to miss",
+
+
+     "benefit1_highlight": "Guaranteed replacement ",
+     "benefit1_normal": "in case of failure",
+
+     "benefit2_highlight": "Save upto ₹1200 ",
+     "benefit2_normal": "on device repair",
+
+     "benefit3_highlight": "Instant support ",
+     "benefit3_normal": "for device related issues",
+
+     "benefit4_highlight": "Free extended subscription upto ₹2000 ",
+     "benefit4_normal": "for faulty period",
+
+     "warranty_button": "Extend warranty now @ ₹365 ",
+     "warranty_button_old": "₹730"
+
+
+
+
+
+
 }

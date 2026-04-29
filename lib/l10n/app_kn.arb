@@ -501,4 +501,33 @@
   "noRecentRidesFound": "ಯಾವುದೇ ಇತ್ತೀಚಿನ ಸವಾರಿಗಳು ಕಂಡುಬಂದಿಲ್ಲ",
   "failedToLoadRides": "ಸವಾರಿಗಳನ್ನು ಲೋಡ್ ಮಾಡಲು ವಿಫಲವಾಗಿದೆ",
   "hrMin": "ಗಂಟೆ:ನಿಮಿಷ"
+  "kmHr": "ಕಿಮೀ/ಗಂ",
+
+   "warranty_title": "ಡಿವೈಸ್ ವಾರಂಟಿ",
+    "warranty_extend": "ನಿಮ್ಮ Trackify Lite ಗೆ 1 ವರ್ಷದ ವಾರಂಟಿಯನ್ನು ₹1/ದಿನಕ್ಕೆ ವಿಸ್ತರಿಸಿ",
+    "warranty_vehicle": "ವಾಹನ",
+    "warranty_expiry": "ವಾರಂಟಿ ಮುಕ್ತಾಯ ದಿನಾಂಕ",
+    "warranty_daysLeft": "{days} ದಿನಗಳು ಬಾಕಿ",
+
+    "warranty_benefitsTitle": "ನೀವು ತಪ್ಪಿಸಿಕೊಳ್ಳಬಾರದ ಪ್ರಯೋಜನಗಳು",
+
+
+
+     "benefit1_highlight": "ಖಚಿತ ಬದಲಾವಣೆ ",
+     "benefit1_normal": "ದೋಷ ಉಂಟಾದರೆ",
+
+     "benefit2_highlight": "₹1200 ವರೆಗೆ ಉಳಿಸಿ ",
+     "benefit2_normal": "ಡಿವೈಸ್ ರಿಪೇರಿ ಮೇಲೆ",
+
+     "benefit3_highlight": "ತಕ್ಷಣದ ಸಹಾಯ ",
+     "benefit3_normal": "ಡಿವೈಸ್ ಸಮಸ್ಯೆಗಳಿಗಾಗಿ",
+
+     "benefit4_highlight": "₹2000 ವರೆಗೆ ಉಚಿತ ವಿಸ್ತರಿತ ಚಂದಾದಾರಿಕೆ ",
+     "benefit4_normal": "ದೋಷ ಅವಧಿಗೆ",
+
+     "warranty_button": "ಈಗ ವಾರಂಟಿಯನ್ನು ವಿಸ್ತರಿಸಿ @ ₹365 ",
+     "warranty_button_old": "₹730"
+
+
+
 }
