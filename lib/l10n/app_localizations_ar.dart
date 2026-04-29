@@ -1152,4 +1152,31 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get kmHr => 'km/hr';
+
+  @override
+  String get viewMore => 'عرض المزيد';
+
+  @override
+  String get viewLess => 'عرض أقل';
+
+  @override
+  String get previousRides => 'الرحلات السابقة';
+
+  @override
+  String get seeAll => 'عرض الكل';
+
+  @override
+  String get videosYouMightLike => 'فيديوهات قد تعجبك';
+
+  @override
+  String get scrollToTop => 'العودة إلى الأعلى';
+
+  @override
+  String get noRecentRidesFound => 'لم يتم العثور على رحلات حديثة';
+
+  @override
+  String get failedToLoadRides => 'فشل في تحميل الرحلات';
+
+  @override
+  String get hrMin => 'ساعة:دقيقة';
 }

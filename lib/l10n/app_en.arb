@@ -463,5 +463,14 @@
   "close": "Close",
   "selected": "Selected",
   "sec": "sec",
-  "kmHr": "km/hr"
+  "kmHr": "km/hr",
+  "viewMore": "View more",
+  "viewLess": "View less",
+  "previousRides": "Previous Rides",
+  "seeAll": "See All",
+  "videosYouMightLike": "Videos You Might Like",
+  "scrollToTop": "Scroll to Top",
+  "noRecentRidesFound": "No recent rides found",
+  "failedToLoadRides": "Failed to load rides",
+  "hrMin": "hr:min"
 }

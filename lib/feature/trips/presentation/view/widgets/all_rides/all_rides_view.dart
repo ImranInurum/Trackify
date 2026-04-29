@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:trackify/feature/trips/presentation/view/widgets/all_rides/widgets/all_rides_empty_state.dart';
 import 'package:trackify/feature/trips/presentation/view/widgets/all_rides/widgets/ride_card.dart';
-import '../../../../data/entity/ride_model.dart';
 import '../../../cubit/ride_history_cubit.dart';
 import '../../../cubit/ride_history_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
+import 'package:trackify/feature/trips/presentation/view/ride_history_details/ride_history_details_screen.dart';
 
 class AllRides extends StatefulWidget {
   const AllRides({super.key});
@@ -28,14 +29,27 @@ class _AllRidesState extends State<AllRides> {
           return const Center(child: CircularProgressIndicator());
         }
 
-           if (state is RideHistorySuccess) {
-          return state.rides.isEmpty
+        if (state is RideHistorySuccess) {
+          final reversedRides = state.rides.reversed.toList();
+          return reversedRides.isEmpty
               ? const AllRidesEmptyState()
               : ListView.builder(
                   padding: const EdgeInsets.all(16),
-                  itemCount: state.rides.length,
+                  itemCount: reversedRides.length,
                   itemBuilder: (context, index) {
-                    return RideCard(ride: state.rides[index]);
+                    final ride = reversedRides[index];
+                    return RideCard(
+                      ride: ride,
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                RideHistoryDetailsScreen(ride: ride),
+                          ),
+                        );
+                      },
+                    );
                   },
                 );
         }

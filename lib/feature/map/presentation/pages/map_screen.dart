@@ -18,13 +18,19 @@ import 'package:trackify/feature/my_garage/presentation/view/my_garage_screen.da
 import 'package:trackify/feature/overspeed_alert/presentation/screens/overspeed_alert_screen.dart';
 import 'package:trackify/feature/reach_me_sticker/presentation/screens/reach_me_sticker_screen.dart';
 import 'package:trackify/feature/record_via_phone/presentation/pages/record_via_phone_screen.dart';
-import 'package:trackify/feature/record_via_phone/presentation/cubit/record_via_phone_cubit.dart';
-import 'package:trackify/feature/record_via_phone/presentation/cubit/record_via_phone_state.dart'
-    hide MapDataByDateLoaded;
+import 'package:trackify/feature/trips/presentation/view/ride_history_details/ride_history_details_screen.dart';
+import 'package:trackify/feature/trips/presentation/view/widgets/all_rides/widgets/ride_card.dart';
 import '../../../../core/utils/shared_preferences.dart';
 import '../../../location_sharing/presentation/pages/location_sharing_screen.dart';
 import 'package:trackify/feature/service_logs/presentation/screens/service_logs_screen.dart';
 import '../../../notifications/presentation/screen/notification_list_screen.dart';
+import 'package:trackify/feature/trips/presentation/cubit/ride_history_cubit.dart';
+import 'package:trackify/feature/trips/presentation/cubit/ride_history_state.dart';
+
+import 'package:trackify/feature/map/data/repository/promo_video_repository_impl.dart';
+import 'package:trackify/feature/map/presentation/cubit/promo_video_cubit.dart';
+import 'package:trackify/feature/map/presentation/cubit/promo_video_state.dart';
+import 'package:trackify/feature/map/presentation/widgets/promo_video_card.dart';
 
 import '../../../../core/config/style_manager.dart';
 import '../cubit/map_cubit.dart';
@@ -45,19 +51,35 @@ class _MapScreenState extends State<MapScreen> {
   Vehicles? _selectedDevice;
   BitmapDescriptor? _customMarker;
   final prefs = AppPreference.instance;
+  bool _isExploreExpanded = false; // For Expandable Explore More section
+  final ScrollController _scrollController = ScrollController();
+  bool _showScrollToTop = false;
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
 
   @override
   void initState() {
     super.initState();
     _loadMapStyles();
     _loadCustomMarker();
+    _scrollController.addListener(_scrollListener);
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      Future.delayed(const Duration(milliseconds: 100), () {
-        if (mounted) {
-          context.read<MapCubit>().fetchVehicles();
-        }
-      });
+      if (mounted) {
+        context.read<MapCubit>().fetchVehicles();
+      }
     });
+  }
+
+  void _scrollListener() {
+    if (_scrollController.offset > 300 && !_showScrollToTop) {
+      setState(() => _showScrollToTop = true);
+    } else if (_scrollController.offset <= 300 && _showScrollToTop) {
+      setState(() => _showScrollToTop = false);
+    }
   }
 
   Future<void> _loadMapStyles() async {
@@ -79,11 +101,13 @@ class _MapScreenState extends State<MapScreen> {
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+    final l10n = AppLocalizations.of(context)!;
+    return BlocProvider(
+      create: (context) => PromoVideoCubit(PromoVideoRepositoryImpl())..fetchPromoVideos(),
+      child: Scaffold(
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: MultiBlocListener(
         listeners: [
           BlocListener<MapCubit, MapState>(
@@ -100,6 +124,8 @@ class _MapScreenState extends State<MapScreen> {
                       setState(() {
                         _selectedDevice = savedVehicle;
                       });
+                      // Refresh rides for the initially selected vehicle
+                      context.read<RideHistoryCubit>().getRideHistoryData();
                     }
                   });
                 }
@@ -137,94 +163,87 @@ class _MapScreenState extends State<MapScreen> {
                 ? (state.vehicleList.vehicles ?? <Vehicles>[])
                 : <Vehicles>[];
 
-            final l10n = AppLocalizations.of(context)!;
             final topSpacing = MediaQuery.of(context).padding.top + 78;
 
-            return Stack(
-              children: [
-                Positioned.fill(
-                  child: SingleChildScrollView(
-                    physics: const BouncingScrollPhysics(),
-                    child: Column(
-                      children: [
-                        SizedBox(height: topSpacing),
-                        _buildMapSection(),
-                        _buildPromoBanner(),
-                        _buildExploreMore(_selectedDevice),
-                        const SizedBox(height: 20),
-                      ],
-                    ),
-                  ),
-                ),
-
-                DraggableAppBar(
-                  vehicles: vehicles,
-                  selectedDevice: _selectedDevice,
-                  collapsedTrailing: IconButton(
-                    onPressed: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) => const NotificationListScreen(),
+            return Scaffold(
+              body: Stack(
+                children: [
+                  Positioned.fill(
+                    child: NotificationListener<ScrollNotification>(
+                      onNotification: (ScrollNotification scrollInfo) {
+                        if (scrollInfo.metrics.pixels >= scrollInfo.metrics.maxScrollExtent - 50) {
+                          context.read<PromoVideoCubit>().loadMoreVideos();
+                        }
+                        return false;
+                      },
+                      child: SingleChildScrollView(
+                        controller: _scrollController,
+                        physics: const BouncingScrollPhysics(),
+                        child: Column(
+                          children: [
+                            SizedBox(height: topSpacing),
+                            _buildMapSection(),
+                            _buildPromoBanner(),
+                            _buildExploreMore(_selectedDevice),
+                            _buildRecentRidesSection(), // Actual RideCard here
+                            _buildVideosSection(), // Vertical videos
+                            const SizedBox(height: 100),
+                          ],
                         ),
-                      );
-                    },
-                    icon: Icon(
-                      Icons.notifications_none_rounded,
-                      color: Theme.of(context).colorScheme.onSurface,
-                      size: 26,
-                    ),
-                  ),
-                  expandedTrailing: IconButton(
-                    alignment: Alignment.center,
-                    padding: EdgeInsets.zero,
-                    onPressed: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) => MyGarageScreen(),
-                        ),
-                      );
-                    },
-                    icon: Icon(
-                      Icons.settings,
-                      color: Theme.of(context).colorScheme.onSurface,
-                      size: 20,
-                    ),
-                  ),
-                  onAddVehicle: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) => const ChoiceSelector(),
                       ),
-                    );
-                  },
-                  onDeviceTap: (device) async {
-                    await prefs.set(
-                      key: AppPreference.IMEI,
-                      value: device.imei ?? '',
-                    );
-                    setState(() {
-                      _selectedDevice = device;
-                    });
-                    if (_mapController != null &&
-                        device.currentLocation?.lat != null &&
-                        device.currentLocation?.lng != null) {
-                      _mapController!.animateCamera(
-                        CameraUpdate.newLatLngZoom(
-                          LatLng(
-                            device.currentLocation!.lat!,
-                            device.currentLocation!.lng!,
-                          ),
-                          15,
-                        ),
-                      );
-                    }
-                  },
-                ),
-              ],
+                    ),
+                  ),
+                  _buildDraggableAppBar(vehicles),
+                ],
+              ),
             );
           },
         ),
       ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      floatingActionButton: _showScrollToTop
+          ? GestureDetector(
+              onTap: () {
+                _scrollController.animateTo(
+                  0,
+                  duration: const Duration(milliseconds: 500),
+                  curve: Curves.easeInOut,
+                );
+              },
+              child: Container(
+                height: 32, // Reduced height
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.95),
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.1),
+                      blurRadius: 4,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                  border: Border.all(color: Colors.grey.withOpacity(0.2)),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.arrow_upward, color: Colors.grey[800], size: 16),
+                    const SizedBox(width: 6),
+                    Text(
+                      l10n.scrollToTop,
+                      style: TextStyle(
+                        color: Colors.grey[800],
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+        )
+      : null,
+    ),
     );
   }
 
@@ -232,9 +251,12 @@ class _MapScreenState extends State<MapScreen> {
     final l10n = AppLocalizations.of(context)!;
     return BouncingWidget(
       onTap: () {
-        Navigator.of(
-          context,
-        ).push(MaterialPageRoute(builder: (context) => FullScreenMap(selectedVehicle: _selectedDevice)));
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) =>
+                FullScreenMap(selectedVehicle: _selectedDevice),
+          ),
+        );
       },
       child: Container(
         height: 300,
@@ -257,100 +279,98 @@ class _MapScreenState extends State<MapScreen> {
             if (currentPos == null) {
               return const Center(child: CircularProgressIndicator());
             }
-                LatLng? bestPos;
-                if (_selectedDevice?.currentLocation != null &&
-                    _selectedDevice!.currentLocation!.lat != null &&
-                    _selectedDevice!.currentLocation!.lng != null) {
-                  bestPos = LatLng(
-                    _selectedDevice!.currentLocation!.lat!,
-                    _selectedDevice!.currentLocation!.lng!,
-                  );
-                }
+            LatLng? bestPos;
+            if (_selectedDevice?.currentLocation != null &&
+                _selectedDevice!.currentLocation!.lat != null &&
+                _selectedDevice!.currentLocation!.lng != null) {
+              bestPos = LatLng(
+                _selectedDevice!.currentLocation!.lat!,
+                _selectedDevice!.currentLocation!.lng!,
+              );
+            }
 
-                bestPos ??= LatLng(currentPos.latitude, currentPos.longitude);
+            bestPos ??= LatLng(currentPos.latitude, currentPos.longitude);
 
-                return Column(
-                  children: [
-                    Expanded(
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.all(Radius.circular(5)),
-                        child: IgnorePointer(
-                          child: GoogleMap(
-                            key: ValueKey(_selectedDevice?.id),
-                            initialCameraPosition: CameraPosition(
-                              target: bestPos,
-                              zoom: 15,
-                            ),
-                            myLocationEnabled: false,
-                            zoomControlsEnabled: false,
-                            myLocationButtonEnabled: false,
-                            scrollGesturesEnabled: false,
-                            zoomGesturesEnabled: false,
-                            tiltGesturesEnabled: false,
-                            rotateGesturesEnabled: false,
-                            mapType: appState.mapType == 'satellite'
-                                ? MapType.satellite
-                                : MapType.normal,
-                            trafficEnabled: appState.isTrafficEnabled,
-                            markers: {
-                              Marker(
-                                markerId: const MarkerId('current_location'),
-                                position: bestPos,
-                                icon:
-                                    _customMarker ??
-                                    BitmapDescriptor.defaultMarker,
-                                anchor: const Offset(0.5, 0.5),
-                              ),
-                            },
-                            onMapCreated: (GoogleMapController controller) async {
-                              _mapController = controller;
-
-                              final appState = context.read<AppCubit>().state;
-                              if (_darkMapStyle == null ||
-                                  _lightMapStyle == null) {
-                                await _loadMapStyles();
-                              }
-
-                                  String? style;
-                                  if (appState.mapStyle == 'Dark') {
-                                    style = _darkMapStyle;
-                                  } else if (appState.mapStyle == 'Light') {
-                                    style = _lightMapStyle;
-                                  } else if (appState.mapStyle == 'Simple') {
-                                    style = await MapUtils.loadStyle(
-                                      'assets/map_styles/light_map.json',
-                                    );
-                                  }
-
-                              await MapUtils.setStyle(controller, style);
-                            },
+            return Column(
+              children: [
+                Expanded(
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.all(Radius.circular(5)),
+                    child: IgnorePointer(
+                      child: GoogleMap(
+                        key: ValueKey(_selectedDevice?.id),
+                        initialCameraPosition: CameraPosition(
+                          target: bestPos,
+                          zoom: 15,
+                        ),
+                        myLocationEnabled: false,
+                        zoomControlsEnabled: false,
+                        myLocationButtonEnabled: false,
+                        scrollGesturesEnabled: false,
+                        zoomGesturesEnabled: false,
+                        tiltGesturesEnabled: false,
+                        rotateGesturesEnabled: false,
+                        mapType: appState.mapType == 'satellite'
+                            ? MapType.satellite
+                            : MapType.normal,
+                        trafficEnabled: appState.isTrafficEnabled,
+                        markers: {
+                          Marker(
+                            markerId: const MarkerId('current_location'),
+                            position: bestPos,
+                            icon:
+                                _customMarker ?? BitmapDescriptor.defaultMarker,
+                            anchor: const Offset(0.5, 0.5),
                           ),
+                        },
+                        onMapCreated: (GoogleMapController controller) async {
+                          _mapController = controller;
+
+                          final appState = context.read<AppCubit>().state;
+                          if (_darkMapStyle == null || _lightMapStyle == null) {
+                            await _loadMapStyles();
+                          }
+
+                          String? style;
+                          if (appState.mapStyle == 'Dark') {
+                            style = _darkMapStyle;
+                          } else if (appState.mapStyle == 'Light') {
+                            style = _lightMapStyle;
+                          } else if (appState.mapStyle == 'Simple') {
+                            style = await MapUtils.loadStyle(
+                              'assets/map_styles/light_map.json',
+                            );
+                          }
+
+                          await MapUtils.setStyle(controller, style);
+                        },
+                      ),
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8.0,
+                    vertical: 8.0,
+                  ),
+                  child: Row(
+                    children: [
+                      Text(
+                        l10n.todayText,
+                        style: getBoldStyle(
+                          color: AppColors.paletteGreen,
+                          fontSize: 10,
                         ),
                       ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 8.0,
-                        vertical: 8.0,
-                      ),
-                      child: Row(
-                        children: [
-                          Text(
-                            l10n.todayText,
-                            style: getBoldStyle(
-                              color: AppColors.paletteGreen,
-                              fontSize: 10,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                      child: _buildStatsRow(),
-                    ),
-                  ],
-                );
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: _buildStatsRow(),
+                ),
+              ],
+            );
           },
         ),
       ),
@@ -362,7 +382,8 @@ class _MapScreenState extends State<MapScreen> {
     return BlocBuilder<MapCubit, MapState>(
       builder: (context, state) {
         String distance = "0.0 ${l10n.km}";
-        String speed = "${_selectedDevice?.currentLocation?.speed ?? 0} ${l10n.kmh}";
+        String speed =
+            "${_selectedDevice?.currentLocation?.speed ?? 0} ${l10n.kmh}";
         String duration = "0${l10n.minutesShort} 0${l10n.secondsShort}";
         String topSpeed = "0 ${l10n.kmh}";
 
@@ -586,181 +607,419 @@ class _MapScreenState extends State<MapScreen> {
       },
     ];
 
-    return Container(
-      margin: const EdgeInsets.all(16),
-      padding: const EdgeInsets.all(16.0),
-      decoration: BoxDecoration(
-        color: Theme.of(context).cardColor,
-        borderRadius: BorderRadius.circular(18),
-        boxShadow: [
-          BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 6),
+    // Only show 8 items (2 rows) if not expanded
+    final displayItems = _isExploreExpanded
+        ? options
+        : options.take(8).toList();
+
+    return Stack(
+      clipBehavior: Clip.none,
+      alignment: Alignment.bottomCenter,
+      children: [
+        Container(
+          margin: const EdgeInsets.all(16),
+          padding: const EdgeInsets.fromLTRB(
+            16,
+            16,
+            16,
+            24,
+          ), // Extra bottom padding for button
+          decoration: BoxDecoration(
+            color: Theme.of(context).cardColor,
+            borderRadius: BorderRadius.circular(18),
+            boxShadow: [
+              BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10),
+            ],
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                l10n.exploreMore,
+                style: getBoldStyle(
+                  color: Theme.of(context).colorScheme.onSurface,
+                  fontSize: 17,
+                ),
+              ),
+              const SizedBox(height: 24),
+              GridView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                padding: EdgeInsets.zero,
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 4,
+                  mainAxisSpacing: 16,
+                  crossAxisSpacing: 8,
+                  childAspectRatio: 0.85,
+                ),
+                itemCount: displayItems.length,
+                itemBuilder: (context, index) {
+                  final option = displayItems[index];
+                  return _buildExploreItem(option, selectedDevice, l10n);
+                },
+              ),
+            ],
+          ),
+        ),
+        Positioned(
+          bottom: -4, // Floats exactly on the border
+          child: InkWell(
+            onTap: () =>
+                setState(() => _isExploreExpanded = !_isExploreExpanded),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+              decoration: BoxDecoration(
+                color: Theme.of(context).cardColor,
+                border: Border.all(
+                  color: Theme.of(context).dividerColor.withOpacity(0.2),
+                ),
+                borderRadius: BorderRadius.circular(24),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.05),
+                    blurRadius: 4,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    _isExploreExpanded ? l10n.viewLess : l10n.viewMore,
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.primary,
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(width: 6),
+                  Icon(
+                    _isExploreExpanded
+                        ? Icons.keyboard_arrow_up
+                        : Icons.keyboard_arrow_down,
+                    color: Theme.of(context).colorScheme.primary,
+                    size: 18,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildExploreItem(
+    Map<String, dynamic> option,
+    Vehicles? selectedDevice,
+    AppLocalizations l10n,
+  ) {
+    return InkWell(
+      onTap: () => _handleExploreTap(option, selectedDevice, l10n),
+      child: Column(
+        children: [
+          if (option["isPlus"] == true)
+            _buildPlusBadge(l10n)
+          else
+            _buildIconWithBadge(option),
+          const SizedBox(height: 8),
+          Text(
+            option["label"] as String,
+            textAlign: TextAlign.center,
+            maxLines: 2,
+            style: getMediumStyle(
+              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+              fontSize: 10.5,
+            ),
+          ),
         ],
       ),
+    );
+  }
+
+  Widget _buildPlusBadge(AppLocalizations l10n) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 6, top: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          colors: [Color(0xFFD4AF37), Color(0xFFE1D2B0), Color(0xFFE2C275)],
+        ),
+        borderRadius: BorderRadius.circular(4),
+      ),
+      child: Text(
+        l10n.plusLabel,
+        style: const TextStyle(
+          fontWeight: FontWeight.bold,
+          fontSize: 11,
+          color: Colors.black87,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildIconWithBadge(Map<String, dynamic> option) {
+    return Stack(
+      clipBehavior: Clip.none,
+      children: [
+        Icon(
+          option["icon"] as IconData,
+          size: 26,
+          color: Theme.of(context).colorScheme.onSurface,
+        ),
+        if (option["badge"] != null)
+          Positioned(
+            top: -8,
+            right: -24,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.primary,
+                borderRadius: BorderRadius.circular(4),
+              ),
+              child: Text(
+                option["badge"] as String,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 8,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ),
+      ],
+    );
+  }
+
+  void _handleExploreTap(
+    Map<String, dynamic> option,
+    Vehicles? selectedDevice,
+    AppLocalizations l10n,
+  ) {
+    final label = option["label"];
+    if (label == l10n.recordViaPhone.replaceAll(' ', '\n')) {
+      if (selectedDevice?.imei == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("No device found"),
+            backgroundColor: Colors.red,
+          ),
+        );
+      } else {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) =>
+                RecordViaPhoneScreen(imei: selectedDevice?.imei ?? ''),
+          ),
+        );
+      }
+    } else if (label == l10n.reachMeSticker.replaceAll(' ', '\n')) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => ReachMeStickerScreen()),
+      );
+    } else if (label == l10n.locationSharing.replaceAll(' ', '\n')) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => LocationSharingScreen()),
+      );
+    } else if (label == l10n.serviceLogs.replaceAll(' ', '\n')) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const ServiceLogsScreen()),
+      );
+    } else if (label == l10n.overspeedAlert.replaceAll(' ', '\n')) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => OverSpeedAlertScreen()),
+      );
+    }
+  }
+
+  Widget _buildRecentRidesSection() {
+    return BlocBuilder<RideHistoryCubit, RideHistoryState>(
+      builder: (context, state) {
+        final l10n = AppLocalizations.of(context)!;
+        if (state is RideHistoryLoading) {
+          return const Padding(
+            padding: EdgeInsets.all(20),
+            child: Center(child: CircularProgressIndicator()),
+          );
+        }
+        if (state is RideHistoryFailure) {
+          return Padding(
+            padding: const EdgeInsets.all(16),
+            child: Center(
+              child: Column(
+                children: [
+                  Text(l10n.failedToLoadRides),
+                  TextButton(
+                    onPressed: () =>
+                        context.read<RideHistoryCubit>().getRideHistoryData(),
+                    child: Text(l10n.retry),
+                  ),
+                ],
+              ),
+            ),
+          );
+        }
+        if (state is RideHistorySuccess) {
+          if (state.rides.isEmpty) {
+            return Padding(
+              padding: const EdgeInsets.all(16),
+              child: Center(
+                child: Text(
+                  l10n.noRecentRidesFound,
+                  style: const TextStyle(color: Colors.grey),
+                ),
+              ),
+            );
+          }
+          final lastRide = state.rides.last;
+          return Container(
+            margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  l10n.previousRides,
+                  style: const TextStyle(
+                    fontSize: 17,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                RideCard(
+                  ride: lastRide,
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            RideHistoryDetailsScreen(ride: lastRide),
+                      ),
+                    );
+                  },
+                ),
+              ],
+            ),
+          );
+        }
+        return const SizedBox.shrink();
+      },
+    );
+  }
+
+  Widget _buildVideosSection() {
+    final l10n = AppLocalizations.of(context)!;
+    return Padding(
+      padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            l10n.exploreMore,
-            style: getBoldStyle(
-              color: Theme.of(context).colorScheme.onSurface,
-              fontSize: 17,
-            ),
+            l10n.videosYouMightLike,
+            style: const TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
           ),
-          const SizedBox(height: 24),
-          GridView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            padding: EdgeInsets.zero,
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 4,
-              mainAxisSpacing: 24,
-              crossAxisSpacing: 8,
-              childAspectRatio: 0.9,
-            ),
-            itemCount: options.length,
-            itemBuilder: (context, index) {
-              final option = options[index];
-              return InkWell(
-                onTap: () {
-                  if (option["label"] ==
-                      l10n.recordViaPhone.replaceAll(' ', '\n')) {
-                    if (selectedDevice?.imei == null) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text("No device found for this vehicle."),
-                          backgroundColor: Colors.red,
-                        ),
-                      );
-                      return;
-                    } else {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) => RecordViaPhoneScreen(
-                            imei: selectedDevice?.imei ?? '',
-                          ),
-                        ),
-                      );
-                    }
-                  }
-
-                  if (option["label"] ==
-                      l10n.reachMeSticker.replaceAll(' ', '\n')) {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) => ReachMeStickerScreen(),
+          const SizedBox(height: 16),
+          BlocBuilder<PromoVideoCubit, PromoVideoState>(
+            builder: (context, state) {
+              if (state is PromoVideoLoading) {
+                return const Center(child: CircularProgressIndicator());
+              }
+              if (state is PromoVideoError) {
+                return Center(
+                  child: Column(
+                    children: [
+                      Text(state.message, style: const TextStyle(color: Colors.red)),
+                      TextButton(
+                        onPressed: () => context.read<PromoVideoCubit>().fetchPromoVideos(),
+                        child: Text(l10n.retry),
                       ),
-                    );
-                  }
-                  if (option["label"] ==
-                      l10n.locationSharing.replaceAll(' ', '\n')) {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) => LocationSharingScreen(),
-                      ),
-                    );
-                  }
-
-                  if (option["label"] ==
-                      l10n.serviceLogs.replaceAll(' ', '\n')) {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) => const ServiceLogsScreen(),
-                      ),
-                    );
-                  }
-
-                  if (option["label"] ==
-                      l10n.overspeedAlert.replaceAll(' ', '\n')) {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) => OverSpeedAlertScreen(),
-                      ),
-                    );
-                  }
-                },
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
+                    ],
+                  ),
+                );
+              }
+              if (state is PromoVideoLoaded) {
+                if (state.videos.isEmpty) {
+                  return const Center(child: Text("No videos found"));
+                }
+                return Column(
                   children: [
-                    if (option["isPlus"] == true)
-                      Container(
-                        margin: const EdgeInsets.only(bottom: 6, top: 4),
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 6,
-                          vertical: 2,
-                        ),
-                        decoration: BoxDecoration(
-                          gradient: const LinearGradient(
-                            colors: [
-                              Color(0xFFD4AF37),
-                              Color(0xFFE1D2B0),
-                              Color(0xFFE2C275),
-                            ],
-                            stops: [0.0, 0.4, 1.0],
-                          ),
-                          borderRadius: BorderRadius.circular(4),
-                        ),
-                        child: Text(
-                          l10n.plusLabel,
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 12,
-                            color: Colors.black87,
-                          ),
-                        ),
-                      )
-                    else
-                      Stack(
-                        clipBehavior: Clip.none,
-                        children: [
-                          Icon(
-                            option["icon"] as IconData,
-                            size: 28,
-                            color: Theme.of(context).colorScheme.onSurface,
-                          ),
-                          if (option["badge"] != null)
-                            Positioned(
-                              top: -10,
-                              right: -36,
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 5,
-                                  vertical: 2,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: Theme.of(context).colorScheme.primary,
-                                  borderRadius: BorderRadius.circular(4),
-                                ),
-                                child: Text(
-                                  option["badge"] as String,
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 8,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ),
-                            ),
-                        ],
+                    ...state.videos.map((video) {
+                      return PromoVideoCard(video: video);
+                    }).toList(),
+                    if (state.hasMore)
+                      const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 20),
+                        child: CircularProgressIndicator(),
                       ),
-                    const SizedBox(height: 10),
-                    Text(
-                      option["label"] as String,
-                      textAlign: TextAlign.center,
-                      maxLines: 2,
-                      style: getMediumStyle(
-                        color: Theme.of(
-                          context,
-                        ).colorScheme.onSurface.withOpacity(0.7),
-                        fontSize: 11,
-                      ),
-                    ),
                   ],
-                ),
-              );
+                );
+              }
+              return const SizedBox.shrink();
             },
           ),
         ],
       ),
+    );
+  }
+
+
+  Widget _buildDraggableAppBar(List<Vehicles> vehicles) {
+    return DraggableAppBar(
+      vehicles: vehicles,
+      selectedDevice: _selectedDevice,
+      collapsedTrailing: IconButton(
+        onPressed: () => Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const NotificationListScreen(),
+          ),
+        ),
+        icon: Icon(
+          Icons.notifications_none_rounded,
+          color: Theme.of(context).colorScheme.onSurface,
+          size: 26,
+        ),
+      ),
+      expandedTrailing: IconButton(
+        onPressed: () => Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => MyGarageScreen()),
+        ),
+        icon: Icon(
+          Icons.settings,
+          color: Theme.of(context).colorScheme.onSurface,
+          size: 20,
+        ),
+      ),
+      onAddVehicle: () => Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const ChoiceSelector()),
+      ),
+      onDeviceTap: (device) async {
+        await prefs.set(key: AppPreference.IMEI, value: device.imei ?? '');
+        setState(() => _selectedDevice = device);
+        if (mounted) {
+          context.read<RideHistoryCubit>().getRideHistoryData();
+        }
+        if (_mapController != null &&
+            device.currentLocation?.lat != null &&
+            device.currentLocation?.lng != null) {
+          _mapController!.animateCamera(
+            CameraUpdate.newLatLngZoom(
+              LatLng(
+                device.currentLocation!.lat!,
+                device.currentLocation!.lng!,
+              ),
+              15,
+            ),
+          );
+        }
+      },
     );
   }
 }

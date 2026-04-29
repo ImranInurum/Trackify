@@ -9,8 +9,6 @@ import '../../domain/repository/ride_history_repository.dart';
 import '../entity/ride_history_response_model.dart';
 import '../entity/ride_model.dart';
 
-
-
 class RideHistoryRepositoryImpl implements RideHistoryRepository {
   final NetworkApiService _apiService = NetworkApiService();
 
@@ -30,11 +28,16 @@ class RideHistoryRepositoryImpl implements RideHistoryRepository {
           try {
             final historyResponse = RideHistoryResponseModel.fromJson(response);
             
-            // If the API returns a status: true and has a summary, map it to a Ride entity.
-            // For now, we take the summary as one 'Ride' entry in the list.
-            if (historyResponse.status == true && historyResponse.summary != null) {
-              final ride = Ride.fromSummary("1", historyResponse.summary!);
-              return Right([ride]);
+            if (historyResponse.status == true && historyResponse.data != null) {
+              final rides = historyResponse.data!
+                  .asMap()
+                  .entries
+                  .map((entry) => Ride.fromTripModel(
+                        entry.key.toString(),
+                        entry.value,
+                      ))
+                  .toList();
+              return Right(rides);
             }
             
             return const Right([]);
