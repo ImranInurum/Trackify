@@ -1165,4 +1165,55 @@ class AppLocalizationsKn extends AppLocalizations {
 
   @override
   String get kmHr => 'ಕಿಮೀ/ಗಂ';
+
+  @override
+  String get warranty_title => 'ಡಿವೈಸ್ ವಾರಂಟಿ';
+
+  @override
+  String get warranty_extend =>
+      'ನಿಮ್ಮ Trackify Lite ಗೆ 1 ವರ್ಷದ ವಾರಂಟಿಯನ್ನು ₹1/ದಿನಕ್ಕೆ ವಿಸ್ತರಿಸಿ';
+
+  @override
+  String get warranty_vehicle => 'ವಾಹನ';
+
+  @override
+  String get warranty_expiry => 'ವಾರಂಟಿ ಮುಕ್ತಾಯ ದಿನಾಂಕ';
+
+  @override
+  String warranty_daysLeft(Object days) {
+    return '$days ದಿನಗಳು ಬಾಕಿ';
+  }
+
+  @override
+  String get warranty_benefitsTitle => 'ನೀವು ತಪ್ಪಿಸಿಕೊಳ್ಳಬಾರದ ಪ್ರಯೋಜನಗಳು';
+
+  @override
+  String get benefit1_highlight => 'ಖಚಿತ ಬದಲಾವಣೆ ';
+
+  @override
+  String get benefit1_normal => 'ದೋಷ ಉಂಟಾದರೆ';
+
+  @override
+  String get benefit2_highlight => '₹1200 ವರೆಗೆ ಉಳಿಸಿ ';
+
+  @override
+  String get benefit2_normal => 'ಡಿವೈಸ್ ರಿಪೇರಿ ಮೇಲೆ';
+
+  @override
+  String get benefit3_highlight => 'ತಕ್ಷಣದ ಸಹಾಯ ';
+
+  @override
+  String get benefit3_normal => 'ಡಿವೈಸ್ ಸಮಸ್ಯೆಗಳಿಗಾಗಿ';
+
+  @override
+  String get benefit4_highlight => '₹2000 ವರೆಗೆ ಉಚಿತ ವಿಸ್ತರಿತ ಚಂದಾದಾರಿಕೆ ';
+
+  @override
+  String get benefit4_normal => 'ದೋಷ ಅವಧಿಗೆ';
+
+  @override
+  String get warranty_button => 'ಈಗ ವಾರಂಟಿಯನ್ನು ವಿಸ್ತರಿಸಿ @ ₹365 ';
+
+  @override
+  String get warranty_button_old => '₹730';
 }

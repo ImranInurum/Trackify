@@ -39,4 +39,7 @@ class AppImages {
 
   static const String roadImage = "$images/road.jpg";
 
+  static const String revolve = "$images/revolve.jpg";
+
+
 }
