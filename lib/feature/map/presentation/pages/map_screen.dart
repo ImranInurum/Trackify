@@ -877,7 +877,7 @@ class _MapScreenState extends State<MapScreen> {
               ),
             );
           }
-          final lastRide = state.rides.first;
+          final lastRide = state.rides.last;
           return Container(
             margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: Column(
