@@ -15,37 +15,43 @@ class RecordViaPhoneCubit extends Cubit<RecordViaPhoneState> {
   RecordViaPhoneCubit(this._recordViaPhoneUseCase) : super(const MapInitial());
 
   void startRecording() {
-    emit(MapRecordingUpdate(
-      isRecording: true,
-      currentRidePoints: const [],
-      rideDuration: Duration.zero,
-      rideDistance: 0.0,
-      currentSpeed: 0.0,
-    ));
+    emit(
+      MapRecordingUpdate(
+        isRecording: true,
+        currentRidePoints: const [],
+        rideDuration: Duration.zero,
+        rideDistance: 0.0,
+        currentSpeed: 0.0,
+      ),
+    );
 
     _rideTimer?.cancel();
     _rideTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (state.isRecording) {
-        emit(MapRecordingUpdate(
-          isRecording: true,
-          currentRidePoints: state.currentRidePoints,
-          rideDuration: state.rideDuration + const Duration(seconds: 1),
-          rideDistance: state.rideDistance,
-          currentSpeed: state.currentSpeed,
-        ));
+        emit(
+          MapRecordingUpdate(
+            isRecording: true,
+            currentRidePoints: state.currentRidePoints,
+            rideDuration: state.rideDuration + const Duration(seconds: 1),
+            rideDistance: state.rideDistance,
+            currentSpeed: state.currentSpeed,
+          ),
+        );
       }
     });
   }
 
   void stopRecording() {
     _rideTimer?.cancel();
-    emit(MapRecordingUpdate(
-      isRecording: false,
-      currentRidePoints: state.currentRidePoints,
-      rideDuration: state.rideDuration,
-      rideDistance: state.rideDistance,
-      currentSpeed: 0.0,
-    ));
+    emit(
+      MapRecordingUpdate(
+        isRecording: false,
+        currentRidePoints: state.currentRidePoints,
+        rideDuration: state.rideDuration,
+        rideDistance: state.rideDistance,
+        currentSpeed: 0.0,
+      ),
+    );
     // Here you could also save the ride to a database or API
   }
 
@@ -54,7 +60,7 @@ class RecordViaPhoneCubit extends Cubit<RecordViaPhoneState> {
 
     final List<LatLng> updatedPoints = List.from(state.currentRidePoints);
     final LatLng newPoint = LatLng(position.latitude, position.longitude);
-    
+
     double addedDistance = 0.0;
     if (updatedPoints.isNotEmpty) {
       final lastPoint = updatedPoints.last;
@@ -65,16 +71,19 @@ class RecordViaPhoneCubit extends Cubit<RecordViaPhoneState> {
         newPoint.longitude,
       );
     }
-    
+
     updatedPoints.add(newPoint);
 
-    emit(MapRecordingUpdate(
-      isRecording: true,
-      currentRidePoints: updatedPoints,
-      rideDuration: state.rideDuration,
-      rideDistance: state.rideDistance + (addedDistance / 1000), // Convert to km
-      currentSpeed: position.speed * 3.6, // m/s to km/h
-    ));
+    emit(
+      MapRecordingUpdate(
+        isRecording: true,
+        currentRidePoints: updatedPoints,
+        rideDuration: state.rideDuration,
+        rideDistance:
+            state.rideDistance + (addedDistance / 1000), // Convert to km
+        currentSpeed: position.speed * 3.6, // m/s to km/h
+      ),
+    );
   }
 
   Future<void> fetchDeviceDataByDate({
@@ -84,26 +93,30 @@ class RecordViaPhoneCubit extends Cubit<RecordViaPhoneState> {
   }) async {
     final body = {"imei": imei, "start_date": startDate, "end_date": endDate};
     LoadingScreenOL().show();
-    emit(MapLoading(
-      isRecording: state.isRecording,
-      currentRidePoints: state.currentRidePoints,
-      rideDuration: state.rideDuration,
-      rideDistance: state.rideDistance,
-      currentSpeed: state.currentSpeed,
-    ));
+    emit(
+      MapLoading(
+        isRecording: state.isRecording,
+        currentRidePoints: state.currentRidePoints,
+        rideDuration: state.rideDuration,
+        rideDistance: state.rideDistance,
+        currentSpeed: state.currentSpeed,
+      ),
+    );
 
     final result = await _recordViaPhoneUseCase.fetchDeviceDataByDate(body);
 
     result.fold(
       (failure) {
-        emit(MapError(
-          failure.message ?? "",
-          isRecording: state.isRecording,
-          currentRidePoints: state.currentRidePoints,
-          rideDuration: state.rideDuration,
-          rideDistance: state.rideDistance,
-          currentSpeed: state.currentSpeed,
-        ));
+        emit(
+          MapError(
+            failure.message ?? "",
+            isRecording: state.isRecording,
+            currentRidePoints: state.currentRidePoints,
+            rideDuration: state.rideDuration,
+            rideDistance: state.rideDistance,
+            currentSpeed: state.currentSpeed,
+          ),
+        );
         LoadingScreenOL().hide();
       },
       (deviceDataByDate) {
@@ -129,7 +142,7 @@ class RecordViaPhoneCubit extends Cubit<RecordViaPhoneState> {
 
           points.add(LatLng(finalLat, finalLng));
         }
-      print("points for the selected date range.${points.length} ");
+        print("points for the selected date range.${points.length} ");
         final Set<Polyline> polylines = {
           Polyline(
             polylineId: const PolylineId("ride_path"),
@@ -139,15 +152,17 @@ class RecordViaPhoneCubit extends Cubit<RecordViaPhoneState> {
           ),
         };
 
-        emit(MapDataByDateLoaded(
-          data: list,
-          polylines: polylines,
-          isRecording: state.isRecording,
-          currentRidePoints: state.currentRidePoints,
-          rideDuration: state.rideDuration,
-          rideDistance: state.rideDistance,
-          currentSpeed: state.currentSpeed,
-        ));
+        emit(
+          MapDataByDateLoaded(
+            data: list,
+            polylines: polylines,
+            isRecording: state.isRecording,
+            currentRidePoints: state.currentRidePoints,
+            rideDuration: state.rideDuration,
+            rideDistance: state.rideDistance,
+            currentSpeed: state.currentSpeed,
+          ),
+        );
         LoadingScreenOL().hide();
       },
     );

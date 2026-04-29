@@ -14,11 +14,12 @@ class PromoVideoLoading extends PromoVideoState {}
 
 class PromoVideoLoaded extends PromoVideoState {
   final List<PromoVideoModel> videos;
+  final bool hasMore;
 
-  const PromoVideoLoaded(this.videos);
+  const PromoVideoLoaded({required this.videos, this.hasMore = false});
 
   @override
-  List<Object> get props => [videos];
+  List<Object> get props => [videos, hasMore];
 }
 
 class PromoVideoError extends PromoVideoState {

@@ -169,19 +169,27 @@ class _MapScreenState extends State<MapScreen> {
               body: Stack(
                 children: [
                   Positioned.fill(
-                    child: SingleChildScrollView(
-                      controller: _scrollController,
-                      physics: const BouncingScrollPhysics(),
-                      child: Column(
-                        children: [
-                          SizedBox(height: topSpacing),
-                          _buildMapSection(),
-                          _buildPromoBanner(),
-                          _buildExploreMore(_selectedDevice),
-                          _buildRecentRidesSection(), // Actual RideCard here
-                          _buildVideosSection(), // Vertical videos
-                          const SizedBox(height: 100),
-                        ],
+                    child: NotificationListener<ScrollNotification>(
+                      onNotification: (ScrollNotification scrollInfo) {
+                        if (scrollInfo.metrics.pixels >= scrollInfo.metrics.maxScrollExtent - 50) {
+                          context.read<PromoVideoCubit>().loadMoreVideos();
+                        }
+                        return false;
+                      },
+                      child: SingleChildScrollView(
+                        controller: _scrollController,
+                        physics: const BouncingScrollPhysics(),
+                        child: Column(
+                          children: [
+                            SizedBox(height: topSpacing),
+                            _buildMapSection(),
+                            _buildPromoBanner(),
+                            _buildExploreMore(_selectedDevice),
+                            _buildRecentRidesSection(), // Actual RideCard here
+                            _buildVideosSection(), // Vertical videos
+                            const SizedBox(height: 100),
+                          ],
+                        ),
                       ),
                     ),
                   ),
@@ -939,9 +947,16 @@ class _MapScreenState extends State<MapScreen> {
                   return const Center(child: Text("No videos found"));
                 }
                 return Column(
-                  children: state.videos.map((video) {
-                    return PromoVideoCard(video: video);
-                  }).toList(),
+                  children: [
+                    ...state.videos.map((video) {
+                      return PromoVideoCard(video: video);
+                    }).toList(),
+                    if (state.hasMore)
+                      const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 20),
+                        child: CircularProgressIndicator(),
+                      ),
+                  ],
                 );
               }
               return const SizedBox.shrink();

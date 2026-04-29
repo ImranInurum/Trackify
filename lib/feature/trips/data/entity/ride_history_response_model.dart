@@ -45,9 +45,13 @@ class RideTripModel {
             )
           : null,
       count: json['count'] as int?,
-      points: ((json['data'] ?? json['points'] ?? json['history'] ?? json['route']) as List<dynamic>?)
-          ?.map((e) => RideDataPointModel.fromJson(e as Map<String, dynamic>))
-          .toList(),
+      points:
+          ((json['data'] ?? json['points'] ?? json['history'] ?? json['route'])
+                  as List<dynamic>?)
+              ?.map(
+                (e) => RideDataPointModel.fromJson(e as Map<String, dynamic>),
+              )
+              .toList(),
       encodedPolyline: json['encodedPolyline'] as String?,
     );
   }
