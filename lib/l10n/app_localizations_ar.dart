@@ -1179,4 +1179,51 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get hrMin => 'ساعة:دقيقة';
+
+  @override
+  String get vehicleLabel => 'المركبة';
+
+  @override
+  String get switchLabel => 'تبديل';
+
+  @override
+  String get expiryDate => 'تاريخ الانتهاء';
+
+  @override
+  String get rechargePlans => 'خطط إعادة الشحن';
+
+  @override
+  String get superComboPlan => 'الخطة الشاملة المميزة';
+
+  @override
+  String get month12Validity => 'صلاحية 12 شهرًا';
+
+  @override
+  String get month6Validity => 'صلاحية 6 أشهر';
+
+  @override
+  String saveAmount(Object amount) {
+    return 'وفر ₹$amount مع هذه الخطة';
+  }
+
+  @override
+  String get superComboPopularity => '95٪ من المستخدمين يختارون الخطة الشاملة';
+
+  @override
+  String get appSimRecharge => 'إعادة شحن التطبيق وSIM';
+
+  @override
+  String get extendedWarranty => 'ضمان ممتد';
+
+  @override
+  String get plusMembership => 'عضوية بلس';
+
+  @override
+  String get continueSuperCombo => 'المتابعة مع الخطة الشاملة';
+
+  @override
+  String get continue12Month => 'المتابعة مع خطة 12 شهرًا';
+
+  @override
+  String get continue6Month => 'المتابعة مع خطة 6 أشهر';
 }

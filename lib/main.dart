@@ -34,6 +34,7 @@ import 'feature/add_vehicle_and_device/add_vehicle/presentation/cubit/add_vehicl
 import 'feature/auth/data/repository/auth_repository_impl.dart';
 import 'feature/auth/domain/usecase/auth_case.dart';
 import 'feature/auth/presentation/cubit/auth_cubit.dart';
+import 'feature/device_data/presentation/cubit/device_data_cubit.dart';
 import 'feature/onboarding/data/repositories/splash_repository_impl.dart';
 import 'feature/onboarding/domain/usecases/get_logo_usecase.dart';
 import 'feature/onboarding/presentation/cubit/splash_cubit.dart';
@@ -133,5 +134,9 @@ List<BlocProvider> _buildBlocProviders() {
         getUserVehiclesUsecase: GetUserVehiclesUsecase(CommonRepositoryImpl()),
       ),
     ),
+    BlocProvider<DeviceDataCubit>(
+      create: (_) => DeviceDataCubit(),
+    ),
+
   ];
 }

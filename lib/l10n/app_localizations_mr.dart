@@ -1162,29 +1162,76 @@ class AppLocalizationsMr extends AppLocalizations {
   String get kmHr => 'किमी/तास';
 
   @override
-  String get viewMore => 'आणखी पहा';
+  String get viewMore => 'View more';
 
   @override
-  String get viewLess => 'कमी पहा';
+  String get viewLess => 'View less';
 
   @override
-  String get previousRides => 'मागील प्रवास';
+  String get previousRides => 'Previous Rides';
 
   @override
-  String get seeAll => 'सर्व पहा';
+  String get seeAll => 'See All';
 
   @override
-  String get videosYouMightLike => 'तुम्हाला आवडतील असे व्हिडिओ';
+  String get videosYouMightLike => 'Videos You Might Like';
 
   @override
-  String get scrollToTop => 'वर जा';
+  String get scrollToTop => 'Scroll to Top';
 
   @override
-  String get noRecentRidesFound => 'कोणताही अलीकडील प्रवास सापडला नाही';
+  String get noRecentRidesFound => 'No recent rides found';
 
   @override
-  String get failedToLoadRides => 'प्रवास लोड करण्यात अयशस्वी';
+  String get failedToLoadRides => 'Failed to load rides';
 
   @override
-  String get hrMin => 'तास:मिनट';
+  String get hrMin => 'hr:min';
+
+  @override
+  String get vehicleLabel => 'Vehicle';
+
+  @override
+  String get switchLabel => 'Switch';
+
+  @override
+  String get expiryDate => 'Expiry Date';
+
+  @override
+  String get rechargePlans => 'Recharge Plans';
+
+  @override
+  String get superComboPlan => 'Super Combo Plan';
+
+  @override
+  String get month12Validity => '12-Month Validity';
+
+  @override
+  String get month6Validity => '6-Month Validity';
+
+  @override
+  String saveAmount(Object amount) {
+    return 'Save ₹$amount with this plan';
+  }
+
+  @override
+  String get superComboPopularity => '95% of users choose the Super Combo Plan';
+
+  @override
+  String get appSimRecharge => 'App & SIM Recharge';
+
+  @override
+  String get extendedWarranty => 'Extended Warranty';
+
+  @override
+  String get plusMembership => 'Plus Membership';
+
+  @override
+  String get continueSuperCombo => 'Continue with Super Combo Plan';
+
+  @override
+  String get continue12Month => 'Continue with 12-Month Plan';
+
+  @override
+  String get continue6Month => 'Continue with 6-Month Plan';
 }

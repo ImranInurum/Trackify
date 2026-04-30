@@ -461,5 +461,34 @@
   "scrollToTop": "العودة إلى الأعلى",
   "noRecentRidesFound": "لم يتم العثور على رحلات حديثة",
   "failedToLoadRides": "فشل في تحميل الرحلات",
-  "hrMin": "ساعة:دقيقة"
+  "hrMin": "ساعة:دقيقة",
+   "safetyScore": "درجة السلامة",
+      "vehicleLabel": "المركبة",
+      "switchLabel": "تبديل",
+
+      "expiryDate": "تاريخ الانتهاء",
+      "rechargePlans": "خطط إعادة الشحن",
+
+      "superComboPlan": "الخطة الشاملة المميزة",
+
+      "month12Validity": "صلاحية 12 شهرًا",
+      "month6Validity": "صلاحية 6 أشهر",
+
+      "saveAmount": "وفر ₹{amount} مع هذه الخطة",
+      "@saveAmount": {
+        "placeholders": {
+          "amount": {}
+        }
+      },
+
+      "superComboPopularity": "95٪ من المستخدمين يختارون الخطة الشاملة",
+
+      "appSimRecharge": "إعادة شحن التطبيق وSIM",
+      "extendedWarranty": "ضمان ممتد",
+      "plusMembership": "عضوية بلس",
+
+      "continueSuperCombo": "المتابعة مع الخطة الشاملة",
+      "continue12Month": "المتابعة مع خطة 12 شهرًا",
+      "continue6Month": "المتابعة مع خطة 6 أشهر"
+
 }

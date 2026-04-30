@@ -472,5 +472,34 @@
   "scrollToTop": "ಮೇಲಕ್ಕೆ ಹೋಗಿ",
   "noRecentRidesFound": "ಯಾವುದೇ ಇತ್ತೀಚಿನ ಸವಾರಿಗಳು ಕಂಡುಬಂದಿಲ್ಲ",
   "failedToLoadRides": "ಸವಾರಿಗಳನ್ನು ಲೋಡ್ ಮಾಡಲು ವಿಫಲವಾಗಿದೆ",
-  "hrMin": "ಗಂಟೆ:ನಿಮಿಷ"
+  "hrMin": "ಗಂಟೆ:ನಿಮಿಷ",
+  "safetyScore": "ಸುರಕ್ಷತಾ ಅಂಕ",
+  "vehicleLabel": "ವಾಹನ",
+  "switchLabel": "ಬದಲಿಸಿ",
+
+  "expiryDate": "ಅವಧಿ ಮುಗಿಯುವ ದಿನಾಂಕ",
+  "rechargePlans": "ರೀಚಾರ್ಜ್ ಯೋಜನೆಗಳು",
+
+  "superComboPlan": "ಸೂಪರ್ ಕಾಂಬೋ ಯೋಜನೆ",
+
+  "month12Validity": "12 ತಿಂಗಳ ಮಾನ್ಯತೆ",
+  "month6Validity": "6 ತಿಂಗಳ ಮಾನ್ಯತೆ",
+
+  "saveAmount": "ಈ ಯೋಜನೆಯೊಂದಿಗೆ ₹{amount} ಉಳಿಸಿ",
+  "@saveAmount": {
+    "placeholders": {
+      "amount": {}
+    }
+  },
+
+  "superComboPopularity": "95% ಬಳಕೆದಾರರು ಸೂಪರ್ ಕಾಂಬೋ ಯೋಜನೆಯನ್ನು ಆಯ್ಕೆ ಮಾಡುತ್ತಾರೆ",
+
+  "appSimRecharge": "ಆಪ್ ಮತ್ತು ಸಿಮ್ ರೀಚಾರ್ಜ್",
+  "extendedWarranty": "ವಿಸ್ತರಿತ ವಾರಂಟಿ",
+  "plusMembership": "ಪ್ಲಸ್ ಸದಸ್ಯತ್ವ",
+
+  "continueSuperCombo": "ಸೂಪರ್ ಕಾಂಬೋ ಯೋಜನೆಯೊಂದಿಗೆ ಮುಂದುವರಿಸಿ",
+  "continue12Month": "12 ತಿಂಗಳ ಯೋಜನೆಯೊಂದಿಗೆ ಮುಂದುವರಿಸಿ",
+  "continue6Month": "6 ತಿಂಗಳ ಯೋಜನೆಯೊಂದಿಗೆ ಮುಂದುವರಿಸಿ"
+
 }

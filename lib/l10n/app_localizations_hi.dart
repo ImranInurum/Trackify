@@ -1188,4 +1188,52 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get hrMin => 'घंटा:मिनट';
+
+  @override
+  String get vehicleLabel => 'वाहन';
+
+  @override
+  String get switchLabel => 'स्विच';
+
+  @override
+  String get expiryDate => 'समाप्ति तिथि';
+
+  @override
+  String get rechargePlans => 'रिचार्ज प्लान';
+
+  @override
+  String get superComboPlan => 'सुपर कॉम्बो प्लान';
+
+  @override
+  String get month12Validity => '12 महीने की वैधता';
+
+  @override
+  String get month6Validity => '6 महीने की वैधता';
+
+  @override
+  String saveAmount(Object amount) {
+    return 'इस प्लान के साथ ₹$amount बचाएं';
+  }
+
+  @override
+  String get superComboPopularity =>
+      '95% उपयोगकर्ता सुपर कॉम्बो प्लान चुनते हैं';
+
+  @override
+  String get appSimRecharge => 'ऐप और सिम रिचार्ज';
+
+  @override
+  String get extendedWarranty => 'विस्तारित वारंटी';
+
+  @override
+  String get plusMembership => 'प्लस सदस्यता';
+
+  @override
+  String get continueSuperCombo => 'सुपर कॉम्बो प्लान के साथ जारी रखें';
+
+  @override
+  String get continue12Month => '12 महीने के प्लान के साथ जारी रखें';
+
+  @override
+  String get continue6Month => '6 महीने के प्लान के साथ जारी रखें';
 }
