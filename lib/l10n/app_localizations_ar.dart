@@ -33,7 +33,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get passwordRequired => 'كلمة المرور مطلوبة';
 
   @override
-  String get invalidEmail => 'يرجى إدخال عنوان بريد إلكتروني صحيح';
+  String get invalidEmail => 'يرجى إدخال بريد إلكتروني صحيح';
 
   @override
   String get forgotPassword => 'هل نسيت كلمة المرور؟';
@@ -132,6 +132,9 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get signUpFailed => 'فشل إنشاء الحساب';
+
+  @override
+  String get alreadyHaveAccount => 'هل لديك حساب بالفعل؟';
 
   @override
   String get otpSent => 'تم إرسال الرمز بنجاح';
@@ -465,9 +468,6 @@ class AppLocalizationsAr extends AppLocalizations {
   String get logout => 'تسجيل الخروج';
 
   @override
-  String get alreadyHaveAccount => 'هل لديك حساب بالفعل؟';
-
-  @override
   String get dataPlan => 'خطة البيانات';
 
   @override
@@ -513,7 +513,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get getMoreOutOfAjjas => 'استفد أكثر من Ajjas';
 
   @override
-  String featuresExploredCount(Object count, Object total) {
+  String featuresExploredCount(String count, String total) {
     return 'لقد استكشفت $count من $total ميزات - واصل!';
   }
 
@@ -723,55 +723,55 @@ class AppLocalizationsAr extends AppLocalizations {
   String get sharedRides => 'الرحلات المشتركة';
 
   @override
-  String get savedRides => 'Saved Rides';
+  String get savedRides => 'الرحلات المحفوظة';
 
   @override
-  String get allRides => 'ALL RIDES';
+  String get allRides => 'كل الرحلات';
 
   @override
-  String get trips => 'TRIPS';
+  String get trips => 'الرحلات';
 
   @override
   String clicked(String value) {
-    return '$value Clicked';
+    return 'تم النقر $value';
   }
 
   @override
-  String get noDailyRides => 'No daily rides to show';
+  String get noDailyRides => 'لا توجد رحلات يومية للعرض';
 
   @override
-  String get getStartedFirstRide => 'Get started by taking your first ride';
+  String get getStartedFirstRide => 'ابدأ برحلتك الأولى';
 
   @override
-  String get durationLabel => 'Duration';
+  String get durationLabel => 'المدة';
 
   @override
-  String get km => 'km';
+  String get km => 'كم';
 
   @override
-  String get kmh => 'km/h';
+  String get kmh => 'كم/ساعة';
 
   @override
   String get tripEmptyQuote =>
-      '“Group your rides into trips, add memories, and relive the journey”';
+      '“جمّع رحلاتك في رحلة واحدة، أضف ذكريات، وأعِد تجربة الرحلة”';
 
   @override
   String ridesCompletedCount(String completed, String total) {
-    return 'Rides completed: $completed/$total';
+    return 'الرحلات المكتملة: $completed/$total';
   }
 
   @override
   String get unlockTripsRequirement =>
-      'You need at least 3 rides to unlock trips';
+      'تحتاج إلى 3 رحلات على الأقل لفتح الرحلات';
 
   @override
-  String get createNewTrip => 'Create a New Trip';
+  String get createNewTrip => 'إنشاء رحلة جديدة';
 
   @override
-  String get startByCreatingTrip => 'Start by creating a New Trip';
+  String get startByCreatingTrip => 'ابدأ بإنشاء رحلة جديدة';
 
   @override
-  String get skip => 'Skip';
+  String get skip => 'تخطي';
 
   @override
   String get todayText => 'اليوم';
@@ -1123,86 +1123,34 @@ class AppLocalizationsAr extends AppLocalizations {
   String get safetyScore => 'درجة السلامة';
 
   @override
-  String get speedAlertInput => 'Speed alert input';
+  String get speedAlertInput => 'إدخال تنبيه السرعة';
 
   @override
-  String get alertTitle => 'Alert title';
+  String get alertTitle => 'عنوان التنبيه';
 
   @override
-  String get speedLimitKmH => 'Speed limit (km/h)';
+  String get speedLimitKmH => 'حد السرعة (كم/ساعة)';
 
   @override
-  String get timeDurationSec => 'Time Duration (sec)';
+  String get timeDurationSec => 'المدة الزمنية (ثانية)';
 
   @override
-  String get selectYourVehicle => 'Select your vehicle';
+  String get selectYourVehicle => 'اختر مركبتك';
 
   @override
-  String get submit => 'Submit';
+  String get submit => 'إرسال';
 
   @override
   String get selectVehiclesOverspeedAlert =>
-      'Select vehicles on which to add overspeed alert';
+      'اختر المركبات التي تريد إضافة تنبيه السرعة الزائدة عليها';
 
   @override
-  String get selected => 'Selected';
+  String get selected => 'محدد';
 
   @override
-  String get sec => 'sec';
+  String get sec => 'ثانية';
 
   @override
-  String get kmHr => 'km/hr';
-
-  @override
-  String get warranty_title => 'ضمان الجهاز';
-
-  @override
-  String get warranty_extend =>
-      'قم بتمديد ضمان Trackify Lite لمدة سنة واحدة مقابل ₹1/يوم';
-
-  @override
-  String get warranty_vehicle => 'المركبة';
-
-  @override
-  String get warranty_expiry => 'تاريخ انتهاء الضمان';
-
-  @override
-  String warranty_daysLeft(Object days) {
-    return 'متبقي $days يوم';
-  }
-
-  @override
-  String get warranty_benefitsTitle => 'तुम्ही चुकवू नये असे फायदे';
-
-  @override
-  String get benefit1_highlight => 'استبدال مضمون ';
-
-  @override
-  String get benefit1_normal => 'في حال حدوث عطل';
-
-  @override
-  String get benefit2_highlight => 'وفّر حتى ₹1200 ';
-
-  @override
-  String get benefit2_normal => 'على إصلاح الجهاز';
-
-  @override
-  String get benefit3_highlight => 'دعم فوري ';
-
-  @override
-  String get benefit3_normal => 'لمشاكل الجهاز';
-
-  @override
-  String get benefit4_highlight => 'اشتراك ممتد مجاني حتى ₹2000 ';
-
-  @override
-  String get benefit4_normal => 'خلال فترة العطل';
-
-  @override
-  String get warranty_button => 'مدد الضمان الآن مقابل ₹365 ';
-
-  @override
-  String get warranty_button_old => '₹730';
   String get viewMore => 'عرض المزيد';
 
   @override
@@ -1230,6 +1178,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get hrMin => 'ساعة:دقيقة';
 
   @override
+  String get kmHr => 'كم/ساعة';
+
+  @override
   String get warranty_title => 'ضمان الجهاز';
 
   @override
@@ -1243,12 +1194,12 @@ class AppLocalizationsAr extends AppLocalizations {
   String get warranty_expiry => 'تاريخ انتهاء الضمان';
 
   @override
-  String warranty_daysLeft(Object days) {
+  String warranty_daysLeft(String days) {
     return 'متبقي $days يوم';
   }
 
   @override
-  String get warranty_benefitsTitle => 'तुम्ही चुकवू नये असे फायदे';
+  String get warranty_benefitsTitle => 'مزايا لا تريد أن تفوتها';
 
   @override
   String get benefit1_highlight => 'استبدال مضمون ';

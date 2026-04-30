@@ -204,6 +204,16 @@
   "upgradeToPlus": "ಅಜ್ಜಾಸ್ ಪ್ಲಸ್‌ಗೆ ಅಪ್‌ಗ್ರೇಡ್ ಮಾಡಿ",
   "getMoreOutOfAjjas": "ಅಜ್ಜಾಸ್‌ನಿಂದ ಹೆಚ್ಚಿನ ಪ್ರಯೋಜನ ಪಡೆಯಿರಿ",
   "featuresExploredCount": "ನೀವು {total} ರಲ್ಲಿ {count} ವೈಶಿಷ್ಟ್ಯಗಳನ್ನು ಅನ್ವೇಷಿಸಿದ್ದೀರಿ",
+  "@featuresExploredCount": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      },
+      "total": {
+        "type": "String"
+      }
+    }
+  },
   "manageVehiclesDesc": "ಎಲ್ಲಾ ವಾಹನಗಳನ್ನು ಇಲ್ಲಿ ನಿರ್ವಹಿಸಿ",
   "settingsDesc": "ಭಾಷೆ, ಖಾತೆ ಸೆಟ್ಟಿಂಗ್‌ಗಳು ಮತ್ತು ಇನ್ನಷ್ಟು",
   "notifications": "ಅಧಿಸೂಚನೆಗಳು",
@@ -276,10 +286,10 @@
   "assigningDevice": "ಸಾಧನವನ್ನು ನಿಯೋಜಿಸಲಾಗುತ್ತಿದೆ...",
   "invalidImeiError": "ದಯವಿಟ್ಟು ಮಾನ್ಯವಾದ 15-ಅಂಕಿಯ IMEI ಸಂಖ್ಯೆಯನ್ನು ನಮೂದಿಸಿ",
   "sharedRides": "ಸಹಭಾಗಿತ್ವದ ರೈಡ್‌ಗಳು",
-  "savedRides": "Saved Rides",
-  "allRides": "ALL RIDES",
-  "trips": "TRIPS",
-  "clicked": "{value} Clicked",
+  "savedRides": "ಉಳಿಸಿದ ರೈಡ್‌ಗಳು",
+  "allRides": "ಎಲ್ಲಾ ರೈಡ್‌ಗಳು",
+  "trips": "ಟ್ರಿಪ್‌ಗಳು",
+  "clicked": "{value} ಕ್ಲಿಕ್ ಮಾಡಲಾಗಿದೆ",
   "@clicked": {
     "placeholders": {
       "value": {
@@ -287,13 +297,13 @@
       }
     }
   },
-  "noDailyRides": "No daily rides to show",
-  "getStartedFirstRide": "Get started by taking your first ride",
-  "durationLabel": "Duration",
-  "km": "km",
-  "kmh": "km/h",
-  "tripEmptyQuote": "“Group your rides into trips, add memories, and relive the journey”",
-  "ridesCompletedCount": "Rides completed: {completed}/{total}",
+  "noDailyRides": "ತೋರಿಸಲು ದೈನಂದಿನ ರೈಡ್‌ಗಳಿಲ್ಲ",
+  "getStartedFirstRide": "ನಿಮ್ಮ ಮೊದಲ ರೈಡ್ ತೆಗೆದುಕೊಂಡು ಪ್ರಾರಂಭಿಸಿ",
+  "durationLabel": "ಅವಧಿ",
+  "km": "ಕಿಮೀ",
+  "kmh": "ಕಿಮೀ/ಗಂ",
+  "tripEmptyQuote": "\u201cನಿಮ್ಮ ರೈಡ್‌ಗಳನ್ನು ಟ್ರಿಪ್‌ಗಳಲ್ಲಿ ಗುಂಪುಮಾಡಿ, ನೆನಪುಗಳನ್ನು ಸೇರಿಸಿ ಮತ್ತು ಪ್ರಯಾಣವನ್ನು ಮತ್ತೆ ಅನುಭವಿಸಿ\u201d",
+  "ridesCompletedCount": "ಪೂರ್ಣಗೊಂಡ ರೈಡ್‌ಗಳು: {completed}/{total}",
   "@ridesCompletedCount": {
     "placeholders": {
       "completed": {
@@ -304,10 +314,10 @@
       }
     }
   },
-  "unlockTripsRequirement": "You need at least 3 rides to unlock trips",
-  "createNewTrip": "Create a New Trip",
-  "startByCreatingTrip": "Start by creating a New Trip",
-  "skip": "Skip",
+  "unlockTripsRequirement": "ಟ್ರಿಪ್‌ಗಳನ್ನು ಅನ್‌ಲಾಕ್ ಮಾಡಲು ನಿಮಗೆ ಕನಿಷ್ಠ 3 ರೈಡ್‌ಗಳು ಬೇಕು",
+  "createNewTrip": "ಹೊಸ ಟ್ರಿಪ್ ರಚಿಸಿ",
+  "startByCreatingTrip": "ಹೊಸ ಟ್ರಿಪ್ ರಚಿಸುವ ಮೂಲಕ ಪ್ರಾರಂಭಿಸಿ",
+  "skip": "ಸ್ಕಿಪ್",
   "todayText": "ಇಂದು",
   "distanceLabel": "ದೂರ",
   "rideDuration": "ರೈಡ್ ಅವಧಿ",
@@ -460,38 +470,8 @@
   "selectYourVehicle": "ನಿಮ್ಮ ವಾಹನವನ್ನು ಆಯ್ಕೆಮಾಡಿ",
   "submit": "ಸಲ್ಲಿಸು",
   "selectVehiclesOverspeedAlert": "ಅತಿವೇಗದ ಎಚ್ಚರಿಕೆಯನ್ನು ಸೇರಿಸಲು ವಾಹನಗಳನ್ನು ಆಯ್ಕೆಮಾಡಿ",
-  "close": "ಮುಚ್ಚಿ",
   "selected": "ಆಯ್ಕೆಮಾಡಲಾಗಿದೆ",
   "sec": "ಸೆಕೆಂಡು",
-  "kmHr": "ಕಿಮೀ/ಗಂ",
-
-   "warranty_title": "ಡಿವೈಸ್ ವಾರಂಟಿ",
-    "warranty_extend": "ನಿಮ್ಮ Trackify Lite ಗೆ 1 ವರ್ಷದ ವಾರಂಟಿಯನ್ನು ₹1/ದಿನಕ್ಕೆ ವಿಸ್ತರಿಸಿ",
-    "warranty_vehicle": "ವಾಹನ",
-    "warranty_expiry": "ವಾರಂಟಿ ಮುಕ್ತಾಯ ದಿನಾಂಕ",
-    "warranty_daysLeft": "{days} ದಿನಗಳು ಬಾಕಿ",
-
-    "warranty_benefitsTitle": "ನೀವು ತಪ್ಪಿಸಿಕೊಳ್ಳಬಾರದ ಪ್ರಯೋಜನಗಳು",
-
-
-
-     "benefit1_highlight": "ಖಚಿತ ಬದಲಾವಣೆ ",
-     "benefit1_normal": "ದೋಷ ಉಂಟಾದರೆ",
-
-     "benefit2_highlight": "₹1200 ವರೆಗೆ ಉಳಿಸಿ ",
-     "benefit2_normal": "ಡಿವೈಸ್ ರಿಪೇರಿ ಮೇಲೆ",
-
-     "benefit3_highlight": "ತಕ್ಷಣದ ಸಹಾಯ ",
-     "benefit3_normal": "ಡಿವೈಸ್ ಸಮಸ್ಯೆಗಳಿಗಾಗಿ",
-
-     "benefit4_highlight": "₹2000 ವರೆಗೆ ಉಚಿತ ವಿಸ್ತರಿತ ಚಂದಾದಾರಿಕೆ ",
-     "benefit4_normal": "ದೋಷ ಅವಧಿಗೆ",
-
-     "warranty_button": "ಈಗ ವಾರಂಟಿಯನ್ನು ವಿಸ್ತರಿಸಿ @ ₹365 ",
-     "warranty_button_old": "₹730"
-
-
-
   "viewMore": "ಹೆಚ್ಚು ನೋಡಿ",
   "viewLess": "ಕಡಿಮೆ ನೋಡಿ",
   "previousRides": "ಹಿಂದಿನ ಸವಾರಿಗಳು",
@@ -500,34 +480,29 @@
   "scrollToTop": "ಮೇಲಕ್ಕೆ ಹೋಗಿ",
   "noRecentRidesFound": "ಯಾವುದೇ ಇತ್ತೀಚಿನ ಸವಾರಿಗಳು ಕಂಡುಬಂದಿಲ್ಲ",
   "failedToLoadRides": "ಸವಾರಿಗಳನ್ನು ಲೋಡ್ ಮಾಡಲು ವಿಫಲವಾಗಿದೆ",
-  "hrMin": "ಗಂಟೆ:ನಿಮಿಷ"
+  "hrMin": "ಗಂಟೆ:ನಿಮಿಷ",
   "kmHr": "ಕಿಮೀ/ಗಂ",
-
-   "warranty_title": "ಡಿವೈಸ್ ವಾರಂಟಿ",
-    "warranty_extend": "ನಿಮ್ಮ Trackify Lite ಗೆ 1 ವರ್ಷದ ವಾರಂಟಿಯನ್ನು ₹1/ದಿನಕ್ಕೆ ವಿಸ್ತರಿಸಿ",
-    "warranty_vehicle": "ವಾಹನ",
-    "warranty_expiry": "ವಾರಂಟಿ ಮುಕ್ತಾಯ ದಿನಾಂಕ",
-    "warranty_daysLeft": "{days} ದಿನಗಳು ಬಾಕಿ",
-
-    "warranty_benefitsTitle": "ನೀವು ತಪ್ಪಿಸಿಕೊಳ್ಳಬಾರದ ಪ್ರಯೋಜನಗಳು",
-
-
-
-     "benefit1_highlight": "ಖಚಿತ ಬದಲಾವಣೆ ",
-     "benefit1_normal": "ದೋಷ ಉಂಟಾದರೆ",
-
-     "benefit2_highlight": "₹1200 ವರೆಗೆ ಉಳಿಸಿ ",
-     "benefit2_normal": "ಡಿವೈಸ್ ರಿಪೇರಿ ಮೇಲೆ",
-
-     "benefit3_highlight": "ತಕ್ಷಣದ ಸಹಾಯ ",
-     "benefit3_normal": "ಡಿವೈಸ್ ಸಮಸ್ಯೆಗಳಿಗಾಗಿ",
-
-     "benefit4_highlight": "₹2000 ವರೆಗೆ ಉಚಿತ ವಿಸ್ತರಿತ ಚಂದಾದಾರಿಕೆ ",
-     "benefit4_normal": "ದೋಷ ಅವಧಿಗೆ",
-
-     "warranty_button": "ಈಗ ವಾರಂಟಿಯನ್ನು ವಿಸ್ತರಿಸಿ @ ₹365 ",
-     "warranty_button_old": "₹730"
-
-
-
+  "warranty_title": "ಡಿವೈಸ್ ವಾರಂಟಿ",
+  "warranty_extend": "ನಿಮ್ಮ Trackify Lite ಗೆ 1 ವರ್ಷದ ವಾರಂಟಿಯನ್ನು \u20b91/ದಿನಕ್ಕೆ ವಿಸ್ತರಿಸಿ",
+  "warranty_vehicle": "ವಾಹನ",
+  "warranty_expiry": "ವಾರಂಟಿ ಮುಕ್ತಾಯ ದಿನಾಂಕ",
+  "warranty_daysLeft": "{days} ದಿನಗಳು ಬಾಕಿ",
+  "@warranty_daysLeft": {
+    "placeholders": {
+      "days": {
+        "type": "String"
+      }
+    }
+  },
+  "warranty_benefitsTitle": "ನೀವು ತಪ್ಪಿಸಿಕೊಳ್ಳಬಾರದ ಪ್ರಯೋಜನಗಳು",
+  "benefit1_highlight": "ಖಚಿತ ಬದಲಾವಣೆ ",
+  "benefit1_normal": "ದೋಷ ಉಂಟಾದರೆ",
+  "benefit2_highlight": "\u20b91200 ವರೆಗೆ ಉಳಿಸಿ ",
+  "benefit2_normal": "ಡಿವೈಸ್ ರಿಪೇರಿ ಮೇಲೆ",
+  "benefit3_highlight": "ತಕ್ಷಣದ ಸಹಾಯ ",
+  "benefit3_normal": "ಡಿವೈಸ್ ಸಮಸ್ಯೆಗಳಿಗಾಗಿ",
+  "benefit4_highlight": "\u20b92000 ವರೆಗೆ ಉಚಿತ ವಿಸ್ತರಿತ ಚಂದಾದಾರಿಕೆ ",
+  "benefit4_normal": "ದೋಷ ಅವಧಿಗೆ",
+  "warranty_button": "ಈಗ ವಾರಂಟಿಯನ್ನು ವಿಸ್ತರಿಸಿ @ \u20b9365 ",
+  "warranty_button_old": "\u20b9730"
 }

@@ -9,10 +9,10 @@ class AppLocalizationsTa extends AppLocalizations {
   AppLocalizationsTa([String locale = 'ta']) : super(locale);
 
   @override
-  String get selectLanguage => 'உங்கள் மொழியைத் தேர்ந்தெடுக்கவும்';
+  String get selectLanguage => 'உங்கள் மொழியை தேர்வு செய்யவும்';
 
   @override
-  String get letsGetStarted => 'தொடங்குவோம்';
+  String get letsGetStarted => 'நாம் தொடங்கலாம்';
 
   @override
   String get email => 'மின்னஞ்சல்';
@@ -27,13 +27,13 @@ class AppLocalizationsTa extends AppLocalizations {
   String get passwordHint => '******';
 
   @override
-  String get emailRequired => 'மின்னஞ்சல் தேவை';
+  String get emailRequired => 'மின்னஞ்சல் அவசியம்';
 
   @override
-  String get passwordRequired => 'கடவுச்சொல் தேவை';
+  String get passwordRequired => 'கடவுச்சொல் அவசியம்';
 
   @override
-  String get invalidEmail => 'செல்லுபடியாகும் மின்னஞ்சல் முகவரியை உள்ளிடவும்';
+  String get invalidEmail => 'சரியான மின்னஞ்சல் முகவரியை உள்ளிடவும்';
 
   @override
   String get forgotPassword => 'கடவுச்சொல்லை மறந்துவிட்டீர்களா?';
@@ -45,7 +45,7 @@ class AppLocalizationsTa extends AppLocalizations {
   String get or => 'அல்லது';
 
   @override
-  String get dontHaveAccount => 'கணக்கு இல்லையா? ';
+  String get dontHaveAccount => 'உங்களிடம் கணக்கு இல்லையா? ';
 
   @override
   String get signUp => 'பதிவு செய்யவும்';
@@ -56,28 +56,28 @@ class AppLocalizationsTa extends AppLocalizations {
   }
 
   @override
-  String get loginFailed => 'உள்நுழைவு தோல்வியடைந்தது';
+  String get loginFailed => 'உள்நுழைவு தோல்வி';
 
   @override
   String get name => 'பெயர்';
 
   @override
-  String get nameHint => 'ஜான் டோ';
+  String get nameHint => 'John Doe';
 
   @override
-  String get nameRequired => 'பெயர் தேவை';
+  String get nameRequired => 'பெயர் அவசியம்';
 
   @override
-  String get mobileNumber => 'மொಬೈಲ್ ಸಂಖ್ಯೆ';
+  String get mobileNumber => 'மொபைல் எண்';
 
   @override
-  String get mobileNumberHint => 'மொಬೈಲ್ ಸಂಖ್ಯೆಯನ್ನು உள்ளிடவும்';
+  String get mobileNumberHint => 'மொபைல் எண்ணை உள்ளிடவும்';
 
   @override
-  String get mobileNumberRequired => 'மொபைல் எண் தேவை';
+  String get mobileNumberRequired => 'மொபைல் எண் அவசியம்';
 
   @override
-  String get invalidMobileNumber => 'செல்லுபடியாகும் மொபைல் எண்ணை உள்ளிடவும்';
+  String get invalidMobileNumber => 'சரியான மொபைல் எண்ணை உள்ளிடவும்';
 
   @override
   String get country => 'நாடு';
@@ -86,7 +86,7 @@ class AppLocalizationsTa extends AppLocalizations {
   String get countryHint => 'நாட்டை உள்ளிடவும்';
 
   @override
-  String get countryRequired => 'நாடு தேவை';
+  String get countryRequired => 'நாடு அவசியம்';
 
   @override
   String get state => 'மாநிலம்';
@@ -95,7 +95,7 @@ class AppLocalizationsTa extends AppLocalizations {
   String get stateHint => 'மாநிலத்தை உள்ளிடவும்';
 
   @override
-  String get stateRequired => 'மாநிலம் தேவை';
+  String get stateRequired => 'மாநிலம் அவசியம்';
 
   @override
   String get city => 'நகரம்';
@@ -104,34 +104,38 @@ class AppLocalizationsTa extends AppLocalizations {
   String get cityHint => 'நகரத்தை உள்ளிடவும்';
 
   @override
-  String get cityRequired => 'நகரம் தேவை';
+  String get cityRequired => 'நகரம் அவசியம்';
 
   @override
-  String get selectProfileImage => 'சுயவிவரப் படத்தை மாற்றவும்';
+  String get selectProfileImage => 'சுயவிவர படத்தைத் தேர்வு செய்யவும்';
 
   @override
   String get role => 'பங்கு';
 
   @override
-  String get roleAdmin => 'நிர்வாகி';
+  String get roleAdmin => 'அட்மின்';
 
   @override
   String get roleCustomer => 'வாடிக்கையாளர்';
 
   @override
-  String get selectRoleHint => 'பங்கைத் தேர்ந்தெடுக்கவும்';
+  String get selectRoleHint => 'பங்கைத் தேர்வு செய்யவும்';
 
   @override
-  String get roleRequired => 'தயவுசெய்து பங்கைத் தேர்ந்தெடுக்கவும்';
+  String get roleRequired => 'தயவுசெய்து ஒரு பங்கைத் தேர்வு செய்யவும்';
 
   @override
   String get createAccount => 'கணக்கை உருவாக்கவும்';
 
   @override
-  String get registerSuccess => 'பதிவு வெற்றிகரமாக முடிந்தது, உள்நுழையவும்';
+  String get registerSuccess =>
+      'பயனர் வெற்றிகரமாக பதிவு செய்யப்பட்டார், தயவுசெய்து உள்நுழையவும்';
 
   @override
-  String get signUpFailed => 'பதிவு தோல்வியடைந்தது';
+  String get signUpFailed => 'பதிவு தோல்வி';
+
+  @override
+  String get alreadyHaveAccount => 'ஏற்கனவே கணக்கு உள்ளதா?';
 
   @override
   String get otpSent => 'OTP வெற்றிகரமாக அனுப்பப்பட்டது';
@@ -141,13 +145,13 @@ class AppLocalizationsTa extends AppLocalizations {
 
   @override
   String get resetPasswordDesc =>
-      'உங்கள் மின்னஞ்சலை உள்ளிடவும், மீட்டமைப்பு இணைப்பை அனுப்புவோம்.';
+      'உங்கள் மின்னஞ்சலை உள்ளிடவும், கடவுச்சொல்லை மீட்டமைக்க ஒரு இணைப்பை அனுப்புவோம்.';
 
   @override
-  String get sendResetLink => 'இணைப்பை அனுப்பு';
+  String get sendResetLink => 'மீட்டமைப்பு இணைப்பை அனுப்பவும்';
 
   @override
-  String get otpVerified => 'OTP சரிபார்க்கப்பட்டது';
+  String get otpVerified => 'OTP வெற்றிகரமாக சரிபார்க்கப்பட்டது';
 
   @override
   String get verifyOtp => 'OTP சரிபார்க்கவும்';
@@ -167,17 +171,18 @@ class AppLocalizationsTa extends AppLocalizations {
   String get otpHint => '123456';
 
   @override
-  String get otpRequired => 'OTP தேவை';
+  String get otpRequired => 'OTP அவசியம்';
 
   @override
-  String get passwordResetSuccess => 'கடவுச்சொல் மீட்டமைக்கப்பட்டது';
+  String get passwordResetSuccess =>
+      'கடவுச்சொல் வெற்றிகரமாக மீட்டமைக்கப்பட்டது';
 
   @override
   String get createNewPassword => 'புதிய கடவுச்சொல்லை உருவாக்கவும்';
 
   @override
   String get passwordDesc =>
-      'புதிய கடவுச்சொல் பழையவற்றிலிருந்து வேறுபட்டிருக்க வேண்டும்.';
+      'உங்கள் புதிய கடவுச்சொல் முன்பு பயன்படுத்திய கடவுச்சொற்களிலிருந்து மாறுபட்டதாக இருக்க வேண்டும்.';
 
   @override
   String get newPassword => 'புதிய கடவுச்சொல்';
@@ -190,22 +195,23 @@ class AppLocalizationsTa extends AppLocalizations {
       'கடவுச்சொல் குறைந்தது 6 எழுத்துகள் இருக்க வேண்டும்';
 
   @override
-  String get confirmPassword => 'கடவுச்சொல்லை உறுதிப்படுத்துக';
+  String get confirmPassword => 'கடவுச்சொல்லை உறுதிப்படுத்தவும்';
 
   @override
-  String get confirmPasswordHint => 'உறுதிப்படுத்துக';
+  String get confirmPasswordHint =>
+      'உங்கள் புதிய கடவுச்சொல்லை உறுதிப்படுத்தவும்';
 
   @override
-  String get confirmPasswordRequired => 'உறுதிப்படுத்துதல் தேவை';
+  String get confirmPasswordRequired => 'கடவுச்சொல் உறுதிப்படுத்தல் அவசியம்';
 
   @override
   String get passwordsDoNotMatch => 'கடவுச்சொற்கள் பொருந்தவில்லை';
 
   @override
-  String get selectDevice => 'சாதனத்தைத் தேர்ந்தெடு';
+  String get selectDevice => 'சாதனத்தைத் தேர்வு செய்யவும்';
 
   @override
-  String get noDevicesFound => 'சாதனங்கள் எதுவும் இல்லை';
+  String get noDevicesFound => 'சாதனங்கள் எதுவும் கிடைக்கவில்லை.';
 
   @override
   String get proceed => 'தொடரவும்';
@@ -219,37 +225,37 @@ class AppLocalizationsTa extends AppLocalizations {
   }
 
   @override
-  String get initializeFetch => 'சாதனங்களைப் பெற தொடங்கவும்';
+  String get initializeFetch => 'சாதனங்களை பெற தொடங்கவும்.';
 
   @override
-  String get recordRide => 'பயணத்தை பதிவு செய்';
+  String get recordRide => 'பயணத்தை பதிவு செய்யவும்';
 
   @override
-  String get phoneAsGps => 'உங்கள் போனைக் கருவியாக மாற்றவும்';
+  String get phoneAsGps => 'உங்கள் மொபைலை GPS டிராக்கிங் சாதனமாக மாற்றவும்';
 
   @override
-  String get goToDashboard => 'டாஷ்போர்டிற்குச் செல்க';
+  String get goToDashboard => 'டாஷ்போர்டுக்கு செல்லவும்';
 
   @override
-  String get seeFullMap => 'வரைபடத்தைப் பார்';
+  String get seeFullMap => 'முழு வரைபடத்தை பார்க்கவும்';
 
   @override
-  String get exploreMore => 'மேலும் ஆராய்';
+  String get exploreMore => 'மேலும் ஆராயவும்';
 
   @override
   String get reachMeSticker => 'ReachMe ஸ்டிக்கர்';
 
   @override
-  String get products => 'தயாரிப்புகள்';
+  String get products => 'பொருட்கள்';
 
   @override
   String get fuelLogs => 'எரிபொருள் பதிவுகள்';
 
   @override
-  String get locationSharing => 'இருப்பிடப் பகிர்வு';
+  String get locationSharing => 'இடத்தை பகிர்வு';
 
   @override
-  String get documentFolder => 'ஆவணக் கோப்புறை';
+  String get documentFolder => 'ஆவண கோப்புறை';
 
   @override
   String get voiceMonitoring => 'குரல் கண்காணிப்பு';
@@ -258,13 +264,13 @@ class AppLocalizationsTa extends AppLocalizations {
   String get remoteEngineOff => 'ரிமோட் எஞ்சின் ஆஃப்';
 
   @override
-  String get networkBooster => 'நெட்வೊர்க் பூஸ்டர்';
+  String get networkBooster => 'நெட்வொர்க் பூஸ்டர்';
 
   @override
   String get emergency => 'அவசரம்';
 
   @override
-  String get overspeedAlert => 'அதிவேக எச்சரிக்கை';
+  String get overspeedAlert => 'அதிக வேக எச்சரிக்கை';
 
   @override
   String get geoFenceAlert => 'ஜியோ-பென்ஸ் எச்சரிக்கை';
@@ -276,16 +282,17 @@ class AppLocalizationsTa extends AppLocalizations {
   String get profile => 'சுயவிவரம்';
 
   @override
-  String get bikeSmartMsg => '1000+ பேர் எங்கள் சாதனத்தைப் பயன்படுத்துகின்றனர்';
+  String get bikeSmartMsg =>
+      '1000+ பேர் எங்கள் சாதனத்தின் மூலம் தங்கள் பைக்கை ஸ்மார்ட் ஆக்கியுள்ளனர்';
 
   @override
   String get features => 'அம்சங்கள்';
 
   @override
-  String get contactUs => 'தொடர்பு கொள்க';
+  String get contactUs => 'எங்களை தொடர்பு கொள்ளவும்';
 
   @override
-  String get contactUsDesc => 'நாங்கள் உதவ இங்கே இருக்கிறோம்';
+  String get contactUsDesc => 'கேள்விகள் உள்ளதா? உதவ நாங்கள் இருக்கிறோம்.';
 
   @override
   String get userReviews => 'பயனர் விமர்சனங்கள்';
@@ -294,7 +301,7 @@ class AppLocalizationsTa extends AppLocalizations {
   String get accidentAlert => 'விபத்து எச்சரிக்கை';
 
   @override
-  String get antiTheftAlert => 'திருட்டு எச்சரிக்கை';
+  String get antiTheftAlert => 'திருட்டு எதிர்ப்பு எச்சரிக்கை';
 
   @override
   String get geoFence => 'ஜியோ பென்ஸ்';
@@ -303,10 +310,10 @@ class AppLocalizationsTa extends AppLocalizations {
   String get statistics => 'புள்ளிவிவரங்கள்';
 
   @override
-  String get myGarage => 'எனது கேரேஜ்';
+  String get myGarage => 'என் கேரேஜ்';
 
   @override
-  String get noVehiclesInGarage => 'வாகனங்கள் எதுவும் இல்லை';
+  String get noVehiclesInGarage => 'உங்கள் கேரேஜில் எந்த வாகனமும் இல்லை.';
 
   @override
   String get unknownVehicle => 'அறியப்படாத வாகனம்';
@@ -321,69 +328,69 @@ class AppLocalizationsTa extends AppLocalizations {
   String get subscription => 'சந்தா';
 
   @override
-  String get proPlan => 'புரோ திட்டம்';
+  String get proPlan => 'ப்ரோ திட்டம்';
 
   @override
-  String get initializeGarage => 'கேரேஜைத் தொடங்கவும்';
+  String get initializeGarage => 'உங்கள் கேரேஜை பெற தொடங்கவும்.';
 
   @override
-  String get ourProducts => 'தயாரிப்புகள்';
+  String get ourProducts => 'எங்கள் பொருட்கள்';
 
   @override
   String get proTitle => 'Trackify Pro';
 
   @override
-  String get proSubtitle => 'மேம்பட்ட கண்காணிப்பு';
+  String get proSubtitle => 'அதிக அம்சங்களுடன் மேம்பட்ட டிராக்கிங்';
 
   @override
   String get goTitle => 'Trackify Go';
 
   @override
-  String get goSubtitle => 'சாதாரண கண்காணிப்பு';
+  String get goSubtitle => 'தினசரி பயன்பாட்டிற்கான ஸ்டாண்டர்ட் டிராக்கிங்';
 
   @override
   String get liteTitle => 'Trackify Lite';
 
   @override
-  String get liteSubtitle => 'அடிப்படை சாதனம்';
+  String get liteSubtitle => 'அடிப்படை லொகேட்டர் சாதனம்';
 
   @override
-  String get realTime1s => 'ரியல்-டைம் 1செ கண்காணிப்பு';
+  String get realTime1s => 'நேரடி 1 விநாடி டிராக்கிங்';
 
   @override
-  String get remoteEngineCutOff => 'எஞ்சின் நிறுத்தம்';
+  String get remoteEngineCutOff => 'ரிமோட் எஞ்சின் கட்-ஆஃப்';
 
   @override
-  String get detailedFuelAnalytics => 'எரிபொருள் பகுப்பாய்வு';
+  String get detailedFuelAnalytics => 'விரிவான எரிபொருள் பகுப்பாய்வு';
 
   @override
-  String get realTime5s => 'ரியல்-டைம் 5செ கண்காணிப்பு';
+  String get realTime5s => 'நேரடி 5 விநாடி டிராக்கிங்';
 
   @override
-  String get antiTheftAlerts => 'திருட்டு எச்சரிக்கைகள்';
+  String get antiTheftAlerts => 'திருட்டு எதிர்ப்பு எச்சரிக்கைகள்';
 
   @override
-  String get basicJourneyLogs => 'பயண பதிவுகள்';
+  String get basicJourneyLogs => 'அடிப்படை பயண பதிவுகள்';
 
   @override
-  String get locationUpdates => 'இருப்பிட புதுப்பிப்புகள்';
+  String get locationUpdates => 'இடம் புதுப்பிப்புகள்';
 
   @override
-  String get batteryMonitor => 'பேட்டரி மானிட்டர்';
+  String get batteryMonitor => 'பேட்டரி கண்காணிப்பு';
 
   @override
   String get featuresLabel => 'அம்சங்கள்:';
 
   @override
   String addedToCart(String title) {
-    return '$title கார்ட்டில் சேர்க்கப்பட்டது!';
+    return '$title கார்டில் சேர்க்கப்பட்டது!';
   }
 
   @override
-  String get buyNow => 'வாங்கு';
+  String get buyNow => 'இப்போது வாங்கவும்';
 
   @override
-  String get retry => 'மீண்டும் முயற்சி';
+  String get retry => 'மீண்டும் முயற்சிக்கவும்';
 
   @override
   String errorMsg(String message) {
@@ -391,10 +398,10 @@ class AppLocalizationsTa extends AppLocalizations {
   }
 
   @override
-  String get addVehicle => 'வாகனத்தைச் சேர்';
+  String get addVehicle => 'வாகனம்/சாதனம் சேர்க்கவும்';
 
   @override
-  String get vehicleAdded => 'வாகனம் சேர்க்கப்பட்டது!';
+  String get vehicleAdded => 'வாகனம் வெற்றிகரமாக சேர்க்கப்பட்டது!';
 
   @override
   String get vehicleType => 'வாகன வகை';
@@ -418,53 +425,51 @@ class AppLocalizationsTa extends AppLocalizations {
   String get petrol => 'பெட்ரோல்';
 
   @override
-  String get electric => 'எலக்ட்ரிக்';
+  String get electric => 'மின்சாரம்';
 
   @override
-  String get vehicleMake => 'வாகன பிராண்ட்';
+  String get vehicleMake => 'வாகன நிறுவனம்';
 
   @override
-  String get vehicleModel => 'வாகன மாடல்';
+  String get vehicleModel => 'வாகன மாதிரி';
 
   @override
   String get vehicleNumber => 'வாகன எண்';
 
   @override
-  String get vehicleNumberHint => 'உதாரணமாக: MP46MX0743';
+  String get vehicleNumberHint => 'எ.கா. MP46MX0743';
 
   @override
-  String get pleaseEnterVehicleNumber => 'வாகன எண்ணை உள்ளிடவும்';
+  String get pleaseEnterVehicleNumber => 'தயவுசெய்து வாகன எண்ணை உள்ளிடவும்';
 
   @override
-  String get selectMake => 'பிராண்டைத் தேர்ந்தெடு';
+  String get selectMake => 'வாகன நிறுவனம் தேர்ந்தெடுக்கவும்';
 
   @override
-  String get selectModel => 'மாடலைத் தேர்ந்தெடு';
+  String get selectModel => 'வாகன மாதிரி தேர்ந்தெடுக்கவும்';
 
   @override
-  String get installDevice => 'சாதனத்தை நிறுவு';
+  String get installDevice => 'Trackify சாதனத்தை நிறுவவும்';
 
   @override
-  String get installDeviceDesc => 'எளிமையான படிகளில் சாதனத்தை அமைக்கவும்';
+  String get installDeviceDesc =>
+      'எளிய படிகளில் உங்கள் Ajjas சாதனத்தை அமைக்கவும்';
 
   @override
-  String get activateSticker => 'ஸ்டிக்கரைச் செயல்படுத்து';
+  String get activateSticker => 'கான்டாக்ட் ஸ்டிக்கரை செயல்படுத்தவும்';
 
   @override
-  String get activateStickerDesc => 'ஸ்டிக்கரைச் செயல்படுத்த எளிய படிகள்';
+  String get activateStickerDesc =>
+      'சில எளிய படிகளில் ஸ்டிக்கரை செயல்படுத்தவும்';
 
   @override
-  String get exploreFreeApp => 'இலவச ஆப்';
+  String get exploreFreeApp => 'எங்கள் இலவச செயலியை பாருங்கள்';
 
   @override
-  String get exploreFreeAppDesc =>
-      'எங்கள் இலவச ஆப் மூலம் பயணங்களை கண்காணிக்கவும்';
+  String get exploreFreeAppDesc => 'போனில் ரைட்களை பதிவு செய்து கண்காணிக்கவும்';
 
   @override
-  String get logout => 'உள்நுழைவு விலகல்';
-
-  @override
-  String get alreadyHaveAccount => 'ஏற்கனவே கணக்கு உள்ளதா?';
+  String get logout => 'வெளியேறு';
 
   @override
   String get dataPlan => 'டேட்டா திட்டம்';
@@ -474,166 +479,171 @@ class AppLocalizationsTa extends AppLocalizations {
 
   @override
   String expiresInDays(String days) {
-    return '$days நாட்களில் முடிவடைகிறது';
+    return '$days நாட்களில் முடியும்';
   }
 
   @override
-  String get rechargeNow => 'ரீசார்ஜ் செய்க';
+  String get rechargeNow => 'இப்போது ரீசார்ஜ் செய்யவும்';
 
   @override
-  String get renewNow => 'புதுப்பிக்கவும்';
+  String get renewNow => 'இப்போது புதுப்பிக்கவும்';
 
   @override
-  String get secureYourVehicle => 'வாகனத்தைப் பாதுகாக்கவும்';
+  String get secureYourVehicle => 'உங்கள் வாகனத்தை பாதுகாக்கவும்';
 
   @override
   String get secureYourVehicleDesc =>
-      'அடிப்படை கண்காணிப்புக்காக சாதனத்தை வாங்கவும்';
+      'நேரடி கண்காணிப்புக்கு Ajjas சாதனத்தை வாங்கவும்';
 
   @override
-  String get boughtDeviceInstallNow => 'சாதனம் வாங்கினீர்களா? ';
+  String get boughtDeviceInstallNow => 'சாதனம் வாங்கியிருக்கிறீர்களா? ';
 
   @override
-  String get installNow => 'நிறுவு';
+  String get installNow => 'இப்போது நிறுவவும்';
 
   @override
-  String get buyAjjasDevice => 'சாதனத்தை வாங்கு';
+  String get buyAjjasDevice => 'Ajjas சாதனம் வாங்கவும்';
 
   @override
-  String get lite4G => 'லைட் 4ஜி';
+  String get lite4G => 'Lite 4G';
 
   @override
   String get swipeToLock => 'பூட்ட ஸ்வைப் செய்யவும்';
 
   @override
-  String get upgradeToPlus => 'பிளஸ் திட்டத்திற்கு மாறு';
+  String get upgradeToPlus => 'Ajjas Plus-க்கு மேம்படுத்தவும்';
 
   @override
-  String get getMoreOutOfAjjas => 'அதிக பலன்களைப் பெறு';
+  String get getMoreOutOfAjjas => 'Ajjas-ஐ அதிகமாக பயன்படுத்துங்கள்';
 
   @override
-  String featuresExploredCount(Object count, Object total) {
-    return '$total இல் $count அம்சங்களை ஆராய்ந்துள்ளீர்கள்';
+  String featuresExploredCount(String count, String total) {
+    return '$count / $total அம்சங்களை பார்த்துள்ளீர்கள்';
   }
 
   @override
-  String get manageVehiclesDesc => 'வாகனங்களை நிர்வகி';
+  String get manageVehiclesDesc =>
+      'உங்கள் அனைத்து வாகனங்களையும் இங்கே நிர்வகிக்கவும்';
 
   @override
-  String get settingsDesc => 'அமைப்புகள்';
+  String get settingsDesc => 'மொழி, கணக்கு அமைப்புகள் மற்றும் மேலும்';
 
   @override
   String get notifications => 'அறிவிப்புகள்';
 
   @override
-  String get noNotifications => 'அறிவிப்புகள் எதுவும் இல்லை';
+  String get noNotifications => 'அறிவிப்புகள் இல்லை';
 
   @override
   String get notificationsFetchedSuccessfully =>
-      'அறிவிப்புகள் வெற்றிகரமாகப் பெறப்பட்டன';
+      'அறிவிப்புகள் வெற்றிகரமாக பெறப்பட்டது';
 
   @override
-  String get errorFetchingNotifications => 'அறிவிப்புகளைப் பெறுவதில் பிழை';
+  String get errorFetchingNotifications => 'அறிவிப்புகளை பெறுவதில் பிழை';
 
   @override
-  String get helpAndSupport => 'உதவி';
+  String get helpAndSupport => 'உதவி & ஆதரவு';
 
   @override
-  String get helpAndSupportDesc => 'உதவி மற்றும் ஆதரவு';
+  String get helpAndSupportDesc => 'உதவி மற்றும் FAQ பெறுங்கள்';
 
   @override
   String get settings => 'அமைப்புகள்';
 
   @override
-  String get searchForSettings => 'தேடு';
+  String get searchForSettings => 'அமைப்புகளை தேடுங்கள்';
 
   @override
-  String get backupAndRestore => 'பேக்கப்';
+  String get backupAndRestore => 'காப்புப்பிரதி & மீட்டமை';
 
   @override
-  String get backupAndRestoreDesc => 'தரவைச் சேமி';
+  String get backupAndRestoreDesc => 'தரவை காப்புப் பெற்று மீட்டமைக்கவும்';
 
   @override
-  String get appSettings => 'ஆப் அமைப்புகள்';
+  String get appSettings => 'செயலி அமைப்புகள்';
 
   @override
-  String get appSettingsDesc => 'விதிமுறைகள் மற்றும் அமைப்புகள்';
+  String get appSettingsDesc => 'தீம், ஹீட்மேப் மற்றும் அவசர அம்சம்';
 
   @override
   String get notificationSettings => 'அறிவிப்பு அமைப்புகள்';
 
   @override
-  String get notificationSettingsDesc => 'விருப்பங்கள்';
+  String get notificationSettingsDesc => 'அறிவிப்பு விருப்பங்கள் & ஒலி';
 
   @override
   String get privacy => 'தனியுரிமை';
 
   @override
-  String get privacyDesc => 'கடவுச்சொல் மாற்றம்';
+  String get privacyDesc => 'கடவுச்சொல் மாற்றம், கணக்கு மேலாண்மை';
 
   @override
-  String get rateUsOnPlayStore => 'எங்களை மதிப்பீடு செய்க';
+  String get rateUsOnPlayStore => 'Play Store-ல் மதிப்பிடுங்கள்';
 
   @override
-  String get rateUsOnPlayStoreDesc => 'கருத்துக்களைப் பகிரவும்';
+  String get rateUsOnPlayStoreDesc => 'உங்கள் கருத்தை பகிருங்கள்';
 
   @override
-  String get logoutDesc => 'வெளியேறு';
+  String get logoutDesc => 'இந்த சாதனத்திலிருந்து வெளியேறு';
 
   @override
-  String get helpAndSuggestion => 'நிர்வாகம்';
+  String get helpAndSuggestion => 'உதவி & பரிந்துரை';
 
   @override
-  String get reportAnIssue => 'புகார் அளிக்கவும்';
+  String get reportAnIssue => 'பிரச்சினையை தெரிவிக்கவும்';
 
   @override
-  String get suggestion => 'சலுகை';
+  String get suggestion => 'பரிந்துரை';
 
   @override
-  String get whatIsYourIssueRelatedTo => 'உங்கள் பிரச்சனை என்ன?';
+  String get whatIsYourIssueRelatedTo =>
+      'உங்கள் பிரச்சினை எதுடன் தொடர்புடையது?';
 
   @override
-  String get shortDescriptionHint => 'சுருக்கமான விளக்கம்';
+  String get shortDescriptionHint =>
+      'சுருக்கமான விளக்கம் அளிக்கவும் (அதிகபட்சம் 200 எழுத்துகள்)';
 
   @override
-  String get selectCallSlot => 'நேரத்தைத் தேர்ந்தெடு';
+  String get selectCallSlot => 'அழைப்பு நேரத்தை தேர்ந்தெடுக்கவும்';
 
   @override
-  String get myIssues => 'எனது பிரச்சனைகள்';
+  String get myIssues => 'என் பிரச்சினைகள்';
 
   @override
-  String get whatsApp => 'WhatsApp';
+  String get whatsApp => 'வாட்ஸ்அப்';
 
   @override
-  String get forceMigrate => 'தரவு மாற்றம்';
+  String get forceMigrate => 'கட்டாய மாற்றம்';
 
   @override
-  String get forceMigrateDesc1 => 'தரவைச் சரிசெய்யவும்';
+  String get forceMigrateDesc1 =>
+      'அப் அப்டேட்டின் போது தவறவிட்ட பேக்கப் ரைட்களை சரிசெய்ய இந்த விருப்பத்தை பயன்படுத்தவும்.';
 
   @override
-  String get forceMigrateDesc2 => 'இது உள்ளூர் தரவை மட்டுமே பாதிக்கும்';
+  String get forceMigrateDesc2 =>
+      'கவனிக்கவும், இது சர்வரில் உள்ள பழைய ரைட்களை மீட்டெடுக்காது. இது உங்கள் லோக்கல் ஸ்டோரேஜ் தரவை புதிய வடிவத்திற்கு மாற்றும்.';
 
   @override
-  String get faq => 'கேள்விகள்';
+  String get faq => 'அடிக்கடி கேட்கப்படும் கேள்விகள்';
 
   @override
-  String get termsConditions => 'விதிமுறைகள்';
+  String get termsConditions => 'விதிமுறைகள் மற்றும் நிபந்தனைகள்';
 
   @override
   String get privacyPolicy => 'தனியுரிமைக் கொள்கை';
 
   @override
-  String get changeLog => 'மாற்றங்கள்';
+  String get changeLog => 'மாற்றப் பதிவு';
 
   @override
   String get todayLabel => '(இன்று)';
 
   @override
-  String get ridingBehaviour => 'சவாரி நடத்தை';
+  String get ridingBehaviour => 'ஓட்டுநர் பழக்கம்';
 
   @override
   String get ridingBehaviourVacationDesc =>
-      'நீங்கள் சவாரி எதையும் மேற்கொள்ளவில்லை';
+      'தேர்ந்தெடுத்த காலத்தில் நீங்கள் எந்த பயணமும் மேற்கொள்ளவில்லை போல தெரிகிறது';
 
   @override
   String get journey => 'பயணம்';
@@ -642,7 +652,7 @@ class AppLocalizationsTa extends AppLocalizations {
   String get distanceTravelled => 'பயணித்த தூரம்';
 
   @override
-  String get timeDuration => 'பயண நேரம்';
+  String get timeDuration => 'நேர அளவு';
 
   @override
   String get speed => 'வேகம்';
@@ -657,23 +667,23 @@ class AppLocalizationsTa extends AppLocalizations {
   String get fuel => 'எரிபொருள்';
 
   @override
-  String get fuelConsumed => 'எரிபொருள் பயன்பாடு';
+  String get fuelConsumed => 'பயன்படுத்திய எரிபொருள்';
 
   @override
-  String get fuelCost => 'செலவு';
+  String get fuelCost => 'எரிபொருள் செலவு';
 
   @override
   String vsPreviousPeriod(String value) {
-    return 'முந்தைய காலத்துடன் ஒப்பிடுகையில் $value%';
+    return 'முந்தைய காலத்துடன் ஒப்பிடும்போது $value%';
   }
 
   @override
   String get vehicleMakeListEmpty =>
-      'இந்தத் தேர்வுக்கு வாகன பிராண்ட் பட்டியல் காலியாக உள்ளது';
+      'இந்த தேர்விற்கு வாகன நிறுவன பட்டியல் காலியாக உள்ளது';
 
   @override
   String get vehicleModelListEmpty =>
-      'இந்தத் தேர்வுக்கு வாகன மாடல் பட்டியல் காலியாக உள்ளது';
+      'இந்த தேர்விற்கு வாகன மாதிரி பட்டியல் காலியாக உள்ளது';
 
   @override
   String get deviceInstallation => 'சாதன நிறுவல்';
@@ -683,17 +693,17 @@ class AppLocalizationsTa extends AppLocalizations {
 
   @override
   String get enterActivationCodeManually =>
-      'செயல்படுத்தும் குறியீட்டை கைமுறையாக உள்ளிடவும்';
+      'செயல்படுத்தும் குறியீட்டை கையால் உள்ளிடவும்';
 
   @override
   String get openAjjasBoxInstruction =>
-      'செயல்படுத்தும் QR குறியீட்டிற்கு Ajjas பெட்டியைத் திறக்கவும்.';
+      'QR குறியீட்டிற்காக Ajjas பெட்டியை திறக்கவும்';
 
   @override
   String get continueText => 'தொடரவும்';
 
   @override
-  String get enterUID => 'UID ஐ உள்ளிடவும்';
+  String get enterUID => 'UID உள்ளிடவும்';
 
   @override
   String get enterIMEINumber => 'IMEI எண்ணை உள்ளிடவும்';
@@ -715,62 +725,61 @@ class AppLocalizationsTa extends AppLocalizations {
   String get assigningDevice => 'சாதனம் இணைக்கப்படுகிறது...';
 
   @override
-  String get invalidImeiError =>
-      'தயவுசெய்து செல்லுபடியாகும் 15-இலக்க IMEI எண்ணை உள்ளிடவும்';
+  String get invalidImeiError => 'சரியான 15 இலக்க IMEI எண்ணை உள்ளிடவும்';
 
   @override
   String get sharedRides => 'பகிரப்பட்ட பயணங்கள்';
 
   @override
-  String get savedRides => 'Saved Rides';
+  String get savedRides => 'சேமிக்கப்பட்ட பயணங்கள்';
 
   @override
-  String get allRides => 'ALL RIDES';
+  String get allRides => 'அனைத்து பயணங்கள்';
 
   @override
-  String get trips => 'TRIPS';
+  String get trips => 'ட்ரிப்ஸ்';
 
   @override
   String clicked(String value) {
-    return '$value Clicked';
+    return '$value கிளிக் செய்யப்பட்டது';
   }
 
   @override
-  String get noDailyRides => 'No daily rides to show';
+  String get noDailyRides => 'தினசரி பயணங்கள் இல்லை';
 
   @override
-  String get getStartedFirstRide => 'Get started by taking your first ride';
+  String get getStartedFirstRide => 'முதல் பயணத்தை தொடங்குங்கள்';
 
   @override
-  String get durationLabel => 'Duration';
+  String get durationLabel => 'நேர அளவு';
 
   @override
-  String get km => 'km';
+  String get km => 'கிமீ';
 
   @override
-  String get kmh => 'km/h';
+  String get kmh => 'கிமீ/மணி';
 
   @override
   String get tripEmptyQuote =>
-      '“Group your rides into trips, add memories, and relive the journey”';
+      '“உங்கள் பயணங்களை ட்ரிப்ஸாக குழுவாக்கி நினைவுகளை சேகரிக்கவும்”';
 
   @override
   String ridesCompletedCount(String completed, String total) {
-    return 'Rides completed: $completed/$total';
+    return 'முடிந்த பயணங்கள்: $completed/$total';
   }
 
   @override
   String get unlockTripsRequirement =>
-      'You need at least 3 rides to unlock trips';
+      'ட்ரிப்ஸை திறக்க குறைந்தது 3 பயணங்கள் தேவை';
 
   @override
-  String get createNewTrip => 'Create a New Trip';
+  String get createNewTrip => 'புதிய ட்ரிப் உருவாக்கவும்';
 
   @override
-  String get startByCreatingTrip => 'Start by creating a New Trip';
+  String get startByCreatingTrip => 'புதிய ட்ரிப் உருவாக்கி தொடங்கவும்';
 
   @override
-  String get skip => 'Skip';
+  String get skip => 'தவிர்க்கவும்';
 
   @override
   String get todayText => 'இன்று';
@@ -779,7 +788,7 @@ class AppLocalizationsTa extends AppLocalizations {
   String get distanceLabel => 'தூரம்';
 
   @override
-  String get rideDuration => 'பயண கால அளவு';
+  String get rideDuration => 'பயண நேரம்';
 
   @override
   String get speedLabel => 'வேகம்';
@@ -791,12 +800,11 @@ class AppLocalizationsTa extends AppLocalizations {
   String get secondsShort => 'வி';
 
   @override
-  String get getMoreOutOfTrackify =>
-      'Trackify-லிருந்து கூடுதல் பலன்களைப் பெறுங்கள்';
+  String get getMoreOutOfTrackify => 'Trackify-ஐ மேலும் பயன்படுத்துங்கள்';
 
   @override
   String get discoverMoreDesc =>
-      'மேலும் பலவற்றை ಅನ್ವೇಷಿಸಿ — அருமையான விஷயங்கள் காத்திருக்கின்றன!';
+      'மேலும் கண்டறியுங்கள் — அருமையான விஷயங்கள் காத்திருக்கின்றன!';
 
   @override
   String get serviceLogs => 'சேவை பதிவுகள்';
@@ -805,25 +813,25 @@ class AppLocalizationsTa extends AppLocalizations {
   String get safeParking => 'பாதுகாப்பான நிறுத்தம்';
 
   @override
-  String get appUpdates => 'செயலி புதுப்பிப்புகள்';
+  String get appUpdates => 'அப் புதுப்பிப்புகள்';
 
   @override
-  String get deviceDataPlanLabel => 'சாதன தரவு திட்டம்';
+  String get deviceDataPlanLabel => 'சாதன டேட்டா திட்டம்';
 
   @override
   String get deviceWarrantyLabel => 'சாதன உத்தரவாதம்';
 
   @override
-  String get videoTutorials => 'வீடியோ பயிற்சிகள்';
+  String get videoTutorials => 'வீடியோ பாடங்கள்';
 
   @override
-  String get exploreNow => 'இப்போது ஆராயுங்கள்';
+  String get exploreNow => 'இப்போது பாருங்கள்';
 
   @override
-  String get plusLabel => 'பிளஸ்';
+  String get plusLabel => 'ப்ளஸ்';
 
   @override
-  String get mapStyleLabel => 'வரைபட நடை';
+  String get mapStyleLabel => 'வரைபட பாணி';
 
   @override
   String get darkStyle => 'டார்க்';
@@ -835,7 +843,7 @@ class AppLocalizationsTa extends AppLocalizations {
   String get simpleStyle => 'சிம்பிள்';
 
   @override
-  String get satelliteStyle => 'சேட்டிலைட்';
+  String get satelliteStyle => 'சாட்லைட்';
 
   @override
   String get mapOptionsLabel => 'வரைபட விருப்பங்கள்';
@@ -854,19 +862,19 @@ class AppLocalizationsTa extends AppLocalizations {
 
   @override
   String parkedSinceTime(String time) {
-    return 'முதல் நிறுத்தப்பட்டுள்ளது: $time';
+    return 'நிறுத்தப்பட்டது: $time';
   }
 
   @override
   String kmsMoreToGo(String value) {
-    return 'இன்னும் $value கிமீ தூரம் செல்ல வேண்டியுள்ளது';
+    return 'இன்னும் $value கிமீ செல்ல வேண்டும்';
   }
 
   @override
   String get buyTrackifyDevice => 'Trackify சாதனத்தை வாங்கவும்';
 
   @override
-  String get recordViaPhone => 'தொலைபேசி வழியாகப் பதிவு செய்யவும்';
+  String get recordViaPhone => 'போன் மூலம் பதிவு செய்யவும்';
 
   @override
   String progressPercentage(String value) {
@@ -879,10 +887,10 @@ class AppLocalizationsTa extends AppLocalizations {
   }
 
   @override
-  String get fuelEmpty => 'இ';
+  String get fuelEmpty => 'E';
 
   @override
-  String get fuelFull => 'எஃப்';
+  String get fuelFull => 'F';
 
   @override
   String get vehicleNamePlaceholder => 'SP 125';
@@ -891,18 +899,18 @@ class AppLocalizationsTa extends AppLocalizations {
   String get vehicleNumberPlaceholder => 'MP09QV8269';
 
   @override
-  String get myProfile => 'எனது சுயவிவரம்';
+  String get myProfile => 'என் சுயவிவரம்';
 
   @override
-  String get profileCompleteness => 'சுயவிவர நிறைவு';
+  String get profileCompleteness => 'சுயவிவர முழுமை';
 
   @override
   String lastUpdatedOn(String date) {
-    return 'கடைசியாக $date அன்று புதுப்பிக்கப்பட்டது';
+    return '$date அன்று கடைசியாக புதுப்பிக்கப்பட்டது';
   }
 
   @override
-  String get addProfilePicture => 'உங்கள் சுயவிவரப் படத்தைச் சேர்க்கவும்';
+  String get addProfilePicture => 'உங்கள் சுயவிவர படத்தை சேர்க்கவும்';
 
   @override
   String get personalDetails => 'தனிப்பட்ட விவரங்கள்';
@@ -926,176 +934,173 @@ class AppLocalizationsTa extends AppLocalizations {
   String get cityLabel => 'நகரம்';
 
   @override
-  String get medicalInsuranceInfo => 'மருத்துவ காப்பீடு தகவல்';
+  String get medicalInsuranceInfo => 'Medical insurance information';
 
   @override
-  String get addMedicalInsuranceInfo => 'மருத்துவ காப்பீடு தகவலைச் சேர்க்கவும்';
+  String get addMedicalInsuranceInfo => 'Add Medical insurance information';
 
   @override
-  String get vehicleInsuranceInfo => 'வாகன காப்பீடு தகவல்';
+  String get vehicleInsuranceInfo => 'Vehicle insurance information';
 
   @override
   String get editViewVehicleInsuranceDesc =>
-      'வாகன அமைப்புகளில் வாகன காப்பீடு விவரங்களைத் திருத்தவும் மற்றும் பார்க்கவும்.';
+      'Edit and view vehicle insurance details in vehicle settings.';
 
   @override
-  String get myGarageVehiclePath => 'எனது கேரேஜ் > வாகனம்';
+  String get myGarageVehiclePath => 'My Garage > Vehicle';
 
   @override
   String get emergencyContacts => 'அவசர தொடர்புகள்';
 
   @override
   String get addEditEmergencyContactDesc =>
-      'வாகன அமைப்புகளில் அவசர தொடர்பு பட்டியலைச் சேர்க்கவும் மற்றும் திருத்தவும்.';
+      'Add and edit emergency contact list in vehicle settings.';
 
   @override
   String get smartContactSticker => 'ஸ்மார்ட் தொடர்பு ஸ்டிக்கர்';
 
   @override
   String get stickerSubtitle =>
-      'உங்கள் வாகனத்தைப் பாதுகாப்பாகவும் புத்திசாலித்தனமாகவும் மாற்ற ஒரு படி முன்னே';
+      'A step forward to make your vehicle SAFE and SMART';
 
   @override
-  String get activateContactSticker => 'தொடர்பு ஸ்டிக்கரைச் செயல்படுத்தவும்';
+  String get activateContactSticker => 'ஸ்டிக்கரை செயல்படுத்தவும்';
 
   @override
-  String get buyNewContactSticker => 'புதிய தொடர்பு ஸ்டிக்கரை வாங்கவும்';
+  String get buyNewContactSticker => 'புதிய ஸ்டிக்கர் வாங்கவும்';
 
   @override
-  String get beyondParkingProblems => 'பார்க்கிங் பிரச்சனைகளுக்கு அப்பால்';
+  String get beyondParkingProblems => 'Beyond parking problems';
 
   @override
   String get noParkings => 'பார்க்கிங் இல்லை';
 
   @override
-  String get emergencies => 'அவசரநிலைகள்';
+  String get emergencies => 'அவசர நிலைகள்';
 
   @override
-  String get vehicleTowing => 'வாகன டோயிಂಗ್';
+  String get vehicleTowing => 'வாகன இழுத்தல்';
 
   @override
   String get getInformedStayConnected =>
-      'தகவல் பெறுங்கள் மற்றும் உங்கள் வாகனத்துடன்\nஇணைந்திருங்கள்';
+      'Get informed & stay connected\nwith your vehicle';
 
   @override
   String get securedCalls => 'பாதுகாப்பான அழைப்புகள்';
 
   @override
   String get securedCallsDesc =>
-      'இணையம்-மறைக்கப்பட்ட அழைப்புகள் - உங்கள் தொலைபேசி எண்ணைத் தனிப்பட்டதாக வைத்திருக்கும்.';
+      'Internet-masked calls-keeps your phone number private.';
 
   @override
   String get notificationHistory => 'அறிவிப்பு வரலாறு';
 
   @override
   String get notificationHistoryDesc =>
-      'தற்போதைய மற்றும் முந்தைய அனைத்து அறிவிப்புகளையும் கண்காணிக்கவும்';
+      'Keep track of all the current and previous notifications';
 
   @override
   String get beInformed => 'தகவலுடன் இருங்கள்';
 
   @override
   String get beInformedDesc =>
-      'யாராவது உங்கள் QR குறியீட்டை ஸ்கேன் செய்யும்போது உடனடியாகத் தெரிந்துகொள்ளுங்கள் மற்றும் அவர்கள் உங்களை அழைக்கும்போது உடனடி நடவடிக்கை எடுக்கவும்.';
+      'Know instantly when someone scans your QR code & take prompt actions when they call you.';
 
   @override
-  String get controlWhatOthersSee =>
-      'மற்றவர்கள் எதைப் பார்க்கிறார்கள் என்பதைக் கட்டுப்படுத்தவும்';
+  String get controlWhatOthersSee => 'Control What Others See';
 
   @override
   String get controlWhatOthersSeeDesc =>
-      'யாராவது QR ஐ ஸ்கேன் செய்யும்போது காண்பிக்கப்படும் விவரங்களைத் தனிப்பயனாக்கவும்.';
+      'Customize the details shown when someone scans the QR.';
 
   @override
-  String get preventFrustrationDamage =>
-      'ஏமாற்றம் மற்றும் சேதத்தைத் தடுக்கவும்';
+  String get preventFrustrationDamage => 'Prevent Frustration & Damage';
 
   @override
   String get preventFrustrationDamageDesc =>
-      'தவறான பார்க்கிங்கால் ஏற்படும் மோதல்கள் மற்றும் வாகன சேதத்தைத் தவிர்க்கவும்.';
+      'Avoid conflicts and vehicle damage caused by incorrect parking.';
 
   @override
   String get serviceLogsSubtitle =>
-      'வாகன சேவையை ஒருபோதும் தவறவிடாதீர்கள். உங்கள் வாகனத்தை சிறந்த நிலையில் வைத்திருக்க நினைவூட்டல்களைப் பெறவும் மற்றும் செலவுகளைக் கண்காணிக்கவும்.';
+      'Never miss a vehicle service. Get reminders and track expenses to keep your vehicle in top condition.';
 
   @override
-  String get addServiceLogs => 'சேவை பதிவுகளைச் சேர்';
+  String get addServiceLogs => 'சேவை பதிவு சேர்க்கவும்';
 
   @override
-  String get uploadServicingBill => 'சேவை மசோதாவை பதிவேற்றவும்';
+  String get uploadServicingBill => 'சேவை பில் பதிவேற்றவும்';
 
   @override
-  String get addImage => 'படம் சேர்';
+  String get addImage => 'படம் சேர்க்கவும்';
 
   @override
-  String get maxFileSizeNote => 'குறிப்பு: அதிகபட்ச கோப்பு அளவு 5MB ஆகும்';
+  String get maxFileSizeNote => 'Note: Maximum File Size is 5MB';
 
   @override
   String get serviceDate => 'சேவை தேதி';
 
   @override
-  String get billingAmount => 'பில்லிங் தொகை';
+  String get billingAmount => 'பில் தொகை';
 
   @override
-  String get serviceCenterName => 'சேவை மையத்தின் பெயர்';
+  String get serviceCenterName => 'Service Center Name';
 
   @override
-  String get serviceCenterContact => 'சேவை மைய தொடர்பு';
+  String get serviceCenterContact => 'Service Center Contact';
 
   @override
-  String get additionalNote => 'கூடுதல் குறிப்பு';
+  String get additionalNote => 'Additional Note';
 
   @override
-  String get saveDetails => 'விவரங்களைச் சேமி';
+  String get saveDetails => 'விவரங்களை சேமிக்கவும்';
 
   @override
-  String get selectVehicle => 'வாகனத்தைத் தேர்ந்தெடுக்கவும்';
+  String get selectVehicle => 'வாகனத்தை தேர்வு செய்யவும்';
 
   @override
-  String get liveTab => 'நேரலை';
+  String get liveTab => 'LIVE';
 
   @override
-  String get historyTab => 'வரலாறு';
+  String get historyTab => 'HISTORY';
 
   @override
-  String get liveLocationSharingActive =>
-      'நேரலை இருப்பிடப் பகிர்வு செயலில் உள்ளது';
+  String get liveLocationSharingActive => 'Live Location Sharing Active';
 
   @override
-  String get noLiveLocationShared => 'நேரலை இருப்பிடம் எதுவும் பகிரப்படவில்லை';
+  String get noLiveLocationShared => 'No live location shared';
 
   @override
   String get realTimeSharingDesc =>
-      'உங்கள் இருப்பிடம் தேர்ந்தெடுக்கப்பட்ட தொடர்புகளுடன் நிகழ்நேரத்தில் பகிரப்படுகிறது.';
+      'Your location is being shared in real-time with selected contacts.';
 
   @override
   String get startSharingPhoneDesc =>
-      'மற்றவர்கள் உங்களைக் கண்காணிக்க உதவ உங்கள் தொலைபேசியின் இருப்பிடத்தைப் பகிரத் தொடங்குங்கள்';
+      'Start sharing your phone\'s location to help others track you';
 
   @override
-  String get noHistoryAvailable => 'வரலாறு எதுவும் இல்லை';
+  String get noHistoryAvailable => 'No history available';
 
   @override
   String get historyDesc =>
-      'கடந்த இருப்பிடப் பகிர்வுகள் முடிந்ததும் இங்கே தோன்றும்.';
+      'Past location shares will appear here once they are completed.';
 
   @override
-  String get stopSharing => 'பகிர்வதை நிறுத்து';
+  String get stopSharing => 'பகிர்வை நிறுத்தவும்';
 
   @override
-  String get shareLocation => 'இருப்பிடத்தைப் பகிர்';
+  String get shareLocation => 'இடத்தை பகிரவும்';
 
   @override
-  String get startSharing => 'பகிரத் தொடங்கு';
+  String get startSharing => 'பகிர்வை தொடங்கவும்';
 
   @override
   String get phoneTracking => 'போன் டிராக்கிங்';
 
   @override
-  String get liveRecordTab => 'நேரடி பதிவு';
+  String get liveRecordTab => 'Live Record';
 
   @override
-  String get statsTab => 'புள்ளிவிவரங்கள்';
+  String get statsTab => 'Stats';
 
   @override
   String get timeLabel => 'நேரம்';
@@ -1110,180 +1115,131 @@ class AppLocalizationsTa extends AppLocalizations {
   String get custom => 'தனிப்பயன்';
 
   @override
-  String get quickStats => 'விரைவான புள்ளிவிவரங்கள்';
+  String get quickStats => 'விரைவு புள்ளிவிவரங்கள்';
 
   @override
-  String get totalRides => 'மொத்த சவாரிகள்';
+  String get totalRides => 'மொத்த பயணங்கள்';
 
   @override
   String get avgSpeed => 'சராசரி வேகம்';
 
   @override
-  String get totalFuel => 'மொத்த எரிபொருள்';
+  String get totalFuel => 'Total Fuel';
 
   @override
   String get overallDistance => 'மொத்த தூரம்';
 
   @override
-  String get drivingTime => 'ஓட்டுநர் நேரம்';
+  String get drivingTime => 'ஓட்ட நேரம்';
 
   @override
   String get safetyScore => 'பாதுகாப்பு மதிப்பெண்';
 
   @override
-  String get speedAlertInput => 'வேக எச்சரிக்கை உள்ளீடு';
+  String get speedAlertInput => 'Speed alert input';
 
   @override
-  String get alertTitle => 'எச்சரிக்கை தலைப்பு';
+  String get alertTitle => 'Alert title';
 
   @override
-  String get speedLimitKmH => 'வேக வரம்பு (கிமீ/மணி)';
+  String get speedLimitKmH => 'Speed limit (km/h)';
 
   @override
-  String get timeDurationSec => 'நேர காலம் (வினாடி)';
+  String get timeDurationSec => 'Time Duration (sec)';
 
   @override
-  String get selectYourVehicle => 'உங்கள் வாகனத்தைத் தேர்ந்தெடுக்கவும்';
+  String get selectYourVehicle => 'Select your vehicle';
 
   @override
-  String get submit => 'சமர்ப்பி';
+  String get submit => 'சமர்ப்பிக்கவும்';
 
   @override
   String get selectVehiclesOverspeedAlert =>
-      'அதிக வேக எச்சரிக்கையை சேர்க்க வேண்டிய வாகனங்களைத் தேர்ந்தெடுக்கவும்';
+      'Select vehicles on which to add overspeed alert';
 
   @override
-  String get selected => 'தேர்ந்தெடுக்கப்பட்டது';
+  String get selected => 'Selected';
 
   @override
-  String get sec => 'வினாடி';
+  String get sec => 'sec';
 
   @override
-  String get kmHr => 'கிமீ/மணி';
-
-  @override
-  String get warranty_title => 'Device Warranty';
-
-  @override
-  String get warranty_extend =>
-      'Extend warranty of your Trackify Lite by 1 year @ ₹1/day';
-
-  @override
-  String get warranty_vehicle => 'Vehicle';
-
-  @override
-  String get warranty_expiry => 'Warranty expiry date';
-
-  @override
-  String warranty_daysLeft(Object days) {
-    return '$days days left';
-  }
-
-  @override
-  String get warranty_benefitsTitle => 'Benefits you do not want to miss';
-
-  @override
-  String get benefit1_highlight => 'Guaranteed replacement ';
-
-  @override
-  String get benefit1_normal => 'in case of failure';
-
-  @override
-  String get benefit2_highlight => 'Save upto ₹1200 ';
-
-  @override
-  String get benefit2_normal => 'on device repair';
-
-  @override
-  String get benefit3_highlight => 'Instant support ';
-
-  @override
-  String get benefit3_normal => 'for device related issues';
-
-  @override
-  String get benefit4_highlight => 'Free extended subscription upto ₹2000 ';
-
-  @override
-  String get benefit4_normal => 'for faulty period';
-
-  @override
-  String get warranty_button => 'Extend warranty now @ ₹365 ';
-
-  @override
-  String get warranty_button_old => '₹730';
   String get viewMore => 'மேலும் பார்க்க';
 
   @override
   String get viewLess => 'குறைவாக பார்க்க';
 
   @override
-  String get previousRides => 'முந்தைய சவாரிகள்';
+  String get previousRides => 'முந்தைய பயணங்கள்';
 
   @override
   String get seeAll => 'அனைத்தையும் பார்க்க';
 
   @override
-  String get videosYouMightLike => 'உங்களுக்குப் பிடிக்கக்கூடிய வீடியோக்கள்';
+  String get videosYouMightLike => 'Videos You Might Like';
 
   @override
-  String get scrollToTop => 'மேலே செல்லவும்';
+  String get scrollToTop => 'Scroll to Top';
 
   @override
-  String get noRecentRidesFound => 'சமீಪத்திய சவாரிகள் எதுவும் கிடைக்கவில்லை';
+  String get noRecentRidesFound => 'சமீபத்திய பயணங்கள் இல்லை';
 
   @override
-  String get failedToLoadRides => 'சவாரிகளை ஏற்றுவதில் தோல்வி';
+  String get failedToLoadRides => 'பயணங்களை ஏற்ற முடியவில்லை';
 
   @override
-  String get hrMin => 'மணி:நிமிடம்';
+  String get hrMin => 'hr:min';
 
   @override
-  String get warranty_title => 'Device Warranty';
+  String get kmHr => 'km/hr';
+
+  @override
+  String get warranty_title => 'சாதன உத்தரவாதம்';
 
   @override
   String get warranty_extend =>
       'Extend warranty of your Trackify Lite by 1 year @ ₹1/day';
 
   @override
-  String get warranty_vehicle => 'Vehicle';
+  String get warranty_vehicle => 'வாகனம்';
 
   @override
-  String get warranty_expiry => 'Warranty expiry date';
+  String get warranty_expiry => 'உத்தரவாத முடிவு தேதி';
 
   @override
-  String warranty_daysLeft(Object days) {
+  String warranty_daysLeft(String days) {
     return '$days days left';
   }
 
   @override
-  String get warranty_benefitsTitle => 'Benefits you do not want to miss';
+  String get warranty_benefitsTitle => 'நீங்கள் தவறவிடக்கூடாத நன்மைகள்';
 
   @override
-  String get benefit1_highlight => 'Guaranteed replacement ';
+  String get benefit1_highlight => 'உத்தரவாத மாற்று ';
 
   @override
-  String get benefit1_normal => 'in case of failure';
+  String get benefit1_normal => 'பழுதானால்';
 
   @override
-  String get benefit2_highlight => 'Save upto ₹1200 ';
+  String get benefit2_highlight => '₹1200 வரை சேமிக்கவும் ';
 
   @override
-  String get benefit2_normal => 'on device repair';
+  String get benefit2_normal => 'சாதன பழுதுparuக்கு';
 
   @override
-  String get benefit3_highlight => 'Instant support ';
+  String get benefit3_highlight => 'உடனடி ஆதரவு ';
 
   @override
-  String get benefit3_normal => 'for device related issues';
+  String get benefit3_normal => 'சாதன தொடர்பான பிரச்சினைகளுக்கு';
 
   @override
-  String get benefit4_highlight => 'Free extended subscription upto ₹2000 ';
+  String get benefit4_highlight => '₹2000 வரை இலவச நீட்டிக்கப்பட்ட சந்தா ';
 
   @override
-  String get benefit4_normal => 'for faulty period';
+  String get benefit4_normal => 'பழுது காலத்திற்கு';
 
   @override
-  String get warranty_button => 'Extend warranty now @ ₹365 ';
+  String get warranty_button => 'இப்போது உத்தரவாதத்தை நீட்டிக்கவும் @ ₹365 ';
 
   @override
   String get warranty_button_old => '₹730';

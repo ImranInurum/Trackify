@@ -7,7 +7,7 @@
   "passwordHint": "******",
   "emailRequired": "البريد الإلكتروني مطلوب",
   "passwordRequired": "كلمة المرور مطلوبة",
-  "invalidEmail": "يرجى إدخال عنوان بريد إلكتروني صحيح",
+  "invalidEmail": "يرجى إدخال بريد إلكتروني صحيح",
   "forgotPassword": "هل نسيت كلمة المرور؟",
   "signIn": "تسجيل الدخول",
   "or": "أو",
@@ -204,6 +204,16 @@
   "upgradeToPlus": "ترقية إلى Ajjas Plus",
   "getMoreOutOfAjjas": "استفد أكثر من Ajjas",
   "featuresExploredCount": "لقد استكشفت {count} من {total} ميزات - واصل!",
+  "@featuresExploredCount": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      },
+      "total": {
+        "type": "String"
+      }
+    }
+  },
   "manageVehiclesDesc": "إدارة جميع مركباتك هنا",
   "settingsDesc": "اللغة وإعدادات الحساب والمزيد",
   "notifications": "الإشعارات",
@@ -276,10 +286,10 @@
   "assigningDevice": "جاري تخصيص الجهاز...",
   "invalidImeiError": "يرجى إدخال رقم IMEI صالِح مكون من 15 رقماً",
   "sharedRides": "الرحلات المشتركة",
-  "savedRides": "Saved Rides",
-  "allRides": "ALL RIDES",
-  "trips": "TRIPS",
-  "clicked": "{value} Clicked",
+  "savedRides": "الرحلات المحفوظة",
+  "allRides": "كل الرحلات",
+  "trips": "الرحلات",
+  "clicked": "تم النقر {value}",
   "@clicked": {
     "placeholders": {
       "value": {
@@ -287,13 +297,13 @@
       }
     }
   },
-  "noDailyRides": "No daily rides to show",
-  "getStartedFirstRide": "Get started by taking your first ride",
-  "durationLabel": "Duration",
-  "km": "km",
-  "kmh": "km/h",
-  "tripEmptyQuote": "“Group your rides into trips, add memories, and relive the journey”",
-  "ridesCompletedCount": "Rides completed: {completed}/{total}",
+  "noDailyRides": "لا توجد رحلات يومية للعرض",
+  "getStartedFirstRide": "ابدأ برحلتك الأولى",
+  "durationLabel": "المدة",
+  "km": "كم",
+  "kmh": "كم/ساعة",
+  "tripEmptyQuote": "\u201cجمّع رحلاتك في رحلة واحدة، أضف ذكريات، وأعِد تجربة الرحلة\u201d",
+  "ridesCompletedCount": "الرحلات المكتملة: {completed}/{total}",
   "@ridesCompletedCount": {
     "placeholders": {
       "completed": {
@@ -304,10 +314,10 @@
       }
     }
   },
-  "unlockTripsRequirement": "You need at least 3 rides to unlock trips",
-  "createNewTrip": "Create a New Trip",
-  "startByCreatingTrip": "Start by creating a New Trip",
-  "skip": "Skip",
+  "unlockTripsRequirement": "تحتاج إلى 3 رحلات على الأقل لفتح الرحلات",
+  "createNewTrip": "إنشاء رحلة جديدة",
+  "startByCreatingTrip": "ابدأ بإنشاء رحلة جديدة",
+  "skip": "تخطي",
   "todayText": "اليوم",
   "distanceLabel": "المسافة",
   "rideDuration": "مدة الرحلة",
@@ -453,6 +463,15 @@
   "overallDistance": "المسافة الإجمالية",
   "drivingTime": "وقت القيادة",
   "safetyScore": "درجة السلامة",
+  "speedAlertInput": "إدخال تنبيه السرعة",
+  "alertTitle": "عنوان التنبيه",
+  "speedLimitKmH": "حد السرعة (كم/ساعة)",
+  "timeDurationSec": "المدة الزمنية (ثانية)",
+  "selectYourVehicle": "اختر مركبتك",
+  "submit": "إرسال",
+  "selectVehiclesOverspeedAlert": "اختر المركبات التي تريد إضافة تنبيه السرعة الزائدة عليها",
+  "selected": "محدد",
+  "sec": "ثانية",
   "viewMore": "عرض المزيد",
   "viewLess": "عرض أقل",
   "previousRides": "الرحلات السابقة",
@@ -461,37 +480,29 @@
   "scrollToTop": "العودة إلى الأعلى",
   "noRecentRidesFound": "لم يتم العثور على رحلات حديثة",
   "failedToLoadRides": "فشل في تحميل الرحلات",
-  "hrMin": "ساعة:دقيقة"
-  "safetyScore": "درجة السلامة",
-
-
-
-
-    "warranty_title": "ضمان الجهاز",
-    "warranty_extend": "قم بتمديد ضمان Trackify Lite لمدة سنة واحدة مقابل ₹1/يوم",
-    "warranty_vehicle": "المركبة",
-    "warranty_expiry": "تاريخ انتهاء الضمان",
-    "warranty_daysLeft": "متبقي {days} يوم",
-
-     "warranty_benefitsTitle": "तुम्ही चुकवू नये असे फायदे",
-
-     "benefit1_highlight": "استبدال مضمون ",
-     "benefit1_normal": "في حال حدوث عطل",
-
-     "benefit2_highlight": "وفّر حتى ₹1200 ",
-     "benefit2_normal": "على إصلاح الجهاز",
-
-     "benefit3_highlight": "دعم فوري ",
-     "benefit3_normal": "لمشاكل الجهاز",
-
-     "benefit4_highlight": "اشتراك ممتد مجاني حتى ₹2000 ",
-     "benefit4_normal": "خلال فترة العطل",
-
-     "warranty_button": "مدد الضمان الآن مقابل ₹365 ",
-     "warranty_button_old": "₹730"
-
-
-
-
-
+  "hrMin": "ساعة:دقيقة",
+  "kmHr": "كم/ساعة",
+  "warranty_title": "ضمان الجهاز",
+  "warranty_extend": "قم بتمديد ضمان Trackify Lite لمدة سنة واحدة مقابل \u20b91/يوم",
+  "warranty_vehicle": "المركبة",
+  "warranty_expiry": "تاريخ انتهاء الضمان",
+  "warranty_daysLeft": "متبقي {days} يوم",
+  "@warranty_daysLeft": {
+    "placeholders": {
+      "days": {
+        "type": "String"
+      }
+    }
+  },
+  "warranty_benefitsTitle": "مزايا لا تريد أن تفوتها",
+  "benefit1_highlight": "استبدال مضمون ",
+  "benefit1_normal": "في حال حدوث عطل",
+  "benefit2_highlight": "وفّر حتى \u20b91200 ",
+  "benefit2_normal": "على إصلاح الجهاز",
+  "benefit3_highlight": "دعم فوري ",
+  "benefit3_normal": "لمشاكل الجهاز",
+  "benefit4_highlight": "اشتراك ممتد مجاني حتى \u20b92000 ",
+  "benefit4_normal": "خلال فترة العطل",
+  "warranty_button": "مدد الضمان الآن مقابل \u20b9365 ",
+  "warranty_button_old": "\u20b9730"
 }

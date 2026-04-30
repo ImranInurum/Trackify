@@ -14,7 +14,6 @@
   "dontHaveAccount": "Don't have an account? ",
   "signUp": "Sign Up",
   "welcome": "Welcome {email}!",
-
   "@welcome": {
     "placeholders": {
       "email": {
@@ -48,6 +47,7 @@
   "createAccount": "Create Account",
   "registerSuccess": "User Registered Successfully Please Login",
   "signUpFailed": "Sign up failed",
+  "alreadyHaveAccount": "Already have an account?",
   "otpSent": "OTP sent successfully",
   "resetPassword": "Reset Password",
   "resetPasswordDesc": "Enter your email address and we will send you a link to reset your password.",
@@ -182,7 +182,6 @@
   "exploreFreeApp": "Explore Our Free App",
   "exploreFreeAppDesc": "Record rides using phone manually & keep track of it using our free app curated for you",
   "logout": "Logout",
-  "alreadyHaveAccount": "Already have an account?",
   "dataPlan": "Data Plan",
   "warranty": "Warranty",
   "expiresInDays": "Expires in {days} days",
@@ -205,6 +204,16 @@
   "upgradeToPlus": "Upgrade to Ajjas Plus",
   "getMoreOutOfAjjas": "Get more out of Ajjas",
   "featuresExploredCount": "You've explored {count} of {total} features - keep going!",
+  "@featuresExploredCount": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      },
+      "total": {
+        "type": "String"
+      }
+    }
+  },
   "manageVehiclesDesc": "Manage all your Vehicles here",
   "settingsDesc": "Language, Account Settings & more",
   "notifications": "Notifications",
@@ -293,7 +302,7 @@
   "durationLabel": "Duration",
   "km": "km",
   "kmh": "km/h",
-  "tripEmptyQuote": "“Group your rides into trips, add memories, and relive the journey”",
+  "tripEmptyQuote": "\u201cGroup your rides into trips, add memories, and relive the journey\u201d",
   "ridesCompletedCount": "Rides completed: {completed}/{total}",
   "@ridesCompletedCount": {
     "placeholders": {
@@ -316,7 +325,7 @@
   "minutesShort": "m",
   "secondsShort": "s",
   "getMoreOutOfTrackify": "Get more out of Trackify",
-  "discoverMoreDesc": "Discover more — awesome things await!",
+  "discoverMoreDesc": "Discover more \u2014 awesome things await!",
   "serviceLogs": "Service Logs",
   "safeParking": "Safe Parking",
   "appUpdates": "App Updates",
@@ -461,10 +470,8 @@
   "selectYourVehicle": "Select your vehicle",
   "submit": "Submit",
   "selectVehiclesOverspeedAlert": "Select vehicles on which to add overspeed alert",
-  "close": "Close",
   "selected": "Selected",
   "sec": "sec",
-  "kmHr": "km/hr",
   "viewMore": "View more",
   "viewLess": "View less",
   "previousRides": "Previous Rides",
@@ -473,38 +480,29 @@
   "scrollToTop": "Scroll to Top",
   "noRecentRidesFound": "No recent rides found",
   "failedToLoadRides": "Failed to load rides",
-  "hrMin": "hr:min"
+  "hrMin": "hr:min",
   "kmHr": "km/hr",
-
-
-
-    "warranty_title": "Device Warranty",
-    "warranty_extend": "Extend warranty of your Trackify Lite by 1 year @ ₹1/day",
-    "warranty_vehicle": "Vehicle",
-    "warranty_expiry": "Warranty expiry date",
-    "warranty_daysLeft": "{days} days left",
-
-    "warranty_benefitsTitle": "Benefits you do not want to miss",
-
-
-     "benefit1_highlight": "Guaranteed replacement ",
-     "benefit1_normal": "in case of failure",
-
-     "benefit2_highlight": "Save upto ₹1200 ",
-     "benefit2_normal": "on device repair",
-
-     "benefit3_highlight": "Instant support ",
-     "benefit3_normal": "for device related issues",
-
-     "benefit4_highlight": "Free extended subscription upto ₹2000 ",
-     "benefit4_normal": "for faulty period",
-
-     "warranty_button": "Extend warranty now @ ₹365 ",
-     "warranty_button_old": "₹730"
-
-
-
-
-
-
+  "warranty_title": "Device Warranty",
+  "warranty_extend": "Extend warranty of your Trackify Lite by 1 year @ \u20b91/day",
+  "warranty_vehicle": "Vehicle",
+  "warranty_expiry": "Warranty expiry date",
+  "warranty_daysLeft": "{days} days left",
+  "@warranty_daysLeft": {
+    "placeholders": {
+      "days": {
+        "type": "String"
+      }
+    }
+  },
+  "warranty_benefitsTitle": "Benefits you do not want to miss",
+  "benefit1_highlight": "Guaranteed replacement ",
+  "benefit1_normal": "in case of failure",
+  "benefit2_highlight": "Save upto \u20b91200 ",
+  "benefit2_normal": "on device repair",
+  "benefit3_highlight": "Instant support ",
+  "benefit3_normal": "for device related issues",
+  "benefit4_highlight": "Free extended subscription upto \u20b92000 ",
+  "benefit4_normal": "for faulty period",
+  "warranty_button": "Extend warranty now @ \u20b9365 ",
+  "warranty_button_old": "\u20b9730"
 }

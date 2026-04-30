@@ -136,6 +136,9 @@ class AppLocalizationsKn extends AppLocalizations {
   String get signUpFailed => 'ಸೈನ್ ಅಪ್ ವಿಫಲವಾಗಿದೆ';
 
   @override
+  String get alreadyHaveAccount => 'ಈಗಾಗಲೇ ಖಾತೆ ಹೊಂದಿದ್ದೀರಾ?';
+
+  @override
   String get otpSent => 'OTP ಯಶಸ್ವಿಯಾಗಿ ಕಳುಹಿಸಲಾಗಿದೆ';
 
   @override
@@ -470,9 +473,6 @@ class AppLocalizationsKn extends AppLocalizations {
   String get logout => 'ಲಾಗ್ ಔಟ್';
 
   @override
-  String get alreadyHaveAccount => 'ಈಗಾಗಲೇ ಖಾತೆ ಹೊಂದಿದ್ದೀರಾ?';
-
-  @override
   String get dataPlan => 'ಡೇಟಾ ಪ್ಲಾನ್';
 
   @override
@@ -518,7 +518,7 @@ class AppLocalizationsKn extends AppLocalizations {
   String get getMoreOutOfAjjas => 'ಅಜ್ಜಾಸ್‌ನಿಂದ ಹೆಚ್ಚಿನ ಪ್ರಯೋಜನ ಪಡೆಯಿರಿ';
 
   @override
-  String featuresExploredCount(Object count, Object total) {
+  String featuresExploredCount(String count, String total) {
     return 'ನೀವು $total ರಲ್ಲಿ $count ವೈಶಿಷ್ಟ್ಯಗಳನ್ನು ಅನ್ವೇಷಿಸಿದ್ದೀರಿ';
   }
 
@@ -730,55 +730,55 @@ class AppLocalizationsKn extends AppLocalizations {
   String get sharedRides => 'ಸಹಭಾಗಿತ್ವದ ರೈಡ್‌ಗಳು';
 
   @override
-  String get savedRides => 'Saved Rides';
+  String get savedRides => 'ಉಳಿಸಿದ ರೈಡ್‌ಗಳು';
 
   @override
-  String get allRides => 'ALL RIDES';
+  String get allRides => 'ಎಲ್ಲಾ ರೈಡ್‌ಗಳು';
 
   @override
-  String get trips => 'TRIPS';
+  String get trips => 'ಟ್ರಿಪ್‌ಗಳು';
 
   @override
   String clicked(String value) {
-    return '$value Clicked';
+    return '$value ಕ್ಲಿಕ್ ಮಾಡಲಾಗಿದೆ';
   }
 
   @override
-  String get noDailyRides => 'No daily rides to show';
+  String get noDailyRides => 'ತೋರಿಸಲು ದೈನಂದಿನ ರೈಡ್‌ಗಳಿಲ್ಲ';
 
   @override
-  String get getStartedFirstRide => 'Get started by taking your first ride';
+  String get getStartedFirstRide => 'ನಿಮ್ಮ ಮೊದಲ ರೈಡ್ ತೆಗೆದುಕೊಂಡು ಪ್ರಾರಂಭಿಸಿ';
 
   @override
-  String get durationLabel => 'Duration';
+  String get durationLabel => 'ಅವಧಿ';
 
   @override
-  String get km => 'km';
+  String get km => 'ಕಿಮೀ';
 
   @override
-  String get kmh => 'km/h';
+  String get kmh => 'ಕಿಮೀ/ಗಂ';
 
   @override
   String get tripEmptyQuote =>
-      '“Group your rides into trips, add memories, and relive the journey”';
+      '“ನಿಮ್ಮ ರೈಡ್‌ಗಳನ್ನು ಟ್ರಿಪ್‌ಗಳಲ್ಲಿ ಗುಂಪುಮಾಡಿ, ನೆನಪುಗಳನ್ನು ಸೇರಿಸಿ ಮತ್ತು ಪ್ರಯಾಣವನ್ನು ಮತ್ತೆ ಅನುಭವಿಸಿ”';
 
   @override
   String ridesCompletedCount(String completed, String total) {
-    return 'Rides completed: $completed/$total';
+    return 'ಪೂರ್ಣಗೊಂಡ ರೈಡ್‌ಗಳು: $completed/$total';
   }
 
   @override
   String get unlockTripsRequirement =>
-      'You need at least 3 rides to unlock trips';
+      'ಟ್ರಿಪ್‌ಗಳನ್ನು ಅನ್‌ಲಾಕ್ ಮಾಡಲು ನಿಮಗೆ ಕನಿಷ್ಠ 3 ರೈಡ್‌ಗಳು ಬೇಕು';
 
   @override
-  String get createNewTrip => 'Create a New Trip';
+  String get createNewTrip => 'ಹೊಸ ಟ್ರಿಪ್ ರಚಿಸಿ';
 
   @override
-  String get startByCreatingTrip => 'Start by creating a New Trip';
+  String get startByCreatingTrip => 'ಹೊಸ ಟ್ರಿಪ್ ರಚಿಸುವ ಮೂಲಕ ಪ್ರಾರಂಭಿಸಿ';
 
   @override
-  String get skip => 'Skip';
+  String get skip => 'ಸ್ಕಿಪ್';
 
   @override
   String get todayText => 'ಇಂದು';
@@ -1164,58 +1164,6 @@ class AppLocalizationsKn extends AppLocalizations {
   String get sec => 'ಸೆಕೆಂಡು';
 
   @override
-  String get kmHr => 'ಕಿಮೀ/ಗಂ';
-
-  @override
-  String get warranty_title => 'ಡಿವೈಸ್ ವಾರಂಟಿ';
-
-  @override
-  String get warranty_extend =>
-      'ನಿಮ್ಮ Trackify Lite ಗೆ 1 ವರ್ಷದ ವಾರಂಟಿಯನ್ನು ₹1/ದಿನಕ್ಕೆ ವಿಸ್ತರಿಸಿ';
-
-  @override
-  String get warranty_vehicle => 'ವಾಹನ';
-
-  @override
-  String get warranty_expiry => 'ವಾರಂಟಿ ಮುಕ್ತಾಯ ದಿನಾಂಕ';
-
-  @override
-  String warranty_daysLeft(Object days) {
-    return '$days ದಿನಗಳು ಬಾಕಿ';
-  }
-
-  @override
-  String get warranty_benefitsTitle => 'ನೀವು ತಪ್ಪಿಸಿಕೊಳ್ಳಬಾರದ ಪ್ರಯೋಜನಗಳು';
-
-  @override
-  String get benefit1_highlight => 'ಖಚಿತ ಬದಲಾವಣೆ ';
-
-  @override
-  String get benefit1_normal => 'ದೋಷ ಉಂಟಾದರೆ';
-
-  @override
-  String get benefit2_highlight => '₹1200 ವರೆಗೆ ಉಳಿಸಿ ';
-
-  @override
-  String get benefit2_normal => 'ಡಿವೈಸ್ ರಿಪೇರಿ ಮೇಲೆ';
-
-  @override
-  String get benefit3_highlight => 'ತಕ್ಷಣದ ಸಹಾಯ ';
-
-  @override
-  String get benefit3_normal => 'ಡಿವೈಸ್ ಸಮಸ್ಯೆಗಳಿಗಾಗಿ';
-
-  @override
-  String get benefit4_highlight => '₹2000 ವರೆಗೆ ಉಚಿತ ವಿಸ್ತರಿತ ಚಂದಾದಾರಿಕೆ ';
-
-  @override
-  String get benefit4_normal => 'ದೋಷ ಅವಧಿಗೆ';
-
-  @override
-  String get warranty_button => 'ಈಗ ವಾರಂಟಿಯನ್ನು ವಿಸ್ತರಿಸಿ @ ₹365 ';
-
-  @override
-  String get warranty_button_old => '₹730';
   String get viewMore => 'ಹೆಚ್ಚು ನೋಡಿ';
 
   @override
@@ -1243,6 +1191,9 @@ class AppLocalizationsKn extends AppLocalizations {
   String get hrMin => 'ಗಂಟೆ:ನಿಮಿಷ';
 
   @override
+  String get kmHr => 'ಕಿಮೀ/ಗಂ';
+
+  @override
   String get warranty_title => 'ಡಿವೈಸ್ ವಾರಂಟಿ';
 
   @override
@@ -1256,7 +1207,7 @@ class AppLocalizationsKn extends AppLocalizations {
   String get warranty_expiry => 'ವಾರಂಟಿ ಮುಕ್ತಾಯ ದಿನಾಂಕ';
 
   @override
-  String warranty_daysLeft(Object days) {
+  String warranty_daysLeft(String days) {
     return '$days ದಿನಗಳು ಬಾಕಿ';
   }
 

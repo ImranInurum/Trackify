@@ -196,7 +196,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             ),
                             const SizedBox(height: 4),
                               Text(
-                                l10n.featuresExploredCount(10, 16),
+                                l10n.featuresExploredCount("10", "16"),
                                 style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6)),
                               ),
                           ],

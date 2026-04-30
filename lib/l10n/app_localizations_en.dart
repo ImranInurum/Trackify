@@ -134,6 +134,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get signUpFailed => 'Sign up failed';
 
   @override
+  String get alreadyHaveAccount => 'Already have an account?';
+
+  @override
   String get otpSent => 'OTP sent successfully';
 
   @override
@@ -466,9 +469,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get logout => 'Logout';
 
   @override
-  String get alreadyHaveAccount => 'Already have an account?';
-
-  @override
   String get dataPlan => 'Data Plan';
 
   @override
@@ -514,7 +514,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get getMoreOutOfAjjas => 'Get more out of Ajjas';
 
   @override
-  String featuresExploredCount(Object count, Object total) {
+  String featuresExploredCount(String count, String total) {
     return 'You\'ve explored $count of $total features - keep going!';
   }
 
@@ -1160,58 +1160,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get sec => 'sec';
 
   @override
-  String get kmHr => 'km/hr';
-
-  @override
-  String get warranty_title => 'Device Warranty';
-
-  @override
-  String get warranty_extend =>
-      'Extend warranty of your Trackify Lite by 1 year @ ₹1/day';
-
-  @override
-  String get warranty_vehicle => 'Vehicle';
-
-  @override
-  String get warranty_expiry => 'Warranty expiry date';
-
-  @override
-  String warranty_daysLeft(Object days) {
-    return '$days days left';
-  }
-
-  @override
-  String get warranty_benefitsTitle => 'Benefits you do not want to miss';
-
-  @override
-  String get benefit1_highlight => 'Guaranteed replacement ';
-
-  @override
-  String get benefit1_normal => 'in case of failure';
-
-  @override
-  String get benefit2_highlight => 'Save upto ₹1200 ';
-
-  @override
-  String get benefit2_normal => 'on device repair';
-
-  @override
-  String get benefit3_highlight => 'Instant support ';
-
-  @override
-  String get benefit3_normal => 'for device related issues';
-
-  @override
-  String get benefit4_highlight => 'Free extended subscription upto ₹2000 ';
-
-  @override
-  String get benefit4_normal => 'for faulty period';
-
-  @override
-  String get warranty_button => 'Extend warranty now @ ₹365 ';
-
-  @override
-  String get warranty_button_old => '₹730';
   String get viewMore => 'View more';
 
   @override
@@ -1239,6 +1187,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get hrMin => 'hr:min';
 
   @override
+  String get kmHr => 'km/hr';
+
+  @override
   String get warranty_title => 'Device Warranty';
 
   @override
@@ -1252,7 +1203,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get warranty_expiry => 'Warranty expiry date';
 
   @override
-  String warranty_daysLeft(Object days) {
+  String warranty_daysLeft(String days) {
     return '$days days left';
   }
 
