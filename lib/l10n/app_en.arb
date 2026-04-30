@@ -501,4 +501,80 @@
     "continueSuperCombo": "Continue with Super Combo Plan",
     "continue12Month": "Continue with 12-Month Plan",
     "continue6Month": "Continue with 6-Month Plan"
+  "odometerReading": "Odometer Reading",
+  "update": "Update",
+  "gpsReadingNote": "GPS-based reading, minor differences may occur.",
+  "tankCapacity": "Tank Capacity",
+  "afterLastRefuel": "After Last Refuel",
+  "fuelRemaining": "Fuel Remaining",
+  "distanceRemaining": "Distance Remaining",
+  "mileageArai": "Mileage (ARAI)",
+  "spendingOnFuel": "Spending on Fuel",
+  "today": "Today",
+  "thisWeek": "This week",
+  "thisMonth": "This month",
+  "thisYear": "This year",
+  "all": "All",
+  "customDates": "Custom dates",
+  "refuelHistory": "Refuel History",
+  "addRefuelingDetails": "Add refueling details",
+  "fuelStations": "Fuel Stations",
+  "dashboard": "Dashboard",
+  "litersShort": "L",
+  "fuelEstimateNote": "These values are estimates based on your fuel entries. Add fuel logs regularly for better accuracy.",
+  "gotIt": "Got it",
+  "currentOdometerReading": "Current Odometer Reading",
+  "odometerUpdateDesc": "Regularly update your odometer for accurate fuel and distance estimates",
+  "updateTankCapacity": "Update Tank Capacity",
+  "tankCapacityDesc": "Enter the maximum fuel capacity of your vehicle tank",
+  "litres": "Litres",
+  "kms": "Kms",
+  "cancel": "Cancel",
+  "save": "Save",
+  "updateMileageArai": "Update Mileage (ARAI)",
+  "mileageDesc": "Enter the mileage of your vehicle as per ARAI standards",
+  "kmL": "Km/L",
+  "serviceLogAddedSuccess": "Service log added successfully",
+  "currencySymbol": "₹",
+  "refuelHistoryComingSoon": "Refuel History Coming Soon",
+  "fuelStationsComingSoon": "Fuel Stations Coming Soon",
+  "percentageValue": "{value}%",
+  "@percentageValue": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "thisYear": "This year",
+  "totalFuelAdded": "Total Fuel Added",
+  "totalSpendings": "Total spendings",
+  "avgMileage": "Avg Mileage",
+  "refuels": "Refuels",
+  "refuelingHistory": "Refueling History",
+  "newestFirst": "Newest First",
+  "oldestFirst": "Oldest First",
+  "mostExpensive": "Most Expensive",
+  "leastExpensive": "Least Expensive",
+  "bestMileage": "Best Mileage",
+  "worstMileage": "Worst Mileage",
+  "edit": "Edit",
+  "delete": "Delete",
+  "error": "Something went wrong",
+  "noDataAvailable": "No data available",
+  "hintEg": "e.g., {value}",
+  "@hintEg": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "addStation": "Add Station",
+  "nearby": "Nearby",
+  "favourites": "Favourites",
+  "addedByMe": "Added by me",
+  "noFavourites": "No favourites yet",
+  "noStationsAdded": "No stations added yet",
+  "fuelStationNearVehicle": "Fuel Station Near Vehicle"
 }

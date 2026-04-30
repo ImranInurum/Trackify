@@ -1235,4 +1235,196 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get continue6Month => 'Continue with 6-Month Plan';
+
+  @override
+  String get odometerReading => 'Odometer Reading';
+
+  @override
+  String get update => 'Update';
+
+  @override
+  String get gpsReadingNote =>
+      'GPS-based reading, minor differences may occur.';
+
+  @override
+  String get tankCapacity => 'Tank Capacity';
+
+  @override
+  String get afterLastRefuel => 'After Last Refuel';
+
+  @override
+  String get fuelRemaining => 'Fuel Remaining';
+
+  @override
+  String get distanceRemaining => 'Distance Remaining';
+
+  @override
+  String get mileageArai => 'Mileage (ARAI)';
+
+  @override
+  String get spendingOnFuel => 'Spending on Fuel';
+
+  @override
+  String get today => 'Today';
+
+  @override
+  String get thisWeek => 'This week';
+
+  @override
+  String get thisMonth => 'This month';
+
+  @override
+  String get thisYear => 'This year';
+
+  @override
+  String get all => 'All';
+
+  @override
+  String get customDates => 'Custom dates';
+
+  @override
+  String get refuelHistory => 'Refuel History';
+
+  @override
+  String get addRefuelingDetails => 'Add refueling details';
+
+  @override
+  String get fuelStations => 'Fuel Stations';
+
+  @override
+  String get dashboard => 'Dashboard';
+
+  @override
+  String get litersShort => 'L';
+
+  @override
+  String get fuelEstimateNote =>
+      'These values are estimates based on your fuel entries. Add fuel logs regularly for better accuracy.';
+
+  @override
+  String get gotIt => 'Got it';
+
+  @override
+  String get currentOdometerReading => 'Current Odometer Reading';
+
+  @override
+  String get odometerUpdateDesc =>
+      'Regularly update your odometer for accurate fuel and distance estimates';
+
+  @override
+  String get updateTankCapacity => 'Update Tank Capacity';
+
+  @override
+  String get tankCapacityDesc =>
+      'Enter the maximum fuel capacity of your vehicle tank';
+
+  @override
+  String get litres => 'Litres';
+
+  @override
+  String get kms => 'Kms';
+
+  @override
+  String get cancel => 'Cancel';
+
+  @override
+  String get save => 'Save';
+
+  @override
+  String get updateMileageArai => 'Update Mileage (ARAI)';
+
+  @override
+  String get mileageDesc =>
+      'Enter the mileage of your vehicle as per ARAI standards';
+
+  @override
+  String get kmL => 'Km/L';
+
+  @override
+  String get serviceLogAddedSuccess => 'Service log added successfully';
+
+  @override
+  String get currencySymbol => '₹';
+
+  @override
+  String get refuelHistoryComingSoon => 'Refuel History Coming Soon';
+
+  @override
+  String get fuelStationsComingSoon => 'Fuel Stations Coming Soon';
+
+  @override
+  String percentageValue(String value) {
+    return '$value%';
+  }
+
+  @override
+  String get totalFuelAdded => 'Total Fuel Added';
+
+  @override
+  String get totalSpendings => 'Total spendings';
+
+  @override
+  String get avgMileage => 'Avg Mileage';
+
+  @override
+  String get refuels => 'Refuels';
+
+  @override
+  String get refuelingHistory => 'Refueling History';
+
+  @override
+  String get newestFirst => 'Newest First';
+
+  @override
+  String get oldestFirst => 'Oldest First';
+
+  @override
+  String get mostExpensive => 'Most Expensive';
+
+  @override
+  String get leastExpensive => 'Least Expensive';
+
+  @override
+  String get bestMileage => 'Best Mileage';
+
+  @override
+  String get worstMileage => 'Worst Mileage';
+
+  @override
+  String get edit => 'Edit';
+
+  @override
+  String get delete => 'Delete';
+
+  @override
+  String get error => 'Something went wrong';
+
+  @override
+  String get noDataAvailable => 'No data available';
+
+  @override
+  String hintEg(String value) {
+    return 'e.g., $value';
+  }
+
+  @override
+  String get addStation => 'Add Station';
+
+  @override
+  String get nearby => 'Nearby';
+
+  @override
+  String get favourites => 'Favourites';
+
+  @override
+  String get addedByMe => 'Added by me';
+
+  @override
+  String get noFavourites => 'No favourites yet';
+
+  @override
+  String get noStationsAdded => 'No stations added yet';
+
+  @override
+  String get fuelStationNearVehicle => 'Fuel Station Near Vehicle';
 }

@@ -1236,4 +1236,195 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get continue6Month => '6 महीने के प्लान के साथ जारी रखें';
+
+  @override
+  String get odometerReading => 'ओडोमीटर रीडिंग';
+
+  @override
+  String get update => 'अपडेट';
+
+  @override
+  String get gpsReadingNote => 'जीपीएस-आधारित रीडिंग, मामूली अंतर हो सकता है।';
+
+  @override
+  String get tankCapacity => 'टैंक क्षमता';
+
+  @override
+  String get afterLastRefuel => 'अंतिम रिफ्यूल के बाद';
+
+  @override
+  String get fuelRemaining => 'शेष ईंधन';
+
+  @override
+  String get distanceRemaining => 'शेष दूरी';
+
+  @override
+  String get mileageArai => 'माइलेज (ARAI)';
+
+  @override
+  String get spendingOnFuel => 'ईंधन पर खर्च';
+
+  @override
+  String get today => 'आज';
+
+  @override
+  String get thisWeek => 'इस सप्ताह';
+
+  @override
+  String get thisMonth => 'इस महीने';
+
+  @override
+  String get thisYear => 'इस वर्ष';
+
+  @override
+  String get all => 'सभी';
+
+  @override
+  String get customDates => 'कस्टम तिथियां';
+
+  @override
+  String get refuelHistory => 'रिफ्यूल इतिहास';
+
+  @override
+  String get addRefuelingDetails => 'रिफ्यूलिंग विवरण जोड़ें';
+
+  @override
+  String get fuelStations => 'ईंधन स्टेशन';
+
+  @override
+  String get dashboard => 'डैशबोर्ड';
+
+  @override
+  String get litersShort => 'ली.';
+
+  @override
+  String get fuelEstimateNote =>
+      'ये मान आपकी ईंधन प्रविष्टियों पर आधारित अनुमान हैं। बेहतर सटीकता के लिए नियमित रूप से ईंधन लॉग जोड़ें।';
+
+  @override
+  String get gotIt => 'समझ गया';
+
+  @override
+  String get currentOdometerReading => 'वर्तमान ओडोमीटर रीडिंग';
+
+  @override
+  String get odometerUpdateDesc =>
+      'सटीक ईंधन और दूरी के अनुमान के लिए नियमित रूप से अपना ओडोमीटर अपडेट करें';
+
+  @override
+  String get updateTankCapacity => 'टैंक क्षमता अपडेट करें';
+
+  @override
+  String get tankCapacityDesc =>
+      'अपने वाहन टैंक की अधिकतम ईंधन क्षमता दर्ज करें';
+
+  @override
+  String get litres => 'लीटर';
+
+  @override
+  String get kms => 'किमी';
+
+  @override
+  String get cancel => 'रद्द करें';
+
+  @override
+  String get save => 'सहेजें';
+
+  @override
+  String get updateMileageArai => 'माइलेज अपडेट करें (ARAI)';
+
+  @override
+  String get mileageDesc =>
+      'ARAI मानकों के अनुसार अपने वाहन का माइलेज दर्ज करें';
+
+  @override
+  String get kmL => 'किमी/ली.';
+
+  @override
+  String get serviceLogAddedSuccess => 'सेवा लॉग सफलतापूर्वक जोड़ा गया';
+
+  @override
+  String get currencySymbol => '₹';
+
+  @override
+  String get refuelHistoryComingSoon => 'रिफ्यूल इतिहास जल्द ही आ रहा है';
+
+  @override
+  String get fuelStationsComingSoon => 'ईंधन स्टेशन जल्द ही आ रहे हैं';
+
+  @override
+  String percentageValue(String value) {
+    return '$value%';
+  }
+
+  @override
+  String get totalFuelAdded => 'कुल जोड़ा गया ईंधन';
+
+  @override
+  String get totalSpendings => 'कुल खर्च';
+
+  @override
+  String get avgMileage => 'औसत माइलेज';
+
+  @override
+  String get refuels => 'रिफ्यूल';
+
+  @override
+  String get refuelingHistory => 'रिफ्यूलिंग इतिहास';
+
+  @override
+  String get newestFirst => 'नवीनतम पहले';
+
+  @override
+  String get oldestFirst => 'सबसे पुराने पहले';
+
+  @override
+  String get mostExpensive => 'सबसे महंगे';
+
+  @override
+  String get leastExpensive => 'सबसे सस्ते';
+
+  @override
+  String get bestMileage => 'सर्वश्रेष्ठ माइलेज';
+
+  @override
+  String get worstMileage => 'सबसे खराब माइलेज';
+
+  @override
+  String get edit => 'संपादित करें';
+
+  @override
+  String get delete => 'हटाएं';
+
+  @override
+  String get error => 'Something went wrong';
+
+  @override
+  String get noDataAvailable => 'No data available';
+
+  @override
+  String hintEg(String value) {
+    return 'जैसे, $value';
+  }
+
+  @override
+  String get addStation => 'स्टेशन जोड़ें';
+
+  @override
+  String get nearby => 'पास के';
+
+  @override
+  String get favourites => 'पसंदीदा';
+
+  @override
+  String get addedByMe => 'मेरे द्वारा जोड़े गए';
+
+  @override
+  String get noFavourites => 'अभी तक कोई पसंदीदा नहीं';
+
+  @override
+  String get noStationsAdded => 'अभी तक कोई स्टेशन नहीं जोड़ा गया';
+
+  @override
+  String get fuelStationNearVehicle => 'वाहन के पास ईंधन स्टेशन';
 }

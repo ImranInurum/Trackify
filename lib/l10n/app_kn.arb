@@ -501,5 +501,77 @@
   "continueSuperCombo": "ಸೂಪರ್ ಕಾಂಬೋ ಯೋಜನೆಯೊಂದಿಗೆ ಮುಂದುವರಿಸಿ",
   "continue12Month": "12 ತಿಂಗಳ ಯೋಜನೆಯೊಂದಿಗೆ ಮುಂದುವರಿಸಿ",
   "continue6Month": "6 ತಿಂಗಳ ಯೋಜನೆಯೊಂದಿಗೆ ಮುಂದುವರಿಸಿ"
+  "odometerReading": "ಒಡೋಮೀಟರ್ ರೀಡಿಂಗ್",
+  "update": "ಅಪ್ಡೇಟ್",
+  "gpsReadingNote": "GPS ಆಧಾರಿತ ರೀಡಿಂಗ್, ಸಣ್ಣ ವ್ಯತ್ಯಾಸವಿರಬಹುದು.",
+  "tankCapacity": "ಟ್ಯಾಂಕ್ ಸಾಮರ್ಥ್ಯ",
+  "afterLastRefuel": "ಕೊನೆಯ ರಿಫ್ಯೂಯಲ್ ನಂತರ",
+  "fuelRemaining": "ಉಳಿದ ಇಂಧನ",
+  "distanceRemaining": "ಉಳಿದ ದೂರ",
+  "mileageArai": "ಮೈಲೇಜ್ (ARAI)",
+  "spendingOnFuel": "ಇಂಧನಕ್ಕಾಗಿ ಖರ್ಚು",
+  "thisWeek": "ಈ ವಾರ",
+  "refuelHistory": "ರಿಫ್ಯೂಯಲ್ ಇತಿಹಾಸ",
+  "addRefuelingDetails": "ರಿಫ್ಯೂಯಲಿಂಗ್ ವಿವರಗಳನ್ನು ಸೇರಿಸಿ",
+  "fuelStations": "ಇಂಧನ ಕೇಂದ್ರಗಳು",
+  "dashboard": "ಡ್ಯಾಶ್‌ಬೋರ್ಡ್",
+  "litersShort": "ಲೀ.",
+  "fuelEstimateNote": "ಈ ಮೌಲ್ಯಗಳು ನಿಮ್ಮ ಇಂಧನ ನಮೂದುಗಳನ್ನು ಆಧರಿಸಿದ ಅಂದಾಜುಗಳಾಗಿವೆ. ಉತ್ತಮ ನಿಖರತೆಗಾಗಿ ನಿಯಮಿತವಾಗಿ ಇಂಧನ ಲಾಗ್‌ಗಳನ್ನು ಸೇರಿಸಿ.",
+  "gotIt": "ಸರಿ",
+  "currentOdometerReading": "ಪ್ರಸ್ತುತ ಒಡೋಮೀಟರ್ ರೀಡಿಂಗ್",
+  "odometerUpdateDesc": "ನಿಖರವಾದ ಇಂಧನ ಮತ್ತು ದೂರದ ಅಂದಾಜಿಗಾಗಿ ನಿಯಮಿತವಾಗಿ ನಿಮ್ಮ ಒಡೋಮೀಟರ್ ಅನ್ನು ಅಪ್‌ಡೇಟ್ ಮಾಡಿ",
+  "updateTankCapacity": "ಟ್ಯಾಂಕ್ ಸಾಮರ್ಥ್ಯವನ್ನು ಅಪ್‌ಡೇಟ್ ಮಾಡಿ",
+  "tankCapacityDesc": "ನಿಮ್ಮ ವಾಹನದ ಟ್ಯಾಂಕ್‌ನ ಗರಿಷ್ಠ ಇಂಧನ ಸಾಮರ್ಥ್ಯವನ್ನು ನಮೂದಿಸಿ",
+  "litres": "ಲೀಟರ್",
+  "kms": "ಕಿಮೀ",
+  "cancel": "ರದ್ದುಮಾಡಿ",
+  "save": "ಉಳಿಸಿ",
+  "updateMileageArai": "ಮೈಲೇಜ್ ಅಪ್‌ಡೇಟ್ ಮಾಡಿ (ARAI)",
+  "mileageDesc": "ARAI ಮಾನದಂಡಗಳ ಪ್ರಕಾರ ನಿಮ್ಮ ವಾಹನದ ಮೈಲೇಜ್ ಅನ್ನು ನಮೂದಿಸಿ",
+  "kmL": "ಕಿಮೀ/ಲೀ",
+  "serviceLogAddedSuccess": "ಸೇವಾ ಲಾಗ್ ಅನ್ನು ಯಶಸ್ವಿಯಾಗಿ ಸೇರಿಸಲಾಗಿದೆ",
 
+  "currencySymbol": "₹",
+  "refuelHistoryComingSoon": "ರಿಫ್ಯೂಯಲ್ ಇತಿಹಾಸ ಶೀಘ್ರದಲ್ಲೇ ಬರಲಿದೆ",
+  "fuelStationsComingSoon": "ಇಂಧನ ಕೇಂದ್ರಗಳು ಶೀಘ್ರದಲ್ಲೇ ಬರಲಿವೆ",
+  "percentageValue": "{value}%",
+  "@percentageValue": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "thisYear": "ಈ ವರ್ಷ",
+  "totalFuelAdded": "ಒಟ್ಟು ಇಂಧನ ಸೇರಿಸಲಾಗಿದೆ",
+  "totalSpendings": "ಒಟ್ಟು ಖರ್ಚು",
+  "avgMileage": "ಸರಾಸರಿ ಮೈಲೇಜ್",
+  "refuels": "ರಿಫ್ಯೂಯಲ್‌ಗಳು",
+  "refuelingHistory": "ರಿಫ್ಯೂಯಲಿಂಗ್ ಇತಿಹಾಸ",
+  "newestFirst": "ಹೊಸತು ಮೊದಲು",
+  "oldestFirst": "ಹಳೆಯದು ಮೊದಲು",
+  "mostExpensive": "ಅತ್ಯಂತ ದುಬಾರಿ",
+  "leastExpensive": "ಕಡಿಮೆ ದುಬಾರಿ",
+  "bestMileage": "ಉತ್ತಮ ಮೈಲೇಜ್",
+  "worstMileage": "ಕಡಿಮೆ ಮೈಲೇಜ್",
+  "edit": "ತಿದ್ದಿ",
+  "delete": "ಅಳಿಸಿ",
+  "hintEg": "ಉದಾಹರಣೆಗೆ: {value}",
+  "@hintEg": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "thisMonth": "ಈ ತಿಂಗಳು",
+  "all": "ಎಲ್ಲಾ",
+  "customDates": "ಕಸ್ಟಮ್ ದಿನಾಂಕಗಳು",
+  "addStation": "ಕೇಂದ್ರವನ್ನು ಸೇರಿಸಿ",
+  "nearby": "ಹತ್ತಿರದ",
+  "favourites": "ಮೆಚ್ಚಿನವುಗಳು",
+  "addedByMe": "ನಾನು ಸೇರಿಸಿದ್ದು",
+  "noFavourites": "ಇನ್ನೂ ಯಾವುದೇ ಮೆಚ್ಚಿನವುಗಳಿಲ್ಲ",
+  "noStationsAdded": "ಇನ್ನೂ ಯಾವುದೇ ಕೇಂದ್ರಗಳನ್ನು ಸೇರಿಸಲಾಗಿಲ್ಲ",
+  "fuelStationNearVehicle": "ವಾಹನದ ಸಮೀಪವಿರುವ ಇಂಧನ ಕೇಂದ್ರ"
 }

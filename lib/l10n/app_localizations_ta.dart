@@ -1234,4 +1234,197 @@ class AppLocalizationsTa extends AppLocalizations {
 
   @override
   String get continue6Month => 'Continue with 6-Month Plan';
+
+  @override
+  String get odometerReading => 'ஓடோமீட்டர் ரீடிங்';
+
+  @override
+  String get update => 'புதுப்பி';
+
+  @override
+  String get gpsReadingNote =>
+      'GPS அடிப்படையிலான ரீடிங், சிறிய வித்தியாசம் இருக்கலாம்.';
+
+  @override
+  String get tankCapacity => 'டேங்க் கொள்ளளவு';
+
+  @override
+  String get afterLastRefuel => 'கடைசி எரிபொருள் நிரப்பலுக்குப் பிறகு';
+
+  @override
+  String get fuelRemaining => 'மீதமுள்ள எரிபொருள்';
+
+  @override
+  String get distanceRemaining => 'மீதமுள்ள தூரம்';
+
+  @override
+  String get mileageArai => 'மைலேஜ் (ARAI)';
+
+  @override
+  String get spendingOnFuel => 'எரிபொருள் செலவு';
+
+  @override
+  String get today => 'Today';
+
+  @override
+  String get thisWeek => 'இந்த வாரம்';
+
+  @override
+  String get thisMonth => 'இந்த மாதம்';
+
+  @override
+  String get thisYear => 'இந்த ஆண்டு';
+
+  @override
+  String get all => 'அனைத்தும்';
+
+  @override
+  String get customDates => 'தனிப்பயன் தேதிகள்';
+
+  @override
+  String get refuelHistory => 'எரிபொருள் வரலாறு';
+
+  @override
+  String get addRefuelingDetails => 'எரிபொருள் விவரங்களைச் சேர்க்கவும்';
+
+  @override
+  String get fuelStations => 'எரிபொருள் நிலையங்கள்';
+
+  @override
+  String get dashboard => 'டாஷ்போர்டு';
+
+  @override
+  String get litersShort => 'லி.';
+
+  @override
+  String get fuelEstimateNote =>
+      'இந்த மதிப்புகள் உங்கள் எரிபொருள் உள்ளீடுகளின் அடிப்படையிலான மதிப்பீடுகள். சிறந்த துல்லியத்திற்கு எரிபொருள் பதிவுகளைத் தவறாமல் சேர்க்கவும்.';
+
+  @override
+  String get gotIt => 'சரி';
+
+  @override
+  String get currentOdometerReading => 'தற்போதைய ஓடோமீட்டர் ரீடிங்';
+
+  @override
+  String get odometerUpdateDesc =>
+      'துல்லியமான எரிபொருள் மற்றும் தூர மதிப்பீடுகளுக்கு உங்கள் ஓடோமீட்டரைத் தவறாமல் புதுப்பிக்கவும்';
+
+  @override
+  String get updateTankCapacity => 'டேங்க் கொள்ளளவைப் புதுப்பிக்கவும்';
+
+  @override
+  String get tankCapacityDesc =>
+      'உங்கள் வாகன டேங்கின் அதிகபட்ச எரிபொருள் கொள்ளளவை உள்ளிடவும்';
+
+  @override
+  String get litres => 'லிட்டர்';
+
+  @override
+  String get kms => 'கி.மீ';
+
+  @override
+  String get cancel => 'ரத்துசெய்';
+
+  @override
+  String get save => 'சேமி';
+
+  @override
+  String get updateMileageArai => 'மைலேஜைப் புதுப்பிக்கவும் (ARAI)';
+
+  @override
+  String get mileageDesc =>
+      'ARAI தரநிலைகளின்படி உங்கள் வாகனத்தின் மைலேஜை உள்ளிடவும்';
+
+  @override
+  String get kmL => 'கி.மீ/லி';
+
+  @override
+  String get serviceLogAddedSuccess => 'சேவை பதிவு வெற்றிகரமாக சேர்க்கப்பட்டது';
+
+  @override
+  String get currencySymbol => '₹';
+
+  @override
+  String get refuelHistoryComingSoon => 'எரிபொருள் வரலாறு விரைவில் வரும்';
+
+  @override
+  String get fuelStationsComingSoon => 'எரிபொருள் நிலையங்கள் விரைவில் வரும்';
+
+  @override
+  String percentageValue(String value) {
+    return '$value%';
+  }
+
+  @override
+  String get totalFuelAdded => 'சேர்க்கப்பட்ட மொத்த எரிபொருள்';
+
+  @override
+  String get totalSpendings => 'மொத்த செலவுகள்';
+
+  @override
+  String get avgMileage => 'சராசரி மைலேஜ்';
+
+  @override
+  String get refuels => 'எரிபொருள் நிரப்பல்கள்';
+
+  @override
+  String get refuelingHistory => 'எரிபொருள் வரலாறு';
+
+  @override
+  String get newestFirst => 'புதியவை முதலில்';
+
+  @override
+  String get oldestFirst => 'பழையவை முதலில்';
+
+  @override
+  String get mostExpensive => 'மிகவும் விலை உயர்ந்தது';
+
+  @override
+  String get leastExpensive => 'குறைந்த விலை';
+
+  @override
+  String get bestMileage => 'சிறந்த மைலேஜ்';
+
+  @override
+  String get worstMileage => 'மோசமான மைಲೇಜ್';
+
+  @override
+  String get edit => 'திருத்து';
+
+  @override
+  String get delete => 'அழி';
+
+  @override
+  String get error => 'Something went wrong';
+
+  @override
+  String get noDataAvailable => 'No data available';
+
+  @override
+  String hintEg(String value) {
+    return 'உதாரணமாக: $value';
+  }
+
+  @override
+  String get addStation => 'நிலையத்தைச் சேர்';
+
+  @override
+  String get nearby => 'அருகிலுள்ள';
+
+  @override
+  String get favourites => 'பிடித்தவை';
+
+  @override
+  String get addedByMe => 'என்னால் சேர்க்கப்பட்டது';
+
+  @override
+  String get noFavourites => 'இன்னும் பிடித்தவை எதுவும் இல்லை';
+
+  @override
+  String get noStationsAdded => 'இன்னும் நிலையங்கள் எதுவும் சேர்க்கப்படவில்லை';
+
+  @override
+  String get fuelStationNearVehicle =>
+      'வாகனத்திற்கு அருகிலுள்ள எரிபொருள் நிலையம்';
 }
