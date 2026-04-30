@@ -21,6 +21,7 @@ import 'package:trackify/feature/record_via_phone/presentation/pages/record_via_
 import 'package:trackify/feature/trips/presentation/view/ride_history_details/ride_history_details_screen.dart';
 import 'package:trackify/feature/trips/presentation/view/widgets/all_rides/widgets/ride_card.dart';
 import '../../../../core/utils/shared_preferences.dart';
+import '../../../device_data/presentation/pages/device_data_screen.dart';
 import '../../../location_sharing/presentation/pages/location_sharing_screen.dart';
 import 'package:trackify/feature/service_logs/presentation/screens/service_logs_screen.dart';
 import '../../../notifications/presentation/screen/notification_list_screen.dart';
@@ -99,6 +100,8 @@ class _MapScreenState extends State<MapScreen> {
         _customMarker = BitmapDescriptor.fromBytes(markerIcon);
       });
     }
+
+
   }
 
   @override
@@ -835,6 +838,25 @@ class _MapScreenState extends State<MapScreen> {
         context,
         MaterialPageRoute(builder: (context) => OverSpeedAlertScreen()),
       );
+    }
+    else if (label == l10n.deviceDataPlanLabel.replaceAll(' ', '\n')) {
+      if (selectedDevice?.imei == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("No device found"),
+            backgroundColor: Colors.red,
+          ),
+        );
+      } else {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => DeviceDataScreen(
+
+            ),
+          ),
+        );
+      }
     }
   }
 

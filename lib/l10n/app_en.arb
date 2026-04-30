@@ -472,5 +472,33 @@
   "scrollToTop": "Scroll to Top",
   "noRecentRidesFound": "No recent rides found",
   "failedToLoadRides": "Failed to load rides",
-  "hrMin": "hr:min"
+  "hrMin": "hr:min",
+    "safetyScore": "Safety Score",
+    "vehicleLabel": "Vehicle",
+    "switchLabel": "Switch",
+
+    "expiryDate": "Expiry Date",
+    "rechargePlans": "Recharge Plans",
+
+    "superComboPlan": "Super Combo Plan",
+
+    "month12Validity": "12-Month Validity",
+    "month6Validity": "6-Month Validity",
+
+    "saveAmount": "Save ₹{amount} with this plan",
+    "@saveAmount": {
+      "placeholders": {
+        "amount": {}
+      }
+    },
+
+    "superComboPopularity": "95% of users choose the Super Combo Plan",
+
+    "appSimRecharge": "App & SIM Recharge",
+    "extendedWarranty": "Extended Warranty",
+    "plusMembership": "Plus Membership",
+
+    "continueSuperCombo": "Continue with Super Combo Plan",
+    "continue12Month": "Continue with 12-Month Plan",
+    "continue6Month": "Continue with 6-Month Plan"
 }

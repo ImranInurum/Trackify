@@ -1133,7 +1133,7 @@ class AppLocalizationsKn extends AppLocalizations {
   String get drivingTime => 'ಚಾಲನಾ ಸಮಯ';
 
   @override
-  String get safetyScore => 'ಸುರಕ್ಷತೆ ಸ್ಕೋರ್';
+  String get safetyScore => 'ಸುರಕ್ಷತಾ ಅಂಕ';
 
   @override
   String get speedAlertInput => 'ವೇಗದ ಎಚ್ಚರಿಕೆ ಇನ್‌ಪುಟ್';
@@ -1192,4 +1192,52 @@ class AppLocalizationsKn extends AppLocalizations {
 
   @override
   String get hrMin => 'ಗಂಟೆ:ನಿಮಿಷ';
+
+  @override
+  String get vehicleLabel => 'ವಾಹನ';
+
+  @override
+  String get switchLabel => 'ಬದಲಿಸಿ';
+
+  @override
+  String get expiryDate => 'ಅವಧಿ ಮುಗಿಯುವ ದಿನಾಂಕ';
+
+  @override
+  String get rechargePlans => 'ರೀಚಾರ್ಜ್ ಯೋಜನೆಗಳು';
+
+  @override
+  String get superComboPlan => 'ಸೂಪರ್ ಕಾಂಬೋ ಯೋಜನೆ';
+
+  @override
+  String get month12Validity => '12 ತಿಂಗಳ ಮಾನ್ಯತೆ';
+
+  @override
+  String get month6Validity => '6 ತಿಂಗಳ ಮಾನ್ಯತೆ';
+
+  @override
+  String saveAmount(Object amount) {
+    return 'ಈ ಯೋಜನೆಯೊಂದಿಗೆ ₹$amount ಉಳಿಸಿ';
+  }
+
+  @override
+  String get superComboPopularity =>
+      '95% ಬಳಕೆದಾರರು ಸೂಪರ್ ಕಾಂಬೋ ಯೋಜನೆಯನ್ನು ಆಯ್ಕೆ ಮಾಡುತ್ತಾರೆ';
+
+  @override
+  String get appSimRecharge => 'ಆಪ್ ಮತ್ತು ಸಿಮ್ ರೀಚಾರ್ಜ್';
+
+  @override
+  String get extendedWarranty => 'ವಿಸ್ತರಿತ ವಾರಂಟಿ';
+
+  @override
+  String get plusMembership => 'ಪ್ಲಸ್ ಸದಸ್ಯತ್ವ';
+
+  @override
+  String get continueSuperCombo => 'ಸೂಪರ್ ಕಾಂಬೋ ಯೋಜನೆಯೊಂದಿಗೆ ಮುಂದುವರಿಸಿ';
+
+  @override
+  String get continue12Month => '12 ತಿಂಗಳ ಯೋಜನೆಯೊಂದಿಗೆ ಮುಂದುವರಿಸಿ';
+
+  @override
+  String get continue6Month => '6 ತಿಂಗಳ ಯೋಜನೆಯೊಂದಿಗೆ ಮುಂದುವರಿಸಿ';
 }

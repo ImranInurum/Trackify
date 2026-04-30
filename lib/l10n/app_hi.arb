@@ -472,5 +472,33 @@
   "scrollToTop": "ऊपर जाएं",
   "noRecentRidesFound": "कोई हालिया सवारी नहीं मिली",
   "failedToLoadRides": "सवारी लोड करने में विफल",
-  "hrMin": "घंटा:मिनट"
+  "hrMin": "घंटा:मिनट",
+    "safetyScore": "सुरक्षा स्कोर",
+    "vehicleLabel": "वाहन",
+    "switchLabel": "स्विच",
+
+    "expiryDate": "समाप्ति तिथि",
+    "rechargePlans": "रिचार्ज प्लान",
+
+    "superComboPlan": "सुपर कॉम्बो प्लान",
+
+    "month12Validity": "12 महीने की वैधता",
+    "month6Validity": "6 महीने की वैधता",
+
+    "saveAmount": "इस प्लान के साथ ₹{amount} बचाएं",
+    "@saveAmount": {
+      "placeholders": {
+        "amount": {}
+      }
+    },
+
+    "superComboPopularity": "95% उपयोगकर्ता सुपर कॉम्बो प्लान चुनते हैं",
+
+    "appSimRecharge": "ऐप और सिम रिचार्ज",
+    "extendedWarranty": "विस्तारित वारंटी",
+    "plusMembership": "प्लस सदस्यता",
+
+    "continueSuperCombo": "सुपर कॉम्बो प्लान के साथ जारी रखें",
+    "continue12Month": "12 महीने के प्लान के साथ जारी रखें",
+    "continue6Month": "6 महीने के प्लान के साथ जारी रखें"
 }

@@ -2337,6 +2337,96 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'hr:min'**
   String get hrMin;
+
+  /// No description provided for @vehicleLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Vehicle'**
+  String get vehicleLabel;
+
+  /// No description provided for @switchLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Switch'**
+  String get switchLabel;
+
+  /// No description provided for @expiryDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Expiry Date'**
+  String get expiryDate;
+
+  /// No description provided for @rechargePlans.
+  ///
+  /// In en, this message translates to:
+  /// **'Recharge Plans'**
+  String get rechargePlans;
+
+  /// No description provided for @superComboPlan.
+  ///
+  /// In en, this message translates to:
+  /// **'Super Combo Plan'**
+  String get superComboPlan;
+
+  /// No description provided for @month12Validity.
+  ///
+  /// In en, this message translates to:
+  /// **'12-Month Validity'**
+  String get month12Validity;
+
+  /// No description provided for @month6Validity.
+  ///
+  /// In en, this message translates to:
+  /// **'6-Month Validity'**
+  String get month6Validity;
+
+  /// No description provided for @saveAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Save ₹{amount} with this plan'**
+  String saveAmount(Object amount);
+
+  /// No description provided for @superComboPopularity.
+  ///
+  /// In en, this message translates to:
+  /// **'95% of users choose the Super Combo Plan'**
+  String get superComboPopularity;
+
+  /// No description provided for @appSimRecharge.
+  ///
+  /// In en, this message translates to:
+  /// **'App & SIM Recharge'**
+  String get appSimRecharge;
+
+  /// No description provided for @extendedWarranty.
+  ///
+  /// In en, this message translates to:
+  /// **'Extended Warranty'**
+  String get extendedWarranty;
+
+  /// No description provided for @plusMembership.
+  ///
+  /// In en, this message translates to:
+  /// **'Plus Membership'**
+  String get plusMembership;
+
+  /// No description provided for @continueSuperCombo.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue with Super Combo Plan'**
+  String get continueSuperCombo;
+
+  /// No description provided for @continue12Month.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue with 12-Month Plan'**
+  String get continue12Month;
+
+  /// No description provided for @continue6Month.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue with 6-Month Plan'**
+  String get continue6Month;
 }
 
 class _AppLocalizationsDelegate

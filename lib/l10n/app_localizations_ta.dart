@@ -1187,4 +1187,51 @@ class AppLocalizationsTa extends AppLocalizations {
 
   @override
   String get hrMin => 'மணி:நிமிடம்';
+
+  @override
+  String get vehicleLabel => 'Vehicle';
+
+  @override
+  String get switchLabel => 'Switch';
+
+  @override
+  String get expiryDate => 'Expiry Date';
+
+  @override
+  String get rechargePlans => 'Recharge Plans';
+
+  @override
+  String get superComboPlan => 'Super Combo Plan';
+
+  @override
+  String get month12Validity => '12-Month Validity';
+
+  @override
+  String get month6Validity => '6-Month Validity';
+
+  @override
+  String saveAmount(Object amount) {
+    return 'Save ₹$amount with this plan';
+  }
+
+  @override
+  String get superComboPopularity => '95% of users choose the Super Combo Plan';
+
+  @override
+  String get appSimRecharge => 'App & SIM Recharge';
+
+  @override
+  String get extendedWarranty => 'Extended Warranty';
+
+  @override
+  String get plusMembership => 'Plus Membership';
+
+  @override
+  String get continueSuperCombo => 'Continue with Super Combo Plan';
+
+  @override
+  String get continue12Month => 'Continue with 12-Month Plan';
+
+  @override
+  String get continue6Month => 'Continue with 6-Month Plan';
 }
