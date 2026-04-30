@@ -22,8 +22,13 @@ class DashboardTabView extends StatelessWidget {
 
     return BlocBuilder<FuelLogsCubit, FuelLogsState>(
       builder: (context, state) {
+        if (state is FuelLogsInitial) {
+          // Trigger load if cubit was created but loadFuelLogs wasn't called yet
+          context.read<FuelLogsCubit>().loadFuelLogs();
+          return Center(child: CircularProgressIndicator(color: theme.primaryColor));
+        }
         if (state is FuelLogsLoading) {
-          return const Center(child: CircularProgressIndicator());
+          return Center(child: CircularProgressIndicator(color: theme.primaryColor));
         }
         if (state is FuelLogsError) {
           return Center(child: Text(state.message));

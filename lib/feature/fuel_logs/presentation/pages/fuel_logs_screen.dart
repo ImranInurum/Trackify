@@ -163,10 +163,10 @@ class _FuelLogsScreenState extends State<FuelLogsScreen>
                 Expanded(
                   child: TabBarView(
                     controller: _tabController,
-                    children: const [
-                      DashboardTabView(),
-                      RefuelHistoryTabView(),
-                      FuelStationsTabView(),
+                    children: [
+                      const DashboardTabView(),
+                      const RefuelHistoryTabView(),
+                      const FuelStationsTabView(),
                     ],
                   ),
                 ),
