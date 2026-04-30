@@ -19,7 +19,6 @@ class _WarrantyScreenState extends State<WarrantyScreen> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final dark = isDark(context);
-
     return Scaffold(
       extendBody: true,
       backgroundColor:

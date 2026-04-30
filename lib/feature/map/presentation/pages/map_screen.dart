@@ -837,6 +837,11 @@ class _MapScreenState extends State<MapScreen> {
         context,
         MaterialPageRoute(builder: (context) => OverSpeedAlertScreen()),
       );
+    } else if (label == l10n.deviceWarrantyLabel.replaceAll(' ', '\n')) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => WarrantyScreen()),
+      );
     }
   }
 
