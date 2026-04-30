@@ -2379,6 +2379,59 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'₹730'**
   String get warranty_button_old;
+  /// No description provided for @viewMore.
+  ///
+  /// In en, this message translates to:
+  /// **'View more'**
+  String get viewMore;
+
+  /// No description provided for @viewLess.
+  ///
+  /// In en, this message translates to:
+  /// **'View less'**
+  String get viewLess;
+
+  /// No description provided for @previousRides.
+  ///
+  /// In en, this message translates to:
+  /// **'Previous Rides'**
+  String get previousRides;
+
+  /// No description provided for @seeAll.
+  ///
+  /// In en, this message translates to:
+  /// **'See All'**
+  String get seeAll;
+
+  /// No description provided for @videosYouMightLike.
+  ///
+  /// In en, this message translates to:
+  /// **'Videos You Might Like'**
+  String get videosYouMightLike;
+
+  /// No description provided for @scrollToTop.
+  ///
+  /// In en, this message translates to:
+  /// **'Scroll to Top'**
+  String get scrollToTop;
+
+  /// No description provided for @noRecentRidesFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No recent rides found'**
+  String get noRecentRidesFound;
+
+  /// No description provided for @failedToLoadRides.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load rides'**
+  String get failedToLoadRides;
+
+  /// No description provided for @hrMin.
+  ///
+  /// In en, this message translates to:
+  /// **'hr:min'**
+  String get hrMin;
 }
 
 class _AppLocalizationsDelegate

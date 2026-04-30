@@ -1211,4 +1211,29 @@ class AppLocalizationsTa extends AppLocalizations {
 
   @override
   String get warranty_button_old => '₹730';
+  String get viewMore => 'மேலும் பார்க்க';
+
+  @override
+  String get viewLess => 'குறைவாக பார்க்க';
+
+  @override
+  String get previousRides => 'முந்தைய சவாரிகள்';
+
+  @override
+  String get seeAll => 'அனைத்தையும் பார்க்க';
+
+  @override
+  String get videosYouMightLike => 'உங்களுக்குப் பிடிக்கக்கூடிய வீடியோக்கள்';
+
+  @override
+  String get scrollToTop => 'மேலே செல்லவும்';
+
+  @override
+  String get noRecentRidesFound => 'சமீಪத்திய சவாரிகள் எதுவும் கிடைக்கவில்லை';
+
+  @override
+  String get failedToLoadRides => 'சவாரிகளை ஏற்றுவதில் தோல்வி';
+
+  @override
+  String get hrMin => 'மணி:நிமிடம்';
 }

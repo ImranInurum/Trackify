@@ -492,4 +492,13 @@
 
 
 
+  "viewMore": "ಹೆಚ್ಚು ನೋಡಿ",
+  "viewLess": "ಕಡಿಮೆ ನೋಡಿ",
+  "previousRides": "ಹಿಂದಿನ ಸವಾರಿಗಳು",
+  "seeAll": "ಎಲ್ಲವನ್ನೂ ನೋಡಿ",
+  "videosYouMightLike": "ನೀವು ಇಷ್ಟಪಡಬಹುದಾದ ವೀಡಿಯೊಗಳು",
+  "scrollToTop": "ಮೇಲಕ್ಕೆ ಹೋಗಿ",
+  "noRecentRidesFound": "ಯಾವುದೇ ಇತ್ತೀಚಿನ ಸವಾರಿಗಳು ಕಂಡುಬಂದಿಲ್ಲ",
+  "failedToLoadRides": "ಸವಾರಿಗಳನ್ನು ಲೋಡ್ ಮಾಡಲು ವಿಫಲವಾಗಿದೆ",
+  "hrMin": "ಗಂಟೆ:ನಿಮಿಷ"
 }

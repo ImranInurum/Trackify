@@ -1211,4 +1211,29 @@ class AppLocalizationsMr extends AppLocalizations {
 
   @override
   String get warranty_button_old => '₹730';
+  String get viewMore => 'आणखी पहा';
+
+  @override
+  String get viewLess => 'कमी पहा';
+
+  @override
+  String get previousRides => 'मागील प्रवास';
+
+  @override
+  String get seeAll => 'सर्व पहा';
+
+  @override
+  String get videosYouMightLike => 'तुम्हाला आवडतील असे व्हिडिओ';
+
+  @override
+  String get scrollToTop => 'वर जा';
+
+  @override
+  String get noRecentRidesFound => 'कोणताही अलीकडील प्रवास सापडला नाही';
+
+  @override
+  String get failedToLoadRides => 'प्रवास लोड करण्यात अयशस्वी';
+
+  @override
+  String get hrMin => 'तास:मिनट';
 }

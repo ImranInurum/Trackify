@@ -62,6 +62,7 @@ class ApiURL {
   static const String assignDevices = "$baseURL/api/assign-devices";
 
   static const String journeyRideHistory = "$baseURL/api/journey/ride-history";
+  static const String promoVideos = "$baseURL/api/promo/all";
 
   // -------------------------
   // LogoURL

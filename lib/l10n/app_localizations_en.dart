@@ -1212,4 +1212,29 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get warranty_button_old => '₹730';
+  String get viewMore => 'View more';
+
+  @override
+  String get viewLess => 'View less';
+
+  @override
+  String get previousRides => 'Previous Rides';
+
+  @override
+  String get seeAll => 'See All';
+
+  @override
+  String get videosYouMightLike => 'Videos You Might Like';
+
+  @override
+  String get scrollToTop => 'Scroll to Top';
+
+  @override
+  String get noRecentRidesFound => 'No recent rides found';
+
+  @override
+  String get failedToLoadRides => 'Failed to load rides';
+
+  @override
+  String get hrMin => 'hr:min';
 }

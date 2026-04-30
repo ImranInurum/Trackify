@@ -1216,4 +1216,29 @@ class AppLocalizationsKn extends AppLocalizations {
 
   @override
   String get warranty_button_old => '₹730';
+  String get viewMore => 'ಹೆಚ್ಚು ನೋಡಿ';
+
+  @override
+  String get viewLess => 'ಕಡಿಮೆ ನೋಡಿ';
+
+  @override
+  String get previousRides => 'ಹಿಂದಿನ ಸವಾರಿಗಳು';
+
+  @override
+  String get seeAll => 'ಎಲ್ಲವನ್ನೂ ನೋಡಿ';
+
+  @override
+  String get videosYouMightLike => 'ನೀವು ಇಷ್ಟಪಡಬಹುದಾದ ವೀಡಿಯೊಗಳು';
+
+  @override
+  String get scrollToTop => 'ಮೇಲಕ್ಕೆ ಹೋಗಿ';
+
+  @override
+  String get noRecentRidesFound => 'ಯಾವುದೇ ಇತ್ತೀಚಿನ ಸವಾರಿಗಳು ಕಂಡುಬಂದಿಲ್ಲ';
+
+  @override
+  String get failedToLoadRides => 'ಸವಾರಿಗಳನ್ನು ಲೋಡ್ ಮಾಡಲು ವಿಫಲವಾಗಿದೆ';
+
+  @override
+  String get hrMin => 'ಗಂಟೆ:ನಿಮಿಷ';
 }
