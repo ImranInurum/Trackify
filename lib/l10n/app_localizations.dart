@@ -2427,6 +2427,462 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Continue with 6-Month Plan'**
   String get continue6Month;
+
+  /// No description provided for @odometerReading.
+  ///
+  /// In en, this message translates to:
+  /// **'Odometer Reading'**
+  String get odometerReading;
+
+  /// No description provided for @update.
+  ///
+  /// In en, this message translates to:
+  /// **'Update'**
+  String get update;
+
+  /// No description provided for @gpsReadingNote.
+  ///
+  /// In en, this message translates to:
+  /// **'GPS-based reading, minor differences may occur.'**
+  String get gpsReadingNote;
+
+  /// No description provided for @tankCapacity.
+  ///
+  /// In en, this message translates to:
+  /// **'Tank Capacity'**
+  String get tankCapacity;
+
+  /// No description provided for @afterLastRefuel.
+  ///
+  /// In en, this message translates to:
+  /// **'After Last Refuel'**
+  String get afterLastRefuel;
+
+  /// No description provided for @fuelRemaining.
+  ///
+  /// In en, this message translates to:
+  /// **'Fuel Remaining'**
+  String get fuelRemaining;
+
+  /// No description provided for @distanceRemaining.
+  ///
+  /// In en, this message translates to:
+  /// **'Distance Remaining'**
+  String get distanceRemaining;
+
+  /// No description provided for @mileageArai.
+  ///
+  /// In en, this message translates to:
+  /// **'Mileage (ARAI)'**
+  String get mileageArai;
+
+  /// No description provided for @spendingOnFuel.
+  ///
+  /// In en, this message translates to:
+  /// **'Spending on Fuel'**
+  String get spendingOnFuel;
+
+  /// No description provided for @today.
+  ///
+  /// In en, this message translates to:
+  /// **'Today'**
+  String get today;
+
+  /// No description provided for @thisWeek.
+  ///
+  /// In en, this message translates to:
+  /// **'This week'**
+  String get thisWeek;
+
+  /// No description provided for @thisMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'This month'**
+  String get thisMonth;
+
+  /// No description provided for @thisYear.
+  ///
+  /// In en, this message translates to:
+  /// **'This year'**
+  String get thisYear;
+
+  /// No description provided for @all.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get all;
+
+  /// No description provided for @customDates.
+  ///
+  /// In en, this message translates to:
+  /// **'Custom dates'**
+  String get customDates;
+
+  /// No description provided for @refuelHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'Refuel History'**
+  String get refuelHistory;
+
+  /// No description provided for @addRefuelingDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Add refueling details'**
+  String get addRefuelingDetails;
+
+  /// No description provided for @fuelStations.
+  ///
+  /// In en, this message translates to:
+  /// **'Fuel Stations'**
+  String get fuelStations;
+
+  /// No description provided for @dashboard.
+  ///
+  /// In en, this message translates to:
+  /// **'Dashboard'**
+  String get dashboard;
+
+  /// No description provided for @litersShort.
+  ///
+  /// In en, this message translates to:
+  /// **'L'**
+  String get litersShort;
+
+  /// No description provided for @fuelEstimateNote.
+  ///
+  /// In en, this message translates to:
+  /// **'These values are estimates based on your fuel entries. Add fuel logs regularly for better accuracy.'**
+  String get fuelEstimateNote;
+
+  /// No description provided for @gotIt.
+  ///
+  /// In en, this message translates to:
+  /// **'Got it'**
+  String get gotIt;
+
+  /// No description provided for @currentOdometerReading.
+  ///
+  /// In en, this message translates to:
+  /// **'Current Odometer Reading'**
+  String get currentOdometerReading;
+
+  /// No description provided for @odometerUpdateDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Regularly update your odometer for accurate fuel and distance estimates'**
+  String get odometerUpdateDesc;
+
+  /// No description provided for @updateTankCapacity.
+  ///
+  /// In en, this message translates to:
+  /// **'Update Tank Capacity'**
+  String get updateTankCapacity;
+
+  /// No description provided for @tankCapacityDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the maximum fuel capacity of your vehicle tank'**
+  String get tankCapacityDesc;
+
+  /// No description provided for @litres.
+  ///
+  /// In en, this message translates to:
+  /// **'Litres'**
+  String get litres;
+
+  /// No description provided for @kms.
+  ///
+  /// In en, this message translates to:
+  /// **'Kms'**
+  String get kms;
+
+  /// No description provided for @cancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get cancel;
+
+  /// No description provided for @save.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get save;
+
+  /// No description provided for @updateMileageArai.
+  ///
+  /// In en, this message translates to:
+  /// **'Update Mileage (ARAI)'**
+  String get updateMileageArai;
+
+  /// No description provided for @mileageDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the mileage of your vehicle as per ARAI standards'**
+  String get mileageDesc;
+
+  /// No description provided for @kmL.
+  ///
+  /// In en, this message translates to:
+  /// **'Km/L'**
+  String get kmL;
+
+  /// No description provided for @serviceLogAddedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Service log added successfully'**
+  String get serviceLogAddedSuccess;
+
+  /// No description provided for @currencySymbol.
+  ///
+  /// In en, this message translates to:
+  /// **'₹'**
+  String get currencySymbol;
+
+  /// No description provided for @refuelHistoryComingSoon.
+  ///
+  /// In en, this message translates to:
+  /// **'Refuel History Coming Soon'**
+  String get refuelHistoryComingSoon;
+
+  /// No description provided for @fuelStationsComingSoon.
+  ///
+  /// In en, this message translates to:
+  /// **'Fuel Stations Coming Soon'**
+  String get fuelStationsComingSoon;
+
+  /// No description provided for @percentageValue.
+  ///
+  /// In en, this message translates to:
+  /// **'{value}%'**
+  String percentageValue(String value);
+
+  /// No description provided for @totalFuelAdded.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Fuel Added'**
+  String get totalFuelAdded;
+
+  /// No description provided for @totalSpendings.
+  ///
+  /// In en, this message translates to:
+  /// **'Total spendings'**
+  String get totalSpendings;
+
+  /// No description provided for @avgMileage.
+  ///
+  /// In en, this message translates to:
+  /// **'Avg Mileage'**
+  String get avgMileage;
+
+  /// No description provided for @refuels.
+  ///
+  /// In en, this message translates to:
+  /// **'Refuels'**
+  String get refuels;
+
+  /// No description provided for @refuelingHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'Refueling History'**
+  String get refuelingHistory;
+
+  /// No description provided for @newestFirst.
+  ///
+  /// In en, this message translates to:
+  /// **'Newest First'**
+  String get newestFirst;
+
+  /// No description provided for @oldestFirst.
+  ///
+  /// In en, this message translates to:
+  /// **'Oldest First'**
+  String get oldestFirst;
+
+  /// No description provided for @mostExpensive.
+  ///
+  /// In en, this message translates to:
+  /// **'Most Expensive'**
+  String get mostExpensive;
+
+  /// No description provided for @leastExpensive.
+  ///
+  /// In en, this message translates to:
+  /// **'Least Expensive'**
+  String get leastExpensive;
+
+  /// No description provided for @bestMileage.
+  ///
+  /// In en, this message translates to:
+  /// **'Best Mileage'**
+  String get bestMileage;
+
+  /// No description provided for @worstMileage.
+  ///
+  /// In en, this message translates to:
+  /// **'Worst Mileage'**
+  String get worstMileage;
+
+  /// No description provided for @edit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit'**
+  String get edit;
+
+  /// No description provided for @delete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get delete;
+
+  /// No description provided for @error.
+  ///
+  /// In en, this message translates to:
+  /// **'Something went wrong'**
+  String get error;
+
+  /// No description provided for @noDataAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'No data available'**
+  String get noDataAvailable;
+
+  /// No description provided for @hintEg.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g., {value}'**
+  String hintEg(String value);
+
+  /// No description provided for @addStation.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Station'**
+  String get addStation;
+
+  /// No description provided for @nearby.
+  ///
+  /// In en, this message translates to:
+  /// **'Nearby'**
+  String get nearby;
+
+  /// No description provided for @favourites.
+  ///
+  /// In en, this message translates to:
+  /// **'Favourites'**
+  String get favourites;
+
+  /// No description provided for @addedByMe.
+  ///
+  /// In en, this message translates to:
+  /// **'Added by me'**
+  String get addedByMe;
+
+  /// No description provided for @noFavourites.
+  ///
+  /// In en, this message translates to:
+  /// **'No favourites yet'**
+  String get noFavourites;
+
+  /// No description provided for @noStationsAdded.
+  ///
+  /// In en, this message translates to:
+  /// **'No stations added yet'**
+  String get noStationsAdded;
+
+  /// No description provided for @fuelStationNearVehicle.
+  ///
+  /// In en, this message translates to:
+  /// **'Fuel Station Near Vehicle'**
+  String get fuelStationNearVehicle;
+
+  /// No description provided for @warranty_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Device Warranty'**
+  String get warranty_title;
+
+  /// No description provided for @warranty_benefitsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Warranty Benefits'**
+  String get warranty_benefitsTitle;
+
+  /// No description provided for @warranty_extend.
+  ///
+  /// In en, this message translates to:
+  /// **'Extend Your Warranty & Keep Your Device Protected'**
+  String get warranty_extend;
+
+  /// No description provided for @warranty_vehicle.
+  ///
+  /// In en, this message translates to:
+  /// **'Vehicle'**
+  String get warranty_vehicle;
+
+  /// No description provided for @warranty_expiry.
+  ///
+  /// In en, this message translates to:
+  /// **'Warranty Expiry'**
+  String get warranty_expiry;
+
+  /// No description provided for @warranty_button.
+  ///
+  /// In en, this message translates to:
+  /// **'Extend Warranty — '**
+  String get warranty_button;
+
+  /// No description provided for @warranty_button_old.
+  ///
+  /// In en, this message translates to:
+  /// **'₹4,999'**
+  String get warranty_button_old;
+
+  /// No description provided for @benefit1_highlight.
+  ///
+  /// In en, this message translates to:
+  /// **'Premium Coverage '**
+  String get benefit1_highlight;
+
+  /// No description provided for @benefit1_normal.
+  ///
+  /// In en, this message translates to:
+  /// **'— Full hardware protection against manufacturing defects.'**
+  String get benefit1_normal;
+
+  /// No description provided for @benefit2_highlight.
+  ///
+  /// In en, this message translates to:
+  /// **'Free Repairs '**
+  String get benefit2_highlight;
+
+  /// No description provided for @benefit2_normal.
+  ///
+  /// In en, this message translates to:
+  /// **'— All service & parts covered at zero cost.'**
+  String get benefit2_normal;
+
+  /// No description provided for @benefit3_highlight.
+  ///
+  /// In en, this message translates to:
+  /// **'24/7 Support '**
+  String get benefit3_highlight;
+
+  /// No description provided for @benefit3_normal.
+  ///
+  /// In en, this message translates to:
+  /// **'— Priority customer support whenever you need it.'**
+  String get benefit3_normal;
+
+  /// No description provided for @benefit4_highlight.
+  ///
+  /// In en, this message translates to:
+  /// **'No Hidden Charges '**
+  String get benefit4_highlight;
+
+  /// No description provided for @benefit4_normal.
+  ///
+  /// In en, this message translates to:
+  /// **'— One flat fee, complete peace of mind.'**
+  String get benefit4_normal;
 }
 
 class _AppLocalizationsDelegate

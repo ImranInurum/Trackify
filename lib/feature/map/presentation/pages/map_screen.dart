@@ -12,6 +12,7 @@ import 'package:trackify/core/utils/map_utils.dart';
 import 'package:trackify/core/widgets/bouncing_widget.dart';
 import 'package:trackify/core/widgets/draggable_app_bar.dart';
 import 'package:trackify/feature/add_vehicle_and_device/choice_selector.dart';
+import 'package:trackify/feature/device_warranty/pages/device_warranty_page.dart';
 import 'package:trackify/feature/map/data/entity/user_vehicles.dart';
 import 'package:trackify/feature/map/presentation/pages/full_screen_map.dart';
 import 'package:trackify/feature/my_garage/presentation/view/my_garage_screen.dart';
@@ -22,6 +23,7 @@ import 'package:trackify/feature/trips/presentation/view/ride_history_details/ri
 import 'package:trackify/feature/trips/presentation/view/widgets/all_rides/widgets/ride_card.dart';
 import '../../../../core/utils/shared_preferences.dart';
 import '../../../device_data/presentation/pages/device_data_screen.dart';
+import '../../../fuel_logs/presentation/pages/fuel_logs_screen.dart';
 import '../../../location_sharing/presentation/pages/location_sharing_screen.dart';
 import 'package:trackify/feature/service_logs/presentation/screens/service_logs_screen.dart';
 import '../../../notifications/presentation/screen/notification_list_screen.dart';
@@ -108,145 +110,151 @@ class _MapScreenState extends State<MapScreen> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     return BlocProvider(
-      create: (context) => PromoVideoCubit(PromoVideoRepositoryImpl())..fetchPromoVideos(),
+      create: (context) =>
+          PromoVideoCubit(PromoVideoRepositoryImpl())..fetchPromoVideos(),
       child: Scaffold(
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      body: MultiBlocListener(
-        listeners: [
-          BlocListener<MapCubit, MapState>(
-            listener: (context, state) {
-              if (state is MapLoaded) {
-                final vehicles = state.vehicleList.vehicles ?? [];
-                if (vehicles.isNotEmpty && _selectedDevice == null) {
-                  prefs.get(key: AppPreference.IMEI).then((savedImei) {
-                    if (mounted) {
-                      final savedVehicle = vehicles.firstWhere(
-                        (v) => v.imei == savedImei,
-                        orElse: () => vehicles.first,
-                      );
-                      setState(() {
-                        _selectedDevice = savedVehicle;
-                      });
-                      // Refresh rides for the initially selected vehicle
-                      context.read<RideHistoryCubit>().getRideHistoryData();
-                    }
-                  });
+        body: MultiBlocListener(
+          listeners: [
+            BlocListener<MapCubit, MapState>(
+              listener: (context, state) {
+                if (state is MapLoaded) {
+                  final vehicles = state.vehicleList.vehicles ?? [];
+                  if (vehicles.isNotEmpty && _selectedDevice == null) {
+                    prefs.get(key: AppPreference.IMEI).then((savedImei) {
+                      if (mounted) {
+                        final savedVehicle = vehicles.firstWhere(
+                          (v) => v.imei == savedImei,
+                          orElse: () => vehicles.first,
+                        );
+                        setState(() {
+                          _selectedDevice = savedVehicle;
+                        });
+                        // Refresh rides for the initially selected vehicle
+                        context.read<RideHistoryCubit>().getRideHistoryData();
+                      }
+                    });
+                  }
                 }
-              }
-            },
-          ),
-          BlocListener<AppCubit, AppState>(
-            listenWhen: (prev, curr) =>
-                prev.mapStyle != curr.mapStyle ||
-                prev.mapType != curr.mapType ||
-                prev.isTrafficEnabled != curr.isTrafficEnabled,
-            listener: (context, state) async {
-              if (_mapController != null) {
-                String? style;
-                if (state.mapStyle == 'Dark') {
-                  style = _darkMapStyle;
-                } else if (state.mapStyle == 'Light') {
-                  style = _lightMapStyle;
-                } else if (state.mapStyle == 'Simple') {
-                  style = await MapUtils.loadStyle(
-                    'assets/map_styles/light_map.json',
-                  );
-                } else if (state.mapStyle == 'Satellite') {
-                  style = null;
+              },
+            ),
+            BlocListener<AppCubit, AppState>(
+              listenWhen: (prev, curr) =>
+                  prev.mapStyle != curr.mapStyle ||
+                  prev.mapType != curr.mapType ||
+                  prev.isTrafficEnabled != curr.isTrafficEnabled,
+              listener: (context, state) async {
+                if (_mapController != null) {
+                  String? style;
+                  if (state.mapStyle == 'Dark') {
+                    style = _darkMapStyle;
+                  } else if (state.mapStyle == 'Light') {
+                    style = _lightMapStyle;
+                  } else if (state.mapStyle == 'Simple') {
+                    style = await MapUtils.loadStyle(
+                      'assets/map_styles/light_map.json',
+                    );
+                  } else if (state.mapStyle == 'Satellite') {
+                    style = null;
+                  }
+
+                  await MapUtils.setStyle(_mapController!, style);
                 }
+              },
+            ),
+          ],
+          child: BlocBuilder<MapCubit, MapState>(
+            builder: (context, state) {
+              final List<Vehicles> vehicles = state is MapLoaded
+                  ? (state.vehicleList.vehicles ?? <Vehicles>[])
+                  : <Vehicles>[];
 
-                await MapUtils.setStyle(_mapController!, style);
-              }
-            },
-          ),
-        ],
-        child: BlocBuilder<MapCubit, MapState>(
-          builder: (context, state) {
-            final List<Vehicles> vehicles = state is MapLoaded
-                ? (state.vehicleList.vehicles ?? <Vehicles>[])
-                : <Vehicles>[];
+              final topSpacing = MediaQuery.of(context).padding.top + 78;
 
-            final topSpacing = MediaQuery.of(context).padding.top + 78;
-
-            return Scaffold(
-              body: Stack(
-                children: [
-                  Positioned.fill(
-                    child: NotificationListener<ScrollNotification>(
-                      onNotification: (ScrollNotification scrollInfo) {
-                        if (scrollInfo.metrics.pixels >= scrollInfo.metrics.maxScrollExtent - 50) {
-                          context.read<PromoVideoCubit>().loadMoreVideos();
-                        }
-                        return false;
-                      },
-                      child: SingleChildScrollView(
-                        controller: _scrollController,
-                        physics: const BouncingScrollPhysics(),
-                        child: Column(
-                          children: [
-                            SizedBox(height: topSpacing),
-                            _buildMapSection(),
-                            _buildPromoBanner(),
-                            _buildExploreMore(_selectedDevice),
-                            _buildRecentRidesSection(), // Actual RideCard here
-                            _buildVideosSection(), // Vertical videos
-                            const SizedBox(height: 100),
-                          ],
+              return Scaffold(
+                body: Stack(
+                  children: [
+                    Positioned.fill(
+                      child: NotificationListener<ScrollNotification>(
+                        onNotification: (ScrollNotification scrollInfo) {
+                          if (scrollInfo.metrics.pixels >=
+                              scrollInfo.metrics.maxScrollExtent - 50) {
+                            context.read<PromoVideoCubit>().loadMoreVideos();
+                          }
+                          return false;
+                        },
+                        child: SingleChildScrollView(
+                          controller: _scrollController,
+                          physics: const BouncingScrollPhysics(),
+                          child: Column(
+                            children: [
+                              SizedBox(height: topSpacing),
+                              _buildMapSection(),
+                              _buildPromoBanner(),
+                              _buildExploreMore(_selectedDevice),
+                              _buildRecentRidesSection(), // Actual RideCard here
+                              _buildVideosSection(), // Vertical videos
+                              const SizedBox(height: 100),
+                            ],
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                  _buildDraggableAppBar(vehicles),
-                ],
-              ),
-            );
-          },
+                    _buildDraggableAppBar(vehicles),
+                  ],
+                ),
+              );
+            },
+          ),
         ),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: _showScrollToTop
-          ? GestureDetector(
-              onTap: () {
-                _scrollController.animateTo(
-                  0,
-                  duration: const Duration(milliseconds: 500),
-                  curve: Curves.easeInOut,
-                );
-              },
-              child: Container(
-                height: 32, // Reduced height
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.95),
-                  borderRadius: BorderRadius.circular(16),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.1),
-                      blurRadius: 4,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
-                  border: Border.all(color: Colors.grey.withOpacity(0.2)),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(Icons.arrow_upward, color: Colors.grey[800], size: 16),
-                    const SizedBox(width: 6),
-                    Text(
-                      l10n.scrollToTop,
-                      style: TextStyle(
-                        color: Colors.grey[800],
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+        floatingActionButton: _showScrollToTop
+            ? GestureDetector(
+                onTap: () {
+                  _scrollController.animateTo(
+                    0,
+                    duration: const Duration(milliseconds: 500),
+                    curve: Curves.easeInOut,
+                  );
+                },
+                child: Container(
+                  height: 32, // Reduced height
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.95),
+                    borderRadius: BorderRadius.circular(16),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.1),
+                        blurRadius: 4,
+                        offset: const Offset(0, 2),
                       ),
-                    ),
-                  ],
+                    ],
+                    border: Border.all(color: Colors.grey.withOpacity(0.2)),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        Icons.arrow_upward,
+                        color: Colors.grey[800],
+                        size: 16,
+                      ),
+                      const SizedBox(width: 6),
+                      Text(
+                        l10n.scrollToTop,
+                        style: TextStyle(
+                          color: Colors.grey[800],
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-        )
-      : null,
-    ),
+              )
+            : null,
+      ),
     );
   }
 
@@ -838,6 +846,16 @@ class _MapScreenState extends State<MapScreen> {
         context,
         MaterialPageRoute(builder: (context) => OverSpeedAlertScreen()),
       );
+    } else if (label == l10n.fuelLogs.replaceAll(' ', '\n')) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => FuelLogsScreen()),
+      );
+    } else if (label == l10n.deviceWarrantyLabel.replaceAll(' ', '\n')) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => WarrantyScreen()),
+      );
     }
     else if (label == l10n.deviceDataPlanLabel.replaceAll(' ', '\n')) {
       if (selectedDevice?.imei == null) {
@@ -955,9 +973,13 @@ class _MapScreenState extends State<MapScreen> {
                 return Center(
                   child: Column(
                     children: [
-                      Text(state.message, style: const TextStyle(color: Colors.red)),
+                      Text(
+                        state.message,
+                        style: const TextStyle(color: Colors.red),
+                      ),
                       TextButton(
-                        onPressed: () => context.read<PromoVideoCubit>().fetchPromoVideos(),
+                        onPressed: () =>
+                            context.read<PromoVideoCubit>().fetchPromoVideos(),
                         child: Text(l10n.retry),
                       ),
                     ],
@@ -988,7 +1010,6 @@ class _MapScreenState extends State<MapScreen> {
       ),
     );
   }
-
 
   Widget _buildDraggableAppBar(List<Vehicles> vehicles) {
     return DraggableAppBar(

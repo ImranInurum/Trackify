@@ -1,0 +1,151 @@
+import 'package:flutter/material.dart';
+import 'package:trackify/l10n/app_localizations.dart';
+
+class RefuelSummaryGrid extends StatelessWidget {
+  final String totalFuel;
+  final String totalSpendings;
+  final String avgMileage;
+  final String refuelCount;
+
+  const RefuelSummaryGrid({
+    super.key,
+    required this.totalFuel,
+    required this.totalSpendings,
+    required this.avgMileage,
+    required this.refuelCount,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final mediaQuery = MediaQuery.of(context);
+    final screenWidth = mediaQuery.size.width;
+
+    return GridView.count(
+      crossAxisCount: 2,
+      shrinkWrap: true,
+      padding: EdgeInsets.zero,
+      physics: const NeverScrollableScrollPhysics(),
+      crossAxisSpacing: screenWidth * 0.04,
+      mainAxisSpacing: screenWidth * 0.04,
+      childAspectRatio: 1.6,
+      children: [
+        _buildSummaryCard(
+          context,
+          l10n.totalFuelAdded,
+          totalFuel,
+          l10n.litersShort,
+          Icons.refresh_outlined,
+          const Color(0xFF52ACCC),
+        ),
+        _buildSummaryCard(
+          context,
+          l10n.totalSpendings,
+          totalSpendings,
+          l10n.currencySymbol,
+          Icons.account_balance_wallet_outlined,
+          const Color(0xFF4CAF50),
+          isPrefix: true,
+        ),
+        _buildSummaryCard(
+          context,
+          l10n.avgMileage,
+          avgMileage,
+          l10n.litersShort,
+          Icons.bolt_outlined,
+          const Color(0xFFFF7043),
+        ),
+        _buildSummaryCard(
+          context,
+          l10n.refuels,
+          refuelCount,
+          "",
+          Icons.local_gas_station_outlined,
+          const Color(0xFF9575CD),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSummaryCard(
+    BuildContext context,
+    String title,
+    String value,
+    String unit,
+    IconData icon,
+    Color iconColor, {
+    bool isPrefix = false,
+  }) {
+    final theme = Theme.of(context);
+    final mediaQuery = MediaQuery.of(context);
+    final screenWidth = mediaQuery.size.width;
+
+    return Container(
+      padding: EdgeInsets.all(screenWidth * 0.04),
+      decoration: BoxDecoration(
+        color: theme.cardColor,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: theme.dividerColor, width: 1),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Row(
+            children: [
+              Icon(icon, color: iconColor, size: mediaQuery.textScaler.scale(20)),
+              const SizedBox(width: 6),
+              Expanded(
+                child: Text(
+                  title,
+                  style: TextStyle(
+                    color: theme.hintColor,
+                    fontSize: mediaQuery.textScaler.scale(13),
+                    fontWeight: FontWeight.w500,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ],
+          ),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.baseline,
+            textBaseline: TextBaseline.alphabetic,
+            children: [
+              if (isPrefix)
+                Text(
+                  unit,
+                  style: TextStyle(
+                    color: theme.textTheme.titleLarge?.color,
+                    fontSize: mediaQuery.textScaler.scale(16),
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              if (isPrefix) const SizedBox(width: 4),
+              Text(
+                value,
+                style: TextStyle(
+                  color: theme.textTheme.titleLarge?.color,
+                  fontSize: mediaQuery.textScaler.scale(22),
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              if (!isPrefix && unit.isNotEmpty) ...[
+                const SizedBox(width: 4),
+                Text(
+                  unit,
+                  style: TextStyle(
+                    color: theme.textTheme.titleLarge?.color,
+                    fontSize: mediaQuery.textScaler.scale(16),
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
