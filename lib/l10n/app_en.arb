@@ -576,5 +576,20 @@
   "addedByMe": "Added by me",
   "noFavourites": "No favourites yet",
   "noStationsAdded": "No stations added yet",
-  "fuelStationNearVehicle": "Fuel Station Near Vehicle"
+  "fuelStationNearVehicle": "Fuel Station Near Vehicle",
+  "warranty_title": "Device Warranty",
+  "warranty_benefitsTitle": "Warranty Benefits",
+  "warranty_extend": "Extend Your Warranty & Keep Your Device Protected",
+  "warranty_vehicle": "Vehicle",
+  "warranty_expiry": "Warranty Expiry",
+  "warranty_button": "Extend Warranty — ",
+  "warranty_button_old": "₹4,999",
+  "benefit1_highlight": "Premium Coverage ",
+  "benefit1_normal": "— Full hardware protection against manufacturing defects.",
+  "benefit2_highlight": "Free Repairs ",
+  "benefit2_normal": "— All service & parts covered at zero cost.",
+  "benefit3_highlight": "24/7 Support ",
+  "benefit3_normal": "— Priority customer support whenever you need it.",
+  "benefit4_highlight": "No Hidden Charges ",
+  "benefit4_normal": "— One flat fee, complete peace of mind."
 }

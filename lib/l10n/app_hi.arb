@@ -578,5 +578,20 @@
   "addedByMe": "मेरे द्वारा जोड़े गए",
   "noFavourites": "अभी तक कोई पसंदीदा नहीं",
   "noStationsAdded": "अभी तक कोई स्टेशन नहीं जोड़ा गया",
-  "fuelStationNearVehicle": "वाहन के पास ईंधन स्टेशन"
+  "fuelStationNearVehicle": "वाहन के पास ईंधन स्टेशन",
+  "warranty_title": "डिवाइस वारंटी",
+  "warranty_benefitsTitle": "वारंटी के लाभ",
+  "warranty_extend": "अपनी वारंटी बढ़ाएं और अपने डिवाइस को सुरक्षित रखें",
+  "warranty_vehicle": "वाहन",
+  "warranty_expiry": "वारंटी समाप्ति",
+  "warranty_button": "वारंटी बढ़ाएं — ",
+  "warranty_button_old": "₹4,999",
+  "benefit1_highlight": "प्रीमियम कवरेज ",
+  "benefit1_normal": "— निर्माण दोषों के खिलाफ पूर्ण हार्डवेयर सुरक्षा।",
+  "benefit2_highlight": "मुफ्त मरम्मत ",
+  "benefit2_normal": "— सभी सेवाएं और पुर्जे बिना किसी शुल्क के।",
+  "benefit3_highlight": "24/7 सहायता ",
+  "benefit3_normal": "— जब भी आवश्यकता हो, प्राथमिकता ग्राहक सेवा।",
+  "benefit4_highlight": "कोई छुपा शुल्क नहीं ",
+  "benefit4_normal": "— एक फ्लैट शुल्क, पूर्ण मन की शांति।"
 }

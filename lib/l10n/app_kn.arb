@@ -573,5 +573,20 @@
   "addedByMe": "ನಾನು ಸೇರಿಸಿದ್ದು",
   "noFavourites": "ಇನ್ನೂ ಯಾವುದೇ ಮೆಚ್ಚಿನವುಗಳಿಲ್ಲ",
   "noStationsAdded": "ಇನ್ನೂ ಯಾವುದೇ ಕೇಂದ್ರಗಳನ್ನು ಸೇರಿಸಲಾಗಿಲ್ಲ",
-  "fuelStationNearVehicle": "ವಾಹನದ ಸಮೀಪವಿರುವ ಇಂಧನ ಕೇಂದ್ರ"
+  "fuelStationNearVehicle": "ವಾಹನದ ಸಮೀಪವಿರುವ ಇಂಧನ ಕೇಂದ್ರ",
+  "warranty_title": "ಸಾಧನ ವಾರಂಟಿ",
+  "warranty_benefitsTitle": "ವಾರಂಟಿ ಪ್ರಯೋಜನಗಳು",
+  "warranty_extend": "ನಿಮ್ಮ ವಾರಂಟಿಯನ್ನು ವಿಸ್ತರಿಸಿ ಮತ್ತು ಸಾಧನವನ್ನು ರಕ್ಷಿಸಿ",
+  "warranty_vehicle": "ವಾಹನ",
+  "warranty_expiry": "ವಾರಂಟಿ ಅವಧಿ ಮುಕ್ತಾಯ",
+  "warranty_button": "ವಾರಂಟಿ ವಿಸ್ತರಿಸಿ — ",
+  "warranty_button_old": "₹4,999",
+  "benefit1_highlight": "ಪ್ರೀಮಿಯಂ ಕವರೇಜ್ ",
+  "benefit1_normal": "— ತಯಾರಿಕೆ ದೋಷಗಳ ವಿರುದ್ಧ ಸಂಪೂರ್ಣ ಹಾರ್ಡ್‌ವೇರ್ ರಕ್ಷಣೆ.",
+  "benefit2_highlight": "ಉಚಿತ ದುರಸ್ತಿ ",
+  "benefit2_normal": "— ಎಲ್ಲಾ ಸೇವೆ ಮತ್ತು ಬಿಡಿಭಾಗಗಳು ಶೂನ್ಯ ವೆಚ್ಚದಲ್ಲಿ.",
+  "benefit3_highlight": "24/7 ಬೆಂಬಲ ",
+  "benefit3_normal": "— ಅಗತ್ಯವಿದ್ದಾಗ ಆದ್ಯತೆ ಗ್ರಾಹಕ ಸೇವೆ.",
+  "benefit4_highlight": "ಗುಪ್ತ ಶುಲ್ಕಗಳಿಲ್ಲ ",
+  "benefit4_normal": "— ಒಂದು ಫ್ಲಾಟ್ ಶುಲ್ಕ, ಸಂಪೂರ್ಣ ಮನಸ್ಸಿನ ಶಾಂತಿ."
 }

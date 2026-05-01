@@ -1427,4 +1427,52 @@ class AppLocalizationsTa extends AppLocalizations {
   @override
   String get fuelStationNearVehicle =>
       'வாகனத்திற்கு அருகிலுள்ள எரிபொருள் நிலையம்';
+
+  @override
+  String get warranty_title => 'சாதன உத்தரவாதம்';
+
+  @override
+  String get warranty_benefitsTitle => 'உத்தரவாத நன்மைகள்';
+
+  @override
+  String get warranty_extend =>
+      'உங்கள் உத்தரவாதத்தை நீட்டிக்கவும் மற்றும் சாதனத்தை பாதுகாக்கவும்';
+
+  @override
+  String get warranty_vehicle => 'வாகனம்';
+
+  @override
+  String get warranty_expiry => 'உத்தரவாத காலாவதி';
+
+  @override
+  String get warranty_button => 'உத்தரவாதம் நீட்டிக்கவும் — ';
+
+  @override
+  String get warranty_button_old => '₹4,999';
+
+  @override
+  String get benefit1_highlight => 'பிரீமியம் கவரேஜ் ';
+
+  @override
+  String get benefit1_normal =>
+      '— உற்பத்தி குறைபாடுகளுக்கு எதிரான முழு வன்பொருள் பாதுகாப்பு.';
+
+  @override
+  String get benefit2_highlight => 'இலவச பழுது ';
+
+  @override
+  String get benefit2_normal => '— அனைத்து சேவைகள் மற்றும் பாகங்கள் இலவசமாக.';
+
+  @override
+  String get benefit3_highlight => '24/7 ஆதரவு ';
+
+  @override
+  String get benefit3_normal =>
+      '— தேவைப்படும்போது முன்னுரிமை வாடிக்கையாளர் சேவை.';
+
+  @override
+  String get benefit4_highlight => 'மறைக்கப்பட்ட கட்டணங்கள் இல்லை ';
+
+  @override
+  String get benefit4_normal => '— ஒரே நிலையான கட்டணம், மனநிம்மதி.';
 }

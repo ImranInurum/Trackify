@@ -2793,6 +2793,96 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Fuel Station Near Vehicle'**
   String get fuelStationNearVehicle;
+
+  /// No description provided for @warranty_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Device Warranty'**
+  String get warranty_title;
+
+  /// No description provided for @warranty_benefitsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Warranty Benefits'**
+  String get warranty_benefitsTitle;
+
+  /// No description provided for @warranty_extend.
+  ///
+  /// In en, this message translates to:
+  /// **'Extend Your Warranty & Keep Your Device Protected'**
+  String get warranty_extend;
+
+  /// No description provided for @warranty_vehicle.
+  ///
+  /// In en, this message translates to:
+  /// **'Vehicle'**
+  String get warranty_vehicle;
+
+  /// No description provided for @warranty_expiry.
+  ///
+  /// In en, this message translates to:
+  /// **'Warranty Expiry'**
+  String get warranty_expiry;
+
+  /// No description provided for @warranty_button.
+  ///
+  /// In en, this message translates to:
+  /// **'Extend Warranty — '**
+  String get warranty_button;
+
+  /// No description provided for @warranty_button_old.
+  ///
+  /// In en, this message translates to:
+  /// **'₹4,999'**
+  String get warranty_button_old;
+
+  /// No description provided for @benefit1_highlight.
+  ///
+  /// In en, this message translates to:
+  /// **'Premium Coverage '**
+  String get benefit1_highlight;
+
+  /// No description provided for @benefit1_normal.
+  ///
+  /// In en, this message translates to:
+  /// **'— Full hardware protection against manufacturing defects.'**
+  String get benefit1_normal;
+
+  /// No description provided for @benefit2_highlight.
+  ///
+  /// In en, this message translates to:
+  /// **'Free Repairs '**
+  String get benefit2_highlight;
+
+  /// No description provided for @benefit2_normal.
+  ///
+  /// In en, this message translates to:
+  /// **'— All service & parts covered at zero cost.'**
+  String get benefit2_normal;
+
+  /// No description provided for @benefit3_highlight.
+  ///
+  /// In en, this message translates to:
+  /// **'24/7 Support '**
+  String get benefit3_highlight;
+
+  /// No description provided for @benefit3_normal.
+  ///
+  /// In en, this message translates to:
+  /// **'— Priority customer support whenever you need it.'**
+  String get benefit3_normal;
+
+  /// No description provided for @benefit4_highlight.
+  ///
+  /// In en, this message translates to:
+  /// **'No Hidden Charges '**
+  String get benefit4_highlight;
+
+  /// No description provided for @benefit4_normal.
+  ///
+  /// In en, this message translates to:
+  /// **'— One flat fee, complete peace of mind.'**
+  String get benefit4_normal;
 }
 
 class _AppLocalizationsDelegate

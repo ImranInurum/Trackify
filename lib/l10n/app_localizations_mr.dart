@@ -1405,4 +1405,50 @@ class AppLocalizationsMr extends AppLocalizations {
 
   @override
   String get fuelStationNearVehicle => 'वाहनाजवळ इंधन केंद्र';
+
+  @override
+  String get warranty_title => 'डिव्हाइस वॉरंटी';
+
+  @override
+  String get warranty_benefitsTitle => 'वॉरंटी फायदे';
+
+  @override
+  String get warranty_extend => 'तुमची वॉरंटी वाढवा आणि डिव्हाइस सुरक्षित ठेवा';
+
+  @override
+  String get warranty_vehicle => 'वाहन';
+
+  @override
+  String get warranty_expiry => 'वॉरंटी कालबाह्यता';
+
+  @override
+  String get warranty_button => 'वॉरंटी वाढवा — ';
+
+  @override
+  String get warranty_button_old => '₹4,999';
+
+  @override
+  String get benefit1_highlight => 'प्रीमियम कव्हरेज ';
+
+  @override
+  String get benefit1_normal =>
+      '— उत्पादन दोषांविरुद्ध संपूर्ण हार्डवेअर संरक्षण.';
+
+  @override
+  String get benefit2_highlight => 'मोफत दुरुस्ती ';
+
+  @override
+  String get benefit2_normal => '— सर्व सेवा आणि पार्ट्स विनामूल्य.';
+
+  @override
+  String get benefit3_highlight => '24/7 समर्थन ';
+
+  @override
+  String get benefit3_normal => '— आवश्यकतेनुसार प्राधान्य ग्राहक सेवा.';
+
+  @override
+  String get benefit4_highlight => 'छुपे शुल्क नाही ';
+
+  @override
+  String get benefit4_normal => '— एक सपाट शुल्क, संपूर्ण मनःशांती.';
 }

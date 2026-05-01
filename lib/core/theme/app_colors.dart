@@ -118,4 +118,11 @@ class AppColors {
   static const Color inactiveMarker = Color(0xFF9E9E9E);
   static const Color userLocation = Color(0xFF34A853);
   static const Color userBackground = Color(0xFFFFFFFF);
+
+  // Device Warranty Screen
+  static const Color warrantyCardStart = Color(0xFF1CA5D4); // brand cyan-blue
+  static const Color warrantyCardEnd   = Color(0xFF0D6B8C); // deep teal
+  static const Color warrantyTileDark  = Color(0xFF1C2620); // reuse cardDark
+  static const Color warrantyButtonStart = Color(0xFFDBBE8F); // paletteTan
+  static const Color warrantyButtonEnd   = Color(0xFFF5D9A8); // lighter tan
 }

@@ -1417,4 +1417,49 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get fuelStationNearVehicle => 'محطة وقود بالقرب من السيارة';
+
+  @override
+  String get warranty_title => 'ضمان الجهاز';
+
+  @override
+  String get warranty_benefitsTitle => 'مزايا الضمان';
+
+  @override
+  String get warranty_extend => 'مدد ضمانك واحتفظ بحماية جهازك';
+
+  @override
+  String get warranty_vehicle => 'المركبة';
+
+  @override
+  String get warranty_expiry => 'انتهاء الضمان';
+
+  @override
+  String get warranty_button => 'تمديد الضمان — ';
+
+  @override
+  String get warranty_button_old => '₹4,999';
+
+  @override
+  String get benefit1_highlight => 'تغطية متميزة ';
+
+  @override
+  String get benefit1_normal => '— حماية كاملة للأجهزة ضد عيوب التصنيع.';
+
+  @override
+  String get benefit2_highlight => 'إصلاح مجاني ';
+
+  @override
+  String get benefit2_normal => '— جميع الخدمات والقطع بدون تكلفة.';
+
+  @override
+  String get benefit3_highlight => 'دعم 24/7 ';
+
+  @override
+  String get benefit3_normal => '— خدمة عملاء ذات أولوية في أي وقت.';
+
+  @override
+  String get benefit4_highlight => 'لا رسوم خفية ';
+
+  @override
+  String get benefit4_normal => '— رسوم ثابتة واحدة، راحة بال كاملة.';
 }

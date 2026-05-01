@@ -1431,4 +1431,52 @@ class AppLocalizationsKn extends AppLocalizations {
 
   @override
   String get fuelStationNearVehicle => 'ವಾಹನದ ಸಮೀಪವಿರುವ ಇಂಧನ ಕೇಂದ್ರ';
+
+  @override
+  String get warranty_title => 'ಸಾಧನ ವಾರಂಟಿ';
+
+  @override
+  String get warranty_benefitsTitle => 'ವಾರಂಟಿ ಪ್ರಯೋಜನಗಳು';
+
+  @override
+  String get warranty_extend =>
+      'ನಿಮ್ಮ ವಾರಂಟಿಯನ್ನು ವಿಸ್ತರಿಸಿ ಮತ್ತು ಸಾಧನವನ್ನು ರಕ್ಷಿಸಿ';
+
+  @override
+  String get warranty_vehicle => 'ವಾಹನ';
+
+  @override
+  String get warranty_expiry => 'ವಾರಂಟಿ ಅವಧಿ ಮುಕ್ತಾಯ';
+
+  @override
+  String get warranty_button => 'ವಾರಂಟಿ ವಿಸ್ತರಿಸಿ — ';
+
+  @override
+  String get warranty_button_old => '₹4,999';
+
+  @override
+  String get benefit1_highlight => 'ಪ್ರೀಮಿಯಂ ಕವರೇಜ್ ';
+
+  @override
+  String get benefit1_normal =>
+      '— ತಯಾರಿಕೆ ದೋಷಗಳ ವಿರುದ್ಧ ಸಂಪೂರ್ಣ ಹಾರ್ಡ್‌ವೇರ್ ರಕ್ಷಣೆ.';
+
+  @override
+  String get benefit2_highlight => 'ಉಚಿತ ದುರಸ್ತಿ ';
+
+  @override
+  String get benefit2_normal =>
+      '— ಎಲ್ಲಾ ಸೇವೆ ಮತ್ತು ಬಿಡಿಭಾಗಗಳು ಶೂನ್ಯ ವೆಚ್ಚದಲ್ಲಿ.';
+
+  @override
+  String get benefit3_highlight => '24/7 ಬೆಂಬಲ ';
+
+  @override
+  String get benefit3_normal => '— ಅಗತ್ಯವಿದ್ದಾಗ ಆದ್ಯತೆ ಗ್ರಾಹಕ ಸೇವೆ.';
+
+  @override
+  String get benefit4_highlight => 'ಗುಪ್ತ ಶುಲ್ಕಗಳಿಲ್ಲ ';
+
+  @override
+  String get benefit4_normal => '— ಒಂದು ಫ್ಲಾಟ್ ಶುಲ್ಕ, ಸಂಪೂರ್ಣ ಮನಸ್ಸಿನ ಶಾಂತಿ.';
 }

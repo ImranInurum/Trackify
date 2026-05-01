@@ -1427,4 +1427,52 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get fuelStationNearVehicle => 'Fuel Station Near Vehicle';
+
+  @override
+  String get warranty_title => 'Device Warranty';
+
+  @override
+  String get warranty_benefitsTitle => 'Warranty Benefits';
+
+  @override
+  String get warranty_extend =>
+      'Extend Your Warranty & Keep Your Device Protected';
+
+  @override
+  String get warranty_vehicle => 'Vehicle';
+
+  @override
+  String get warranty_expiry => 'Warranty Expiry';
+
+  @override
+  String get warranty_button => 'Extend Warranty — ';
+
+  @override
+  String get warranty_button_old => '₹4,999';
+
+  @override
+  String get benefit1_highlight => 'Premium Coverage ';
+
+  @override
+  String get benefit1_normal =>
+      '— Full hardware protection against manufacturing defects.';
+
+  @override
+  String get benefit2_highlight => 'Free Repairs ';
+
+  @override
+  String get benefit2_normal => '— All service & parts covered at zero cost.';
+
+  @override
+  String get benefit3_highlight => '24/7 Support ';
+
+  @override
+  String get benefit3_normal =>
+      '— Priority customer support whenever you need it.';
+
+  @override
+  String get benefit4_highlight => 'No Hidden Charges ';
+
+  @override
+  String get benefit4_normal => '— One flat fee, complete peace of mind.';
 }
