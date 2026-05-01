@@ -13,6 +13,7 @@ import 'package:trackify/core/widgets/bouncing_widget.dart';
 import 'package:trackify/core/widgets/draggable_app_bar.dart';
 import 'package:trackify/feature/add_vehicle_and_device/choice_selector.dart';
 import 'package:trackify/feature/device_warranty/pages/device_warranty_page.dart';
+import 'package:trackify/feature/help_and_support/presentation/pages/help_support_screen.dart';
 import 'package:trackify/feature/map/data/entity/user_vehicles.dart';
 import 'package:trackify/feature/map/presentation/pages/full_screen_map.dart';
 import 'package:trackify/feature/my_garage/presentation/view/my_garage_screen.dart';
@@ -857,6 +858,14 @@ class _MapScreenState extends State<MapScreen> {
         MaterialPageRoute(builder: (context) => WarrantyScreen()),
       );
     }
+    else if (label == l10n.helpAndSupport.replaceAll(' ', '\n')) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => HelpSuggestionScreen(),
+        ),
+      );
+    }
     else if (label == l10n.deviceDataPlanLabel.replaceAll(' ', '\n')) {
       if (selectedDevice?.imei == null) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -865,7 +874,10 @@ class _MapScreenState extends State<MapScreen> {
             backgroundColor: Colors.red,
           ),
         );
-      } else {
+      }
+
+
+      else {
         Navigator.push(
           context,
           MaterialPageRoute(
