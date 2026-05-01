@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import '../../core/theme/models/app_theme_model.dart';
 import '../../feature/auth/data/entity/login_response_model.dart';
@@ -19,6 +20,8 @@ class AppState extends Equatable {
   final String mapType; // 'normal', 'satellite'
   final bool isTrafficEnabled;
   final bool isLabelsEnabled;
+  final LatLng? livePosition;
+  final double liveBearing;
 
   const AppState({
     this.themeMode = ThemeMode.light,
@@ -33,6 +36,8 @@ class AppState extends Equatable {
     this.mapType = 'normal',
     this.isTrafficEnabled = false,
     this.isLabelsEnabled = true,
+    this.livePosition,
+    this.liveBearing = 0.0,
   });
 
   AppState copyWith({
@@ -48,6 +53,8 @@ class AppState extends Equatable {
     String? mapType,
     bool? isTrafficEnabled,
     bool? isLabelsEnabled,
+    LatLng? livePosition,
+    double? liveBearing,
   }) {
     return AppState(
       themeMode: themeMode ?? this.themeMode,
@@ -62,6 +69,8 @@ class AppState extends Equatable {
       mapType: mapType ?? this.mapType,
       isTrafficEnabled: isTrafficEnabled ?? this.isTrafficEnabled,
       isLabelsEnabled: isLabelsEnabled ?? this.isLabelsEnabled,
+      livePosition: livePosition ?? this.livePosition,
+      liveBearing: liveBearing ?? this.liveBearing,
     );
   }
 
@@ -79,5 +88,7 @@ class AppState extends Equatable {
     mapType,
     isTrafficEnabled,
     isLabelsEnabled,
+    livePosition,
+    liveBearing,
   ];
 }

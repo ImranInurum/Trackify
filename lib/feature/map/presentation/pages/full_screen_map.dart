@@ -285,14 +285,25 @@ class _FullScreenMapState extends State<FullScreenMap> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Stack(
-        children: [
-          _buildMap(),
-          _buildTopActions(),
-          _buildRightSideActions(),
-          _buildDraggableBottomCard(),
-        ],
+    return BlocListener<AppCubit, AppState>(
+      listenWhen: (previous, current) =>
+          previous.livePosition != current.livePosition,
+      listener: (context, state) {
+        if (state.livePosition != null && _mapController != null) {
+          _mapController!.animateCamera(
+            CameraUpdate.newLatLng(state.livePosition!),
+          );
+        }
+      },
+      child: Scaffold(
+        body: Stack(
+          children: [
+            _buildMap(),
+            _buildTopActions(),
+            _buildRightSideActions(),
+            _buildDraggableBottomCard(),
+          ],
+        ),
       ),
     );
   }
@@ -305,8 +316,12 @@ class _FullScreenMapState extends State<FullScreenMap> {
           return const Center(child: CircularProgressIndicator());
         }
 
-        LatLng? bestPos;
-        if (widget.selectedVehicle?.currentLocation != null &&
+        // Prioritize Live Position from Socket
+        LatLng? bestPos = appState.livePosition;
+
+        // Fallback to selected vehicle's static location
+        if (bestPos == null &&
+            widget.selectedVehicle?.currentLocation != null &&
             widget.selectedVehicle!.currentLocation!.lat != null &&
             widget.selectedVehicle!.currentLocation!.lng != null) {
           bestPos = LatLng(
@@ -315,6 +330,7 @@ class _FullScreenMapState extends State<FullScreenMap> {
           );
         }
 
+        // Final fallback to phone location
         bestPos ??= LatLng(currentPos.latitude, currentPos.longitude);
 
         return GoogleMap(
@@ -333,10 +349,11 @@ class _FullScreenMapState extends State<FullScreenMap> {
           trafficEnabled: appState.isTrafficEnabled,
           markers: {
             Marker(
-              markerId: const MarkerId('current_location'),
+              markerId: const MarkerId('vehicle_marker'),
               position: bestPos,
               icon: _customMarker ?? BitmapDescriptor.defaultMarker,
               anchor: const Offset(0.5, 0.5),
+              rotation: appState.liveBearing,
             ),
           },
           onMapCreated: (controller) async {
@@ -633,24 +650,39 @@ class _FullScreenMapState extends State<FullScreenMap> {
   }
 
   Widget _buildStatsGrid() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          AppLocalizations.of(context)!.todaysStats,
-          style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.grey),
-        ),
-        const SizedBox(height: 16),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return BlocBuilder<AppCubit, AppState>(
+      builder: (context, state) {
+        // Find current device in the live devices list to get live speed/odometer
+        final liveDevice = state.devices.firstWhere(
+          (d) => d['imei']?.toString() == widget.selectedVehicle?.id?.toString(),
+          orElse: () => {},
+        );
+
+        final liveSpeed = liveDevice['sp']?.toString() ?? 
+                         widget.selectedVehicle?.currentLocation?.speed?.toString() ?? "0";
+        
+        final odometer = liveDevice['odometer']?.toString() ?? "0";
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildGridItem("0 ${AppLocalizations.of(context)!.km}", AppLocalizations.of(context)!.distanceLabel),
-            _buildGridItem("0${AppLocalizations.of(context)!.minutesShort} 0${AppLocalizations.of(context)!.secondsShort}", AppLocalizations.of(context)!.durationLabel),
-            _buildGridItem("${widget.selectedVehicle?.currentLocation?.speed ?? 0} ${AppLocalizations.of(context)!.kmh}", AppLocalizations.of(context)!.averageSpeed),
-            _buildGridItem(AppLocalizations.of(context)!.plusLabel, AppLocalizations.of(context)!.topSpeed, isPlus: true),
+            Text(
+              AppLocalizations.of(context)!.todaysStats,
+              style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.grey),
+            ),
+            const SizedBox(height: 16),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                _buildGridItem("$odometer ${AppLocalizations.of(context)!.km}", AppLocalizations.of(context)!.distanceLabel),
+                _buildGridItem("0${AppLocalizations.of(context)!.minutesShort} 0${AppLocalizations.of(context)!.secondsShort}", AppLocalizations.of(context)!.durationLabel),
+                _buildGridItem("$liveSpeed ${AppLocalizations.of(context)!.kmh}", AppLocalizations.of(context)!.averageSpeed),
+                _buildGridItem(AppLocalizations.of(context)!.plusLabel, AppLocalizations.of(context)!.topSpeed, isPlus: true),
+              ],
+            ),
           ],
-        ),
-      ],
+        );
+      },
     );
   }
 
