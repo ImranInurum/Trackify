@@ -125,4 +125,5 @@ class AppColors {
   static const Color warrantyTileDark  = Color(0xFF1C2620); // reuse cardDark
   static const Color warrantyButtonStart = Color(0xFFDBBE8F); // paletteTan
   static const Color warrantyButtonEnd   = Color(0xFFF5D9A8); // lighter tan
+
 }
