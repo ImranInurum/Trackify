@@ -12,6 +12,7 @@ class ApiURL {
   }
 
   static const String baseURL = 'http://139.59.1.109:5000';
+  static const String socketURL = 'ws://139.59.1.109:4000';
 
   static String authToken = '';
   static void updateAuthToken(String token) {

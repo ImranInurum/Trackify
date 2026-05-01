@@ -21,6 +21,7 @@ import 'package:trackify/feature/reach_me_sticker/presentation/screens/reach_me_
 import 'package:trackify/feature/record_via_phone/presentation/pages/record_via_phone_screen.dart';
 import 'package:trackify/feature/trips/presentation/view/ride_history_details/ride_history_details_screen.dart';
 import 'package:trackify/feature/trips/presentation/view/widgets/all_rides/widgets/ride_card.dart';
+import '../../../../core/services/socket_service.dart';
 import '../../../../core/utils/shared_preferences.dart';
 import '../../../device_data/presentation/pages/device_data_screen.dart';
 import '../../../fuel_logs/presentation/pages/fuel_logs_screen.dart';
@@ -121,6 +122,7 @@ class _MapScreenState extends State<MapScreen> {
                 if (state is MapLoaded) {
                   final vehicles = state.vehicleList.vehicles ?? [];
                   if (vehicles.isNotEmpty && _selectedDevice == null) {
+
                     prefs.get(key: AppPreference.IMEI).then((savedImei) {
                       if (mounted) {
                         final savedVehicle = vehicles.firstWhere(
@@ -134,6 +136,8 @@ class _MapScreenState extends State<MapScreen> {
                         context.read<RideHistoryCubit>().getRideHistoryData();
                       }
                     });
+                    print("slected device is ${_selectedDevice?.imei}");
+
                   }
                 }
               },
@@ -299,7 +303,7 @@ class _MapScreenState extends State<MapScreen> {
                 _selectedDevice!.currentLocation!.lng!,
               );
             }
-
+         print("live data on map ${appState.livePosition}");
             bestPos ??= LatLng(currentPos.latitude, currentPos.longitude);
 
             return Column(
@@ -311,7 +315,7 @@ class _MapScreenState extends State<MapScreen> {
                       child: GoogleMap(
                         key: ValueKey(_selectedDevice?.id),
                         initialCameraPosition: CameraPosition(
-                          target: bestPos,
+                          target: appState.livePosition??bestPos,
                           zoom: 15,
                         ),
                         myLocationEnabled: false,
@@ -332,6 +336,7 @@ class _MapScreenState extends State<MapScreen> {
                             icon:
                                 _customMarker ?? BitmapDescriptor.defaultMarker,
                             anchor: const Offset(0.5, 0.5),
+                            rotation: appState.liveBearing,
                           ),
                         },
                         onMapCreated: (GoogleMapController controller) async {
@@ -1062,6 +1067,8 @@ class _MapScreenState extends State<MapScreen> {
             ),
           );
         }
+
+        context.read<AppCubit>().initializeSocket(imei: device.imei);
       },
     );
   }

@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import '../../core/config/network/api_host.dart';
 import '../../core/config/network/base_api_service.dart';
@@ -46,7 +47,7 @@ class AppCubit extends Cubit<AppState> {
       _initializeConnectivity();
       await _initializeLocation();
       await loadUserSession();
-      // await _initializeSocket();
+      await initializeSocket();
     } catch (e) {
       print('Initialization error: $e');
     }
@@ -68,27 +69,26 @@ class AppCubit extends Cubit<AppState> {
   Future<void> fetchTheme() async {
     try {
       final result = await _apiServices.getGetApiResponse(ApiURL.theme);
-      
-      result.fold(
-        (error) => print('Error fetching theme: ${error.message}'),
-        (data) async {
-          try {
-            final theme = AppThemeModel.fromJson(data);
-            
-            // Update state
-            emit(state.copyWith(dynamicTheme: theme));
-            
-            // Cache theme
-            await AppPreference.instance.set(
-              key: AppPreference.KEY_DYNAMIC_THEME,
-              value: jsonEncode(data),
-            );
-            print('Theme fetched and updated successfully from API');
-          } catch (e) {
-            print('Error parsing theme JSON: $e');
-          }
-        },
-      );
+
+      result.fold((error) => print('Error fetching theme: ${error.message}'), (
+        data,
+      ) async {
+        try {
+          final theme = AppThemeModel.fromJson(data);
+
+          // Update state
+          emit(state.copyWith(dynamicTheme: theme));
+
+          // Cache theme
+          await AppPreference.instance.set(
+            key: AppPreference.KEY_DYNAMIC_THEME,
+            value: jsonEncode(data),
+          );
+          print('Theme fetched and updated successfully from API');
+        } catch (e) {
+          print('Error parsing theme JSON: $e');
+        }
+      });
     } catch (e) {
       print('Unexpected error fetching theme: $e');
     }
@@ -101,10 +101,9 @@ class AppCubit extends Cubit<AppState> {
     ) {
       print("IsConnected : $isConnected");
       emit(state.copyWith(isConnected: isConnected));
-
-      // if (isConnected && !_socketService.isConnected) {
-      //   _reconnectSocket();
-      // }
+      if (isConnected && !_socketService.isConnected) {
+        _reconnectSocket();
+      }
     });
   }
 
@@ -131,8 +130,9 @@ class AppCubit extends Cubit<AppState> {
   Future<void> loadUserSession() async {
     final prefs = AppPreference.instance;
     final userData = await prefs.get(key: AppPreference.KEY_USER_DETAILS);
-    final selectedLanguageKey =
-        await prefs.get(key: AppPreference.KEY_SELECTED_LANGUAGE);
+    final selectedLanguageKey = await prefs.get(
+      key: AppPreference.KEY_SELECTED_LANGUAGE,
+    );
     print("UserDetails : $userData");
     print("SelectedLanguageKey : $selectedLanguageKey");
 
@@ -144,7 +144,9 @@ class AppCubit extends Cubit<AppState> {
     if (selectedLanguageKey.isNotEmpty) {
       try {
         final language = AppLanguages.languages.firstWhere(
-          (lang) => (lang['key'] as String).toLowerCase() == selectedLanguageKey.toLowerCase(),
+          (lang) =>
+              (lang['key'] as String).toLowerCase() ==
+              selectedLanguageKey.toLowerCase(),
           orElse: () => AppLanguages.languages.first,
         );
         emit(state.copyWith(locale: language['locale'] as Locale));
@@ -155,12 +157,15 @@ class AppCubit extends Cubit<AppState> {
     }
   }
 
-  Future<void> _initializeSocket() async {
-    print('_initializeSocket');
+  Future<void> initializeSocket({String? imei}) async {
+    print('initializeSocket for IMEI: $imei');
+
+    // Ensure we start fresh on each initialization (critical for switching vehicles/IMEIs)
+    _socketService.disconnect();
+    await _socketSubscription?.cancel();
 
     try {
-      const socketUrl = 'ws://139.59.1.109:4000';
-      await _socketService.connect(socketUrl);
+      await _socketService.connect(ApiURL.socketURL, imei: imei);
 
       emit(state.copyWith(isSocketConnected: true));
 
@@ -182,8 +187,7 @@ class AppCubit extends Cubit<AppState> {
 
   void _reconnectSocket() async {
     try {
-      const socketUrl = 'ws://139.59.1.109:4000';
-      await _socketService.connect(socketUrl);
+      await _socketService.connect(ApiURL.socketURL);
       emit(state.copyWith(isSocketConnected: true));
     } catch (e) {
       print('Socket reconnection error: $e');
@@ -194,12 +198,21 @@ class AppCubit extends Cubit<AppState> {
     // Update devices list with new data
     final currentDevices = List<Map<String, dynamic>>.from(state.devices);
 
-    // Example: deviceData = {id: 'device1', lat: 23.45, lng: 78.90, name: 'Device 1'}
-    final deviceId = deviceData['id'] as String?;
+    // Identify device by imei, _id or id
+    final deviceId =
+        (deviceData['imei'] ?? deviceData['_id'] ?? deviceData['id'])
+            ?.toString();
+
+    print("[AppCubit] 🔄 Data Received for IMEI: ${deviceData['imei']}");
 
     if (deviceId != null) {
       // Check if device already exists
-      final index = currentDevices.indexWhere((d) => d['id'] == deviceId);
+      final index = currentDevices.indexWhere(
+        (d) =>
+            (d['imei']?.toString() == deviceId) ||
+            (d['_id']?.toString() == deviceId) ||
+            (d['id']?.toString() == deviceId),
+      );
 
       if (index != -1) {
         // Update existing device
@@ -209,7 +222,31 @@ class AppCubit extends Cubit<AppState> {
         currentDevices.add(deviceData);
       }
 
-      emit(state.copyWith(devices: currentDevices));
+      // Extract coordinates (lt = latitude, lg = longitude)
+      final lat = double.tryParse(deviceData['lt']?.toString() ?? '');
+      final lng = double.tryParse(deviceData['lg']?.toString() ?? '');
+
+      if (lat != null && lng != null) {
+        // Extract bearing/heading (common keys: course, bearing, angle, dir)
+        final bearing = double.tryParse(
+              (deviceData['course'] ?? 
+               deviceData['bearing'] ?? 
+               deviceData['angle'] ?? 
+               deviceData['dir'] ?? 
+               '0').toString()
+            ) ?? 0.0;
+
+        print("[AppCubit] 📍 Updating Live Position: $lat, $lng | Bearing: $bearing");
+        emit(
+          state.copyWith(
+            devices: currentDevices,
+            livePosition: LatLng(lat, lng),
+            liveBearing: bearing,
+          ),
+        );
+      } else {
+        emit(state.copyWith(devices: currentDevices));
+      }
     }
   }
 
@@ -234,12 +271,14 @@ class AppCubit extends Cubit<AppState> {
     bool? isTrafficEnabled,
     bool? isLabelsEnabled,
   }) {
-    emit(state.copyWith(
-      mapStyle: mapStyle,
-      mapType: mapType,
-      isTrafficEnabled: isTrafficEnabled,
-      isLabelsEnabled: isLabelsEnabled,
-    ));
+    emit(
+      state.copyWith(
+        mapStyle: mapStyle,
+        mapType: mapType,
+        isTrafficEnabled: isTrafficEnabled,
+        isLabelsEnabled: isLabelsEnabled,
+      ),
+    );
   }
 
   /// Get current location once
