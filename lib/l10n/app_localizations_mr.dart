@@ -1162,28 +1162,49 @@ class AppLocalizationsMr extends AppLocalizations {
   String get kmHr => 'किमी/तास';
 
   @override
-  String get viewMore => 'आणखी पहा';
+  String get viewMore => 'View more';
 
   @override
-  String get viewLess => 'कमी पहा';
+  String get viewLess => 'View less';
 
   @override
-  String get previousRides => 'मागील प्रवास';
+  String get previousRides => 'Previous Rides';
 
   @override
-  String get seeAll => 'सर्व पहा';
+  String get seeAll => 'See All';
 
   @override
-  String get videosYouMightLike => 'तुम्हाला आवडतील असे व्हिडिओ';
+  String get videosYouMightLike => 'Videos You Might Like';
 
   @override
-  String get scrollToTop => 'वर जा';
+  String get scrollToTop => 'Scroll to Top';
 
   @override
-  String get noRecentRidesFound => 'कोणताही अलीकडील प्रवास सापडला नाही';
+  String get noRecentRidesFound => 'No recent rides found';
 
   @override
-  String get failedToLoadRides => 'प्रवास लोड करण्यात अयशस्वी';
+  String get failedToLoadRides => 'Failed to load rides';
+
+  @override
+  String get hrMin => 'hr:min';
+
+  @override
+  String get vehicleLabel => 'Vehicle';
+
+  @override
+  String get switchLabel => 'Switch';
+
+  @override
+  String get expiryDate => 'Expiry Date';
+
+  @override
+  String get rechargePlans => 'Recharge Plans';
+
+  @override
+  String get superComboPlan => 'Super Combo Plan';
+
+  @override
+  String get month12Validity => '12-Month Validity';
 
   @override
   String get month6Validity => '6-Month Validity';
@@ -1213,122 +1234,122 @@ class AppLocalizationsMr extends AppLocalizations {
 
   @override
   String get continue6Month => 'Continue with 6-Month Plan';
-  String get hrMin => 'तास:मिनट';
 
   @override
-  String get odometerReading => 'ओडोमीटर रीडिंग';
+  String get odometerReading => 'Odometer Reading';
 
   @override
-  String get update => 'अपडेट';
+  String get update => 'Update';
 
   @override
-  String get gpsReadingNote => 'GPS आधारित रीडिंग, थोडा फरक असू शकतो.';
+  String get gpsReadingNote =>
+      'GPS-based reading, minor differences may occur.';
 
   @override
-  String get tankCapacity => 'टाकी क्षमता';
+  String get tankCapacity => 'Tank Capacity';
 
   @override
-  String get afterLastRefuel => 'शेवटच्या रिफ्यूएल नंतर';
+  String get afterLastRefuel => 'After Last Refuel';
 
   @override
-  String get fuelRemaining => 'शिल्लक इंधन';
+  String get fuelRemaining => 'Fuel Remaining';
 
   @override
-  String get distanceRemaining => 'शिल्लक अंतर';
+  String get distanceRemaining => 'Distance Remaining';
 
   @override
-  String get mileageArai => 'मायलेज (ARAI)';
+  String get mileageArai => 'Mileage (ARAI)';
 
   @override
-  String get spendingOnFuel => 'इंधनावरील खर्च';
+  String get spendingOnFuel => 'Spending on Fuel';
 
   @override
   String get today => 'Today';
 
   @override
-  String get thisWeek => 'या आठवड्यात';
+  String get thisWeek => 'This week';
 
   @override
-  String get thisMonth => 'या महिन्यात';
+  String get thisMonth => 'This month';
 
   @override
-  String get thisYear => 'या वर्षी';
+  String get thisYear => 'This year';
 
   @override
-  String get all => 'सर्व';
+  String get all => 'All';
 
   @override
-  String get customDates => 'कस्टम तारखा';
+  String get customDates => 'Custom dates';
 
   @override
-  String get refuelHistory => 'रिफ्यूएल इतिहास';
+  String get refuelHistory => 'Refuel History';
 
   @override
-  String get addRefuelingDetails => 'रिफ्यूलिंग तपशील जोडा';
+  String get addRefuelingDetails => 'Add refueling details';
 
   @override
-  String get fuelStations => 'इंधन केंद्रे';
+  String get fuelStations => 'Fuel Stations';
 
   @override
-  String get dashboard => 'डॅशबोर्ड';
+  String get dashboard => 'Dashboard';
 
   @override
-  String get litersShort => 'ली.';
+  String get litersShort => 'L';
 
   @override
   String get fuelEstimateNote =>
-      'ही मूल्ये तुमच्या इंधन नोंदींवर आधारित अंदाज आहेत. चांगल्या अचूकतेसाठी नियमितपणे इंधन लॉग जोडा.';
+      'These values are estimates based on your fuel entries. Add fuel logs regularly for better accuracy.';
 
   @override
-  String get gotIt => 'समजले';
+  String get gotIt => 'Got it';
 
   @override
-  String get currentOdometerReading => 'सध्याची ओडोमीटर रीडिंग';
+  String get currentOdometerReading => 'Current Odometer Reading';
 
   @override
   String get odometerUpdateDesc =>
-      'अचूक इंधन आणि अंतराच्या अंदाजासाठी तुमचे ओडोमीटर नियमितपणे अपडेट करा';
+      'Regularly update your odometer for accurate fuel and distance estimates';
 
   @override
-  String get updateTankCapacity => 'टाकी क्षमता अपडेट करा';
+  String get updateTankCapacity => 'Update Tank Capacity';
 
   @override
   String get tankCapacityDesc =>
-      'तुमच्या वाहन टाकीची कमाल इंधन क्षमता प्रविष्ट करा';
+      'Enter the maximum fuel capacity of your vehicle tank';
 
   @override
-  String get litres => 'लिटर';
+  String get litres => 'Litres';
 
   @override
-  String get kms => 'किमी';
+  String get kms => 'Kms';
 
   @override
-  String get cancel => 'रद्द करा';
+  String get cancel => 'Cancel';
 
   @override
-  String get save => 'जतन करा';
+  String get save => 'Save';
 
   @override
-  String get updateMileageArai => 'मायलेज अपडेट करा (ARAI)';
+  String get updateMileageArai => 'Update Mileage (ARAI)';
 
   @override
   String get mileageDesc =>
-      'ARAI मानकांनुसार तुमच्या वाहनाचे मायलेज प्रविष्ट करा';
+      'Enter the mileage of your vehicle as per ARAI standards';
 
   @override
-  String get kmL => 'किमी/ली.';
+  String get kmL => 'Km/L';
 
   @override
-  String get serviceLogAddedSuccess => 'सर्व्हिस लॉग यशस्वीरित्या जोडला गेला';
+  String get serviceLogAddedSuccess => 'Service log added successfully';
 
   @override
   String get currencySymbol => '₹';
 
   @override
-  String get refuelHistoryComingSoon => 'रिफ्यूएल इतिहास लवकरच येत आहे';
+  String get refuelHistoryComingSoon => 'Refuel History Coming Soon';
 
   @override
-  String get fuelStationsComingSoon => 'इंधन केंद्रे लवकरच येत आहेत';
+  String get fuelStationsComingSoon => 'Fuel Stations Coming Soon';
 
   @override
   String percentageValue(String value) {
@@ -1336,43 +1357,43 @@ class AppLocalizationsMr extends AppLocalizations {
   }
 
   @override
-  String get totalFuelAdded => 'एकूण जोडलेले इंधन';
+  String get totalFuelAdded => 'Total Fuel Added';
 
   @override
-  String get totalSpendings => 'एकूण खर्च';
+  String get totalSpendings => 'Total spendings';
 
   @override
-  String get avgMileage => 'सरासरी मायलेज';
+  String get avgMileage => 'Avg Mileage';
 
   @override
-  String get refuels => 'रिफ्यूल';
+  String get refuels => 'Refuels';
 
   @override
-  String get refuelingHistory => 'रिफ्यूलिंग इतिहास';
+  String get refuelingHistory => 'Refueling History';
 
   @override
-  String get newestFirst => 'सर्वात नवीन प्रथम';
+  String get newestFirst => 'Newest First';
 
   @override
-  String get oldestFirst => 'सर्वात जुने प्रथम';
+  String get oldestFirst => 'Oldest First';
 
   @override
-  String get mostExpensive => 'सर्वात महाग';
+  String get mostExpensive => 'Most Expensive';
 
   @override
-  String get leastExpensive => 'सर्वात स्वस्त';
+  String get leastExpensive => 'Least Expensive';
 
   @override
-  String get bestMileage => 'सर्वोत्कृष्ट मायलेज';
+  String get bestMileage => 'Best Mileage';
 
   @override
-  String get worstMileage => 'सर्वात खराब मायलेज';
+  String get worstMileage => 'Worst Mileage';
 
   @override
-  String get edit => 'संपादन करा';
+  String get edit => 'Edit';
 
   @override
-  String get delete => 'हटवा';
+  String get delete => 'Delete';
 
   @override
   String get error => 'Something went wrong';
@@ -1382,73 +1403,75 @@ class AppLocalizationsMr extends AppLocalizations {
 
   @override
   String hintEg(String value) {
-    return 'उदा: $value';
+    return 'e.g., $value';
   }
 
   @override
-  String get addStation => 'केंद्र जोडा';
+  String get addStation => 'Add Station';
 
   @override
-  String get nearby => 'जवळचे';
+  String get nearby => 'Nearby';
 
   @override
-  String get favourites => 'आवडते';
+  String get favourites => 'Favourites';
 
   @override
-  String get addedByMe => 'मी जोडलेले';
+  String get addedByMe => 'Added by me';
 
   @override
-  String get noFavourites => 'अजून कोणतेही आवडते केंद्र नाही';
+  String get noFavourites => 'No favourites yet';
 
   @override
-  String get noStationsAdded => 'अजून कोणतेही केंद्र जोडलेले नाही';
+  String get noStationsAdded => 'No stations added yet';
 
   @override
-  String get fuelStationNearVehicle => 'वाहनाजवळ इंधन केंद्र';
+  String get fuelStationNearVehicle => 'Fuel Station Near Vehicle';
 
   @override
-  String get warranty_title => 'डिव्हाइस वॉरंटी';
+  String get warranty_title => 'Device Warranty';
 
   @override
-  String get warranty_benefitsTitle => 'वॉरंटी फायदे';
+  String get warranty_benefitsTitle => 'Warranty Benefits';
 
   @override
-  String get warranty_extend => 'तुमची वॉरंटी वाढवा आणि डिव्हाइस सुरक्षित ठेवा';
+  String get warranty_extend =>
+      'Extend Your Warranty & Keep Your Device Protected';
 
   @override
-  String get warranty_vehicle => 'वाहन';
+  String get warranty_vehicle => 'Vehicle';
 
   @override
-  String get warranty_expiry => 'वॉरंटी कालबाह्यता';
+  String get warranty_expiry => 'Warranty Expiry';
 
   @override
-  String get warranty_button => 'वॉरंटी वाढवा — ';
+  String get warranty_button => 'Extend Warranty — ';
 
   @override
   String get warranty_button_old => '₹4,999';
 
   @override
-  String get benefit1_highlight => 'प्रीमियम कव्हरेज ';
+  String get benefit1_highlight => 'Premium Coverage ';
 
   @override
   String get benefit1_normal =>
-      '— उत्पादन दोषांविरुद्ध संपूर्ण हार्डवेअर संरक्षण.';
+      '— Full hardware protection against manufacturing defects.';
 
   @override
-  String get benefit2_highlight => 'मोफत दुरुस्ती ';
+  String get benefit2_highlight => 'Free Repairs ';
 
   @override
-  String get benefit2_normal => '— सर्व सेवा आणि पार्ट्स विनामूल्य.';
+  String get benefit2_normal => '— All service & parts covered at zero cost.';
 
   @override
-  String get benefit3_highlight => '24/7 समर्थन ';
+  String get benefit3_highlight => '24/7 Support ';
 
   @override
-  String get benefit3_normal => '— आवश्यकतेनुसार प्राधान्य ग्राहक सेवा.';
+  String get benefit3_normal =>
+      '— Priority customer support whenever you need it.';
 
   @override
-  String get benefit4_highlight => 'छुपे शुल्क नाही ';
+  String get benefit4_highlight => 'No Hidden Charges ';
 
   @override
-  String get benefit4_normal => '— एक सपाट शुल्क, संपूर्ण मनःशांती.';
+  String get benefit4_normal => '— One flat fee, complete peace of mind.';
 }

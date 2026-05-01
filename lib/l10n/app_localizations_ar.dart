@@ -9,7 +9,7 @@ class AppLocalizationsAr extends AppLocalizations {
   AppLocalizationsAr([String locale = 'ar']) : super(locale);
 
   @override
-  String get selectLanguage => 'اختر اللغة';
+  String get selectLanguage => 'اختر لغتك';
 
   @override
   String get letsGetStarted => 'لنبدأ الآن';
@@ -729,7 +729,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get allRides => 'ALL RIDES';
 
   @override
-  String get trips => 'الرحلات';
+  String get trips => 'TRIPS';
 
   @override
   String clicked(String value) {
@@ -746,10 +746,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String get durationLabel => 'Duration';
 
   @override
-  String get km => 'كم';
+  String get km => 'km';
 
   @override
-  String get kmh => 'كم/س';
+  String get kmh => 'km/h';
 
   @override
   String get tripEmptyQuote =>
@@ -771,7 +771,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get startByCreatingTrip => 'Start by creating a New Trip';
 
   @override
-  String get skip => 'تخطي';
+  String get skip => 'Skip';
 
   @override
   String get todayText => 'اليوم';
@@ -1166,156 +1166,16 @@ class AppLocalizationsAr extends AppLocalizations {
   String get seeAll => 'عرض الكل';
 
   @override
-  String get videosYouMightLike => 'Videos You Might Like';
+  String get videosYouMightLike => 'فيديوهات قد تعجبك';
 
   @override
-  String get scrollToTop => 'Scroll to Top';
+  String get scrollToTop => 'العودة إلى الأعلى';
 
   @override
-  String get noRecentRidesFound => 'No recent rides found';
+  String get noRecentRidesFound => 'لم يتم العثور على رحلات حديثة';
 
   @override
-  String get failedToLoadRides => 'Failed to load rides';
-
-  @override
-  String get hrMin => 'hr:min';
-
-  @override
-  String get odometerReading => 'Odometer Reading';
-
-  @override
-  String get update => 'Update';
-
-  @override
-  String get gpsReadingNote =>
-      'GPS-based reading, minor differences may occur.';
-
-  @override
-  String get tankCapacity => 'Tank Capacity';
-
-  @override
-  String get afterLastRefuel => 'بعد آخر تزود بالوقود';
-
-  @override
-  String get fuelRemaining => 'الوقود المتبقي';
-
-  @override
-  String get distanceRemaining => 'المسافة المتبقية';
-
-  @override
-  String get mileageArai => 'الاستهلاك (ARAI)';
-
-  @override
-  String get spendingOnFuel => 'الإنفاق على الوقود';
-
-  @override
-  String get today => 'اليوم';
-
-  @override
-  String get thisWeek => 'هذا الأسبوع';
-
-  @override
-  String get thisMonth => 'هذا الشهر';
-
-  @override
-  String get thisYear => 'هذا العام';
-
-  @override
-  String get all => 'الكل';
-
-  @override
-  String get customDates => 'تواريخ مخصصة';
-
-  @override
-  String get refuelHistory => 'سجل التزود بالوقود';
-
-  @override
-  String get addRefuelingDetails => 'إضافة تفاصيل التزود بالوقود';
-
-  @override
-  String get fuelStations => 'محطات الوقود';
-
-  @override
-  String get dashboard => 'لوحة التحكم';
-
-  @override
-  String get litersShort => 'لتر';
-
-  @override
-  String get fuelEstimateNote =>
-      'هذه القيم تقديرية بناءً على مدخلات الوقود الخاصة بك. أضف سجلات الوقود بانتظام للحصول على دقة أفضل.';
-
-  @override
-  String get gotIt => 'فهمت';
-
-  @override
-  String get currentOdometerReading => 'قراءة عداد المسافات الحالية';
-
-  @override
-  String get odometerUpdateDesc =>
-      'قم بتحديث عداد المسافات بانتظام للحصول على تقديرات دقيقة للوقود والمسافة';
-
-  @override
-  String get updateTankCapacity => 'تحديث سعة الخزان';
-
-  @override
-  String get tankCapacityDesc => 'أدخل أقصى سعة وقود لخزان مركبتك';
-
-  @override
-  String get litres => 'لتر';
-
-  @override
-  String get kms => 'كم';
-
-  @override
-  String get cancel => 'إلغاء';
-
-  @override
-  String get save => 'حفظ';
-
-  @override
-  String get updateMileageArai => 'تحديث الاستهلاك (ARAI)';
-
-  @override
-  String get mileageDesc => 'أدخل استهلاك مركبتك وفقاً لمعايير ARAI';
-
-  @override
-  String get kmL => 'كم/لتر';
-
-  @override
-  String get serviceLogAddedSuccess => 'تم إضافة سجل الخدمة بنجاح';
-
-  @override
-  String get currencySymbol => '₹';
-
-  @override
-  String get refuelHistoryComingSoon => 'سجل التزود بالوقود قريباً';
-
-  @override
-  String get fuelStationsComingSoon => 'محطات الوقود قريباً';
-
-  @override
-  String percentageValue(String value) {
-    return '$value%';
-  }
-
-  @override
-  String get totalFuelAdded => 'إجمالي الوقود المضاف';
-
-  @override
-  String get totalSpendings => 'إجمالي المصاريف';
-
-  @override
-  String get avgMileage => 'متوسط استهلاك الوقود';
-
-  @override
-  String get refuels => 'عمليات التزود بالوقود';
-
-  @override
-  String get refuelingHistory => 'سجل التزود بالوقود';
-
-  @override
-  String get newestFirst => 'الأحدث أولاً';
+  String get failedToLoadRides => 'فشل في تحميل الرحلات';
 
   @override
   String get hrMin => 'ساعة:دقيقة';
@@ -1366,100 +1226,244 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get continue6Month => 'المتابعة مع خطة 6 أشهر';
-  String get oldestFirst => 'الأقدم أولاً';
 
   @override
-  String get mostExpensive => 'الأغلى';
+  String get odometerReading => 'Odometer Reading';
 
   @override
-  String get leastExpensive => 'الأرخص';
+  String get update => 'Update';
 
   @override
-  String get bestMileage => 'أفضل استهلاك';
+  String get gpsReadingNote =>
+      'GPS-based reading, minor differences may occur.';
 
   @override
-  String get worstMileage => 'أسوأ استهلاك';
+  String get tankCapacity => 'Tank Capacity';
 
   @override
-  String get edit => 'تعديل';
+  String get afterLastRefuel => 'After Last Refuel';
 
   @override
-  String get delete => 'حذف';
+  String get fuelRemaining => 'Fuel Remaining';
 
   @override
-  String get error => 'حدث خطأ ما';
+  String get distanceRemaining => 'Distance Remaining';
 
   @override
-  String get noDataAvailable => 'لا توجد بيانات متاحة';
+  String get mileageArai => 'Mileage (ARAI)';
 
   @override
-  String hintEg(String value) {
-    return 'مثلاً: $value';
+  String get spendingOnFuel => 'Spending on Fuel';
+
+  @override
+  String get today => 'Today';
+
+  @override
+  String get thisWeek => 'This week';
+
+  @override
+  String get thisMonth => 'This month';
+
+  @override
+  String get thisYear => 'This year';
+
+  @override
+  String get all => 'All';
+
+  @override
+  String get customDates => 'Custom dates';
+
+  @override
+  String get refuelHistory => 'Refuel History';
+
+  @override
+  String get addRefuelingDetails => 'Add refueling details';
+
+  @override
+  String get fuelStations => 'Fuel Stations';
+
+  @override
+  String get dashboard => 'Dashboard';
+
+  @override
+  String get litersShort => 'L';
+
+  @override
+  String get fuelEstimateNote =>
+      'These values are estimates based on your fuel entries. Add fuel logs regularly for better accuracy.';
+
+  @override
+  String get gotIt => 'Got it';
+
+  @override
+  String get currentOdometerReading => 'Current Odometer Reading';
+
+  @override
+  String get odometerUpdateDesc =>
+      'Regularly update your odometer for accurate fuel and distance estimates';
+
+  @override
+  String get updateTankCapacity => 'Update Tank Capacity';
+
+  @override
+  String get tankCapacityDesc =>
+      'Enter the maximum fuel capacity of your vehicle tank';
+
+  @override
+  String get litres => 'Litres';
+
+  @override
+  String get kms => 'Kms';
+
+  @override
+  String get cancel => 'Cancel';
+
+  @override
+  String get save => 'Save';
+
+  @override
+  String get updateMileageArai => 'Update Mileage (ARAI)';
+
+  @override
+  String get mileageDesc =>
+      'Enter the mileage of your vehicle as per ARAI standards';
+
+  @override
+  String get kmL => 'Km/L';
+
+  @override
+  String get serviceLogAddedSuccess => 'Service log added successfully';
+
+  @override
+  String get currencySymbol => '₹';
+
+  @override
+  String get refuelHistoryComingSoon => 'Refuel History Coming Soon';
+
+  @override
+  String get fuelStationsComingSoon => 'Fuel Stations Coming Soon';
+
+  @override
+  String percentageValue(String value) {
+    return '$value%';
   }
 
   @override
-  String get addStation => 'إضافة محطة';
+  String get totalFuelAdded => 'Total Fuel Added';
 
   @override
-  String get nearby => 'القريبة';
+  String get totalSpendings => 'Total spendings';
 
   @override
-  String get favourites => 'المفضلة';
+  String get avgMileage => 'Avg Mileage';
 
   @override
-  String get addedByMe => 'أضيفت بواسطتي';
+  String get refuels => 'Refuels';
 
   @override
-  String get noFavourites => 'لا توجد مفضلات بعد';
+  String get refuelingHistory => 'Refueling History';
 
   @override
-  String get noStationsAdded => 'لم يتم إضافة محطات بعد';
+  String get newestFirst => 'Newest First';
 
   @override
-  String get fuelStationNearVehicle => 'محطة وقود بالقرب من السيارة';
+  String get oldestFirst => 'Oldest First';
 
   @override
-  String get warranty_title => 'ضمان الجهاز';
+  String get mostExpensive => 'Most Expensive';
 
   @override
-  String get warranty_benefitsTitle => 'مزايا الضمان';
+  String get leastExpensive => 'Least Expensive';
 
   @override
-  String get warranty_extend => 'مدد ضمانك واحتفظ بحماية جهازك';
+  String get bestMileage => 'Best Mileage';
 
   @override
-  String get warranty_vehicle => 'المركبة';
+  String get worstMileage => 'Worst Mileage';
 
   @override
-  String get warranty_expiry => 'انتهاء الضمان';
+  String get edit => 'Edit';
 
   @override
-  String get warranty_button => 'تمديد الضمان — ';
+  String get delete => 'Delete';
+
+  @override
+  String get error => 'Something went wrong';
+
+  @override
+  String get noDataAvailable => 'No data available';
+
+  @override
+  String hintEg(String value) {
+    return 'e.g., $value';
+  }
+
+  @override
+  String get addStation => 'Add Station';
+
+  @override
+  String get nearby => 'Nearby';
+
+  @override
+  String get favourites => 'Favourites';
+
+  @override
+  String get addedByMe => 'Added by me';
+
+  @override
+  String get noFavourites => 'No favourites yet';
+
+  @override
+  String get noStationsAdded => 'No stations added yet';
+
+  @override
+  String get fuelStationNearVehicle => 'Fuel Station Near Vehicle';
+
+  @override
+  String get warranty_title => 'Device Warranty';
+
+  @override
+  String get warranty_benefitsTitle => 'Warranty Benefits';
+
+  @override
+  String get warranty_extend =>
+      'Extend Your Warranty & Keep Your Device Protected';
+
+  @override
+  String get warranty_vehicle => 'Vehicle';
+
+  @override
+  String get warranty_expiry => 'Warranty Expiry';
+
+  @override
+  String get warranty_button => 'Extend Warranty — ';
 
   @override
   String get warranty_button_old => '₹4,999';
 
   @override
-  String get benefit1_highlight => 'تغطية متميزة ';
+  String get benefit1_highlight => 'Premium Coverage ';
 
   @override
-  String get benefit1_normal => '— حماية كاملة للأجهزة ضد عيوب التصنيع.';
+  String get benefit1_normal =>
+      '— Full hardware protection against manufacturing defects.';
 
   @override
-  String get benefit2_highlight => 'إصلاح مجاني ';
+  String get benefit2_highlight => 'Free Repairs ';
 
   @override
-  String get benefit2_normal => '— جميع الخدمات والقطع بدون تكلفة.';
+  String get benefit2_normal => '— All service & parts covered at zero cost.';
 
   @override
-  String get benefit3_highlight => 'دعم 24/7 ';
+  String get benefit3_highlight => '24/7 Support ';
 
   @override
-  String get benefit3_normal => '— خدمة عملاء ذات أولوية في أي وقت.';
+  String get benefit3_normal =>
+      '— Priority customer support whenever you need it.';
 
   @override
-  String get benefit4_highlight => 'لا رسوم خفية ';
+  String get benefit4_highlight => 'No Hidden Charges ';
 
   @override
-  String get benefit4_normal => '— رسوم ثابتة واحدة، راحة بال كاملة.';
+  String get benefit4_normal => '— One flat fee, complete peace of mind.';
 }
