@@ -28,6 +28,7 @@ import '../../../../core/services/socket_service.dart';
 import '../../../../core/utils/shared_preferences.dart';
 import '../../../device_data/presentation/pages/device_data_screen.dart';
 import '../../../fuel_logs/presentation/pages/fuel_logs_screen.dart';
+import '../../../geo_fence/presentation/pages/geo_fence_screen.dart';
 import '../../../location_sharing/presentation/pages/location_sharing_screen.dart';
 import 'package:trackify/feature/service_logs/presentation/screens/service_logs_screen.dart';
 import '../../../notifications/presentation/screen/notification_list_screen.dart';
@@ -906,6 +907,16 @@ class _MapScreenState extends State<MapScreen> {
           ),
         );
       }
+    }else if (label == l10n.geoFenceAlert.replaceAll(' ', '\n')) {
+      final vName = selectedDevice != null
+          ? "${selectedDevice.vehicleMaker} ${selectedDevice.vehicleNumber}"
+          : null;
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => GeoFenceScreen(vehicleName: vName),
+        ),
+      );
     }
   }
 

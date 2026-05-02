@@ -2907,6 +2907,102 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Send Now'**
   String get sendNow;
+
+  /// No description provided for @geoFenceTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Geo-fence'**
+  String get geoFenceTitle;
+
+  /// No description provided for @geoFenceRadius.
+  ///
+  /// In en, this message translates to:
+  /// **'Radius: {radius}m'**
+  String geoFenceRadius(String radius);
+
+  /// No description provided for @geoFenceLocating.
+  ///
+  /// In en, this message translates to:
+  /// **'Locating...'**
+  String get geoFenceLocating;
+
+  /// No description provided for @geoFenceNameRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a geo-fence name'**
+  String get geoFenceNameRequired;
+
+  /// No description provided for @geoFenceSaveSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Geo-fence saved successfully!'**
+  String get geoFenceSaveSuccess;
+
+  /// No description provided for @geoFenceSearchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search location...'**
+  String get geoFenceSearchHint;
+
+  /// No description provided for @geoFenceSelectType.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Geo-fence type for '**
+  String get geoFenceSelectType;
+
+  /// No description provided for @geoFenceTypeHome.
+  ///
+  /// In en, this message translates to:
+  /// **'Home'**
+  String get geoFenceTypeHome;
+
+  /// No description provided for @geoFenceTypeOffice.
+  ///
+  /// In en, this message translates to:
+  /// **'Office'**
+  String get geoFenceTypeOffice;
+
+  /// No description provided for @geoFenceTypeFamily.
+  ///
+  /// In en, this message translates to:
+  /// **'Family'**
+  String get geoFenceTypeFamily;
+
+  /// No description provided for @geoFenceTypeParking.
+  ///
+  /// In en, this message translates to:
+  /// **'Parking'**
+  String get geoFenceTypeParking;
+
+  /// No description provided for @geoFenceTypeOthers.
+  ///
+  /// In en, this message translates to:
+  /// **'Others'**
+  String get geoFenceTypeOthers;
+
+  /// No description provided for @geoFenceNameFieldHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter Geo-fence name, eg: Home'**
+  String get geoFenceNameFieldHint;
+
+  /// No description provided for @geoFenceAddSmsContacts.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Contacts for SMS Alert'**
+  String get geoFenceAddSmsContacts;
+
+  /// No description provided for @geoFenceEmptyStateDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Draw a circle on the map and be alerted whenever a bike enters or exits the circle.'**
+  String get geoFenceEmptyStateDesc;
+
+  /// No description provided for @addGeoFenceButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Geo-fence'**
+  String get addGeoFenceButton;
 }
 
 class _AppLocalizationsDelegate

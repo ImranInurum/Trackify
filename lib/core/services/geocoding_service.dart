@@ -59,4 +59,30 @@ class GeocodingService {
     _cache[key] = fallback;
     return fallback;
   }
+  /// Returns a list of [LatLng] for the given [address] query.
+  Future<List<LatLng>> searchLocation(String address) async {
+    try {
+      final uri = Uri.parse(
+        'https://nominatim.openstreetmap.org/search'
+        '?q=${Uri.encodeComponent(address)}'
+        '&format=json&limit=5',
+      );
+
+      final response = await http
+          .get(uri, headers: {'User-Agent': 'Trackify-App/1.0'})
+          .timeout(const Duration(seconds: 6));
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body) as List<dynamic>;
+        return data.map((item) {
+          final lat = double.parse(item['lat'].toString());
+          final lon = double.parse(item['lon'].toString());
+          return LatLng(lat, lon);
+        }).toList();
+      }
+    } catch (e) {
+      debugPrint('[GeocodingService] searchLocation error: $e');
+    }
+    return [];
+  }
 }

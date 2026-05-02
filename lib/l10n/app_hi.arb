@@ -598,5 +598,28 @@
   "pleaseUseResponsibly": "कृपया जिम्मेदारी से उपयोग करें",
   "secondsBeforeSendingAlert": "अलर्ट भेजने से पहले सेकंड",
   "sendNow": "अभी भेजें",
-  "cancel": "रद्द करें"
-}
+  "cancel": "रद्द करें",
+  "geoFenceTitle": "जियो-फेंस",
+  "geoFenceRadius": "त्रिज्या: {radius}मी",
+  "@geoFenceRadius": {
+    "placeholders": {
+      "radius": {
+        "type": "String"
+      }
+    }
+  },
+  "geoFenceLocating": "स्थान खोजा जा रहा है...",
+  "geoFenceNameRequired": "कृपया जियो-फेंस नाम दर्ज करें",
+  "geoFenceSaveSuccess": "जियो-फेंस सफलतापूर्वक सहेजा गया!",
+  "geoFenceSearchHint": "स्थान खोजें...",
+  "geoFenceSelectType": "इसके लिए जियो-फेंस प्रकार चुनें ",
+  "geoFenceTypeHome": "घर",
+  "geoFenceTypeOffice": "कार्यालय",
+  "geoFenceTypeFamily": "परिवार",
+  "geoFenceTypeParking": "पार्किंग",
+  "geoFenceTypeOthers": "अन्य",
+  "geoFenceNameFieldHint": "जियो-फेंस नाम दर्ज करें, जैसे: घर",
+  "geoFenceAddSmsContacts": "SMS अलर्ट के लिए संपर्क जोड़ें",
+  "geoFenceEmptyStateDesc": "मैप पर एक घेरा बनाएं और जब भी कोई बाइक घेरे में प्रवेश करे या बाहर निकले तो अलर्ट पाएं।",
+  "addGeoFenceButton": "जियो-फेंस जोड़ें"
+}

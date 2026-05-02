@@ -596,5 +596,28 @@
   "pleaseUseResponsibly": "Please use responsibly",
   "secondsBeforeSendingAlert": "seconds before sending alert",
   "sendNow": "Send Now",
-  "cancel": "Cancel"
+  "cancel": "Cancel",
+  "geoFenceTitle": "Geo-fence",
+  "geoFenceRadius": "Radius: {radius}m",
+  "@geoFenceRadius": {
+    "placeholders": {
+      "radius": {
+        "type": "String"
+      }
+    }
+  },
+  "geoFenceLocating": "Locating...",
+  "geoFenceNameRequired": "Please enter a geo-fence name",
+  "geoFenceSaveSuccess": "Geo-fence saved successfully!",
+  "geoFenceSearchHint": "Search location...",
+  "geoFenceSelectType": "Select Geo-fence type for ",
+  "geoFenceTypeHome": "Home",
+  "geoFenceTypeOffice": "Office",
+  "geoFenceTypeFamily": "Family",
+  "geoFenceTypeParking": "Parking",
+  "geoFenceTypeOthers": "Others",
+  "geoFenceNameFieldHint": "Enter Geo-fence name, eg: Home",
+  "geoFenceAddSmsContacts": "Add Contacts for SMS Alert",
+  "geoFenceEmptyStateDesc": "Draw a circle on the map and be alerted whenever a bike enters or exits the circle.",
+  "addGeoFenceButton": "Add Geo-fence"
 }

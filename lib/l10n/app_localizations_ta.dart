@@ -1489,4 +1489,55 @@ class AppLocalizationsTa extends AppLocalizations {
 
   @override
   String get sendNow => 'இப்போது அனுப்பு';
+
+  @override
+  String get geoFenceTitle => 'Geo-fence';
+
+  @override
+  String geoFenceRadius(String radius) {
+    return 'Radius: ${radius}m';
+  }
+
+  @override
+  String get geoFenceLocating => 'Locating...';
+
+  @override
+  String get geoFenceNameRequired => 'Please enter a geo-fence name';
+
+  @override
+  String get geoFenceSaveSuccess => 'Geo-fence saved successfully!';
+
+  @override
+  String get geoFenceSearchHint => 'Search location...';
+
+  @override
+  String get geoFenceSelectType => 'Select Geo-fence type for ';
+
+  @override
+  String get geoFenceTypeHome => 'Home';
+
+  @override
+  String get geoFenceTypeOffice => 'Office';
+
+  @override
+  String get geoFenceTypeFamily => 'Family';
+
+  @override
+  String get geoFenceTypeParking => 'Parking';
+
+  @override
+  String get geoFenceTypeOthers => 'Others';
+
+  @override
+  String get geoFenceNameFieldHint => 'Enter Geo-fence name, eg: Home';
+
+  @override
+  String get geoFenceAddSmsContacts => 'Add Contacts for SMS Alert';
+
+  @override
+  String get geoFenceEmptyStateDesc =>
+      'Draw a circle on the map and be alerted whenever a bike enters or exits the circle.';
+
+  @override
+  String get addGeoFenceButton => 'Add Geo-fence';
 }
