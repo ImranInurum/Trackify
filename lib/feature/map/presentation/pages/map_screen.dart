@@ -22,6 +22,7 @@ import 'package:trackify/feature/my_garage/presentation/view/my_garage_screen.da
 import 'package:trackify/feature/overspeed_alert/presentation/screens/overspeed_alert_screen.dart';
 import 'package:trackify/feature/reach_me_sticker/presentation/screens/reach_me_sticker_screen.dart';
 import 'package:trackify/feature/record_via_phone/presentation/pages/record_via_phone_screen.dart';
+import 'package:trackify/feature/safe_parking/presentation/pages/safe_parking_screen.dart';
 import 'package:trackify/feature/trips/presentation/view/ride_history_details/ride_history_details_screen.dart';
 import 'package:trackify/feature/trips/presentation/view/widgets/all_rides/widgets/ride_card.dart';
 import '../../../../core/services/socket_service.dart';
@@ -886,6 +887,15 @@ class _MapScreenState extends State<MapScreen> {
         ),
       );
     }
+    else if (label == l10n.safeParking.replaceAll(' ', '\n')) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const SafeParkingScreen(),
+        ),
+      );
+    }
+
     else if (label == l10n.deviceDataPlanLabel.replaceAll(' ', '\n')) {
       if (selectedDevice?.imei == null) {
         ScaffoldMessenger.of(context).showSnackBar(

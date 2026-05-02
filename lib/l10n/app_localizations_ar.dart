@@ -1530,4 +1530,27 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get addGeoFenceButton => 'Add Geo-fence';
+
+  @override
+  String get safeParkingTitle => 'موقف آمن';
+
+  @override
+  String get schedule => 'الجدولة';
+
+  @override
+  String get setupSafeParking => 'إعداد الموقف الآمن';
+
+  @override
+  String get safeParkingSubtitle =>
+      'تلقي تنبيهات عند تشغيل المحرك أو سحب المركبة';
+
+  @override
+  String get activate => 'تفعيل';
+
+  @override
+  String get activated => 'مفعل';
+
+  @override
+  String get safeParkingDescription =>
+      'تمكين التنبيهات عند تشغيل المحرك أو اكتشاف السحب';
 }

@@ -1543,4 +1543,27 @@ class AppLocalizationsKn extends AppLocalizations {
 
   @override
   String get addGeoFenceButton => 'Add Geo-fence';
+
+  @override
+  String get safeParkingTitle => 'ಸುರಕ್ಷಿತ ಪಾರ್ಕಿಂಗ್';
+
+  @override
+  String get schedule => 'ವೇಳಾಪಟ್ಟಿ';
+
+  @override
+  String get setupSafeParking => 'ಸುರಕ್ಷಿತ ಪಾರ್ಕಿಂಗ್ ಸೆಟ್ ಮಾಡಿ';
+
+  @override
+  String get safeParkingSubtitle =>
+      'ಎಂಜಿನ್ ON ಮತ್ತು ಟೋಯಿಂಗ್ ಎಚ್ಚರಿಕೆಗಳಿಗಾಗಿ ಕರೆ ಎಚ್ಚರಿಕೆಗಳನ್ನು ಪಡೆಯಿರಿ';
+
+  @override
+  String get activate => 'ಸಕ್ರಿಯಗೊಳಿಸಿ';
+
+  @override
+  String get activated => 'ಸಕ್ರಿಯವಾಗಿದೆ';
+
+  @override
+  String get safeParkingDescription =>
+      'ಎಂಜಿನ್ ON ಆಗಿದಾಗ ಅಥವಾ ಟೋಯಿಂಗ್ ಪತ್ತೆಯಾದಾಗ ಎಚ್ಚರಿಕೆಗಳನ್ನು ಸಕ್ರಿಯಗೊಳಿಸಿ';
 }

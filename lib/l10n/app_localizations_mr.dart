@@ -1128,7 +1128,7 @@ class AppLocalizationsMr extends AppLocalizations {
   String get drivingTime => 'Driving Time';
 
   @override
-  String get safetyScore => 'Safety Score';
+  String get safetyScore => 'सुरक्षा स्कोअर';
 
   @override
   String get speedAlertInput => 'वेग इशारा इनपुट';
@@ -1162,78 +1162,78 @@ class AppLocalizationsMr extends AppLocalizations {
   String get kmHr => 'किमी/तास';
 
   @override
-  String get viewMore => 'View more';
+  String get viewMore => 'आणखी पहा';
 
   @override
-  String get viewLess => 'View less';
+  String get viewLess => 'कमी पहा';
 
   @override
-  String get previousRides => 'Previous Rides';
+  String get previousRides => 'मागील राईड्स';
 
   @override
-  String get seeAll => 'See All';
+  String get seeAll => 'सर्व पहा';
 
   @override
-  String get videosYouMightLike => 'Videos You Might Like';
+  String get videosYouMightLike => 'तुम्हाला आवडू शकणारे व्हिडिओ';
 
   @override
-  String get scrollToTop => 'Scroll to Top';
+  String get scrollToTop => 'वर जा';
 
   @override
-  String get noRecentRidesFound => 'No recent rides found';
+  String get noRecentRidesFound => 'अलीकडील राईड्स आढळल्या नाहीत';
 
   @override
-  String get failedToLoadRides => 'Failed to load rides';
+  String get failedToLoadRides => 'राईड्स लोड करण्यात अयशस्वी';
 
   @override
   String get hrMin => 'hr:min';
 
   @override
-  String get vehicleLabel => 'Vehicle';
+  String get vehicleLabel => 'वाहन';
 
   @override
-  String get switchLabel => 'Switch';
+  String get switchLabel => 'स्विच';
 
   @override
-  String get expiryDate => 'Expiry Date';
+  String get expiryDate => 'समाप्ती तारीख';
 
   @override
-  String get rechargePlans => 'Recharge Plans';
+  String get rechargePlans => 'रिचार्ज योजना';
 
   @override
-  String get superComboPlan => 'Super Combo Plan';
+  String get superComboPlan => 'सुपर कॉम्बो योजना';
 
   @override
-  String get month12Validity => '12-Month Validity';
+  String get month12Validity => '12 महिन्यांची वैधता';
 
   @override
-  String get month6Validity => '6-Month Validity';
+  String get month6Validity => '6 महिन्यांची वैधता';
 
   @override
   String saveAmount(Object amount) {
-    return 'Save ₹$amount with this plan';
+    return 'या योजनेसोबत ₹$amount वाचवा';
   }
 
   @override
-  String get superComboPopularity => '95% of users choose the Super Combo Plan';
+  String get superComboPopularity => '95% वापरकर्ते सुपर कॉम्बो योजना निवडतात';
 
   @override
-  String get appSimRecharge => 'App & SIM Recharge';
+  String get appSimRecharge => 'ॲप आणि सिम रिचार्ज';
 
   @override
-  String get extendedWarranty => 'Extended Warranty';
+  String get extendedWarranty => 'वाढीव वॉरंटी';
 
   @override
-  String get plusMembership => 'Plus Membership';
+  String get plusMembership => 'प्लस सदस्यत्व';
 
   @override
-  String get continueSuperCombo => 'Continue with Super Combo Plan';
+  String get continueSuperCombo => 'सुपर कॉम्बो योजनेसह पुढे जा';
 
   @override
-  String get continue12Month => 'Continue with 12-Month Plan';
+  String get continue12Month => '12 महिन्यांच्या योजनेसह पुढे जा';
 
   @override
-  String get continue6Month => 'Continue with 6-Month Plan';
+  String get continue6Month => '6 महिन्यांच्या योजनेसह पुढे जा';
 
   @override
   String get odometerReading => 'Odometer Reading';
@@ -1538,4 +1538,27 @@ class AppLocalizationsMr extends AppLocalizations {
 
   @override
   String get addGeoFenceButton => 'Add Geo-fence';
+
+  @override
+  String get safeParkingTitle => 'सेफ पार्किंग';
+
+  @override
+  String get schedule => 'शेड्यूल';
+
+  @override
+  String get setupSafeParking => 'सेफ पार्किंग सेट करा';
+
+  @override
+  String get safeParkingSubtitle =>
+      'इंजिन ON आणि टोइंग अलर्टसाठी कॉल अलर्ट मिळवा';
+
+  @override
+  String get activate => 'सुरू करा';
+
+  @override
+  String get activated => 'सक्रिय';
+
+  @override
+  String get safeParkingDescription =>
+      'इंजिन सुरू झाल्यावर किंवा टोइंग आढळल्यास अलर्ट सक्षम करा';
 }

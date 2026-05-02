@@ -39,4 +39,6 @@ class AppImages {
 
   static const String roadImage = "$images/road.jpg";
 
+  static const String safeParking = "$images/safe_parking_.png";
+
 }
