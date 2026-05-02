@@ -867,7 +867,8 @@ class _MapScreenState extends State<MapScreen> {
     else if (label == l10n.appUpdates.replaceAll(' ', '\n')) {
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => UpdateScreen()),
+        MaterialPageRoute(builder: (context) => UpdateScreen()));
+          }
     else if (label == l10n.helpAndSupport.replaceAll(' ', '\n')) {
       Navigator.push(
         context,
