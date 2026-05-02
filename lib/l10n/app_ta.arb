@@ -560,5 +560,10 @@
   "benefit3_highlight": "24/7 ஆதரவு ",
   "benefit3_normal": "— தேவைப்படும்போது முன்னுரிமை வாடிக்கையாளர் சேவை.",
   "benefit4_highlight": "மறைக்கப்பட்ட கட்டணங்கள் இல்லை ",
-  "benefit4_normal": "— ஒரே நிலையான கட்டணம், மனநிம்மதி."
+  "benefit4_normal": "— ஒரே நிலையான கட்டணம், மனநிம்மதி.",
+  "initiatingEmergencyAlert": "Trackify பயனர்களுக்கு அவசர எச்சரிக்கை அனுப்பப்படுகிறது",
+  "pleaseUseResponsibly": "தயவுசெய்து பொறுப்புடன் பயன்படுத்தவும்",
+  "secondsBeforeSendingAlert": "எச்சரிக்கை அனுப்புவதற்கு முன் விநாடிகள்",
+  "sendNow": "இப்போது அனுப்பு",
+  "cancel": "ரத்து செய்"
 }

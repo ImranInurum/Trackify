@@ -14,6 +14,7 @@ import 'package:trackify/core/widgets/draggable_app_bar.dart';
 import 'package:trackify/feature/add_vehicle_and_device/choice_selector.dart';
 import 'package:trackify/feature/app_updates/presentiation/pages/update_screen.dart';
 import 'package:trackify/feature/device_warranty/pages/device_warranty_page.dart';
+import 'package:trackify/feature/emergency_sos/presentation/pages/emergency_alert_screen.dart';
 import 'package:trackify/feature/help_and_support/presentation/pages/help_support_screen.dart';
 import 'package:trackify/feature/map/data/entity/user_vehicles.dart';
 import 'package:trackify/feature/map/presentation/pages/full_screen_map.dart';
@@ -874,6 +875,13 @@ class _MapScreenState extends State<MapScreen> {
         context,
         MaterialPageRoute(
           builder: (context) => HelpSuggestionScreen(),
+        ),
+      );
+    }else if (label == l10n.emergency.replaceAll(' ', '\n')) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => EmergencyAlertScreen(),
         ),
       );
     }

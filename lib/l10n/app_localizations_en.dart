@@ -1475,4 +1475,17 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get benefit4_normal => '— One flat fee, complete peace of mind.';
+
+  @override
+  String get initiatingEmergencyAlert =>
+      'Initiating Emergency Alert to Trackify users';
+
+  @override
+  String get pleaseUseResponsibly => 'Please use responsibly';
+
+  @override
+  String get secondsBeforeSendingAlert => 'seconds before sending alert';
+
+  @override
+  String get sendNow => 'Send Now';
 }

@@ -1324,7 +1324,7 @@ class AppLocalizationsTa extends AppLocalizations {
   String get kms => 'கி.மீ';
 
   @override
-  String get cancel => 'ரத்துசெய்';
+  String get cancel => 'ரத்து செய்';
 
   @override
   String get save => 'சேமி';
@@ -1475,4 +1475,18 @@ class AppLocalizationsTa extends AppLocalizations {
 
   @override
   String get benefit4_normal => '— ஒரே நிலையான கட்டணம், மனநிம்மதி.';
+
+  @override
+  String get initiatingEmergencyAlert =>
+      'Trackify பயனர்களுக்கு அவசர எச்சரிக்கை அனுப்பப்படுகிறது';
+
+  @override
+  String get pleaseUseResponsibly => 'தயவுசெய்து பொறுப்புடன் பயன்படுத்தவும்';
+
+  @override
+  String get secondsBeforeSendingAlert =>
+      'எச்சரிக்கை அனுப்புவதற்கு முன் விநாடிகள்';
+
+  @override
+  String get sendNow => 'இப்போது அனுப்பு';
 }

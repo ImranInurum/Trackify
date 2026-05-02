@@ -40,6 +40,11 @@ import 'feature/auth/data/repository/auth_repository_impl.dart';
 import 'feature/auth/domain/usecase/auth_case.dart';
 import 'feature/auth/presentation/cubit/auth_cubit.dart';
 import 'feature/device_data/presentation/cubit/device_data_cubit.dart';
+import 'feature/emergency_sos/data/data_source/emergency_alert_remote_data.dart';
+import 'feature/emergency_sos/data/repository/emergency_alert_repository_impl.dart';
+import 'feature/emergency_sos/domain/usecase/emergency_alert_usecase.dart';
+import 'feature/emergency_sos/presentation/cubit/emergency_alert_cubit.dart';
+import 'feature/emergency_sos/presentation/cubit/emergency_alert_state.dart' show EmergencySent;
 import 'feature/onboarding/data/repositories/splash_repository_impl.dart';
 import 'feature/onboarding/domain/usecases/get_logo_usecase.dart';
 import 'feature/onboarding/presentation/cubit/splash_cubit.dart';
@@ -148,6 +153,15 @@ List<BlocProvider> _buildBlocProviders() {
           UpdateRepositoryImpl(
             UpdateRemoteDataSource(),
           ),
+        ),
+      ),
+    ),
+    BlocProvider<EmergencyAlertCubit>(
+      create: (_) => EmergencyAlertCubit(
+        EmergencyAlertUsecase(
+          EmergencyAlertRepositoryImpl(
+            EmergencyAlertRemoteData(),
+          ) ,
         ),
       ),
     ),

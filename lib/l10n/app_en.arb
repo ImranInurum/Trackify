@@ -591,5 +591,10 @@
   "benefit3_highlight": "24/7 Support ",
   "benefit3_normal": "— Priority customer support whenever you need it.",
   "benefit4_highlight": "No Hidden Charges ",
-  "benefit4_normal": "— One flat fee, complete peace of mind."
+  "benefit4_normal": "— One flat fee, complete peace of mind.",
+  "initiatingEmergencyAlert": "Initiating Emergency Alert to Trackify users",
+  "pleaseUseResponsibly": "Please use responsibly",
+  "secondsBeforeSendingAlert": "seconds before sending alert",
+  "sendNow": "Send Now",
+  "cancel": "Cancel"
 }

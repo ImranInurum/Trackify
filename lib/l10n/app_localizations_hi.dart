@@ -1474,4 +1474,17 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get benefit4_normal => '— एक फ्लैट शुल्क, पूर्ण मन की शांति।';
+
+  @override
+  String get initiatingEmergencyAlert =>
+      'Trackify उपयोगकर्ताओं को आपातकालीन अलर्ट भेजा जा रहा है';
+
+  @override
+  String get pleaseUseResponsibly => 'कृपया जिम्मेदारी से उपयोग करें';
+
+  @override
+  String get secondsBeforeSendingAlert => 'अलर्ट भेजने से पहले सेकंड';
+
+  @override
+  String get sendNow => 'अभी भेजें';
 }

@@ -1316,7 +1316,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get kms => 'Kms';
 
   @override
-  String get cancel => 'Cancel';
+  String get cancel => 'إلغاء';
 
   @override
   String get save => 'Save';
@@ -1466,4 +1466,17 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get benefit4_normal => '— One flat fee, complete peace of mind.';
+
+  @override
+  String get initiatingEmergencyAlert =>
+      'يتم إرسال تنبيه طارئ إلى مستخدمي Trackify';
+
+  @override
+  String get pleaseUseResponsibly => 'يرجى الاستخدام بمسؤولية';
+
+  @override
+  String get secondsBeforeSendingAlert => 'ثوانٍ قبل إرسال التنبيه';
+
+  @override
+  String get sendNow => 'إرسال الآن';
 }
