@@ -1479,4 +1479,17 @@ class AppLocalizationsKn extends AppLocalizations {
 
   @override
   String get benefit4_normal => '— ಒಂದು ಫ್ಲಾಟ್ ಶುಲ್ಕ, ಸಂಪೂರ್ಣ ಮನಸ್ಸಿನ ಶಾಂತಿ.';
+
+  @override
+  String get initiatingEmergencyAlert =>
+      'Trackify ಬಳಕೆದಾರರಿಗೆ ತುರ್ತು ಎಚ್ಚರಿಕೆಯನ್ನು ಆರಂಭಿಸಲಾಗುತ್ತಿದೆ';
+
+  @override
+  String get pleaseUseResponsibly => 'ದಯವಿಟ್ಟು ಜವಾಬ್ದಾರಿಯಿಂದ ಬಳಸಿ';
+
+  @override
+  String get secondsBeforeSendingAlert => 'ಎಚ್ಚರಿಕೆ ಕಳುಹಿಸುವ ಮೊದಲು ಸೆಕೆಂಡುಗಳು';
+
+  @override
+  String get sendNow => 'ಈಗ ಕಳುಹಿಸಿ';
 }

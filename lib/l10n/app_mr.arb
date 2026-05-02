@@ -438,5 +438,10 @@
   "close": "बंद करा",
   "selected": "निवडले",
   "sec": "सेकंद",
-  "kmHr": "किमी/तास"
+  "kmHr": "किमी/तास",
+  "initiatingEmergencyAlert": "Trackify वापरकर्त्यांना आपत्कालीन सूचना पाठवली जात आहे",
+  "pleaseUseResponsibly": "कृपया जबाबदारीने वापरा",
+  "secondsBeforeSendingAlert": "सूचना पाठवण्यापूर्वी सेकंद",
+  "sendNow": "आता पाठवा",
+  "cancel": "रद्द करा"
 }

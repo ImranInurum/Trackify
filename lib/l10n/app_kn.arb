@@ -588,5 +588,11 @@
   "benefit3_highlight": "24/7 ಬೆಂಬಲ ",
   "benefit3_normal": "— ಅಗತ್ಯವಿದ್ದಾಗ ಆದ್ಯತೆ ಗ್ರಾಹಕ ಸೇವೆ.",
   "benefit4_highlight": "ಗುಪ್ತ ಶುಲ್ಕಗಳಿಲ್ಲ ",
-  "benefit4_normal": "— ಒಂದು ಫ್ಲಾಟ್ ಶುಲ್ಕ, ಸಂಪೂರ್ಣ ಮನಸ್ಸಿನ ಶಾಂತಿ."
+  "benefit4_normal": "— ಒಂದು ಫ್ಲಾಟ್ ಶುಲ್ಕ, ಸಂಪೂರ್ಣ ಮನಸ್ಸಿನ ಶಾಂತಿ.",
+
+   "initiatingEmergencyAlert": "Trackify ಬಳಕೆದಾರರಿಗೆ ತುರ್ತು ಎಚ್ಚರಿಕೆಯನ್ನು ಆರಂಭಿಸಲಾಗುತ್ತಿದೆ",
+   "pleaseUseResponsibly": "ದಯವಿಟ್ಟು ಜವಾಬ್ದಾರಿಯಿಂದ ಬಳಸಿ",
+   "secondsBeforeSendingAlert": "ಎಚ್ಚರಿಕೆ ಕಳುಹಿಸುವ ಮೊದಲು ಸೆಕೆಂಡುಗಳು",
+   "sendNow": "ಈಗ ಕಳುಹಿಸಿ",
+   "cancel": "ರದ್ದುಮಾಡಿ"
 }

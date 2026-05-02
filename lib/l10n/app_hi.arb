@@ -593,5 +593,10 @@
   "benefit3_highlight": "24/7 सहायता ",
   "benefit3_normal": "— जब भी आवश्यकता हो, प्राथमिकता ग्राहक सेवा।",
   "benefit4_highlight": "कोई छुपा शुल्क नहीं ",
-  "benefit4_normal": "— एक फ्लैट शुल्क, पूर्ण मन की शांति।"
+  "benefit4_normal": "— एक फ्लैट शुल्क, पूर्ण मन की शांति।",
+  "initiatingEmergencyAlert": "Trackify उपयोगकर्ताओं को आपातकालीन अलर्ट भेजा जा रहा है",
+  "pleaseUseResponsibly": "कृपया जिम्मेदारी से उपयोग करें",
+  "secondsBeforeSendingAlert": "अलर्ट भेजने से पहले सेकंड",
+  "sendNow": "अभी भेजें",
+  "cancel": "रद्द करें"
 }

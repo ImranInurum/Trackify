@@ -1324,7 +1324,7 @@ class AppLocalizationsMr extends AppLocalizations {
   String get kms => 'Kms';
 
   @override
-  String get cancel => 'Cancel';
+  String get cancel => 'रद्द करा';
 
   @override
   String get save => 'Save';
@@ -1474,4 +1474,17 @@ class AppLocalizationsMr extends AppLocalizations {
 
   @override
   String get benefit4_normal => '— One flat fee, complete peace of mind.';
+
+  @override
+  String get initiatingEmergencyAlert =>
+      'Trackify वापरकर्त्यांना आपत्कालीन सूचना पाठवली जात आहे';
+
+  @override
+  String get pleaseUseResponsibly => 'कृपया जबाबदारीने वापरा';
+
+  @override
+  String get secondsBeforeSendingAlert => 'सूचना पाठवण्यापूर्वी सेकंद';
+
+  @override
+  String get sendNow => 'आता पाठवा';
 }

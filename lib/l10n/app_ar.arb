@@ -489,6 +489,14 @@
 
       "continueSuperCombo": "المتابعة مع الخطة الشاملة",
       "continue12Month": "المتابعة مع خطة 12 شهرًا",
-      "continue6Month": "المتابعة مع خطة 6 أشهر"
+      "continue6Month": "المتابعة مع خطة 6 أشهر",
+
+       "initiatingEmergencyAlert": "يتم إرسال تنبيه طارئ إلى مستخدمي Trackify",
+       "pleaseUseResponsibly": "يرجى الاستخدام بمسؤولية",
+       "secondsBeforeSendingAlert": "ثوانٍ قبل إرسال التنبيه",
+       "sendNow": "إرسال الآن",
+       "cancel": "إلغاء"
+
+
 
 }

@@ -2883,6 +2883,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'— One flat fee, complete peace of mind.'**
   String get benefit4_normal;
+
+  /// No description provided for @initiatingEmergencyAlert.
+  ///
+  /// In en, this message translates to:
+  /// **'Initiating Emergency Alert to Trackify users'**
+  String get initiatingEmergencyAlert;
+
+  /// No description provided for @pleaseUseResponsibly.
+  ///
+  /// In en, this message translates to:
+  /// **'Please use responsibly'**
+  String get pleaseUseResponsibly;
+
+  /// No description provided for @secondsBeforeSendingAlert.
+  ///
+  /// In en, this message translates to:
+  /// **'seconds before sending alert'**
+  String get secondsBeforeSendingAlert;
+
+  /// No description provided for @sendNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Send Now'**
+  String get sendNow;
 }
 
 class _AppLocalizationsDelegate
