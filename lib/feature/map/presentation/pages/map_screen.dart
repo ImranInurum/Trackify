@@ -14,6 +14,7 @@ import 'package:trackify/core/widgets/draggable_app_bar.dart';
 import 'package:trackify/feature/add_vehicle_and_device/choice_selector.dart';
 import 'package:trackify/feature/app_updates/presentiation/pages/update_screen.dart';
 import 'package:trackify/feature/device_warranty/pages/device_warranty_page.dart';
+import 'package:trackify/feature/help_and_support/presentation/pages/help_support_screen.dart';
 import 'package:trackify/feature/map/data/entity/user_vehicles.dart';
 import 'package:trackify/feature/map/presentation/pages/full_screen_map.dart';
 import 'package:trackify/feature/my_garage/presentation/view/my_garage_screen.dart';
@@ -22,6 +23,7 @@ import 'package:trackify/feature/reach_me_sticker/presentation/screens/reach_me_
 import 'package:trackify/feature/record_via_phone/presentation/pages/record_via_phone_screen.dart';
 import 'package:trackify/feature/trips/presentation/view/ride_history_details/ride_history_details_screen.dart';
 import 'package:trackify/feature/trips/presentation/view/widgets/all_rides/widgets/ride_card.dart';
+import '../../../../core/services/socket_service.dart';
 import '../../../../core/utils/shared_preferences.dart';
 import '../../../device_data/presentation/pages/device_data_screen.dart';
 import '../../../fuel_logs/presentation/pages/fuel_logs_screen.dart';
@@ -122,6 +124,7 @@ class _MapScreenState extends State<MapScreen> {
                 if (state is MapLoaded) {
                   final vehicles = state.vehicleList.vehicles ?? [];
                   if (vehicles.isNotEmpty && _selectedDevice == null) {
+
                     prefs.get(key: AppPreference.IMEI).then((savedImei) {
                       if (mounted) {
                         final savedVehicle = vehicles.firstWhere(
@@ -135,6 +138,8 @@ class _MapScreenState extends State<MapScreen> {
                         context.read<RideHistoryCubit>().getRideHistoryData();
                       }
                     });
+                    print("slected device is ${_selectedDevice?.imei}");
+
                   }
                 }
               },
@@ -300,7 +305,7 @@ class _MapScreenState extends State<MapScreen> {
                 _selectedDevice!.currentLocation!.lng!,
               );
             }
-
+         print("live data on map ${appState.livePosition}");
             bestPos ??= LatLng(currentPos.latitude, currentPos.longitude);
 
             return Column(
@@ -312,7 +317,7 @@ class _MapScreenState extends State<MapScreen> {
                       child: GoogleMap(
                         key: ValueKey(_selectedDevice?.id),
                         initialCameraPosition: CameraPosition(
-                          target: bestPos,
+                          target: appState.livePosition??bestPos,
                           zoom: 15,
                         ),
                         myLocationEnabled: false,
@@ -333,6 +338,7 @@ class _MapScreenState extends State<MapScreen> {
                             icon:
                                 _customMarker ?? BitmapDescriptor.defaultMarker,
                             anchor: const Offset(0.5, 0.5),
+                            rotation: appState.liveBearing,
                           ),
                         },
                         onMapCreated: (GoogleMapController controller) async {
@@ -862,6 +868,12 @@ class _MapScreenState extends State<MapScreen> {
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => UpdateScreen()),
+    else if (label == l10n.helpAndSupport.replaceAll(' ', '\n')) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => HelpSuggestionScreen(),
+        ),
       );
     }
     else if (label == l10n.deviceDataPlanLabel.replaceAll(' ', '\n')) {
@@ -872,7 +884,10 @@ class _MapScreenState extends State<MapScreen> {
             backgroundColor: Colors.red,
           ),
         );
-      } else {
+      }
+
+
+      else {
         Navigator.push(
           context,
           MaterialPageRoute(
@@ -1069,6 +1084,8 @@ class _MapScreenState extends State<MapScreen> {
             ),
           );
         }
+
+        context.read<AppCubit>().initializeSocket(imei: device.imei);
       },
     );
   }

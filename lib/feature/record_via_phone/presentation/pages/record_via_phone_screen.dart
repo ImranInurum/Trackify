@@ -26,7 +26,6 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
       Completer<GoogleMapController>();
   String? _lightMapStyle;
   String? _darkMapStyle;
-
   @override
   void initState() {
     super.initState();
@@ -37,7 +36,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
       final now = DateTime.now();
       final today = DateFormat('yyyy-MM-dd').format(now);
       context.read<RecordViaPhoneCubit>().fetchDeviceDataByDate(
-        imei: '860710085959719',
+        imei: widget.imei,
         startDate: today,
         endDate: today,
       );
