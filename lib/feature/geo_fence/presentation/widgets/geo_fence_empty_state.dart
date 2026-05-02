@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../l10n/app_localizations.dart';
 
 class GeoFenceEmptyState extends StatelessWidget {
   final VoidCallback onAddPressed;
@@ -29,7 +30,7 @@ class GeoFenceEmptyState extends StatelessWidget {
           ),
         ),
         title: Text(
-          "Geo-fence",
+          AppLocalizations.of(context)!.geoFenceTitle,
           style: TextStyle(
             color: colorScheme.onSurface,
             fontWeight: FontWeight.w600,
@@ -51,7 +52,7 @@ class GeoFenceEmptyState extends StatelessWidget {
             ),
             const SizedBox(height: 40),
             Text(
-              "Draw a circle on the map and be alerted whenever a bike enters or exits the circle.",
+              AppLocalizations.of(context)!.geoFenceEmptyStateDesc,
               textAlign: TextAlign.center,
               style: TextStyle(
                 color: colorScheme.onSurface.withValues(alpha: 0.7),
@@ -73,8 +74,8 @@ class GeoFenceEmptyState extends StatelessWidget {
                     borderRadius: BorderRadius.circular(12),
                   ),
                 ),
-                child: const Text(
-                  "Add Geo-fence",
+                child: Text(
+                  AppLocalizations.of(context)!.addGeoFenceButton,
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 16,

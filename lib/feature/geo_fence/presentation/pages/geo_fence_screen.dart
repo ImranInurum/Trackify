@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../../l10n/app_localizations.dart';
 
 import '../cubit/geo_fence_cubit.dart';
 import '../cubit/geo_fence_state.dart';
@@ -58,7 +59,7 @@ class _GeoFenceScreenState extends State<GeoFenceScreen> {
                 onPressed: () => Navigator.pop(context),
               ),
               title: Text(
-                "Geo-fence",
+                AppLocalizations.of(context)!.geoFenceTitle,
                 style: TextStyle(color: colorScheme.onSurface, fontWeight: FontWeight.bold),
               ),
             ),
@@ -105,7 +106,7 @@ class _GeoFenceScreenState extends State<GeoFenceScreen> {
                             ),
                             const SizedBox(height: 4),
                             Text(
-                              "Radius: ${fence.radius.toInt()}m",
+                              AppLocalizations.of(context)!.geoFenceRadius(fence.radius.toInt().toString()),
                               style: TextStyle(
                                 color: colorScheme.onSurface.withValues(alpha: 0.6),
                                 fontSize: 13,
@@ -130,7 +131,7 @@ class _GeoFenceScreenState extends State<GeoFenceScreen> {
                         onChanged: (val) {
                           // TODO: Implement toggle action
                         },
-                        activeColor: colorScheme.primary,
+                        activeThumbColor: colorScheme.primary,
                         activeTrackColor: colorScheme.primary.withValues(alpha: 0.3),
                       ),
                       // Popup Menu
@@ -144,13 +145,13 @@ class _GeoFenceScreenState extends State<GeoFenceScreen> {
                           }
                         },
                         itemBuilder: (context) => [
-                          const PopupMenuItem(
+                          PopupMenuItem(
                             value: 'edit',
-                            child: Text("Edit"),
+                            child: Text(AppLocalizations.of(context)!.edit),
                           ),
-                          const PopupMenuItem(
+                          PopupMenuItem(
                             value: 'delete',
-                            child: Text("Delete"),
+                            child: Text(AppLocalizations.of(context)!.delete),
                           ),
                         ],
                       ),

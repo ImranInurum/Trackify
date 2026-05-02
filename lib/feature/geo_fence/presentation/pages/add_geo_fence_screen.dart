@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../../l10n/app_localizations.dart';
 import '../cubit/geo_fence_cubit.dart';
 import '../cubit/geo_fence_state.dart';
 import '../../domain/entity/geo_fence_entity.dart';
@@ -22,9 +23,7 @@ class _AddGeoFenceScreenState extends State<AddGeoFenceScreen> {
   LatLng? _userLocation;
   String _selectedType = '';
   final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _searchController = TextEditingController(
-    text: "Locating...",
-  );
+  final TextEditingController _searchController = TextEditingController();
   double _radius = 500;
   GoogleMapController? _mapController;
   Timer? _debounceTimer;
@@ -33,6 +32,9 @@ class _AddGeoFenceScreenState extends State<AddGeoFenceScreen> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _searchController.text = AppLocalizations.of(context)!.geoFenceLocating;
+    });
     _fetchCurrentLocation();
   }
 
@@ -96,7 +98,7 @@ class _AddGeoFenceScreenState extends State<AddGeoFenceScreen> {
   void _onSave() {
     if (_nameController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Please enter a geo-fence name")),
+        SnackBar(content: Text(AppLocalizations.of(context)!.geoFenceNameRequired)),
       );
       return;
     }
@@ -132,7 +134,7 @@ class _AddGeoFenceScreenState extends State<AddGeoFenceScreen> {
       listener: (context, state) {
         if (state is GeoFenceSuccess) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text("Geo-fence saved successfully!")),
+            SnackBar(content: Text(AppLocalizations.of(context)!.geoFenceSaveSuccess)),
           );
           if (mounted) Navigator.pop(context);
         } else if (state is GeoFenceError) {
@@ -214,8 +216,8 @@ class _AddGeoFenceScreenState extends State<AddGeoFenceScreen> {
                       displayAddress = state.address!;
                     }
 
-                    if (displayAddress == "Locating..." ||
-                        displayAddress == "Search location...") {
+                    if (displayAddress == AppLocalizations.of(context)!.geoFenceLocating ||
+                        displayAddress == AppLocalizations.of(context)!.geoFenceSearchHint) {
                       return const SizedBox.shrink();
                     }
 
@@ -269,7 +271,7 @@ class _AddGeoFenceScreenState extends State<AddGeoFenceScreen> {
                                 }
                               }
 
-                              bool isLoading = displayAddress == "Search location...";
+                              bool isLoading = displayAddress == AppLocalizations.of(context)!.geoFenceSearchHint;
 
                               return TextField(
                                 controller: _searchController,
@@ -299,7 +301,7 @@ class _AddGeoFenceScreenState extends State<AddGeoFenceScreen> {
                                   contentPadding: const EdgeInsets.symmetric(
                                     vertical: 12,
                                   ),
-                                  hintText: "Search location...",
+                                  hintText: AppLocalizations.of(context)!.geoFenceSearchHint,
                                   suffix: isLoading
                                       ? const SizedBox(
                                           height: 14,
@@ -320,7 +322,7 @@ class _AddGeoFenceScreenState extends State<AddGeoFenceScreen> {
                             color: colorScheme.onSurface.withValues(alpha: 0.5),
                           ),
                           onPressed: () =>
-                              _searchController.text = "Locating...",
+                              _searchController.text = AppLocalizations.of(context)!.geoFenceLocating,
                         ),
                       ],
                     ),
@@ -354,7 +356,7 @@ class _AddGeoFenceScreenState extends State<AddGeoFenceScreen> {
                   children: [
                     RichText(
                       text: TextSpan(
-                        text: "Select Geo-fence type for ",
+                        text: AppLocalizations.of(context)!.geoFenceSelectType,
                         style: TextStyle(
                           color: colorScheme.onSurface,
                           fontSize: 16,
@@ -376,27 +378,27 @@ class _AddGeoFenceScreenState extends State<AddGeoFenceScreen> {
                       children: [
                         _buildTypeItem(
                           Icons.home_outlined,
-                          "Home",
+                          AppLocalizations.of(context)!.geoFenceTypeHome,
                           colorScheme,
                         ),
                         _buildTypeItem(
                           Icons.apartment_outlined,
-                          "Office",
+                          AppLocalizations.of(context)!.geoFenceTypeOffice,
                           colorScheme,
                         ),
                         _buildTypeItem(
                           Icons.person_outline,
-                          "Family",
+                          AppLocalizations.of(context)!.geoFenceTypeFamily,
                           colorScheme,
                         ),
                         _buildTypeItem(
                           Icons.local_parking_outlined,
-                          "Parking",
+                          AppLocalizations.of(context)!.geoFenceTypeParking,
                           colorScheme,
                         ),
                         _buildTypeItem(
                           Icons.location_on_outlined,
-                          "Others",
+                          AppLocalizations.of(context)!.geoFenceTypeOthers,
                           colorScheme,
                         ),
                       ],
@@ -424,7 +426,7 @@ class _AddGeoFenceScreenState extends State<AddGeoFenceScreen> {
                                   horizontal: 16,
                                   vertical: 12,
                                 ),
-                                hintText: "Enter Geo-fence name, eg: Home",
+                                hintText: AppLocalizations.of(context)!.geoFenceNameFieldHint,
                                 hintStyle: TextStyle(
                                   color: theme.hintColor.withValues(alpha: 0.5),
                                 ),
@@ -459,7 +461,7 @@ class _AddGeoFenceScreenState extends State<AddGeoFenceScreen> {
                                           ),
                                         )
                                       : Text(
-                                          "Save",
+                                          AppLocalizations.of(context)!.save,
                                           style: TextStyle(
                                             color: colorScheme.onPrimary,
                                             fontWeight: FontWeight.bold,
@@ -484,7 +486,7 @@ class _AddGeoFenceScreenState extends State<AddGeoFenceScreen> {
                           ),
                           const SizedBox(width: 10),
                           Text(
-                            "Add Contacts for SMS Alert",
+                            AppLocalizations.of(context)!.geoFenceAddSmsContacts,
                             style: TextStyle(
                               color: colorScheme.onSurface.withValues(
                                 alpha: 0.5,
@@ -503,7 +505,7 @@ class _AddGeoFenceScreenState extends State<AddGeoFenceScreen> {
                               borderRadius: BorderRadius.circular(6),
                             ),
                             child: Text(
-                              "Plus",
+                              AppLocalizations.of(context)!.plusLabel,
                               style: TextStyle(
                                 color: colorScheme.onPrimary,
                                 fontSize: 12,

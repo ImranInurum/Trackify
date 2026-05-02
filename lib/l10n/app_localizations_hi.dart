@@ -1487,4 +1487,55 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get sendNow => 'अभी भेजें';
+
+  @override
+  String get geoFenceTitle => 'जियो-फेंस';
+
+  @override
+  String geoFenceRadius(String radius) {
+    return 'त्रिज्या: $radiusमी';
+  }
+
+  @override
+  String get geoFenceLocating => 'स्थान खोजा जा रहा है...';
+
+  @override
+  String get geoFenceNameRequired => 'कृपया जियो-फेंस नाम दर्ज करें';
+
+  @override
+  String get geoFenceSaveSuccess => 'जियो-फेंस सफलतापूर्वक सहेजा गया!';
+
+  @override
+  String get geoFenceSearchHint => 'स्थान खोजें...';
+
+  @override
+  String get geoFenceSelectType => 'इसके लिए जियो-फेंस प्रकार चुनें ';
+
+  @override
+  String get geoFenceTypeHome => 'घर';
+
+  @override
+  String get geoFenceTypeOffice => 'कार्यालय';
+
+  @override
+  String get geoFenceTypeFamily => 'परिवार';
+
+  @override
+  String get geoFenceTypeParking => 'पार्किंग';
+
+  @override
+  String get geoFenceTypeOthers => 'अन्य';
+
+  @override
+  String get geoFenceNameFieldHint => 'जियो-फेंस नाम दर्ज करें, जैसे: घर';
+
+  @override
+  String get geoFenceAddSmsContacts => 'SMS अलर्ट के लिए संपर्क जोड़ें';
+
+  @override
+  String get geoFenceEmptyStateDesc =>
+      'मैप पर एक घेरा बनाएं और जब भी कोई बाइक घेरे में प्रवेश करे या बाहर निकले तो अलर्ट पाएं।';
+
+  @override
+  String get addGeoFenceButton => 'जियो-फेंस जोड़ें';
 }

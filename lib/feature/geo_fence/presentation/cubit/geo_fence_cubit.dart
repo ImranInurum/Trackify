@@ -51,54 +51,14 @@ class GeoFenceCubit extends Cubit<GeoFenceState> {
     required String selectedType,
   }) async {
     try {
-      // Use locale for better local results
       List<Placemark> placemarks = await placemarkFromCoordinates(
         latitude,
         longitude,
       );
+
       if (placemarks.isNotEmpty) {
         final place = placemarks.first;
-
-        // Prioritize Colony/Building/Area names
-        final name = place.name ?? "";
-        final subLocality = place.subLocality ?? "";
-        final locality = place.locality ?? "";
-        final street = place.street ?? "";
-
-        String address = "";
-
-        // In India, subLocality is often the Colony name
-        if (subLocality.isNotEmpty) {
-          address = subLocality;
-          if (name.isNotEmpty &&
-              name != subLocality &&
-              !name.contains(subLocality)) {
-            address = "$name, $address";
-          }
-        } else if (name.isNotEmpty) {
-          address = name;
-        } else if (street.isNotEmpty) {
-          address = street;
-        }
-
-        // Add City
-        if (locality.isNotEmpty && !address.contains(locality)) {
-          if (address.isNotEmpty) address += ", ";
-          address += locality;
-        }
-
-        if (address.isEmpty || address.length < 3) {
-          address = locality.isNotEmpty ? locality : "Area near Indore";
-        }
-
-        // Add City/State if short
-        if (!address.contains(locality) && locality.isNotEmpty) {
-          address += ", $locality";
-        }
-
-        if (address.isEmpty || address.length < 3) {
-          address = "Location at $locality";
-        }
+        final address = "${place.name ?? ''}, ${place.subLocality ?? ''}, ${place.locality ?? ''}".replaceAll(RegExp(r'^, |, $'), '').trim();
 
         emit(
           GeoFenceFormUpdated(
@@ -109,21 +69,9 @@ class GeoFenceCubit extends Cubit<GeoFenceState> {
             address: address,
           ),
         );
-      } else {
-        // Fallback to coordinates if no placemarks found
-        emit(
-          GeoFenceFormUpdated(
-            latitude: latitude,
-            longitude: longitude,
-            radius: radius,
-            selectedType: selectedType,
-            address: "Lat: ${placemarks.first.locality}",
-          ),
-        );
       }
     } catch (e) {
       print("Address Error ${e.toString()}");
-      // On error, show coordinates so the user knows it's at least tracking
       emit(
         GeoFenceFormUpdated(
           latitude: latitude,
@@ -147,7 +95,6 @@ class GeoFenceCubit extends Cubit<GeoFenceState> {
       List<Location> locations = await locationFromAddress(query);
       if (locations.isNotEmpty) {
         final loc = locations.first;
-        // After finding coordinates, update the address to a more formal one
         await updateAddress(
           latitude: loc.latitude,
           longitude: loc.longitude,
@@ -156,7 +103,7 @@ class GeoFenceCubit extends Cubit<GeoFenceState> {
         );
       }
     } catch (e) {
-      // If geocoding fails, we just keep current state or maybe emit an error
+      // If geocoding fails
     }
   }
 
