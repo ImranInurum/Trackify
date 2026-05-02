@@ -31,6 +31,11 @@ import 'core/services/socket_service.dart';
 import 'core/utils/shared_preferences.dart';
 import 'feature/add_vehicle_and_device/add_vehicle/data/repository/add_vehicle_repository_impl.dart';
 import 'feature/add_vehicle_and_device/add_vehicle/presentation/cubit/add_vehicle_cubit.dart';
+import 'feature/app_updates/data/data_source/update_remote_data.dart';
+import 'feature/app_updates/domain/repositories/update_repository_impl.dart';
+import 'feature/app_updates/domain/use_case/get_update_use_case.dart';
+import 'feature/app_updates/presentiation/cubit/update_cubit.dart';
+import 'feature/app_updates/presentiation/pages/update_screen.dart';
 import 'feature/auth/data/repository/auth_repository_impl.dart';
 import 'feature/auth/domain/usecase/auth_case.dart';
 import 'feature/auth/presentation/cubit/auth_cubit.dart';
@@ -136,6 +141,15 @@ List<BlocProvider> _buildBlocProviders() {
     ),
     BlocProvider<DeviceDataCubit>(
       create: (_) => DeviceDataCubit(),
+    ),
+    BlocProvider<UpdateCubit>(
+      create: (_) => UpdateCubit(
+        GetUpdateUseCase(
+          UpdateRepositoryImpl(
+            UpdateRemoteDataSource(),
+          ),
+        ),
+      ),
     ),
 
   ];
