@@ -35,7 +35,7 @@ import 'feature/app_updates/data/data_source/update_remote_data.dart';
 import 'feature/app_updates/domain/repositories/update_repository_impl.dart';
 import 'feature/app_updates/domain/use_case/get_update_use_case.dart';
 import 'feature/app_updates/presentiation/cubit/update_cubit.dart';
-import 'feature/app_updates/presentiation/pages/update_screen.dart';
+
 import 'feature/auth/data/repository/auth_repository_impl.dart';
 import 'feature/auth/domain/usecase/auth_case.dart';
 import 'feature/auth/presentation/cubit/auth_cubit.dart';
@@ -45,6 +45,7 @@ import 'feature/emergency_sos/data/repository/emergency_alert_repository_impl.da
 import 'feature/emergency_sos/domain/usecase/emergency_alert_usecase.dart';
 import 'feature/emergency_sos/presentation/cubit/emergency_alert_cubit.dart';
 import 'feature/emergency_sos/presentation/cubit/emergency_alert_state.dart' show EmergencySent;
+import 'feature/geo_fence/presentation/cubit/geo_fence_cubit.dart';
 import 'feature/onboarding/data/repositories/splash_repository_impl.dart';
 import 'feature/onboarding/domain/usecases/get_logo_usecase.dart';
 import 'feature/onboarding/presentation/cubit/splash_cubit.dart';
@@ -56,7 +57,12 @@ import 'feature/trips/domain/usecase/ride_history_use_case.dart';
 import 'feature/trips/presentation/cubit/ride_history_cubit.dart';
 import 'package:trackify/feature/service_logs/presentation/cubit/service_logs_cubit.dart';
 import 'package:trackify/core/common/repositories/common_repo_impl.dart';
+import 'package:trackify/feature/geo_fence/data/data_source/geo_fence_remote_data_source.dart';
+import 'package:trackify/feature/geo_fence/data/repository/geo_fence_repository_impl.dart';
+import 'package:trackify/feature/geo_fence/domain/usecase/get_geo_fence_usecase.dart';
+import 'package:trackify/feature/geo_fence/domain/usecase/add_geo_fence_usecase.dart';
 import 'package:trackify/core/common/usecase/get_user_vehicles_usecase.dart';
+
 import 'firebase_options.dart';
 
 final GlobalKey<NavigatorState> rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -155,6 +161,15 @@ List<BlocProvider> _buildBlocProviders() {
           ),
         ),
       ),
+    ),
+    BlocProvider<GeoFenceCubit>(
+      create: (_) {
+        final repository = GeoFenceRepositoryImpl(GeoFenceRemoteDataSource());
+        return GeoFenceCubit(
+          GetGeoFenceUseCase(repository),
+          AddGeoFenceUseCase(repository),
+        );
+      },
     ),
     BlocProvider<EmergencyAlertCubit>(
       create: (_) => EmergencyAlertCubit(
