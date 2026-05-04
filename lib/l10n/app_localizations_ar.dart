@@ -1553,4 +1553,15 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get safeParkingDescription =>
       'Enable alerts when engine is turned ON or towing is detected';
+
+  @override
+  String get geoFenceDeleteConfirmation =>
+      'Are you sure you want to delete this Geo-Fence?';
+
+  @override
+  String get geoFenceTurnOffConfirmation =>
+      'Are you sure you want to turn Off this geo fence?';
+
+  @override
+  String get turnOff => 'Turn off';
 }

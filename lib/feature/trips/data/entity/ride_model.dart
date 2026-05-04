@@ -101,7 +101,8 @@ class Ride {
     List<LatLng> polylinePoints = [];
     List<RidePoint> ridePoints = [];
 
-    // 1. Try decoding encodedPolyline first
+    // 1. Try decoding encodedPolyline first (DISABLED as per user request, using routeData instead)
+    /*
     if (trip.encodedPolyline != null && trip.encodedPolyline!.isNotEmpty) {
       try {
         final decoded = PolylineCodec.decode(trip.encodedPolyline!);
@@ -124,6 +125,7 @@ class Ride {
         debugPrint("Error decoding polyline: $e");
       }
     }
+    */
 
     // 2. Fallback to trip.points or supplement with them for speed data
     if (trip.points != null && trip.points!.isNotEmpty) {

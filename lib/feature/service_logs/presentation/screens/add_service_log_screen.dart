@@ -7,6 +7,7 @@ import '../cubit/service_logs_cubit.dart';
 import '../cubit/service_logs_state.dart';
 import '../widgets/vehicle_selection_app_bar.dart';
 import '../widgets/image_picker_box.dart';
+import '../../../../core/common/models/vehicle_list_model.dart';
 import '../../../../l10n/app_localizations.dart';
 
 class AddServiceLogScreen extends StatefulWidget {
@@ -53,7 +54,9 @@ class _AddServiceLogScreenState extends State<AddServiceLogScreen> {
   Future<void> _pickImage() async {
     if (_billImages.length >= 2) return;
 
-    final XFile? image = await _imagePicker.pickImage(source: ImageSource.gallery);
+    final XFile? image = await _imagePicker.pickImage(
+      source: ImageSource.gallery,
+    );
     if (image != null) {
       setState(() {
         _billImages.add(File(image.path));
@@ -83,26 +86,37 @@ class _AddServiceLogScreenState extends State<AddServiceLogScreen> {
             Navigator.pop(context);
           }
           if (state is ServiceLogsError) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(state.message)),
-            );
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(SnackBar(content: Text(state.message)));
           }
         },
         builder: (context, state) {
-          if (state is! ServiceLogsLoaded && state is! ServiceLogsSubmitting) {
+          List<Vehicle> vehicles = [];
+          Vehicle? selectedVehicle;
+
+          if (state is ServiceLogsLoaded) {
+            vehicles = state.vehicles;
+            selectedVehicle = state.selectedVehicle;
+          } else if (state is ServiceLogsSubmitting) {
+            vehicles = state.vehicles;
+            selectedVehicle = state.selectedVehicle;
+          } else if (state is ServiceLogsSuccess) {
+            vehicles = state.vehicles;
+            selectedVehicle = state.selectedVehicle;
+          } else if (state is ServiceLogsError) {
+            vehicles = state.vehicles;
+            selectedVehicle = state.selectedVehicle;
+          } else {
             return const Center(child: CircularProgressIndicator());
           }
-
-          final currentState = state is ServiceLogsLoaded 
-              ? state 
-              : (context.read<ServiceLogsCubit>().state as ServiceLogsLoaded);
 
           return Column(
             children: [
               VehicleSelectionAppBar(
                 title: l10n.serviceLogs,
-                selectedVehicle: currentState.selectedVehicle,
-                vehicles: currentState.vehicles,
+                selectedVehicle: selectedVehicle,
+                vehicles: vehicles,
                 onBack: () => Navigator.pop(context),
                 onVehicleSelected: (vehicle) {
                   context.read<ServiceLogsCubit>().selectVehicle(vehicle.id!);
@@ -126,8 +140,8 @@ class _AddServiceLogScreenState extends State<AddServiceLogScreen> {
                         Row(
                           children: [
                             ImagePickerBox(
-                              image: _billImages.isNotEmpty 
-                                  ? _billImages[0] 
+                              image: _billImages.isNotEmpty
+                                  ? _billImages[0]
                                   : null,
                               isRequired: true,
                               onTap: _pickImage,
@@ -137,8 +151,8 @@ class _AddServiceLogScreenState extends State<AddServiceLogScreen> {
                             ),
                             const SizedBox(width: 16),
                             ImagePickerBox(
-                              image: _billImages.length > 1 
-                                  ? _billImages[1] 
+                              image: _billImages.length > 1
+                                  ? _billImages[1]
                                   : null,
                               onTap: _pickImage,
                               onRemove: _billImages.length > 1
@@ -155,7 +169,7 @@ class _AddServiceLogScreenState extends State<AddServiceLogScreen> {
                           ),
                         ),
                         const SizedBox(height: 24),
-                        
+
                         _buildTextField(
                           controller: _dateController,
                           label: l10n.serviceDate,
@@ -165,7 +179,7 @@ class _AddServiceLogScreenState extends State<AddServiceLogScreen> {
                           suffixIcon: Icons.calendar_today_outlined,
                         ),
                         const SizedBox(height: 16),
-                        
+
                         _buildTextField(
                           controller: _amountController,
                           label: l10n.billingAmount,
@@ -174,43 +188,46 @@ class _AddServiceLogScreenState extends State<AddServiceLogScreen> {
                           prefixText: "₹ ",
                         ),
                         const SizedBox(height: 16),
-                        
+
                         _buildTextField(
                           controller: _centerNameController,
                           label: l10n.serviceCenterName,
                         ),
                         const SizedBox(height: 16),
-                        
+
                         _buildTextField(
                           controller: _contactController,
                           label: l10n.serviceCenterContact,
                           keyboardType: TextInputType.phone,
                         ),
                         const SizedBox(height: 16),
-                        
+
                         _buildTextField(
                           controller: _noteController,
                           label: l10n.additionalNote,
                           maxLines: 3,
                         ),
                         const SizedBox(height: 40),
-                        
+
                         SizedBox(
                           width: double.infinity,
                           height: 54,
                           child: ElevatedButton(
-                            onPressed: state is ServiceLogsSubmitting 
-                                ? null 
+                            onPressed: state is ServiceLogsSubmitting
+                                ? null
                                 : () {
                                     if (_formKey.currentState!.validate()) {
-                                      context.read<ServiceLogsCubit>().saveServiceLog(
-                                        date: _dateController.text,
-                                        amount: _amountController.text,
-                                        images: _billImages,
-                                        centerName: _centerNameController.text,
-                                        contact: _contactController.text,
-                                        note: _noteController.text,
-                                      );
+                                      context
+                                          .read<ServiceLogsCubit>()
+                                          .saveServiceLog(
+                                            date: _dateController.text,
+                                            amount: _amountController.text,
+                                            images: _billImages,
+                                            centerName:
+                                                _centerNameController.text,
+                                            contact: _contactController.text,
+                                            note: _noteController.text,
+                                          );
                                     }
                                   },
                             style: ElevatedButton.styleFrom(
@@ -222,7 +239,9 @@ class _AddServiceLogScreenState extends State<AddServiceLogScreen> {
                               disabledBackgroundColor: theme.dividerColor,
                             ),
                             child: state is ServiceLogsSubmitting
-                                ? const CircularProgressIndicator(color: Colors.white)
+                                ? const CircularProgressIndicator(
+                                    color: Colors.white,
+                                  )
                                 : Text(
                                     l10n.saveDetails,
                                     style: const TextStyle(
@@ -257,7 +276,7 @@ class _AddServiceLogScreenState extends State<AddServiceLogScreen> {
     int maxLines = 1,
   }) {
     final theme = Theme.of(context);
-    
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

@@ -18,7 +18,7 @@ class RideHistoryDetailsScreen extends StatefulWidget {
 }
 
 class _RideHistoryDetailsScreenState extends State<RideHistoryDetailsScreen>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
   final Completer<GoogleMapController> _controller = Completer();
   String? _darkMapStyle;
   BitmapDescriptor? _startIcon;
@@ -47,6 +47,9 @@ class _RideHistoryDetailsScreenState extends State<RideHistoryDetailsScreen>
   DateTime? _rideEndTime;
   List<RidePoint> _interpolatedPoints = [];
 
+  late AnimationController _orbitController;
+  bool _isOrbiting = false;
+
   @override
   void initState() {
     super.initState();
@@ -74,6 +77,18 @@ class _RideHistoryDetailsScreenState extends State<RideHistoryDetailsScreen>
       vsync: this,
       duration: const Duration(seconds: 30),
     );
+
+    // Setup animation controller for orbit effect
+    _orbitController = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 8),
+    );
+
+    _orbitController.addListener(() {
+      if (_isPlaying) {
+        _animateCameraToVehicle();
+      }
+    });
 
     _playController.addListener(() {
       _updateVehiclePosition();
@@ -275,7 +290,26 @@ class _RideHistoryDetailsScreenState extends State<RideHistoryDetailsScreen>
   @override
   void dispose() {
     _playController.dispose();
+    _orbitController.dispose();
     super.dispose();
+  }
+
+  void _startOrbitAnimation() {
+    if (_isOrbiting) return;
+
+    setState(() {
+      _isOrbiting = true;
+    });
+
+    _orbitController.repeat();
+  }
+
+  void _stopOrbitAnimation() {
+    if (!_isOrbiting) return;
+    _orbitController.stop();
+    setState(() {
+      _isOrbiting = false;
+    });
   }
 
   void _updateVehiclePosition() {
@@ -357,8 +391,12 @@ class _RideHistoryDetailsScreenState extends State<RideHistoryDetailsScreen>
     }
 
     // Calculate time
-    DateTime? liveTime = _rideStartTime;
-    if (_rideStartTime != null && _rideEndTime != null) {
+    DateTime? liveTime;
+    if (p1.time != null) {
+      liveTime = _parseDateTime(p1.time);
+    }
+
+    if (liveTime == null && _rideStartTime != null && _rideEndTime != null) {
       final totalMs = _rideEndTime!.difference(_rideStartTime!).inMilliseconds;
       final elapsedMs = (totalMs * progress).toInt();
       liveTime = _rideStartTime!.add(Duration(milliseconds: elapsedMs));
@@ -414,13 +452,22 @@ class _RideHistoryDetailsScreenState extends State<RideHistoryDetailsScreen>
     final controller = await _controller.future;
 
     if (_isPlaying) {
+      // Calculate bearing: combined heading + orbit offset
+      double bearing = _currentHeading;
+      if (_isOrbiting) {
+        final double curvedValue = Curves.easeInOut.transform(
+          _orbitController.value,
+        );
+        bearing = (bearing + (curvedValue * 360)) % 360;
+      }
+
       controller.moveCamera(
         CameraUpdate.newCameraPosition(
           CameraPosition(
             target: _currentVehiclePosition!,
             zoom: 17.5,
             tilt: 60.0,
-            bearing: _currentHeading,
+            bearing: bearing,
           ),
         ),
       );
@@ -431,6 +478,7 @@ class _RideHistoryDetailsScreenState extends State<RideHistoryDetailsScreen>
     if (_isPlaying) {
       setState(() {
         _playController.stop();
+        _stopOrbitAnimation(); // Stop orbit when paused
         _isPlaying = false;
       });
     } else {
@@ -442,6 +490,7 @@ class _RideHistoryDetailsScreenState extends State<RideHistoryDetailsScreen>
         _isPlaying = true;
         _isPlaybackActive = true;
         _playController.duration = const Duration(seconds: 30);
+        _startOrbitAnimation(); // Start orbit when playback begins
       });
       _createMarkers(); // Update marker size for playback
 
@@ -469,6 +518,7 @@ class _RideHistoryDetailsScreenState extends State<RideHistoryDetailsScreen>
     setState(() {
       _playController.stop();
       _playController.value = 0.0;
+      _stopOrbitAnimation(); // Stop orbit on stop
       _isPlaying = false;
       _isPlaybackActive = false;
       _updateVehiclePosition();
@@ -499,16 +549,13 @@ class _RideHistoryDetailsScreenState extends State<RideHistoryDetailsScreen>
   Future<void> _loadMapStyle() async {
     try {
       final controller = await _controller.future;
-      if (Theme.of(context).brightness == Brightness.dark) {
-        if (_darkMapStyle == null) {
-          _darkMapStyle = await rootBundle.loadString(
-            'assets/map_styles/dark_map.json',
-          );
-        }
-        controller.setMapStyle(_darkMapStyle);
-      } else {
-        controller.setMapStyle(null);
+      // Force dark map style by default as per user request
+      if (_darkMapStyle == null) {
+        _darkMapStyle = await rootBundle.loadString(
+          'assets/map_styles/dark_map.json',
+        );
       }
+      controller.setMapStyle(_darkMapStyle);
     } catch (e) {
       debugPrint('Error loading map style: $e');
     }
@@ -648,6 +695,10 @@ class _RideHistoryDetailsScreenState extends State<RideHistoryDetailsScreen>
             myLocationButtonEnabled: false,
             compassEnabled: false,
             mapToolbarEnabled: false,
+            onCameraMoveStarted: () {
+              // Optionally stop orbit on user interaction
+              // _stopOrbitAnimation();
+            },
             padding: const EdgeInsets.only(bottom: 220), // Push Google logo up
             polylines: {
               if (validPoints.isNotEmpty)
@@ -805,7 +856,7 @@ class _RideHistoryDetailsScreenState extends State<RideHistoryDetailsScreen>
                         ),
                         const SizedBox(height: 2),
                         Text(
-                          "AJJAS",
+                          "Trackify",
                           style: TextStyle(
                             color: Theme.of(context).colorScheme.primary,
                             fontSize: 8,
@@ -822,7 +873,10 @@ class _RideHistoryDetailsScreenState extends State<RideHistoryDetailsScreen>
                         Text(
                           l10n.speed,
                           textAlign: TextAlign.center,
-                          style: const TextStyle(color: Colors.grey, fontSize: 10),
+                          style: const TextStyle(
+                            color: Colors.grey,
+                            fontSize: 10,
+                          ),
                         ),
                         Text(
                           l10n.kmh,
@@ -858,7 +912,10 @@ class _RideHistoryDetailsScreenState extends State<RideHistoryDetailsScreen>
                         Text(
                           l10n.timeLabel,
                           textAlign: TextAlign.center,
-                          style: const TextStyle(color: Colors.grey, fontSize: 10),
+                          style: const TextStyle(
+                            color: Colors.grey,
+                            fontSize: 10,
+                          ),
                         ),
                         Text(
                           l10n.hrMin,
@@ -919,7 +976,10 @@ class _RideHistoryDetailsScreenState extends State<RideHistoryDetailsScreen>
                       ).colorScheme.onSurface.withValues(alpha: 0.2),
                     ),
                     Expanded(
-                      child: _buildLiveStatColumn(l10n.timeLabel, _currentTimeDisplay),
+                      child: _buildLiveStatColumn(
+                        l10n.timeLabel,
+                        _currentTimeDisplay,
+                      ),
                     ),
                     Container(
                       width: 1,

@@ -630,7 +630,8 @@
     "activate": "Activate",
     "activated": "Activated",
 
-    "safeParkingDescription": "Enable alerts when engine is turned ON or towing is detected"
-
-
+    "safeParkingDescription": "Enable alerts when engine is turned ON or towing is detected",
+    "geoFenceDeleteConfirmation": "Are you sure you want to delete this Geo-Fence?",
+    "geoFenceTurnOffConfirmation": "Are you sure you want to turn Off this geo fence?",
+    "turnOff": "Turn off"
 }

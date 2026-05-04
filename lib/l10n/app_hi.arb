@@ -632,5 +632,8 @@
     "activate": "सक्रिय करें",
     "activated": "सक्रिय",
 
-    "safeParkingDescription": "इंजन चालू होने या टोइंग का पता चलने पर अलर्ट सक्षम करें"
+    "safeParkingDescription": "इंजन चालू होने या टोइंग का पता चलने पर अलर्ट सक्षम करें",
+    "geoFenceDeleteConfirmation": "क्या आप वाकई इस जियो-फेंस को हटाना चाहते हैं?",
+    "geoFenceTurnOffConfirmation": "क्या आप वाकई इस जियो-फेंस को बंद करना चाहते हैं?",
+    "turnOff": "बंद करें"
 }

@@ -9,14 +9,15 @@ class GeoFenceRepositoryImpl implements GeoFenceRepository {
   GeoFenceRepositoryImpl(this.remoteDataSource);
 
   @override
-  Future<List<GeoFenceEntity>> getGeoFences() {
-    return remoteDataSource.getGeoFences();
+  Future<List<GeoFenceEntity>> getGeoFences(String imei) {
+    return remoteDataSource.getGeoFences(imei);
   }
 
   @override
   Future<void> addGeoFence(GeoFenceEntity geoFence) {
     return remoteDataSource.addGeoFence(GeoFenceModel(
       id: geoFence.id,
+      imei: geoFence.imei,
       name: geoFence.name,
       type: geoFence.type,
       latitude: geoFence.latitude,
@@ -24,5 +25,10 @@ class GeoFenceRepositoryImpl implements GeoFenceRepository {
       radius: geoFence.radius,
       vehicleName: geoFence.vehicleName,
     ));
+  }
+
+  @override
+  Future<void> deleteGeoFence(String imei) {
+    return remoteDataSource.deleteGeoFence(imei);
   }
 }

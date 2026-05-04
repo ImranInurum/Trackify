@@ -77,6 +77,25 @@ class ApiURL {
   static String notifications(String userId) =>
       "$baseURL/api/notification/$userId";
 
+  // -------------------------
+  // Geo-Fence
+  // -------------------------
+  static const String updateGeoFence = "$baseURL/api/geoFance/update_geofence";
+  static String getGeoFenceData(String imei) => "$baseURL/api/geoFance/geofenceData/$imei";
+  static String deleteGeoFence(String imei) => "$baseURL/api/geoFance/geofence/$imei";
+
+  // -------------------------
+  // Service Logs
+  // -------------------------
+  static const String serviceLogs = "$baseURL/api/service/service-logs";
+  static const String addServiceLogs = "$baseURL/api/service/service-logs";
+
+  // -------------------------
+  // Overspeed Alert
+  // -------------------------
+  static const String createOverspeedAlert = "$baseURL/api/overspeed/create-alert";
+  static String getOverspeedAlerts(String imei) => "$baseURL/api/overspeed/get-overspeed/$imei";
+
   // NEED TO IMPLEMENT CORRECT API
   // static const String logout = '$baseURL/users/logout';
   // static const String userDetails = '$baseURL/users/get-details';
