@@ -621,5 +621,16 @@
   "geoFenceNameFieldHint": "जियो-फेंस नाम दर्ज करें, जैसे: घर",
   "geoFenceAddSmsContacts": "SMS अलर्ट के लिए संपर्क जोड़ें",
   "geoFenceEmptyStateDesc": "मैप पर एक घेरा बनाएं और जब भी कोई बाइक घेरे में प्रवेश करे या बाहर निकले तो अलर्ट पाएं।",
-  "addGeoFenceButton": "जियो-फेंस जोड़ें"
-}
+  "addGeoFenceButton": "जियो-फेंस जोड़ें",
+
+    "safeParkingTitle": "सुरक्षित पार्किंग",
+    "schedule": "शेड्यूल",
+
+    "setupSafeParking": "सुरक्षित पार्किंग सेट करें",
+    "safeParkingSubtitle": "इंजन ON और टोइंग अलर्ट के लिए कॉल अलर्ट प्राप्त करें",
+
+    "activate": "सक्रिय करें",
+    "activated": "सक्रिय",
+
+    "safeParkingDescription": "इंजन चालू होने या टोइंग का पता चलने पर अलर्ट सक्षम करें"
+}

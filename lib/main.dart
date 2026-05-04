@@ -52,6 +52,7 @@ import 'feature/onboarding/presentation/cubit/splash_cubit.dart';
 import 'feature/device_installation/data/repository/device_installation_repository_impl.dart';
 import 'feature/device_installation/domain/usecase/assign_device_use_case.dart';
 import 'feature/device_installation/presentation/cubit/device_installation_cubit.dart';
+import 'feature/safe_parking/presentation/cubit/safe_parking_cubit.dart';
 import 'feature/trips/data/repository/ride_history_repository_impl.dart';
 import 'feature/trips/domain/usecase/ride_history_use_case.dart';
 import 'feature/trips/presentation/cubit/ride_history_cubit.dart';
@@ -180,6 +181,11 @@ List<BlocProvider> _buildBlocProviders() {
         ),
       ),
     ),
+
+    BlocProvider<SafeParkingCubit>(
+      create: (_) => SafeParkingCubit(),
+    ),
+
 
   ];
 }

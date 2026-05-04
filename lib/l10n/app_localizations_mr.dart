@@ -1538,4 +1538,27 @@ class AppLocalizationsMr extends AppLocalizations {
 
   @override
   String get addGeoFenceButton => 'Add Geo-fence';
+
+  @override
+  String get safeParkingTitle => 'Safe Parking';
+
+  @override
+  String get schedule => 'Schedule';
+
+  @override
+  String get setupSafeParking => 'Set up Safe Parking';
+
+  @override
+  String get safeParkingSubtitle =>
+      'Get call alerts for engine ON & towing alerts';
+
+  @override
+  String get activate => 'Activate';
+
+  @override
+  String get activated => 'Activated';
+
+  @override
+  String get safeParkingDescription =>
+      'Enable alerts when engine is turned ON or towing is detected';
 }

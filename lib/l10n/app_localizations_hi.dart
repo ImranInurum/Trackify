@@ -1538,4 +1538,27 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get addGeoFenceButton => 'जियो-फेंस जोड़ें';
+
+  @override
+  String get safeParkingTitle => 'सुरक्षित पार्किंग';
+
+  @override
+  String get schedule => 'शेड्यूल';
+
+  @override
+  String get setupSafeParking => 'सुरक्षित पार्किंग सेट करें';
+
+  @override
+  String get safeParkingSubtitle =>
+      'इंजन ON और टोइंग अलर्ट के लिए कॉल अलर्ट प्राप्त करें';
+
+  @override
+  String get activate => 'सक्रिय करें';
+
+  @override
+  String get activated => 'सक्रिय';
+
+  @override
+  String get safeParkingDescription =>
+      'इंजन चालू होने या टोइंग का पता चलने पर अलर्ट सक्षम करें';
 }

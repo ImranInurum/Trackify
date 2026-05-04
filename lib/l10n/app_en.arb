@@ -619,5 +619,18 @@
   "geoFenceNameFieldHint": "Enter Geo-fence name, eg: Home",
   "geoFenceAddSmsContacts": "Add Contacts for SMS Alert",
   "geoFenceEmptyStateDesc": "Draw a circle on the map and be alerted whenever a bike enters or exits the circle.",
-  "addGeoFenceButton": "Add Geo-fence"
+  "addGeoFenceButton": "Add Geo-fence",
+
+    "safeParkingTitle": "Safe Parking",
+    "schedule": "Schedule",
+
+    "setupSafeParking": "Set up Safe Parking",
+    "safeParkingSubtitle": "Get call alerts for engine ON & towing alerts",
+
+    "activate": "Activate",
+    "activated": "Activated",
+
+    "safeParkingDescription": "Enable alerts when engine is turned ON or towing is detected"
+
+
 }

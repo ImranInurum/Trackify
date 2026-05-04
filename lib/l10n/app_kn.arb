@@ -588,11 +588,22 @@
   "benefit3_highlight": "24/7 ಬೆಂಬಲ ",
   "benefit3_normal": "— ಅಗತ್ಯವಿದ್ದಾಗ ಆದ್ಯತೆ ಗ್ರಾಹಕ ಸೇವೆ.",
   "benefit4_highlight": "ಗುಪ್ತ ಶುಲ್ಕಗಳಿಲ್ಲ ",
-  "benefit4_normal": "— ಒಂದು ಫ್ಲಾಟ್ ಶುಲ್ಕ, ಸಂಪೂರ್ಣ ಮನಸ್ಸಿನ ಶಾಂತಿ.",
+
 
    "initiatingEmergencyAlert": "Trackify ಬಳಕೆದಾರರಿಗೆ ತುರ್ತು ಎಚ್ಚರಿಕೆಯನ್ನು ಆರಂಭಿಸಲಾಗುತ್ತಿದೆ",
    "pleaseUseResponsibly": "ದಯವಿಟ್ಟು ಜವಾಬ್ದಾರಿಯಿಂದ ಬಳಸಿ",
    "secondsBeforeSendingAlert": "ಎಚ್ಚರಿಕೆ ಕಳುಹಿಸುವ ಮೊದಲು ಸೆಕೆಂಡುಗಳು",
    "sendNow": "ಈಗ ಕಳುಹಿಸಿ",
-   "cancel": "ರದ್ದುಮಾಡಿ"
+   "cancel": "ರದ್ದುಮಾಡಿ",
+  "benefit4_normal": "— ಒಂದು ಫ್ಲಾಟ್ ಶುಲ್ಕ, ಸಂಪೂರ್ಣ ಮನಸ್ಸಿನ ಶಾಂತಿ.",
+    "safeParkingTitle": "ಸುರಕ್ಷಿತ ಪಾರ್ಕಿಂಗ್",
+    "schedule": "ವೇಳಾಪಟ್ಟಿ",
+
+    "setupSafeParking": "ಸುರಕ್ಷಿತ ಪಾರ್ಕಿಂಗ್ ಸೆಟ್ ಮಾಡಿ",
+    "safeParkingSubtitle": "ಎಂಜಿನ್ ON ಮತ್ತು ಟೋಯಿಂಗ್ ಎಚ್ಚರಿಕೆಗಳಿಗಾಗಿ ಕರೆ ಎಚ್ಚರಿಕೆಗಳನ್ನು ಪಡೆಯಿರಿ",
+
+    "activate": "ಸಕ್ರಿಯಗೊಳಿಸಿ",
+    "activated": "ಸಕ್ರಿಯವಾಗಿದೆ",
+
+    "safeParkingDescription": "ಎಂಜಿನ್ ON ಆಗಿದಾಗ ಅಥವಾ ಟೋಯಿಂಗ್ ಪತ್ತೆಯಾದಾಗ ಎಚ್ಚರಿಕೆಗಳನ್ನು ಸಕ್ರಿಯಗೊಳಿಸಿ"
 }

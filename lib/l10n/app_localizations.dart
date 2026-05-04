@@ -3003,6 +3003,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Add Geo-fence'**
   String get addGeoFenceButton;
+
+  /// No description provided for @safeParkingTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Safe Parking'**
+  String get safeParkingTitle;
+
+  /// No description provided for @schedule.
+  ///
+  /// In en, this message translates to:
+  /// **'Schedule'**
+  String get schedule;
+
+  /// No description provided for @setupSafeParking.
+  ///
+  /// In en, this message translates to:
+  /// **'Set up Safe Parking'**
+  String get setupSafeParking;
+
+  /// No description provided for @safeParkingSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Get call alerts for engine ON & towing alerts'**
+  String get safeParkingSubtitle;
+
+  /// No description provided for @activate.
+  ///
+  /// In en, this message translates to:
+  /// **'Activate'**
+  String get activate;
+
+  /// No description provided for @activated.
+  ///
+  /// In en, this message translates to:
+  /// **'Activated'**
+  String get activated;
+
+  /// No description provided for @safeParkingDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Enable alerts when engine is turned ON or towing is detected'**
+  String get safeParkingDescription;
 }
 
 class _AppLocalizationsDelegate
