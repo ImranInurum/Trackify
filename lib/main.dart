@@ -46,6 +46,11 @@ import 'feature/emergency_sos/domain/usecase/emergency_alert_usecase.dart';
 import 'feature/emergency_sos/presentation/cubit/emergency_alert_cubit.dart';
 import 'feature/emergency_sos/presentation/cubit/emergency_alert_state.dart' show EmergencySent;
 import 'feature/geo_fence/presentation/cubit/geo_fence_cubit.dart';
+import 'feature/service_logs/data/data_source/service_logs_remote_data_source.dart';
+import 'feature/service_logs/data/repository/service_logs_repository_impl.dart';
+import 'feature/service_logs/domain/usecase/get_service_logs_usecase.dart';
+import 'feature/service_logs/domain/usecase/save_service_log_usecase.dart';
+import 'feature/service_logs/presentation/cubit/service_logs_cubit.dart';
 import 'feature/onboarding/data/repositories/splash_repository_impl.dart';
 import 'feature/onboarding/domain/usecases/get_logo_usecase.dart';
 import 'feature/onboarding/presentation/cubit/splash_cubit.dart';
@@ -56,13 +61,18 @@ import 'feature/safe_parking/presentation/cubit/safe_parking_cubit.dart';
 import 'feature/trips/data/repository/ride_history_repository_impl.dart';
 import 'feature/trips/domain/usecase/ride_history_use_case.dart';
 import 'feature/trips/presentation/cubit/ride_history_cubit.dart';
-import 'package:trackify/feature/service_logs/presentation/cubit/service_logs_cubit.dart';
-import 'package:trackify/core/common/repositories/common_repo_impl.dart';
-import 'package:trackify/feature/geo_fence/data/data_source/geo_fence_remote_data_source.dart';
-import 'package:trackify/feature/geo_fence/data/repository/geo_fence_repository_impl.dart';
-import 'package:trackify/feature/geo_fence/domain/usecase/get_geo_fence_usecase.dart';
-import 'package:trackify/feature/geo_fence/domain/usecase/add_geo_fence_usecase.dart';
-import 'package:trackify/core/common/usecase/get_user_vehicles_usecase.dart';
+import 'core/common/repositories/common_repo_impl.dart';
+import 'feature/geo_fence/data/data_source/geo_fence_remote_data_source.dart';
+import 'feature/geo_fence/data/repository/geo_fence_repository_impl.dart';
+import 'feature/geo_fence/domain/usecase/get_geo_fence_usecase.dart';
+import 'feature/geo_fence/domain/usecase/add_geo_fence_usecase.dart';
+import 'feature/geo_fence/domain/usecase/delete_geo_fence_usecase.dart';
+import 'core/common/usecase/get_user_vehicles_usecase.dart';
+import 'core/config/network/network_api_service.dart';
+import 'feature/overspeed_alert/data/data_source/overspeed_alert_remote_data_source.dart';
+import 'feature/overspeed_alert/data/repository/overspeed_alert_repository_impl.dart';
+import 'feature/overspeed_alert/domain/usecase/create_overspeed_alert_usecase.dart';
+import 'feature/overspeed_alert/domain/usecase/get_overspeed_alerts_usecase.dart';
 
 import 'firebase_options.dart';
 
@@ -144,12 +154,29 @@ List<BlocProvider> _buildBlocProviders() {
     BlocProvider<ServiceLogsCubit>(
       create: (_) => ServiceLogsCubit(
         GetUserVehiclesUsecase(CommonRepositoryImpl()),
+        GetServiceLogsUsecase(
+          ServiceLogsRepositoryImpl(
+            ServiceLogsRemoteDataSource(NetworkApiService()),
+          ),
+        ),
+        SaveServiceLogUsecase(
+          ServiceLogsRepositoryImpl(
+            ServiceLogsRemoteDataSource(NetworkApiService()),
+          ),
+        ),
       ),
     ),
     BlocProvider<OverspeedAlertCubit>(
-      create: (_) => OverspeedAlertCubit(
-        getUserVehiclesUsecase: GetUserVehiclesUsecase(CommonRepositoryImpl()),
-      ),
+      create: (_) {
+        final repository = OverspeedAlertRepositoryImpl(
+          OverspeedAlertRemoteDataSource(NetworkApiService()),
+        );
+        return OverspeedAlertCubit(
+          getUserVehiclesUsecase: GetUserVehiclesUsecase(CommonRepositoryImpl()),
+          createOverspeedAlertUsecase: CreateOverspeedAlertUsecase(repository),
+          getOverspeedAlertsUsecase: GetOverspeedAlertsUsecase(repository),
+        );
+      },
     ),
     BlocProvider<DeviceDataCubit>(
       create: (_) => DeviceDataCubit(),
@@ -165,10 +192,13 @@ List<BlocProvider> _buildBlocProviders() {
     ),
     BlocProvider<GeoFenceCubit>(
       create: (_) {
-        final repository = GeoFenceRepositoryImpl(GeoFenceRemoteDataSource());
+        final repository = GeoFenceRepositoryImpl(
+          GeoFenceRemoteDataSource(NetworkApiService()),
+        );
         return GeoFenceCubit(
           GetGeoFenceUseCase(repository),
           AddGeoFenceUseCase(repository),
+          DeleteGeoFenceUseCase(repository),
         );
       },
     ),

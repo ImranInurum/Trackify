@@ -3045,6 +3045,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Enable alerts when engine is turned ON or towing is detected'**
   String get safeParkingDescription;
+
+  /// No description provided for @geoFenceDeleteConfirmation.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete this Geo-Fence?'**
+  String get geoFenceDeleteConfirmation;
+
+  /// No description provided for @geoFenceTurnOffConfirmation.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to turn Off this geo fence?'**
+  String get geoFenceTurnOffConfirmation;
+
+  /// No description provided for @turnOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn off'**
+  String get turnOff;
 }
 
 class _AppLocalizationsDelegate

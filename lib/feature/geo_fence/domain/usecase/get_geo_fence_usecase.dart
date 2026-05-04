@@ -6,7 +6,7 @@ class GetGeoFenceUseCase {
 
   GetGeoFenceUseCase(this.repository);
 
-  Future<List<GeoFenceEntity>> call() {
-    return repository.getGeoFences();
+  Future<List<GeoFenceEntity>> call(String imei) {
+    return repository.getGeoFences(imei);
   }
 }

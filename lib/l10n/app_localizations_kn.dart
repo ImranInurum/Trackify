@@ -1566,4 +1566,15 @@ class AppLocalizationsKn extends AppLocalizations {
   @override
   String get safeParkingDescription =>
       'ಎಂಜಿನ್ ON ಆಗಿದಾಗ ಅಥವಾ ಟೋಯಿಂಗ್ ಪತ್ತೆಯಾದಾಗ ಎಚ್ಚರಿಕೆಗಳನ್ನು ಸಕ್ರಿಯಗೊಳಿಸಿ';
+
+  @override
+  String get geoFenceDeleteConfirmation =>
+      'Are you sure you want to delete this Geo-Fence?';
+
+  @override
+  String get geoFenceTurnOffConfirmation =>
+      'Are you sure you want to turn Off this geo fence?';
+
+  @override
+  String get turnOff => 'Turn off';
 }

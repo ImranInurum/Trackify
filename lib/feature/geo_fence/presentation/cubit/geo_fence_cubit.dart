@@ -2,6 +2,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geocoding/geocoding.dart';
 import '../../domain/entity/geo_fence_entity.dart';
 import '../../domain/usecase/add_geo_fence_usecase.dart';
+import '../../domain/usecase/delete_geo_fence_usecase.dart';
 import '../../domain/usecase/get_geo_fence_usecase.dart';
 
 import 'geo_fence_state.dart';
@@ -9,15 +10,19 @@ import 'geo_fence_state.dart';
 class GeoFenceCubit extends Cubit<GeoFenceState> {
   final GetGeoFenceUseCase _getGeoFenceUseCase;
   final AddGeoFenceUseCase _addGeoFenceUseCase;
+  final DeleteGeoFenceUseCase _deleteGeoFenceUseCase;
 
-  GeoFenceCubit(this._getGeoFenceUseCase, this._addGeoFenceUseCase)
-    : super(GeoFenceInitial());
+  GeoFenceCubit(
+    this._getGeoFenceUseCase,
+    this._addGeoFenceUseCase,
+    this._deleteGeoFenceUseCase,
+  ) : super(GeoFenceInitial());
 
-  Future<void> fetchGeoFences() async {
+  Future<void> fetchGeoFences(String imei) async {
     emit(GeoFenceLoading());
 
     try {
-      final geoFences = await _getGeoFenceUseCase();
+      final geoFences = await _getGeoFenceUseCase(imei);
       emit(GeoFenceLoaded(geoFences: geoFences));
     } catch (e) {
       emit(GeoFenceError(e.toString()));
@@ -58,7 +63,10 @@ class GeoFenceCubit extends Cubit<GeoFenceState> {
 
       if (placemarks.isNotEmpty) {
         final place = placemarks.first;
-        final address = "${place.name ?? ''}, ${place.subLocality ?? ''}, ${place.locality ?? ''}".replaceAll(RegExp(r'^, |, $'), '').trim();
+        final address =
+            "${place.name ?? ''}, ${place.subLocality ?? ''}, ${place.locality ?? ''}"
+                .replaceAll(RegExp(r'^, |, $'), '')
+                .trim();
 
         emit(
           GeoFenceFormUpdated(
@@ -114,9 +122,35 @@ class GeoFenceCubit extends Cubit<GeoFenceState> {
       await _addGeoFenceUseCase(geoFence);
       emit(GeoFenceSuccess());
       // Refresh list after success
-      fetchGeoFences();
+      fetchGeoFences(geoFence.imei);
     } catch (e) {
       emit(GeoFenceError(e.toString()));
+    }
+  }
+
+  Future<void> deleteGeoFence(String imei) async {
+    emit(GeoFenceLoading());
+
+    try {
+      await _deleteGeoFenceUseCase(imei);
+      // Refresh list after deletion
+      fetchGeoFences(imei);
+    } catch (e) {
+      emit(GeoFenceError(e.toString()));
+    }
+  }
+
+  Future<void> toggleGeoFenceStatus(String imei, bool isActive) async {
+    // For testing: update local state
+    if (state is GeoFenceLoaded) {
+      final currentFences = (state as GeoFenceLoaded).geoFences;
+      final updatedFences = currentFences.map((f) {
+        if (f.imei == imei) {
+          return f.copyWith(isActive: isActive);
+        }
+        return f;
+      }).toList();
+      emit(GeoFenceLoaded(geoFences: updatedFences));
     }
   }
 }

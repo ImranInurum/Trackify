@@ -36,9 +36,25 @@ class _AddOverspeedAlertScreenState extends State<AddOverspeedAlertScreen> {
       final alert = widget.alertToEdit!;
       _titleController.text = alert.title;
       _speedController.text = alert.speedLimit.toString();
-      _selectedDuration = alert.timeDuration;
-      // Pre-select vehicles from the existing alert passed via navigation
-      _selectedVehicles = List.from(alert.vehicles);
+      _selectedDuration = alert.duration;
+      
+      // Find the vehicle matching the alert's IMEI
+      final cubitState = context.read<OverspeedAlertCubit>().state;
+      if (cubitState is OverspeedAlertLoaded) {
+        final vehicle = cubitState.userVehicles.cast<Vehicle?>().firstWhere(
+              (v) => v?.imei == alert.imei,
+              orElse: () => null,
+            );
+        if (vehicle != null) {
+          _selectedVehicles = [vehicle];
+        }
+      }
+    } else {
+      // Pre-select the currently active vehicle from the Cubit
+      final cubitState = context.read<OverspeedAlertCubit>().state;
+      if (cubitState is OverspeedAlertLoaded && cubitState.selectedVehicle != null) {
+        _selectedVehicles = [cubitState.selectedVehicle!];
+      }
     }
   }
 
@@ -103,6 +119,11 @@ class _AddOverspeedAlertScreenState extends State<AddOverspeedAlertScreen> {
       body: BlocConsumer<OverspeedAlertCubit, OverspeedAlertState>(
         listener: (context, state) {
           if (state is OverspeedAlertSuccess) {
+            if (state.message != null) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text(state.message!)),
+              );
+            }
             Navigator.pop(context);
           } else if (state is OverspeedAlertError) {
             ScaffoldMessenger.of(context)

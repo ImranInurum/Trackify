@@ -45,6 +45,8 @@ import '../../../../core/config/style_manager.dart';
 import '../cubit/map_cubit.dart';
 import '../cubit/map_state.dart';
 import '../../../../l10n/app_localizations.dart';
+import 'package:trackify/core/common/models/vehicle_list_model.dart';
+
 
 class MapScreen extends StatefulWidget {
   const MapScreen({super.key});
@@ -852,9 +854,17 @@ class _MapScreenState extends State<MapScreen> {
         MaterialPageRoute(builder: (context) => const ServiceLogsScreen()),
       );
     } else if (label == l10n.overspeedAlert.replaceAll(' ', '\n')) {
+      final vehicle = selectedDevice != null ? Vehicle(
+        id: selectedDevice.id,
+        userId: selectedDevice.userId,
+        vehicleMaker: selectedDevice.vehicleMaker,
+        vehicleNumber: selectedDevice.vehicleNumber,
+        vehicleModel: selectedDevice.vehicleModel,
+        imei: selectedDevice.imei,
+      ) : null;
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => OverSpeedAlertScreen()),
+        MaterialPageRoute(builder: (context) => OverSpeedAlertScreen(vehicle: vehicle)),
       );
     } else if (label == l10n.fuelLogs.replaceAll(' ', '\n')) {
       Navigator.push(
@@ -924,7 +934,10 @@ class _MapScreenState extends State<MapScreen> {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => GeoFenceScreen(vehicleName: vName),
+          builder: (context) => GeoFenceScreen(
+            vehicleName: vName,
+            imei: selectedDevice?.imei,
+          ),
         ),
       );
     }
@@ -1116,6 +1129,7 @@ class _MapScreenState extends State<MapScreen> {
         }
 
         context.read<AppCubit>().initializeSocket(imei: device.imei);
+
       },
     );
   }

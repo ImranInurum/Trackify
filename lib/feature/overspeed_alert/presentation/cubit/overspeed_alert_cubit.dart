@@ -2,45 +2,81 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:trackify/core/common/models/vehicle_list_model.dart';
 import 'package:trackify/core/common/usecase/get_user_vehicles_usecase.dart';
 import 'package:trackify/feature/overspeed_alert/data/model/overspeed_alert_model.dart';
+import 'package:trackify/feature/overspeed_alert/domain/usecase/create_overspeed_alert_usecase.dart';
+import 'package:trackify/feature/overspeed_alert/domain/usecase/get_overspeed_alerts_usecase.dart';
 import 'overspeed_alert_state.dart';
 
 class OverspeedAlertCubit extends Cubit<OverspeedAlertState> {
   final GetUserVehiclesUsecase getUserVehiclesUsecase;
+  final CreateOverspeedAlertUsecase createOverspeedAlertUsecase;
+  final GetOverspeedAlertsUsecase getOverspeedAlertsUsecase;
 
-  // Mock data — one alert has a LIST of vehicles
-  final List<OverspeedAlertModel> _mockAlerts = [
-    OverspeedAlertModel(
-      title: 'Overspeed Alert',
-      speedLimit: 60,
-      timeDuration: 30,
-      date: '24 Apr 2026',
-      vehicles: [
-        Vehicle(id: '1', vehicleNumber: 'KA04MK1234', vehicleModel: 'Maruti Baleno'),
-        Vehicle(id: '2', vehicleNumber: 'KA04MK5678', vehicleModel: 'Honda SP 125'),
-      ],
-    ),
-  ];
+  List<OverspeedAlertModel> _alerts = [];
 
-  OverspeedAlertCubit({required this.getUserVehiclesUsecase})
-      : super(OverspeedAlertInitial());
+  OverspeedAlertCubit({
+    required this.getUserVehiclesUsecase,
+    required this.createOverspeedAlertUsecase,
+    required this.getOverspeedAlertsUsecase,
+  }) : super(OverspeedAlertInitial());
 
-  Future<void> fetchInitialData() async {
+  Future<void> fetchInitialData({Vehicle? targetVehicle}) async {
     emit(OverspeedAlertLoading());
     try {
-      final result = await getUserVehiclesUsecase.call();
-      result.fold(
-        (failure) => emit(OverspeedAlertError(failure.message)),
-        (response) => emit(OverspeedAlertLoaded(
-          alerts: List.unmodifiable(_mockAlerts),
-          userVehicles: response.vehicles ?? [],
-        )),
+      if (targetVehicle != null) {
+        // If a specific vehicle is provided (e.g. from global selection), fetch only for it.
+        await selectVehicle(targetVehicle, existingVehicles: [targetVehicle]);
+        return;
+      }
+
+      final vehicleResult = await getUserVehiclesUsecase.call();
+
+      await vehicleResult.fold(
+        (failure) async => emit(OverspeedAlertError(failure.message)),
+        (response) async {
+          final vehicles = response.vehicles ?? [];
+          if (vehicles.isEmpty) {
+            emit(const OverspeedAlertLoaded(alerts: [], userVehicles: []));
+            return;
+          }
+          // Default to first vehicle
+          await selectVehicle(vehicles.first, existingVehicles: vehicles);
+        },
       );
     } catch (e) {
       emit(OverspeedAlertError(e.toString()));
     }
   }
 
-  /// Called from AddOverspeedAlertScreen with the locally selected vehicles.
+  Future<void> selectVehicle(
+    Vehicle vehicle, {
+    List<Vehicle>? existingVehicles,
+  }) async {
+    final List<Vehicle> vehicles =
+        existingVehicles ??
+        (state is OverspeedAlertLoaded
+            ? (state as OverspeedAlertLoaded).userVehicles
+            : []);
+
+    emit(OverspeedAlertLoading());
+
+    _alerts = [];
+    if (vehicle.imei != null && vehicle.imei!.isNotEmpty) {
+      final alertResult = await getOverspeedAlertsUsecase.call(vehicle.imei!);
+      alertResult.fold(
+        (failure) => null, // Ignore failures for individual vehicles
+        (alerts) => _alerts = alerts,
+      );
+    }
+
+    emit(
+      OverspeedAlertLoaded(
+        alerts: List.unmodifiable(_alerts),
+        userVehicles: vehicles,
+        selectedVehicle: vehicle,
+      ),
+    );
+  }
+
   Future<void> saveOverspeedAlert({
     required String title,
     required int speedLimit,
@@ -59,35 +95,44 @@ class OverspeedAlertCubit extends Cubit<OverspeedAlertState> {
     emit(OverspeedAlertSubmitting());
 
     try {
-      // TODO: Replace with real API call
-      await Future.delayed(const Duration(seconds: 1));
+      final imeiString = selectedVehicles
+          .map((v) => v.imei)
+          .where((imei) => imei != null && imei.isNotEmpty)
+          .join(',');
 
-      _mockAlerts.add(OverspeedAlertModel(
-        title: title,
+      if (imeiString.isEmpty) {
+        emit(
+          const OverspeedAlertError('Selected vehicles do not have an IMEI'),
+        );
+        emit(currentState);
+        return;
+      }
+
+      final result = await createOverspeedAlertUsecase.call(
+        alertTitle: title,
         speedLimit: speedLimit,
-        timeDuration: timeDuration,
-        date: _formattedToday(),
-        vehicles: selectedVehicles,
-      ));
+        duration: timeDuration,
+        imei: imeiString,
+      );
 
-      emit(OverspeedAlertSuccess());
-      emit(currentState.copyWith(alerts: List.unmodifiable(_mockAlerts)));
+      result.fold(
+        (failure) {
+          emit(OverspeedAlertError(failure.message));
+          emit(currentState);
+        },
+        (message) {
+          emit(OverspeedAlertSuccess(message: message));
+          // Re-fetch data for the currently selected vehicle
+          if (currentState.selectedVehicle != null) {
+            selectVehicle(currentState.selectedVehicle!);
+          } else {
+            fetchInitialData();
+          }
+        },
+      );
     } catch (e) {
-      emit(const OverspeedAlertError('Failed to save alert.'));
+      emit(OverspeedAlertError(e.toString()));
       emit(currentState);
     }
-  }
-
-  String _formattedToday() {
-    final now = DateTime.now();
-    return '${now.day} ${_monthName(now.month)} ${now.year}';
-  }
-
-  String _monthName(int month) {
-    const months = [
-      'Jan','Feb','Mar','Apr','May','Jun',
-      'Jul','Aug','Sep','Oct','Nov','Dec',
-    ];
-    return months[month - 1];
   }
 }

@@ -46,7 +46,7 @@ class RideTripModel {
           : null,
       count: json['count'] as int?,
       points:
-          ((json['data'] ?? json['points'] ?? json['history'] ?? json['route'])
+          ((json['data'] ?? json['points'] ?? json['history'] ?? json['route'] ?? json['routeData'])
                   as List<dynamic>?)
               ?.map(
                 (e) => RideDataPointModel.fromJson(e as Map<String, dynamic>),
@@ -120,7 +120,7 @@ class RideDataPointModel {
       lt: (json['lt'] ?? json['lat'] ?? json['latitude'])?.toString(),
       lg: (json['lg'] ?? json['lng'] ?? json['longitude'])?.toString(),
       sp: double.tryParse((json['sp'] ?? json['speed'] ?? "0").toString()),
-      createdAt: json['createdAt'] as String?,
+      createdAt: (json['createdAt'] ?? json['time']) as String?,
     );
   }
 }

@@ -5,9 +5,13 @@ import 'package:trackify/feature/overspeed_alert/presentation/widgets/overspeed_
 import 'package:trackify/feature/overspeed_alert/presentation/screens/add_overspeed_alert_screen.dart';
 import '../cubit/overspeed_alert_cubit.dart';
 import '../cubit/overspeed_alert_state.dart';
+import 'package:trackify/core/common/models/vehicle_list_model.dart';
+import 'package:trackify/feature/overspeed_alert/data/model/overspeed_alert_model.dart';
+
 
 class OverSpeedAlertScreen extends StatefulWidget {
-  const OverSpeedAlertScreen({Key? key}) : super(key: key);
+  final Vehicle? vehicle;
+  const OverSpeedAlertScreen({Key? key, this.vehicle}) : super(key: key);
 
   @override
   State<OverSpeedAlertScreen> createState() => _OverSpeedAlertScreenState();
@@ -17,7 +21,7 @@ class _OverSpeedAlertScreenState extends State<OverSpeedAlertScreen> {
   @override
   void initState() {
     super.initState();
-    context.read<OverspeedAlertCubit>().fetchInitialData();
+    context.read<OverspeedAlertCubit>().fetchInitialData(targetVehicle: widget.vehicle);
   }
 
   @override
@@ -40,13 +44,17 @@ class _OverSpeedAlertScreenState extends State<OverSpeedAlertScreen> {
           onPressed: () {
             Navigator.pop(context);
           },
-          icon: Icon(Icons.arrow_back_ios_new_rounded, size: 20, color: theme.colorScheme.onSurface),
+          icon: Icon(
+            Icons.arrow_back_ios_new_rounded,
+            size: 20,
+            color: theme.colorScheme.onSurface,
+          ),
         ),
         centerTitle: true,
       ),
       body: BlocBuilder<OverspeedAlertCubit, OverspeedAlertState>(
         builder: (context, state) {
-          if (state is OverspeedAlertLoading || state is OverspeedAlertInitial) {
+          if (state is OverspeedAlertInitial) {
             return const Center(child: CircularProgressIndicator());
           }
 
@@ -54,42 +62,67 @@ class _OverSpeedAlertScreenState extends State<OverSpeedAlertScreen> {
             return Center(child: Text(state.message));
           }
 
-          if (state is OverspeedAlertLoaded) {
-            if (state.alerts.isEmpty) {
-              return Center(
-                child: Text(
-                  "No alerts created yet.",
-                  style: theme.textTheme.bodyLarge?.copyWith(
-                    color: theme.colorScheme.onSurface.withOpacity(0.5),
-                  ),
-                ),
-              );
-            }
+          if (state is OverspeedAlertLoaded || state is OverspeedAlertLoading) {
+            final isLoaded = state is OverspeedAlertLoaded;
+            final selectedVehicle = isLoaded ? (state as OverspeedAlertLoaded).selectedVehicle : widget.vehicle;
+            final alerts = isLoaded ? (state as OverspeedAlertLoaded).alerts : <OverspeedAlertModel>[];
 
-            return RefreshIndicator(
-              onRefresh: () async {
-                await context.read<OverspeedAlertCubit>().fetchInitialData();
-              },
-              child: ListView.builder(
-                padding: const EdgeInsets.only(top: 20, bottom: 80),
-                itemCount: state.alerts.length,
-                itemBuilder: (context, index) {
-                  final item = state.alerts[index];
-                  return GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => AddOverspeedAlertScreen(
-                            alertToEdit: item,
-                          ),
+            return Column(
+              children: [
+                if (state is OverspeedAlertLoading)
+                  const Expanded(child: Center(child: CircularProgressIndicator()))
+                else if (alerts.isEmpty)
+                  Expanded(
+                    child: Center(
+                      child: Text(
+                        "No alerts created for this vehicle.",
+                        style: theme.textTheme.bodyLarge?.copyWith(
+                          color: theme.colorScheme.onSurface.withOpacity(0.5),
                         ),
-                      );
-                    },
-                    child: OverspeedCard(overspeedAlert: item),
-                  );
-                },
-              ),
+                      ),
+                    ),
+                  )
+                else
+                  Expanded(
+                    child: RefreshIndicator(
+                      onRefresh: () async {
+                        if (selectedVehicle != null) {
+                          await context.read<OverspeedAlertCubit>().selectVehicle(selectedVehicle);
+                        } else {
+                          await context.read<OverspeedAlertCubit>().fetchInitialData();
+                        }
+                      },
+                      child: ListView.builder(
+                        padding: const EdgeInsets.only(top: 10, bottom: 80),
+                        itemCount: alerts.length,
+                        itemBuilder: (context, index) {
+                          final item = alerts[index];
+                          return GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => AddOverspeedAlertScreen(
+                                    alertToEdit: item,
+                                  ),
+                                ),
+                              );
+                            },
+                            child: OverspeedCard(
+                              overspeedAlert: item,
+                              vehicle: selectedVehicle,
+                              onDelete: () {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(content: Text('Delete functionality coming soon')),
+                                );
+                              },
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+              ],
             );
           }
 
@@ -97,6 +130,7 @@ class _OverSpeedAlertScreenState extends State<OverSpeedAlertScreen> {
         },
       ),
       floatingActionButton: FloatingActionButton(
+        shape: const CircleBorder(),
         backgroundColor: theme.colorScheme.primary,
         onPressed: () {
           Navigator.push(
@@ -106,7 +140,11 @@ class _OverSpeedAlertScreenState extends State<OverSpeedAlertScreen> {
             ),
           );
         },
-        child: Icon(Icons.add_rounded, size: 30, color: theme.colorScheme.onPrimary),
+        child: Icon(
+          Icons.add_rounded,
+          size: 30,
+          color: theme.colorScheme.onPrimary,
+        ),
       ),
     );
   }

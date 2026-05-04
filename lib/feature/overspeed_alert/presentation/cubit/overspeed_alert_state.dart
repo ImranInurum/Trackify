@@ -16,24 +16,28 @@ class OverspeedAlertLoading extends OverspeedAlertState {}
 class OverspeedAlertLoaded extends OverspeedAlertState {
   final List<OverspeedAlertModel> alerts;
   final List<Vehicle> userVehicles;
+  final Vehicle? selectedVehicle;
 
   const OverspeedAlertLoaded({
     required this.alerts,
     required this.userVehicles,
+    this.selectedVehicle,
   });
 
   OverspeedAlertLoaded copyWith({
     List<OverspeedAlertModel>? alerts,
     List<Vehicle>? userVehicles,
+    Vehicle? selectedVehicle,
   }) {
     return OverspeedAlertLoaded(
       alerts: alerts ?? this.alerts,
       userVehicles: userVehicles ?? this.userVehicles,
+      selectedVehicle: selectedVehicle ?? this.selectedVehicle,
     );
   }
 
   @override
-  List<Object?> get props => [alerts, userVehicles];
+  List<Object?> get props => [alerts, userVehicles, selectedVehicle];
 }
 
 class OverspeedAlertError extends OverspeedAlertState {
@@ -47,4 +51,10 @@ class OverspeedAlertError extends OverspeedAlertState {
 
 class OverspeedAlertSubmitting extends OverspeedAlertState {}
 
-class OverspeedAlertSuccess extends OverspeedAlertState {}
+class OverspeedAlertSuccess extends OverspeedAlertState {
+  final String? message;
+  const OverspeedAlertSuccess({this.message});
+
+  @override
+  List<Object?> get props => [message];
+}

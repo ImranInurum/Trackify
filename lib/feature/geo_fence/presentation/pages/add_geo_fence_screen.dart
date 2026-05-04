@@ -12,7 +12,9 @@ import 'dart:ui';
 
 class AddGeoFenceScreen extends StatefulWidget {
   final String? vehicleName;
-  const AddGeoFenceScreen({super.key, this.vehicleName});
+  final String? imei;
+  final GeoFenceEntity? initialFence;
+  const AddGeoFenceScreen({super.key, this.vehicleName, this.imei, this.initialFence});
 
   @override
   State<AddGeoFenceScreen> createState() => _AddGeoFenceScreenState();
@@ -32,10 +34,34 @@ class _AddGeoFenceScreenState extends State<AddGeoFenceScreen> {
   @override
   void initState() {
     super.initState();
+    if (widget.initialFence != null) {
+      _fencePosition = LatLng(widget.initialFence!.latitude, widget.initialFence!.longitude);
+      _radius = widget.initialFence!.radius;
+      _selectedType = widget.initialFence!.type;
+      _nameController.text = widget.initialFence!.name;
+      _searchController.text = ""; // Will be updated by updateAddress
+    }
+    
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _searchController.text = AppLocalizations.of(context)!.geoFenceLocating;
+      if (widget.initialFence == null) {
+        _searchController.text = AppLocalizations.of(context)!.geoFenceLocating;
+      }
     });
-    _fetchCurrentLocation();
+    
+    if (widget.initialFence == null) {
+      _fetchCurrentLocation();
+    } else {
+      // Small delay to ensure map is ready
+      Future.delayed(const Duration(milliseconds: 500), () {
+        _mapController?.animateCamera(CameraUpdate.newLatLngZoom(_fencePosition, 15));
+        context.read<GeoFenceCubit>().updateAddress(
+          latitude: _fencePosition.latitude,
+          longitude: _fencePosition.longitude,
+          radius: _radius,
+          selectedType: _selectedType,
+        );
+      });
+    }
   }
 
   Future<void> _fetchCurrentLocation() async {
@@ -104,14 +130,15 @@ class _AddGeoFenceScreenState extends State<AddGeoFenceScreen> {
     }
 
     final newFence = GeoFenceEntity(
-      id: DateTime.now().millisecondsSinceEpoch.toString(),
+      id: widget.initialFence?.id ?? DateTime.now().millisecondsSinceEpoch.toString(),
+      imei: widget.imei ?? widget.initialFence?.imei ?? '',
       name: _nameController.text,
       type: _selectedType,
       latitude: _fencePosition.latitude,
       longitude: _fencePosition.longitude,
       radius: _radius,
-      vehicleName: widget.vehicleName ?? "SP 125 MP09QV8269",
-      isActive: true,
+      vehicleName: widget.vehicleName ?? widget.initialFence?.vehicleName ?? "SP 125 MP09QV8269",
+      isActive: widget.initialFence?.isActive ?? true,
     );
 
     context.read<GeoFenceCubit>().addGeoFence(newFence);
@@ -138,9 +165,13 @@ class _AddGeoFenceScreenState extends State<AddGeoFenceScreen> {
           );
           if (mounted) Navigator.pop(context);
         } else if (state is GeoFenceError) {
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(SnackBar(content: Text("Error: ${state.message}")));
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(state.message),
+              backgroundColor: Colors.red,
+              behavior: SnackBarBehavior.floating,
+            ),
+          );
         } else if (state is GeoFenceFormUpdated) {
           _fencePosition = LatLng(state.latitude, state.longitude);
           _radius = state.radius;

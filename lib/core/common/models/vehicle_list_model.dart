@@ -47,6 +47,7 @@ class Vehicle {
   final String? vehicleMaker;
   final String? vehicleNumber;
   final String? vehicleModel;
+  final String? imei;
   final String? createdAt;
   final String? updatedAt;
 
@@ -58,6 +59,7 @@ class Vehicle {
     this.vehicleMaker,
     this.vehicleNumber,
     this.vehicleModel,
+    this.imei,
     this.createdAt,
     this.updatedAt,
   });
@@ -71,6 +73,7 @@ class Vehicle {
       vehicleMaker: json['vehicleMaker'],
       vehicleNumber: json['vehicleNumber'],
       vehicleModel: json['vehicleModel'],
+      imei: json['imei'],
       createdAt: json['createdAt'],
       updatedAt: json['updatedAt'],
     );
@@ -84,6 +87,7 @@ class Vehicle {
     String? vehicleMaker,
     String? vehicleNumber,
     String? vehicleModel,
+    String? imei,
     String? createdAt,
     String? updatedAt,
   }) => Vehicle(
@@ -94,6 +98,7 @@ class Vehicle {
     vehicleMaker: vehicleMaker ?? this.vehicleMaker,
     vehicleNumber: vehicleNumber ?? this.vehicleNumber,
     vehicleModel: vehicleModel ?? this.vehicleModel,
+    imei: imei ?? this.imei,
     createdAt: createdAt ?? this.createdAt,
     updatedAt: updatedAt ?? this.updatedAt,
   );
@@ -107,6 +112,7 @@ class Vehicle {
       'vehicleMaker': vehicleMaker,
       'vehicleNumber': vehicleNumber,
       'vehicleModel': vehicleModel,
+      'imei': imei,
       'createdAt': createdAt,
       'updatedAt': updatedAt,
     };
