@@ -74,7 +74,7 @@ class VehicleSelectionAppBar extends StatelessWidget {
                   Expanded(
                     child: Text(
                       selectedVehicle != null
-                          ? "${selectedVehicle!.vehicleMaker} ${selectedVehicle!.vehicleModel} (${selectedVehicle!.vehicleNumber})"
+                          ? "${selectedVehicle!.vehicleMaker ?? ""} ${selectedVehicle!.vehicleModel ?? ""}".trim() + " (${selectedVehicle!.vehicleNumber ?? ""})"
                           : l10n.selectVehicle,
                       style: theme.textTheme.bodyMedium?.copyWith(
                         fontWeight: FontWeight.w500,
@@ -166,7 +166,7 @@ class _VehicleSelectorSheet extends StatelessWidget {
                       height: 50,
                     ),
                     title: Text(
-                      "${vehicle.vehicleMaker} ${vehicle.vehicleModel}",
+                      "${vehicle.vehicleMaker ?? ""} ${vehicle.vehicleModel ?? ""}".trim(),
                       style: theme.textTheme.bodyLarge?.copyWith(
                         fontWeight: isSelected
                             ? FontWeight.bold

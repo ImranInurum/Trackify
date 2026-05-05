@@ -7,10 +7,15 @@ import '../feature/statistics/presentation/pages/statistics_screen.dart';
 import '../feature/trips/presentation/view/trip_screen.dart';
 
 class AppNavigation extends StatefulWidget {
-  const AppNavigation({super.key});
+  static final GlobalKey<_AppNavigationState> navigationKey = GlobalKey<_AppNavigationState>();
+  AppNavigation() : super(key: navigationKey);
 
   @override
   State<AppNavigation> createState() => _AppNavigationState();
+
+  static void setIndex(int index) {
+    navigationKey.currentState?._onTabTap(index);
+  }
 }
 
 class _AppNavigationState extends State<AppNavigation> {

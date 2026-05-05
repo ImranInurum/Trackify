@@ -500,7 +500,23 @@
 
     "continueSuperCombo": "Continue with Super Combo Plan",
     "continue12Month": "Continue with 12-Month Plan",
-  "continue6Month": "Continue with 6-Month Plan",
+    "continue6Month": "Continue with 6-Month Plan",
+    "vehicleDocumentsTitle": "Vehicle Documents",
+    "personalDocumentsSubtitle": "Keep your vehicle documents handy by uploading them",
+    "vehicleRC": "Vehicle RC",
+    "insurance": "Insurance Details",
+    "puc": "PUC Certificate",
+    "vehicleRCTitle": "Vehicle RC",
+    "insuranceTitle": "Insurance Details",
+    "pucTitle": "PUC Certificate",
+    "notificationControlsTitle": "Notification Controls",
+    "ignitionOnOffTitle": "Ignition ON/OFF",
+    "ignitionOnOffDesc": "Get notification when vehicle ignition is ON or OFF",
+    "motionWithIgnitionOffTitle": "Motion with Ignition OFF",
+    "motionWithIgnitionOffDesc": "Get notification when vehicle moves when ignition is OFF",
+    "powerSupplyOffTitle": "Power supply OFF",
+    "powerSupplyOffDesc": "Get notification when Ajjas is not receiving power",
+    "appNotification": "App notification",
   "odometerReading": "Odometer Reading",
   "update": "Update",
   "gpsReadingNote": "GPS-based reading, minor differences may occur.",
@@ -633,5 +649,24 @@
     "safeParkingDescription": "Enable alerts when engine is turned ON or towing is detected",
     "geoFenceDeleteConfirmation": "Are you sure you want to delete this Geo-Fence?",
     "geoFenceTurnOffConfirmation": "Are you sure you want to turn Off this geo fence?",
-    "turnOff": "Turn off"
+    "turnOff": "Turn off",
+    "plusMembershipTitle": "PLUS MEMBERSHIP",
+    "membership": "Membership",
+    "premiumBenefits": "PREMIUM BENEFITS",
+    "otherBenefits": "OTHER BENEFITS",
+    "trackifyPlusReviews": "TRACKIFY PLUS REVIEWS",
+    "offerings": "Offerings",
+    "plus": "Plus",
+    "regular": "Regular",
+    "upgradeNowAtJust": "Upgrade Now at Just ₹{price}",
+    "@upgradeNowAtJust": {
+      "placeholders": {
+        "price": {
+          "type": "String"
+        }
+      }
+    },
+    "viewMoreReviews": "View More Reviews",
+    "speciallyForYou": "Specially For You",
+    "footerMotto": "Creating a future where every bike is SMART\nand every rider is SAFE"
 }

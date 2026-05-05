@@ -126,4 +126,12 @@ class AppColors {
   static const Color warrantyButtonStart = Color(0xFFDBBE8F); // paletteTan
   static const Color warrantyButtonEnd   = Color(0xFFF5D9A8); // lighter tan
 
+  // Upgrade to Plus
+  static const Color goldStart = Color(0xFFE5C171);
+  static const Color goldEnd = Color(0xFFA67C00);
+  static const Color goldText = Color(0xFFD4AF37);
+  static const Color plusCardBg = Color(0xFF1A1A1A);
+  static const Color plusCardBorder = Color(0xFF333333);
+  static const Color premiumBenefitsBg = Color(0xFF121212);
 }
+

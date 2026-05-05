@@ -605,5 +605,24 @@
     "activate": "ಸಕ್ರಿಯಗೊಳಿಸಿ",
     "activated": "ಸಕ್ರಿಯವಾಗಿದೆ",
 
-    "safeParkingDescription": "ಎಂಜಿನ್ ON ಆಗಿದಾಗ ಅಥವಾ ಟೋಯಿಂಗ್ ಪತ್ತೆಯಾದಾಗ ಎಚ್ಚರಿಕೆಗಳನ್ನು ಸಕ್ರಿಯಗೊಳಿಸಿ"
+    "safeParkingDescription": "ಎಂಜಿನ್ ON ಆಗಿದಾಗ ಅಥವಾ ಟೋಯಿಂಗ್ ಪತ್ತೆಯಾದಾಗ ಎಚ್ಚರಿಕೆಗಳನ್ನು ಸಕ್ರಿಯಗೊಳಿಸಿ",
+    "plusMembershipTitle": "ಪ್ಲಸ್ ಸದಸ್ಯತ್ವ",
+    "membership": "ಸದಸ್ಯತ್ವ",
+    "premiumBenefits": "ಪ್ರೀಮಿಯಂ ಪ್ರಯೋಜನಗಳು",
+    "otherBenefits": "ಇತರ ಪ್ರಯೋಜನಗಳು",
+    "trackifyPlusReviews": "ಟ್ರ್ಯಾಕಿಫೈ ಪ್ಲಸ್ ವಿಮರ್ಶೆಗಳು",
+    "offerings": "ಕೊಡುಗೆಗಳು",
+    "plus": "ಪ್ಲಸ್",
+    "regular": "ನಿಯಮಿತ",
+    "upgradeNowAtJust": "ಕೇವಲ ₹{price} ರಲ್ಲಿ ಈಗಲೇ ಅಪ್‌ಗ್ರೇಡ್ ಮಾಡಿ",
+    "@upgradeNowAtJust": {
+      "placeholders": {
+        "price": {
+          "type": "String"
+        }
+      }
+    },
+    "viewMoreReviews": "ಹೆಚ್ಚಿನ ವಿಮರ್ಶೆಗಳನ್ನು ವೀಕ್ಷಿಸಿ",
+    "speciallyForYou": "ವಿಶೇಷವಾಗಿ ನಿಮಗಾಗಿ",
+    "footerMotto": "ಪ್ರತಿ ಬೈಕು ಸ್ಮಾರ್ಟ್ ಮತ್ತು ಪ್ರತಿ ರೈಡರ್ ಸುರಕ್ಷಿತವಾಗಿರುವ\nಭವಿಷ್ಯವನ್ನು ರಚಿಸುವುದು"
 }

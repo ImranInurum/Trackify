@@ -15,6 +15,8 @@ import 'package:trackify/feature/settings/presentation/pages/settings_screen.dar
 
 import '../../../../core/common/widgets/vehicle_card.dart';
 import '../../../../l10n/app_localizations.dart';
+import '../../../Vehicle_control/presentation/pages/vehicle_control_screen.dart';
+import '../../../upgrade_to_plus/presentation/pages/upgrade_to_plus.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -118,7 +120,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                 /// 🔹 UPGRADE BUTTON
                 GestureDetector(
-                  onTap: () => debugPrint("Upgrade tapped"),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const UpgradeToPlusScreen(),
+                      ),
+                    );
+                  },
                   child: Container(
                     margin: const EdgeInsets.symmetric(horizontal: 68),
                     padding: const EdgeInsets.symmetric(vertical: 14),
@@ -240,6 +249,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               vehicle: vehicle,
                               hasDevice: true,
                               // Assuming first vehicle has device for now
+                              onVehicleControl: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => const VehicleControlScreen(),
+                                  ),
+                                );
+                              },
                               onLock: () => debugPrint("Locked!"),
                               onRecharge: () => debugPrint("Recharge"),
                               onRenew: () => debugPrint("Renew"),

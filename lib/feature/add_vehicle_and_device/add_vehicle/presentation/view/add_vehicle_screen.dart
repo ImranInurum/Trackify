@@ -319,7 +319,7 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
               ),
             );
             Navigator.of(context).pushAndRemoveUntil(
-              MaterialPageRoute(builder: (context) => const AppNavigation()),
+              MaterialPageRoute(builder: (context) => AppNavigation()),
               (route) => false,
             );
           } else if (state.errorMessage != null) {

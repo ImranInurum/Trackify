@@ -635,5 +635,40 @@
     "safeParkingDescription": "इंजन चालू होने या टोइंग का पता चलने पर अलर्ट सक्षम करें",
     "geoFenceDeleteConfirmation": "क्या आप वाकई इस जियो-फेंस को हटाना चाहते हैं?",
     "geoFenceTurnOffConfirmation": "क्या आप वाकई इस जियो-फेंस को बंद करना चाहते हैं?",
-    "turnOff": "बंद करें"
+    "turnOff": "बंद करें",
+    "plusMembershipTitle": "प्लस सदस्यता",
+    "membership": "सदस्यता",
+    "premiumBenefits": "प्रीमियम लाभ",
+    "otherBenefits": "अन्य लाभ",
+    "trackifyPlusReviews": "TRACKIFY प्लस समीक्षाएं",
+    "offerings": "सुविधाएँ",
+    "plus": "प्लस",
+    "regular": "नियमित",
+    "upgradeNowAtJust": "अभी अपग्रेड करें मात्र ₹{price} में",
+    "@upgradeNowAtJust": {
+      "placeholders": {
+        "price": {
+          "type": "String"
+        }
+      }
+    },
+    "viewMoreReviews": "अधिक समीक्षाएं देखें",
+    "speciallyForYou": "विशेष रूप से आपके लिए",
+    "footerMotto": "एक ऐसे भविष्य का निर्माण जहाँ हर बाइक स्मार्ट हो\nऔर हर राइडर सुरक्षित हो",
+    "vehicleDocumentsTitle": "वाहन दस्तावेज़",
+    "personalDocumentsSubtitle": "अपने वाहन के दस्तावेज़ अपलोड करके अपने पास रखें",
+    "vehicleRC": "वाहन RC",
+    "insurance": "बीमा विवरण",
+    "puc": "PUC प्रमाणपत्र",
+    "vehicleRCTitle": "वाहन RC",
+    "insuranceTitle": "बीमा विवरण",
+    "pucTitle": "PUC प्रमाणपत्र",
+    "notificationControlsTitle": "अधिसूचना नियंत्रण",
+    "ignitionOnOffTitle": "इग्निशन चालू/बंद",
+    "ignitionOnOffDesc": "वाहन का इग्निशन चालू या बंद होने पर अधिसूचना प्राप्त करें",
+    "motionWithIgnitionOffTitle": "इग्निशन बंद होने पर गति",
+    "motionWithIgnitionOffDesc": "जब इग्निशन बंद हो और वाहन चले तो अधिसूचना प्राप्त करें",
+    "powerSupplyOffTitle": "पावर सप्लाई बंद",
+    "powerSupplyOffDesc": "जब Ajjas को पावर नहीं मिल रही हो तो अधिसूचना प्राप्त करें",
+    "appNotification": "ऐप अधिसूचना"
 }
