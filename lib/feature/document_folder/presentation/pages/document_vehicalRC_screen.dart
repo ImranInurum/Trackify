@@ -7,25 +7,23 @@ import 'package:image_cropper/image_cropper.dart';
 import 'package:intl/intl.dart';
 import 'package:trackify/l10n/app_localizations.dart';
 
-/// Generic single-document upload screen — reused for Insurance, PUC, etc.
-/// Pass the [title] that should appear in the header.
-class DocumentSubScreen extends StatefulWidget {
+class DocumentVehicleRCScreen extends StatefulWidget {
   final String title;
 
-  const DocumentSubScreen({super.key, required this.title});
+  const DocumentVehicleRCScreen({super.key, required this.title});
 
   @override
-  State<DocumentSubScreen> createState() => _DocumentSubScreenState();
+  State<DocumentVehicleRCScreen> createState() =>
+      _DocumentVehicleRCScreenState();
 }
 
-class _DocumentSubScreenState extends State<DocumentSubScreen> {
+class _DocumentVehicleRCScreenState extends State<DocumentVehicleRCScreen> {
   File? _frontFile;
   File? _backFile;
   DateTime? _selectedDate;
   bool _isLoading = false;
   String? _error = null;
   bool _isPickerActive = false;
-
 
   static const int _maxBytes = 5 * 1024 * 1024;
   final ImagePicker _picker = ImagePicker();
@@ -157,7 +155,7 @@ class _DocumentSubScreenState extends State<DocumentSubScreen> {
     }
   }
 
-  // ── BOTTOM SHEET ─────────────────────────────────────────────
+  // ── BOTTOM SHEET ────────────────────────────────────────────
 
   void _showPicker(bool isFront) {
     final l10n = AppLocalizations.of(context)!;
@@ -288,7 +286,7 @@ class _DocumentSubScreenState extends State<DocumentSubScreen> {
     Navigator.pop(context);
   }
 
-  // ── BUILD ────────────────────────────────────────────────────
+  // ── UI ───────────────────────────────────────────────────────
 
   @override
   Widget build(BuildContext context) {
@@ -301,8 +299,6 @@ class _DocumentSubScreenState extends State<DocumentSubScreen> {
         ? l10n.selectExpiryDate
         : DateFormat('dd / MM / yyyy').format(_selectedDate!);
 
-
-
     return Scaffold(
       backgroundColor: colorScheme.surface,
       body: SafeArea(
@@ -313,12 +309,12 @@ class _DocumentSubScreenState extends State<DocumentSubScreen> {
             children: [
               const SizedBox(height: 14),
 
-              // ── Header ──────────────────────────────────────
               Row(
                 children: [
                   GestureDetector(
                     onTap: () => Navigator.pop(context),
-                    child: Icon(Icons.arrow_back, color: colorScheme.onSurface),
+                    child:
+                        Icon(Icons.arrow_back, color: colorScheme.onSurface),
                   ),
                   Expanded(
                     child: Center(
@@ -339,7 +335,8 @@ class _DocumentSubScreenState extends State<DocumentSubScreen> {
 
               if (_isLoading) const LinearProgressIndicator(),
               if (_error != null)
-                Text(_error!, style: const TextStyle(color: Colors.red)),
+                Text(_error!,
+                    style: const TextStyle(color: Colors.red)),
 
               const SizedBox(height: 20),
 
@@ -349,11 +346,13 @@ class _DocumentSubScreenState extends State<DocumentSubScreen> {
                 child: Container(
                   height: screenHeight * 0.055,
                   width: screenWidth * 0.45,
-                  padding: const EdgeInsets.symmetric(horizontal: 14),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 14),
                   decoration: BoxDecoration(
                     color: Theme.of(context).cardColor,
                     borderRadius: BorderRadius.circular(10),
-                    border: Border.all(color: colorScheme.outlineVariant),
+                    border:
+                        Border.all(color: colorScheme.outlineVariant),
                   ),
                   child: Row(
                     children: [
@@ -371,7 +370,8 @@ class _DocumentSubScreenState extends State<DocumentSubScreen> {
                       ),
                       const SizedBox(width: 8),
                       Icon(Icons.calendar_today_outlined,
-                          size: 18, color: colorScheme.onSurfaceVariant),
+                          size: 18,
+                          color: colorScheme.onSurfaceVariant),
                     ],
                   ),
                 ),
@@ -397,7 +397,8 @@ class _DocumentSubScreenState extends State<DocumentSubScreen> {
               Text(
                 l10n.commitmentText,
                 style: TextStyle(
-                    color: colorScheme.onSurface.withOpacity(0.5), fontSize: screenHeight * 0.045),
+                    color: colorScheme.onSurface.withOpacity(0.5),
+                    fontSize: screenHeight * 0.045),
               ),
 
               SizedBox(height: screenHeight * 0.03),
@@ -407,22 +408,21 @@ class _DocumentSubScreenState extends State<DocumentSubScreen> {
                   const Icon(Icons.shield, color: Colors.green, size: 20),
                   const SizedBox(width: 6),
                   Text(l10n.documentsSafe,
-                      style: TextStyle(
-                          fontSize: 14, color: colorScheme.onSurface)),
+                      style: TextStyle(fontSize: 14,color: colorScheme.onSurface)),
                 ],
               ),
 
               const Spacer(),
 
-              // ── Save Button ──────────────────────────────────
               GestureDetector(
                 onTap: _frontFile == null ? null : _submit,
                 child: Container(
                   height: screenHeight * 0.055,
                   width: double.infinity,
                   decoration: BoxDecoration(
-                    color:
-                        _frontFile == null ? colorScheme.outline : colorScheme.primary,
+                    color: _frontFile == null
+                        ? colorScheme.outline
+                        : colorScheme.primary,
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Center(
@@ -490,7 +490,8 @@ class _DocumentSubScreenState extends State<DocumentSubScreen> {
                             child: Text(
                               file.path.split('/').last,
                               style: TextStyle(
-                                  color: colorScheme.onSurfaceVariant, fontSize: 10),
+                                  color: colorScheme.onSurfaceVariant,
+                                  fontSize: 10),
                               textAlign: TextAlign.center,
                               maxLines: 2,
                               overflow: TextOverflow.ellipsis,

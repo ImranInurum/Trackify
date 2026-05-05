@@ -11,7 +11,7 @@ class PickerService {
 
   static Future<String?> pick(PickSource source) async {
     if (source == PickSource.pdf) {
-      final result = await FilePicker.platform.pickFiles(
+      final result = await FilePicker.pickFiles(
         type: FileType.custom,
         allowedExtensions: ['pdf'],
       );
