@@ -145,7 +145,7 @@ class _SignInScreenState extends State<SignInScreen> {
                   (mapState.vehicleList.vehicles?.isNotEmpty ?? false)) {
                 Navigator.pushReplacement(
                   context,
-                  MaterialPageRoute(builder: (_) => const AppNavigation()),
+                  MaterialPageRoute(builder: (_) =>  AppNavigation()),
                 );
               } else {
                 Navigator.pushReplacement(

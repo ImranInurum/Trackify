@@ -35,7 +35,11 @@ class _MyGarageScreenState extends State<MyGarageScreen> {
         elevation: 0,
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Theme.of(context).colorScheme.onSurface, size: 24),
+          icon: Icon(
+            Icons.arrow_back,
+            color: Theme.of(context).colorScheme.onSurface,
+            size: 24,
+          ),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
@@ -64,7 +68,11 @@ class _MyGarageScreenState extends State<MyGarageScreen> {
               return Center(
                 child: Text(
                   l10n.noVehiclesInGarage,
-                  style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6)),
+                  style: TextStyle(
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.onSurface.withOpacity(0.6),
+                  ),
                 ),
               );
             }
@@ -74,7 +82,10 @@ class _MyGarageScreenState extends State<MyGarageScreen> {
               backgroundColor: Theme.of(context).cardColor,
               onRefresh: () => context.read<MyGarageCubit>().fetchVehicles(),
               child: ListView.builder(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 20,
+                ),
                 itemCount: vehicles.length,
                 itemBuilder: (context, index) {
                   final vehicle = vehicles[index];
@@ -86,6 +97,7 @@ class _MyGarageScreenState extends State<MyGarageScreen> {
                     context: context,
                     vehicle: vehicle,
                     hasDevice: hasDevice,
+                    onVehicleControl: () => debugPrint('Vehicle control'),
                     onLock: () => _handleVehicleLock(context, vehicle),
                     onRecharge: () => _handleRecharge(context, vehicle),
                     onRenew: () => _handleRenew(context, vehicle),
@@ -119,10 +131,15 @@ class _MyGarageScreenState extends State<MyGarageScreen> {
             ElevatedButton(
               style: ElevatedButton.styleFrom(
                 backgroundColor: Theme.of(context).colorScheme.onSurface,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
               ),
               onPressed: () => context.read<MyGarageCubit>().fetchVehicles(),
-              child: Text(l10n.retry, style: TextStyle(color: Theme.of(context).colorScheme.surface)),
+              child: Text(
+                l10n.retry,
+                style: TextStyle(color: Theme.of(context).colorScheme.surface),
+              ),
             ),
           ],
         ),
@@ -146,8 +163,8 @@ class _MyGarageScreenState extends State<MyGarageScreen> {
 
   void _handleRenew(BuildContext context, dynamic vehicle) {
     // TODO: Navigate to Warranty Renewal flow
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(const SnackBar(content: Text("Opening Warranty Renewal...")));
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text("Opening Warranty Renewal...")),
+    );
   }
 }

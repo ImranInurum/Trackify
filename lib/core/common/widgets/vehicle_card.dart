@@ -13,6 +13,7 @@ class VehicleCard extends StatelessWidget {
   final VoidCallback onLock;
   final VoidCallback onRecharge;
   final VoidCallback onRenew;
+  final VoidCallback onVehicleControl;
   final BuildContext context;
 
   const VehicleCard({
@@ -22,6 +23,7 @@ class VehicleCard extends StatelessWidget {
     required this.onLock,
     required this.onRecharge,
     required this.onRenew,
+    required this.onVehicleControl,
     required this.context,
   });
 
@@ -46,77 +48,80 @@ class VehicleCard extends StatelessWidget {
           const SizedBox(height: 16),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: Row(
-              children: [
-                SizedBox(
-                  width: 50,
-                  height: 50,
-                  child: Image.asset(AppImages.bikeImage, fit: BoxFit.contain),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "${vehicle.vehicleMaker} ${vehicle.vehicleModel}",
-                        style: TextStyle(
-                          fontSize: 17,
-                          fontWeight: FontWeight.bold,
-                          color: Theme.of(context).colorScheme.onSurface,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Row(
-                        children: [
-                          Text(
-                            vehicle.vehicleNumber?.toUpperCase() ?? 'N/A',
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                          if (hasDevice)
-                            Text(
-                              l10n.lite4G,
-                              style: TextStyle(
-                                fontSize: 13,
-                                color: Theme.of(context).colorScheme.primary,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            )
-                          else
-                            Row(
-                              children: [
-                                const Icon(
-                                  Icons.verified_user_rounded,
-                                  color: Colors.orange,
-                                  size: 14,
-                                ),
-                                const SizedBox(width: 4),
-                                Text(
-                                  l10n.buyAjjasDevice,
-                                  style: const TextStyle(
-                                    fontSize: 12,
-                                    color: Colors.orange,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ],
-                            ),
-                        ],
-                      ),
-                    ],
+            child: InkWell(
+              onTap: onVehicleControl,
+              child: Row(
+                children: [
+                  SizedBox(
+                    width: 50,
+                    height: 50,
+                    child: Image.asset(AppImages.bikeImage, fit: BoxFit.contain),
                   ),
-                ),
-                Icon(
-                  Icons.chevron_right,
-                  color: Theme.of(context).colorScheme.onSurface.withOpacity(0.3),
-                  size: 24,
-                ),
-              ],
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "${vehicle.vehicleMaker} ${vehicle.vehicleModel}",
+                          style: TextStyle(
+                            fontSize: 17,
+                            fontWeight: FontWeight.bold,
+                            color: Theme.of(context).colorScheme.onSurface,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Row(
+                          children: [
+                            Text(
+                              vehicle.vehicleNumber?.toUpperCase() ?? 'N/A',
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            if (hasDevice)
+                              Text(
+                                l10n.lite4G,
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  color: Theme.of(context).colorScheme.primary,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              )
+                            else
+                              Row(
+                                children: [
+                                  const Icon(
+                                    Icons.verified_user_rounded,
+                                    color: Colors.orange,
+                                    size: 14,
+                                  ),
+                                  const SizedBox(width: 4),
+                                  Text(
+                                    l10n.buyAjjasDevice,
+                                    style: const TextStyle(
+                                      fontSize: 12,
+                                      color: Colors.orange,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                  Icon(
+                    Icons.chevron_right,
+                    color: Theme.of(context).colorScheme.onSurface.withOpacity(0.3),
+                    size: 24,
+                  ),
+                ],
+              ),
             ),
           ),
           const SizedBox(height: 20),

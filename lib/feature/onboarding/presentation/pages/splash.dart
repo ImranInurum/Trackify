@@ -76,7 +76,7 @@ class _SplashScreenState extends State<SplashScreen> {
     if (mapState is MapLoaded && (mapState.vehicleList.vehicles?.isNotEmpty ?? false)) {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (_) => const AppNavigation()),
+        MaterialPageRoute(builder: (_) => AppNavigation()),
       );
     } else {
       Navigator.pushReplacement(

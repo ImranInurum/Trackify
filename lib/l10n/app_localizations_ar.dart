@@ -1228,6 +1228,58 @@ class AppLocalizationsAr extends AppLocalizations {
   String get continue6Month => 'المتابعة مع خطة 6 أشهر';
 
   @override
+  String get vehicleDocumentsTitle => 'Vehicle Documents';
+
+  @override
+  String get personalDocumentsSubtitle =>
+      'Keep your vehicle documents handy by uploading them';
+
+  @override
+  String get vehicleRC => 'Vehicle RC';
+
+  @override
+  String get insurance => 'Insurance Details';
+
+  @override
+  String get puc => 'PUC Certificate';
+
+  @override
+  String get vehicleRCTitle => 'Vehicle RC';
+
+  @override
+  String get insuranceTitle => 'Insurance Details';
+
+  @override
+  String get pucTitle => 'PUC Certificate';
+
+  @override
+  String get notificationControlsTitle => 'Notification Controls';
+
+  @override
+  String get ignitionOnOffTitle => 'Ignition ON/OFF';
+
+  @override
+  String get ignitionOnOffDesc =>
+      'Get notification when vehicle ignition is ON or OFF';
+
+  @override
+  String get motionWithIgnitionOffTitle => 'Motion with Ignition OFF';
+
+  @override
+  String get motionWithIgnitionOffDesc =>
+      'Get notification when vehicle moves when ignition is OFF';
+
+  @override
+  String get powerSupplyOffTitle => 'Power supply OFF';
+
+  @override
+  String get powerSupplyOffDesc =>
+      'Get notification when Ajjas is not receiving power';
+
+  @override
+  String get appNotification => 'App notification';
+
+  @override
   String get odometerReading => 'Odometer Reading';
 
   @override
@@ -1564,4 +1616,43 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get turnOff => 'Turn off';
+
+  @override
+  String get plusMembershipTitle => 'PLUS MEMBERSHIP';
+
+  @override
+  String get membership => 'Membership';
+
+  @override
+  String get premiumBenefits => 'PREMIUM BENEFITS';
+
+  @override
+  String get otherBenefits => 'OTHER BENEFITS';
+
+  @override
+  String get trackifyPlusReviews => 'TRACKIFY PLUS REVIEWS';
+
+  @override
+  String get offerings => 'Offerings';
+
+  @override
+  String get plus => 'Plus';
+
+  @override
+  String get regular => 'Regular';
+
+  @override
+  String upgradeNowAtJust(String price) {
+    return 'Upgrade Now at Just ₹$price';
+  }
+
+  @override
+  String get viewMoreReviews => 'View More Reviews';
+
+  @override
+  String get speciallyForYou => 'Specially For You';
+
+  @override
+  String get footerMotto =>
+      'Creating a future where every bike is SMART\nand every rider is SAFE';
 }

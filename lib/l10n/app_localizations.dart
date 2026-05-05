@@ -2428,6 +2428,102 @@ abstract class AppLocalizations {
   /// **'Continue with 6-Month Plan'**
   String get continue6Month;
 
+  /// No description provided for @vehicleDocumentsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Vehicle Documents'**
+  String get vehicleDocumentsTitle;
+
+  /// No description provided for @personalDocumentsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep your vehicle documents handy by uploading them'**
+  String get personalDocumentsSubtitle;
+
+  /// No description provided for @vehicleRC.
+  ///
+  /// In en, this message translates to:
+  /// **'Vehicle RC'**
+  String get vehicleRC;
+
+  /// No description provided for @insurance.
+  ///
+  /// In en, this message translates to:
+  /// **'Insurance Details'**
+  String get insurance;
+
+  /// No description provided for @puc.
+  ///
+  /// In en, this message translates to:
+  /// **'PUC Certificate'**
+  String get puc;
+
+  /// No description provided for @vehicleRCTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Vehicle RC'**
+  String get vehicleRCTitle;
+
+  /// No description provided for @insuranceTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Insurance Details'**
+  String get insuranceTitle;
+
+  /// No description provided for @pucTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'PUC Certificate'**
+  String get pucTitle;
+
+  /// No description provided for @notificationControlsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Notification Controls'**
+  String get notificationControlsTitle;
+
+  /// No description provided for @ignitionOnOffTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Ignition ON/OFF'**
+  String get ignitionOnOffTitle;
+
+  /// No description provided for @ignitionOnOffDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Get notification when vehicle ignition is ON or OFF'**
+  String get ignitionOnOffDesc;
+
+  /// No description provided for @motionWithIgnitionOffTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Motion with Ignition OFF'**
+  String get motionWithIgnitionOffTitle;
+
+  /// No description provided for @motionWithIgnitionOffDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Get notification when vehicle moves when ignition is OFF'**
+  String get motionWithIgnitionOffDesc;
+
+  /// No description provided for @powerSupplyOffTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Power supply OFF'**
+  String get powerSupplyOffTitle;
+
+  /// No description provided for @powerSupplyOffDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Get notification when Ajjas is not receiving power'**
+  String get powerSupplyOffDesc;
+
+  /// No description provided for @appNotification.
+  ///
+  /// In en, this message translates to:
+  /// **'App notification'**
+  String get appNotification;
+
   /// No description provided for @odometerReading.
   ///
   /// In en, this message translates to:
@@ -3063,6 +3159,78 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Turn off'**
   String get turnOff;
+
+  /// No description provided for @plusMembershipTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'PLUS MEMBERSHIP'**
+  String get plusMembershipTitle;
+
+  /// No description provided for @membership.
+  ///
+  /// In en, this message translates to:
+  /// **'Membership'**
+  String get membership;
+
+  /// No description provided for @premiumBenefits.
+  ///
+  /// In en, this message translates to:
+  /// **'PREMIUM BENEFITS'**
+  String get premiumBenefits;
+
+  /// No description provided for @otherBenefits.
+  ///
+  /// In en, this message translates to:
+  /// **'OTHER BENEFITS'**
+  String get otherBenefits;
+
+  /// No description provided for @trackifyPlusReviews.
+  ///
+  /// In en, this message translates to:
+  /// **'TRACKIFY PLUS REVIEWS'**
+  String get trackifyPlusReviews;
+
+  /// No description provided for @offerings.
+  ///
+  /// In en, this message translates to:
+  /// **'Offerings'**
+  String get offerings;
+
+  /// No description provided for @plus.
+  ///
+  /// In en, this message translates to:
+  /// **'Plus'**
+  String get plus;
+
+  /// No description provided for @regular.
+  ///
+  /// In en, this message translates to:
+  /// **'Regular'**
+  String get regular;
+
+  /// No description provided for @upgradeNowAtJust.
+  ///
+  /// In en, this message translates to:
+  /// **'Upgrade Now at Just ₹{price}'**
+  String upgradeNowAtJust(String price);
+
+  /// No description provided for @viewMoreReviews.
+  ///
+  /// In en, this message translates to:
+  /// **'View More Reviews'**
+  String get viewMoreReviews;
+
+  /// No description provided for @speciallyForYou.
+  ///
+  /// In en, this message translates to:
+  /// **'Specially For You'**
+  String get speciallyForYou;
+
+  /// No description provided for @footerMotto.
+  ///
+  /// In en, this message translates to:
+  /// **'Creating a future where every bike is SMART\nand every rider is SAFE'**
+  String get footerMotto;
 }
 
 class _AppLocalizationsDelegate

@@ -443,5 +443,24 @@
   "pleaseUseResponsibly": "कृपया जबाबदारीने वापरा",
   "secondsBeforeSendingAlert": "सूचना पाठवण्यापूर्वी सेकंद",
   "sendNow": "आता पाठवा",
-  "cancel": "रद्द करा"
+  "cancel": "रद्द करा",
+  "plusMembershipTitle": "प्लस सदस्यता",
+  "membership": "सदस्यता",
+  "premiumBenefits": "प्रीमियम फायदे",
+  "otherBenefits": "इतर फायदे",
+  "trackifyPlusReviews": "ट्रॅकिफाय प्लस रिव्ह्यू",
+  "offerings": "ऑफरिंग्ज",
+  "plus": "प्लस",
+  "regular": "नियमित",
+  "upgradeNowAtJust": "आत्ताच अपग्रेड करा फक्त ₹{price} मध्ये",
+  "@upgradeNowAtJust": {
+    "placeholders": {
+      "price": {
+        "type": "String"
+      }
+    }
+  },
+  "viewMoreReviews": "अधिक रिव्ह्यू पहा",
+  "speciallyForYou": "खास तुमच्यासाठी",
+  "footerMotto": "प्रत्येक बाईक स्मार्ट आणि प्रत्येक रायडर सुरक्षित\nअसेल अशा भविष्याची निर्मिती करत आहोत"
 }

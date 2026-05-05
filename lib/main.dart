@@ -20,6 +20,10 @@ import 'package:trackify/feature/profile/presentation/cubit/profile_cubit.dart';
 import 'package:trackify/feature/record_via_phone/data/repository/record_via_phone_repository_impl.dart';
 import 'package:trackify/feature/record_via_phone/domain/usecase/record_via_phone_use_case.dart';
 import 'package:trackify/feature/record_via_phone/presentation/cubit/record_via_phone_cubit.dart';
+import 'package:trackify/feature/upgrade_to_plus/data/data_source/plus_membership_remote_data_source.dart';
+import 'package:trackify/feature/upgrade_to_plus/data/repository/plus_membership_repository_impl.dart';
+import 'package:trackify/feature/upgrade_to_plus/domain/usecase/get_plus_membership_details.dart';
+import 'package:trackify/feature/upgrade_to_plus/presentation/cubit/upgrade_to_plus_cubit.dart';
 
 import 'app/app.dart';
 import 'app/cubit/app_cubit.dart';
@@ -214,6 +218,15 @@ List<BlocProvider> _buildBlocProviders() {
 
     BlocProvider<SafeParkingCubit>(
       create: (_) => SafeParkingCubit(),
+    ),
+    BlocProvider<UpgradeToPlusCubit>(
+      create: (_) {
+        final repository = PlusMembershipRepositoryImpl(PlusMembershipRemoteDataSourceImpl());
+        return UpgradeToPlusCubit(
+          getPlusMembershipDetails: GetPlusMembershipDetails(repository),
+          repository: repository,
+        )..getDetails();
+      },
     ),
 
 

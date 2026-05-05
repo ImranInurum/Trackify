@@ -565,5 +565,24 @@
   "pleaseUseResponsibly": "தயவுசெய்து பொறுப்புடன் பயன்படுத்தவும்",
   "secondsBeforeSendingAlert": "எச்சரிக்கை அனுப்புவதற்கு முன் விநாடிகள்",
   "sendNow": "இப்போது அனுப்பு",
-  "cancel": "ரத்து செய்"
+  "cancel": "ரத்து செய்",
+  "plusMembershipTitle": "பிளஸ் மெம்பர்ஷிப்",
+  "membership": "மெம்பர்ஷிப்",
+  "premiumBenefits": "பிரீமியம் நன்மைகள்",
+  "otherBenefits": "இதர நன்மைகள்",
+  "trackifyPlusReviews": "டிராக்கிஃபை பிளஸ் மதிப்புரைகள்",
+  "offerings": "வழங்குதல்கள்",
+  "plus": "பிளஸ்",
+  "regular": "வழக்கமான",
+  "upgradeNowAtJust": "இப்போதே ₹{price} விலையில் அப்கிரேட் செய்யுங்கள்",
+  "@upgradeNowAtJust": {
+    "placeholders": {
+      "price": {
+        "type": "String"
+      }
+    }
+  },
+  "viewMoreReviews": "மேலும் மதிப்புரைகளைக் காண்க",
+  "speciallyForYou": "உங்களுக்காக பிரத்யேகமாக",
+  "footerMotto": "ஒவ்வொரு பைக்கும் ஸ்மார்ட்டாகவும், ஒவ்வொரு ரைடரும் பாதுகாப்பாகவும் இருக்கும்\nஎதிர்காலத்தை உருவாக்குதல்"
 }

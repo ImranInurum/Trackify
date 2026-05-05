@@ -42,6 +42,7 @@ import 'package:trackify/feature/map/presentation/cubit/promo_video_state.dart';
 import 'package:trackify/feature/map/presentation/widgets/promo_video_card.dart';
 
 import '../../../../core/config/style_manager.dart';
+import '../../../upgrade_to_plus/presentation/pages/upgrade_to_plus.dart';
 import '../cubit/map_cubit.dart';
 import '../cubit/map_state.dart';
 import '../../../../l10n/app_localizations.dart';
@@ -938,6 +939,13 @@ class _MapScreenState extends State<MapScreen> {
             vehicleName: vName,
             imei: selectedDevice?.imei,
           ),
+        ),
+      );
+    }  else if (label == l10n.upgradeToPlus.replaceAll(' ', '\n')) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const UpgradeToPlusScreen(),
         ),
       );
     }
