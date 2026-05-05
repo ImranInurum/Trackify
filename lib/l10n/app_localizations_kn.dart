@@ -251,7 +251,7 @@ class AppLocalizationsKn extends AppLocalizations {
   String get locationSharing => 'ಸ್ಥಳ ಹಂಚಿಕೆ';
 
   @override
-  String get documentFolder => 'ಡಾಕ್ಯುಮೆಂಟ್ ಫೋಲ್ಡರ್';
+  String get documentFolder => 'ದಾಖಲೆ ಫೋಲ್ಡರ್';
 
   @override
   String get voiceMonitoring => 'ಧ್ವನಿ ಮಾನಿಟರಿಂಗ್';
