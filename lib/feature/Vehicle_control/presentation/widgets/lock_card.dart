@@ -6,6 +6,7 @@ class LockCard extends StatelessWidget {
   final Color primaryTextColor;
   final Color secondaryTextColor;
   final VoidCallback onLock;
+  final VoidCallback onInfoTap;
 
   const LockCard({
     super.key,
@@ -13,6 +14,7 @@ class LockCard extends StatelessWidget {
     required this.primaryTextColor,
     required this.secondaryTextColor,
     required this.onLock,
+    required this.onInfoTap,
   });
 
   @override
@@ -45,23 +47,31 @@ class LockCard extends StatelessWidget {
           InteractiveSwipeButton(onSwipe: onLock),
           const SizedBox(height: 24),
           Center(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Expanded(
-                  child: Text(
-                    "Your vehicle will not be Locked / Unlocked if the device is in sleep mode.",
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: secondaryTextColor,
-                      height: 1.4,
+            child: GestureDetector(
+              onTap: onInfoTap,
+              child: Text.rich(
+                TextSpan(
+                  children: [
+                    TextSpan(
+                      text: "Your vehicle will not be Locked / Unlocked if the device is in sleep mode. ",
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: secondaryTextColor,
+                        height: 1.4,
+                      ),
                     ),
-                  ),
+                    WidgetSpan(
+                      alignment: PlaceholderAlignment.middle,
+                      child: Icon(
+                        Icons.info_outline,
+                        color: secondaryTextColor,
+                        size: 14,
+                      ),
+                    ),
+                  ],
                 ),
-                const SizedBox(width: 4),
-                Icon(Icons.info_outline, color: secondaryTextColor, size: 16),
-              ],
+                textAlign: TextAlign.center,
+              ),
             ),
           ),
         ],

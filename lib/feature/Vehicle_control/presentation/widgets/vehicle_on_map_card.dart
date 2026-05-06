@@ -35,7 +35,8 @@ class VehicleOnMapCard extends StatefulWidget {
   State<VehicleOnMapCard> createState() => _VehicleOnMapCardState();
 }
 
-class _VehicleOnMapCardState extends State<VehicleOnMapCard> with SingleTickerProviderStateMixin {
+class _VehicleOnMapCardState extends State<VehicleOnMapCard>
+    with SingleTickerProviderStateMixin {
   late AnimationController _shakeController;
   late Animation<double> _shakeAnimation;
 
@@ -99,11 +100,18 @@ class _VehicleOnMapCardState extends State<VehicleOnMapCard> with SingleTickerPr
                 child: InkWell(
                   onTap: widget.onUpgrade,
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 8,
+                    ),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(25),
                       gradient: const LinearGradient(
-                        colors: [Color(0xFFD6B57B), Color(0xFFE7D0B7), Color(0xFFD6B57B)],
+                        colors: [
+                          Color(0xFFD6B57B),
+                          Color(0xFFE7D0B7),
+                          Color(0xFFD6B57B),
+                        ],
                       ),
                     ),
                     child: Row(
@@ -112,7 +120,11 @@ class _VehicleOnMapCardState extends State<VehicleOnMapCard> with SingleTickerPr
                         const SizedBox(width: 6),
                         const Text(
                           "Upgrade to Plus",
-                          style: TextStyle(color: Colors.black, fontSize: 12, fontWeight: FontWeight.w800),
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w800,
+                          ),
                         ),
                       ],
                     ),
@@ -229,10 +241,7 @@ class _VehicleOnMapCardState extends State<VehicleOnMapCard> with SingleTickerPr
                 ),
                 child: const Text(
                   "Save Changes",
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
               ),
             ),

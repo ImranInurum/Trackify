@@ -24,6 +24,7 @@ class IconOption extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
           Stack(
             clipBehavior: Clip.none,
@@ -31,11 +32,12 @@ class IconOption extends StatelessWidget {
               Container(
                 width: 65,
                 height: 65,
+                padding: const EdgeInsets.all(4), // Padding inside border
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: isDark ? const Color(0xFF121212) : Colors.grey.shade200,
+                  color: isDark ? const Color(0xFF1E1E1E) : Colors.grey.shade100,
                   border: Border.all(
-                    color: isSelected ? theme.colorScheme.onSurface : Colors.transparent,
+                    color: isSelected ? theme.colorScheme.onSurface : theme.colorScheme.onSurface.withOpacity(0.1),
                     width: 2,
                   ),
                 ),
@@ -48,16 +50,13 @@ class IconOption extends StatelessWidget {
                 ),
               ),
               if (isLocked)
-                Positioned(
-                  top: 0,
-                  right: 0,
-                  child: Container(
-                    padding: const EdgeInsets.all(3),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFD6B57B),
-                      borderRadius: BorderRadius.circular(4),
-                    ),
-                    child: Icon(Icons.lock, color: theme.colorScheme.surface, size: 12),
+                const Positioned(
+                  top: -2,
+                  right: -2,
+                  child: Icon(
+                    Icons.lock,
+                    color: Color(0xFFFBB03B),
+                    size: 16,
                   ),
                 ),
             ],
@@ -67,7 +66,7 @@ class IconOption extends StatelessWidget {
             label,
             style: TextStyle(
               fontSize: 13,
-              color: isSelected ? theme.colorScheme.onSurface : theme.colorScheme.onSurface.withOpacity(0.3),
+              color: isSelected ? theme.colorScheme.onSurface : theme.colorScheme.onSurface.withOpacity(0.4),
               fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
             ),
           ),

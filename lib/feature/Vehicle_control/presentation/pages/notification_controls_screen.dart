@@ -3,7 +3,6 @@ import 'package:trackify/core/common/models/vehicle_list_model.dart';
 import 'package:trackify/feature/service_logs/presentation/widgets/vehicle_selection_app_bar.dart';
 import 'package:trackify/l10n/app_localizations.dart';
 
-
 class NotificationControlsScreen extends StatefulWidget {
   const NotificationControlsScreen({super.key});
 
@@ -34,13 +33,9 @@ class _NotificationControlsScreenState extends State<NotificationControlsScreen>
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context)!;
-    final isDark = theme.brightness == Brightness.dark;
     
-    final onSurface = theme.colorScheme.onSurface;
-    final onSurfaceVariant = theme.colorScheme.onSurfaceVariant;
-
     return Scaffold(
-      backgroundColor: isDark ? const Color(0xFF0C0C0C) : theme.scaffoldBackgroundColor,
+      backgroundColor: theme.scaffoldBackgroundColor,
       body: Column(
         children: [
           /// 🔹 SHARED VEHICLE SELECTION APP BAR

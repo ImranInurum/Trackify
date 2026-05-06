@@ -18,36 +18,44 @@ class ColorOption extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    
     return GestureDetector(
       onTap: onTap,
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
           Stack(
             clipBehavior: Clip.none,
             children: [
               Container(
-                width: 48,
-                height: 48,
+                width: 52,
+                height: 52,
+                padding: const EdgeInsets.all(4), // Space between border and color
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: color,
                   border: Border.all(
-                    color: isSelected ? Theme.of(context).colorScheme.onSurface : Theme.of(context).colorScheme.surface,
-                    width: isSelected ? 2 : 1,
+                    color: isSelected 
+                        ? (theme.brightness == Brightness.dark ? Colors.white : theme.colorScheme.primary)
+                        : theme.colorScheme.onSurface.withOpacity(0.15),
+                    width: 1.5,
+                  ),
+                ),
+                child: Container(
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: color,
                   ),
                 ),
               ),
               if (isLocked)
-                Positioned(
-                  top: 0,
-                  right: 0,
-                  child: Container(
-                    padding: const EdgeInsets.all(3),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFD6B57B),
-                      borderRadius: BorderRadius.circular(4),
-                    ),
-                    child: Icon(Icons.lock, color: Theme.of(context).colorScheme.surface, size: 10),
+                const Positioned(
+                  top: -2,
+                  right: -2,
+                  child: Icon(
+                    Icons.lock,
+                    color: Color(0xFFFBB03B),
+                    size: 16,
                   ),
                 ),
             ],
@@ -57,7 +65,9 @@ class ColorOption extends StatelessWidget {
             label,
             style: TextStyle(
               fontSize: 12,
-              color: isSelected ? Theme.of(context).colorScheme.onSurface : Theme.of(context).colorScheme.onSurface.withOpacity(0.3),
+              color: isSelected 
+                  ? theme.colorScheme.onSurface 
+                  : theme.colorScheme.onSurface.withOpacity(0.4),
               fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
             ),
           ),
