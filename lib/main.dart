@@ -25,6 +25,8 @@ import 'package:trackify/feature/upgrade_to_plus/data/data_source/plus_membershi
 import 'package:trackify/feature/upgrade_to_plus/data/repository/plus_membership_repository_impl.dart';
 import 'package:trackify/feature/upgrade_to_plus/domain/usecase/get_plus_membership_details.dart';
 import 'package:trackify/feature/upgrade_to_plus/presentation/cubit/upgrade_to_plus_cubit.dart';
+import 'package:trackify/feature/video_tutorial/data/repository/tutorial_repository_impl.dart';
+import 'package:trackify/feature/video_tutorial/domain/usecase/tutorial_usecase.dart';
 
 import 'app/app.dart';
 import 'app/cubit/app_cubit.dart';
@@ -80,6 +82,8 @@ import 'feature/overspeed_alert/data/repository/overspeed_alert_repository_impl.
 import 'feature/overspeed_alert/domain/usecase/create_overspeed_alert_usecase.dart';
 import 'feature/overspeed_alert/domain/usecase/get_overspeed_alerts_usecase.dart';
 
+import 'feature/video_tutorial/data/datasource/tutorial_remote_data.dart';
+import 'feature/video_tutorial/presentation/cubit/tutorial_cubit.dart';
 import 'firebase_options.dart';
 
 final GlobalKey<NavigatorState> rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -230,6 +234,16 @@ List<BlocProvider> _buildBlocProviders() {
         )..getDetails();
       },
     ),
+    BlocProvider<TutorialCubit>(
+      create: (_) => TutorialCubit(
+        GetTutorial(
+          TutorialRepositoryImplement(
+            TutorialRemoteData(),
+          ),
+        ),
+      ),
+    ),
+
 
 
 

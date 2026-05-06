@@ -1768,4 +1768,22 @@ class AppLocalizationsTa extends AppLocalizations {
 
   @override
   String get accessoryBills => 'Accessory Bills';
+
+  @override
+  String get tutorialVideos => 'பயிற்சி வீடியோக்கள்';
+
+  @override
+  String get videos => 'வீடியோக்கள்';
+
+  @override
+  String get location => 'இடம்';
+
+  @override
+  String get amazingFeatures => 'அற்புதமான அம்சங்கள்';
+
+  @override
+  String get loading => 'ஏற்றப்படுகிறது...';
+
+  @override
+  String get noVideos => 'வீடியோக்கள் இல்லை';
 }

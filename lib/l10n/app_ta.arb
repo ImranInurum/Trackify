@@ -632,5 +632,18 @@
   "addDocument": "Add Document",
   "documentName": "Document Name*",
   "vehicleImage": "Vehicle Image",
-  "newLabel": "NEW"
+  "newLabel": "NEW",
+
+
+   "tutorialVideos": "பயிற்சி வீடியோக்கள்",
+   "videos": "வீடியோக்கள்",
+
+   "location": "இடம்",
+   "amazingFeatures": "அற்புதமான அம்சங்கள்",
+   "deviceInstallation": "சாதன நிறுவல்",
+   "voiceMonitoring": "குரல் கண்காணிப்பு",
+
+   "loading": "ஏற்றப்படுகிறது...",
+   "noVideos": "வீடியோக்கள் இல்லை"
+
 }

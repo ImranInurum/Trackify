@@ -687,7 +687,7 @@ class AppLocalizationsMr extends AppLocalizations {
   String get vehicleModelListEmpty => 'या निवडीसाठी वाहन मॉडेल सूची रिकामी आहे';
 
   @override
-  String get deviceInstallation => 'डिव्हाइस स्थापना';
+  String get deviceInstallation => 'डिव्हाइस इंस्टॉलेशन';
 
   @override
   String get scanActivationCode => 'सक्रियन कोड स्कॅन करा';
@@ -1766,4 +1766,22 @@ class AppLocalizationsMr extends AppLocalizations {
 
   @override
   String get accessoryBills => 'Accessory Bills';
+
+  @override
+  String get tutorialVideos => 'ट्युटोरियल व्हिडिओ';
+
+  @override
+  String get videos => 'व्हिडिओ';
+
+  @override
+  String get location => 'स्थान';
+
+  @override
+  String get amazingFeatures => 'उत्तम वैशिष्ट्ये';
+
+  @override
+  String get loading => 'लोड होत आहे...';
+
+  @override
+  String get noVideos => 'कोणतेही व्हिडिओ उपलब्ध नाहीत';
 }

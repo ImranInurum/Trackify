@@ -1405,7 +1405,7 @@ abstract class AppLocalizations {
   /// No description provided for @deviceInstallation.
   ///
   /// In en, this message translates to:
-  /// **'Device Installation'**
+  /// **'Trackify Device Installation'**
   String get deviceInstallation;
 
   /// No description provided for @scanActivationCode.
@@ -3435,6 +3435,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Accessory Bills'**
   String get accessoryBills;
+
+  /// No description provided for @tutorialVideos.
+  ///
+  /// In en, this message translates to:
+  /// **'Tutorial Videos'**
+  String get tutorialVideos;
+
+  /// No description provided for @videos.
+  ///
+  /// In en, this message translates to:
+  /// **'Videos'**
+  String get videos;
+
+  /// No description provided for @location.
+  ///
+  /// In en, this message translates to:
+  /// **'Location'**
+  String get location;
+
+  /// No description provided for @amazingFeatures.
+  ///
+  /// In en, this message translates to:
+  /// **'Amazing Features'**
+  String get amazingFeatures;
+
+  /// No description provided for @loading.
+  ///
+  /// In en, this message translates to:
+  /// **'Loading...'**
+  String get loading;
+
+  /// No description provided for @noVideos.
+  ///
+  /// In en, this message translates to:
+  /// **'No videos found'**
+  String get noVideos;
 }
 
 class _AppLocalizationsDelegate

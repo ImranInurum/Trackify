@@ -254,7 +254,7 @@ class AppLocalizationsKn extends AppLocalizations {
   String get documentFolder => 'ಡಾಕ್ಯುಮೆಂಟ್ ಫೋಲ್ಡರ್';
 
   @override
-  String get voiceMonitoring => 'ಧ್ವನಿ ಮಾನಿಟರಿಂಗ್';
+  String get voiceMonitoring => 'ಧ್ವನಿ ಮೇಲ್ವಿಚಾರಣೆ';
 
   @override
   String get remoteEngineOff => 'ರಿಮೋಟ್ ಇಂಜಿನ್ ಆಫ್';
@@ -1771,4 +1771,22 @@ class AppLocalizationsKn extends AppLocalizations {
 
   @override
   String get accessoryBills => 'Accessory Bills';
+
+  @override
+  String get tutorialVideos => 'ಟ್ಯುಟೋರಿಯಲ್ ವೀಡಿಯೊಗಳು';
+
+  @override
+  String get videos => 'ವೀಡಿಯೊಗಳು';
+
+  @override
+  String get location => 'ಸ್ಥಳ';
+
+  @override
+  String get amazingFeatures => 'ಅದ್ಭುತ ವೈಶಿಷ್ಟ್ಯಗಳು';
+
+  @override
+  String get loading => 'ಲೋಡ್ ಆಗುತ್ತಿದೆ...';
+
+  @override
+  String get noVideos => 'ಯಾವುದೇ ವೀಡಿಯೊಗಳು ಲಭ್ಯವಿಲ್ಲ';
 }

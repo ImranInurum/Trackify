@@ -709,5 +709,16 @@
     "billsDescription": "Upload and manage your vehicle-related bills",
     "movedTo": "Moved to",
     "viewNow": "View Now",
-    "accessoryBills": "Accessory Bills"
+    "accessoryBills": "Accessory Bills",
+
+    "tutorialVideos": "Tutorial Videos",
+      "videos": "Videos",
+
+      "location": "Location",
+      "amazingFeatures": "Amazing Features",
+      "deviceInstallation": "Trackify Device Installation",
+      "voiceMonitoring": "Voice Monitoring",
+
+      "loading": "Loading...",
+      "noVideos": "No videos found"
 }

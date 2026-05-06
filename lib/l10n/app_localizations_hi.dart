@@ -252,7 +252,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get documentFolder => 'दस्तावेज़ फ़ोल्डर';
 
   @override
-  String get voiceMonitoring => 'वॉयस मॉनिटरिंग';
+  String get voiceMonitoring => 'वॉइस मॉनिटरिंग';
 
   @override
   String get remoteEngineOff => 'रिमोट इंजन बंद';
@@ -688,7 +688,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get vehicleModelListEmpty => 'इस चयन के लिए वाहन मॉडल सूची खाली है';
 
   @override
-  String get deviceInstallation => 'डिवाइस इंस्टालेशन';
+  String get deviceInstallation => 'डिवाइस इंस्टॉलेशन';
 
   @override
   String get scanActivationCode => 'एक्टिवेशन कोड स्कैन करें';
@@ -1767,4 +1767,22 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get accessoryBills => 'एक्सेसरी बिल';
+
+  @override
+  String get tutorialVideos => 'ट्यूटोरियल वीडियो';
+
+  @override
+  String get videos => 'वीडियो';
+
+  @override
+  String get location => 'लोकेशन';
+
+  @override
+  String get amazingFeatures => 'शानदार फीचर्स';
+
+  @override
+  String get loading => 'लोड हो रहा है...';
+
+  @override
+  String get noVideos => 'कोई वीडियो नहीं मिला';
 }
