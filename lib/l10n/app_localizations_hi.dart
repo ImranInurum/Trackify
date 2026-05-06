@@ -422,6 +422,12 @@ class AppLocalizationsHi extends AppLocalizations {
   String get electric => 'इलेक्ट्रिक';
 
   @override
+  String get vehicleImage => 'वाहन की छवि';
+
+  @override
+  String get newLabel => 'नया';
+
+  @override
   String get vehicleMake => 'वाहन का ब्रांड';
 
   @override
@@ -1242,25 +1248,25 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get personalDocumentsSubtitle =>
-      'अपने वाहन के दस्तावेज़ अपलोड करके अपने पास रखें';
+      'अपने वाहन के दस्तावेज़ अपलोड करके संभाल कर रखें';
 
   @override
-  String get vehicleRC => 'वाहन RC';
+  String get vehicleRC => 'वाहन आरसी';
 
   @override
-  String get insurance => 'बीमा विवरण';
+  String get insurance => 'बीमा';
 
   @override
-  String get puc => 'PUC प्रमाणपत्र';
+  String get puc => 'पीयूसी';
 
   @override
-  String get vehicleRCTitle => 'वाहन RC';
+  String get vehicleRCTitle => 'वाहन आरसी';
 
   @override
   String get insuranceTitle => 'बीमा विवरण';
 
   @override
-  String get pucTitle => 'PUC प्रमाणपत्र';
+  String get pucTitle => 'पीयूसी प्रमाणपत्र';
 
   @override
   String get notificationControlsTitle => 'अधिसूचना नियंत्रण';
@@ -1663,4 +1669,102 @@ class AppLocalizationsHi extends AppLocalizations {
   @override
   String get footerMotto =>
       'एक ऐसे भविष्य का निर्माण जहाँ हर बाइक स्मार्ट हो\nऔर हर राइडर सुरक्षित हो';
+
+  @override
+  String get cropDocument => 'दस्तावेज़ क्रॉप करें';
+
+  @override
+  String get cropVehicleImage => 'वाहन की छवि क्रॉप करें';
+
+  @override
+  String get uploadImage => 'छवि अपलोड करें';
+
+  @override
+  String get camera => 'कैमरा';
+
+  @override
+  String get gallery => 'गैलरी';
+
+  @override
+  String get pdf => 'पीडीएफ';
+
+  @override
+  String get fileTooLarge => 'फ़ाइल का आकार 5MB से अधिक है';
+
+  @override
+  String get pickImageError => 'छवि चुनने में त्रुटि';
+
+  @override
+  String get pickPdfError => 'पीडीएफ चुनने में त्रुटि';
+
+  @override
+  String get pdfTooLarge => 'पीडीएफ का आकार 5MB से अधिक है';
+
+  @override
+  String get uploadDocuments => 'दस्तावेज़ अपलोड करें';
+
+  @override
+  String get frontSide => 'सामने का हिस्सा';
+
+  @override
+  String get backSide => 'पीछे का हिस्सा';
+
+  @override
+  String get commitmentText => 'आपके\nदस्तावेज़\nहमारी\nप्रतिबद्धता';
+
+  @override
+  String get documentsSafe => 'आपके दस्तावेज़ एन्क्रिप्टेड और सुरक्षित हैं';
+
+  @override
+  String get addDocument => 'दस्तावेज़ जोड़ें';
+
+  @override
+  String get frontRequired => 'सामने का दस्तावेज़ आवश्यक है';
+
+  @override
+  String get successMessage => 'दस्तावेज़ सफलतापूर्वक सहेजा गया';
+
+  @override
+  String get selectExpiryDate => 'समाप्ति तिथि';
+
+  @override
+  String get documentsEncrypted =>
+      'आपके दस्तावेज़ एन्क्रिप्टेड और सुरक्षित हैं';
+
+  @override
+  String get fileSizeNote => 'नोट: अधिकतम फ़ाइल का आकार 5MB है';
+
+  @override
+  String get personalDocumentsTitle => 'व्यक्तिगत दस्तावेज़';
+
+  @override
+  String get drivingLicense => 'ड्राइविंग लाइसेंस';
+
+  @override
+  String get drivingLicenseTitle => 'ड्राइविंग लाइसेंस';
+
+  @override
+  String get otherDocuments => 'अन्य दस्तावेज़';
+
+  @override
+  String get otherDocumentTitle => 'अन्य दस्तावेज़';
+
+  @override
+  String get documentName => 'दस्तावेज़ का नाम*';
+
+  @override
+  String get billsTitle => 'बिल';
+
+  @override
+  String get billsDescription =>
+      'अपने वाहन से संबंधित बिल अपलोड और प्रबंधित करें';
+
+  @override
+  String get movedTo => 'यहाँ स्थानांतरित';
+
+  @override
+  String get viewNow => 'अभी देखें';
+
+  @override
+  String get accessoryBills => 'एक्सेसरी बिल';
 }

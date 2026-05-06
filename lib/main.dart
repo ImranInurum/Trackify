@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:trackify/feature/add_vehicle_and_device/add_vehicle/domain/use_case/add_vehicle_use_case.dart';
+import 'package:trackify/feature/document_folder/presentation/cubit/document_cubit.dart';
 import 'package:trackify/feature/help_and_support/data/repository_impl/help_support_repository_impl.dart';
 import 'package:trackify/feature/help_and_support/domain/use_case/help_support_use_case.dart';
 import 'package:trackify/feature/help_and_support/presentation/cubit/help_support_cubit.dart';
@@ -44,6 +45,7 @@ import 'feature/auth/data/repository/auth_repository_impl.dart';
 import 'feature/auth/domain/usecase/auth_case.dart';
 import 'feature/auth/presentation/cubit/auth_cubit.dart';
 import 'feature/device_data/presentation/cubit/device_data_cubit.dart';
+import 'feature/document_folder/presentation/pages/document_screen.dart';
 import 'feature/emergency_sos/data/data_source/emergency_alert_remote_data.dart';
 import 'feature/emergency_sos/data/repository/emergency_alert_repository_impl.dart';
 import 'feature/emergency_sos/domain/usecase/emergency_alert_usecase.dart';
@@ -228,6 +230,9 @@ List<BlocProvider> _buildBlocProviders() {
         )..getDetails();
       },
     ),
+
+
+
 
 
   ];

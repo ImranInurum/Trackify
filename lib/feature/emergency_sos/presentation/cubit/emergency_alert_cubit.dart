@@ -48,7 +48,8 @@ class EmergencyAlertCubit extends Cubit<EmergencyAlertState> {
           result.message,
         ),
       );
-    } catch (e) {
+    }
+    catch (e) {
       emit(
         EmergencyError(
           e.toString(),
