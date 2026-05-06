@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../../l10n/app_localizations.dart';
 import '../../domain/entities/vehicle_control_entity.dart';
 import '../cubit/vehicle_control_cubit.dart';
 
@@ -19,52 +20,53 @@ class _EditVehicleScreenState extends State<EditVehicleScreen> {
   String selectedMake = "Honda";
   String selectedModel = "SP 125";
 
-  final List<Map<String, dynamic>> vehicleTypes = [
-    {"label": "Two Wheeler", "icon": Icons.motorcycle_outlined},
-    {"label": "Four Wheeler", "icon": Icons.directions_car_outlined},
-    {"label": "Auto Rickshaw", "icon": Icons.electric_rickshaw_outlined},
-    {"label": "Heavy Vehicle", "icon": Icons.local_shipping_outlined},
+  List<Map<String, dynamic>> _getVehicleTypes(AppLocalizations l10n) => [
+    {"key": "twoWheeler", "label": l10n.twoWheeler, "icon": Icons.motorcycle_outlined},
+    {"key": "fourWheeler", "label": l10n.fourWheeler, "icon": Icons.directions_car_outlined},
+    {"key": "autoRickshaw", "label": l10n.autoRickshaw, "icon": Icons.electric_rickshaw_outlined},
+    {"key": "heavyVehicle", "label": l10n.heavyVehicle, "icon": Icons.local_shipping_outlined},
   ];
 
-  List<Map<String, dynamic>> getAvailableFuelTypes() {
+  List<Map<String, dynamic>> _getAvailableFuelTypes(AppLocalizations l10n) {
     final List<Map<String, dynamic>> allFuelTypes = [
-      {"label": "Petrol", "icon": Icons.local_gas_station_outlined},
-      {"label": "Diesel", "icon": Icons.local_gas_station_outlined},
-      {"label": "Electric", "icon": Icons.electric_bolt_outlined},
-      {"label": "CNG", "icon": Icons.gas_meter_outlined},
+      {"key": "petrol", "label": l10n.petrol, "icon": Icons.local_gas_station_outlined},
+      {"key": "diesel", "label": l10n.diesel, "icon": Icons.local_gas_station_outlined},
+      {"key": "electric", "label": l10n.electric, "icon": Icons.electric_bolt_outlined},
+      {"key": "cng", "label": l10n.cng, "icon": Icons.gas_meter_outlined},
     ];
 
-    if (selectedType == "Two Wheeler") {
-      return allFuelTypes.where((f) => f['label'] == "Petrol" || f['label'] == "Electric").toList();
-    } else if (selectedType == "Heavy Vehicle") {
-      return allFuelTypes.where((f) => f['label'] != "CNG").toList();
-    } else if (selectedType == "Auto Rickshaw") {
-      // Assuming Auto Rickshaw has Petrol, Electric, CNG (based on common knowledge/screenshots)
-      return allFuelTypes.where((f) => f['label'] != "Diesel").toList();
+    if (selectedType == "twoWheeler") {
+      return allFuelTypes.where((f) => f['key'] == "petrol" || f['key'] == "electric").toList();
+    } else if (selectedType == "heavyVehicle") {
+      return allFuelTypes.where((f) => f['key'] != "cng").toList();
+    } else if (selectedType == "autoRickshaw") {
+      return allFuelTypes.where((f) => f['key'] != "diesel").toList();
     }
     
-    // Four Wheeler has all
     return allFuelTypes;
   }
 
   @override
   void initState() {
     super.initState();
-    selectedType = "Two Wheeler";
-    selectedFuel = widget.vehicle.fuelType;
+    selectedType = "twoWheeler";
+    selectedFuel = widget.vehicle.fuelType.toLowerCase(); // Ensure it matches our keys
     numberController = TextEditingController(text: widget.vehicle.vehicleNumber);
   }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
     final isDark = theme.brightness == Brightness.dark;
     final primaryColor = theme.colorScheme.primary;
-    final availableFuels = getAvailableFuelTypes();
+    
+    final vehicleTypes = _getVehicleTypes(l10n);
+    final availableFuels = _getAvailableFuelTypes(l10n);
 
     // Ensure selectedFuel is still valid for the new type
-    if (!availableFuels.any((f) => f['label'] == selectedFuel)) {
-      selectedFuel = availableFuels.first['label'];
+    if (!availableFuels.any((f) => f['key'] == selectedFuel)) {
+      selectedFuel = availableFuels.first['key'];
     }
 
     return Scaffold(
@@ -77,7 +79,7 @@ class _EditVehicleScreenState extends State<EditVehicleScreen> {
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
-          "Edit Vehicle",
+          l10n.editVehicle,
           style: theme.textTheme.titleLarge?.copyWith(
             fontWeight: FontWeight.bold,
             color: theme.colorScheme.onSurface,
@@ -90,23 +92,23 @@ class _EditVehicleScreenState extends State<EditVehicleScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildSectionTitle("Vehicle Type"),
+            _buildSectionTitle(l10n.vehicleType),
             const SizedBox(height: 16),
             _buildHorizontalSelection(
               items: vehicleTypes,
-              selectedLabel: selectedType,
+              selectedKey: selectedType,
               onSelect: (val) => setState(() => selectedType = val),
             ),
             const SizedBox(height: 32),
-            _buildSectionTitle("Fuel Type"),
+            _buildSectionTitle(l10n.fuelType),
             const SizedBox(height: 16),
             _buildHorizontalSelection(
               items: availableFuels,
-              selectedLabel: selectedFuel,
+              selectedKey: selectedFuel,
               onSelect: (val) => setState(() => selectedFuel = val),
             ),
             const SizedBox(height: 32),
-            _buildSectionTitle("Vehicle Make"),
+            _buildSectionTitle(l10n.vehicleMake),
             const SizedBox(height: 12),
             _buildDropdown(
               value: selectedMake,
@@ -114,7 +116,7 @@ class _EditVehicleScreenState extends State<EditVehicleScreen> {
               onChanged: (val) => setState(() => selectedMake = val!),
             ),
             const SizedBox(height: 24),
-            _buildSectionTitle("Vehicle Model"),
+            _buildSectionTitle(l10n.vehicleModel),
             const SizedBox(height: 12),
             _buildDropdown(
               value: selectedModel,
@@ -122,9 +124,9 @@ class _EditVehicleScreenState extends State<EditVehicleScreen> {
               onChanged: (val) => setState(() => selectedModel = val!),
             ),
             const SizedBox(height: 24),
-            _buildSectionTitle("Vehicle number"),
+            _buildSectionTitle(l10n.vehicleNumber),
             const SizedBox(height: 12),
-            _buildTextField(numberController, "e.g. MP09QV8269"),
+            _buildTextField(numberController, l10n.vehicleNumberHint),
             const SizedBox(height: 48),
             SizedBox(
               width: double.infinity,
@@ -145,9 +147,9 @@ class _EditVehicleScreenState extends State<EditVehicleScreen> {
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                   elevation: 0,
                 ),
-                child: const Text(
-                  "Update Vehicle",
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                child: Text(
+                  l10n.updateVehicle,
+                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
               ),
             ),
@@ -171,7 +173,7 @@ class _EditVehicleScreenState extends State<EditVehicleScreen> {
 
   Widget _buildHorizontalSelection({
     required List<Map<String, dynamic>> items,
-    required String selectedLabel,
+    required String selectedKey,
     required Function(String) onSelect,
   }) {
     final theme = Theme.of(context);
@@ -181,10 +183,10 @@ class _EditVehicleScreenState extends State<EditVehicleScreen> {
       spacing: 20,
       runSpacing: 16,
       children: items.map((item) {
-        final isSelected = item['label'] == selectedLabel;
+        final isSelected = item['key'] == selectedKey;
 
         return GestureDetector(
-          onTap: () => onSelect(item['label']),
+          onTap: () => onSelect(item['key']),
           child: Column(
             children: [
               Container(

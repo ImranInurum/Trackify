@@ -456,7 +456,7 @@ class AppLocalizationsKn extends AppLocalizations {
 
   @override
   String get installDeviceDesc =>
-      'ನಿಮ್ಮ Ajjas ಸ್ಮಾರ್ಟ್ ಸಾಧನವನ್ನು ತ್ವರಿತವಾಗಿ ಹೊಂದಿಸಿ';
+      'ನಿಮ್ಮ Trackify ಸ್ಮಾರ್ಟ್ ಸಾಧನವನ್ನು ತ್ವರಿತವಾಗಿ ಹೊಂದಿಸಿ';
 
   @override
   String get activateSticker => 'ಸಂಪರ್ಕ ಸ್ಟಿಕರ್ ಸಕ್ರಿಯಗೊಳಿಸಿ';
@@ -509,7 +509,7 @@ class AppLocalizationsKn extends AppLocalizations {
   String get installNow => 'ಈಗ ಸ್ಥಾಪಿಸಿ';
 
   @override
-  String get buyAjjasDevice => 'ಅಜ್ಜಾಸ್ ಸಾಧನವನ್ನು ಖರೀದಿಸಿ';
+  String get buyTrackifyDevice => 'Trackify ಸಾಧನವನ್ನು ಖರೀದಿಸಿ';
 
   @override
   String get lite4G => 'ಲೈಟ್ 4ಜಿ';
@@ -521,7 +521,7 @@ class AppLocalizationsKn extends AppLocalizations {
   String get upgradeToPlus => 'ಅಜ್ಜಾಸ್ ಪ್ಲಸ್‌ಗೆ ಅಪ್‌ಗ್ರೇಡ್ ಮಾಡಿ';
 
   @override
-  String get getMoreOutOfAjjas => 'ಅಜ್ಜಾಸ್‌ನಿಂದ ಹೆಚ್ಚಿನ ಪ್ರಯೋಜನ ಪಡೆಯಿರಿ';
+  String get getMoreOutOfTrackify => 'Trackify ನಿಂದ ಹೆಚ್ಚಿನದನ್ನು ಪಡೆಯಿರಿ';
 
   @override
   String featuresExploredCount(Object count, Object total) {
@@ -700,8 +700,8 @@ class AppLocalizationsKn extends AppLocalizations {
       'ಸಕ್ರಿಯಗೊಳಿಸುವ ಕೋಡ್ ಅನ್ನು ಹಸ್ತಚಾಲಿತವಾಗಿ ನಮೂದಿಸಿ';
 
   @override
-  String get openAjjasBoxInstruction =>
-      'ಸಕ್ರಿಯಗೊಳಿಸುವ QR ಕೋಡ್‌ಗಾಗಿ Ajjas ಬಾಕ್ಸ್ ತೆರೆಯಿರಿ.';
+  String get openTrackifyBoxInstruction =>
+      'ಸಕ್ರಿಯಗೊಳಿಸುವ QR ಕೋಡ್‌ಗಾಗಿ Trackify ಬಾಕ್ಸ್ ತೆರೆಯಿರಿ.';
 
   @override
   String get continueText => 'ಮುಂದುವರಿಸಿ';
@@ -805,9 +805,6 @@ class AppLocalizationsKn extends AppLocalizations {
   String get secondsShort => 'ಸೆ';
 
   @override
-  String get getMoreOutOfTrackify => 'Trackify ನಿಂದ ಹೆಚ್ಚಿನದನ್ನು ಪಡೆಯಿರಿ';
-
-  @override
   String get discoverMoreDesc =>
       'ಇನ್ನಷ್ಟು ಅನ್ವೇಷಿಸಿ — ಅದ್ಭುತ ವಿಷಯಗಳು ಕಾಯುತ್ತಿವೆ!';
 
@@ -874,9 +871,6 @@ class AppLocalizationsKn extends AppLocalizations {
   String kmsMoreToGo(String value) {
     return '$value ಕಿಮೀ ದೂರ ಹೋಗಬೇಕಿದೆ';
   }
-
-  @override
-  String get buyTrackifyDevice => 'Trackify ಸಾಧನವನ್ನು ಖರೀದಿಸಿ';
 
   @override
   String get recordViaPhone => 'ಫೋನ್ ಮೂಲಕ ರೆಕಾರ್ಡ್ ಮಾಡಿ';
@@ -1294,7 +1288,7 @@ class AppLocalizationsKn extends AppLocalizations {
 
   @override
   String get powerSupplyOffDesc =>
-      'Get notified when Ajjas is not receiving power';
+      'Get notified when Trackify is not receiving power';
 
   @override
   String get appNotification => 'App Notification';
@@ -1364,7 +1358,7 @@ class AppLocalizationsKn extends AppLocalizations {
       'ಈ ಮೌಲ್ಯಗಳು ನಿಮ್ಮ ಇಂಧನ ನಮೂದುಗಳನ್ನು ಆಧರಿಸಿದ ಅಂದಾಜುಗಳಾಗಿವೆ. ಉತ್ತಮ ನಿಖರತೆಗಾಗಿ ನಿಯಮಿತವಾಗಿ ಇಂಧನ ಲಾಗ್‌ಗಳನ್ನು ಸೇರಿಸಿ.';
 
   @override
-  String get gotIt => 'ಸರಿ';
+  String get gotIt => 'ಗೊತ್ತಾಯಿತು';
 
   @override
   String get currentOdometerReading => 'ಪ್ರಸ್ತುತ ಒಡೋಮೀಟರ್ ರೀಡಿಂಗ್';
@@ -1494,46 +1488,44 @@ class AppLocalizationsKn extends AppLocalizations {
   String get warranty_title => 'ಸಾಧನ ವಾರಂಟಿ';
 
   @override
-  String get warranty_benefitsTitle => 'ವಾರಂಟಿ ಪ್ರಯೋಜನಗಳು';
+  String get warranty_benefitsTitle => 'ನೀವು ಕಳೆದುಕೊಳ್ಳಬಾರದ ಪ್ರಯೋಜನಗಳು';
 
   @override
   String get warranty_extend =>
-      'ನಿಮ್ಮ ವಾರಂಟಿಯನ್ನು ವಿಸ್ತರಿಸಿ ಮತ್ತು ಸಾಧನವನ್ನು ರಕ್ಷಿಸಿ';
+      'ನಿಮ್ಮ Trackify Lite ವಾರಂಟಿಯನ್ನು 1 ವರ್ಷಕ್ಕೆ ವಿಸ್ತರಿಸಿ @ ₹1/ದಿನಕ್ಕೆ';
 
   @override
   String get warranty_vehicle => 'ವಾಹನ';
 
   @override
-  String get warranty_expiry => 'ವಾರಂಟಿ ಅವಧಿ ಮುಕ್ತಾಯ';
+  String get warranty_expiry => 'ವಾರಂಟಿ ಮುಕ್ತಾಯ ದಿನಾಂಕ';
 
   @override
-  String get warranty_button => 'ವಾರಂಟಿ ವಿಸ್ತರಿಸಿ — ';
+  String get warranty_button => 'ಈಗ ವಾರಂಟಿ ವಿಸ್ತರಿಸಿ @ ₹365 ';
 
   @override
-  String get warranty_button_old => '₹4,999';
+  String get warranty_button_old => '₹730';
 
   @override
-  String get benefit1_highlight => 'ಪ್ರೀಮಿಯಂ ಕವರೇಜ್ ';
+  String get benefit1_highlight => 'ಗ್ಯಾರಂಟಿ ಬದಲಿ';
 
   @override
-  String get benefit1_normal =>
-      '— ತಯಾರಿಕೆ ದೋಷಗಳ ವಿರುದ್ಧ ಸಂಪೂರ್ಣ ಹಾರ್ಡ್‌ವೇರ್ ರಕ್ಷಣೆ.';
+  String get benefit1_normal => ' ವೈಫಲ್ಯದ ಸಂದರ್ಭದಲ್ಲಿ';
 
   @override
-  String get benefit2_highlight => 'ಉಚಿತ ದುರಸ್ತಿ ';
+  String get benefit2_highlight => '₹1200 ರವರೆಗೆ ಉಳಿಸಿ';
 
   @override
-  String get benefit2_normal =>
-      '— ಎಲ್ಲಾ ಸೇವೆ ಮತ್ತು ಬಿಡಿಭಾಗಗಳು ಶೂನ್ಯ ವೆಚ್ಚದಲ್ಲಿ.';
+  String get benefit2_normal => ' ಸಾಧನ ದುರಸ್ತಿಯಲ್ಲಿ';
 
   @override
-  String get benefit3_highlight => '24/7 ಬೆಂಬಲ ';
+  String get benefit3_highlight => 'ತತ್ಕ್ಷಣ ಬೆಂಬಲ';
 
   @override
-  String get benefit3_normal => '— ಅಗತ್ಯವಿದ್ದಾಗ ಆದ್ಯತೆ ಗ್ರಾಹಕ ಸೇವೆ.';
+  String get benefit3_normal => ' ಸಾಧನ ಸಂಬಂಧಿತ ಸಮಸ್ಯೆಗಳಿಗೆ';
 
   @override
-  String get benefit4_highlight => 'ಗುಪ್ತ ಶುಲ್ಕಗಳಿಲ್ಲ ';
+  String get benefit4_highlight => '₹2000 ರವರೆಗೆ ಉಚಿತ ವಿಸ್ತೃತ ಚಂದಾದಾರಿಕೆ';
 
   @override
   String get benefit4_normal => '— ಒಂದು ಫ್ಲಾಟ್ ಶುಲ್ಕ, ಸಂಪೂರ್ಣ ಮನಸ್ಸಿನ ಶಾಂತಿ.';
@@ -1789,4 +1781,169 @@ class AppLocalizationsKn extends AppLocalizations {
 
   @override
   String get noVideos => 'ಯಾವುದೇ ವೀಡಿಯೊಗಳು ಲಭ್ಯವಿಲ್ಲ';
+
+  @override
+  String get apply => 'Apply';
+
+  @override
+  String get noRecordsFound => 'No records found';
+
+  @override
+  String get selectDateRange => 'Select date range';
+
+  @override
+  String get notificationTypes => 'Notification types';
+
+  @override
+  String get motionSensed => 'Motion sensed';
+
+  @override
+  String get ignitionOff => 'Ignition off';
+
+  @override
+  String get ignitionOn => 'Ignition on';
+
+  @override
+  String get accidentDetected => 'Accident detected';
+
+  @override
+  String get stationaryFallDetected => 'Stationary fall detected';
+
+  @override
+  String get vehicleSwitchedOff => 'Vehicle switched off';
+
+  @override
+  String get vehicleSwitchedOn => 'Vehicle switched on';
+
+  @override
+  String get powerSupplyOn => 'Power supply on';
+
+  @override
+  String get vibrationSensed => 'Vibration sensed';
+
+  @override
+  String get editVehicle => 'Edit Vehicle';
+
+  @override
+  String get diesel => 'Diesel';
+
+  @override
+  String get cng => 'CNG';
+
+  @override
+  String get updateVehicle => 'Update Vehicle';
+
+  @override
+  String get vehicleMileage => 'Vehicle Mileage';
+
+  @override
+  String get notificationControls => 'Notification controls';
+
+  @override
+  String get changeNotificationPreferences =>
+      'Change your notification preferences';
+
+  @override
+  String get unmapTrackify => 'Unmap your Trackify';
+
+  @override
+  String get unmapStep1 => 'Step 1: To un-map device, call at +918061971443';
+
+  @override
+  String get unmapStep2 => 'Step 2: Remove vehicle';
+
+  @override
+  String get updateMileage => 'Update Mileage';
+
+  @override
+  String get lastUpdated => 'Last updated: ';
+
+  @override
+  String get lockUnlockVehicle => 'ವಾಹನ ಲಾಕ್ ಮತ್ತು ಅನ್ಲಾಕ್';
+
+  @override
+  String get sleepModeWarning =>
+      'ಸಾಧನವು ಸ್ಲೀಪ್ ಮೋಡ್‌ನಲ್ಲಿದ್ದರೆ ನಿಮ್ಮ ವಾಹನವು ಲಾಕ್ / ಅನ್ಲಾಕ್ ಆಗುವುದಿಲ್ಲ.';
+
+  @override
+  String get journeyWithTrackify => 'Trackify ಜೊತೆಗಿನ ಪ್ರಯಾಣ';
+
+  @override
+  String get lifetime => 'ಜೀವಿತಾವಧಿ';
+
+  @override
+  String hrMinFormat(Object hr, Object min) {
+    return '$hr ಗಂ $min ನಿ';
+  }
+
+  @override
+  String get yourVehicleOnMap => 'ನಕ್ಷೆಯಲ್ಲಿ ನಿಮ್ಮ ವಾಹನ';
+
+  @override
+  String get selectIcon => 'ಐಕಾನ್ ಆಯ್ಕೆಮಾಡಿ';
+
+  @override
+  String get bike => 'ಬೈಕ್';
+
+  @override
+  String get scooty => 'ಸ್ಕೂಟಿ';
+
+  @override
+  String get myVehicle => 'ನನ್ನ ವಾಹನ';
+
+  @override
+  String get selectColor => 'ಬಣ್ಣವನ್ನು ಆಯ್ಕೆಮಾಡಿ';
+
+  @override
+  String get white => 'ಬಿಳಿ';
+
+  @override
+  String get red => 'ಕೆಂಪು';
+
+  @override
+  String get aqua => 'ಆಕ್ವಾ';
+
+  @override
+  String get orange => 'ಕಿತ್ತಳೆ';
+
+  @override
+  String get sky => 'ಆಕಾಶ';
+
+  @override
+  String get saveChanges => 'ಬದಲಾವಣೆಗಳನ್ನು ಉಳಿಸಿ';
+
+  @override
+  String get whatIsSleepMode => 'ಸ್ಲೀಪ್ ಮೋಡ್ ಎಂದರೇನು?';
+
+  @override
+  String get sleepModeDesc1 =>
+      'Trackify ಸಾಧನವು ಯಾವುದೇ ಕಂಪನ ಅಥವಾ ಚಲನೆಯನ್ನು ಪತ್ತೆಹಚ್ಚದಿದ್ದಾಗ, ವಾಹನದ ಬ್ಯಾಟರಿಯನ್ನು ಉಳಿಸಲು ಅದು ಸ್ವಯಂಚಾಲಿತವಾಗಿ ಸ್ಲೀಪ್ ಮೋಡ್‌ಗೆ ಪ್ರವೇಶಿಸುತ್ತದೆ.';
+
+  @override
+  String get sleepModeDesc2 =>
+      'ಸಾಧನವು ಯಾವುದೇ ಚಲನೆಯನ್ನು ಅನುಭವಿಸಿದಾಗ ತಕ್ಷಣವೇ ಎಚ್ಚರಗೊಳ್ಳುತ್ತದೆ ಮತ್ತು ಉತ್ತಮ ನೆಟ್‌ವರ್ಕ್ ವ್ಯಾಪ್ತಿಯಲ್ಲಿದ್ದಾಗ ಟ್ರ್ಯಾಕಿಂಗ್ ಪ್ರಾರಂಭಿಸುತ್ತದೆ.';
+
+  @override
+  String get hr => 'ಗಂ';
+
+  @override
+  String get min => 'ನಿ';
+
+  @override
+  String get filters => 'ಫಿಲ್ಟರ್‌ಗಳು';
+
+  @override
+  String get tankCapacityHint => 'ಉದಾ. ೧೩';
+
+  @override
+  String get mileageHint => 'ಉದಾ. ೫೦';
+
+  @override
+  String get powerSupplyOff => 'ಪವರ್ ಸಪ್ಲೈ ಆಫ್';
+
+  @override
+  String get lastUpdatedLabel => 'ಕೊನೆಯದಾಗಿ ನವೀಕರಿಸಲಾಗಿದೆ: ';
+
+  @override
+  String get litresShort => 'ಲೀ.';
 }

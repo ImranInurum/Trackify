@@ -515,9 +515,7 @@ class _DocumentOtherdocumentScreenState extends State<DocumentOtherdocumentScree
                     child: Text(
                       l10n.addDocument,
                       style: TextStyle(
-                        color: _frontFile == null
-                            ? colorScheme.onSurfaceVariant
-                            : colorScheme.onPrimary,
+                        color: colorScheme.onPrimary,
                         fontWeight: FontWeight.bold,
                       ),
                     ),

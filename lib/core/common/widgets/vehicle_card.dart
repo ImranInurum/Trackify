@@ -101,7 +101,7 @@ class VehicleCard extends StatelessWidget {
                                   ),
                                   const SizedBox(width: 4),
                                   Text(
-                                    l10n.buyAjjasDevice,
+                                    l10n.buyTrackifyDevice,
                                     style: const TextStyle(
                                       fontSize: 12,
                                       color: Colors.orange,

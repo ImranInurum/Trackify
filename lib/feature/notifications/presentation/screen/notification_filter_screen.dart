@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../../l10n/app_localizations.dart';
 import '../cubit/notification_timeline_cubit.dart';
 
 class NotificationFilterScreen extends StatefulWidget {
@@ -15,29 +16,29 @@ class NotificationFilterScreen extends StatefulWidget {
 }
 
 class _NotificationFilterScreenState extends State<NotificationFilterScreen> {
-  final List<String> notificationTypes = [
-    "Motion sensed",
-    "Ignition off",
-    "Ignition on",
-    "Accident detected",
-    "Stationary fall detected",
-    "Power supply off",
-    "Vehicle switched off",
-    "Vehicle switched on",
-    "Power supply on",
-    "Vibration sensed",
+  List<String> _getNotificationTypes() => [
+    "Motion Sensed",
+    "Ignition Off",
+    "Ignition On",
+    "Accident Detected",
+    "Stationary Fall Detected",
+    "Power Supply Off",
+    "Vehicle Switched Off",
+    "Vehicle Switched On",
+    "Power Supply On",
+    "Vibration Sensed",
   ];
 
-  final List<Map<String, String>> dateOptions = [
-    {"label": "Today", "count": "35"},
-    {"label": "This month", "count": "534"},
-    {"label": "This year", "count": "2226"},
-    {"label": "All", "count": "2226"},
-    {"label": "Custom dates", "count": ""},
+  List<Map<String, String>> _getDateOptions(AppLocalizations l10n) => [
+    {"label": l10n.today, "count": "35"},
+    {"label": l10n.thisMonth, "count": "534"},
+    {"label": l10n.thisYear, "count": "2226"},
+    {"label": l10n.all, "count": "2226"},
+    {"label": l10n.customDates, "count": ""},
   ];
 
   late Set<String> selectedCategories;
-  String selectedDateRange = "All";
+  String? selectedDateRange;
 
   @override
   void initState() {
@@ -53,6 +54,12 @@ class _NotificationFilterScreenState extends State<NotificationFilterScreen> {
     final scaffoldBg = theme.scaffoldBackgroundColor;
     final textColor = theme.textTheme.bodyLarge?.color ?? Colors.black;
     final subTextColor = theme.textTheme.bodySmall?.color ?? Colors.grey;
+    final l10n = AppLocalizations.of(context)!;
+    
+    final notificationTypes = _getNotificationTypes();
+    final dateOptions = _getDateOptions(l10n);
+    
+    selectedDateRange ??= l10n.all;
 
     return Scaffold(
       backgroundColor: scaffoldBg,
@@ -65,7 +72,7 @@ class _NotificationFilterScreenState extends State<NotificationFilterScreen> {
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
-          "Filters",
+          l10n.filters,
           style: TextStyle(color: textColor, fontSize: 18, fontWeight: FontWeight.bold),
         ),
       ),
@@ -79,7 +86,7 @@ class _NotificationFilterScreenState extends State<NotificationFilterScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "Select date range",
+                    l10n.selectDateRange,
                     style: TextStyle(color: subTextColor, fontSize: 13),
                   ),
                   const SizedBox(height: 16),
@@ -110,7 +117,7 @@ class _NotificationFilterScreenState extends State<NotificationFilterScreen> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Text(
-                          selectedDateRange,
+                          selectedDateRange!,
                           style: TextStyle(color: primaryColor, fontSize: 15, fontWeight: FontWeight.w500),
                         ),
                         const SizedBox(width: 4),
@@ -120,7 +127,7 @@ class _NotificationFilterScreenState extends State<NotificationFilterScreen> {
                   ),
                   const SizedBox(height: 32),
                   Text(
-                    "Notification types",
+                    l10n.notificationTypes,
                     style: TextStyle(color: subTextColor, fontSize: 13),
                   ),
                   const SizedBox(height: 12),
@@ -138,7 +145,7 @@ class _NotificationFilterScreenState extends State<NotificationFilterScreen> {
                 onPressed: () {
                   context.read<NotificationTimelineCubit>().applyFilters(
                     categories: selectedCategories.toList(),
-                    timePeriod: selectedDateRange,
+                    timePeriod: selectedDateRange!,
                   );
                   Navigator.pop(context);
                 },
@@ -148,9 +155,9 @@ class _NotificationFilterScreenState extends State<NotificationFilterScreen> {
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                   elevation: 0,
                 ),
-                child: const Text(
-                  "Apply",
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                child: Text(
+                  l10n.apply,
+                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
               ),
             ),

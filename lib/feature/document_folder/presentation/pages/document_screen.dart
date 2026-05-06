@@ -32,7 +32,10 @@ class _DocumentFolderScreenState extends State<DocumentFolderScreen> {
 
     try {
       final picker = ImagePicker();
-      final pickedFile = await picker.pickImage(source: source, imageQuality: 50);
+      final pickedFile = await picker.pickImage(
+        source: source,
+        imageQuality: 50,
+      );
       if (pickedFile != null) {
         final croppedFile = await _cropImage(File(pickedFile.path));
         if (croppedFile != null) {
@@ -58,9 +61,7 @@ class _DocumentFolderScreenState extends State<DocumentFolderScreen> {
           initAspectRatio: CropAspectRatioPreset.original,
           lockAspectRatio: false,
         ),
-        IOSUiSettings(
-          title: l10n.cropVehicleImage,
-        ),
+        IOSUiSettings(title: l10n.cropVehicleImage),
       ],
     );
     return croppedFile != null ? File(croppedFile.path) : null;
@@ -104,7 +105,7 @@ class _DocumentFolderScreenState extends State<DocumentFolderScreen> {
               ),
               const SizedBox(height: 28),
               Row(
-               crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   _circleOption(
                     icon: Icons.camera_alt_outlined,
@@ -196,23 +197,23 @@ class _DocumentFolderScreenState extends State<DocumentFolderScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-
               // ── HEADER ─────────────────────────────
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   GestureDetector(
                     onTap: () => Navigator.pop(context),
-                    child: Icon(Icons.arrow_back,
-                        color: colorScheme.onSurfaceVariant),
+                    child: Icon(
+                      Icons.arrow_back,
+                      color: colorScheme.onSurfaceVariant,
+                    ),
                   ),
                   const SizedBox(height: 12),
                   Text(
                     l10n.documentFolder,
-                    style: TextStyle(
-                      fontSize: 20,
+                    style: theme.textTheme.titleLarge?.copyWith(
                       fontWeight: FontWeight.w600,
-                      color: colorScheme.onSurfaceVariant,
+                      color: colorScheme.onSurface,
                     ),
                   ),
                 ],
@@ -226,8 +227,7 @@ class _DocumentFolderScreenState extends State<DocumentFolderScreen> {
                   const SizedBox(width: 6),
                   Text(
                     l10n.documentsEncrypted,
-                    style: const TextStyle(
-                        color: Colors.green, fontSize: 12),
+                    style: const TextStyle(color: Colors.green, fontSize: 12),
                   ),
                 ],
               ),
@@ -235,24 +235,25 @@ class _DocumentFolderScreenState extends State<DocumentFolderScreen> {
               const SizedBox(height: 50),
 
               // ── PERSONAL SECTION ─────────────────────────────
-
               Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.all(15),
-                  decoration: BoxDecoration(
-                    color:  Theme.of(context).cardColor,
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(color: colorScheme.outlineVariant.withOpacity(0.2)),
+                width: double.infinity,
+                padding: const EdgeInsets.all(15),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).cardColor,
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(
+                    color: colorScheme.outlineVariant.withOpacity(0.2),
                   ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _sectionTitle(
-                        colorScheme,
-                        title: l10n.personalDocumentsTitle,
-                        subtitle: l10n.personalDocumentsSubtitle,
-                      ),
-                      const SizedBox(height: 16),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _sectionTitle(
+                      colorScheme,
+                      title: l10n.personalDocumentsTitle,
+                      subtitle: l10n.personalDocumentsSubtitle,
+                    ),
+                    const SizedBox(height: 16),
                     SingleChildScrollView(
                       scrollDirection: Axis.horizontal,
                       child: Row(
@@ -266,7 +267,8 @@ class _DocumentFolderScreenState extends State<DocumentFolderScreen> {
                                 context,
                                 MaterialPageRoute(
                                   builder: (_) => DocumentLicense(
-                                      title: l10n.drivingLicenseTitle),
+                                    title: l10n.drivingLicenseTitle,
+                                  ),
                                 ),
                               );
                             },
@@ -280,9 +282,9 @@ class _DocumentFolderScreenState extends State<DocumentFolderScreen> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (_) =>
-                                      DocumentOtherdocumentScreen(
-                                          title: l10n.otherDocumentTitle),
+                                  builder: (_) => DocumentOtherdocumentScreen(
+                                    title: l10n.otherDocumentTitle,
+                                  ),
                                 ),
                               );
                             },
@@ -294,9 +296,6 @@ class _DocumentFolderScreenState extends State<DocumentFolderScreen> {
                 ),
               ),
 
-              
-
-
               const SizedBox(height: 25),
               LayoutBuilder(
                 builder: (context, constraints) {
@@ -304,7 +303,8 @@ class _DocumentFolderScreenState extends State<DocumentFolderScreen> {
                   const dashWidth = 4.0;
                   const dashHeight = 1.0;
                   const dashSpace = 4.0;
-                  final dashCount = (boxWidth / (dashWidth + dashSpace)).floor();
+                  final dashCount = (boxWidth / (dashWidth + dashSpace))
+                      .floor();
                   return Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: List.generate(dashCount, (_) {
@@ -333,22 +333,27 @@ class _DocumentFolderScreenState extends State<DocumentFolderScreen> {
                       width: screenWidth * 0.20,
                       height: screenHeight * 0.07,
                       decoration: BoxDecoration(
-                        color:  Theme.of(context).cardColor,
+                        color: Theme.of(context).cardColor,
                         borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: colorScheme.outlineVariant.withOpacity(0.5)),
+                        border: Border.all(
+                          color: colorScheme.outlineVariant.withOpacity(0.5),
+                        ),
                       ),
                       child: _vehicleImage == null
                           ? Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Icon(Icons.camera_alt,
-                                    color: colorScheme.onSurfaceVariant, size: 20),
+                                Icon(
+                                  Icons.camera_alt,
+                                  color: colorScheme.onSurfaceVariant,
+                                  size: 20,
+                                ),
                                 const SizedBox(height: 4),
                                 Text(
                                   l10n.vehicleImage,
-                                  style: TextStyle(
-                                      color: colorScheme.onSurfaceVariant,
-                                      fontSize: 10),
+                                  style: theme.textTheme.labelSmall?.copyWith(
+                                    color: colorScheme.onSurfaceVariant,
+                                  ),
                                 ),
                               ],
                             )
@@ -375,9 +380,9 @@ class _DocumentFolderScreenState extends State<DocumentFolderScreen> {
                             selectedVehicle: selectedVehicle,
 
                             onSelected: (vehicle) {
-                              context
-                                  .read<ServiceLogsCubit>()
-                                  .selectVehicle(vehicle.id!);
+                              context.read<ServiceLogsCubit>().selectVehicle(
+                                vehicle.id!,
+                              );
                               Navigator.pop(context);
                             },
                           ),
@@ -385,30 +390,30 @@ class _DocumentFolderScreenState extends State<DocumentFolderScreen> {
                       },
                       child: Container(
                         height: screenHeight * 0.07,
-                        padding:
-                        const EdgeInsets.symmetric(horizontal: 12),
+                        padding: const EdgeInsets.symmetric(horizontal: 12),
                         decoration: BoxDecoration(
-                          color:  Theme.of(context).cardColor,
+                          color: Theme.of(context).cardColor,
                           borderRadius: BorderRadius.circular(12),
                           border: Border.all(
-                              color: colorScheme.outlineVariant.withOpacity(0.5)),
+                            color: colorScheme.outlineVariant.withOpacity(0.5),
+                          ),
                         ),
                         child: Row(
-                          mainAxisAlignment:
-                          MainAxisAlignment.spaceBetween,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Expanded(
                               child: Text(
                                 selectedVehicle != null
                                     ? "${selectedVehicle.vehicleMaker} ${selectedVehicle.vehicleModel} (${selectedVehicle.vehicleNumber})"
                                     : l10n.selectVehicle,
-                                style: TextStyle(
-                                    color: colorScheme.onSurface),
+                                style: TextStyle(color: colorScheme.onSurface),
                                 overflow: TextOverflow.ellipsis,
                               ),
                             ),
-                            Icon(Icons.keyboard_arrow_down,
-                                color: colorScheme.onSurfaceVariant),
+                            Icon(
+                              Icons.keyboard_arrow_down,
+                              color: colorScheme.onSurfaceVariant,
+                            ),
                           ],
                         ),
                       ),
@@ -424,9 +429,11 @@ class _DocumentFolderScreenState extends State<DocumentFolderScreen> {
                 width: double.infinity,
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color:  Theme.of(context).cardColor,
+                  color: Theme.of(context).cardColor,
                   borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: colorScheme.outlineVariant.withOpacity(0.5)),
+                  border: Border.all(
+                    color: colorScheme.outlineVariant.withOpacity(0.5),
+                  ),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -441,23 +448,52 @@ class _DocumentFolderScreenState extends State<DocumentFolderScreen> {
                       scrollDirection: Axis.horizontal,
                       child: Row(
                         children: [
-                          _docTile(context, colorScheme, title: l10n.vehicleRC, onTap: () {
-                            Navigator.push(context, MaterialPageRoute(
-                              builder: (_) => DocumentVehicleRCScreen(title: l10n.vehicleRCTitle),
-                            ));
-                          }),
+                          _docTile(
+                            context,
+                            colorScheme,
+                            title: l10n.vehicleRC,
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => DocumentVehicleRCScreen(
+                                    title: l10n.vehicleRCTitle,
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
                           const SizedBox(width: 12),
-                          _docTile(context, colorScheme, title: l10n.insurance, onTap: () {
-                            Navigator.push(context, MaterialPageRoute(
-                              builder: (_) => DocumentSubScreen(title: l10n.insuranceTitle),
-                            ));
-                          }),
+                          _docTile(
+                            context,
+                            colorScheme,
+                            title: l10n.insurance,
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => DocumentSubScreen(
+                                    title: l10n.insuranceTitle,
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
                           const SizedBox(width: 12),
-                          _docTile(context, colorScheme, title: l10n.puc, onTap: () {
-                            Navigator.push(context, MaterialPageRoute(
-                              builder: (_) => DocumentSubScreen(title: l10n.pucTitle),
-                            ));
-                          }),
+                          _docTile(
+                            context,
+                            colorScheme,
+                            title: l10n.puc,
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) =>
+                                      DocumentSubScreen(title: l10n.pucTitle),
+                                ),
+                              );
+                            },
+                          ),
                         ],
                       ),
                     ),
@@ -474,7 +510,9 @@ class _DocumentFolderScreenState extends State<DocumentFolderScreen> {
                 decoration: BoxDecoration(
                   color: Theme.of(context).cardColor,
                   borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: colorScheme.outlineVariant.withOpacity(0.5)),
+                  border: Border.all(
+                    color: colorScheme.outlineVariant.withOpacity(0.5),
+                  ),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -497,7 +535,8 @@ class _DocumentFolderScreenState extends State<DocumentFolderScreen> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => const ServiceLogsScreen(),
+                                  builder: (context) =>
+                                      const ServiceLogsScreen(),
                                 ),
                               );
                             },
@@ -509,39 +548,56 @@ class _DocumentFolderScreenState extends State<DocumentFolderScreen> {
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  Text(l10n.movedTo,
-                                      style: const TextStyle(
-                                          color: Colors.white, fontSize: 10)),
+                                    Text(
+                                      l10n.movedTo,
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                        fontSize: 10,
+                                      ),
+                                    ),
                                   Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
-                                      Text(l10n.exploreMore,
-                                          style: const TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 10,
-                                              fontWeight: FontWeight.bold)),
+                                      Text(
+                                        l10n.exploreMore,
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 10,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
                                       const SizedBox(width: 4),
                                       Container(
                                         padding: const EdgeInsets.symmetric(
-                                            horizontal: 4, vertical: 1),
+                                          horizontal: 4,
+                                          vertical: 1,
+                                        ),
                                         decoration: BoxDecoration(
                                           color: Colors.amber,
-                                          borderRadius: BorderRadius.circular(4),
+                                          borderRadius: BorderRadius.circular(
+                                            4,
+                                          ),
                                         ),
-                                        child: Text(l10n.newLabel,
-                                            style: const TextStyle(
-                                                color: Colors.black,
-                                                fontSize: 7,
-                                                fontWeight: FontWeight.bold)),
+                                        child: Text(
+                                          l10n.newLabel,
+                                          style: const TextStyle(
+                                            color: Colors.black,
+                                            fontSize: 7,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
                                       ),
                                     ],
                                   ),
                                   const SizedBox(height: 4),
-                                  Text("${l10n.viewNow} >",
-                                      style: const TextStyle(
-                                          color: Colors.amber,
-                                          fontSize: 10,
-                                          fontWeight: FontWeight.w600)),
+                                  Text(
+                                    "${l10n.viewNow} >",
+                                    style: TextStyle(
+                                      color: colorScheme.primary,
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
                                 ],
                               ),
                             ),
@@ -568,25 +624,38 @@ class _DocumentFolderScreenState extends State<DocumentFolderScreen> {
   }
 
   Widget _sectionTitle(
-      ColorScheme colorScheme,
-      {required String title, required String subtitle}) {
+    ColorScheme colorScheme, {
+    required String title,
+    required String subtitle,
+  }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(title,
-            style: TextStyle(
-                color: colorScheme.primary,
-                fontWeight: FontWeight.bold)),
+        Text(
+          title,
+          style: TextStyle(
+            color: colorScheme.primary,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
         const SizedBox(height: 4),
-        Text(subtitle,textAlign: TextAlign.start,
-            style:
-            TextStyle(color: colorScheme.onSurfaceVariant, fontSize: 12)),
+        Text(
+          subtitle,
+          textAlign: TextAlign.start,
+          style: TextStyle(color: colorScheme.onSurfaceVariant, fontSize: 12),
+        ),
       ],
     );
   }
 
-  Widget _docTile(BuildContext context, ColorScheme colorScheme,
-      {required String title, required VoidCallback onTap, Widget? customContent}) {
+  Widget _docTile(
+    BuildContext context,
+    ColorScheme colorScheme, {
+    required String title,
+    required VoidCallback onTap,
+    Widget? customContent,
+  }) {
+    final theme = Theme.of(context);
     final screenWidth = MediaQuery.of(context).size.width;
     return GestureDetector(
       onTap: onTap,
@@ -598,18 +667,29 @@ class _DocumentFolderScreenState extends State<DocumentFolderScreen> {
             decoration: BoxDecoration(
               color: Theme.of(context).cardColor,
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: colorScheme.outlineVariant.withOpacity(0.5)),
+              border: Border.all(
+                color: colorScheme.outlineVariant.withOpacity(0.5),
+              ),
             ),
-            child: customContent ?? Center(
-              child: Icon(Icons.note_add_outlined,
-                  color: colorScheme.onSurfaceVariant, size: 28),
-            ),
+            child:
+                customContent ??
+                Center(
+                  child: Icon(
+                    Icons.note_add_outlined,
+                    color: colorScheme.onSurfaceVariant,
+                    size: 28,
+                  ),
+                ),
           ),
           const SizedBox(height: 8),
-          Text(title,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                  color: colorScheme.onSurfaceVariant, fontSize: 12)),
+          Text(
+            title,
+            textAlign: TextAlign.center,
+            style: theme.textTheme.bodySmall?.copyWith(
+              color: colorScheme.onSurface,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
         ],
       ),
     );
@@ -679,21 +759,24 @@ class _VehicleSelectorSheet extends StatelessWidget {
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
               itemCount: vehicles.length,
-              separatorBuilder: (_, __) => Divider(
-                color: colorScheme.outlineVariant,
-                height: 1,
-              ),
+              separatorBuilder: (_, __) =>
+                  Divider(color: colorScheme.outlineVariant, height: 1),
               itemBuilder: (context, index) {
                 final vehicle = vehicles[index];
                 final isSelected = selectedVehicle?.id == vehicle.id;
                 return ListTile(
                   contentPadding: EdgeInsets.zero,
-                  leading: const Icon(Icons.directions_car,
-                      color: Colors.amber),
+                  leading: const Icon(
+                    Icons.directions_car,
+                    color: Colors.amber,
+                  ),
                   title: Text(
-                    '${vehicle.vehicleMaker ?? ''} ${vehicle.vehicleModel ?? ''}'.trim(),
+                    '${vehicle.vehicleMaker ?? ''} ${vehicle.vehicleModel ?? ''}'
+                        .trim(),
                     style: TextStyle(
-                      color: isSelected ? colorScheme.primary : colorScheme.onSurface,
+                      color: isSelected
+                          ? colorScheme.primary
+                          : colorScheme.onSurface,
                       fontWeight: isSelected
                           ? FontWeight.w600
                           : FontWeight.normal,
@@ -703,12 +786,17 @@ class _VehicleSelectorSheet extends StatelessWidget {
                       ? Text(
                           vehicle.vehicleNumber!,
                           style: TextStyle(
-                              color: colorScheme.onSurfaceVariant, fontSize: 12),
+                            color: colorScheme.onSurfaceVariant,
+                            fontSize: 12,
+                          ),
                         )
                       : null,
                   trailing: isSelected
-                      ? Icon(Icons.check_circle,
-                          color: colorScheme.primary, size: 20)
+                      ? Icon(
+                          Icons.check_circle,
+                          color: colorScheme.primary,
+                          size: 20,
+                        )
                       : null,
                   onTap: () => onSelected(vehicle),
                 );

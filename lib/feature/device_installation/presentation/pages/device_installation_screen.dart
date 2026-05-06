@@ -306,7 +306,7 @@ class _DeviceInstallationScreenState extends State<DeviceInstallationScreen>
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      l10n.openAjjasBoxInstruction,
+                      l10n.openTrackifyBoxInstruction,
                       style: theme.textTheme.bodyMedium?.copyWith(
                         color: theme.colorScheme.onSurface.withValues(alpha: 0.54),
                       ),

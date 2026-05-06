@@ -200,7 +200,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              l10n.getMoreOutOfAjjas,
+                              l10n.getMoreOutOfTrackify,
                               style: TextStyle(
                                 fontWeight: FontWeight.w600,
                                 color: Theme.of(context).colorScheme.primary,

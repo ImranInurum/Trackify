@@ -206,7 +206,7 @@ class VehicleControlView extends StatelessWidget {
                         Expanded(
                           child: MetricCard(
                             value: vehicle.tankCapacity,
-                            unit: "L",
+                            unit: l10n.litresShort,
                             label: l10n.tankCapacity,
                             cardColor: cardColor,
                             onEdit: () => _showTankCapacityDialog(
@@ -220,8 +220,8 @@ class VehicleControlView extends StatelessWidget {
                         Expanded(
                           child: MetricCard(
                             value: vehicle.vehicleMileage,
-                            unit: "Km/L",
-                            label: "Vehicle Mileage",
+                            unit: l10n.kmL,
+                            label: l10n.vehicleMileage,
                             cardColor: cardColor,
                             onEdit: () => _showMileageDialog(
                               context,
@@ -347,7 +347,7 @@ class VehicleControlView extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  "Notification controls",
+                                  l10n.notificationControls,
                                   style: TextStyle(
                                     fontSize: 18,
                                     fontWeight: FontWeight.w700,
@@ -356,7 +356,7 @@ class VehicleControlView extends StatelessWidget {
                                 ),
                                 const SizedBox(height: 4),
                                 Text(
-                                  "Change your notification preferences",
+                                  l10n.changeNotificationPreferences,
                                   style: TextStyle(
                                     fontSize: 14,
                                     color: secondaryTextColor,
@@ -388,7 +388,7 @@ class VehicleControlView extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          "Unmap your Ajjas",
+                          l10n.unmapTrackify,
                           style: TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.w700,
@@ -397,7 +397,7 @@ class VehicleControlView extends StatelessWidget {
                         ),
                         const SizedBox(height: 20),
                         Text(
-                          "Step 1: To un-map device, call at +918061971443",
+                          l10n.unmapStep1,
                           style: TextStyle(
                             fontSize: 14,
                             color: secondaryTextColor,
@@ -406,7 +406,7 @@ class VehicleControlView extends StatelessWidget {
                         ),
                         const SizedBox(height: 12),
                         Text(
-                          "Step 2: Remove vehicle",
+                          l10n.unmapStep2,
                           style: TextStyle(
                             fontSize: 14,
                             color: secondaryTextColor,
@@ -431,6 +431,7 @@ class VehicleControlView extends StatelessWidget {
   void _showImageSourceDialog(BuildContext context, String vehicleId) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
+    final l10n = AppLocalizations.of(context)!;
 
     showModalBottomSheet(
       context: context,
@@ -456,7 +457,7 @@ class VehicleControlView extends StatelessWidget {
             ),
             const SizedBox(height: 24),
             Text(
-              "Upload Image",
+              l10n.uploadImage,
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
@@ -469,7 +470,7 @@ class VehicleControlView extends StatelessWidget {
                 _buildSourceOption(
                   context,
                   icon: Icons.camera_alt_outlined,
-                  label: "Camera",
+                  label: l10n.camera,
                   onTap: () {
                     Navigator.pop(ctx);
                     _pickImage(context, ImageSource.camera, vehicleId);
@@ -479,7 +480,7 @@ class VehicleControlView extends StatelessWidget {
                 _buildSourceOption(
                   context,
                   icon: Icons.image_outlined,
-                  label: "Gallery",
+                  label: l10n.gallery,
                   onTap: () {
                     Navigator.pop(ctx);
                     _pickImage(context, ImageSource.gallery, vehicleId);
@@ -531,11 +532,12 @@ class VehicleControlView extends StatelessWidget {
     ImageSource source,
     String vehicleId,
   ) async {
+    final l10n = AppLocalizations.of(context)!;
     final picker = ImagePicker();
     final pickedFile = await picker.pickImage(source: source);
 
     if (pickedFile != null) {
-      final croppedFile = await _cropImage(pickedFile.path);
+      final croppedFile = await _cropImage(pickedFile.path, l10n);
       if (croppedFile != null && context.mounted) {
         context.read<VehicleControlCubit>().updateVehicleImage(
               vehicleId,
@@ -545,19 +547,19 @@ class VehicleControlView extends StatelessWidget {
     }
   }
 
-  Future<CroppedFile?> _cropImage(String path) async {
+  Future<CroppedFile?> _cropImage(String path, AppLocalizations l10n) async {
     return await ImageCropper().cropImage(
       sourcePath: path,
       uiSettings: [
         AndroidUiSettings(
-          toolbarTitle: 'Crop Vehicle Image',
+          toolbarTitle: l10n.cropVehicleImage,
           toolbarColor: Colors.black,
           toolbarWidgetColor: Colors.amber,
           initAspectRatio: CropAspectRatioPreset.original,
           lockAspectRatio: false,
         ),
         IOSUiSettings(
-          title: 'Crop Vehicle Image',
+          title: l10n.cropVehicleImage,
         ),
       ],
     );
@@ -572,6 +574,7 @@ class VehicleControlView extends StatelessWidget {
     final controller = TextEditingController(text: currentVal);
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
+    final l10n = AppLocalizations.of(context)!;
 
     showDialog(
       context: context,
@@ -591,15 +594,15 @@ class VehicleControlView extends StatelessWidget {
                     color: theme.colorScheme.onSurface.withOpacity(0.8),
                   ),
                   const SizedBox(width: 12),
-                  const Text(
-                    "Update Tank Capacity",
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  Text(
+                    l10n.updateTankCapacity,
+                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                 ],
               ),
               const SizedBox(height: 12),
               Text(
-                "Enter the maximum fuel capacity of your vehicle tank",
+                l10n.tankCapacityDesc,
                 style: TextStyle(
                   color: theme.colorScheme.onSurface.withOpacity(0.6),
                   fontSize: 14,
@@ -618,7 +621,7 @@ class VehicleControlView extends StatelessWidget {
                   keyboardType: TextInputType.number,
                   style: const TextStyle(fontSize: 16),
                   decoration: InputDecoration(
-                    hintText: "e.g, 13",
+                    hintText: l10n.tankCapacityHint,
                     hintStyle: TextStyle(
                       color: theme.colorScheme.onSurface.withOpacity(0.3),
                     ),
@@ -630,7 +633,7 @@ class VehicleControlView extends StatelessWidget {
                     suffixIcon: Padding(
                       padding: const EdgeInsets.only(right: 16, top: 12),
                       child: Text(
-                        "Litres",
+                        l10n.litres,
                         style: TextStyle(
                           color: theme.colorScheme.onSurface.withOpacity(0.5),
                         ),
@@ -646,7 +649,7 @@ class VehicleControlView extends StatelessWidget {
                   TextButton(
                     onPressed: () => Navigator.pop(context),
                     child: Text(
-                      "Cancel",
+                      l10n.cancel,
                       style: TextStyle(
                         color: theme.colorScheme.onSurface.withOpacity(0.6),
                       ),
@@ -662,7 +665,7 @@ class VehicleControlView extends StatelessWidget {
                       Navigator.pop(context);
                     },
                     child: Text(
-                      "Save",
+                      l10n.save,
                       style: TextStyle(
                         color: theme.colorScheme.primary,
                         fontWeight: FontWeight.bold,
@@ -687,6 +690,7 @@ class VehicleControlView extends StatelessWidget {
     final controller = TextEditingController(text: currentVal);
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
+    final l10n = AppLocalizations.of(context)!;
 
     showDialog(
       context: context,
@@ -706,15 +710,15 @@ class VehicleControlView extends StatelessWidget {
                     color: theme.colorScheme.onSurface.withOpacity(0.8),
                   ),
                   const SizedBox(width: 12),
-                  const Text(
-                    "Update Mileage",
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  Text(
+                    l10n.updateMileage,
+                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                 ],
               ),
               const SizedBox(height: 12),
               Text(
-                "Enter current mileage (Km/L) to track remaining fuel & distance accurately.",
+                l10n.mileageDesc,
                 style: TextStyle(
                   color: theme.colorScheme.onSurface.withOpacity(0.6),
                   fontSize: 14,
@@ -733,7 +737,7 @@ class VehicleControlView extends StatelessWidget {
                   keyboardType: TextInputType.number,
                   style: const TextStyle(fontSize: 16),
                   decoration: InputDecoration(
-                    hintText: "e.g, 50",
+                    hintText: l10n.mileageHint,
                     hintStyle: TextStyle(
                       color: theme.colorScheme.onSurface.withOpacity(0.3),
                     ),
@@ -745,7 +749,7 @@ class VehicleControlView extends StatelessWidget {
                     suffixIcon: Padding(
                       padding: const EdgeInsets.only(right: 16, top: 12),
                       child: Text(
-                        "Km/L",
+                        l10n.kmL,
                         style: TextStyle(
                           color: theme.colorScheme.onSurface.withOpacity(0.5),
                         ),
@@ -756,7 +760,7 @@ class VehicleControlView extends StatelessWidget {
               ),
               const SizedBox(height: 12),
               Text(
-                "Last updated: $currentVal Km/L",
+                "${l10n.lastUpdatedLabel}$currentVal ${l10n.kmL}",
                 style: TextStyle(
                   color: theme.colorScheme.onSurface.withOpacity(0.4),
                   fontSize: 12,
@@ -769,7 +773,7 @@ class VehicleControlView extends StatelessWidget {
                   TextButton(
                     onPressed: () => Navigator.pop(context),
                     child: Text(
-                      "Cancel",
+                      l10n.cancel,
                       style: TextStyle(
                         color: theme.colorScheme.onSurface.withOpacity(0.6),
                       ),
@@ -785,7 +789,7 @@ class VehicleControlView extends StatelessWidget {
                       Navigator.pop(context);
                     },
                     child: Text(
-                      "Save",
+                      l10n.save,
                       style: TextStyle(
                         color: theme.colorScheme.primary,
                         fontWeight: FontWeight.bold,
@@ -804,6 +808,7 @@ class VehicleControlView extends StatelessWidget {
   void _showSleepModeDialog(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
+    final l10n = AppLocalizations.of(context)!;
 
     showDialog(
       context: context,
@@ -818,7 +823,7 @@ class VehicleControlView extends StatelessWidget {
             children: [
               Center(
                 child: Text(
-                  "What is Sleep Mode?",
+                  l10n.whatIsSleepMode,
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
@@ -828,7 +833,7 @@ class VehicleControlView extends StatelessWidget {
               ),
               const SizedBox(height: 20),
               Text(
-                "When the Ajjas device doesn't detect any vibration or motion, it automatically enters sleep mode to save the vehicle's battery.",
+                l10n.sleepModeDesc1,
                 style: TextStyle(
                   color: theme.colorScheme.onSurface.withOpacity(0.8),
                   fontSize: 14,
@@ -837,7 +842,7 @@ class VehicleControlView extends StatelessWidget {
               ),
               const SizedBox(height: 16),
               Text(
-                "The device instantly wakes up and begins tracking when it senses any motion and is in good network coverage.",
+                l10n.sleepModeDesc2,
                 style: TextStyle(
                   color: theme.colorScheme.onSurface.withOpacity(0.8),
                   fontSize: 14,
@@ -850,7 +855,7 @@ class VehicleControlView extends StatelessWidget {
                 child: TextButton(
                   onPressed: () => Navigator.pop(context),
                   child: Text(
-                    "Okay",
+                    l10n.gotIt,
                     style: TextStyle(
                       color: theme.colorScheme.primary,
                       fontWeight: FontWeight.bold,

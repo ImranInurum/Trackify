@@ -3,13 +3,15 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:trackify/l10n/app_localizations.dart';
 // import 'package:video_player/video_player.dart'; //
 
+import '../../../../core/config/font_manager.dart';
 import '../cubit/tutorial_cubit.dart';
 import '../cubit/tutorial_state.dart';
 
 class TutorialScreen extends StatefulWidget {
   final String type;
+  final String title;
 
-  const TutorialScreen({super.key, required this.type});
+  const TutorialScreen({super.key, required this.type, required this.title});
 
   @override
   State<TutorialScreen> createState() => _TutorialScreenState();
@@ -55,10 +57,17 @@ class _TutorialScreenState extends State<TutorialScreen> {
     return Scaffold(
       backgroundColor: colorScheme.surface,
       appBar: AppBar(
+        backgroundColor: colorScheme.surface,
+        centerTitle: false,
+        elevation: 0,
         title: Text(
-          l10n.tutorialVideos,
-          style: TextStyle(color: colorScheme.onSurfaceVariant),
+          widget.title,
+          style: TextStyle(
+            color: colorScheme.onSurface,
+            fontWeight: FontWeightManager.medium,
+          ),
         ),
+        iconTheme: IconThemeData(color: colorScheme.onSurface),
       ),
 
       body: BlocBuilder<TutorialCubit, TutorialState>(

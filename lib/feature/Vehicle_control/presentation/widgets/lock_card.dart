@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../core/common/widgets/interactive_swipe_button.dart';
+import '../../../../l10n/app_localizations.dart';
 
 class LockCard extends StatelessWidget {
   final Color cardColor;
@@ -34,7 +35,7 @@ class LockCard extends StatelessWidget {
               Icon(Icons.lock_outline, color: secondaryTextColor, size: 24),
               const SizedBox(width: 12),
               Text(
-                "Lock and Unlock Vehicle",
+                AppLocalizations.of(context)!.lockUnlockVehicle,
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.w700,
@@ -53,7 +54,7 @@ class LockCard extends StatelessWidget {
                 TextSpan(
                   children: [
                     TextSpan(
-                      text: "Your vehicle will not be Locked / Unlocked if the device is in sleep mode. ",
+                      text: AppLocalizations.of(context)!.sleepModeWarning,
                       style: TextStyle(
                         fontSize: 12,
                         color: secondaryTextColor,

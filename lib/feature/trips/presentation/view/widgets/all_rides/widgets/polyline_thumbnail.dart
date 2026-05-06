@@ -114,7 +114,7 @@ class _PolylineThumbnailState extends State<PolylineThumbnail> {
     if (validPoints.isEmpty) {
       return Container(
         decoration: BoxDecoration(
-          color: const Color(0xFF1A1F2B),
+          color: Theme.of(context).colorScheme.surfaceContainerLow,
           borderRadius: BorderRadius.circular(12),
         ),
         child: Center(
@@ -160,9 +160,9 @@ class _PolylineThumbnailState extends State<PolylineThumbnail> {
 
     return Container(
       decoration: BoxDecoration(
-        color: const Color(0xFF1A1F2B),
+        color: Theme.of(context).colorScheme.surfaceContainerLow,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
+        border: Border.all(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.05)),
       ),
       clipBehavior: Clip.antiAlias,
       child: Stack(
@@ -189,7 +189,7 @@ class _PolylineThumbnailState extends State<PolylineThumbnail> {
                 Polyline(
                   polylineId: const PolylineId('route'),
                   points: validPoints,
-                  color: widget.color ?? const Color(0xFFFFC107),
+                  color: widget.color ?? Theme.of(context).colorScheme.primary,
                   width: widget.strokeWidth.toInt(),
                   startCap: Cap.roundCap,
                   endCap: Cap.roundCap,

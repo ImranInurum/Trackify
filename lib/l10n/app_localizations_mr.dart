@@ -453,7 +453,8 @@ class AppLocalizationsMr extends AppLocalizations {
   String get installDevice => 'Trackify डिव्हाइस स्थापित करा';
 
   @override
-  String get installDeviceDesc => 'तुमचे Ajjas स्मार्ट डिव्हाइस त्वरित सेट करा';
+  String get installDeviceDesc =>
+      'तुमचे Trackify स्मार्ट डिव्हाइस त्वरित सेट करा';
 
   @override
   String get activateSticker => 'संपर्क स्टिकर सक्रिय करा';
@@ -506,7 +507,7 @@ class AppLocalizationsMr extends AppLocalizations {
   String get installNow => 'आता स्थापित करा';
 
   @override
-  String get buyAjjasDevice => 'अजस डिव्हाइस खरेदी करा';
+  String get buyTrackifyDevice => 'Trackify डिव्हाइस खरेदी करा';
 
   @override
   String get lite4G => 'लाईट ४जी';
@@ -515,10 +516,10 @@ class AppLocalizationsMr extends AppLocalizations {
   String get swipeToLock => 'लॉक करण्यासाठी स्वाइप करा';
 
   @override
-  String get upgradeToPlus => 'Ajjas Plus वर अपग्रेड करा';
+  String get upgradeToPlus => 'Trackify Plus वर अपग्रेड करा';
 
   @override
-  String get getMoreOutOfAjjas => 'Ajjas मधून अधिक मिळवा';
+  String get getMoreOutOfTrackify => 'Trackify मधून अधिक मिळवा';
 
   @override
   String featuresExploredCount(Object count, Object total) {
@@ -697,7 +698,7 @@ class AppLocalizationsMr extends AppLocalizations {
       'सक्रियन कोड मॅन्युअली प्रविष्ट करा';
 
   @override
-  String get openAjjasBoxInstruction =>
+  String get openTrackifyBoxInstruction =>
       'सक्रियन क्यूआर कोडसाठी अजस बॉक्स उघडा.';
 
   @override
@@ -801,9 +802,6 @@ class AppLocalizationsMr extends AppLocalizations {
   String get secondsShort => 'से';
 
   @override
-  String get getMoreOutOfTrackify => 'Trackify मधून अधिक मिळवा';
-
-  @override
   String get discoverMoreDesc =>
       'अधिक शोधा — जबरदस्त गोष्टी तुमची वाट पाहत आहेत!';
 
@@ -870,9 +868,6 @@ class AppLocalizationsMr extends AppLocalizations {
   String kmsMoreToGo(String value) {
     return 'अजून $value किमी जायचे आहे';
   }
-
-  @override
-  String get buyTrackifyDevice => 'Trackify डिव्हाइस खरेदी करा';
 
   @override
   String get recordViaPhone => 'फोनद्वारे रेकॉर्ड करा';
@@ -1288,7 +1283,7 @@ class AppLocalizationsMr extends AppLocalizations {
 
   @override
   String get powerSupplyOffDesc =>
-      'Get notified when Ajjas is not receiving power';
+      'Get notified when Trackify is not receiving power';
 
   @override
   String get appNotification => 'App Notification';
@@ -1359,7 +1354,7 @@ class AppLocalizationsMr extends AppLocalizations {
       'These values are estimates based on your fuel entries. Add fuel logs regularly for better accuracy.';
 
   @override
-  String get gotIt => 'Got it';
+  String get gotIt => 'समजले';
 
   @override
   String get currentOdometerReading => 'Current Odometer Reading';
@@ -1392,7 +1387,7 @@ class AppLocalizationsMr extends AppLocalizations {
 
   @override
   String get mileageDesc =>
-      'Enter the mileage of your vehicle as per ARAI standards';
+      'Enter current mileage (Km/L) to track remaining fuel & distance accurately.';
 
   @override
   String get kmL => 'Km/L';
@@ -1486,52 +1481,51 @@ class AppLocalizationsMr extends AppLocalizations {
   String get fuelStationNearVehicle => 'Fuel Station Near Vehicle';
 
   @override
-  String get warranty_title => 'Device Warranty';
+  String get warranty_title => 'डिव्हाइस वॉरंटी';
 
   @override
-  String get warranty_benefitsTitle => 'Warranty Benefits';
+  String get warranty_benefitsTitle => 'तुम्ही गमावू इच्छित नसलेले फायदे';
 
   @override
   String get warranty_extend =>
-      'Extend Your Warranty & Keep Your Device Protected';
+      'तुमच्या Trackify Lite ची वॉरंटी 1 वर्षासाठी वाढवा @ ₹1/दिवस';
 
   @override
-  String get warranty_vehicle => 'Vehicle';
+  String get warranty_vehicle => 'वाहन';
 
   @override
-  String get warranty_expiry => 'Warranty Expiry';
+  String get warranty_expiry => 'वॉरंटी संपण्याची तारीख';
 
   @override
-  String get warranty_button => 'Extend Warranty — ';
+  String get warranty_button => 'आता वॉरंटी वाढवा @ ₹365 ';
 
   @override
-  String get warranty_button_old => '₹4,999';
+  String get warranty_button_old => '₹730';
 
   @override
-  String get benefit1_highlight => 'Premium Coverage ';
+  String get benefit1_highlight => 'हमी बदली';
 
   @override
-  String get benefit1_normal =>
-      '— Full hardware protection against manufacturing defects.';
+  String get benefit1_normal => ' बिघाड झाल्यास';
 
   @override
-  String get benefit2_highlight => 'Free Repairs ';
+  String get benefit2_highlight => '₹1200 पर्यंत बचत करा';
 
   @override
-  String get benefit2_normal => '— All service & parts covered at zero cost.';
+  String get benefit2_normal => ' डिव्हाइस दुरुस्तीवर';
 
   @override
-  String get benefit3_highlight => '24/7 Support ';
+  String get benefit3_highlight => 'झटपट सपोर्ट';
 
   @override
-  String get benefit3_normal =>
-      '— Priority customer support whenever you need it.';
+  String get benefit3_normal => ' डिव्हाइस संबंधित समस्यांसाठी';
 
   @override
-  String get benefit4_highlight => 'No Hidden Charges ';
+  String get benefit4_highlight =>
+      '₹2000 पर्यंत विनामूल्य विस्तारित सबस्क्रिप्शन';
 
   @override
-  String get benefit4_normal => '— One flat fee, complete peace of mind.';
+  String get benefit4_normal => ' सदोष कालावधीसाठी';
 
   @override
   String get initiatingEmergencyAlert =>
@@ -1784,4 +1778,169 @@ class AppLocalizationsMr extends AppLocalizations {
 
   @override
   String get noVideos => 'कोणतेही व्हिडिओ उपलब्ध नाहीत';
+
+  @override
+  String get apply => 'Apply';
+
+  @override
+  String get noRecordsFound => 'No records found';
+
+  @override
+  String get selectDateRange => 'Select date range';
+
+  @override
+  String get notificationTypes => 'Notification types';
+
+  @override
+  String get motionSensed => 'Motion sensed';
+
+  @override
+  String get ignitionOff => 'Ignition off';
+
+  @override
+  String get ignitionOn => 'Ignition on';
+
+  @override
+  String get accidentDetected => 'Accident detected';
+
+  @override
+  String get stationaryFallDetected => 'Stationary fall detected';
+
+  @override
+  String get vehicleSwitchedOff => 'Vehicle switched off';
+
+  @override
+  String get vehicleSwitchedOn => 'Vehicle switched on';
+
+  @override
+  String get powerSupplyOn => 'Power supply on';
+
+  @override
+  String get vibrationSensed => 'Vibration sensed';
+
+  @override
+  String get editVehicle => 'Edit Vehicle';
+
+  @override
+  String get diesel => 'Diesel';
+
+  @override
+  String get cng => 'CNG';
+
+  @override
+  String get updateVehicle => 'Update Vehicle';
+
+  @override
+  String get vehicleMileage => 'Vehicle Mileage';
+
+  @override
+  String get notificationControls => 'Notification controls';
+
+  @override
+  String get changeNotificationPreferences =>
+      'Change your notification preferences';
+
+  @override
+  String get unmapTrackify => 'Unmap your Trackify';
+
+  @override
+  String get unmapStep1 => 'Step 1: To un-map device, call at +918061971443';
+
+  @override
+  String get unmapStep2 => 'Step 2: Remove vehicle';
+
+  @override
+  String get updateMileage => 'Update Mileage';
+
+  @override
+  String get lastUpdated => 'Last updated: ';
+
+  @override
+  String get lockUnlockVehicle => 'वाहन लॉक आणि अनलॉक';
+
+  @override
+  String get sleepModeWarning =>
+      'डिव्हाइस स्लीप मोडमध्ये असल्यास तुमचे वाहन लॉक / अनलॉक होणार नाही.';
+
+  @override
+  String get journeyWithTrackify => 'Trackify सह प्रवास';
+
+  @override
+  String get lifetime => 'आजीवन';
+
+  @override
+  String hrMinFormat(Object hr, Object min) {
+    return '$hr तास $min मिनिटे';
+  }
+
+  @override
+  String get yourVehicleOnMap => 'नकाशावर तुमचे वाहन';
+
+  @override
+  String get selectIcon => 'आयकॉन निवडा';
+
+  @override
+  String get bike => 'बाईक';
+
+  @override
+  String get scooty => 'स्कूटी';
+
+  @override
+  String get myVehicle => 'माझे वाहन';
+
+  @override
+  String get selectColor => 'रंग निवडा';
+
+  @override
+  String get white => 'पांढरा';
+
+  @override
+  String get red => 'लाल';
+
+  @override
+  String get aqua => 'एक्वा';
+
+  @override
+  String get orange => 'केशरी';
+
+  @override
+  String get sky => 'आकाशी';
+
+  @override
+  String get saveChanges => 'बदल जतन करा';
+
+  @override
+  String get whatIsSleepMode => 'स्लीप मोड म्हणजे काय?';
+
+  @override
+  String get sleepModeDesc1 =>
+      'जेव्हा Trackify डिव्हाइसला कोणतीही हालचाल किंवा कंपन जाणवत नाही, तेव्हा ते वाहनाची बॅटरी वाचवण्यासाठी स्वयंचलितपणे स्लीप मोडमध्ये जाते.';
+
+  @override
+  String get sleepModeDesc2 =>
+      'जेव्हा डिव्हाइसला हालचाल जाणवते आणि ते चांगल्या नेटवर्क कव्हरेजमध्ये असते, तेव्हा ते त्वरित सक्रिय होते आणि ट्रॅकिंग सुरू करते.';
+
+  @override
+  String get hr => 'तास';
+
+  @override
+  String get min => 'मि';
+
+  @override
+  String get filters => 'फिल्टर्स';
+
+  @override
+  String get tankCapacityHint => 'उदा. १३';
+
+  @override
+  String get mileageHint => 'उदा. ५०';
+
+  @override
+  String get powerSupplyOff => 'पॉवर सप्लाय बंद';
+
+  @override
+  String get lastUpdatedLabel => 'शेवटचे अपडेट: ';
+
+  @override
+  String get litresShort => 'लि.';
 }

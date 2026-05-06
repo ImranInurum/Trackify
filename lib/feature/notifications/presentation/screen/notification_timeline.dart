@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../../l10n/app_localizations.dart';
 import '../cubit/notification_timeline_cubit.dart';
 import '../state/notification_timeline_state.dart';
 import 'notification_filter_screen.dart';
@@ -100,7 +101,7 @@ class _NotificationTimelineViewState extends State<NotificationTimelineView> {
         ),
         titleSpacing: 0,
         title: Text(
-          "Notifications",
+          AppLocalizations.of(context)!.notifications,
           style: TextStyle(
             color: primaryTextColor,
             fontSize: 20,
@@ -131,7 +132,7 @@ class _NotificationTimelineViewState extends State<NotificationTimelineView> {
                     Icon(Icons.notifications_off_outlined, size: 64, color: secondaryTextColor.withOpacity(0.5)),
                     const SizedBox(height: 16),
                     Text(
-                      "No records found",
+                      AppLocalizations.of(context)!.noRecordsFound,
                       style: TextStyle(
                         fontSize: 16,
                         color: secondaryTextColor,
