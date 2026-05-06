@@ -16,7 +16,10 @@ import 'package:trackify/feature/settings/presentation/pages/settings_screen.dar
 import '../../../../core/common/widgets/vehicle_card.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../../Vehicle_control/presentation/pages/vehicle_control_screen.dart';
+import '../../../device_data/presentation/pages/device_data_screen.dart';
+import '../../../device_warranty/pages/device_warranty_page.dart';
 import '../../../upgrade_to_plus/presentation/pages/upgrade_to_plus.dart';
+import '../../../notifications/presentation/screen/notification_timeline.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -197,7 +200,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              l10n.getMoreOutOfAjjas,
+                              l10n.getMoreOutOfTrackify,
                               style: TextStyle(
                                 fontWeight: FontWeight.w600,
                                 color: Theme.of(context).colorScheme.primary,
@@ -258,8 +261,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 );
                               },
                               onLock: () => debugPrint("Locked!"),
-                              onRecharge: () => debugPrint("Recharge"),
-                              onRenew: () => debugPrint("Renew"),
+                              onRecharge: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => DeviceDataScreen(
+
+                                    ),
+                                  ),
+                                );
+                              },
+                              onRenew: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(builder: (context) => WarrantyScreen()),
+                                );
+                              },
                             );
                           }
                           return const SizedBox.shrink();
@@ -268,7 +285,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                       /// 🔹 NOTIFICATIONS
                       GestureDetector(
-                        onTap: () => debugPrint("Notifications tapped"),
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const NotificationTimelineScreen(),
+                            ),
+                          );
+                        },
                         child: Container(
                           padding: const EdgeInsets.symmetric(vertical: 14),
                           decoration: BoxDecoration(

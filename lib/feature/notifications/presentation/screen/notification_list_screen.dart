@@ -55,7 +55,7 @@ class NotificationListScreen extends StatelessWidget {
                     const SizedBox(height: 16),
                     ElevatedButton(
                       onPressed: () => context.read<NotificationCubit>().fetchNotifications(),
-                      child: const Text("Retry"),
+                      child: Text(l10n.retry),
                     ),
                   ],
                 ),

@@ -967,7 +967,7 @@ abstract class AppLocalizations {
   /// No description provided for @installDeviceDesc.
   ///
   /// In en, this message translates to:
-  /// **'Quickly set up your Ajjas smart device with simple steps'**
+  /// **'Quickly set up your Trackify smart device with simple steps'**
   String get installDeviceDesc;
 
   /// No description provided for @activateSticker.
@@ -1045,7 +1045,7 @@ abstract class AppLocalizations {
   /// No description provided for @secureYourVehicleDesc.
   ///
   /// In en, this message translates to:
-  /// **'Buy Ajjas device now for real-time tracking and complete peace of mind.'**
+  /// **'Buy Trackify device now for real-time tracking and complete peace of mind.'**
   String get secureYourVehicleDesc;
 
   /// No description provided for @boughtDeviceInstallNow.
@@ -1060,11 +1060,11 @@ abstract class AppLocalizations {
   /// **'Install now'**
   String get installNow;
 
-  /// No description provided for @buyAjjasDevice.
+  /// No description provided for @buyTrackifyDevice.
   ///
   /// In en, this message translates to:
-  /// **'Buy Ajjas Device'**
-  String get buyAjjasDevice;
+  /// **'Buy Trackify Device'**
+  String get buyTrackifyDevice;
 
   /// No description provided for @lite4G.
   ///
@@ -1081,14 +1081,14 @@ abstract class AppLocalizations {
   /// No description provided for @upgradeToPlus.
   ///
   /// In en, this message translates to:
-  /// **'Upgrade to Ajjas Plus'**
+  /// **'Upgrade to Trackify Plus'**
   String get upgradeToPlus;
 
-  /// No description provided for @getMoreOutOfAjjas.
+  /// No description provided for @getMoreOutOfTrackify.
   ///
   /// In en, this message translates to:
-  /// **'Get more out of Ajjas'**
-  String get getMoreOutOfAjjas;
+  /// **'Get more out of Trackify'**
+  String get getMoreOutOfTrackify;
 
   /// No description provided for @featuresExploredCount.
   ///
@@ -1420,11 +1420,11 @@ abstract class AppLocalizations {
   /// **'Enter activation code manually'**
   String get enterActivationCodeManually;
 
-  /// No description provided for @openAjjasBoxInstruction.
+  /// No description provided for @openTrackifyBoxInstruction.
   ///
   /// In en, this message translates to:
-  /// **'Open Ajjas box for the activation QR code.'**
-  String get openAjjasBoxInstruction;
+  /// **'Open Trackify box for the activation QR code.'**
+  String get openTrackifyBoxInstruction;
 
   /// No description provided for @continueText.
   ///
@@ -1612,12 +1612,6 @@ abstract class AppLocalizations {
   /// **'s'**
   String get secondsShort;
 
-  /// No description provided for @getMoreOutOfTrackify.
-  ///
-  /// In en, this message translates to:
-  /// **'Get more out of Trackify'**
-  String get getMoreOutOfTrackify;
-
   /// No description provided for @discoverMoreDesc.
   ///
   /// In en, this message translates to:
@@ -1743,12 +1737,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{value} kms more to go'**
   String kmsMoreToGo(String value);
-
-  /// No description provided for @buyTrackifyDevice.
-  ///
-  /// In en, this message translates to:
-  /// **'Buy Trackify Device'**
-  String get buyTrackifyDevice;
 
   /// No description provided for @recordViaPhone.
   ///
@@ -2527,7 +2515,7 @@ abstract class AppLocalizations {
   /// No description provided for @powerSupplyOffDesc.
   ///
   /// In en, this message translates to:
-  /// **'Get notification when Ajjas is not receiving power'**
+  /// **'Get notification when Trackify is not receiving power'**
   String get powerSupplyOffDesc;
 
   /// No description provided for @appNotification.
@@ -2725,7 +2713,7 @@ abstract class AppLocalizations {
   /// No description provided for @mileageDesc.
   ///
   /// In en, this message translates to:
-  /// **'Enter the mileage of your vehicle as per ARAI standards'**
+  /// **'Enter current mileage (Km/L) to track remaining fuel & distance accurately.'**
   String get mileageDesc;
 
   /// No description provided for @kmL.
@@ -2911,13 +2899,13 @@ abstract class AppLocalizations {
   /// No description provided for @warranty_benefitsTitle.
   ///
   /// In en, this message translates to:
-  /// **'Warranty Benefits'**
+  /// **'Benefits you do not want to miss'**
   String get warranty_benefitsTitle;
 
   /// No description provided for @warranty_extend.
   ///
   /// In en, this message translates to:
-  /// **'Extend Your Warranty & Keep Your Device Protected'**
+  /// **'Extend warranty of your Trackify Lite by 1 year @ ₹1/day'**
   String get warranty_extend;
 
   /// No description provided for @warranty_vehicle.
@@ -2929,67 +2917,67 @@ abstract class AppLocalizations {
   /// No description provided for @warranty_expiry.
   ///
   /// In en, this message translates to:
-  /// **'Warranty Expiry'**
+  /// **'Warranty expiry date'**
   String get warranty_expiry;
 
   /// No description provided for @warranty_button.
   ///
   /// In en, this message translates to:
-  /// **'Extend Warranty — '**
+  /// **'Extend warranty now @ ₹365 '**
   String get warranty_button;
 
   /// No description provided for @warranty_button_old.
   ///
   /// In en, this message translates to:
-  /// **'₹4,999'**
+  /// **'₹730'**
   String get warranty_button_old;
 
   /// No description provided for @benefit1_highlight.
   ///
   /// In en, this message translates to:
-  /// **'Premium Coverage '**
+  /// **'Guaranteed replacement'**
   String get benefit1_highlight;
 
   /// No description provided for @benefit1_normal.
   ///
   /// In en, this message translates to:
-  /// **'— Full hardware protection against manufacturing defects.'**
+  /// **' in case of failure'**
   String get benefit1_normal;
 
   /// No description provided for @benefit2_highlight.
   ///
   /// In en, this message translates to:
-  /// **'Free Repairs '**
+  /// **'Save upto ₹1200'**
   String get benefit2_highlight;
 
   /// No description provided for @benefit2_normal.
   ///
   /// In en, this message translates to:
-  /// **'— All service & parts covered at zero cost.'**
+  /// **' on device repair'**
   String get benefit2_normal;
 
   /// No description provided for @benefit3_highlight.
   ///
   /// In en, this message translates to:
-  /// **'24/7 Support '**
+  /// **'Instant support'**
   String get benefit3_highlight;
 
   /// No description provided for @benefit3_normal.
   ///
   /// In en, this message translates to:
-  /// **'— Priority customer support whenever you need it.'**
+  /// **' for device related issues'**
   String get benefit3_normal;
 
   /// No description provided for @benefit4_highlight.
   ///
   /// In en, this message translates to:
-  /// **'No Hidden Charges '**
+  /// **'Free extended subscription upto ₹2000'**
   String get benefit4_highlight;
 
   /// No description provided for @benefit4_normal.
   ///
   /// In en, this message translates to:
-  /// **'— One flat fee, complete peace of mind.'**
+  /// **' for faulty period'**
   String get benefit4_normal;
 
   /// No description provided for @initiatingEmergencyAlert.
@@ -3471,6 +3459,324 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No videos found'**
   String get noVideos;
+
+  /// No description provided for @apply.
+  ///
+  /// In en, this message translates to:
+  /// **'Apply'**
+  String get apply;
+
+  /// No description provided for @noRecordsFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No records found'**
+  String get noRecordsFound;
+
+  /// No description provided for @selectDateRange.
+  ///
+  /// In en, this message translates to:
+  /// **'Select date range'**
+  String get selectDateRange;
+
+  /// No description provided for @notificationTypes.
+  ///
+  /// In en, this message translates to:
+  /// **'Notification types'**
+  String get notificationTypes;
+
+  /// No description provided for @motionSensed.
+  ///
+  /// In en, this message translates to:
+  /// **'Motion sensed'**
+  String get motionSensed;
+
+  /// No description provided for @ignitionOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Ignition off'**
+  String get ignitionOff;
+
+  /// No description provided for @ignitionOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Ignition on'**
+  String get ignitionOn;
+
+  /// No description provided for @accidentDetected.
+  ///
+  /// In en, this message translates to:
+  /// **'Accident detected'**
+  String get accidentDetected;
+
+  /// No description provided for @stationaryFallDetected.
+  ///
+  /// In en, this message translates to:
+  /// **'Stationary fall detected'**
+  String get stationaryFallDetected;
+
+  /// No description provided for @vehicleSwitchedOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Vehicle switched off'**
+  String get vehicleSwitchedOff;
+
+  /// No description provided for @vehicleSwitchedOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Vehicle switched on'**
+  String get vehicleSwitchedOn;
+
+  /// No description provided for @powerSupplyOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Power supply on'**
+  String get powerSupplyOn;
+
+  /// No description provided for @vibrationSensed.
+  ///
+  /// In en, this message translates to:
+  /// **'Vibration sensed'**
+  String get vibrationSensed;
+
+  /// No description provided for @editVehicle.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Vehicle'**
+  String get editVehicle;
+
+  /// No description provided for @diesel.
+  ///
+  /// In en, this message translates to:
+  /// **'Diesel'**
+  String get diesel;
+
+  /// No description provided for @cng.
+  ///
+  /// In en, this message translates to:
+  /// **'CNG'**
+  String get cng;
+
+  /// No description provided for @updateVehicle.
+  ///
+  /// In en, this message translates to:
+  /// **'Update Vehicle'**
+  String get updateVehicle;
+
+  /// No description provided for @vehicleMileage.
+  ///
+  /// In en, this message translates to:
+  /// **'Vehicle Mileage'**
+  String get vehicleMileage;
+
+  /// No description provided for @notificationControls.
+  ///
+  /// In en, this message translates to:
+  /// **'Notification controls'**
+  String get notificationControls;
+
+  /// No description provided for @changeNotificationPreferences.
+  ///
+  /// In en, this message translates to:
+  /// **'Change your notification preferences'**
+  String get changeNotificationPreferences;
+
+  /// No description provided for @unmapTrackify.
+  ///
+  /// In en, this message translates to:
+  /// **'Unmap your Trackify'**
+  String get unmapTrackify;
+
+  /// No description provided for @unmapStep1.
+  ///
+  /// In en, this message translates to:
+  /// **'Step 1: To un-map device, call at +918061971443'**
+  String get unmapStep1;
+
+  /// No description provided for @unmapStep2.
+  ///
+  /// In en, this message translates to:
+  /// **'Step 2: Remove vehicle'**
+  String get unmapStep2;
+
+  /// No description provided for @updateMileage.
+  ///
+  /// In en, this message translates to:
+  /// **'Update Mileage'**
+  String get updateMileage;
+
+  /// No description provided for @lastUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Last updated: '**
+  String get lastUpdated;
+
+  /// No description provided for @lockUnlockVehicle.
+  ///
+  /// In en, this message translates to:
+  /// **'Lock and Unlock Vehicle'**
+  String get lockUnlockVehicle;
+
+  /// No description provided for @sleepModeWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'Your vehicle will not be Locked / Unlocked if the device is in sleep mode. '**
+  String get sleepModeWarning;
+
+  /// No description provided for @journeyWithTrackify.
+  ///
+  /// In en, this message translates to:
+  /// **'Journey with Trackify'**
+  String get journeyWithTrackify;
+
+  /// No description provided for @lifetime.
+  ///
+  /// In en, this message translates to:
+  /// **'Lifetime'**
+  String get lifetime;
+
+  /// No description provided for @hrMinFormat.
+  ///
+  /// In en, this message translates to:
+  /// **'{hr} hr {min} min'**
+  String hrMinFormat(Object hr, Object min);
+
+  /// No description provided for @yourVehicleOnMap.
+  ///
+  /// In en, this message translates to:
+  /// **'Your vehicle on map'**
+  String get yourVehicleOnMap;
+
+  /// No description provided for @selectIcon.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Icon'**
+  String get selectIcon;
+
+  /// No description provided for @bike.
+  ///
+  /// In en, this message translates to:
+  /// **'Bike'**
+  String get bike;
+
+  /// No description provided for @scooty.
+  ///
+  /// In en, this message translates to:
+  /// **'Scooty'**
+  String get scooty;
+
+  /// No description provided for @myVehicle.
+  ///
+  /// In en, this message translates to:
+  /// **'My Vehicle'**
+  String get myVehicle;
+
+  /// No description provided for @selectColor.
+  ///
+  /// In en, this message translates to:
+  /// **'Select color'**
+  String get selectColor;
+
+  /// No description provided for @white.
+  ///
+  /// In en, this message translates to:
+  /// **'White'**
+  String get white;
+
+  /// No description provided for @red.
+  ///
+  /// In en, this message translates to:
+  /// **'Red'**
+  String get red;
+
+  /// No description provided for @aqua.
+  ///
+  /// In en, this message translates to:
+  /// **'Aqua'**
+  String get aqua;
+
+  /// No description provided for @orange.
+  ///
+  /// In en, this message translates to:
+  /// **'Orange'**
+  String get orange;
+
+  /// No description provided for @sky.
+  ///
+  /// In en, this message translates to:
+  /// **'Sky'**
+  String get sky;
+
+  /// No description provided for @saveChanges.
+  ///
+  /// In en, this message translates to:
+  /// **'Save Changes'**
+  String get saveChanges;
+
+  /// No description provided for @whatIsSleepMode.
+  ///
+  /// In en, this message translates to:
+  /// **'What is Sleep Mode?'**
+  String get whatIsSleepMode;
+
+  /// No description provided for @sleepModeDesc1.
+  ///
+  /// In en, this message translates to:
+  /// **'When the Trackify device doesn\'t detect any vibration or motion, it automatically enters sleep mode to save the vehicle\'s battery.'**
+  String get sleepModeDesc1;
+
+  /// No description provided for @sleepModeDesc2.
+  ///
+  /// In en, this message translates to:
+  /// **'The device instantly wakes up and begins tracking when it senses any motion and is in good network coverage.'**
+  String get sleepModeDesc2;
+
+  /// No description provided for @hr.
+  ///
+  /// In en, this message translates to:
+  /// **'hr'**
+  String get hr;
+
+  /// No description provided for @min.
+  ///
+  /// In en, this message translates to:
+  /// **'min'**
+  String get min;
+
+  /// No description provided for @filters.
+  ///
+  /// In en, this message translates to:
+  /// **'Filters'**
+  String get filters;
+
+  /// No description provided for @tankCapacityHint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g., 13'**
+  String get tankCapacityHint;
+
+  /// No description provided for @mileageHint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g., 50'**
+  String get mileageHint;
+
+  /// No description provided for @powerSupplyOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Power supply off'**
+  String get powerSupplyOff;
+
+  /// No description provided for @lastUpdatedLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Last updated: '**
+  String get lastUpdatedLabel;
+
+  /// No description provided for @litresShort.
+  ///
+  /// In en, this message translates to:
+  /// **'L'**
+  String get litresShort;
 }
 
 class _AppLocalizationsDelegate

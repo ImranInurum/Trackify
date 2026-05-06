@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../l10n/app_localizations.dart';
 import '../../../../core/constants/app_images.dart';
 import 'icon_option.dart';
 import 'color_option.dart';
@@ -35,7 +36,8 @@ class VehicleOnMapCard extends StatefulWidget {
   State<VehicleOnMapCard> createState() => _VehicleOnMapCardState();
 }
 
-class _VehicleOnMapCardState extends State<VehicleOnMapCard> with SingleTickerProviderStateMixin {
+class _VehicleOnMapCardState extends State<VehicleOnMapCard>
+    with SingleTickerProviderStateMixin {
   late AnimationController _shakeController;
   late Animation<double> _shakeAnimation;
 
@@ -81,7 +83,7 @@ class _VehicleOnMapCardState extends State<VehicleOnMapCard> with SingleTickerPr
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                "Your vehicle on map",
+                AppLocalizations.of(context)!.yourVehicleOnMap,
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.w700,
@@ -99,20 +101,31 @@ class _VehicleOnMapCardState extends State<VehicleOnMapCard> with SingleTickerPr
                 child: InkWell(
                   onTap: widget.onUpgrade,
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 8,
+                    ),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(25),
                       gradient: const LinearGradient(
-                        colors: [Color(0xFFD6B57B), Color(0xFFE7D0B7), Color(0xFFD6B57B)],
+                        colors: [
+                          Color(0xFFD6B57B),
+                          Color(0xFFE7D0B7),
+                          Color(0xFFD6B57B),
+                        ],
                       ),
                     ),
                     child: Row(
                       children: [
                         Image.asset(AppImages.kingIcon, height: 16, width: 16),
                         const SizedBox(width: 6),
-                        const Text(
-                          "Upgrade to Plus",
-                          style: TextStyle(color: Colors.black, fontSize: 12, fontWeight: FontWeight.w800),
+                        Text(
+                          AppLocalizations.of(context)!.upgradeToPlus,
+                          style: const TextStyle(
+                            color: Colors.black,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w800,
+                          ),
                         ),
                       ],
                     ),
@@ -123,7 +136,7 @@ class _VehicleOnMapCardState extends State<VehicleOnMapCard> with SingleTickerPr
           ),
           const SizedBox(height: 20),
           Text(
-            "Select Icon",
+            AppLocalizations.of(context)!.selectIcon,
             style: TextStyle(
               fontSize: 15,
               color: widget.secondaryTextColor,
@@ -135,14 +148,14 @@ class _VehicleOnMapCardState extends State<VehicleOnMapCard> with SingleTickerPr
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               IconOption(
-                label: "Bike",
+                label: AppLocalizations.of(context)!.bike,
                 icon: Icons.motorcycle,
                 isSelected: widget.selectedIcon == 'Bike',
                 onTap: () => widget.onIconChanged('Bike'),
               ),
               const SizedBox(width: 25),
               IconOption(
-                label: "Scooty",
+                label: AppLocalizations.of(context)!.scooty,
                 icon: Icons.moped,
                 isLocked: true,
                 isSelected: widget.selectedIcon == 'Scooty',
@@ -150,7 +163,7 @@ class _VehicleOnMapCardState extends State<VehicleOnMapCard> with SingleTickerPr
               ),
               const SizedBox(width: 25),
               IconOption(
-                label: "My Vehicle",
+                label: AppLocalizations.of(context)!.myVehicle,
                 icon: Icons.directions_car,
                 isLocked: true,
                 isSelected: widget.selectedIcon == 'My Vehicle',
@@ -160,7 +173,7 @@ class _VehicleOnMapCardState extends State<VehicleOnMapCard> with SingleTickerPr
           ),
           const SizedBox(height: 30),
           Text(
-            "Select color",
+            AppLocalizations.of(context)!.selectColor,
             style: TextStyle(
               fontSize: 15,
               color: widget.secondaryTextColor,
@@ -173,14 +186,14 @@ class _VehicleOnMapCardState extends State<VehicleOnMapCard> with SingleTickerPr
             child: Row(
               children: [
                 ColorOption(
-                  label: "White",
+                  label: AppLocalizations.of(context)!.white,
                   color: Colors.white,
                   isSelected: widget.selectedColor == 'White',
                   onTap: () => widget.onColorChanged('White'),
                 ),
                 const SizedBox(width: 20),
                 ColorOption(
-                  label: "Red",
+                  label: AppLocalizations.of(context)!.red,
                   color: const Color(0xFF7B3D3D),
                   isLocked: true,
                   isSelected: widget.selectedColor == 'Red',
@@ -188,7 +201,7 @@ class _VehicleOnMapCardState extends State<VehicleOnMapCard> with SingleTickerPr
                 ),
                 const SizedBox(width: 20),
                 ColorOption(
-                  label: "Aqua",
+                  label: AppLocalizations.of(context)!.aqua,
                   color: const Color(0xFF4D7B7B),
                   isLocked: true,
                   isSelected: widget.selectedColor == 'Aqua',
@@ -196,7 +209,7 @@ class _VehicleOnMapCardState extends State<VehicleOnMapCard> with SingleTickerPr
                 ),
                 const SizedBox(width: 20),
                 ColorOption(
-                  label: "Orange",
+                  label: AppLocalizations.of(context)!.orange,
                   color: const Color(0xFF7B551D),
                   isLocked: true,
                   isSelected: widget.selectedColor == 'Orange',
@@ -204,7 +217,7 @@ class _VehicleOnMapCardState extends State<VehicleOnMapCard> with SingleTickerPr
                 ),
                 const SizedBox(width: 20),
                 ColorOption(
-                  label: "Sky",
+                  label: AppLocalizations.of(context)!.sky,
                   color: const Color(0xFFA6D0FF),
                   isSelected: widget.selectedColor == 'Sky',
                   onTap: () => widget.onColorChanged('Sky'),
@@ -227,12 +240,9 @@ class _VehicleOnMapCardState extends State<VehicleOnMapCard> with SingleTickerPr
                   ),
                   elevation: 0,
                 ),
-                child: const Text(
-                  "Save Changes",
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
+                child: Text(
+                  AppLocalizations.of(context)!.saveChanges,
+                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
               ),
             ),

@@ -452,7 +452,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get installDeviceDesc =>
-      'Quickly set up your Ajjas smart device with simple steps';
+      'Quickly set up your Trackify smart device with simple steps';
 
   @override
   String get activateSticker => 'Activate Contact Sticker';
@@ -496,7 +496,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get secureYourVehicleDesc =>
-      'Buy Ajjas device now for real-time tracking and complete peace of mind.';
+      'Buy Trackify device now for real-time tracking and complete peace of mind.';
 
   @override
   String get boughtDeviceInstallNow => 'Bought a device? ';
@@ -505,7 +505,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get installNow => 'Install now';
 
   @override
-  String get buyAjjasDevice => 'Buy Ajjas Device';
+  String get buyTrackifyDevice => 'Buy Trackify Device';
 
   @override
   String get lite4G => 'Lite 4G';
@@ -514,10 +514,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get swipeToLock => 'SWIPE TO LOCK';
 
   @override
-  String get upgradeToPlus => 'Upgrade to Ajjas Plus';
+  String get upgradeToPlus => 'Upgrade to Trackify Plus';
 
   @override
-  String get getMoreOutOfAjjas => 'Get more out of Ajjas';
+  String get getMoreOutOfTrackify => 'Get more out of Trackify';
 
   @override
   String featuresExploredCount(Object count, Object total) {
@@ -699,8 +699,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get enterActivationCodeManually => 'Enter activation code manually';
 
   @override
-  String get openAjjasBoxInstruction =>
-      'Open Ajjas box for the activation QR code.';
+  String get openTrackifyBoxInstruction =>
+      'Open Trackify box for the activation QR code.';
 
   @override
   String get continueText => 'Continue';
@@ -803,9 +803,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get secondsShort => 's';
 
   @override
-  String get getMoreOutOfTrackify => 'Get more out of Trackify';
-
-  @override
   String get discoverMoreDesc => 'Discover more — awesome things await!';
 
   @override
@@ -871,9 +868,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String kmsMoreToGo(String value) {
     return '$value kms more to go';
   }
-
-  @override
-  String get buyTrackifyDevice => 'Buy Trackify Device';
 
   @override
   String get recordViaPhone => 'Record via Phone';
@@ -1289,7 +1283,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get powerSupplyOffDesc =>
-      'Get notification when Ajjas is not receiving power';
+      'Get notification when Trackify is not receiving power';
 
   @override
   String get appNotification => 'App notification';
@@ -1393,7 +1387,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get mileageDesc =>
-      'Enter the mileage of your vehicle as per ARAI standards';
+      'Enter current mileage (Km/L) to track remaining fuel & distance accurately.';
 
   @override
   String get kmL => 'Km/L';
@@ -1490,49 +1484,47 @@ class AppLocalizationsEn extends AppLocalizations {
   String get warranty_title => 'Device Warranty';
 
   @override
-  String get warranty_benefitsTitle => 'Warranty Benefits';
+  String get warranty_benefitsTitle => 'Benefits you do not want to miss';
 
   @override
   String get warranty_extend =>
-      'Extend Your Warranty & Keep Your Device Protected';
+      'Extend warranty of your Trackify Lite by 1 year @ ₹1/day';
 
   @override
   String get warranty_vehicle => 'Vehicle';
 
   @override
-  String get warranty_expiry => 'Warranty Expiry';
+  String get warranty_expiry => 'Warranty expiry date';
 
   @override
-  String get warranty_button => 'Extend Warranty — ';
+  String get warranty_button => 'Extend warranty now @ ₹365 ';
 
   @override
-  String get warranty_button_old => '₹4,999';
+  String get warranty_button_old => '₹730';
 
   @override
-  String get benefit1_highlight => 'Premium Coverage ';
+  String get benefit1_highlight => 'Guaranteed replacement';
 
   @override
-  String get benefit1_normal =>
-      '— Full hardware protection against manufacturing defects.';
+  String get benefit1_normal => ' in case of failure';
 
   @override
-  String get benefit2_highlight => 'Free Repairs ';
+  String get benefit2_highlight => 'Save upto ₹1200';
 
   @override
-  String get benefit2_normal => '— All service & parts covered at zero cost.';
+  String get benefit2_normal => ' on device repair';
 
   @override
-  String get benefit3_highlight => '24/7 Support ';
+  String get benefit3_highlight => 'Instant support';
 
   @override
-  String get benefit3_normal =>
-      '— Priority customer support whenever you need it.';
+  String get benefit3_normal => ' for device related issues';
 
   @override
-  String get benefit4_highlight => 'No Hidden Charges ';
+  String get benefit4_highlight => 'Free extended subscription upto ₹2000';
 
   @override
-  String get benefit4_normal => '— One flat fee, complete peace of mind.';
+  String get benefit4_normal => ' for faulty period';
 
   @override
   String get initiatingEmergencyAlert =>
@@ -1785,4 +1777,169 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get noVideos => 'No videos found';
+
+  @override
+  String get apply => 'Apply';
+
+  @override
+  String get noRecordsFound => 'No records found';
+
+  @override
+  String get selectDateRange => 'Select date range';
+
+  @override
+  String get notificationTypes => 'Notification types';
+
+  @override
+  String get motionSensed => 'Motion sensed';
+
+  @override
+  String get ignitionOff => 'Ignition off';
+
+  @override
+  String get ignitionOn => 'Ignition on';
+
+  @override
+  String get accidentDetected => 'Accident detected';
+
+  @override
+  String get stationaryFallDetected => 'Stationary fall detected';
+
+  @override
+  String get vehicleSwitchedOff => 'Vehicle switched off';
+
+  @override
+  String get vehicleSwitchedOn => 'Vehicle switched on';
+
+  @override
+  String get powerSupplyOn => 'Power supply on';
+
+  @override
+  String get vibrationSensed => 'Vibration sensed';
+
+  @override
+  String get editVehicle => 'Edit Vehicle';
+
+  @override
+  String get diesel => 'Diesel';
+
+  @override
+  String get cng => 'CNG';
+
+  @override
+  String get updateVehicle => 'Update Vehicle';
+
+  @override
+  String get vehicleMileage => 'Vehicle Mileage';
+
+  @override
+  String get notificationControls => 'Notification controls';
+
+  @override
+  String get changeNotificationPreferences =>
+      'Change your notification preferences';
+
+  @override
+  String get unmapTrackify => 'Unmap your Trackify';
+
+  @override
+  String get unmapStep1 => 'Step 1: To un-map device, call at +918061971443';
+
+  @override
+  String get unmapStep2 => 'Step 2: Remove vehicle';
+
+  @override
+  String get updateMileage => 'Update Mileage';
+
+  @override
+  String get lastUpdated => 'Last updated: ';
+
+  @override
+  String get lockUnlockVehicle => 'Lock and Unlock Vehicle';
+
+  @override
+  String get sleepModeWarning =>
+      'Your vehicle will not be Locked / Unlocked if the device is in sleep mode. ';
+
+  @override
+  String get journeyWithTrackify => 'Journey with Trackify';
+
+  @override
+  String get lifetime => 'Lifetime';
+
+  @override
+  String hrMinFormat(Object hr, Object min) {
+    return '$hr hr $min min';
+  }
+
+  @override
+  String get yourVehicleOnMap => 'Your vehicle on map';
+
+  @override
+  String get selectIcon => 'Select Icon';
+
+  @override
+  String get bike => 'Bike';
+
+  @override
+  String get scooty => 'Scooty';
+
+  @override
+  String get myVehicle => 'My Vehicle';
+
+  @override
+  String get selectColor => 'Select color';
+
+  @override
+  String get white => 'White';
+
+  @override
+  String get red => 'Red';
+
+  @override
+  String get aqua => 'Aqua';
+
+  @override
+  String get orange => 'Orange';
+
+  @override
+  String get sky => 'Sky';
+
+  @override
+  String get saveChanges => 'Save Changes';
+
+  @override
+  String get whatIsSleepMode => 'What is Sleep Mode?';
+
+  @override
+  String get sleepModeDesc1 =>
+      'When the Trackify device doesn\'t detect any vibration or motion, it automatically enters sleep mode to save the vehicle\'s battery.';
+
+  @override
+  String get sleepModeDesc2 =>
+      'The device instantly wakes up and begins tracking when it senses any motion and is in good network coverage.';
+
+  @override
+  String get hr => 'hr';
+
+  @override
+  String get min => 'min';
+
+  @override
+  String get filters => 'Filters';
+
+  @override
+  String get tankCapacityHint => 'e.g., 13';
+
+  @override
+  String get mileageHint => 'e.g., 50';
+
+  @override
+  String get powerSupplyOff => 'Power supply off';
+
+  @override
+  String get lastUpdatedLabel => 'Last updated: ';
+
+  @override
+  String get litresShort => 'L';
 }

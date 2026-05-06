@@ -26,7 +26,6 @@ class _DocumentSubScreenState extends State<DocumentSubScreen> {
   String? _error = null;
   bool _isPickerActive = false;
 
-
   static const int _maxBytes = 5 * 1024 * 1024;
   final ImagePicker _picker = ImagePicker();
 
@@ -36,9 +35,9 @@ class _DocumentSubScreenState extends State<DocumentSubScreen> {
   void _setLoading(bool v) => setState(() => _isLoading = v);
 
   void _setError(String msg) => setState(() {
-        _error = msg;
-        _isLoading = false;
-      });
+    _error = msg;
+    _isLoading = false;
+  });
 
   // ── DATE PICKER ──────────────────────────────────────────────
 
@@ -67,8 +66,7 @@ class _DocumentSubScreenState extends State<DocumentSubScreen> {
     });
 
     try {
-      final picked =
-          await _picker.pickImage(source: source, imageQuality: 50);
+      final picked = await _picker.pickImage(source: source, imageQuality: 50);
       if (picked == null) {
         _setLoading(false);
         return;
@@ -110,9 +108,7 @@ class _DocumentSubScreenState extends State<DocumentSubScreen> {
           initAspectRatio: CropAspectRatioPreset.original,
           lockAspectRatio: false,
         ),
-        IOSUiSettings(
-          title: l10n.cropDocument,
-        ),
+        IOSUiSettings(title: l10n.cropDocument),
       ],
     );
     return croppedFile != null ? File(croppedFile.path) : null;
@@ -285,8 +281,9 @@ class _DocumentSubScreenState extends State<DocumentSubScreen> {
       setState(() => _error = l10n.frontRequired);
       return;
     }
-    ScaffoldMessenger.of(context)
-        .showSnackBar(SnackBar(content: Text(l10n.successMessage)));
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(l10n.successMessage)));
     Navigator.pop(context);
   }
 
@@ -303,8 +300,6 @@ class _DocumentSubScreenState extends State<DocumentSubScreen> {
         ? l10n.selectExpiryDate
         : DateFormat('dd / MM / yyyy').format(_selectedDate!);
 
-
-
     return Scaffold(
       backgroundColor: colorScheme.surface,
       body: SafeArea(
@@ -316,8 +311,6 @@ class _DocumentSubScreenState extends State<DocumentSubScreen> {
               const SizedBox(height: 14),
 
               // ── Header ──────────────────────────────────────
-              const SizedBox(height: 24),
-
               Row(
                 children: [
                   GestureDetector(
@@ -339,92 +332,97 @@ class _DocumentSubScreenState extends State<DocumentSubScreen> {
                 ],
               ),
 
-              Expanded(
-                child: SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+              const SizedBox(height: 24),
+
+              if (_isLoading) const LinearProgressIndicator(),
+              if (_error != null)
+                Text(_error!, style: const TextStyle(color: Colors.red)),
+
+              const SizedBox(height: 20),
+
+              // ── Expiry Date ──────────────────────────────────
+              GestureDetector(
+                onTap: _pickDate,
+                child: Container(
+                  height: screenHeight * 0.055,
+                  width: screenWidth * 0.45,
+                  padding: const EdgeInsets.symmetric(horizontal: 14),
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).cardColor,
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(
+                      color: colorScheme.outlineVariant.withOpacity(0.2),
+                    ),
+                  ),
+                  child: Row(
                     children: [
-                      const SizedBox(height: 24),
-
-                      if (_isLoading) const LinearProgressIndicator(),
-                      if (_error != null)
-                        Text(_error!, style: const TextStyle(color: Colors.red)),
-
-                      const SizedBox(height: 20),
-
-                      // ── Expiry Date ──────────────────────────────────
-                      GestureDetector(
-                        onTap: _pickDate,
-                        child: Container(
-                          height: screenHeight * 0.055,
-                          width: screenWidth * 0.45,
-                          padding: const EdgeInsets.symmetric(horizontal: 14),
-                          decoration: BoxDecoration(
-                            color: Theme.of(context).cardColor,
-                            borderRadius: BorderRadius.circular(10),
-                            border: Border.all(color: colorScheme.outlineVariant.withOpacity(0.2)),
+                      Expanded(
+                        child: Text(
+                          dateLabel,
+                          style: TextStyle(
+                            color: _selectedDate == null
+                                ? colorScheme.onSurfaceVariant
+                                : colorScheme.onSurface,
+                            fontSize: 13,
                           ),
-                          child: Row(
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  dateLabel,
-                                  style: TextStyle(
-                                    color: _selectedDate == null
-                                        ? colorScheme.onSurfaceVariant
-                                        : colorScheme.onSurface,
-                                    fontSize: 13,
-                                  ),
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ),
-                              const SizedBox(width: 8),
-                              Icon(Icons.calendar_today_outlined,
-                                  size: 18, color: colorScheme.onSurfaceVariant),
-                            ],
-                          ),
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ),
-
-                      const SizedBox(height: 20),
-
-                      Text(l10n.uploadDocuments,
-                          style: TextStyle(color: colorScheme.onSurface)),
-
-                      const SizedBox(height: 20),
-
-                      Row(
-                        children: [
-                          _uploadBox(true, _frontFile, l10n.frontSide),
-                          const SizedBox(width: 12),
-                          _uploadBox(false, _backFile, l10n.backSide),
-                        ],
+                      const SizedBox(width: 8),
+                      Icon(
+                        Icons.calendar_today_outlined,
+                        size: 18,
+                        color: colorScheme.onSurfaceVariant,
                       ),
-
-                      const SizedBox(height: 20),
-
-                      Text(
-                        l10n.commitmentText,
-                        style: TextStyle(
-                            color: colorScheme.onSurface.withOpacity(0.5), fontSize: screenHeight * 0.045),
-                      ),
-
-                      SizedBox(height: screenHeight * 0.03),
-
-                      Row(
-                        children: [
-                          const Icon(Icons.shield, color: Colors.green, size: 20),
-                          const SizedBox(width: 6),
-                          Text(l10n.documentsSafe,
-                              style: TextStyle(
-                                  fontSize: 14, color: colorScheme.onSurface)),
-                        ],
-                      ),
-                      const SizedBox(height: 40),
                     ],
                   ),
                 ),
               ),
+
+              const SizedBox(height: 20),
+
+              Text(
+                l10n.uploadDocuments,
+                style: TextStyle(color: colorScheme.onSurface),
+              ),
+
+              const SizedBox(height: 20),
+
+              Row(
+                children: [
+                  _uploadBox(true, _frontFile, l10n.frontSide),
+                  const SizedBox(width: 12),
+                  _uploadBox(false, _backFile, l10n.backSide),
+                ],
+              ),
+
+              const SizedBox(height: 20),
+
+              Text(
+                l10n.commitmentText,
+                style: TextStyle(
+                  color: colorScheme.onSurface.withOpacity(0.5),
+                  fontSize: screenHeight * 0.045,
+                ),
+              ),
+
+              SizedBox(height: screenHeight * 0.03),
+
+              Row(
+                children: [
+                  const Icon(Icons.shield, color: Colors.green, size: 20),
+                  const SizedBox(width: 6),
+                  Text(
+                    l10n.documentsSafe,
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: colorScheme.onSurface,
+                    ),
+                  ),
+                ],
+              ),
+
+              const Spacer(),
 
               // ── Save Button ──────────────────────────────────
               GestureDetector(
@@ -433,17 +431,16 @@ class _DocumentSubScreenState extends State<DocumentSubScreen> {
                   height: screenHeight * 0.055,
                   width: double.infinity,
                   decoration: BoxDecoration(
-                    color:
-                        _frontFile == null ? colorScheme.outline : colorScheme.primary,
+                    color: _frontFile == null
+                        ? colorScheme.outline
+                        : colorScheme.primary,
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Center(
                     child: Text(
                       l10n.addDocument,
                       style: TextStyle(
-                        color: _frontFile == null
-                            ? colorScheme.onSurfaceVariant
-                            : colorScheme.onPrimary,
+                        color: colorScheme.onPrimary,
                         fontWeight: FontWeight.w700,
                       ),
                     ),
@@ -472,19 +469,28 @@ class _DocumentSubScreenState extends State<DocumentSubScreen> {
         decoration: BoxDecoration(
           color: Theme.of(context).cardColor,
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: colorScheme.outlineVariant.withOpacity(0.2)),
+          border: Border.all(
+            color: colorScheme.outlineVariant.withOpacity(0.2),
+          ),
         ),
         child: file == null
             ? Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.camera_alt_outlined,
-                      color: colorScheme.onSurfaceVariant, size: 28),
+                  Icon(
+                    Icons.camera_alt_outlined,
+                    color: colorScheme.onSurfaceVariant,
+                    size: 28,
+                  ),
                   const SizedBox(height: 8),
-                  Text(label,
-                      style: TextStyle(
-                          color: colorScheme.onSurfaceVariant, fontSize: 12),
-                      textAlign: TextAlign.center),
+                  Text(
+                    label,
+                    style: TextStyle(
+                      color: colorScheme.onSurfaceVariant,
+                      fontSize: 12,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
                 ],
               )
             : ClipRRect(
@@ -493,16 +499,20 @@ class _DocumentSubScreenState extends State<DocumentSubScreen> {
                     ? Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const Icon(Icons.picture_as_pdf,
-                              color: Colors.red, size: 32),
+                          const Icon(
+                            Icons.picture_as_pdf,
+                            color: Colors.red,
+                            size: 32,
+                          ),
                           const SizedBox(height: 6),
                           Padding(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 6),
+                            padding: const EdgeInsets.symmetric(horizontal: 6),
                             child: Text(
                               file.path.split('/').last,
                               style: TextStyle(
-                                  color: colorScheme.onSurfaceVariant, fontSize: 10),
+                                color: colorScheme.onSurfaceVariant,
+                                fontSize: 10,
+                              ),
                               textAlign: TextAlign.center,
                               maxLines: 2,
                               overflow: TextOverflow.ellipsis,
@@ -510,10 +520,12 @@ class _DocumentSubScreenState extends State<DocumentSubScreen> {
                           ),
                         ],
                       )
-                    : Image.file(file,
+                    : Image.file(
+                        file,
                         fit: BoxFit.cover,
                         width: double.infinity,
-                        height: double.infinity),
+                        height: double.infinity,
+                      ),
               ),
       ),
     );

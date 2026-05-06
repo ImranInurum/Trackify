@@ -453,7 +453,7 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get installDeviceDesc =>
-      'सरल चरणों के साथ अपना Ajjas स्मार्ट डिवाइस जल्दी सेट करें';
+      'सरल चरणों के साथ अपना Trackify स्मार्ट डिवाइस जल्दी सेट करें';
 
   @override
   String get activateSticker => 'संपर्क स्टिकर सक्रिय करें';
@@ -506,7 +506,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get installNow => 'अभी इंस्टॉल करें';
 
   @override
-  String get buyAjjasDevice => 'अजस डिवाइस खरीदें';
+  String get buyTrackifyDevice => 'Trackify डिवाइस खरीदें';
 
   @override
   String get lite4G => 'लाइट 4जी';
@@ -515,10 +515,10 @@ class AppLocalizationsHi extends AppLocalizations {
   String get swipeToLock => 'लॉक करने के लिए स्वाइप करें';
 
   @override
-  String get upgradeToPlus => 'Ajjas Plus में अपग्रेड करें';
+  String get upgradeToPlus => 'Trackify Plus में अपग्रेड करें';
 
   @override
-  String get getMoreOutOfAjjas => 'Ajjas से और अधिक पाएं';
+  String get getMoreOutOfTrackify => 'Trackify से और अधिक पाएं';
 
   @override
   String featuresExploredCount(Object count, Object total) {
@@ -698,8 +698,8 @@ class AppLocalizationsHi extends AppLocalizations {
       'एक्टिवेशन कोड मैन्युअल रूप से दर्ज करें';
 
   @override
-  String get openAjjasBoxInstruction =>
-      'एक्टिवेशन QR कोड के लिए Ajjas बॉक्स खोलें।';
+  String get openTrackifyBoxInstruction =>
+      'एक्टिवेशन QR कोड के लिए Trackify बॉक्स खोलें।';
 
   @override
   String get continueText => 'जारी रखें';
@@ -802,9 +802,6 @@ class AppLocalizationsHi extends AppLocalizations {
   String get secondsShort => 'से';
 
   @override
-  String get getMoreOutOfTrackify => 'Trackify से और अधिक पाएं';
-
-  @override
   String get discoverMoreDesc =>
       'और खोजें — शानदार चीज़ें प्रतीक्षा कर रही हैं!';
 
@@ -871,9 +868,6 @@ class AppLocalizationsHi extends AppLocalizations {
   String kmsMoreToGo(String value) {
     return '$value किमी और जाना है';
   }
-
-  @override
-  String get buyTrackifyDevice => 'Trackify डिवाइस खरीदें';
 
   @override
   String get recordViaPhone => 'फोन से रिकॉर्ड करें';
@@ -1290,7 +1284,7 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get powerSupplyOffDesc =>
-      'जब Ajjas को पावर नहीं मिल रही हो तो अधिसूचना प्राप्त करें';
+      'जब Trackify को पावर नहीं मिल रही हो तो अधिसूचना प्राप्त करें';
 
   @override
   String get appNotification => 'ऐप अधिसूचना';
@@ -1393,7 +1387,7 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get mileageDesc =>
-      'ARAI मानकों के अनुसार अपने वाहन का माइलेज दर्ज करें';
+      'शेष ईंधन और दूरी को सटीक रूप से ट्रैक करने के लिए वर्तमान माइलेज (Km/L) दर्ज करें।';
 
   @override
   String get kmL => 'किमी/ली.';
@@ -1785,4 +1779,170 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get noVideos => 'कोई वीडियो नहीं मिला';
+
+  @override
+  String get apply => 'लागू करें';
+
+  @override
+  String get noRecordsFound => 'कोई रिकॉर्ड नहीं मिला';
+
+  @override
+  String get selectDateRange => 'तारीख सीमा चुनें';
+
+  @override
+  String get notificationTypes => 'अधिसूचना प्रकार';
+
+  @override
+  String get motionSensed => 'मोशन सेंस किया गया';
+
+  @override
+  String get ignitionOff => 'इग्निशन बंद';
+
+  @override
+  String get ignitionOn => 'इग्निशन चालू';
+
+  @override
+  String get accidentDetected => 'दुर्घटना का पता चला';
+
+  @override
+  String get stationaryFallDetected => 'स्थिर गिरावट का पता चला';
+
+  @override
+  String get vehicleSwitchedOff => 'वाहन बंद कर दिया गया';
+
+  @override
+  String get vehicleSwitchedOn => 'वाहन चालू कर दिया गया';
+
+  @override
+  String get powerSupplyOn => 'पावर सप्लाई चालू';
+
+  @override
+  String get vibrationSensed => 'कंपन महसूस किया गया';
+
+  @override
+  String get editVehicle => 'वाहन संपादित करें';
+
+  @override
+  String get diesel => 'डीजल';
+
+  @override
+  String get cng => 'सीएनजी';
+
+  @override
+  String get updateVehicle => 'वाहन अपडेट करें';
+
+  @override
+  String get vehicleMileage => 'वाहन माइलेज';
+
+  @override
+  String get notificationControls => 'अधिसूचना नियंत्रण';
+
+  @override
+  String get changeNotificationPreferences =>
+      'अपनी अधिसूचना प्राथमिकताएं बदलें';
+
+  @override
+  String get unmapTrackify => 'अपने Trackify को अनमैप करें';
+
+  @override
+  String get unmapStep1 =>
+      'चरण 1: डिवाइस को अन-मैप करने के लिए, +918061971443 पर कॉल करें';
+
+  @override
+  String get unmapStep2 => 'चरण 2: वाहन निकालें';
+
+  @override
+  String get updateMileage => 'माइलेज अपडेट करें';
+
+  @override
+  String get lastUpdated => 'अंतिम बार अपडेट किया गया: ';
+
+  @override
+  String get lockUnlockVehicle => 'वाहन लॉक और अनलॉक करें';
+
+  @override
+  String get sleepModeWarning =>
+      'यदि डिवाइस स्लीप मोड में है तो आपका वाहन लॉक/अनलॉक नहीं होगा। ';
+
+  @override
+  String get journeyWithTrackify => 'Trackify के साथ यात्रा';
+
+  @override
+  String get lifetime => 'लाइफटाइम';
+
+  @override
+  String hrMinFormat(Object hr, Object min) {
+    return '$hr घंटा $min मिनट';
+  }
+
+  @override
+  String get yourVehicleOnMap => 'नक्शे पर आपका वाहन';
+
+  @override
+  String get selectIcon => 'आइकन चुनें';
+
+  @override
+  String get bike => 'बाइक';
+
+  @override
+  String get scooty => 'स्कूटी';
+
+  @override
+  String get myVehicle => 'मेरा वाहन';
+
+  @override
+  String get selectColor => 'रंग चुनें';
+
+  @override
+  String get white => 'सफेद';
+
+  @override
+  String get red => 'लाल';
+
+  @override
+  String get aqua => 'एक्वा';
+
+  @override
+  String get orange => 'नारंगी';
+
+  @override
+  String get sky => 'आकाश';
+
+  @override
+  String get saveChanges => 'परिवर्तन सहेजें';
+
+  @override
+  String get whatIsSleepMode => 'स्लीप मोड क्या है?';
+
+  @override
+  String get sleepModeDesc1 =>
+      'जब Trackify डिवाइस किसी कंपन या गति का पता नहीं लगाता है, तो यह वाहन की बैटरी बचाने के लिए स्वचालित रूप से स्लीप मोड में चला जाता है।';
+
+  @override
+  String get sleepModeDesc2 =>
+      'डिवाइस तुरंत जाग जाता है और ट्रैकिंग शुरू कर देता है जब वह किसी गति को महसूस करता है और अच्छे नेटवर्क कवरेज में होता है।';
+
+  @override
+  String get hr => 'घंटा';
+
+  @override
+  String get min => 'मिनट';
+
+  @override
+  String get filters => 'फ़िल्टर';
+
+  @override
+  String get tankCapacityHint => 'e.g., 13';
+
+  @override
+  String get mileageHint => 'e.g., 50';
+
+  @override
+  String get powerSupplyOff => 'Power supply off';
+
+  @override
+  String get lastUpdatedLabel => 'Last updated: ';
+
+  @override
+  String get litresShort => 'L';
 }

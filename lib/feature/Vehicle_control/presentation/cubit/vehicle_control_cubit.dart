@@ -39,16 +39,49 @@ class VehicleControlCubit extends Cubit<VehicleControlState> {
     if (state is VehicleControlLoaded) {
       final currentState = state as VehicleControlLoaded;
       
-      // Optionally show a small loading overlay or just perform the save
       try {
         await repository.updateVehicleIcon(vehicleId, currentState.tempIcon);
         await repository.updateVehicleColor(vehicleId, currentState.tempColor);
-        
-        // After saving, reload to get fresh entity from "API"
         loadVehicleDetails(vehicleId);
       } catch (e) {
         emit(VehicleControlError(e.toString()));
       }
+    }
+  }
+
+  Future<void> updateTankCapacity(String vehicleId, String capacity) async {
+    try {
+      await repository.updateTankCapacity(vehicleId, capacity);
+      loadVehicleDetails(vehicleId);
+    } catch (e) {
+      emit(VehicleControlError(e.toString()));
+    }
+  }
+
+  Future<void> updateMileage(String vehicleId, String mileage) async {
+    try {
+      await repository.updateMileage(vehicleId, mileage);
+      loadVehicleDetails(vehicleId);
+    } catch (e) {
+      emit(VehicleControlError(e.toString()));
+    }
+  }
+
+  Future<void> updateVehicleDetails(String vehicleId, String name, String number, String fuelType) async {
+    try {
+      await repository.updateVehicleDetails(vehicleId, name, number, fuelType);
+      loadVehicleDetails(vehicleId);
+    } catch (e) {
+      emit(VehicleControlError(e.toString()));
+    }
+  }
+
+  Future<void> updateVehicleImage(String vehicleId, String imagePath) async {
+    try {
+      await repository.updateVehicleImage(vehicleId, imagePath);
+      loadVehicleDetails(vehicleId);
+    } catch (e) {
+      emit(VehicleControlError(e.toString()));
     }
   }
 }

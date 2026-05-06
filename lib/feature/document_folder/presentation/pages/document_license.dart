@@ -480,9 +480,7 @@ class _DocumentLicenseState extends State<DocumentLicense> {
                     child: Text(
                       l10n.addDocument,
                       style: TextStyle(
-                        color: _frontFile == null
-                            ? colorScheme.onSurfaceVariant.withOpacity(0.4)
-                            : colorScheme.onPrimary,
+                        color: colorScheme.onPrimary,
                         fontWeight: FontWeightManager.bold,
                       ),
                     ),

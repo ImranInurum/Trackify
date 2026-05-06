@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../l10n/app_localizations.dart';
 
 class JourneyCard extends StatelessWidget {
   final Color cardColor;
@@ -33,7 +34,7 @@ class JourneyCard extends StatelessWidget {
                 Row(
                   children: [
                     Text(
-                      "Journey with Trackify",
+                      AppLocalizations.of(context)!.journeyWithTrackify,
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.w700,
@@ -42,7 +43,7 @@ class JourneyCard extends StatelessWidget {
                     ),
                     const SizedBox(width: 8),
                     Text(
-                      "Lifetime",
+                      AppLocalizations.of(context)!.lifetime,
                       style: TextStyle(
                         fontSize: 14,
                         color: secondaryTextColor,
@@ -59,7 +60,7 @@ class JourneyCard extends StatelessWidget {
                 Expanded(
                   child: _buildMetric(
                     icon: Icons.location_on_outlined,
-                    label: "Distance Travelled",
+                    label: AppLocalizations.of(context)!.distanceTravelled,
                     value: "42.9",
                     unit: "km",
                     color: const Color(0xFF4D7B7B),
@@ -73,9 +74,9 @@ class JourneyCard extends StatelessWidget {
                 Expanded(
                   child: _buildMetric(
                     icon: Icons.access_time,
-                    label: "Time Duration",
+                    label: AppLocalizations.of(context)!.timeDuration,
                     value: "19",
-                    unit: "hr 35 min",
+                    unit: "${AppLocalizations.of(context)!.hr} 35 ${AppLocalizations.of(context)!.min}",
                     color: const Color(0xFF3D7B9E),
                   ),
                 ),

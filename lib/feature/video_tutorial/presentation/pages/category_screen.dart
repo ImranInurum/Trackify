@@ -22,10 +22,17 @@ class CategoryScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: colorScheme.surface,
       appBar: AppBar(
-        title: Text(l10n.tutorialVideos,style: TextStyle(
-          fontWeight: FontWeightManager.medium,
-          color:colorScheme.onSurfaceVariant,
-        ),),
+        backgroundColor: colorScheme.surface,
+        centerTitle: false,
+        elevation: 0,
+        title: Text(
+          l10n.tutorialVideos,
+          style: TextStyle(
+            fontWeight: FontWeightManager.medium,
+            color: colorScheme.onSurface,
+          ),
+        ),
+        iconTheme: IconThemeData(color: colorScheme.onSurface),
       ),
       body: Padding(
           padding: const EdgeInsets.all(15),
@@ -49,7 +56,7 @@ class CategoryScreen extends StatelessWidget {
     return GestureDetector(
       onTap: (){
         Navigator.push(context,
-            MaterialPageRoute(builder: (context)=>TutorialScreen(type:type,)
+            MaterialPageRoute(builder: (context)=>TutorialScreen(type:type, title: title,)
             )
         );
       },
