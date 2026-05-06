@@ -690,7 +690,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'Vehicle model list is empty for this selection';
 
   @override
-  String get deviceInstallation => 'Device Installation';
+  String get deviceInstallation => 'Trackify Device Installation';
 
   @override
   String get scanActivationCode => 'Scan activation code';
@@ -1767,4 +1767,22 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get accessoryBills => 'Accessory Bills';
+
+  @override
+  String get tutorialVideos => 'Tutorial Videos';
+
+  @override
+  String get videos => 'Videos';
+
+  @override
+  String get location => 'Location';
+
+  @override
+  String get amazingFeatures => 'Amazing Features';
+
+  @override
+  String get loading => 'Loading...';
+
+  @override
+  String get noVideos => 'No videos found';
 }

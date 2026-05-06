@@ -738,5 +738,20 @@
   "billsDescription": "अपने वाहन से संबंधित बिल अपलोड और प्रबंधित करें",
   "movedTo": "यहाँ स्थानांतरित",
   "viewNow": "अभी देखें",
-  "accessoryBills": "एक्सेसरी बिल"
+  "accessoryBills": "एक्सेसरी बिल",
+
+
+    "tutorialVideos": "ट्यूटोरियल वीडियो",
+    "videos": "वीडियो",
+
+    "location": "लोकेशन",
+    "amazingFeatures": "शानदार फीचर्स",
+    "deviceInstallation": "डिवाइस इंस्टॉलेशन",
+    "voiceMonitoring": "वॉइस मॉनिटरिंग",
+
+    "loading": "लोड हो रहा है...",
+    "noVideos": "कोई वीडियो नहीं मिला"
+
+
+
 }

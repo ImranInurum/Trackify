@@ -26,6 +26,7 @@ import 'package:trackify/feature/record_via_phone/presentation/pages/record_via_
 import 'package:trackify/feature/safe_parking/presentation/pages/safe_parking_screen.dart';
 import 'package:trackify/feature/trips/presentation/view/ride_history_details/ride_history_details_screen.dart';
 import 'package:trackify/feature/trips/presentation/view/widgets/all_rides/widgets/ride_card.dart';
+import 'package:trackify/feature/video_tutorial/presentation/pages/category_screen.dart';
 import '../../../../core/services/socket_service.dart';
 import '../../../../core/utils/shared_preferences.dart';
 import '../../../device_data/presentation/pages/device_data_screen.dart';
@@ -911,6 +912,13 @@ class _MapScreenState extends State<MapScreen> {
         context,
         MaterialPageRoute(
           builder: (context) => const DocumentFolderScreen(),
+        ),
+      );
+    }else if (label == l10n.videoTutorials.replaceAll(' ', '\n')) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const CategoryScreen(),
         ),
       );
     }

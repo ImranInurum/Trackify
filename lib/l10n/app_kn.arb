@@ -672,5 +672,16 @@
     "addDocument": "Add Document",
     "documentName": "Document Name*",
     "vehicleImage": "Vehicle Image",
-    "newLabel": "NEW"
+    "newLabel": "NEW",
+
+     "tutorialVideos": "ಟ್ಯುಟೋರಿಯಲ್ ವೀಡಿಯೊಗಳು",
+      "videos": "ವೀಡಿಯೊಗಳು",
+
+      "location": "ಸ್ಥಳ",
+      "amazingFeatures": "ಅದ್ಭುತ ವೈಶಿಷ್ಟ್ಯಗಳು",
+      "deviceInstallation": "ಸಾಧನ ಸ್ಥಾಪನೆ",
+      "voiceMonitoring": "ಧ್ವನಿ ಮೇಲ್ವಿಚಾರಣೆ",
+
+      "loading": "ಲೋಡ್ ಆಗುತ್ತಿದೆ...",
+      "noVideos": "ಯಾವುದೇ ವೀಡಿಯೊಗಳು ಲಭ್ಯವಿಲ್ಲ"
 }

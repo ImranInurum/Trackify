@@ -252,7 +252,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get documentFolder => 'مجلد المستندات';
 
   @override
-  String get voiceMonitoring => 'مراقبة الصوت';
+  String get voiceMonitoring => 'ಧ್ವನಿ ಮೇಲ್ವಿಚಾರಣೆ';
 
   @override
   String get remoteEngineOff => 'إيقاف المحرك عن بعد';
@@ -688,7 +688,7 @@ class AppLocalizationsAr extends AppLocalizations {
       'قائمة موديلات المركبات فارغة لهذا الاختيار';
 
   @override
-  String get deviceInstallation => 'تركيب الجهاز';
+  String get deviceInstallation => 'ಸಾಧನ ಸ್ಥಾಪನೆ';
 
   @override
   String get scanActivationCode => 'مسح كود التفعيل';
@@ -1755,4 +1755,22 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get accessoryBills => 'فواتير الملحقات';
+
+  @override
+  String get tutorialVideos => 'ಟ್ಯುಟೋರಿಯಲ್ ವೀಡಿಯೊಗಳು';
+
+  @override
+  String get videos => 'ವೀಡಿಯೊಗಳು';
+
+  @override
+  String get location => 'ಸ್ಥಳ';
+
+  @override
+  String get amazingFeatures => 'ಅದ್ಭುತ ವೈಶಿಷ್ಟ್ಯಗಳು';
+
+  @override
+  String get loading => 'ಲೋಡ್ ಆಗುತ್ತಿದೆ...';
+
+  @override
+  String get noVideos => 'ಯಾವುದೇ ವೀಡಿಯೊಗಳು ಲಭ್ಯವಿಲ್ಲ';
 }

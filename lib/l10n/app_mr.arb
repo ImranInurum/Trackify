@@ -510,5 +510,16 @@
   "addDocument": "Add Document",
   "documentName": "Document Name*",
   "vehicleImage": "Vehicle Image",
-  "newLabel": "NEW"
+  "newLabel": "NEW",
+
+   "tutorialVideos": "ट्युटोरियल व्हिडिओ",
+    "videos": "व्हिडिओ",
+
+    "location": "स्थान",
+    "amazingFeatures": "उत्तम वैशिष्ट्ये",
+    "deviceInstallation": "डिव्हाइस इंस्टॉलेशन",
+    "voiceMonitoring": "व्हॉइस मॉनिटरिंग",
+
+    "loading": "लोड होत आहे...",
+    "noVideos": "कोणतेही व्हिडिओ उपलब्ध नाहीत"
 }
