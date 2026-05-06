@@ -119,16 +119,17 @@ class _DocumentOtherdocumentScreenState extends State<DocumentOtherdocumentScree
   }
 
   Future<File?> _cropImage(File imageFile) async {
+    final l10n = AppLocalizations.of(context)!;
     try {
       final croppedFile = await ImageCropper().cropImage(
         sourcePath: imageFile.path,
         uiSettings: [
           AndroidUiSettings(
-            toolbarTitle: 'Crop Document',
+            toolbarTitle: l10n.cropDocument,
             toolbarColor: Colors.black,
             toolbarWidgetColor: Colors.white,
           ),
-          IOSUiSettings(title: 'Crop Document'),
+          IOSUiSettings(title: l10n.cropDocument),
         ],
       );
 
@@ -363,6 +364,13 @@ class _DocumentOtherdocumentScreenState extends State<DocumentOtherdocumentScree
 
               const SizedBox(height: 24),
 
+              Expanded(
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SizedBox(height: 24),
+
               if (_isLoading) const LinearProgressIndicator(),
 
               if (_error != null)
@@ -412,18 +420,21 @@ class _DocumentOtherdocumentScreenState extends State<DocumentOtherdocumentScree
                     border: Border.all(color: colorScheme.outlineVariant.withOpacity(0.2)),
                   ),
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
-                        dateLabel,
-                        style: TextStyle(
-                          color: _selectedDate == null
-                              ? colorScheme.onSurfaceVariant
-                              : colorScheme.onSurface,
-                          fontSize: 14,
+                      Expanded(
+                        child: Text(
+                          dateLabel,
+                          style: TextStyle(
+                            color: _selectedDate == null
+                                ? colorScheme.onSurfaceVariant
+                                : colorScheme.onSurface,
+                            fontSize: 14,
+                          ),
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ),
-                      SizedBox(width: 20,),
+                      const SizedBox(width: 8),
                       Icon(
                         Icons.calendar_today_outlined,
                         size: 18,
@@ -483,7 +494,11 @@ class _DocumentOtherdocumentScreenState extends State<DocumentOtherdocumentScree
 
               //
 
-              Spacer(),
+                      const SizedBox(height: 40),
+                    ],
+                  ),
+                ),
+              ),
 
               GestureDetector(
                 onTap: _frontFile == null ? null : _submit,
@@ -503,7 +518,7 @@ class _DocumentOtherdocumentScreenState extends State<DocumentOtherdocumentScree
                         color: _frontFile == null
                             ? colorScheme.onSurfaceVariant
                             : colorScheme.onPrimary,
-                        fontWeight: FontWeightManager.bold,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
                   ),

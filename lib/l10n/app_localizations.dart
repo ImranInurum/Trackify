@@ -904,6 +904,18 @@ abstract class AppLocalizations {
   /// **'Electric'**
   String get electric;
 
+  /// No description provided for @vehicleImage.
+  ///
+  /// In en, this message translates to:
+  /// **'Vehicle Image'**
+  String get vehicleImage;
+
+  /// No description provided for @newLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'NEW'**
+  String get newLabel;
+
   /// No description provided for @vehicleMake.
   ///
   /// In en, this message translates to:
@@ -2449,13 +2461,13 @@ abstract class AppLocalizations {
   /// No description provided for @insurance.
   ///
   /// In en, this message translates to:
-  /// **'Insurance Details'**
+  /// **'Insurance'**
   String get insurance;
 
   /// No description provided for @puc.
   ///
   /// In en, this message translates to:
-  /// **'PUC Certificate'**
+  /// **'PUC'**
   String get puc;
 
   /// No description provided for @vehicleRCTitle.
@@ -3231,6 +3243,198 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Creating a future where every bike is SMART\nand every rider is SAFE'**
   String get footerMotto;
+
+  /// No description provided for @cropDocument.
+  ///
+  /// In en, this message translates to:
+  /// **'Crop Document'**
+  String get cropDocument;
+
+  /// No description provided for @cropVehicleImage.
+  ///
+  /// In en, this message translates to:
+  /// **'Crop Vehicle Image'**
+  String get cropVehicleImage;
+
+  /// No description provided for @uploadImage.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload Image'**
+  String get uploadImage;
+
+  /// No description provided for @camera.
+  ///
+  /// In en, this message translates to:
+  /// **'Camera'**
+  String get camera;
+
+  /// No description provided for @gallery.
+  ///
+  /// In en, this message translates to:
+  /// **'Gallery'**
+  String get gallery;
+
+  /// No description provided for @pdf.
+  ///
+  /// In en, this message translates to:
+  /// **'PDF'**
+  String get pdf;
+
+  /// No description provided for @fileTooLarge.
+  ///
+  /// In en, this message translates to:
+  /// **'File size exceeds 5MB limit'**
+  String get fileTooLarge;
+
+  /// No description provided for @pickImageError.
+  ///
+  /// In en, this message translates to:
+  /// **'Error picking image'**
+  String get pickImageError;
+
+  /// No description provided for @pickPdfError.
+  ///
+  /// In en, this message translates to:
+  /// **'Error picking PDF'**
+  String get pickPdfError;
+
+  /// No description provided for @pdfTooLarge.
+  ///
+  /// In en, this message translates to:
+  /// **'PDF size exceeds 5MB limit'**
+  String get pdfTooLarge;
+
+  /// No description provided for @uploadDocuments.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload Documents'**
+  String get uploadDocuments;
+
+  /// No description provided for @frontSide.
+  ///
+  /// In en, this message translates to:
+  /// **'Front Side'**
+  String get frontSide;
+
+  /// No description provided for @backSide.
+  ///
+  /// In en, this message translates to:
+  /// **'Back Side'**
+  String get backSide;
+
+  /// No description provided for @commitmentText.
+  ///
+  /// In en, this message translates to:
+  /// **'We are committed to protecting your privacy and ensuring your documents are safe with us.'**
+  String get commitmentText;
+
+  /// No description provided for @documentsSafe.
+  ///
+  /// In en, this message translates to:
+  /// **'Your documents are safe with us'**
+  String get documentsSafe;
+
+  /// No description provided for @addDocument.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Document'**
+  String get addDocument;
+
+  /// No description provided for @frontRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Front side document is required'**
+  String get frontRequired;
+
+  /// No description provided for @successMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Document saved successfully'**
+  String get successMessage;
+
+  /// No description provided for @selectExpiryDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Expiry Date'**
+  String get selectExpiryDate;
+
+  /// No description provided for @documentsEncrypted.
+  ///
+  /// In en, this message translates to:
+  /// **'Your documents are encrypted & safe'**
+  String get documentsEncrypted;
+
+  /// No description provided for @fileSizeNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Note: Maximum File Size is 5MB'**
+  String get fileSizeNote;
+
+  /// No description provided for @personalDocumentsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Personal Documents'**
+  String get personalDocumentsTitle;
+
+  /// No description provided for @drivingLicense.
+  ///
+  /// In en, this message translates to:
+  /// **'Driving License'**
+  String get drivingLicense;
+
+  /// No description provided for @drivingLicenseTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Driving License'**
+  String get drivingLicenseTitle;
+
+  /// No description provided for @otherDocuments.
+  ///
+  /// In en, this message translates to:
+  /// **'Other Documents'**
+  String get otherDocuments;
+
+  /// No description provided for @otherDocumentTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Other Documents'**
+  String get otherDocumentTitle;
+
+  /// No description provided for @documentName.
+  ///
+  /// In en, this message translates to:
+  /// **'Document Name*'**
+  String get documentName;
+
+  /// No description provided for @billsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Bills'**
+  String get billsTitle;
+
+  /// No description provided for @billsDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload and manage your vehicle-related bills'**
+  String get billsDescription;
+
+  /// No description provided for @movedTo.
+  ///
+  /// In en, this message translates to:
+  /// **'Moved to'**
+  String get movedTo;
+
+  /// No description provided for @viewNow.
+  ///
+  /// In en, this message translates to:
+  /// **'View Now'**
+  String get viewNow;
+
+  /// No description provided for @accessoryBills.
+  ///
+  /// In en, this message translates to:
+  /// **'Accessory Bills'**
+  String get accessoryBills;
 }
 
 class _AppLocalizationsDelegate

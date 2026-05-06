@@ -41,6 +41,7 @@ class _DocumentVehicleRCScreenState extends State<DocumentVehicleRCScreen> {
   // ── DATE PICKER ──────────────────────────────────────────────
 
   Future<void> _pickDate() async {
+    final l10n = AppLocalizations.of(context)!;
     final now = DateTime.now();
     final picked = await showDatePicker(
       context: context,
@@ -96,18 +97,19 @@ class _DocumentVehicleRCScreenState extends State<DocumentVehicleRCScreen> {
   }
 
   Future<File?> _cropImage(File imageFile) async {
+    final l10n = AppLocalizations.of(context)!;
     final croppedFile = await ImageCropper().cropImage(
       sourcePath: imageFile.path,
       uiSettings: [
         AndroidUiSettings(
-          toolbarTitle: 'Crop Document',
+          toolbarTitle: l10n.cropDocument,
           toolbarColor: Colors.black,
           toolbarWidgetColor: Colors.white,
           initAspectRatio: CropAspectRatioPreset.original,
           lockAspectRatio: false,
         ),
         IOSUiSettings(
-          title: 'Crop Document',
+          title: l10n.cropDocument,
         ),
       ],
     );
@@ -333,6 +335,13 @@ class _DocumentVehicleRCScreenState extends State<DocumentVehicleRCScreen> {
 
               const SizedBox(height: 24),
 
+              Expanded(
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SizedBox(height: 24),
+
               if (_isLoading) const LinearProgressIndicator(),
               if (_error != null)
                 Text(_error!,
@@ -352,7 +361,7 @@ class _DocumentVehicleRCScreenState extends State<DocumentVehicleRCScreen> {
                     color: Theme.of(context).cardColor,
                     borderRadius: BorderRadius.circular(10),
                     border:
-                        Border.all(color: colorScheme.outlineVariant),
+                        Border.all(color: colorScheme.outlineVariant.withOpacity(0.2)),
                   ),
                   child: Row(
                     children: [
@@ -412,7 +421,11 @@ class _DocumentVehicleRCScreenState extends State<DocumentVehicleRCScreen> {
                 ],
               ),
 
-              const Spacer(),
+                      const SizedBox(height: 40),
+                    ],
+                  ),
+                ),
+              ),
 
               GestureDetector(
                 onTap: _frontFile == null ? null : _submit,
@@ -460,7 +473,7 @@ class _DocumentVehicleRCScreenState extends State<DocumentVehicleRCScreen> {
         decoration: BoxDecoration(
           color: Theme.of(context).cardColor,
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: colorScheme.outlineVariant),
+          border: Border.all(color: colorScheme.outlineVariant.withOpacity(0.2)),
         ),
         child: file == null
             ? Column(

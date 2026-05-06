@@ -13,6 +13,7 @@ class VehicleOnMapCard extends StatefulWidget {
   final Function(String) onIconChanged;
   final Function(String) onColorChanged;
   final VoidCallback onSave;
+  final VoidCallback onUpgrade;
   final bool showSaveButton;
 
   const VehicleOnMapCard({
@@ -26,6 +27,7 @@ class VehicleOnMapCard extends StatefulWidget {
     required this.onIconChanged,
     required this.onColorChanged,
     required this.onSave,
+    required this.onUpgrade,
     this.showSaveButton = false,
   });
 
@@ -94,23 +96,26 @@ class _VehicleOnMapCardState extends State<VehicleOnMapCard> with SingleTickerPr
                     child: child,
                   );
                 },
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(25),
-                    gradient: const LinearGradient(
-                      colors: [Color(0xFFD6B57B), Color(0xFFE7D0B7), Color(0xFFD6B57B)],
-                    ),
-                  ),
-                  child: Row(
-                    children: [
-                      Image.asset(AppImages.kingIcon, height: 16, width: 16),
-                      const SizedBox(width: 6),
-                      const Text(
-                        "Upgrade to Plus",
-                        style: TextStyle(color: Colors.black, fontSize: 12, fontWeight: FontWeight.w800),
+                child: InkWell(
+                  onTap: widget.onUpgrade,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(25),
+                      gradient: const LinearGradient(
+                        colors: [Color(0xFFD6B57B), Color(0xFFE7D0B7), Color(0xFFD6B57B)],
                       ),
-                    ],
+                    ),
+                    child: Row(
+                      children: [
+                        Image.asset(AppImages.kingIcon, height: 16, width: 16),
+                        const SizedBox(width: 6),
+                        const Text(
+                          "Upgrade to Plus",
+                          style: TextStyle(color: Colors.black, fontSize: 12, fontWeight: FontWeight.w800),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),

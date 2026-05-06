@@ -105,18 +105,19 @@ class _DocumentLicenseState extends State<DocumentLicense> {
   }
 
   Future<File?> _cropImage(File imageFile) async {
+    final l10n = AppLocalizations.of(context)!;
     final croppedFile = await ImageCropper().cropImage(
       sourcePath: imageFile.path,
       uiSettings: [
         AndroidUiSettings(
-          toolbarTitle: 'Crop Document',
+          toolbarTitle: l10n.cropDocument,
           toolbarColor: Colors.black,
           toolbarWidgetColor: Colors.white,
           initAspectRatio: CropAspectRatioPreset.original,
           lockAspectRatio: false,
         ),
         IOSUiSettings(
-          title: 'Crop Document',
+          title: l10n.cropDocument,
         ),
       ],
     );
@@ -329,7 +330,6 @@ class _DocumentLicenseState extends State<DocumentLicense> {
               const SizedBox(height: 14),
 
               Row(
-                // mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   GestureDetector(
                     onTap: () => Navigator.pop(context),
@@ -351,103 +351,119 @@ class _DocumentLicenseState extends State<DocumentLicense> {
                 ],
               ),
 
-              SizedBox(height: screenHeight * 0.02),
-
-              if (_isLoading) const LinearProgressIndicator(),
-
-              if (_error != null)
-                Text(_error!, style: const TextStyle(color: Colors.red)),
-
-              SizedBox(height: screenHeight * 0.02),
-
-              GestureDetector(
-                onTap: _pickDate,
-                child: Container(
-                  height: screenHeight * 0.055,
-                  width: screenWidth * 0.42,
-                  padding: const EdgeInsets.symmetric(horizontal: 14),
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).cardColor,
-                    borderRadius: BorderRadius.circular(10),
-                    border: Border.all(color: colorScheme.outlineVariant.withOpacity(0.2)),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
+              Expanded(
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        dateLabel,
-                        style: TextStyle(
-                          color: _selectedDate == null
-                              ? colorScheme.onSurfaceVariant
-                              : colorScheme.onSurface,
-                          fontSize: 14,
+                      SizedBox(height: screenHeight * 0.02),
+
+                      if (_isLoading) const LinearProgressIndicator(),
+
+                      if (_error != null)
+                        Text(_error!, style: const TextStyle(color: Colors.red)),
+
+                      SizedBox(height: screenHeight * 0.02),
+
+                      GestureDetector(
+                        onTap: _pickDate,
+                        child: Container(
+                          height: screenHeight * 0.055,
+                          width: screenWidth * 0.42,
+                          padding: const EdgeInsets.symmetric(horizontal: 14),
+                          decoration: BoxDecoration(
+                            color: Theme.of(context).cardColor,
+                            borderRadius: BorderRadius.circular(10),
+                            border: Border.all(color: colorScheme.outlineVariant.withOpacity(0.2)),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  dateLabel,
+                                  style: TextStyle(
+                                    color: _selectedDate == null
+                                        ? colorScheme.onSurfaceVariant
+                                        : colorScheme.onSurface,
+                                    fontSize: 14,
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              Icon(
+                                Icons.calendar_today_outlined,
+                                size: 18,
+                                color: colorScheme.onSurfaceVariant,
+                              ),
+                            ],
+                          ),
                         ),
                       ),
-                      SizedBox(width: 20,),
-                      Icon(
-                        Icons.calendar_today_outlined,
-                        size: 18,
-                        color: colorScheme.onSurfaceVariant,
+
+                      const SizedBox(height: 20),
+
+                      Text(l10n.uploadDocuments,
+                        style: TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeightManager.medium,
+                          color: colorScheme.onSurface.withOpacity(0.5),
+                        ),),
+
+                      const SizedBox(height: 20),
+
+
+                      Row(
+                        children: [
+                          _uploadBox(true, _frontFile, l10n.frontSide),
+                          const SizedBox(width: 12),
+                          _uploadBox(false, _backFile, l10n.backSide),
+                        ],
                       ),
+
+                      SizedBox(height: screenHeight * 0.04),
+
+
+                      Text(
+                        l10n.fileSizeNote,style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeightManager.medium,
+                        color: colorScheme.onSurface.withOpacity(0.7),
+                      ),
+                      ),
+
+                      SizedBox(height: screenHeight * 0.05),
+
+                      Text(
+                        l10n.commitmentText,
+                        style: TextStyle(
+                            color: colorScheme.onSurface.withOpacity(0.3),
+                            fontSize: 18,
+                            fontWeight: FontWeightManager.medium),
+                      ),
+
+                      SizedBox(height: screenHeight * 0.04),
+
+
+                      Row(
+                        children: [
+                          const Icon(Icons.shield, color: Colors.green, size: 20),
+                          const SizedBox(width: 6),
+                          Expanded(
+                            child: Text(
+                              l10n.documentsSafe,
+                              style: TextStyle(fontSize: 14, color: colorScheme.onSurface),
+                            ),
+                          ),
+                        ],
+                      ),
+
+                      const SizedBox(height: 40),
                     ],
                   ),
                 ),
               ),
-
-              const SizedBox(height: 20),
-
-              Text(l10n.uploadDocuments,
-              style: TextStyle(
-                fontSize: 15,
-                fontWeight: FontWeightManager.medium,
-                color: colorScheme.onSurface.withOpacity(0.5),
-              ),),
-
-              const SizedBox(height: 20),
-
-
-              Row(
-                children: [
-                  _uploadBox(true, _frontFile, l10n.frontSide),
-                  const SizedBox(width: 12),
-                  _uploadBox(false, _backFile, l10n.backSide),
-                ],
-              ),
-
-              SizedBox(height: screenHeight * 0.04),
-
-
-              Text(
-                l10n.fileSizeNote,style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeightManager.medium,
-                color: colorScheme.onSurface.withOpacity(0.7),
-              ),
-              ),
-
-              SizedBox(height: screenHeight * 0.05),
-
-              Text(
-                l10n.commitmentText,
-                style: TextStyle(
-                    color: colorScheme.onSurface.withOpacity(0.5),
-                    fontSize: screenHeight * 0.045),
-              ),
-
-              SizedBox(height: screenHeight * 0.04),
-
-
-              Row(
-                children: [
-                  const Icon(Icons.shield, color: Colors.green, size: 20),
-                  const SizedBox(width: 6),
-                  Text(l10n.documentsSafe,style: TextStyle(fontSize: 14, color: colorScheme.onSurface),),
-                ],
-              ),
-
-              //
-
-              Spacer(),
 
               GestureDetector(
                 onTap: _frontFile == null ? null : _submit,

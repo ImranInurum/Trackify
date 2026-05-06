@@ -47,18 +47,19 @@ class _DocumentFolderScreenState extends State<DocumentFolderScreen> {
   }
 
   Future<File?> _cropImage(File imageFile) async {
+    final l10n = AppLocalizations.of(context)!;
     final croppedFile = await ImageCropper().cropImage(
       sourcePath: imageFile.path,
       uiSettings: [
         AndroidUiSettings(
-          toolbarTitle: 'Crop Vehicle Image',
+          toolbarTitle: l10n.cropVehicleImage,
           toolbarColor: Colors.black,
           toolbarWidgetColor: Colors.white,
           initAspectRatio: CropAspectRatioPreset.original,
           lockAspectRatio: false,
         ),
         IOSUiSettings(
-          title: 'Crop Vehicle Image',
+          title: l10n.cropVehicleImage,
         ),
       ],
     );
@@ -527,8 +528,8 @@ class _DocumentFolderScreenState extends State<DocumentFolderScreen> {
                                           color: Colors.amber,
                                           borderRadius: BorderRadius.circular(4),
                                         ),
-                                        child: const Text("NEW",
-                                            style: TextStyle(
+                                        child: Text(l10n.newLabel,
+                                            style: const TextStyle(
                                                 color: Colors.black,
                                                 fontSize: 7,
                                                 fontWeight: FontWeight.bold)),

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../l10n/app_localizations.dart';
+import '../../../document_folder/presentation/pages/document_ss.dart';
+import '../../../document_folder/presentation/pages/document_vehicalRC_screen.dart';
 
 // Note: These screens need to be imported once they are created/available
 // import 'package:trackify/feature/documents/presentation/pages/document_vehicle_rc_screen.dart';
@@ -9,12 +11,13 @@ class DocumentsCard extends StatelessWidget {
   final Color cardColor;
   final Color primaryTextColor;
   final Color secondaryTextColor;
-
+  final VoidCallback? onTap;
   const DocumentsCard({
     super.key,
     required this.cardColor,
     required this.primaryTextColor,
     required this.secondaryTextColor,
+    required this.onTap,
   });
 
   @override
@@ -34,19 +37,22 @@ class DocumentsCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                child: _sectionTitle(
-                  colorScheme,
-                  title: l10n.vehicleDocumentsTitle,
-                  subtitle: l10n.personalDocumentsSubtitle,
+          InkWell(
+             onTap: onTap,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: _sectionTitle(
+                    colorScheme,
+                    title: l10n.vehicleDocumentsTitle,
+                    subtitle: l10n.personalDocumentsSubtitle,
+                  ),
                 ),
-              ),
-              Icon(Icons.arrow_forward, color: colorScheme.onSurfaceVariant, size: 24),
-            ],
+                Icon(Icons.arrow_forward, color: colorScheme.onSurfaceVariant, size: 24),
+              ],
+            ),
           ),
           const SizedBox(height: 16),
           SingleChildScrollView(
@@ -54,21 +60,21 @@ class DocumentsCard extends StatelessWidget {
             child: Row(
               children: [
                 _docTile(context, colorScheme, title: l10n.vehicleRC, onTap: () {
-                  // Navigator.push(context, MaterialPageRoute(
-                  //   builder: (_) => DocumentVehicleRCScreen(title: l10n.vehicleRCTitle),
-                  // ));
+                  Navigator.push(context, MaterialPageRoute(
+                    builder: (_) => DocumentVehicleRCScreen(title: l10n.vehicleRCTitle),
+                  ));
                 }),
                 const SizedBox(width: 12),
                 _docTile(context, colorScheme, title: l10n.insurance, onTap: () {
-                  // Navigator.push(context, MaterialPageRoute(
-                  //   builder: (_) => DocumentSubScreen(title: l10n.insuranceTitle),
-                  // ));
+                  Navigator.push(context, MaterialPageRoute(
+                    builder: (_) => DocumentSubScreen(title: l10n.insuranceTitle),
+                  ));
                 }),
                 const SizedBox(width: 12),
                 _docTile(context, colorScheme, title: l10n.puc, onTap: () {
-                  // Navigator.push(context, MaterialPageRoute(
-                  //   builder: (_) => DocumentSubScreen(title: l10n.pucTitle),
-                  // ));
+                  Navigator.push(context, MaterialPageRoute(
+                    builder: (_) => DocumentSubScreen(title: l10n.pucTitle),
+                  ));
                 }),
               ],
             ),

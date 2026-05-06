@@ -421,6 +421,12 @@ class AppLocalizationsTa extends AppLocalizations {
   String get electric => 'எலக்ட்ரிக்';
 
   @override
+  String get vehicleImage => 'Vehicle Image';
+
+  @override
+  String get newLabel => 'NEW';
+
+  @override
   String get vehicleMake => 'வாகன பிராண்ட்';
 
   @override
@@ -1268,24 +1274,24 @@ class AppLocalizationsTa extends AppLocalizations {
 
   @override
   String get ignitionOnOffDesc =>
-      'Get notification when vehicle ignition is ON or OFF';
+      'Get notified when vehicle ignition is turned ON or OFF';
 
   @override
   String get motionWithIgnitionOffTitle => 'Motion with Ignition OFF';
 
   @override
   String get motionWithIgnitionOffDesc =>
-      'Get notification when vehicle moves when ignition is OFF';
+      'Get notified when vehicle is moving while ignition is OFF';
 
   @override
-  String get powerSupplyOffTitle => 'Power supply OFF';
+  String get powerSupplyOffTitle => 'Power Supply OFF';
 
   @override
   String get powerSupplyOffDesc =>
-      'Get notification when Ajjas is not receiving power';
+      'Get notified when Ajjas is not receiving power';
 
   @override
-  String get appNotification => 'App notification';
+  String get appNotification => 'App Notification';
 
   @override
   String get odometerReading => 'ஓடோமீட்டர் ரீடிங்';
@@ -1665,4 +1671,101 @@ class AppLocalizationsTa extends AppLocalizations {
   @override
   String get footerMotto =>
       'ஒவ்வொரு பைக்கும் ஸ்மார்ட்டாகவும், ஒவ்வொரு ரைடரும் பாதுகாப்பாகவும் இருக்கும்\nஎதிர்காலத்தை உருவாக்குதல்';
+
+  @override
+  String get cropDocument => 'Crop Document';
+
+  @override
+  String get cropVehicleImage => 'Crop Vehicle Image';
+
+  @override
+  String get uploadImage => 'Upload Image';
+
+  @override
+  String get camera => 'Camera';
+
+  @override
+  String get gallery => 'Gallery';
+
+  @override
+  String get pdf => 'PDF';
+
+  @override
+  String get fileTooLarge => 'File size exceeds 5MB';
+
+  @override
+  String get pickImageError => 'Error picking image';
+
+  @override
+  String get pickPdfError => 'Error picking PDF';
+
+  @override
+  String get pdfTooLarge => 'PDF size exceeds 5MB';
+
+  @override
+  String get uploadDocuments => 'Upload Documents';
+
+  @override
+  String get frontSide => 'Front Side*';
+
+  @override
+  String get backSide => 'Back Side';
+
+  @override
+  String get commitmentText => 'Your Documents\nOur Commitment';
+
+  @override
+  String get documentsSafe => 'Your documents are encrypted and safe';
+
+  @override
+  String get addDocument => 'Add Document';
+
+  @override
+  String get frontRequired => 'Front side document is required';
+
+  @override
+  String get successMessage => 'Document added successfully';
+
+  @override
+  String get selectExpiryDate => 'Select Expiry Date';
+
+  @override
+  String get documentsEncrypted => 'Your documents are encrypted & safe';
+
+  @override
+  String get fileSizeNote => 'Note: Max file size is 5MB';
+
+  @override
+  String get personalDocumentsTitle => 'Personal Documents';
+
+  @override
+  String get drivingLicense => 'Driving License';
+
+  @override
+  String get drivingLicenseTitle => 'Driving License';
+
+  @override
+  String get otherDocuments => 'Other Documents';
+
+  @override
+  String get otherDocumentTitle => 'Other Documents';
+
+  @override
+  String get documentName => 'Document Name*';
+
+  @override
+  String get billsTitle => 'Bills';
+
+  @override
+  String get billsDescription =>
+      'Add and set reminders for your vehicle servicing days, upload bills and more';
+
+  @override
+  String get movedTo => 'Moved to';
+
+  @override
+  String get viewNow => 'View Now';
+
+  @override
+  String get accessoryBills => 'Accessory Bills';
 }

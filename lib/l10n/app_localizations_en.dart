@@ -421,6 +421,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get electric => 'Electric';
 
   @override
+  String get vehicleImage => 'Vehicle Image';
+
+  @override
+  String get newLabel => 'NEW';
+
+  @override
   String get vehicleMake => 'Vehicle Make';
 
   @override
@@ -1247,10 +1253,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get vehicleRC => 'Vehicle RC';
 
   @override
-  String get insurance => 'Insurance Details';
+  String get insurance => 'Insurance';
 
   @override
-  String get puc => 'PUC Certificate';
+  String get puc => 'PUC';
 
   @override
   String get vehicleRCTitle => 'Vehicle RC';
@@ -1664,4 +1670,101 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get footerMotto =>
       'Creating a future where every bike is SMART\nand every rider is SAFE';
+
+  @override
+  String get cropDocument => 'Crop Document';
+
+  @override
+  String get cropVehicleImage => 'Crop Vehicle Image';
+
+  @override
+  String get uploadImage => 'Upload Image';
+
+  @override
+  String get camera => 'Camera';
+
+  @override
+  String get gallery => 'Gallery';
+
+  @override
+  String get pdf => 'PDF';
+
+  @override
+  String get fileTooLarge => 'File size exceeds 5MB limit';
+
+  @override
+  String get pickImageError => 'Error picking image';
+
+  @override
+  String get pickPdfError => 'Error picking PDF';
+
+  @override
+  String get pdfTooLarge => 'PDF size exceeds 5MB limit';
+
+  @override
+  String get uploadDocuments => 'Upload Documents';
+
+  @override
+  String get frontSide => 'Front Side';
+
+  @override
+  String get backSide => 'Back Side';
+
+  @override
+  String get commitmentText =>
+      'We are committed to protecting your privacy and ensuring your documents are safe with us.';
+
+  @override
+  String get documentsSafe => 'Your documents are safe with us';
+
+  @override
+  String get addDocument => 'Add Document';
+
+  @override
+  String get frontRequired => 'Front side document is required';
+
+  @override
+  String get successMessage => 'Document saved successfully';
+
+  @override
+  String get selectExpiryDate => 'Expiry Date';
+
+  @override
+  String get documentsEncrypted => 'Your documents are encrypted & safe';
+
+  @override
+  String get fileSizeNote => 'Note: Maximum File Size is 5MB';
+
+  @override
+  String get personalDocumentsTitle => 'Personal Documents';
+
+  @override
+  String get drivingLicense => 'Driving License';
+
+  @override
+  String get drivingLicenseTitle => 'Driving License';
+
+  @override
+  String get otherDocuments => 'Other Documents';
+
+  @override
+  String get otherDocumentTitle => 'Other Documents';
+
+  @override
+  String get documentName => 'Document Name*';
+
+  @override
+  String get billsTitle => 'Bills';
+
+  @override
+  String get billsDescription => 'Upload and manage your vehicle-related bills';
+
+  @override
+  String get movedTo => 'Moved to';
+
+  @override
+  String get viewNow => 'View Now';
+
+  @override
+  String get accessoryBills => 'Accessory Bills';
 }

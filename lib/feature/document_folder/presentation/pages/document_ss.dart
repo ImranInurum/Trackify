@@ -43,6 +43,7 @@ class _DocumentSubScreenState extends State<DocumentSubScreen> {
   // ── DATE PICKER ──────────────────────────────────────────────
 
   Future<void> _pickDate() async {
+    final l10n = AppLocalizations.of(context)!;
     final now = DateTime.now();
     final picked = await showDatePicker(
       context: context,
@@ -98,18 +99,19 @@ class _DocumentSubScreenState extends State<DocumentSubScreen> {
   }
 
   Future<File?> _cropImage(File imageFile) async {
+    final l10n = AppLocalizations.of(context)!;
     final croppedFile = await ImageCropper().cropImage(
       sourcePath: imageFile.path,
       uiSettings: [
         AndroidUiSettings(
-          toolbarTitle: 'Crop Document',
+          toolbarTitle: l10n.cropDocument,
           toolbarColor: Colors.black,
           toolbarWidgetColor: Colors.white,
           initAspectRatio: CropAspectRatioPreset.original,
           lockAspectRatio: false,
         ),
         IOSUiSettings(
-          title: 'Crop Document',
+          title: l10n.cropDocument,
         ),
       ],
     );
@@ -314,6 +316,8 @@ class _DocumentSubScreenState extends State<DocumentSubScreen> {
               const SizedBox(height: 14),
 
               // ── Header ──────────────────────────────────────
+              const SizedBox(height: 24),
+
               Row(
                 children: [
                   GestureDetector(
@@ -335,84 +339,92 @@ class _DocumentSubScreenState extends State<DocumentSubScreen> {
                 ],
               ),
 
-              const SizedBox(height: 24),
-
-              if (_isLoading) const LinearProgressIndicator(),
-              if (_error != null)
-                Text(_error!, style: const TextStyle(color: Colors.red)),
-
-              const SizedBox(height: 20),
-
-              // ── Expiry Date ──────────────────────────────────
-              GestureDetector(
-                onTap: _pickDate,
-                child: Container(
-                  height: screenHeight * 0.055,
-                  width: screenWidth * 0.45,
-                  padding: const EdgeInsets.symmetric(horizontal: 14),
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).cardColor,
-                    borderRadius: BorderRadius.circular(10),
-                    border: Border.all(color: colorScheme.outlineVariant),
-                  ),
-                  child: Row(
+              Expanded(
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Expanded(
-                        child: Text(
-                          dateLabel,
-                          style: TextStyle(
-                            color: _selectedDate == null
-                                ? colorScheme.onSurfaceVariant
-                                : colorScheme.onSurface,
-                            fontSize: 13,
+                      const SizedBox(height: 24),
+
+                      if (_isLoading) const LinearProgressIndicator(),
+                      if (_error != null)
+                        Text(_error!, style: const TextStyle(color: Colors.red)),
+
+                      const SizedBox(height: 20),
+
+                      // ── Expiry Date ──────────────────────────────────
+                      GestureDetector(
+                        onTap: _pickDate,
+                        child: Container(
+                          height: screenHeight * 0.055,
+                          width: screenWidth * 0.45,
+                          padding: const EdgeInsets.symmetric(horizontal: 14),
+                          decoration: BoxDecoration(
+                            color: Theme.of(context).cardColor,
+                            borderRadius: BorderRadius.circular(10),
+                            border: Border.all(color: colorScheme.outlineVariant.withOpacity(0.2)),
                           ),
-                          overflow: TextOverflow.ellipsis,
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  dateLabel,
+                                  style: TextStyle(
+                                    color: _selectedDate == null
+                                        ? colorScheme.onSurfaceVariant
+                                        : colorScheme.onSurface,
+                                    fontSize: 13,
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              Icon(Icons.calendar_today_outlined,
+                                  size: 18, color: colorScheme.onSurfaceVariant),
+                            ],
+                          ),
                         ),
                       ),
-                      const SizedBox(width: 8),
-                      Icon(Icons.calendar_today_outlined,
-                          size: 18, color: colorScheme.onSurfaceVariant),
+
+                      const SizedBox(height: 20),
+
+                      Text(l10n.uploadDocuments,
+                          style: TextStyle(color: colorScheme.onSurface)),
+
+                      const SizedBox(height: 20),
+
+                      Row(
+                        children: [
+                          _uploadBox(true, _frontFile, l10n.frontSide),
+                          const SizedBox(width: 12),
+                          _uploadBox(false, _backFile, l10n.backSide),
+                        ],
+                      ),
+
+                      const SizedBox(height: 20),
+
+                      Text(
+                        l10n.commitmentText,
+                        style: TextStyle(
+                            color: colorScheme.onSurface.withOpacity(0.5), fontSize: screenHeight * 0.045),
+                      ),
+
+                      SizedBox(height: screenHeight * 0.03),
+
+                      Row(
+                        children: [
+                          const Icon(Icons.shield, color: Colors.green, size: 20),
+                          const SizedBox(width: 6),
+                          Text(l10n.documentsSafe,
+                              style: TextStyle(
+                                  fontSize: 14, color: colorScheme.onSurface)),
+                        ],
+                      ),
+                      const SizedBox(height: 40),
                     ],
                   ),
                 ),
               ),
-
-              const SizedBox(height: 20),
-
-              Text(l10n.uploadDocuments,
-                  style: TextStyle(color: colorScheme.onSurface)),
-
-              const SizedBox(height: 20),
-
-              Row(
-                children: [
-                  _uploadBox(true, _frontFile, l10n.frontSide),
-                  const SizedBox(width: 12),
-                  _uploadBox(false, _backFile, l10n.backSide),
-                ],
-              ),
-
-              const SizedBox(height: 20),
-
-              Text(
-                l10n.commitmentText,
-                style: TextStyle(
-                    color: colorScheme.onSurface.withOpacity(0.5), fontSize: screenHeight * 0.045),
-              ),
-
-              SizedBox(height: screenHeight * 0.03),
-
-              Row(
-                children: [
-                  const Icon(Icons.shield, color: Colors.green, size: 20),
-                  const SizedBox(width: 6),
-                  Text(l10n.documentsSafe,
-                      style: TextStyle(
-                          fontSize: 14, color: colorScheme.onSurface)),
-                ],
-              ),
-
-              const Spacer(),
 
               // ── Save Button ──────────────────────────────────
               GestureDetector(
@@ -460,7 +472,7 @@ class _DocumentSubScreenState extends State<DocumentSubScreen> {
         decoration: BoxDecoration(
           color: Theme.of(context).cardColor,
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: colorScheme.outlineVariant),
+          border: Border.all(color: colorScheme.outlineVariant.withOpacity(0.2)),
         ),
         child: file == null
             ? Column(

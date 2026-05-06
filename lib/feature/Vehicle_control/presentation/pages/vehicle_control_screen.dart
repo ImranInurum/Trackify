@@ -3,6 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:trackify/app/app_navigation.dart';
 import 'package:trackify/core/constants/app_images.dart';
 import 'package:trackify/l10n/app_localizations.dart';
+import '../../../document_folder/presentation/pages/document_screen.dart';
+import '../../../upgrade_to_plus/presentation/pages/upgrade_to_plus.dart';
 import '../../data/repositories/vehicle_control_repository_impl.dart';
 import '../cubit/vehicle_control_cubit.dart';
 import '../state/vehicle_control_state.dart';
@@ -198,6 +200,14 @@ class VehicleControlView extends StatelessWidget {
                     accentColor: const Color(0xFFD6B57B),
                     selectedIcon: state.tempIcon,
                     selectedColor: state.tempColor,
+                    onUpgrade: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const UpgradeToPlusScreen(),
+                        ),
+                      );
+                    },
                     onIconChanged: (icon) {
                       context.read<VehicleControlCubit>().updateLocalIcon(icon);
                     },
@@ -230,6 +240,14 @@ class VehicleControlView extends StatelessWidget {
                     cardColor: cardColor,
                     primaryTextColor: primaryTextColor,
                     secondaryTextColor: secondaryTextColor,
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const DocumentFolderScreen(),
+                        ),
+                      );
+                    },
                   ),
 
                   const SizedBox(height: 20),
