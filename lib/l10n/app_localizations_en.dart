@@ -1051,7 +1051,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get saveDetails => 'Save Details';
 
   @override
-  String get selectVehicle => 'Select your vehicle';
+  String get selectVehicle => 'Select Vehicle';
 
   @override
   String get liveTab => 'LIVE';

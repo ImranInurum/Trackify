@@ -249,7 +249,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get locationSharing => 'स्थान साझाकरण';
 
   @override
-  String get documentFolder => 'डॉक्यूमेंट फ़ोल्डर';
+  String get documentFolder => 'दस्तावेज़ फ़ोल्डर';
 
   @override
   String get voiceMonitoring => 'वॉयस मॉनिटरिंग';

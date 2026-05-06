@@ -1228,20 +1228,20 @@ class AppLocalizationsAr extends AppLocalizations {
   String get continue6Month => 'المتابعة مع خطة 6 أشهر';
 
   @override
-  String get vehicleDocumentsTitle => 'Vehicle Documents';
+  String get vehicleDocumentsTitle => 'مستندات المركبة';
 
   @override
   String get personalDocumentsSubtitle =>
-      'Keep your vehicle documents handy by uploading them';
+      'احتفظ بمستنداتك الشخصية في متناول اليد';
 
   @override
-  String get vehicleRC => 'Vehicle RC';
+  String get vehicleRC => 'رخصة المركبة';
 
   @override
-  String get insurance => 'Insurance Details';
+  String get insurance => 'التأمين';
 
   @override
-  String get puc => 'PUC Certificate';
+  String get puc => 'شهادة التلوث';
 
   @override
   String get vehicleRCTitle => 'Vehicle RC';
