@@ -5,6 +5,7 @@ class AppImages {
   static const String icons = 'assets/icons';
 
   static const String bikeImage = '$icons/bike2.png';
+  static const String bikeInfoImage = '$images/bike_info_image.png';
   static const String appLogo = '$icons/appLogo.png';
 
   static const String kingIcon = "$icons/king.png";

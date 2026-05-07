@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:trackify/feature/document_folder/presentation/pages/accessory_bill_screen.dart';
 
 import '../../../../core/common/models/vehicle_list_model.dart';
 import '../../../../l10n/app_localizations.dart';
@@ -607,7 +608,15 @@ class _DocumentFolderScreenState extends State<DocumentFolderScreen> {
                             context,
                             colorScheme,
                             title: l10n.accessoryBills,
-                            onTap: () {},
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                  const AccessoryBillScreen(),
+                                ),
+                              );
+                            },
                           ),
                         ],
                       ),

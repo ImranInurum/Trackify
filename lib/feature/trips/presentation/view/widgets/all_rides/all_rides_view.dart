@@ -15,6 +15,8 @@ class AllRides extends StatefulWidget {
 }
 
 class _AllRidesState extends State<AllRides> {
+  String _searchQuery = '';
+
   @override
   void initState() {
     super.initState();
@@ -23,45 +25,131 @@ class _AllRidesState extends State<AllRides> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<RideHistoryCubit, RideHistoryState>(
-      builder: (context, state) {
-        if (state is RideHistoryLoading) {
-          return const Center(child: CircularProgressIndicator());
-        }
+    final theme = Theme.of(context);
 
-        if (state is RideHistorySuccess) {
-          final reversedRides = state.rides.reversed.toList();
-          return reversedRides.isEmpty
-              ? const AllRidesEmptyState()
-              : ListView.builder(
-                  padding: const EdgeInsets.all(16),
-                  itemCount: reversedRides.length,
-                  itemBuilder: (context, index) {
-                    final ride = reversedRides[index];
-                    return RideCard(
-                      ride: ride,
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                RideHistoryDetailsScreen(ride: ride),
+    return Column(
+      children: [
+        /// SEARCH BAR & FILTER
+        Padding(
+          padding: const EdgeInsets.only(left: 16, right: 16, top: 16),
+          child: Row(
+            children: [
+              Expanded(
+                child: Container(
+                  height: 48,
+                  decoration: BoxDecoration(
+                    color: theme.colorScheme.onSurface.withOpacity(0.05),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: theme.colorScheme.onSurface.withOpacity(0.1),
+                    ),
+                  ),
+                  child: Row(
+                    children: [
+                      const SizedBox(width: 16),
+                      Icon(
+                        Icons.search,
+                        color: theme.colorScheme.onSurface.withOpacity(0.5),
+                        size: 20,
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: TextField(
+                          onChanged: (value) {
+                            setState(() {
+                              _searchQuery = value.toLowerCase();
+                            });
+                          },
+                          decoration: InputDecoration(
+                            fillColor: Colors.transparent,
+                            filled: true,
+                            hintText: 'Search Rides by City',
+                            hintStyle: TextStyle(
+                              color: theme.colorScheme.onSurface.withOpacity(0.4),
+                              fontSize: 14,
+                            ),
+                            border: InputBorder.none,
+                            enabledBorder: InputBorder.none,
+                            focusedBorder: InputBorder.none,
+                            errorBorder: InputBorder.none,
+                            disabledBorder: InputBorder.none,
+                            contentPadding: const EdgeInsets.symmetric(vertical: 14),
                           ),
-                        );
-                      },
-                    );
-                  },
-                );
-        }
-        //
-        // if (state is RideHistoryFailure) {
-        //   return Center(
-        //     child: Text("Failed to load rides: ${state.exception}"),
-        //   );
-        // }
+                          style: TextStyle(
+                            color: theme.colorScheme.onSurface,
+                            fontSize: 14,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Container(
+                height: 48,
+                width: 48,
+                decoration: BoxDecoration(
+                  color: theme.colorScheme.onSurface.withOpacity(0.05),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: theme.colorScheme.primary.withOpacity(0.5),
+                  ),
+                ),
+                child: Icon(
+                  Icons.sort,
+                  color: theme.colorScheme.primary,
+                ),
+              ),
+            ],
+          ),
+        ),
 
-        return const SizedBox();
-      },
+        /// ALL RIDES LIST
+        Expanded(
+          child: BlocBuilder<RideHistoryCubit, RideHistoryState>(
+            builder: (context, state) {
+              if (state is RideHistoryLoading) {
+                return const Center(child: CircularProgressIndicator());
+              }
+
+              if (state is RideHistorySuccess) {
+                final reversedRides = state.rides.reversed.toList();
+                final filteredRides = reversedRides.where((ride) {
+                  final startLoc = ride.startLocation.toLowerCase();
+                  final endLoc = ride.endLocation.toLowerCase();
+                  return startLoc.contains(_searchQuery) ||
+                         endLoc.contains(_searchQuery);
+                }).toList();
+
+                return filteredRides.isEmpty
+                    ? const AllRidesEmptyState()
+                    : ListView.builder(
+                        padding: const EdgeInsets.all(16),
+                        itemCount: filteredRides.length,
+                        itemBuilder: (context, index) {
+                          final ride = filteredRides[index];
+                          return RideCard(
+                            ride: ride,
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      RideHistoryDetailsScreen(ride: ride),
+                                ),
+                              );
+                            },
+                          );
+                        },
+                      );
+              }
+
+              return const SizedBox();
+            },
+          ),
+        ),
+      ],
     );
   }
 }

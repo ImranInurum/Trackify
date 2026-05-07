@@ -379,30 +379,42 @@ class _DocumentOtherdocumentScreenState extends State<DocumentOtherdocumentScree
               SizedBox(height: screenHeight * 0.02),
 
               // ── Document Name ────────────────────────────────
-              Container(
-                height: screenHeight * 0.055,
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  color: Theme.of(context).cardColor,
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(
-                      color: colorScheme.outlineVariant.withOpacity(0.2)),
-                ),
-                child: TextFormField(
-                  controller: _nameController,
-                  decoration: InputDecoration(
-                    hintText: l10n.documentName,
-                    hintStyle: TextStyle(
-                      color: colorScheme.onSurfaceVariant,
-                      fontSize: 14,
-                    ),
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-                    border: InputBorder.none,
-                  ),
-                  style: TextStyle(
-                    color: colorScheme.onSurface,
+              TextFormField(
+                controller: _nameController,
+                decoration: InputDecoration(
+                  filled: true,
+                  fillColor: Colors.white,
+                  labelText: l10n.documentName,
+                  labelStyle: TextStyle(
+                    color: colorScheme.onSurfaceVariant,
                     fontSize: 14,
                   ),
+                  floatingLabelStyle: TextStyle(
+                    color: colorScheme.primary,
+                  ),
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 16),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: BorderSide(
+                      color: colorScheme.outlineVariant.withOpacity(0.2),
+                    ),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: BorderSide(
+                      color: colorScheme.outlineVariant.withOpacity(0.2),
+                    ),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: BorderSide(
+                      color: colorScheme.primary,
+                    ),
+                  ),
+                ),
+                style: TextStyle(
+                  color: colorScheme.onSurface,
+                  fontSize: 14,
                 ),
               ),
 
@@ -415,7 +427,7 @@ class _DocumentOtherdocumentScreenState extends State<DocumentOtherdocumentScree
                   width: screenWidth * 0.42,
                   padding: const EdgeInsets.symmetric(horizontal: 14),
                   decoration: BoxDecoration(
-                    color: Theme.of(context).cardColor,
+                    color: Colors.white,
                     borderRadius: BorderRadius.circular(10),
                     border: Border.all(color: colorScheme.outlineVariant.withOpacity(0.2)),
                   ),
