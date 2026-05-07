@@ -1767,4 +1767,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get accessoryBills => 'Accessory Bills';
+
+  @override
+  String get discoverTrackifyFeatures => 'Discover Trackify Features';
 }

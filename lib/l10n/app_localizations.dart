@@ -3435,6 +3435,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Accessory Bills'**
   String get accessoryBills;
+
+  /// No description provided for @discoverTrackifyFeatures.
+  ///
+  /// In en, this message translates to:
+  /// **'Discover Trackify Features'**
+  String get discoverTrackifyFeatures;
 }
 
 class _AppLocalizationsDelegate

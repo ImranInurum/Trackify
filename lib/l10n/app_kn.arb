@@ -672,5 +672,7 @@
     "addDocument": "Add Document",
     "documentName": "Document Name*",
     "vehicleImage": "Vehicle Image",
-    "newLabel": "NEW"
+    "newLabel": "NEW",
+
+      "discoverTrackifyFeatures": "Trackify ವೈಶಿಷ್ಟ್ಯಗಳನ್ನು ಅನ್ವೇಷಿಸಿ"
 }

@@ -16,6 +16,7 @@ import 'package:trackify/feature/app_updates/presentiation/pages/update_screen.d
 import 'package:trackify/feature/device_warranty/pages/device_warranty_page.dart';
 import 'package:trackify/feature/document_folder/presentation/pages/document_screen.dart';
 import 'package:trackify/feature/emergency_sos/presentation/pages/emergency_alert_screen.dart';
+import 'package:trackify/feature/get_more_out/presentation/pages/disover_screen.dart';
 import 'package:trackify/feature/help_and_support/presentation/pages/help_support_screen.dart';
 import 'package:trackify/feature/map/data/entity/user_vehicles.dart';
 import 'package:trackify/feature/map/presentation/pages/full_screen_map.dart';
@@ -467,81 +468,82 @@ class _MapScreenState extends State<MapScreen> {
 
   Widget _buildPromoBanner() {
     final l10n = AppLocalizations.of(context)!;
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16),
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: Theme.of(context).cardColor,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: Theme.of(context).dividerColor.withOpacity(0.5),
-        ),
+    return GestureDetector(
+      onTap: () => _handleExploreTap(
+        {"label": l10n.getMoreOutOfTrackify.replaceAll(' ', '\n')},
+        _selectedDevice,
+        l10n,
       ),
-      child: Row(
-        children: [
-          SizedBox(
-            width: 44,
-            height: 44,
-            child: Stack(
-              alignment: Alignment.center,
-              children: [
-                CircularProgressIndicator(
-                  value: 0.63,
-                  strokeWidth: 3.5,
-                  backgroundColor: Theme.of(context).dividerColor,
-                  valueColor: AlwaysStoppedAnimation<Color>(
-                    Theme.of(context).colorScheme.primary,
-                  ),
-                ),
-                Text(
-                  l10n.progressPercentage("63"),
-                  style: getBoldStyle(
-                    color: Theme.of(context).colorScheme.primary,
-                    fontSize: 10,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Text(
-                      l10n.getMoreOutOfTrackify,
-                      style: getBoldStyle(
-                        color: Theme.of(context).colorScheme.primary,
-                        fontSize: 14,
-                      ),
-                    ),
-                    Icon(
-                      Icons.chevron_right,
+      child: Container(
+        margin: const EdgeInsets.symmetric(horizontal: 16),
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: Theme.of(context).cardColor,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: Theme.of(context).dividerColor.withOpacity(0.5), width: 0.8),
+        ),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+                shape: BoxShape.circle,
+              ),
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  SizedBox(
+                    height: 36,
+                    width: 36,
+                    child: CircularProgressIndicator(
+                      value: 0.63,
+                      strokeWidth: 3,
+                      backgroundColor: Theme.of(context).dividerColor,
                       color: Theme.of(context).colorScheme.primary,
-                      size: 18,
                     ),
-                  ],
-                ),
-                Text(
-                  l10n.discoverMoreDesc,
-                  style: getRegularStyle(
-                    color: Theme.of(
-                      context,
-                    ).colorScheme.onSurface.withOpacity(0.6),
-                    fontSize: 11,
                   ),
-                ),
-              ],
+                  Text(
+                    "63%",
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.onSurface,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 10,
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
-          Icon(
-            Icons.close,
-            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.4),
-            size: 18,
-          ),
-        ],
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    l10n.getMoreOutOfTrackify,
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    l10n.discoverMoreDesc,
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Icon(
+              Icons.chevron_right,
+              color: Theme.of(context).colorScheme.primary,
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -597,6 +599,11 @@ class _MapScreenState extends State<MapScreen> {
       {
         "icon": Icons.folder_open_outlined,
         "label": l10n.documentFolder.replaceAll(' ', '\n'),
+        "badge": null,
+      },
+      {
+        "icon": Icons.explore_outlined,
+        "label": l10n.getMoreOutOfTrackify.replaceAll(' ', '\n'),
         "badge": null,
       },
       {
@@ -954,6 +961,19 @@ class _MapScreenState extends State<MapScreen> {
         context,
         MaterialPageRoute(
           builder: (context) => const UpgradeToPlusScreen(),
+        ),
+      );
+    }
+    else if (label == l10n.getMoreOutOfTrackify.replaceAll(' ', '\n')) {
+      print("NAVIGATION CLICKED");
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) {
+            print("NAVIGATION CLICKED");
+
+         return const  DiscoverFeaturesScreen();
+          }
         ),
       );
     }

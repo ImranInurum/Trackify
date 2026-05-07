@@ -1755,4 +1755,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get accessoryBills => 'فواتير الملحقات';
+
+  @override
+  String get discoverTrackifyFeatures => 'اكتشف ميزات Trackify';
 }

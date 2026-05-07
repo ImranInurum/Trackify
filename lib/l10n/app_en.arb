@@ -709,5 +709,9 @@
     "billsDescription": "Upload and manage your vehicle-related bills",
     "movedTo": "Moved to",
     "viewNow": "View Now",
-    "accessoryBills": "Accessory Bills"
+    "accessoryBills": "Accessory Bills",
+
+      "discoverTrackifyFeatures": "Discover Trackify Features"
+
+
 }

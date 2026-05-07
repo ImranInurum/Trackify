@@ -52,6 +52,15 @@ import 'feature/emergency_sos/domain/usecase/emergency_alert_usecase.dart';
 import 'feature/emergency_sos/presentation/cubit/emergency_alert_cubit.dart';
 import 'feature/emergency_sos/presentation/cubit/emergency_alert_state.dart' show EmergencySent;
 import 'feature/geo_fence/presentation/cubit/geo_fence_cubit.dart';
+import 'feature/get_more_out/data/repository/discover_repository_impl.dart';
+import 'feature/get_more_out/data/repository/feature_repository_impl.dart';
+import 'feature/get_more_out/data/repository/geo_fenc_repository_impl.dart';
+import 'feature/get_more_out/domain/usecase/disover_usecase.dart';
+import 'feature/get_more_out/domain/usecase/geo_fenc_usecase.dart';
+import 'feature/get_more_out/domain/usecase/get_safey_usecase.dart';
+import 'feature/get_more_out/presentation/cubit/discover_cubit.dart';
+import 'feature/get_more_out/presentation/cubit/feature_cubit.dart';
+import 'feature/get_more_out/presentation/cubit/geo_fenc_cubit.dart';
 import 'feature/service_logs/data/data_source/service_logs_remote_data_source.dart';
 import 'feature/service_logs/data/repository/service_logs_repository_impl.dart';
 import 'feature/service_logs/domain/usecase/get_service_logs_usecase.dart';
@@ -230,7 +239,49 @@ List<BlocProvider> _buildBlocProviders() {
         )..getDetails();
       },
     ),
+    BlocProvider<DiscoverCubit>(
 
+      create: (_) => DiscoverCubit(
+
+        GetDiscoverUseCase(
+
+          DiscoverRepositoryImpl(),
+        ),
+      ),
+    ),
+
+    /// ================= SAFETY =================
+    BlocProvider<FeatureCubit>(
+
+      create: (_) => FeatureCubit(
+
+        GetSafetyUseCase(
+          FeatureRepositoryImpl(),
+        ),
+
+        GetTrackingUseCase(
+          FeatureRepositoryImpl(),
+        ),
+
+        GetRideUseCase(
+          FeatureRepositoryImpl(),
+        ),
+
+        GetDeviceUseCase(
+          FeatureRepositoryImpl(),
+        ),
+      ),
+    ),
+    BlocProvider<GeoFenceIntroCubit>(
+
+      create: (_) => GeoFenceIntroCubit(
+
+        GetGeoFenceIntroUseCase(
+
+          GeoFenceIntroRepositoryImpl(),
+        ),
+      ),
+    ),
 
 
 

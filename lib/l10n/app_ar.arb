@@ -684,5 +684,7 @@
   "addDocument": "إضافة مستند",
   "documentName": "اسم المستند*",
   "vehicleImage": "صورة المركبة",
-  "newLabel": "جديد"
+  "newLabel": "جديد",
+
+    "discoverTrackifyFeatures": "اكتشف ميزات Trackify"
 }

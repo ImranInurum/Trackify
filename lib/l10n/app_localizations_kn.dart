@@ -1771,4 +1771,7 @@ class AppLocalizationsKn extends AppLocalizations {
 
   @override
   String get accessoryBills => 'Accessory Bills';
+
+  @override
+  String get discoverTrackifyFeatures => 'Trackify ವೈಶಿಷ್ಟ್ಯಗಳನ್ನು ಅನ್ವೇಷಿಸಿ';
 }

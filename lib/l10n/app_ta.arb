@@ -632,5 +632,7 @@
   "addDocument": "Add Document",
   "documentName": "Document Name*",
   "vehicleImage": "Vehicle Image",
-  "newLabel": "NEW"
+  "newLabel": "NEW",
+
+  "discoverAjjasFeatures": "Ajjas அம்சங்களை கண்டறியுங்கள்"
 }
