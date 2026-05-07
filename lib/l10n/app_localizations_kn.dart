@@ -1946,4 +1946,7 @@ class AppLocalizationsKn extends AppLocalizations {
 
   @override
   String get litresShort => 'ಲೀ.';
+
+  @override
+  String get discoverTrackifyFeatures => 'Discover Ajjas Features';
 }

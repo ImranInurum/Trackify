@@ -662,5 +662,8 @@
     "mileageHint": "உதாரணமாக. 50",
     "powerSupplyOff": "மின்சாரம் நிறுத்தப்பட்டது",
     "lastUpdatedLabel": "கடைசியாக புதுப்பிக்கப்பட்டது: ",
-    "litresShort": "லி"
+    "litresShort": "லி",
+
+      "discoverAjjasFeatures": "Trackify அம்சங்களை கண்டறியுங்கள்"
+
 }

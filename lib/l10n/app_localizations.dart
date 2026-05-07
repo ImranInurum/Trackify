@@ -3777,6 +3777,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'L'**
   String get litresShort;
+
+  /// No description provided for @discoverTrackifyFeatures.
+  ///
+  /// In en, this message translates to:
+  /// **'Discover Ajjas Features'**
+  String get discoverTrackifyFeatures;
 }
 
 class _AppLocalizationsDelegate

@@ -1943,4 +1943,7 @@ class AppLocalizationsTa extends AppLocalizations {
 
   @override
   String get litresShort => 'லி';
+
+  @override
+  String get discoverTrackifyFeatures => 'Discover Ajjas Features';
 }
