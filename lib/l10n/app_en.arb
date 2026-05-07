@@ -776,5 +776,7 @@
     "mileageHint": "e.g., 50",
     "powerSupplyOff": "Power supply off",
     "lastUpdatedLabel": "Last updated: ",
-    "litresShort": "L"
+    "litresShort": "L",
+
+    "discoverTrackifyFeatures": "Discover Ajjas Features"
 }

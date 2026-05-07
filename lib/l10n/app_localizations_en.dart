@@ -1942,4 +1942,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get litresShort => 'L';
+
+  @override
+  String get discoverTrackifyFeatures => 'Discover Ajjas Features';
 }
