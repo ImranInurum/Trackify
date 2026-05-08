@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../../../../core/constants/app_images.dart';
 import '../../../../../../../l10n/app_localizations.dart';
 
 class TripEmptyState extends StatelessWidget {
@@ -10,7 +11,7 @@ class TripEmptyState extends StatelessWidget {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Image.asset("assets/images/tripScreenBike.png", height: 160),
+        Image.asset(AppImages.bikeInfoImage, height: 160),
         const SizedBox(height: 20),
          Padding(
           padding: const EdgeInsets.symmetric(horizontal: 30),

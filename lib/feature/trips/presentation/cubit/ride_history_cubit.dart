@@ -58,4 +58,34 @@ class RideHistoryCubit extends Cubit<RideHistoryState> {
       }
     }
   }
+
+  void sortRides(String sortBy, bool isRecentToOldest) {
+    if (state is! RideHistorySuccess) return;
+    
+    final currentRides = List<Ride>.from((state as RideHistorySuccess).rides);
+    
+    currentRides.sort((a, b) {
+      int comparison = 0;
+      
+      switch (sortBy) {
+        case 'Date':
+          // Assuming date is in a sortable format or using index/id if not
+          comparison = a.startTime.compareTo(b.startTime);
+          break;
+        case 'Distance':
+          comparison = a.distance.compareTo(b.distance);
+          break;
+        case 'Duration':
+          // Extract minutes for comparison
+          int durA = int.tryParse(a.duration.replaceAll('m', '')) ?? 0;
+          int durB = int.tryParse(b.duration.replaceAll('m', '')) ?? 0;
+          comparison = durA.compareTo(durB);
+          break;
+      }
+      
+      return isRecentToOldest ? -comparison : comparison;
+    });
+    
+    emit(RideHistorySuccess(currentRides));
+  }
 }

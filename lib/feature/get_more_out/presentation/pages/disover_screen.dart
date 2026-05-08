@@ -8,8 +8,7 @@ import '../cubit/discover_cubit.dart';
 import '../cubit/disocver_state.dart';
 
 
-class DiscoverFeaturesScreen
-    extends StatefulWidget {
+class DiscoverFeaturesScreen extends StatefulWidget {
 
   const DiscoverFeaturesScreen({super.key});
 

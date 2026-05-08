@@ -343,7 +343,7 @@ class _DocumentOtherdocumentScreenState extends State<DocumentOtherdocumentScree
               const SizedBox(height: 14),
 
               Row(
-               // mainAxisAlignment: MainAxisAlignment.center,
+                // mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   GestureDetector(
                     onTap: () => Navigator.pop(context),
@@ -371,128 +371,140 @@ class _DocumentOtherdocumentScreenState extends State<DocumentOtherdocumentScree
                     children: [
                       const SizedBox(height: 24),
 
-              if (_isLoading) const LinearProgressIndicator(),
+                      if (_isLoading) const LinearProgressIndicator(),
 
-              if (_error != null)
-                Text(_error!, style: const TextStyle(color: Colors.red)),
+                      if (_error != null)
+                        Text(_error!, style: const TextStyle(color: Colors.red)),
 
-              SizedBox(height: screenHeight * 0.02),
+                      SizedBox(height: screenHeight * 0.02),
 
-              // ── Document Name ────────────────────────────────
-              Container(
-                height: screenHeight * 0.055,
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  color: Theme.of(context).cardColor,
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(
-                      color: colorScheme.outlineVariant.withOpacity(0.2)),
-                ),
-                child: TextFormField(
-                  controller: _nameController,
-                  decoration: InputDecoration(
-                    hintText: l10n.documentName,
-                    hintStyle: TextStyle(
-                      color: colorScheme.onSurfaceVariant,
-                      fontSize: 14,
-                    ),
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-                    border: InputBorder.none,
-                  ),
-                  style: TextStyle(
-                    color: colorScheme.onSurface,
-                    fontSize: 14,
-                  ),
-                ),
-              ),
-
-              const SizedBox(height: 20),
-
-              GestureDetector(
-                onTap: _pickDate,
-                child: Container(
-                  height: screenHeight * 0.055,
-                  width: screenWidth * 0.42,
-                  padding: const EdgeInsets.symmetric(horizontal: 14),
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).cardColor,
-                    borderRadius: BorderRadius.circular(10),
-                    border: Border.all(color: colorScheme.outlineVariant.withOpacity(0.2)),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                        child: Text(
-                          dateLabel,
-                          style: TextStyle(
-                            color: _selectedDate == null
-                                ? colorScheme.onSurfaceVariant
-                                : colorScheme.onSurface,
+                      // ── Document Name ────────────────────────────────
+                      TextFormField(
+                        controller: _nameController,
+                        decoration: InputDecoration(
+                          filled: true,
+                          fillColor: Colors.white,
+                          labelText: l10n.documentName,
+                          labelStyle: TextStyle(
+                            color: colorScheme.onSurfaceVariant,
                             fontSize: 14,
                           ),
-                          overflow: TextOverflow.ellipsis,
+                          floatingLabelStyle: TextStyle(
+                            color: colorScheme.primary,
+                          ),
+                          contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 16),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                            borderSide: BorderSide(
+                              color: colorScheme.outlineVariant.withOpacity(0.2),
+                            ),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                            borderSide: BorderSide(
+                              color: colorScheme.outlineVariant.withOpacity(0.2),
+                            ),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                            borderSide: BorderSide(
+                              color: colorScheme.primary,
+                            ),
+                          ),
+                        ),
+                        style: TextStyle(
+                          color: colorScheme.onSurface,
+                          fontSize: 14,
                         ),
                       ),
-                      const SizedBox(width: 8),
-                      Icon(
-                        Icons.calendar_today_outlined,
-                        size: 18,
-                        color: colorScheme.onSurfaceVariant,
+
+                      const SizedBox(height: 20),
+
+                      GestureDetector(
+                        onTap: _pickDate,
+                        child: Container(
+                          height: screenHeight * 0.055,
+                          width: screenWidth * 0.42,
+                          padding: const EdgeInsets.symmetric(horizontal: 14),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(10),
+                            border: Border.all(color: colorScheme.outlineVariant.withOpacity(0.2)),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  dateLabel,
+                                  style: TextStyle(
+                                    color: _selectedDate == null
+                                        ? colorScheme.onSurfaceVariant
+                                        : colorScheme.onSurface,
+                                    fontSize: 14,
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              Icon(
+                                Icons.calendar_today_outlined,
+                                size: 18,
+                                color: colorScheme.onSurfaceVariant,
+                              ),
+                            ],
+                          ),
+                        ),
                       ),
-                    ],
-                  ),
-                ),
-              ),
 
-              const SizedBox(height: 20),
+                      const SizedBox(height: 20),
 
-              Text(l10n.uploadDocuments),
+                      Text(l10n.uploadDocuments),
 
-              const SizedBox(height: 20),
+                      const SizedBox(height: 20),
 
 
-              Row(
-                children: [
-                  _uploadBox(true, _frontFile, l10n.frontSide),
-                  const SizedBox(width: 12),
-                  _uploadBox(false, _backFile, l10n.backSide),
-                ],
-              ),
+                      Row(
+                        children: [
+                          _uploadBox(true, _frontFile, l10n.frontSide),
+                          const SizedBox(width: 12),
+                          _uploadBox(false, _backFile, l10n.backSide),
+                        ],
+                      ),
 
-              SizedBox(height: screenHeight * 0.02),
+                      SizedBox(height: screenHeight * 0.02),
 
-              Text(
-                l10n.fileSizeNote,style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeightManager.medium,
-                color: colorScheme.onSurface.withOpacity(0.7),
-              ),
-              ),
+                      Text(
+                        l10n.fileSizeNote,style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeightManager.medium,
+                        color: colorScheme.onSurface.withOpacity(0.7),
+                      ),
+                      ),
 
-              SizedBox(height: screenHeight * 0.02),
+                      SizedBox(height: screenHeight * 0.02),
 
 
 
-              Text(
-                l10n.commitmentText,
-                style: TextStyle(
-                    color: colorScheme.onSurface.withOpacity(0.5),
-                    fontSize: screenHeight * 0.045),
-              ),
+                      Text(
+                        l10n.commitmentText,
+                        style: TextStyle(
+                            color: colorScheme.onSurface.withOpacity(0.5),
+                            fontSize: screenHeight * 0.045),
+                      ),
 
-              SizedBox(height: screenHeight * 0.03),
+                      SizedBox(height: screenHeight * 0.03),
 
 
-              Row(
-                children: [
-                  const Icon(Icons.shield, color: Colors.green, size: 20),
-                  const SizedBox(width: 6),
-                  Text(l10n.documentsSafe,style: TextStyle(fontSize: 14, color: colorScheme.onSurface),),
-                ],
-              ),
+                      Row(
+                        children: [
+                          const Icon(Icons.shield, color: Colors.green, size: 20),
+                          const SizedBox(width: 6),
+                          Text(l10n.documentsSafe,style: TextStyle(fontSize: 14, color: colorScheme.onSurface),),
+                        ],
+                      ),
 
-              //
+                      //
 
                       const SizedBox(height: 40),
                     ],
