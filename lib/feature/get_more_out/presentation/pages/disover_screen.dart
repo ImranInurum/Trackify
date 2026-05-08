@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:trackify/feature/get_more_out/presentation/pages/rides_statistics_screen.dart';
-import 'package:trackify/feature/get_more_out/presentation/pages/safety_security_screen.dart';
-import 'package:trackify/feature/get_more_out/presentation/pages/vehicle_device_screen.dart';
-import 'package:trackify/feature/get_more_out/presentation/pages/vehicle_tracking_screen.dart';
+import 'package:trackify/feature/get_more_out/presentation/pages/feature_details_screen.dart';
 import 'package:trackify/l10n/app_localizations_ar.dart';
 
 import '../../../../l10n/app_localizations.dart';
@@ -76,42 +73,15 @@ class _DiscoverFeaturesScreenState
 
                 return GestureDetector(
                   onTap: () {
-                    /// SAFETY
-                    if (index == 0) {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => const SafetySecurityScreen(),
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => FeatureDetailsScreen(
+                          appBarTitle: feature.title,
+                          featureIndex: index,
                         ),
-                      );
-                    }
-                    /// TRACKING
-                    else if (index == 1) {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => const VehicleTrackingScreen(),
-                        ),
-                      );
-                    }
-                    /// RIDES
-                    else if (index == 2) {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => const RidesStatisticsScreen(),
-                        ),
-                      );
-                    }
-                    /// DEVICE
-                    else if (index == 3) {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => const VehicleDeviceScreen(),
-                        ),
-                      );
-                    }
+                      ),
+                    );
                   },
                   child: Container(
                     height: 200,

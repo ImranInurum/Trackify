@@ -1935,5 +1935,5 @@ class AppLocalizationsAr extends AppLocalizations {
   String get litresShort => 'L';
 
   @override
-  String get discoverTrackifyFeatures => 'Discover Ajjas Features';
+  String get discoverTrackifyFeatures => 'Discover Trackify Features';
 }

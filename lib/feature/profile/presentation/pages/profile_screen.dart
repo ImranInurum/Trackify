@@ -18,8 +18,10 @@ import '../../../../l10n/app_localizations.dart';
 import '../../../Vehicle_control/presentation/pages/vehicle_control_screen.dart';
 import '../../../device_data/presentation/pages/device_data_screen.dart';
 import '../../../device_warranty/pages/device_warranty_page.dart';
+import '../../../get_more_out/presentation/pages/disover_screen.dart';
 import '../../../upgrade_to_plus/presentation/pages/upgrade_to_plus.dart';
 import '../../../notifications/presentation/screen/notification_timeline.dart';
+
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -160,67 +162,69 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                 const SizedBox(height: 16),
 
-                /// 🔹 PROGRESS CARD
-                Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 16),
-                  padding: const EdgeInsets.all(14),
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).cardColor,
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(color: Theme.of(context).dividerColor),
-                  ),
-                  child: Row(
-                    children: [
-                      Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          SizedBox(
-                            height: 48,
-                            width: 48,
-                            child: CircularProgressIndicator(
-                              value: 0.63,
-                              strokeWidth: 4,
-                              backgroundColor: Theme.of(context).dividerColor,
-                              color: Theme.of(context).colorScheme.primary,
-                            ),
-                          ),
-                          Text(
-                            "63%",
-                            style: TextStyle(
-                              color: Theme.of(context).colorScheme.onSurface,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 12,
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+
+
+                  Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 16),
+                    padding: const EdgeInsets.all(14),
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).cardColor,
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(color: Theme.of(context).dividerColor),
+                    ),
+                    child: Row(
+                      children: [
+                        Stack(
+                          alignment: Alignment.center,
                           children: [
-                            Text(
-                              l10n.getMoreOutOfTrackify,
-                              style: TextStyle(
-                                fontWeight: FontWeight.w600,
+                            SizedBox(
+                              height: 48,
+                              width: 48,
+                              child: CircularProgressIndicator(
+                                value: 0.63,
+                                strokeWidth: 4,
+                                backgroundColor: Theme.of(context).dividerColor,
                                 color: Theme.of(context).colorScheme.primary,
                               ),
                             ),
-                            const SizedBox(height: 4),
-                              Text(
-                                l10n.featuresExploredCount(10, 16),
-                                style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6)),
+                            Text(
+                              "63%",
+                              style: TextStyle(
+                                color: Theme.of(context).colorScheme.onSurface,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 12,
                               ),
+                            ),
                           ],
                         ),
-                      ),
-                      Icon(
-                        Icons.chevron_right,
-                        color: Theme.of(context).colorScheme.onSurface.withOpacity(0.3),
-                      ),
-                    ],
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                l10n.getMoreOutOfTrackify,
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                  color: Theme.of(context).colorScheme.primary,
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                                Text(
+                                  l10n.featuresExploredCount(10, 16),
+                                  style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6)),
+                                ),
+                            ],
+                          ),
+                        ),
+                        Icon(
+                          Icons.chevron_right,
+                          color: Theme.of(context).colorScheme.onSurface.withOpacity(0.3),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
+
 
                 const SizedBox(height: 16),
 
