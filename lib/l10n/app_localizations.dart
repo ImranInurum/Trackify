@@ -2029,7 +2029,7 @@ abstract class AppLocalizations {
   /// No description provided for @maxFileSizeNote.
   ///
   /// In en, this message translates to:
-  /// **'Note: Maximum File Size is 5MB'**
+  /// **'Note: Max file size is 5MB'**
   String get maxFileSizeNote;
 
   /// No description provided for @serviceDate.
@@ -3271,7 +3271,7 @@ abstract class AppLocalizations {
   /// No description provided for @fileTooLarge.
   ///
   /// In en, this message translates to:
-  /// **'File size exceeds 5MB limit'**
+  /// **'File is too large (max 5MB)'**
   String get fileTooLarge;
 
   /// No description provided for @pickImageError.
@@ -3343,7 +3343,7 @@ abstract class AppLocalizations {
   /// No description provided for @selectExpiryDate.
   ///
   /// In en, this message translates to:
-  /// **'Expiry Date'**
+  /// **'Select Expiry Date'**
   String get selectExpiryDate;
 
   /// No description provided for @documentsEncrypted.
@@ -3849,6 +3849,354 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Products'**
   String get product;
+
+  /// No description provided for @errorPickingImage.
+  ///
+  /// In en, this message translates to:
+  /// **'Error picking image'**
+  String get errorPickingImage;
+
+  /// No description provided for @frontDocumentRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Front document image is required'**
+  String get frontDocumentRequired;
+
+  /// No description provided for @documentUploadedSuccessfully.
+  ///
+  /// In en, this message translates to:
+  /// **'Document uploaded successfully'**
+  String get documentUploadedSuccessfully;
+
+  /// No description provided for @addAccessoryBill.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Accessory Bill'**
+  String get addAccessoryBill;
+
+  /// No description provided for @accessoryName.
+  ///
+  /// In en, this message translates to:
+  /// **'Accessory Name'**
+  String get accessoryName;
+
+  /// No description provided for @billingDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Billing Date'**
+  String get billingDate;
+
+  /// No description provided for @shopName.
+  ///
+  /// In en, this message translates to:
+  /// **'Shop Name'**
+  String get shopName;
+
+  /// No description provided for @shopContact.
+  ///
+  /// In en, this message translates to:
+  /// **'Shop Contact'**
+  String get shopContact;
+
+  /// No description provided for @uploadBill.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload Bill'**
+  String get uploadBill;
+
+  /// No description provided for @yearExtendedWarranty.
+  ///
+  /// In en, this message translates to:
+  /// **'1 year extended warranty'**
+  String get yearExtendedWarranty;
+
+  /// No description provided for @paymentSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment Summary'**
+  String get paymentSummary;
+
+  /// No description provided for @boosterOffer.
+  ///
+  /// In en, this message translates to:
+  /// **'Booster offer @50% OFF'**
+  String get boosterOffer;
+
+  /// No description provided for @toPay.
+  ///
+  /// In en, this message translates to:
+  /// **'To Pay'**
+  String get toPay;
+
+  /// No description provided for @amountPayable.
+  ///
+  /// In en, this message translates to:
+  /// **'Amount Payable {amount}'**
+  String amountPayable(String amount);
+
+  /// No description provided for @distance.
+  ///
+  /// In en, this message translates to:
+  /// **'Distance'**
+  String get distance;
+
+  /// No description provided for @recentToOldest.
+  ///
+  /// In en, this message translates to:
+  /// **'Recent to Oldest'**
+  String get recentToOldest;
+
+  /// No description provided for @sorting.
+  ///
+  /// In en, this message translates to:
+  /// **'Sorting'**
+  String get sorting;
+
+  /// No description provided for @backToDefault.
+  ///
+  /// In en, this message translates to:
+  /// **'Back to Default'**
+  String get backToDefault;
+
+  /// No description provided for @sortBy.
+  ///
+  /// In en, this message translates to:
+  /// **'Sort By'**
+  String get sortBy;
+
+  /// No description provided for @duration.
+  ///
+  /// In en, this message translates to:
+  /// **'Duration'**
+  String get duration;
+
+  /// No description provided for @oldestToRecent.
+  ///
+  /// In en, this message translates to:
+  /// **'Oldest to Recent'**
+  String get oldestToRecent;
+
+  /// No description provided for @date.
+  ///
+  /// In en, this message translates to:
+  /// **'Date'**
+  String get date;
+
+  /// No description provided for @noTripsFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No trips found for \"{query}\"'**
+  String noTripsFound(String query);
+
+  /// No description provided for @ridesCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} rides'**
+  String ridesCount(String count);
+
+  /// No description provided for @searchTrips.
+  ///
+  /// In en, this message translates to:
+  /// **'Search Trips'**
+  String get searchTrips;
+
+  /// No description provided for @searchRides.
+  ///
+  /// In en, this message translates to:
+  /// **'Search Rides'**
+  String get searchRides;
+
+  /// No description provided for @notAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'N/A'**
+  String get notAvailable;
+
+  /// No description provided for @start.
+  ///
+  /// In en, this message translates to:
+  /// **'Start'**
+  String get start;
+
+  /// No description provided for @end.
+  ///
+  /// In en, this message translates to:
+  /// **'End'**
+  String get end;
+
+  /// No description provided for @yesImSure.
+  ///
+  /// In en, this message translates to:
+  /// **'Yes I\'m Sure'**
+  String get yesImSure;
+
+  /// No description provided for @topSpeedLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Top Speed'**
+  String get topSpeedLabel;
+
+  /// No description provided for @rideDurationLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Ride Duration'**
+  String get rideDurationLabel;
+
+  /// No description provided for @editRides.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Rides'**
+  String get editRides;
+
+  /// No description provided for @tripDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Trip Details'**
+  String get tripDetails;
+
+  /// No description provided for @tripQuoteLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Trip Quote'**
+  String get tripQuoteLabel;
+
+  /// No description provided for @unmerge.
+  ///
+  /// In en, this message translates to:
+  /// **'Unmerge'**
+  String get unmerge;
+
+  /// No description provided for @tripNameLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Trip Name'**
+  String get tripNameLabel;
+
+  /// No description provided for @deleteTripConfirmation.
+  ///
+  /// In en, this message translates to:
+  /// **'This will permanently delete your trip. Are you sure you want to continue?'**
+  String get deleteTripConfirmation;
+
+  /// No description provided for @tripStats.
+  ///
+  /// In en, this message translates to:
+  /// **'Trip Stats'**
+  String get tripStats;
+
+  /// No description provided for @avgSpeedLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Avg. Speed'**
+  String get avgSpeedLabel;
+
+  /// No description provided for @tripQuoteDefault.
+  ///
+  /// In en, this message translates to:
+  /// **'Every trip has a story. Yours goes here.'**
+  String get tripQuoteDefault;
+
+  /// No description provided for @deleteTrip.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Trip'**
+  String get deleteTrip;
+
+  /// No description provided for @hrLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'hr'**
+  String get hrLabel;
+
+  /// No description provided for @ridesSelectedSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} rides selected | {distance} km • {duration}'**
+  String ridesSelectedSummary(String count, String distance, String duration);
+
+  /// No description provided for @clearSelection.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear Selection'**
+  String get clearSelection;
+
+  /// No description provided for @secLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'sec'**
+  String get secLabel;
+
+  /// No description provided for @minLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'min'**
+  String get minLabel;
+
+  /// No description provided for @selectionTooltipMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Select the rides you want to add to your trip.'**
+  String get selectionTooltipMessage;
+
+  /// No description provided for @selectRides.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Rides'**
+  String get selectRides;
+
+  /// No description provided for @createTrip.
+  ///
+  /// In en, this message translates to:
+  /// **'Create Trip'**
+  String get createTrip;
+
+  /// No description provided for @bestAverageSpeed.
+  ///
+  /// In en, this message translates to:
+  /// **'Best average speed'**
+  String get bestAverageSpeed;
+
+  /// No description provided for @topSpeedClocked.
+  ///
+  /// In en, this message translates to:
+  /// **'Top speed clocked'**
+  String get topSpeedClocked;
+
+  /// No description provided for @searchTripsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search Trips by Name'**
+  String get searchTripsHint;
+
+  /// No description provided for @noRidesFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No rides found for \"{query}\"'**
+  String noRidesFound(String query);
+
+  /// No description provided for @tripLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Trip {number}'**
+  String tripLabel(String number);
+
+  /// No description provided for @extraordinaryTrips.
+  ///
+  /// In en, this message translates to:
+  /// **'Extraordinary Trips'**
+  String get extraordinaryTrips;
+
+  /// No description provided for @maxDistanceCovered.
+  ///
+  /// In en, this message translates to:
+  /// **'Max distance covered'**
+  String get maxDistanceCovered;
+
+  /// No description provided for @searchRidesHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search Rides by City'**
+  String get searchRidesHint;
 }
 
 class _AppLocalizationsDelegate

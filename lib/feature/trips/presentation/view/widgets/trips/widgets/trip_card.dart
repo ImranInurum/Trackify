@@ -3,6 +3,7 @@ import 'package:trackify/feature/trips/data/entity/ride_model.dart';
 import 'package:trackify/feature/trips/presentation/view/widgets/all_rides/widgets/polyline_thumbnail.dart';
 import 'package:trackify/l10n/app_localizations.dart';
 
+
 class TripCard extends StatelessWidget {
   final String title;
   final List<Ride> rides;
@@ -19,6 +20,8 @@ class TripCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final goldColor = theme.colorScheme.primary;
+    final l10n = AppLocalizations.of(context)!;
+
     
     double totalDist = 0;
     for (var r in rides) {
@@ -70,7 +73,7 @@ class TripCard extends StatelessWidget {
                       Icon(Icons.location_on_outlined, color: theme.colorScheme.onSurface.withValues(alpha: 0.5), size: 16),
                       const SizedBox(width: 4),
                       Text(
-                        "${totalDist.toStringAsFixed(1)} kms",
+                        "${totalDist.toStringAsFixed(1)} ${l10n.kms}",
                         style: TextStyle(
                           color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                           fontSize: 14,
@@ -86,7 +89,7 @@ class TripCard extends StatelessWidget {
                       Icon(Icons.route_outlined, color: theme.colorScheme.onSurface.withValues(alpha: 0.5), size: 16),
                       const SizedBox(width: 4),
                       Text(
-                        "${rides.length} rides",
+                        l10n.ridesCount(rides.length.toString()),
                         style: TextStyle(
                           color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                           fontSize: 14,

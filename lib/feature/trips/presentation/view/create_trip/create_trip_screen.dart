@@ -5,11 +5,13 @@ import 'package:trackify/feature/trips/presentation/cubit/create_trip_cubit.dart
 import 'package:trackify/feature/trips/presentation/cubit/create_trip_state.dart';
 import 'package:trackify/feature/trips/presentation/cubit/ride_history_cubit.dart';
 import 'package:trackify/feature/trips/presentation/cubit/ride_history_state.dart';
-import 'package:trackify/l10n/app_localizations.dart';
+
+
 import 'package:trackify/feature/trips/data/entity/ride_model.dart';
 import 'package:trackify/feature/trips/presentation/view/trip_details/trip_details_screen.dart';
 import 'package:trackify/feature/trips/presentation/view/widgets/all_rides/widgets/polyline_thumbnail.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:trackify/l10n/app_localizations.dart';
 
 class CreateTripScreen extends StatefulWidget {
   final String? initialTitle;
@@ -89,7 +91,7 @@ class _CreateTripScreenState extends State<CreateTripScreen> {
             onPressed: () => Navigator.pop(context),
           ),
           title: Text(
-            "Select Rides",
+            l10n.selectRides,
             style: TextStyle(
               color: theme.colorScheme.onSurface,
               fontWeight: FontWeight.bold,
@@ -197,12 +199,14 @@ class _CreateTripScreenState extends State<CreateTripScreen> {
 
               final hr = totalMinutes ~/ 60;
               final min = totalMinutes % 60;
-              final durationStr = "${hr} hr ${min} min";
+              final durationStr = "${hr} ${l10n.hrLabel} ${min} ${l10n.minLabel}";
 
               return _SelectionSummarySheet(
-                count: selectedRides.length,
-                distance: totalDist.toStringAsFixed(0),
-                duration: durationStr,
+                summary: l10n.ridesSelectedSummary(
+                  selectedRides.length.toString(),
+                  totalDist.toStringAsFixed(0),
+                  durationStr,
+                ),
                 goldColor: goldColor,
                 onClear: () => context.read<CreateTripCubit>().clearSelection(),
                 onCreate: () => context.read<CreateTripCubit>().saveTrip(),
@@ -324,9 +328,9 @@ class _SelectionGroupCardState extends State<_SelectionGroupCard> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  _buildStatItem("${totalDist.toStringAsFixed(1)}km", l10n.distanceLabel),
-                  _buildStatItem("${totalMinutes}m ${widget.rides.isNotEmpty ? '00s' : ''}", l10n.rideDuration),
-                  _buildStatItem("${avgSpeed.toStringAsFixed(1)}km/h", l10n.averageSpeed),
+                  _buildStatItem("${totalDist.toStringAsFixed(1)}${l10n.kms}", l10n.distanceLabel),
+                  _buildStatItem("${totalMinutes}${l10n.minLabel} ${widget.rides.isNotEmpty ? '00${l10n.secLabel}' : ''}", l10n.rideDurationLabel),
+                  _buildStatItem("${avgSpeed.toStringAsFixed(1)}${l10n.kmh}", l10n.averageSpeed),
                 ],
               ),
               const SizedBox(height: 20),
@@ -340,7 +344,7 @@ class _SelectionGroupCardState extends State<_SelectionGroupCard> {
                     Icon(Icons.route_outlined, size: 18, color: widget.goldColor),
                     const SizedBox(width: 8),
                     Text(
-                      "${widget.rides.length} Rides",
+                      l10n.ridesCount(widget.rides.length.toString()),
                       style: TextStyle(
                         color: widget.goldColor,
                         fontWeight: FontWeight.w600,
@@ -403,7 +407,7 @@ class _SelectionGroupCardState extends State<_SelectionGroupCard> {
                     ),
                     const SizedBox(width: 4),
                     Text(
-                      "km",
+                      l10n.kms,
                       style: TextStyle(
                         color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                         fontSize: 14,
@@ -414,9 +418,9 @@ class _SelectionGroupCardState extends State<_SelectionGroupCard> {
                 const SizedBox(height: 16),
                 Row(
                   children: [
-                    _buildSmallStat("${ride.duration}", l10n.rideDuration),
+                    _buildSmallStat("${ride.duration}", l10n.rideDurationLabel),
                     const SizedBox(width: 24),
-                    _buildSmallStat("${ride.avgSpeed.toStringAsFixed(1)} km/h", l10n.averageSpeed),
+                    _buildSmallStat("${ride.avgSpeed.toStringAsFixed(1)} ${l10n.kmh}", l10n.averageSpeed),
                   ],
                 ),
               ],
@@ -497,6 +501,7 @@ class _SelectionTooltip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+        final l10n = AppLocalizations.of(context)!;
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -523,7 +528,7 @@ class _SelectionTooltip extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                "Select Rides",
+                l10n.selectRides,
                 style: TextStyle(
                   color: goldColor,
                   fontWeight: FontWeight.w700,
@@ -532,7 +537,7 @@ class _SelectionTooltip extends StatelessWidget {
               ),
               const SizedBox(height: 8),
               Text(
-                "Select the rides you want to add to your trip.",
+                l10n.selectionTooltipMessage,
                 style: TextStyle(
                   color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                   fontSize: 13,
@@ -549,7 +554,7 @@ class _SelectionTooltip extends StatelessWidget {
                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                     color: Colors.transparent,
                     child: Text(
-                      "Skip",
+                      l10n.skip,
                       style: TextStyle(
                         color: goldColor,
                         fontWeight: FontWeight.w700,
@@ -587,25 +592,23 @@ class _TopTrianglePainter extends CustomPainter {
 }
 
 class _SelectionSummarySheet extends StatelessWidget {
-  final int count;
-  final String distance;
-  final String duration;
+  final String summary;
   final Color goldColor;
   final VoidCallback onClear;
   final VoidCallback onCreate;
 
   const _SelectionSummarySheet({
-    required this.count,
-    required this.distance,
-    required this.duration,
+    required this.summary,
     required this.goldColor,
     required this.onClear,
     required this.onCreate,
   });
 
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+ final l10n = AppLocalizations.of(context)!;
     return Container(
       decoration: BoxDecoration(
         color: theme.cardColor,
@@ -618,7 +621,7 @@ class _SelectionSummarySheet extends StatelessWidget {
           Row(
             children: [
               Text(
-                "$count rides selected | $distance km • $duration",
+                summary,
                 style: TextStyle(
                   color: theme.colorScheme.onSurface,
                   fontSize: 14,
@@ -641,8 +644,8 @@ class _SelectionSummarySheet extends StatelessWidget {
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
-                  child: const Text(
-                    "Clear Selection",
+                  child: Text(
+                    l10n.clearSelection,
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
                 ),
@@ -659,8 +662,8 @@ class _SelectionSummarySheet extends StatelessWidget {
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
-                  child: const Text(
-                    "Create Trip",
+                  child: Text(
+                    l10n.createTrip,
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
                 ),

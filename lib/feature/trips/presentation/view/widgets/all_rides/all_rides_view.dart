@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:trackify/feature/trips/presentation/view/widgets/all_rides/widgets/all_rides_empty_state.dart';
 import 'package:trackify/feature/trips/presentation/view/widgets/all_rides/widgets/ride_card.dart';
+import 'package:trackify/l10n/app_localizations.dart';
 import '../../../cubit/ride_history_cubit.dart';
 import '../../../cubit/ride_history_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -9,6 +10,7 @@ import 'package:trackify/feature/trips/presentation/view/ride_history_details/ri
 
 import 'package:trackify/feature/trips/presentation/view/widgets/sorting_bottom_sheet.dart';
 import '../../trip_search_screen.dart';
+
 
 class AllRides extends StatefulWidget {
   const AllRides({super.key});
@@ -29,6 +31,8 @@ class _AllRidesState extends State<AllRides> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
+
 
     return Column(
       children: [
@@ -70,7 +74,7 @@ class _AllRidesState extends State<AllRides> {
                             alignment: Alignment.centerLeft,
                             padding: const EdgeInsets.symmetric(vertical: 14),
                             child: Text(
-                              'Search Rides',
+                              l10n.searchRides,
                               style: TextStyle(
                                 color: theme.colorScheme.onSurface
                                     .withOpacity(0.4),

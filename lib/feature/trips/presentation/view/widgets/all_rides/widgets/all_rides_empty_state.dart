@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:trackify/l10n/app_localizations.dart';
 
-import '../../../../../../../l10n/app_localizations.dart';
+
 
 class AllRidesEmptyState extends StatelessWidget {
   const AllRidesEmptyState({super.key});

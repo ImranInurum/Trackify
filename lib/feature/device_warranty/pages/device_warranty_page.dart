@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:trackify/core/config/font_manager.dart';
 import 'package:trackify/core/constants/app_images.dart';
 import '../../../l10n/app_localizations.dart';
+import 'device_warranty_confirm_screen.dart';
 
 class WarrantyScreen extends StatefulWidget {
   const WarrantyScreen({super.key});
@@ -41,13 +42,17 @@ class _WarrantyScreenState extends State<WarrantyScreen> {
     final colorScheme = theme.colorScheme;
 
     return Scaffold(
-      backgroundColor: colorScheme.surface,
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: colorScheme.surface,
+        backgroundColor: theme.scaffoldBackgroundColor,
         elevation: 0,
         centerTitle: true,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios_new, color: colorScheme.onSurface, size: 20),
+          icon: Icon(
+            Icons.arrow_back_ios_new,
+            color: colorScheme.onSurface,
+            size: 20,
+          ),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
@@ -68,7 +73,7 @@ class _WarrantyScreenState extends State<WarrantyScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   _topCard(l10n, theme, colorScheme),
-                  const SizedBox(height: 32),
+                  const SizedBox(height: 24),
 
                   Text(
                     l10n.warranty_benefitsTitle,
@@ -80,14 +85,16 @@ class _WarrantyScreenState extends State<WarrantyScreen> {
                   ),
                   const SizedBox(height: 16),
 
-                  /// 🔹 BENEFITS LIST (Simulating API Data)
-                  ..._getBenefits().map((benefit) => _benefitTile(
-                        theme: theme,
-                        colorScheme: colorScheme,
-                        highlightText: benefit['highlight'] as String,
-                        normalText: benefit['normal'] as String,
-                        icon: benefit['icon'] as IconData,
-                      )),
+                  /// 🔹 BENEFITS LIST
+                  ..._getBenefits().map(
+                    (benefit) => _benefitTile(
+                      theme: theme,
+                      colorScheme: colorScheme,
+                      highlightText: benefit['highlight'] as String,
+                      normalText: benefit['normal'] as String,
+                      icon: benefit['icon'] as IconData,
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -110,14 +117,7 @@ class _WarrantyScreenState extends State<WarrantyScreen> {
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            colorScheme.surfaceContainerLow,
-            colorScheme.surface,
-          ],
-        ),
+        color: colorScheme.surface,
       ),
       padding: const EdgeInsets.all(20),
       child: Column(
@@ -126,8 +126,8 @@ class _WarrantyScreenState extends State<WarrantyScreen> {
             children: [
               Image.asset(
                 AppImages.installDevices,
-                height: 120,
-                width: 120,
+                height: 100,
+                width: 100,
                 fit: BoxFit.contain,
               ),
               const SizedBox(width: 16),
@@ -135,7 +135,7 @@ class _WarrantyScreenState extends State<WarrantyScreen> {
                 child: Text(
                   l10n.warranty_extend,
                   style: TextStyle(
-                    color: colorScheme.onSurface,
+                    color: colorScheme.onSurface.withValues(alpha: 0.9),
                     fontWeight: FontWeight.w400,
                     fontSize: 16,
                     height: 1.4,
@@ -169,7 +169,7 @@ class _WarrantyScreenState extends State<WarrantyScreen> {
                         'SP 125',
                         style: TextStyle(
                           color: colorScheme.onSurface,
-                          fontWeight: FontWeight.w600,
+                          fontWeight: FontWeight.w500,
                           fontSize: 14,
                         ),
                       ),
@@ -195,14 +195,14 @@ class _WarrantyScreenState extends State<WarrantyScreen> {
                               text: '23 Feb 2027 ',
                               style: TextStyle(
                                 color: colorScheme.onSurface,
-                                fontWeight: FontWeight.w600,
+                                fontWeight: FontWeight.w500,
                                 fontSize: 13,
                               ),
                             ),
                             TextSpan(
                               text: '(301 days left)',
                               style: TextStyle(
-                                color: colorScheme.secondary.withValues(alpha: 0.7),
+                                color: const Color(0xFF81C784),
                                 fontSize: 11,
                                 fontWeight: FontWeight.w400,
                               ),
@@ -234,15 +234,17 @@ class _WarrantyScreenState extends State<WarrantyScreen> {
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12),
-        color: colorScheme.surface,
-        border: Border.all(color: colorScheme.onSurface.withValues(alpha: 0.1)),
+        color: theme.scaffoldBackgroundColor,
+        border: Border.all(
+          color: colorScheme.onSurface.withValues(alpha: 0.15),
+        ),
       ),
       child: Row(
         children: [
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: colorScheme.onSurface.withValues(alpha: 0.05),
+              color: colorScheme.tertiary.withValues(alpha: 0.1),
               shape: BoxShape.circle,
             ),
             child: Icon(icon, color: colorScheme.tertiary, size: 20),
@@ -266,7 +268,9 @@ class _WarrantyScreenState extends State<WarrantyScreen> {
                   ),
                   TextSpan(
                     text: normalText,
-                    style: TextStyle(color: colorScheme.onSurface.withValues(alpha: 0.9)),
+                    style: TextStyle(
+                      color: colorScheme.onSurface.withValues(alpha: 0.9),
+                    ),
                   ),
                 ],
               ),
@@ -285,12 +289,12 @@ class _WarrantyScreenState extends State<WarrantyScreen> {
   ) {
     return Container(
       width: double.infinity,
-      height: 54,
+      height: 45,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(8),
         gradient: LinearGradient(
           colors: [
-            colorScheme.tertiary.withValues(alpha: 0.8),
+            colorScheme.tertiary.withValues(alpha: 0.9),
             colorScheme.tertiary,
           ],
         ),
@@ -298,15 +302,22 @@ class _WarrantyScreenState extends State<WarrantyScreen> {
       child: Material(
         color: Colors.transparent,
         child: InkWell(
-          onTap: () {},
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const DeviceWarrantyConfirmScreen(),
+              ),
+            );
+          },
           borderRadius: BorderRadius.circular(8),
           child: Center(
             child: RichText(
               text: TextSpan(
-                style: TextStyle(
-                  color: colorScheme.onTertiary,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16,
+                style: const TextStyle(
+                  color: Colors.black,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 15,
                 ),
                 children: [
                   TextSpan(text: l10n.warranty_button),
@@ -314,7 +325,7 @@ class _WarrantyScreenState extends State<WarrantyScreen> {
                     text: l10n.warranty_button_old,
                     style: TextStyle(
                       decoration: TextDecoration.lineThrough,
-                      color: colorScheme.onTertiary.withValues(alpha: 0.4),
+                      color: Colors.black.withValues(alpha: 0.5),
                       fontWeight: FontWeight.w400,
                       fontSize: 14,
                     ),

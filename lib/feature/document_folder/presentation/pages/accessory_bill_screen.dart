@@ -7,6 +7,7 @@ import 'package:image_cropper/image_cropper.dart';
 import 'package:intl/intl.dart';
 import 'package:trackify/core/config/font_manager.dart';
 import 'package:trackify/feature/document_folder/presentation/widegt/text_field_widgets.dart';
+import 'package:trackify/l10n/app_localizations.dart';
 
 
 class AccessoryBillScreen extends StatefulWidget {
@@ -92,7 +93,7 @@ class _AccessoryBillScreenState extends State<AccessoryBillScreen> {
       }
 
       if (!_isValidSize(croppedFile)) {
-        _setError('File is too large (max 5MB)');
+        _setError(AppLocalizations.of(context)!.fileTooLarge);
         return;
       }
 
@@ -106,7 +107,7 @@ class _AccessoryBillScreenState extends State<AccessoryBillScreen> {
       });
     } catch (e) {
       debugPrint("Pick error: $e");
-      _setError('Error picking image');
+      _setError(AppLocalizations.of(context)!.errorPickingImage);
     } finally {
       if (mounted) {
         setState(() => _isPickerActive = false);
@@ -121,11 +122,11 @@ class _AccessoryBillScreenState extends State<AccessoryBillScreen> {
         sourcePath: imageFile.path,
         uiSettings: [
           AndroidUiSettings(
-            toolbarTitle: 'Crop Document',
+            toolbarTitle: AppLocalizations.of(context)!.cropDocument,
             toolbarColor: Colors.black,
             toolbarWidgetColor: Colors.white,
           ),
-          IOSUiSettings(title: 'Crop Document'),
+          IOSUiSettings(title: AppLocalizations.of(context)!.cropDocument),
         ],
       );
 
@@ -173,7 +174,7 @@ class _AccessoryBillScreenState extends State<AccessoryBillScreen> {
 
               // Title
               Text(
-                'Upload Image',
+                AppLocalizations.of(context)!.uploadImage,
                 style: TextStyle(
                   color: colorScheme.onSurface,
                   fontSize: 16,
@@ -187,7 +188,7 @@ class _AccessoryBillScreenState extends State<AccessoryBillScreen> {
                 children: [
                   _circleOption(
                     icon: Icons.camera_alt_outlined,
-                    label: 'Camera',
+                    label: AppLocalizations.of(context)!.camera,
                     onTap: () {
                       _pickImage(isFront, ImageSource.camera);
                     },
@@ -195,7 +196,7 @@ class _AccessoryBillScreenState extends State<AccessoryBillScreen> {
                   const SizedBox(width: 10),
                   _circleOption(
                     icon: Icons.photo_library_outlined,
-                    label: 'Gallery',
+                    label: AppLocalizations.of(context)!.gallery,
                     onTap: () {
                       _pickImage(isFront, ImageSource.gallery);
                     },
@@ -250,13 +251,13 @@ class _AccessoryBillScreenState extends State<AccessoryBillScreen> {
 
 
     if (_frontFile == null) {
-      setState(() => _error = 'Front document image is required');
+      setState(() => _error = AppLocalizations.of(context)!.frontDocumentRequired);
       return;
     }
 
     ScaffoldMessenger.of(
       context,
-    ).showSnackBar(const SnackBar(content: Text('Document uploaded successfully')));
+    ).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.documentUploadedSuccessfully)));
 
     Navigator.pop(context);
   }
@@ -272,7 +273,7 @@ class _AccessoryBillScreenState extends State<AccessoryBillScreen> {
     final screenWidth = size.width;
     final screenHeight = size.height;
     final dateLabel = _selectedDate == null
-        ? 'Select Expiry Date'
+        ? AppLocalizations.of(context)!.selectExpiryDate
         : DateFormat('dd / MM / yyyy').format(_selectedDate!);
 
     return Scaffold(
@@ -290,7 +291,7 @@ class _AccessoryBillScreenState extends State<AccessoryBillScreen> {
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
-          'Add Accessory Bill',
+          AppLocalizations.of(context)!.addAccessoryBill,
           style: theme.textTheme.titleMedium?.copyWith(
             color: colorScheme.onSurface,
             fontWeight: FontWeightManager.semibold,
@@ -320,7 +321,7 @@ class _AccessoryBillScreenState extends State<AccessoryBillScreen> {
                     // ── Document Name ────────────────────────────────
                     TextFieldWidgets(
                       controller: _nameController,
-                      hintText: 'Accessory Name',
+                      hintText: AppLocalizations.of(context)!.accessoryName,
                       isRequired: true,
                     ),
 
@@ -347,7 +348,7 @@ class _AccessoryBillScreenState extends State<AccessoryBillScreen> {
                                   Expanded(
                                     child: Text.rich(
                                       TextSpan(
-                                        text: 'Billing Date',
+                                        text: AppLocalizations.of(context)!.billingDate,
                                         children: const [
                                           TextSpan(
                                             text: '*',
@@ -379,7 +380,7 @@ class _AccessoryBillScreenState extends State<AccessoryBillScreen> {
                         Expanded(
                           child: TextFieldWidgets(
                             controller: _nameController,
-                            hintText: 'Billing Amount',
+                            hintText: AppLocalizations.of(context)!.billingAmount,
                             isRequired: true,
                             keyboardType: TextInputType.number,
                             suffixIcon: Padding(
@@ -393,12 +394,12 @@ class _AccessoryBillScreenState extends State<AccessoryBillScreen> {
                     const SizedBox(height: 20),
                     TextFieldWidgets(
                       controller: _nameController,
-                      hintText: 'Shop Name',
+                      hintText: AppLocalizations.of(context)!.shopName,
                     ),
                     const SizedBox(height: 20),
                     TextFieldWidgets(
                       controller: _nameController,
-                      hintText: 'Shop Contact',
+                      hintText: AppLocalizations.of(context)!.shopContact,
                       keyboardType: TextInputType.phone,
                     ),
                     const SizedBox(height: 20),
@@ -443,22 +444,21 @@ class _AccessoryBillScreenState extends State<AccessoryBillScreen> {
 
                     const SizedBox(height: 20),
 
-                    const Text('Upload Bill'),
-
+                    Text(AppLocalizations.of(context)!.uploadBill),
                     const SizedBox(height: 20),
 
                     Row(
                       children: [
-                        _uploadBox(true, _frontFile, 'Add Image'),
+                        _uploadBox(true, _frontFile, AppLocalizations.of(context)!.addImage),
                         const SizedBox(width: 12),
-                        _uploadBox(false, _backFile, 'Add Image'),
+                        _uploadBox(false, _backFile, AppLocalizations.of(context)!.addImage),
                       ],
                     ),
 
                     SizedBox(height: screenHeight * 0.02),
 
                     Text(
-                      'Note: Max file size is 5MB',
+                      AppLocalizations.of(context)!.maxFileSizeNote,
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeightManager.medium,
@@ -486,7 +486,7 @@ class _AccessoryBillScreenState extends State<AccessoryBillScreen> {
                 ),
                 child: Center(
                   child: Text(
-                    'Add Document',
+                    AppLocalizations.of(context)!.addDocument,
                     style: TextStyle(
                       color: colorScheme.onPrimary,
                       fontWeight: FontWeight.bold,

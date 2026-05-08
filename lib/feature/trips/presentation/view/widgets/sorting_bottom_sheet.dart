@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:trackify/l10n/app_localizations.dart';
+
 
 class SortingBottomSheet extends StatefulWidget {
   final String initialSortBy;
@@ -31,6 +33,8 @@ class _SortingBottomSheetState extends State<SortingBottomSheet> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
+    final l10n = AppLocalizations.of(context)!;
+
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
@@ -46,7 +50,7 @@ class _SortingBottomSheetState extends State<SortingBottomSheet> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Sorting',
+                l10n.sorting,
                 style: theme.textTheme.titleLarge?.copyWith(
                   fontWeight: FontWeight.bold,
                   color: theme.colorScheme.onSurface,
@@ -81,7 +85,7 @@ class _SortingBottomSheetState extends State<SortingBottomSheet> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Sort By',
+                  l10n.sortBy,
                   style: theme.textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.bold,
                     color: theme.colorScheme.onSurface.withOpacity(0.9),
@@ -91,19 +95,19 @@ class _SortingBottomSheetState extends State<SortingBottomSheet> {
                 Row(
                   children: [
                     _SortOptionChip(
-                      label: 'Date',
+                      label: l10n.date,
                       isSelected: _selectedSortBy == 'Date',
                       onTap: () => setState(() => _selectedSortBy = 'Date'),
                     ),
                     const SizedBox(width: 10),
                     _SortOptionChip(
-                      label: 'Distance',
+                      label: l10n.distance,
                       isSelected: _selectedSortBy == 'Distance',
                       onTap: () => setState(() => _selectedSortBy = 'Distance'),
                     ),
                     const SizedBox(width: 10),
                     _SortOptionChip(
-                      label: 'Duration',
+                      label: l10n.duration,
                       isSelected: _selectedSortBy == 'Duration',
                       onTap: () => setState(() => _selectedSortBy = 'Duration'),
                     ),
@@ -111,13 +115,13 @@ class _SortingBottomSheetState extends State<SortingBottomSheet> {
                 ),
                 const SizedBox(height: 30),
                 _RadioOption(
-                  label: 'Recent to Oldest',
+                  label: l10n.recentToOldest,
                   isSelected: _isRecentToOldest,
                   onTap: () => setState(() => _isRecentToOldest = true),
                 ),
                 const SizedBox(height: 20),
                 _RadioOption(
-                  label: 'Oldest to Recent',
+                  label: l10n.oldestToRecent,
                   isSelected: !_isRecentToOldest,
                   onTap: () => setState(() => _isRecentToOldest = false),
                 ),
@@ -136,7 +140,7 @@ class _SortingBottomSheetState extends State<SortingBottomSheet> {
                     });
                   },
                   child: Text(
-                    'Back to Default',
+                    l10n.backToDefault,
                     style: TextStyle(
                       color: theme.colorScheme.onSurface.withOpacity(0.5),
                       fontWeight: FontWeight.w600,
@@ -161,8 +165,8 @@ class _SortingBottomSheetState extends State<SortingBottomSheet> {
                     ),
                     elevation: 0,
                   ),
-                  child: const Text(
-                    'Apply',
+                  child: Text(
+                    l10n.apply,
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 16,

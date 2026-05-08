@@ -1,4 +1,4 @@
-{
+﻿{
     "selectLanguage": "ನಿಮ್ಮ ಭಾಷೆಯನ್ನು ಆಯ್ಕೆ ಮಾಡಿ",
     "letsGetStarted": "ಪ್ರಾರಂಭಿಸೋಣ",
     "email": "ಇಮೇಲ್",
@@ -708,8 +708,95 @@
         "homeAddress": "ಮನೆಯ ವಿಳಾಸ",
         "officeAddress": "ಕಚೇರಿ ವಿಳಾಸ",
         "proceed": "ಮುಂದುವರಿಸಿ",
-        "product": "ಉತ್ಪನ್ನಗಳು"
+        "product": "ಉತ್ಪನ್ನಗಳು",
 
 
 
+
+        "addAccessoryBill": "ಅನುಬಂಧ ಬಿಲ್ ಸೇರಿಸಿ",
+        "accessoryName": "ಅನುಬಂಧದ ಹೆಸರು",
+        "billingDate": "ಬಿಲ್ಲಿಂಗ್ ದಿನಾಂಕ",
+        "billingAmount": "ಬಿಲ್ಲಿಂಗ್ ಮೊತ್ತ",
+        "shopName": "ಅಂಗಡಿ ಹೆಸರು",
+        "shopContact": "ಅಂಗಡಿ ಸಂಪರ್ಕ",
+        "uploadBill": "ಬಿಲ್ ಅಪ್‌ಲೋಡ್ ಮಾಡಿ",
+        "addImage": "ಚಿತ್ರ ಸೇರಿಸಿ",
+        "maxFileSizeNote": "ಸೂಚನೆ: ಗರಿಷ್ಠ ಫೈಲ್ ಗಾತ್ರ 5MB",
+        "addDocument": "ದಾಖಲೆ ಸೇರಿಸಿ",
+        "extendedWarranty": "ವಿಸ್ತೃತ ವಾರಂಟಿ",
+        "yearExtendedWarranty": "1 ವರ್ಷದ ವಿಸ್ತೃತ ವಾರಂಟಿ",
+        "paymentSummary": "ಪಾವತಿ ಸಾರಾಂಶ",
+        "boosterOffer": "ಬೂಸ್ಟರ್ ಆಫರ್ @50% ರಿಯಾಯಿತಿ",
+        "toPay": "ಪಾವತಿಸಲು",
+        "amountPayable": "ಪಾವತಿಸಬೇಕಾದ ಮೊತ್ತ {amount}",
+        "@amountPayable": {
+          "placeholders": {
+            "amount": {
+              "type": "String"
+            }
+          }
+        },
+  "distance": "ದೂರ",
+  "recentToOldest": "ಇತ್ತೀಚಿನಿಂದ ಹಳೆಯದಕ್ಕೆ",
+  "sorting": "ವಿಂಗಡಣೆ",
+  "backToDefault": "ಡೀಫಾಲ್ಟ್‌ಗೆ ಹಿಂತಿರುಗಿ",
+  "sortBy": "ಇದರ ಮೂಲಕ ವಿಂಗಡಿಸಿ",
+  "duration": "ಅವಧಿ",
+  "oldestToRecent": "ಹಳೆಯದರಿಂದ ಇತ್ತೀಚಿನದಕ್ಕೆ",
+  "date": "ದಿನಾಂಕ",
+  "noTripsFound": "ಯಾವುದೇ ಟ್ರಿಪ್‌ಗಳು ಕಂಡುಬಂದಿಲ್ಲ",
+  "ridesCount": "{count} ಸವಾರಿಗಳು",
+  "@ridesCount": {
+    "placeholders":  {
+                         "count":  {
+                                       "type":  "String"
+                                   }
+                     }
+},
+  "searchTrips": "ಟ್ರಿಪ್‌ಗಳನ್ನು ಹುಡುಕಿ",
+  "searchRides": "ಸವಾರಿಗಳನ್ನು ಹುಡುಕಿ",
+  "notAvailable": "ಲಭ್ಯವಿಲ್ಲ",
+  "start": "ಪ್ರಾರಂಭ",
+  "end": "ಅಂತ್ಯ",
+  "yesImSure": "ಹೌದು ನನಗೆ ಖಚಿತವಿದೆ",
+  "topSpeedLabel": "ಗರಿಷ್ಠ ವೇಗ",
+  "rideDurationLabel": "ಸವಾರಿ ಅವಧಿ",
+  "editRides": "ಸವಾರಿಗಳನ್ನು ಎಡಿಟ್ ಮಾಡಿ",
+  "camera": "ಕ್ಯಾಮೆರಾ",
+  "tripDetails": "ಪ್ರವಾಸದ ವಿವರಗಳು",
+  "tripQuoteLabel": "ಪ್ರವಾಸದ ಉಲ್ಲೇಖ",
+  "unmerge": "ಅನ್-ಮರ್ಜ್",
+  "gallery": "ಗ್ಯಾಲರಿ",
+  "tripNameLabel": "ಪ್ರವಾಸದ ಹೆಸರು",
+  "ridingBehaviour": "ಸವಾರಿ ನಡವಳಿಕೆ",
+  "deleteTripConfirmation": "ಇದು ನಿಮ್ಮ ಪ್ರವಾಸವನ್ನು ಶಾಶ್ವತವಾಗಿ ಅಳಿಸುತ್ತದೆ. ನೀವು ಮುಂದುವರಿಯಲು ಖಚಿತವಾಗಿದೆಯೇ?",
+  "tripStats": "ಪ್ರವಾಸದ ಅಂಕಿಅಂಶಗಳು",
+  "uploadImage": "ಚಿತ್ರವನ್ನು ಅಪ್‌ಲೋಡ್ ಮಾಡಿ",
+  "avgSpeedLabel": "ಸರಾಸರಿ ವೇಗ",
+  "tripQuoteDefault": "ಪ್ರತಿಯೊಂದು ಪ್ರವಾಸಕ್ಕೂ ಒಂದು ಕಥೆ ಇರುತ್ತದೆ. ನಿಮ್ಮದು ಇಲ್ಲಿದೆ.",
+  "save": "ಉಳಿಸಿ",
+  "deleteTrip": "ಪ್ರವಾಸವನ್ನು ಅಳಿಸಿ",
+  "hrLabel": "ಗಂಟೆ",
+  "ridesSelectedSummary": "{count} ಸವಾರಿಗಳನ್ನು ಆಯ್ಕೆ ಮಾಡಲಾಗಿದೆ | {distance} ಕಿಮೀ • {duration}",
+  "@ridesSelectedSummary": {"placeholders": {"count": {"type": "String"}, "distance": {"type": "String"}, "duration": {"type": "String"}} },
+  "clearSelection": "ಆಯ್ಕೆಯನ್ನು ತೆರವುಗೊಳಿಸಿ",
+  "skip": "ಬಿಟ್ಟುಬಿಡಿ",
+  "secLabel": "ಸೆಕೆಂಡ್",
+  "minLabel": "ನಿಮಿಷ",
+  "selectionTooltipMessage": "ನಿಮ್ಮ ಪ್ರವಾಸಕ್ಕೆ ಸೇರಿಸಲು ಬಯಸುವ ಸವಾರಿಗಳನ್ನು ಆಯ್ಕೆಮಾಡಿ.",
+  "selectRides": "ಸವಾರಿಗಳನ್ನು ಆಯ್ಕೆಮಾಡಿ",
+  "createTrip": "ಪ್ರವಾಸವನ್ನು ರಚಿಸಿ",
+  "bestAverageSpeed": "ಉತ್ತಮ ಸರಾಸರಿ ವೇಗ",
+  "noTripsFound": "\"{query}\" ಗಾಗಿ ಯಾವುದೇ ಪ್ರವಾಸಗಳು ಕಂಡುಬಂದಿಲ್ಲ",
+  "@noTripsFound": {"placeholders": {"query": {"type": "String"}}},
+  "topSpeedClocked": "ದಾಖಲಾದ ಗರಿಷ್ಠ ವೇಗ",
+  "searchTripsHint": "ಹೆಸರಿನ ಮೂಲಕ ಪ್ರವಾಸಗಳನ್ನು ಹುಡುಕಿ",
+  "noRidesFound": "\"{query}\" ಗಾಗಿ ಯಾವುದೇ ಸವಾರಿಗಳು ಕಂಡುಬಂದಿಲ್ಲ",
+  "@noRidesFound": {"placeholders": {"query": {"type": "String"}}},
+  "tripLabel": "ಪ್ರವಾಸ {number}",
+  "@tripLabel": {"placeholders": {"number": {"type": "String"}}},
+  "extraordinaryTrips": "ಅಸಾಧಾರಣ ಪ್ರವಾಸಗಳು",
+  "maxDistanceCovered": "ಕ್ರಮಿಸಿದ ಗರಿಷ್ಠ ದೂರ",
+  "searchTrips": "ಪ್ರವಾಸಗಳನ್ನು ಹುಡುಕಿ",
+  "searchRidesHint": "ನಗರದ ಮೂಲಕ ಸವಾರಿಗಳನ್ನು ಹುಡುಕಿ"
 }

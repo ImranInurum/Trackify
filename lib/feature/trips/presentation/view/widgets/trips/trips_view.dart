@@ -6,6 +6,7 @@ import 'package:trackify/feature/trips/presentation/view/widgets/trips/widgets/t
 import 'package:trackify/feature/trips/presentation/view/widgets/sorting_bottom_sheet.dart';
 import 'package:trackify/feature/trips/presentation/view/widgets/trips/widgets/trip_tooltip.dart';
 import 'package:trackify/l10n/app_localizations.dart';
+
 import '../../../cubit/ride_history_cubit.dart';
 import '../../../cubit/ride_history_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -130,15 +131,18 @@ class _TripsState extends State<Trips> {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (context) => const TripSearchScreen(),
+                                      builder: (context) =>
+                                          const TripSearchScreen(),
                                     ),
                                   );
                                 },
                                 child: Container(
                                   alignment: Alignment.centerLeft,
-                                  padding: const EdgeInsets.symmetric(vertical: 14),
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 14,
+                                  ),
                                   child: Text(
-                                    'Search Trips',
+                                    l10n.searchTrips,
                                     style: TextStyle(
                                       color: theme.colorScheme.onSurface
                                           .withValues(alpha: 0.4),
@@ -256,9 +260,7 @@ class _TripsState extends State<Trips> {
             /// FLOATING TOOLTIP
             Positioned(
               bottom: 40,
-              child: TripTooltip(
-                onSkip: _markTooltipAsSeen,
-              ),
+              child: TripTooltip(onSkip: _markTooltipAsSeen),
             ),
           ],
         ],

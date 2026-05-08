@@ -4,6 +4,11 @@ import 'package:trackify/feature/trips/data/entity/ride_model.dart';
 import 'package:trackify/feature/trips/presentation/view/create_trip/create_trip_screen.dart';
 import 'package:trackify/feature/trips/presentation/view/ride_history_details/ride_history_details_screen.dart';
 import 'package:trackify/feature/trips/presentation/view/widgets/all_rides/widgets/polyline_thumbnail.dart';
+
+
+import 'package:image_picker/image_picker.dart';
+import 'dart:io';
+
 import 'package:trackify/l10n/app_localizations.dart';
 
 class TripDetailsScreen extends StatefulWidget {
@@ -23,6 +28,7 @@ class TripDetailsScreen extends StatefulWidget {
 class _TripDetailsScreenState extends State<TripDetailsScreen> {
   bool _isFabExtended = true;
   late final Timer _fabTimer;
+  File? _pickedImage;
 
   @override
   void initState() {
@@ -49,13 +55,28 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> {
     super.dispose();
   }
 
+  Future<void> _pickImage(ImageSource source) async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: source);
+    if (pickedFile != null) {
+      setState(() {
+        _pickedImage = File(pickedFile.path);
+      });
+      // Handle the picked image (e.g., upload to server or show in UI)
+      if (mounted) Navigator.pop(context);
+    }
+  }
+
   void _showEditDetailsDialog() {
     final theme = Theme.of(context);
     final goldColor = theme.colorScheme.primary;
+    final l10n = AppLocalizations.of(context)!;
+
     final nameController = TextEditingController(text: widget.tripName);
     final quoteController = TextEditingController(
-      text: "Every trip has a story. Yours goes here.",
+      text: l10n.tripQuoteDefault,
     );
+
 
     showDialog(
       context: context,
@@ -69,7 +90,7 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                "Trip Details",
+                l10n.tripDetails,
                 style: TextStyle(
                   color: theme.colorScheme.onSurface,
                   fontSize: 20,
@@ -80,7 +101,7 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> {
               TextField(
                 controller: nameController,
                 decoration: InputDecoration(
-                  labelText: "Trip Name",
+                  labelText: l10n.tripNameLabel,
                   labelStyle: TextStyle(
                     color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
                   ),
@@ -102,7 +123,7 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> {
                 controller: quoteController,
                 maxLines: 3,
                 decoration: InputDecoration(
-                  labelText: "Trip Quote",
+                  labelText: l10n.tripQuoteLabel,
                   labelStyle: TextStyle(
                     color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
                   ),
@@ -126,7 +147,7 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> {
                   TextButton(
                     onPressed: () => Navigator.pop(context),
                     child: Text(
-                      "Cancel",
+                      l10n.cancel,
                       style: TextStyle(
                         color: theme.colorScheme.onSurface.withValues(
                           alpha: 0.7,
@@ -137,11 +158,10 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> {
                   const SizedBox(width: 16),
                   TextButton(
                     onPressed: () {
-                      // TODO: Implement save logic to repository/cubit
                       Navigator.pop(context);
                     },
                     child: Text(
-                      "Save",
+                      l10n.save,
                       style: TextStyle(
                         color: goldColor,
                         fontWeight: FontWeight.bold,
@@ -159,23 +179,24 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> {
 
   void _showDeleteDialog() {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: theme.cardColor,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-        title: const Text(
-          "Delete Trip",
+        title: Text(
+          l10n.deleteTrip,
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
-        content: const Text(
-          "This will permanently delete your trip. Are you sure you want to continue?",
+        content: Text(
+          l10n.deleteTripConfirmation,
           style: TextStyle(color: Colors.grey, fontSize: 14),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text("Cancel", style: TextStyle(color: Colors.grey)),
+            child: Text(l10n.cancel, style: const TextStyle(color: Colors.grey)),
           ),
           TextButton(
             onPressed: () {
@@ -183,10 +204,10 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> {
               // TODO: Implement actual delete logic
               Navigator.pop(context); // Go back to trips screen
             },
-            child: const Text(
-              "Yes I'm Sure",
+            child: Text(
+              l10n.yesImSure,
               style: TextStyle(
-                color: Color(0xFF00A3FF),
+                color: theme.colorScheme.primary,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -198,6 +219,7 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> {
 
   void _showUploadImageSheet() {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
@@ -222,10 +244,10 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> {
               ),
             ),
             const SizedBox(height: 24),
-            const Text(
-              "Upload Image",
+             Text(
+              l10n.uploadImage,
               style: TextStyle(
-                color: Color(0xFF00A3FF),
+                color: theme.colorScheme.primary,
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
               ),
@@ -233,9 +255,9 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> {
             const SizedBox(height: 24),
             Row(
               children: [
-                _buildOption(context, Icons.camera_alt_outlined, "Camera"),
+                _buildOption(context, Icons.camera_alt_outlined, l10n.camera, () => _pickImage(ImageSource.camera)),
                 const SizedBox(width: 24),
-                _buildOption(context, Icons.image_outlined, "Gallery"),
+                _buildOption(context, Icons.image_outlined, l10n.gallery, () => _pickImage(ImageSource.gallery)),
               ],
             ),
             const SizedBox(height: 20),
@@ -245,28 +267,31 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> {
     );
   }
 
-  Widget _buildOption(BuildContext context, IconData icon, String label) {
+  Widget _buildOption(BuildContext context, IconData icon, String label, VoidCallback onTap) {
     final theme = Theme.of(context);
-    return Column(
-      children: [
-        Container(
-          width: 64,
-          height: 64,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            border: Border.all(color: Colors.grey.withValues(alpha: 0.2)),
+    return GestureDetector(
+      onTap: onTap,
+      child: Column(
+        children: [
+          Container(
+            width: 64,
+            height: 64,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(color: Colors.grey.withValues(alpha: 0.2)),
+            ),
+            child: Icon(icon, color: Colors.grey[700], size: 28),
           ),
-          child: Icon(icon, color: Colors.grey[700], size: 28),
-        ),
-        const SizedBox(height: 8),
-        Text(
-          label,
-          style: TextStyle(
-            color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
-            fontSize: 12,
+          const SizedBox(height: 8),
+          Text(
+            label,
+            style: TextStyle(
+              color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+              fontSize: 12,
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
@@ -423,7 +448,7 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
               child: Text(
-                "\"Every trip has a story. Yours goes here.\"",
+                "\"${l10n.tripQuoteDefault}\"",
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
@@ -437,25 +462,25 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> {
 
             /// TRIP STATS CARD
             _StatCard(
-              title: "Trip Stats",
+              title: l10n.tripStats,
               goldColor: goldColor,
               cardBg: cardBg,
               stats: [
                 _StatItem(
-                  value: "${totalDist.toStringAsFixed(1)}km",
-                  label: "Distance",
+                  value: "${totalDist.toStringAsFixed(1)}${l10n.kms}",
+                  label: l10n.distance,
                 ),
                 _StatItem(
                   value: formatDuration(totalMinutes),
-                  label: "Ride Duration",
+                  label: l10n.rideDurationLabel,
                 ),
                 _StatItem(
-                  value: "${avgSpeed.toStringAsFixed(1)}km/h",
-                  label: "Avg. Speed",
+                  value: "${avgSpeed.toStringAsFixed(1)}${l10n.kmh}",
+                  label: l10n.avgSpeedLabel,
                 ),
                 _StatItem(
-                  value: "${topSpeed.toStringAsFixed(1)}km/h",
-                  label: "Top Speed",
+                  value: "${topSpeed.toStringAsFixed(1)}${l10n.kmh}",
+                  label: l10n.topSpeedLabel,
                 ),
               ],
             ),
@@ -464,7 +489,7 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> {
 
             /// RIDING BEHAVIOUR CARD
             _BehaviourCard(
-              title: "Riding Behaviour",
+              title: l10n.ridingBehaviour,
               goldColor: goldColor,
               cardBg: cardBg,
             ),
@@ -529,7 +554,7 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> {
                       key: const ValueKey('extended_text'),
                       padding: const EdgeInsets.only(right: 8),
                       child: Text(
-                        "Edit Rides",
+                        l10n.editRides,
                         style: TextStyle(
                           color: theme.colorScheme.onPrimary,
                           fontWeight: FontWeight.bold,
@@ -786,6 +811,7 @@ class _MapCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
     // Collect all points for a single polyline
     final allPoints = rides.expand((r) => r.polylinePoints).toList();
     final firstRide = rides.first;
@@ -835,7 +861,7 @@ class _MapCard extends StatelessWidget {
                         ),
                         const SizedBox(width: 6),
                         Text(
-                          "Unmerge",
+                          l10n.unmerge,
                           style: TextStyle(
                             color: theme.colorScheme.onSurface,
                             fontSize: 12,
@@ -855,7 +881,7 @@ class _MapCard extends StatelessWidget {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Text(
-                          "${totalDist.toStringAsFixed(1)} km",
+                          "${totalDist.toStringAsFixed(1)} ${l10n.kms}",
                           style: TextStyle(
                             color: theme.colorScheme.onSurface,
                             fontSize: 18,

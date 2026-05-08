@@ -7,6 +7,7 @@ import 'package:trackify/feature/trips/presentation/view/trip_details/trip_detai
 import 'package:trackify/feature/trips/presentation/view/ride_history_details/ride_history_details_screen.dart';
 import 'package:trackify/feature/trips/presentation/view/widgets/trips/widgets/trip_card.dart';
 import 'package:trackify/feature/trips/presentation/view/widgets/all_rides/widgets/ride_card.dart';
+import 'package:trackify/l10n/app_localizations.dart';
 
 class TripSearchScreen extends StatefulWidget {
   final bool isTripSearch;
@@ -24,6 +25,8 @@ class _TripSearchScreenState extends State<TripSearchScreen> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
+    final l10n = AppLocalizations.of(context)!;
+
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
@@ -35,7 +38,7 @@ class _TripSearchScreenState extends State<TripSearchScreen> {
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
-          widget.isTripSearch ? "Search Trips" : "Search Rides",
+          widget.isTripSearch ? l10n.searchTrips : l10n.searchRides,
           style: TextStyle(
             color: theme.colorScheme.onSurface,
             fontWeight: FontWeight.bold,
@@ -61,7 +64,7 @@ class _TripSearchScreenState extends State<TripSearchScreen> {
                 autofocus: true,
                 onChanged: (value) => setState(() => _query = value.toLowerCase()),
                 decoration: InputDecoration(
-                  hintText: widget.isTripSearch ? "Search Trips by Name" : "Search Rides by City",
+                  hintText: widget.isTripSearch ? l10n.searchTripsHint : l10n.searchRidesHint,
                   hintStyle: TextStyle(
                     color: theme.colorScheme.onSurface.withValues(alpha: 0.4),
                     fontSize: 14,
@@ -106,6 +109,7 @@ class _TripSearchScreenState extends State<TripSearchScreen> {
     if (rides.isEmpty) return const SizedBox();
 
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
     
     // Calculate Extraordinary Trips
     final topSpeedRide = rides.reduce((a, b) => a.topSpeed > b.topSpeed ? a : b);
@@ -119,7 +123,7 @@ class _TripSearchScreenState extends State<TripSearchScreen> {
         Row(
           children: [
             Text(
-              "Extraordinary Trips",
+              l10n.extraordinaryTrips,
               style: TextStyle(
                 color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                 fontSize: 14,
@@ -135,30 +139,30 @@ class _TripSearchScreenState extends State<TripSearchScreen> {
           context,
           icon: Icons.local_fire_department,
           iconColor: Colors.orange,
-          title: "Top speed clocked",
+          title: l10n.topSpeedClocked,
           dateRange: "${topSpeedRide.date} - ${topSpeedRide.date}",
-          mainStat: "Top Speed - ${topSpeedRide.topSpeed.toStringAsFixed(1)} km/h",
-          subStat: "Avg Speed - ${topSpeedRide.avgSpeed.toStringAsFixed(1)} km/h",
+          mainStat: "${l10n.topSpeedLabel} - ${topSpeedRide.topSpeed.toStringAsFixed(1)} ${l10n.kmh}",
+          subStat: "${l10n.avgSpeedLabel} - ${topSpeedRide.avgSpeed.toStringAsFixed(1)} ${l10n.kmh}",
           ride: topSpeedRide,
         ),
         _buildExtraCard(
           context,
           icon: Icons.location_on,
           iconColor: Colors.redAccent,
-          title: "Max distance covered",
+          title: l10n.maxDistanceCovered,
           dateRange: "${maxDistRide.date} - ${maxDistRide.date}",
-          mainStat: "Distance - ${maxDistRide.distance.toStringAsFixed(1)} kms",
-          subStat: "Duration - ${maxDistRide.duration}",
+          mainStat: "${l10n.distanceLabel} - ${maxDistRide.distance.toStringAsFixed(1)} ${l10n.kms}",
+          subStat: "${l10n.durationLabel} - ${maxDistRide.duration}",
           ride: maxDistRide,
         ),
         _buildExtraCard(
           context,
           icon: Icons.speed,
           iconColor: Colors.pinkAccent,
-          title: "Best average speed",
+          title: l10n.bestAverageSpeed,
           dateRange: "${bestAvgSpeedRide.date} - ${bestAvgSpeedRide.date}",
-          mainStat: "Avg Speed - ${bestAvgSpeedRide.avgSpeed.toStringAsFixed(1)} km/h",
-          subStat: "Distance - ${bestAvgSpeedRide.distance.toStringAsFixed(1)} kms",
+          mainStat: "${l10n.avgSpeedLabel} - ${bestAvgSpeedRide.avgSpeed.toStringAsFixed(1)} ${l10n.kmh}",
+          subStat: "${l10n.distanceLabel} - ${bestAvgSpeedRide.distance.toStringAsFixed(1)} ${l10n.kms}",
           ride: bestAvgSpeedRide,
         ),
       ],
@@ -270,6 +274,8 @@ class _TripSearchScreenState extends State<TripSearchScreen> {
   }
 
   Widget _buildSearchResults(BuildContext context, List<Ride> rides) {
+    final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
     final results = rides.where((r) {
       if (widget.isTripSearch) {
         final title = "Trip ${rides.indexOf(r) + 1}".toLowerCase();
@@ -286,8 +292,8 @@ class _TripSearchScreenState extends State<TripSearchScreen> {
     if (results.isEmpty) {
       return Center(
         child: Text(
-          widget.isTripSearch ? "No trips found for \"$_query\"" : "No rides found for \"$_query\"",
-          style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5)),
+          widget.isTripSearch ? l10n.noTripsFound(_query) : l10n.noRidesFound(_query),
+          style: TextStyle(color: theme.colorScheme.onSurface.withValues(alpha: 0.5)),
         ),
       );
     }
@@ -299,14 +305,14 @@ class _TripSearchScreenState extends State<TripSearchScreen> {
         final ride = results[index];
         if (widget.isTripSearch) {
           return TripCard(
-            title: "Trip ${rides.indexOf(ride) + 1}",
+            title: l10n.tripLabel((rides.indexOf(ride) + 1).toString()),
             rides: [ride],
             onTap: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(
                   builder: (context) => TripDetailsScreen(
-                    tripName: "Trip ${rides.indexOf(ride) + 1}",
+                    tripName: l10n.tripLabel((rides.indexOf(ride) + 1).toString()),
                     rides: [ride],
                   ),
                 ),

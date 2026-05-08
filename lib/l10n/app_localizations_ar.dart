@@ -1661,7 +1661,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get cropVehicleImage => 'قص صورة المركبة';
 
   @override
-  String get uploadImage => 'رفع صورة';
+  String get uploadImage => 'تحميل الصورة';
 
   @override
   String get camera => 'كاميرا';
@@ -1969,4 +1969,192 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get product => 'المنتجات';
+
+  @override
+  String get errorPickingImage => 'Error picking image';
+
+  @override
+  String get frontDocumentRequired => 'Front document image is required';
+
+  @override
+  String get documentUploadedSuccessfully => 'Document uploaded successfully';
+
+  @override
+  String get addAccessoryBill => 'إضافة فاتورة ملحقات';
+
+  @override
+  String get accessoryName => 'اسم الملحق';
+
+  @override
+  String get billingDate => 'تاريخ الفاتورة';
+
+  @override
+  String get shopName => 'اسم المحل';
+
+  @override
+  String get shopContact => 'اتصال المحل';
+
+  @override
+  String get uploadBill => 'تحميل الفاتورة';
+
+  @override
+  String get yearExtendedWarranty => 'ضمان ممتد لمدة عام واحد';
+
+  @override
+  String get paymentSummary => 'ملخص الدفع';
+
+  @override
+  String get boosterOffer => 'عرض معزز بخصم 50%';
+
+  @override
+  String get toPay => 'للدفع';
+
+  @override
+  String amountPayable(String amount) {
+    return 'المبلغ المستحق $amount';
+  }
+
+  @override
+  String get distance => 'المسافة';
+
+  @override
+  String get recentToOldest => 'من الأحدث إلى الأقدم';
+
+  @override
+  String get sorting => 'فرز';
+
+  @override
+  String get backToDefault => 'العودة إلى الافتراضي';
+
+  @override
+  String get sortBy => 'فرز حسب';
+
+  @override
+  String get duration => 'المدة';
+
+  @override
+  String get oldestToRecent => 'من الأقدم إلى الأحدث';
+
+  @override
+  String get date => 'التاريخ';
+
+  @override
+  String noTripsFound(String query) {
+    return 'لم يتم العثور على رحلات لـ \"$query\"';
+  }
+
+  @override
+  String ridesCount(String count) {
+    return '$count رحلات';
+  }
+
+  @override
+  String get searchTrips => 'البحث عن الرحلات';
+
+  @override
+  String get searchRides => 'بحث في الرحلات';
+
+  @override
+  String get notAvailable => 'غير متوفر';
+
+  @override
+  String get start => 'بداية';
+
+  @override
+  String get end => 'نهاية';
+
+  @override
+  String get yesImSure => 'نعم أنا متأكد';
+
+  @override
+  String get topSpeedLabel => 'السرعة القصوى';
+
+  @override
+  String get rideDurationLabel => 'مدة الرحلة';
+
+  @override
+  String get editRides => 'تعديل الرحلات';
+
+  @override
+  String get tripDetails => 'تفاصيل الرحلة';
+
+  @override
+  String get tripQuoteLabel => 'مقولة الرحلة';
+
+  @override
+  String get unmerge => 'فك الدمج';
+
+  @override
+  String get tripNameLabel => 'اسم الرحلة';
+
+  @override
+  String get deleteTripConfirmation =>
+      'سيؤدي هذا إلى حذف رحلتك نهائيًا. هل أنت متأكد أنك تريد الاستمرار؟';
+
+  @override
+  String get tripStats => 'إحصائيات الرحلة';
+
+  @override
+  String get avgSpeedLabel => 'متوسط السرعة';
+
+  @override
+  String get tripQuoteDefault => 'كل رحلة لها قصة. قصتك تبدأ هنا.';
+
+  @override
+  String get deleteTrip => 'حذف الرحلة';
+
+  @override
+  String get hrLabel => 'ساعة';
+
+  @override
+  String ridesSelectedSummary(String count, String distance, String duration) {
+    return 'تم اختيار $count رحلات | $distance كم • $duration';
+  }
+
+  @override
+  String get clearSelection => 'مسح التحديد';
+
+  @override
+  String get secLabel => 'ثانية';
+
+  @override
+  String get minLabel => 'دقيقة';
+
+  @override
+  String get selectionTooltipMessage =>
+      'اختر الرحلات التي تريد إضافتها إلى رحلتك.';
+
+  @override
+  String get selectRides => 'اختر الرحلات';
+
+  @override
+  String get createTrip => 'إنشاء رحلة';
+
+  @override
+  String get bestAverageSpeed => 'أفضل متوسط سرعة';
+
+  @override
+  String get topSpeedClocked => 'أعلى سرعة مسجلة';
+
+  @override
+  String get searchTripsHint => 'ابحث عن الرحلات بالاسم';
+
+  @override
+  String noRidesFound(String query) {
+    return 'لم يتم العثور على رحلات لـ \"$query\"';
+  }
+
+  @override
+  String tripLabel(String number) {
+    return 'رحلة $number';
+  }
+
+  @override
+  String get extraordinaryTrips => 'رحلات استثنائية';
+
+  @override
+  String get maxDistanceCovered => 'أقصى مسافة مقطوعة';
+
+  @override
+  String get searchRidesHint => 'ابحث عن الرحلات بالمدينة';
 }

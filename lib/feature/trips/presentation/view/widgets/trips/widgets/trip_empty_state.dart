@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:trackify/l10n/app_localizations.dart';
 import '../../../../../../../core/constants/app_images.dart';
-import '../../../../../../../l10n/app_localizations.dart';
+
+
 
 class TripEmptyState extends StatelessWidget {
   const TripEmptyState({super.key});
