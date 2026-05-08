@@ -63,6 +63,10 @@ import 'feature/get_more_out/domain/usecase/get_safey_usecase.dart';
 import 'feature/get_more_out/presentation/cubit/discover_cubit.dart';
 import 'feature/get_more_out/presentation/cubit/feature_cubit.dart';
 import 'feature/get_more_out/presentation/cubit/geo_fenc_cubit.dart';
+import 'feature/my_garage/data/repository_impl/product_repository_impl.dart';
+import 'feature/my_garage/domain/repository/product_repository.dart';
+import 'feature/my_garage/domain/use_case/product_usecase.dart';
+import 'feature/my_garage/presentation/cubit/product_cubit.dart';
 import 'feature/service_logs/data/data_source/service_logs_remote_data_source.dart';
 import 'feature/service_logs/data/repository/service_logs_repository_impl.dart';
 import 'feature/service_logs/domain/usecase/get_service_logs_usecase.dart';
@@ -295,6 +299,17 @@ List<BlocProvider> _buildBlocProviders() {
         ),
       ),
     ),
+    BlocProvider<ProductCubit>(
+
+      create: (_) => ProductCubit(
+        GetProductsUsecase(
+          ProductRepositoryImpl(),
+        ),
+      ),
+    ),
+
+
+
 
 
 

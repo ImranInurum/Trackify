@@ -664,6 +664,24 @@
     "lastUpdatedLabel": "கடைசியாக புதுப்பிக்கப்பட்டது: ",
     "litresShort": "லி",
 
-      "discoverAjjasFeatures": "Trackify அம்சங்களை கண்டறியுங்கள்"
+      "discoverAjjasFeatures": "Trackify அம்சங்களை கண்டறியுங்கள்",
+
+
+        "checkout": "செக்அவுட்",
+        "address": "முகவரி",
+        "summary": "சுருக்கம்",
+        "pleaseEnterDetails": "கீழே உள்ள விவரங்களை உள்ளிடவும்",
+        "fullName": "முழு பெயர்",
+        "mobileNumber": "மொபைல் எண்",
+        "houseFloorLine": "வீடு, மாடி, தெரு",
+        "landmark": "அடையாளம்",
+        "state": "மாநிலம்",
+        "pinCode": "அஞ்சல் குறியீடு",
+        "homeAddress": "வீட்டு முகவரி",
+        "officeAddress": "அலுவலக முகவரி",
+        "proceed": "தொடரவும்",
+        "product": "தயாரிப்புகள்"
+
+
 
 }

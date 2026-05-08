@@ -1948,4 +1948,37 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get discoverTrackifyFeatures => 'Discover Trackify Features';
+
+  @override
+  String get checkout => 'चेकआउट';
+
+  @override
+  String get address => 'पता';
+
+  @override
+  String get summary => 'सारांश';
+
+  @override
+  String get pleaseEnterDetails => 'कृपया नीचे दी गई जानकारी भरें';
+
+  @override
+  String get fullName => 'पूरा नाम';
+
+  @override
+  String get houseFloorLine => 'घर, मंजिल, लाइन';
+
+  @override
+  String get landmark => 'लैंडमार्क';
+
+  @override
+  String get pinCode => 'पिन कोड';
+
+  @override
+  String get homeAddress => 'घर का पता';
+
+  @override
+  String get officeAddress => 'ऑफिस का पता';
+
+  @override
+  String get product => 'प्रोडक्ट्स';
 }

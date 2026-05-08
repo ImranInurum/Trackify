@@ -68,7 +68,7 @@ class AppLocalizationsTa extends AppLocalizations {
   String get nameRequired => 'பெயர் தேவை';
 
   @override
-  String get mobileNumber => 'மொಬೈಲ್ ಸಂಖ್ಯೆ';
+  String get mobileNumber => 'மொபைல் எண்';
 
   @override
   String get mobileNumberHint => 'மொಬೈಲ್ ಸಂಖ್ಯೆಯನ್ನು உள்ளிடவும்';
@@ -1946,4 +1946,37 @@ class AppLocalizationsTa extends AppLocalizations {
 
   @override
   String get discoverTrackifyFeatures => 'Discover Trackify Features';
+
+  @override
+  String get checkout => 'செக்அவுட்';
+
+  @override
+  String get address => 'முகவரி';
+
+  @override
+  String get summary => 'சுருக்கம்';
+
+  @override
+  String get pleaseEnterDetails => 'கீழே உள்ள விவரங்களை உள்ளிடவும்';
+
+  @override
+  String get fullName => 'முழு பெயர்';
+
+  @override
+  String get houseFloorLine => 'வீடு, மாடி, தெரு';
+
+  @override
+  String get landmark => 'அடையாளம்';
+
+  @override
+  String get pinCode => 'அஞ்சல் குறியீடு';
+
+  @override
+  String get homeAddress => 'வீட்டு முகவரி';
+
+  @override
+  String get officeAddress => 'அலுவலக முகவரி';
+
+  @override
+  String get product => 'தயாரிப்புகள்';
 }

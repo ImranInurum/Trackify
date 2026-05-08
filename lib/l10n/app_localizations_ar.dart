@@ -68,7 +68,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get nameRequired => 'الاسم مطلوب';
 
   @override
-  String get mobileNumber => 'رقم الهاتف المحمول';
+  String get mobileNumber => 'رقم الجوال';
 
   @override
   String get mobileNumberHint => 'أدخل رقم الهاتف المحمول';
@@ -89,7 +89,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get countryRequired => 'البلد مطلوب';
 
   @override
-  String get state => 'الولاية/المحافظة';
+  String get state => 'الولاية';
 
   @override
   String get stateHint => 'أدخل الولاية';
@@ -1936,4 +1936,37 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get discoverTrackifyFeatures => 'Discover Trackify Features';
+
+  @override
+  String get checkout => 'إتمام الشراء';
+
+  @override
+  String get address => 'العنوان';
+
+  @override
+  String get summary => 'الملخص';
+
+  @override
+  String get pleaseEnterDetails => 'يرجى إدخال التفاصيل أدناه';
+
+  @override
+  String get fullName => 'الاسم الكامل';
+
+  @override
+  String get houseFloorLine => 'المنزل، الطابق، الخط';
+
+  @override
+  String get landmark => 'علامة مميزة';
+
+  @override
+  String get pinCode => 'الرمز البريدي';
+
+  @override
+  String get homeAddress => 'عنوان المنزل';
+
+  @override
+  String get officeAddress => 'عنوان المكتب';
+
+  @override
+  String get product => 'المنتجات';
 }

@@ -560,6 +560,24 @@
     "benefit4_highlight": "₹2000 पर्यंत विनामूल्य विस्तारित सबस्क्रिप्शन",
     "benefit4_normal": " सदोष कालावधीसाठी",
 
-      "discoverAjjasFeatures": "Trackify फीचर्स शोधा"
+      "discoverAjjasFeatures": "Trackify फीचर्स शोधा",
+
+
+        "checkout": "चेकआउट",
+        "address": "पत्ता",
+        "summary": "सारांश",
+        "pleaseEnterDetails": "कृपया खालील माहिती भरा",
+        "fullName": "पूर्ण नाव",
+        "mobileNumber": "मोबाइल नंबर",
+        "houseFloorLine": "घर, मजला, लाईन",
+        "landmark": "ओळख चिन्ह",
+        "state": "राज्य",
+        "pinCode": "पिन कोड",
+        "homeAddress": "घराचा पत्ता",
+        "officeAddress": "ऑफिसचा पत्ता",
+        "proceed": "पुढे जा",
+        "product": "उत्पादने"
+
+
 
 }

@@ -712,6 +712,24 @@
     "min": "دقيقة",
     "filters": "تصفية",
 
-      "discoverAjjasFeatures": "اكتشف ميزات Trackify"
+      "discoverAjjasFeatures": "اكتشف ميزات Trackify",
+
+
+        "checkout": "إتمام الشراء",
+        "address": "العنوان",
+        "summary": "الملخص",
+        "pleaseEnterDetails": "يرجى إدخال التفاصيل أدناه",
+        "fullName": "الاسم الكامل",
+        "mobileNumber": "رقم الجوال",
+        "houseFloorLine": "المنزل، الطابق، الخط",
+        "landmark": "علامة مميزة",
+        "state": "الولاية",
+        "pinCode": "الرمز البريدي",
+        "homeAddress": "عنوان المنزل",
+        "officeAddress": "عنوان المكتب",
+        "proceed": "متابعة",
+        "product": "المنتجات"
+
+
 
 }

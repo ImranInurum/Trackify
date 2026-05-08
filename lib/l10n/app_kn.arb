@@ -692,6 +692,24 @@
     "lastUpdatedLabel": "ಕೊನೆಯದಾಗಿ ನವೀಕರಿಸಲಾಗಿದೆ: ",
     "litresShort": "ಲೀ.",
 
-      "discoverAjjasFeatures": "Trackify ವೈಶಿಷ್ಟ್ಯಗಳನ್ನು ಅನ್ವೇಷಿಸಿ"
+      "discoverAjjasFeatures": "Trackify ವೈಶಿಷ್ಟ್ಯಗಳನ್ನು ಅನ್ವೇಷಿಸಿ",
+
+
+        "checkout": "ಚೆಕ್‌ಔಟ್",
+        "address": "ವಿಳಾಸ",
+        "summary": "ಸಾರಾಂಶ",
+        "pleaseEnterDetails": "ದಯವಿಟ್ಟು ಕೆಳಗಿನ ವಿವರಗಳನ್ನು ನಮೂದಿಸಿ",
+        "fullName": "ಪೂರ್ಣ ಹೆಸರು",
+        "mobileNumber": "ಮೊಬೈಲ್ ಸಂಖ್ಯೆ",
+        "houseFloorLine": "ಮನೆ, ಮಹಡಿ, ರಸ್ತೆ",
+        "landmark": "ಗುರುತು ಸ್ಥಳ",
+        "state": "ರಾಜ್ಯ",
+        "pinCode": "ಪಿನ್ ಕೋಡ್",
+        "homeAddress": "ಮನೆಯ ವಿಳಾಸ",
+        "officeAddress": "ಕಚೇರಿ ವಿಳಾಸ",
+        "proceed": "ಮುಂದುವರಿಸಿ",
+        "product": "ಉತ್ಪನ್ನಗಳು"
+
+
 
 }

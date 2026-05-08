@@ -44,4 +44,8 @@ class AppImages {
   static const String upgradeBackground = "$images/bg_upgrade.png";
   static const String plusImg = "$images/plus_img.png";
 
+  static const String deviceImage = "$images/device_image.png";
+
+
+
 }
