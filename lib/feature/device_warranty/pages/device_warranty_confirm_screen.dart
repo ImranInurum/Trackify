@@ -76,7 +76,7 @@ class _DeviceWarrantyConfirmScreenState extends State<DeviceWarrantyConfirmScree
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                '1 year extended warranty',
+                l10n.yearExtendedWarranty,
                 style: TextStyle(
                   color: colorScheme.onSurface.withValues(alpha: 0.7),
                   fontSize: 13,
@@ -142,7 +142,7 @@ class _DeviceWarrantyConfirmScreenState extends State<DeviceWarrantyConfirmScree
         Padding(
           padding: const EdgeInsets.only(bottom: 12),
           child: Text(
-            'Payment Summary',
+            l10n.paymentSummary,
             style: TextStyle(
               color: colorScheme.onSurface.withValues(alpha: 0.7),
               fontSize: 14,
@@ -195,7 +195,7 @@ class _DeviceWarrantyConfirmScreenState extends State<DeviceWarrantyConfirmScree
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    'Booster offer @50% OFF',
+                    l10n.boosterOffer,
                     style: TextStyle(
                       color: colorScheme.onSurface.withValues(alpha: 0.5),
                       fontSize: 13,
@@ -240,7 +240,7 @@ class _DeviceWarrantyConfirmScreenState extends State<DeviceWarrantyConfirmScree
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                    Text(
-                    'To Pay',
+                    l10n.toPay,
                     style: TextStyle(
                       color: colorScheme.primary,
                       fontSize: 14,
@@ -296,7 +296,7 @@ class _DeviceWarrantyConfirmScreenState extends State<DeviceWarrantyConfirmScree
           },
           borderRadius: BorderRadius.circular(8),
           child: Center(
-            child:  Text("Amount Payable ₹365", style: TextStyle(
+            child:  Text(l10n.amountPayable("₹365"), style: TextStyle(
               color: colorScheme.onTertiary,
               fontWeight: FontWeight.bold,
               fontSize: 13,

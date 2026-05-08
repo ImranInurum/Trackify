@@ -291,7 +291,7 @@ class _AccessoryBillScreenState extends State<AccessoryBillScreen> {
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
-          "Add Accessory Bill",
+          l10n.addAccessoryBill,
           style: theme.textTheme.titleMedium?.copyWith(
             color: colorScheme.onSurface,
             fontWeight: FontWeightManager.semibold,
@@ -321,7 +321,7 @@ class _AccessoryBillScreenState extends State<AccessoryBillScreen> {
                     // ── Document Name ────────────────────────────────
                     TextFieldWidgets(
                       controller: _nameController,
-                      hintText: "Accessory Name",
+                      hintText: l10n.accessoryName,
                       isRequired: true,
                     ),
 
@@ -347,9 +347,9 @@ class _AccessoryBillScreenState extends State<AccessoryBillScreen> {
                                 children: [
                                   Expanded(
                                     child: Text.rich(
-                                      const TextSpan(
-                                        text: "Billing Date",
-                                        children: [
+                                      TextSpan(
+                                        text: l10n.billingDate,
+                                        children: const [
                                           TextSpan(
                                             text: '*',
                                             style: TextStyle(color: Colors.red),
@@ -380,7 +380,7 @@ class _AccessoryBillScreenState extends State<AccessoryBillScreen> {
                         Expanded(
                           child: TextFieldWidgets(
                             controller: _nameController,
-                            hintText: "Billing Amount",
+                            hintText: l10n.billingAmount,
                             isRequired: true,
                             keyboardType: TextInputType.number,
                             suffixIcon: Padding(
@@ -394,12 +394,12 @@ class _AccessoryBillScreenState extends State<AccessoryBillScreen> {
                     const SizedBox(height: 20),
                     TextFieldWidgets(
                       controller: _nameController,
-                      hintText: "Shop Name",
+                      hintText: l10n.shopName,
                     ),
                     const SizedBox(height: 20),
                     TextFieldWidgets(
                       controller: _nameController,
-                      hintText: "Shop Contact",
+                      hintText: l10n.shopContact,
                       keyboardType: TextInputType.phone,
                     ),
                     const SizedBox(height: 20),
@@ -444,7 +444,7 @@ class _AccessoryBillScreenState extends State<AccessoryBillScreen> {
 
                     const SizedBox(height: 20),
 
-                    Text("Upload Bill"),
+                    Text(l10n.uploadBill),
 
                     const SizedBox(height: 20),
 
