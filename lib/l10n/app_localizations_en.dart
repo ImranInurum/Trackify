@@ -1945,4 +1945,39 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get discoverTrackifyFeatures => 'Discover Ajjas Features';
+
+  @override
+  String get addAccessoryBill => 'Add Accessory Bill';
+
+  @override
+  String get accessoryName => 'Accessory Name';
+
+  @override
+  String get billingDate => 'Billing Date';
+
+  @override
+  String get shopName => 'Shop Name';
+
+  @override
+  String get shopContact => 'Shop Contact';
+
+  @override
+  String get uploadBill => 'Upload Bill';
+
+  @override
+  String get yearExtendedWarranty => '1 year extended warranty';
+
+  @override
+  String get paymentSummary => 'Payment Summary';
+
+  @override
+  String get boosterOffer => 'Booster offer @50% OFF';
+
+  @override
+  String get toPay => 'To Pay';
+
+  @override
+  String amountPayable(String amount) {
+    return 'Amount Payable $amount';
+  }
 }

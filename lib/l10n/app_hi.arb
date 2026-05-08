@@ -804,4 +804,16 @@
 
       "discoverAjjasFeatures": "Trackify फीचर्स खोजें"
 
+    "filters": "फ़िल्टर",
+    "addAccessoryBill": "एक्सेसरी बिल जोड़ें",
+    "accessoryName": "एक्सेसरी का नाम",
+    "billingDate": "बिलिंग की तारीख",
+    "shopName": "दुकान का नाम",
+    "shopContact": "दुकान का संपर्क",
+    "uploadBill": "बिल अपलोड करें",
+    "yearExtendedWarranty": "1 साल की विस्तारित वारंटी",
+    "paymentSummary": "भुगतान सारांश",
+    "boosterOffer": "बूस्टर ऑफर @50% छूट",
+    "toPay": "भुगतान करना है",
+    "amountPayable": "देय राशि {amount}"
 }

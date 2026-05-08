@@ -1946,4 +1946,39 @@ class AppLocalizationsTa extends AppLocalizations {
 
   @override
   String get discoverTrackifyFeatures => 'Discover Ajjas Features';
+
+  @override
+  String get addAccessoryBill => 'துணைக்கருவி பில் சேர்க்கவும்';
+
+  @override
+  String get accessoryName => 'துணைக்கருவி பெயர்';
+
+  @override
+  String get billingDate => 'பில்லிங் தேதி';
+
+  @override
+  String get shopName => 'கடை பெயர்';
+
+  @override
+  String get shopContact => 'கடை தொடர்பு';
+
+  @override
+  String get uploadBill => 'பில் பதிவேற்றவும்';
+
+  @override
+  String get yearExtendedWarranty => '1 வருட நீட்டிக்கப்பட்ட உத்தரவாதம்';
+
+  @override
+  String get paymentSummary => 'கட்டணச் சுருக்கம்';
+
+  @override
+  String get boosterOffer => 'பூஸ்டர் சலுகை @50% தள்ளுபடி';
+
+  @override
+  String get toPay => 'செலுத்த வேண்டியது';
+
+  @override
+  String amountPayable(String amount) {
+    return 'செலுத்த வேண்டிய தொகை $amount';
+  }
 }

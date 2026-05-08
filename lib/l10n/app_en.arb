@@ -779,4 +779,23 @@
     "litresShort": "L",
 
     "discoverTrackifyFeatures": "Discover Ajjas Features"
+    "litresShort": "L",
+    "addAccessoryBill": "Add Accessory Bill",
+    "accessoryName": "Accessory Name",
+    "billingDate": "Billing Date",
+    "shopName": "Shop Name",
+    "shopContact": "Shop Contact",
+    "uploadBill": "Upload Bill",
+    "yearExtendedWarranty": "1 year extended warranty",
+    "paymentSummary": "Payment Summary",
+    "boosterOffer": "Booster offer @50% OFF",
+    "toPay": "To Pay",
+    "amountPayable": "Amount Payable {amount}",
+    "@amountPayable": {
+      "placeholders": {
+        "amount": {
+          "type": "String"
+        }
+      }
+    }
 }

@@ -1948,4 +1948,39 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get discoverTrackifyFeatures => 'Discover Ajjas Features';
+
+  @override
+  String get addAccessoryBill => 'एक्सेसरी बिल जोड़ें';
+
+  @override
+  String get accessoryName => 'एक्सेसरी का नाम';
+
+  @override
+  String get billingDate => 'बिलिंग की तारीख';
+
+  @override
+  String get shopName => 'दुकान का नाम';
+
+  @override
+  String get shopContact => 'दुकान का संपर्क';
+
+  @override
+  String get uploadBill => 'बिल अपलोड करें';
+
+  @override
+  String get yearExtendedWarranty => '1 साल की विस्तारित वारंटी';
+
+  @override
+  String get paymentSummary => 'भुगतान सारांश';
+
+  @override
+  String get boosterOffer => 'बूस्टर ऑफर @50% छूट';
+
+  @override
+  String get toPay => 'भुगतान करना है';
+
+  @override
+  String amountPayable(String amount) {
+    return 'देय राशि $amount';
+  }
 }

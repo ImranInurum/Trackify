@@ -1936,4 +1936,39 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get discoverTrackifyFeatures => 'Discover Ajjas Features';
+
+  @override
+  String get addAccessoryBill => 'إضافة فاتورة ملحقات';
+
+  @override
+  String get accessoryName => 'اسم الملحق';
+
+  @override
+  String get billingDate => 'تاريخ الفاتورة';
+
+  @override
+  String get shopName => 'اسم المحل';
+
+  @override
+  String get shopContact => 'جهة اتصال المحل';
+
+  @override
+  String get uploadBill => 'تحميل الفاتورة';
+
+  @override
+  String get yearExtendedWarranty => 'ضمان ممتد لمدة سنة واحدة';
+
+  @override
+  String get paymentSummary => 'ملخص الدفع';
+
+  @override
+  String get boosterOffer => 'عرض معزز بخصم 50٪';
+
+  @override
+  String get toPay => 'للدفع';
+
+  @override
+  String amountPayable(String amount) {
+    return 'المبلغ المستحق الدفع $amount';
+  }
 }

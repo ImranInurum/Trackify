@@ -1949,4 +1949,39 @@ class AppLocalizationsKn extends AppLocalizations {
 
   @override
   String get discoverTrackifyFeatures => 'Discover Ajjas Features';
+
+  @override
+  String get addAccessoryBill => 'ಅಕ್ಸೆಸರಿ ಬಿಲ್ ಸೇರಿಸಿ';
+
+  @override
+  String get accessoryName => 'ಅಕ್ಸೆಸರಿ ಹೆಸರು';
+
+  @override
+  String get billingDate => 'ಬಿಲ್ಲಿಂಗ್ ದಿನಾಂಕ';
+
+  @override
+  String get shopName => 'ಅಂಗಡಿ ಹೆಸರು';
+
+  @override
+  String get shopContact => 'ಅಂಗಡಿ ಸಂಪರ್ಕ';
+
+  @override
+  String get uploadBill => 'ಬಿಲ್ ಅಪ್‌ಲೋಡ್ ಮಾಡಿ';
+
+  @override
+  String get yearExtendedWarranty => '1 ವರ್ಷದ ವಿಸ್ತರಿತ ವಾರಂಟಿ';
+
+  @override
+  String get paymentSummary => 'ಪಾವತಿ ಸಾರಾಂಶ';
+
+  @override
+  String get boosterOffer => 'ಬೂಸ್ಟರ್ ಆಫರ್ @50% ರಿಯಾಯಿತಿ';
+
+  @override
+  String get toPay => 'ಪಾವತಿಸಬೇಕಾದ ಮೊತ್ತ';
+
+  @override
+  String amountPayable(String amount) {
+    return 'ಪಾವತಿಸಬೇಕಾದ ಮೊತ್ತ $amount';
+  }
 }
