@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:trackify/core/config/font_manager.dart';
-import '../../../l10n/app_localizations.dart';
+
 
 class DeviceWarrantyConfirmScreen extends StatefulWidget {
   const DeviceWarrantyConfirmScreen({super.key});
@@ -14,7 +14,7 @@ class _DeviceWarrantyConfirmScreenState extends State<DeviceWarrantyConfirmScree
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
@@ -29,7 +29,7 @@ class _DeviceWarrantyConfirmScreenState extends State<DeviceWarrantyConfirmScree
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
-          l10n.warranty_title,
+          'Extended Warranty',
           style: theme.textTheme.titleMedium?.copyWith(
             color: colorScheme.onSurface,
             fontWeight: FontWeightManager.semibold,
@@ -42,13 +42,13 @@ class _DeviceWarrantyConfirmScreenState extends State<DeviceWarrantyConfirmScree
         child: Column(
           children: [
             const SizedBox(height: 16),
-            _deviceInfoCard(l10n, theme, colorScheme),
+            _deviceInfoCard(theme, colorScheme),
             const SizedBox(height: 24),
-            _paymentSummaryCard(l10n, theme, colorScheme),
+            _paymentSummaryCard(theme, colorScheme),
             const Spacer(),
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 24),
-              child: _bottomButton(l10n, theme, colorScheme),
+              child: _bottomButton(theme, colorScheme),
             ),
           ],
         ),
@@ -58,7 +58,6 @@ class _DeviceWarrantyConfirmScreenState extends State<DeviceWarrantyConfirmScree
 
 
   Widget _deviceInfoCard(
-      AppLocalizations l10n,
       ThemeData theme,
       ColorScheme colorScheme,
       ) {
@@ -76,7 +75,7 @@ class _DeviceWarrantyConfirmScreenState extends State<DeviceWarrantyConfirmScree
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                l10n.yearExtendedWarranty,
+                '1 year extended warranty',
                 style: TextStyle(
                   color: colorScheme.onSurface.withValues(alpha: 0.7),
                   fontSize: 13,
@@ -132,7 +131,6 @@ class _DeviceWarrantyConfirmScreenState extends State<DeviceWarrantyConfirmScree
 
 
   Widget _paymentSummaryCard(
-      AppLocalizations l10n,
       ThemeData theme,
       ColorScheme colorScheme,
       ) {
@@ -142,7 +140,7 @@ class _DeviceWarrantyConfirmScreenState extends State<DeviceWarrantyConfirmScree
         Padding(
           padding: const EdgeInsets.only(bottom: 12),
           child: Text(
-            l10n.paymentSummary,
+            'Payment Summary',
             style: TextStyle(
               color: colorScheme.onSurface.withValues(alpha: 0.7),
               fontSize: 14,
@@ -195,7 +193,7 @@ class _DeviceWarrantyConfirmScreenState extends State<DeviceWarrantyConfirmScree
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    l10n.boosterOffer,
+                    'Booster offer @50% OFF',
                     style: TextStyle(
                       color: colorScheme.onSurface.withValues(alpha: 0.5),
                       fontSize: 13,
@@ -240,7 +238,7 @@ class _DeviceWarrantyConfirmScreenState extends State<DeviceWarrantyConfirmScree
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                    Text(
-                    l10n.toPay,
+                    'To Pay',
                     style: TextStyle(
                       color: colorScheme.primary,
                       fontSize: 14,
@@ -267,7 +265,6 @@ class _DeviceWarrantyConfirmScreenState extends State<DeviceWarrantyConfirmScree
 
   /// BOTTOM BUTTON
   Widget _bottomButton(
-      AppLocalizations l10n,
       ThemeData theme,
       ColorScheme colorScheme,
       ) {
@@ -296,11 +293,14 @@ class _DeviceWarrantyConfirmScreenState extends State<DeviceWarrantyConfirmScree
           },
           borderRadius: BorderRadius.circular(8),
           child: Center(
-            child:  Text(l10n.amountPayable("₹365"), style: TextStyle(
-              color: colorScheme.onTertiary,
-              fontWeight: FontWeight.bold,
-              fontSize: 13,
-            ),)
+            child: Text(
+              'Amount Payable ₹365',
+              style: TextStyle(
+                color: colorScheme.onTertiary,
+                fontWeight: FontWeight.bold,
+                fontSize: 13,
+              ),
+            ),
           ),
         ),
       ),

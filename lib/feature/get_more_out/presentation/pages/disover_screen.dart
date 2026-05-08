@@ -4,9 +4,6 @@ import 'package:trackify/feature/get_more_out/presentation/pages/rides_statistic
 import 'package:trackify/feature/get_more_out/presentation/pages/safety_security_screen.dart';
 import 'package:trackify/feature/get_more_out/presentation/pages/vehicle_device_screen.dart';
 import 'package:trackify/feature/get_more_out/presentation/pages/vehicle_tracking_screen.dart';
-import 'package:trackify/l10n/app_localizations_ar.dart';
-
-import '../../../../l10n/app_localizations.dart';
 import '../cubit/discover_cubit.dart';
 import '../cubit/disocver_state.dart';
 
@@ -30,7 +27,7 @@ class _DiscoverFeaturesScreenState
     super.initState();
   }
 
-  late final l10n = AppLocalizations.of(context)!;
+
 
   @override
   Widget build(BuildContext context) {
@@ -54,7 +51,7 @@ class _DiscoverFeaturesScreenState
           ),
         ),
         title: Text(
-          l10n.discoverTrackifyFeatures,
+          'Discover Trackify Features',
           style: TextStyle(
             color: colorScheme.onSurface,
             fontSize: 18,

@@ -7,7 +7,7 @@ import 'package:image_cropper/image_cropper.dart';
 import 'package:intl/intl.dart';
 import 'package:trackify/core/config/font_manager.dart';
 import 'package:trackify/feature/document_folder/presentation/widegt/text_field_widgets.dart';
-import 'package:trackify/l10n/app_localizations.dart';
+
 
 class AccessoryBillScreen extends StatefulWidget {
   const AccessoryBillScreen({super.key});
@@ -47,7 +47,7 @@ class _AccessoryBillScreenState extends State<AccessoryBillScreen> {
   // ── DATE PICKER ─────────────────────────────────────────────
 
   Future<void> _pickDate() async {
-    final l10n = AppLocalizations.of(context)!;
+
 
     final now = DateTime.now();
     final picked = await showDatePicker(
@@ -63,7 +63,6 @@ class _AccessoryBillScreenState extends State<AccessoryBillScreen> {
   Future<void> _pickImage(bool isFront, ImageSource source) async {
     if (_isPickerActive) return;
 
-    final l10n = AppLocalizations.of(context)!;
 
     setState(() {
       _isPickerActive = true;
@@ -93,7 +92,7 @@ class _AccessoryBillScreenState extends State<AccessoryBillScreen> {
       }
 
       if (!_isValidSize(croppedFile)) {
-        _setError(l10n.fileTooLarge);
+        _setError('File is too large (max 5MB)');
         return;
       }
 
@@ -107,7 +106,7 @@ class _AccessoryBillScreenState extends State<AccessoryBillScreen> {
       });
     } catch (e) {
       debugPrint("Pick error: $e");
-      _setError(l10n.pickImageError);
+      _setError('Error picking image');
     } finally {
       if (mounted) {
         setState(() => _isPickerActive = false);
@@ -116,17 +115,17 @@ class _AccessoryBillScreenState extends State<AccessoryBillScreen> {
   }
 
   Future<File?> _cropImage(File imageFile) async {
-    final l10n = AppLocalizations.of(context)!;
+
     try {
       final croppedFile = await ImageCropper().cropImage(
         sourcePath: imageFile.path,
         uiSettings: [
           AndroidUiSettings(
-            toolbarTitle: l10n.cropDocument,
+            toolbarTitle: 'Crop Document',
             toolbarColor: Colors.black,
             toolbarWidgetColor: Colors.white,
           ),
-          IOSUiSettings(title: l10n.cropDocument),
+          IOSUiSettings(title: 'Crop Document'),
         ],
       );
 
@@ -143,7 +142,7 @@ class _AccessoryBillScreenState extends State<AccessoryBillScreen> {
   // ── BOTTOM SHEET ─────────────────────────────────────────────
 
   void _showPicker(bool isFront) {
-    final l10n = AppLocalizations.of(context)!;
+
     final colorScheme = Theme.of(context).colorScheme;
 
     showModalBottomSheet<void>(
@@ -174,7 +173,7 @@ class _AccessoryBillScreenState extends State<AccessoryBillScreen> {
 
               // Title
               Text(
-                l10n.uploadImage,
+                'Upload Image',
                 style: TextStyle(
                   color: colorScheme.onSurface,
                   fontSize: 16,
@@ -188,7 +187,7 @@ class _AccessoryBillScreenState extends State<AccessoryBillScreen> {
                 children: [
                   _circleOption(
                     icon: Icons.camera_alt_outlined,
-                    label: l10n.camera,
+                    label: 'Camera',
                     onTap: () {
                       _pickImage(isFront, ImageSource.camera);
                     },
@@ -196,7 +195,7 @@ class _AccessoryBillScreenState extends State<AccessoryBillScreen> {
                   const SizedBox(width: 10),
                   _circleOption(
                     icon: Icons.photo_library_outlined,
-                    label: l10n.gallery,
+                    label: 'Gallery',
                     onTap: () {
                       _pickImage(isFront, ImageSource.gallery);
                     },
@@ -248,16 +247,16 @@ class _AccessoryBillScreenState extends State<AccessoryBillScreen> {
   // ── SUBMIT ─────────────────────────────────────────────
 
   void _submit() {
-    final l10n = AppLocalizations.of(context)!;
+
 
     if (_frontFile == null) {
-      setState(() => _error = l10n.frontRequired);
+      setState(() => _error = 'Front document image is required');
       return;
     }
 
     ScaffoldMessenger.of(
       context,
-    ).showSnackBar(SnackBar(content: Text(l10n.successMessage)));
+    ).showSnackBar(const SnackBar(content: Text('Document uploaded successfully')));
 
     Navigator.pop(context);
   }
@@ -266,14 +265,14 @@ class _AccessoryBillScreenState extends State<AccessoryBillScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+
     final colorScheme = Theme.of(context).colorScheme;
     final theme = Theme.of(context);
     final size = MediaQuery.of(context).size;
     final screenWidth = size.width;
     final screenHeight = size.height;
     final dateLabel = _selectedDate == null
-        ? l10n.selectExpiryDate
+        ? 'Select Expiry Date'
         : DateFormat('dd / MM / yyyy').format(_selectedDate!);
 
     return Scaffold(
@@ -291,7 +290,7 @@ class _AccessoryBillScreenState extends State<AccessoryBillScreen> {
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
-          l10n.addAccessoryBill,
+          'Add Accessory Bill',
           style: theme.textTheme.titleMedium?.copyWith(
             color: colorScheme.onSurface,
             fontWeight: FontWeightManager.semibold,
@@ -321,7 +320,7 @@ class _AccessoryBillScreenState extends State<AccessoryBillScreen> {
                     // ── Document Name ────────────────────────────────
                     TextFieldWidgets(
                       controller: _nameController,
-                      hintText: l10n.accessoryName,
+                      hintText: 'Accessory Name',
                       isRequired: true,
                     ),
 
@@ -348,7 +347,7 @@ class _AccessoryBillScreenState extends State<AccessoryBillScreen> {
                                   Expanded(
                                     child: Text.rich(
                                       TextSpan(
-                                        text: l10n.billingDate,
+                                        text: 'Billing Date',
                                         children: const [
                                           TextSpan(
                                             text: '*',
@@ -380,7 +379,7 @@ class _AccessoryBillScreenState extends State<AccessoryBillScreen> {
                         Expanded(
                           child: TextFieldWidgets(
                             controller: _nameController,
-                            hintText: l10n.billingAmount,
+                            hintText: 'Billing Amount',
                             isRequired: true,
                             keyboardType: TextInputType.number,
                             suffixIcon: Padding(
@@ -394,12 +393,12 @@ class _AccessoryBillScreenState extends State<AccessoryBillScreen> {
                     const SizedBox(height: 20),
                     TextFieldWidgets(
                       controller: _nameController,
-                      hintText: l10n.shopName,
+                      hintText: 'Shop Name',
                     ),
                     const SizedBox(height: 20),
                     TextFieldWidgets(
                       controller: _nameController,
-                      hintText: l10n.shopContact,
+                      hintText: 'Shop Contact',
                       keyboardType: TextInputType.phone,
                     ),
                     const SizedBox(height: 20),
@@ -444,22 +443,22 @@ class _AccessoryBillScreenState extends State<AccessoryBillScreen> {
 
                     const SizedBox(height: 20),
 
-                    Text(l10n.uploadBill),
+                    const Text('Upload Bill'),
 
                     const SizedBox(height: 20),
 
                     Row(
                       children: [
-                        _uploadBox(true, _frontFile, l10n.addImage),
+                        _uploadBox(true, _frontFile, 'Add Image'),
                         const SizedBox(width: 12),
-                        _uploadBox(false, _backFile, l10n.addImage),
+                        _uploadBox(false, _backFile, 'Add Image'),
                       ],
                     ),
 
                     SizedBox(height: screenHeight * 0.02),
 
                     Text(
-                      l10n.fileSizeNote,
+                      'Note: Max file size is 5MB',
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeightManager.medium,
@@ -487,7 +486,7 @@ class _AccessoryBillScreenState extends State<AccessoryBillScreen> {
                 ),
                 child: Center(
                   child: Text(
-                    l10n.addDocument,
+                    'Add Document',
                     style: TextStyle(
                       color: colorScheme.onPrimary,
                       fontWeight: FontWeight.bold,
