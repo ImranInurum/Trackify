@@ -115,10 +115,7 @@ class _FeatureDetailsScreenState extends State<FeatureDetailsScreen> {
                             ),
                           ),
                           child: Icon(
-                            IconData(
                               item.icon,
-                              fontFamily: 'MaterialIcons',
-                            ),
                             color: colorScheme.onSurface,
                             size: 32,
                           ),
