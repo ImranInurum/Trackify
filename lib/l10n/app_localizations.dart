@@ -493,7 +493,7 @@ abstract class AppLocalizations {
   /// No description provided for @proceed.
   ///
   /// In en, this message translates to:
-  /// **'Proceed'**
+  /// **'PROCEED'**
   String get proceed;
 
   /// No description provided for @unknownDevice.
@@ -3783,6 +3783,72 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Discover Trackify Features'**
   String get discoverTrackifyFeatures;
+
+  /// No description provided for @checkout.
+  ///
+  /// In en, this message translates to:
+  /// **'Checkout'**
+  String get checkout;
+
+  /// No description provided for @address.
+  ///
+  /// In en, this message translates to:
+  /// **'Address'**
+  String get address;
+
+  /// No description provided for @summary.
+  ///
+  /// In en, this message translates to:
+  /// **'Summary'**
+  String get summary;
+
+  /// No description provided for @pleaseEnterDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter the details given below'**
+  String get pleaseEnterDetails;
+
+  /// No description provided for @fullName.
+  ///
+  /// In en, this message translates to:
+  /// **'Full Name'**
+  String get fullName;
+
+  /// No description provided for @houseFloorLine.
+  ///
+  /// In en, this message translates to:
+  /// **'House, Floor, Line'**
+  String get houseFloorLine;
+
+  /// No description provided for @landmark.
+  ///
+  /// In en, this message translates to:
+  /// **'Landmark'**
+  String get landmark;
+
+  /// No description provided for @pinCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Pin Code'**
+  String get pinCode;
+
+  /// No description provided for @homeAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Home Address'**
+  String get homeAddress;
+
+  /// No description provided for @officeAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Office Address'**
+  String get officeAddress;
+
+  /// No description provided for @product.
+  ///
+  /// In en, this message translates to:
+  /// **'Products'**
+  String get product;
 }
 
 class _AppLocalizationsDelegate

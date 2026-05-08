@@ -68,7 +68,7 @@ class AppLocalizationsMr extends AppLocalizations {
   String get nameRequired => 'नाव आवश्यक आहे';
 
   @override
-  String get mobileNumber => 'मोबाईल नंबर';
+  String get mobileNumber => 'मोबाइल नंबर';
 
   @override
   String get mobileNumberHint => 'मोबाईल नंबर प्रविष्ट करा';
@@ -1946,4 +1946,37 @@ class AppLocalizationsMr extends AppLocalizations {
 
   @override
   String get discoverTrackifyFeatures => 'Discover Trackify Features';
+
+  @override
+  String get checkout => 'चेकआउट';
+
+  @override
+  String get address => 'पत्ता';
+
+  @override
+  String get summary => 'सारांश';
+
+  @override
+  String get pleaseEnterDetails => 'कृपया खालील माहिती भरा';
+
+  @override
+  String get fullName => 'पूर्ण नाव';
+
+  @override
+  String get houseFloorLine => 'घर, मजला, लाईन';
+
+  @override
+  String get landmark => 'ओळख चिन्ह';
+
+  @override
+  String get pinCode => 'पिन कोड';
+
+  @override
+  String get homeAddress => 'घराचा पत्ता';
+
+  @override
+  String get officeAddress => 'ऑफिसचा पत्ता';
+
+  @override
+  String get product => 'उत्पादने';
 }

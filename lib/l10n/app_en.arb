@@ -778,5 +778,22 @@
     "lastUpdatedLabel": "Last updated: ",
     "litresShort": "L",
 
-    "discoverTrackifyFeatures": "Discover Trackify Features"
+    "discoverTrackifyFeatures": "Discover Trackify Features",
+
+      "checkout": "Checkout",
+      "address": "Address",
+      "summary": "Summary",
+      "pleaseEnterDetails": "Please enter the details given below",
+      "fullName": "Full Name",
+      "mobileNumber": "Mobile Number",
+      "houseFloorLine": "House, Floor, Line",
+      "landmark": "Landmark",
+      "state": "State",
+      "pinCode": "Pin Code",
+      "homeAddress": "Home Address",
+      "officeAddress": "Office Address",
+      "proceed": "PROCEED",
+      "product": "Products"
+
+
 }

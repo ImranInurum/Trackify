@@ -209,7 +209,7 @@ class AppLocalizationsKn extends AppLocalizations {
   String get noDevicesFound => 'ಯಾವುದೇ ಸಾಧನಗಳು ಕಂಡುಬಂದಿಲ್ಲ.';
 
   @override
-  String get proceed => 'ಮುಂದುವರಿಯಿರಿ';
+  String get proceed => 'ಮುಂದುವರಿಸಿ';
 
   @override
   String get unknownDevice => 'ಅಜ್ಞಾತ ಸಾಧನ';
@@ -1949,4 +1949,37 @@ class AppLocalizationsKn extends AppLocalizations {
 
   @override
   String get discoverTrackifyFeatures => 'Discover Trackify Features';
+
+  @override
+  String get checkout => 'ಚೆಕ್‌ಔಟ್';
+
+  @override
+  String get address => 'ವಿಳಾಸ';
+
+  @override
+  String get summary => 'ಸಾರಾಂಶ';
+
+  @override
+  String get pleaseEnterDetails => 'ದಯವಿಟ್ಟು ಕೆಳಗಿನ ವಿವರಗಳನ್ನು ನಮೂದಿಸಿ';
+
+  @override
+  String get fullName => 'ಪೂರ್ಣ ಹೆಸರು';
+
+  @override
+  String get houseFloorLine => 'ಮನೆ, ಮಹಡಿ, ರಸ್ತೆ';
+
+  @override
+  String get landmark => 'ಗುರುತು ಸ್ಥಳ';
+
+  @override
+  String get pinCode => 'ಪಿನ್ ಕೋಡ್';
+
+  @override
+  String get homeAddress => 'ಮನೆಯ ವಿಳಾಸ';
+
+  @override
+  String get officeAddress => 'ಕಚೇರಿ ವಿಳಾಸ';
+
+  @override
+  String get product => 'ಉತ್ಪನ್ನಗಳು';
 }

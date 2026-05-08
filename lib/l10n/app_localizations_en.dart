@@ -207,7 +207,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get noDevicesFound => 'No devices found.';
 
   @override
-  String get proceed => 'Proceed';
+  String get proceed => 'PROCEED';
 
   @override
   String get unknownDevice => 'Unknown Device';
@@ -1945,4 +1945,37 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get discoverTrackifyFeatures => 'Discover Trackify Features';
+
+  @override
+  String get checkout => 'Checkout';
+
+  @override
+  String get address => 'Address';
+
+  @override
+  String get summary => 'Summary';
+
+  @override
+  String get pleaseEnterDetails => 'Please enter the details given below';
+
+  @override
+  String get fullName => 'Full Name';
+
+  @override
+  String get houseFloorLine => 'House, Floor, Line';
+
+  @override
+  String get landmark => 'Landmark';
+
+  @override
+  String get pinCode => 'Pin Code';
+
+  @override
+  String get homeAddress => 'Home Address';
+
+  @override
+  String get officeAddress => 'Office Address';
+
+  @override
+  String get product => 'Products';
 }

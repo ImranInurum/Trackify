@@ -802,6 +802,24 @@
     "min": "मिनट",
     "filters": "फ़िल्टर",
 
-      "discoverAjjasFeatures": "Trackify फीचर्स खोजें"
+      "discoverAjjasFeatures": "Trackify फीचर्स खोजें",
+
+        "checkout": "चेकआउट",
+        "address": "पता",
+        "summary": "सारांश",
+        "pleaseEnterDetails": "कृपया नीचे दी गई जानकारी भरें",
+        "fullName": "पूरा नाम",
+        "mobileNumber": "मोबाइल नंबर",
+        "houseFloorLine": "घर, मंजिल, लाइन",
+        "landmark": "लैंडमार्क",
+        "state": "राज्य",
+        "pinCode": "पिन कोड",
+        "homeAddress": "घर का पता",
+        "officeAddress": "ऑफिस का पता",
+        "proceed": "आगे बढ़ें",
+      "product": "प्रोडक्ट्स"
+
+
+
 
 }
