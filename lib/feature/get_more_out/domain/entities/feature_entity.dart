@@ -1,7 +1,9 @@
+import 'package:flutter/cupertino.dart';
+
 class FeatureEntity{
   final String title;
   final String subtitle;
-  final int icon;
+  final IconData icon;
 
 
 
@@ -10,4 +12,6 @@ class FeatureEntity{
     required this.subtitle,
     required this.icon,
 });
+
+
 }

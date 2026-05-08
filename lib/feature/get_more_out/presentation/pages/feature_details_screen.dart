@@ -1,28 +1,46 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../../l10n/app_localizations.dart';
 import '../cubit/feature_cubit.dart';
 import '../cubit/feature_state.dart';
 import 'geo_fenc_screen.dart';
 
-class VehicleTrackingScreen extends StatefulWidget {
-  const VehicleTrackingScreen({super.key});
+class FeatureDetailsScreen extends StatefulWidget {
+  final String appBarTitle;
+  final int featureIndex;
+
+  const FeatureDetailsScreen({
+    super.key,
+    required this.appBarTitle,
+    required this.featureIndex,
+  });
 
   @override
-  State<VehicleTrackingScreen> createState() => _VehicleTrackingScreenState();
+  State<FeatureDetailsScreen> createState() => _FeatureDetailsScreenState();
 }
 
-class _VehicleTrackingScreenState extends State<VehicleTrackingScreen> {
-
+class _FeatureDetailsScreenState extends State<FeatureDetailsScreen> {
   @override
   void initState() {
-    context.read<FeatureCubit>().loadTrackingItems();
     super.initState();
+
+    /// LOAD DATA FROM CUBIT BASED ON INDEX
+    final cubit = context.read<FeatureCubit>();
+    switch (widget.featureIndex) {
+      case 0:
+        cubit.loadSafetyItems();
+        break;
+      case 1:
+        cubit.loadTrackingItems();
+        break;
+      case 2:
+        cubit.loadRideItems();
+        break;
+      case 3:
+        cubit.loadDeviceItems();
+        break;
+    }
   }
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -42,7 +60,7 @@ class _VehicleTrackingScreenState extends State<VehicleTrackingScreen> {
           icon: Icon(Icons.arrow_back_ios, color: colorScheme.onSurface, size: 18),
         ),
         title: Text(
-         "Vehicle Tracking & More",
+          widget.appBarTitle,
           style: TextStyle(
             color: colorScheme.onSurface,
             fontSize: 18,
@@ -97,10 +115,7 @@ class _VehicleTrackingScreenState extends State<VehicleTrackingScreen> {
                             ),
                           ),
                           child: Icon(
-                            IconData(
                               item.icon,
-                              fontFamily: 'MaterialIcons',
-                            ),
                             color: colorScheme.onSurface,
                             size: 32,
                           ),

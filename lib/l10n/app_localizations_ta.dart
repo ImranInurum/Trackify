@@ -1945,5 +1945,5 @@ class AppLocalizationsTa extends AppLocalizations {
   String get litresShort => 'லி';
 
   @override
-  String get discoverTrackifyFeatures => 'Discover Ajjas Features';
+  String get discoverTrackifyFeatures => 'Discover Trackify Features';
 }

@@ -1945,5 +1945,5 @@ class AppLocalizationsMr extends AppLocalizations {
   String get litresShort => 'लि.';
 
   @override
-  String get discoverTrackifyFeatures => 'Discover Ajjas Features';
+  String get discoverTrackifyFeatures => 'Discover Trackify Features';
 }

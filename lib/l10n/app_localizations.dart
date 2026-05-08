@@ -3781,7 +3781,7 @@ abstract class AppLocalizations {
   /// No description provided for @discoverTrackifyFeatures.
   ///
   /// In en, this message translates to:
-  /// **'Discover Ajjas Features'**
+  /// **'Discover Trackify Features'**
   String get discoverTrackifyFeatures;
 }
 

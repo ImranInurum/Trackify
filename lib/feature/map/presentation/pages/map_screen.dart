@@ -32,6 +32,7 @@ import '../../../../core/utils/shared_preferences.dart';
 import '../../../device_data/presentation/pages/device_data_screen.dart';
 import '../../../fuel_logs/presentation/pages/fuel_logs_screen.dart';
 import '../../../geo_fence/presentation/pages/geo_fence_screen.dart';
+import '../../../get_more_out/presentation/pages/disover_screen.dart';
 import '../../../location_sharing/presentation/pages/location_sharing_screen.dart';
 import 'package:trackify/feature/service_logs/presentation/screens/service_logs_screen.dart';
 import '../../../notifications/presentation/screen/notification_list_screen.dart';
@@ -468,7 +469,16 @@ class _MapScreenState extends State<MapScreen> {
 
   Widget _buildPromoBanner() {
     final l10n = AppLocalizations.of(context)!;
-    return Container(
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const DiscoverFeaturesScreen(),
+          ),
+        );
+      },
+      child: Container(
       margin: const EdgeInsets.symmetric(horizontal: 16),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
@@ -544,6 +554,7 @@ class _MapScreenState extends State<MapScreen> {
           ),
         ],
       ),
+      )
     );
   }
 
@@ -957,7 +968,8 @@ class _MapScreenState extends State<MapScreen> {
           ),
         ),
       );
-    }  else if (label == l10n.upgradeToPlus.replaceAll(' ', '\n')) {
+    }
+    else if (label == l10n.upgradeToPlus.replaceAll(' ', '\n')) {
       Navigator.push(
         context,
         MaterialPageRoute(
