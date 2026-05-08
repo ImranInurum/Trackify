@@ -3781,74 +3781,8 @@ abstract class AppLocalizations {
   /// No description provided for @discoverTrackifyFeatures.
   ///
   /// In en, this message translates to:
-  /// **'Discover Ajjas Features'**
+  /// **'Discover Trackify Features'**
   String get discoverTrackifyFeatures;
-
-  /// No description provided for @addAccessoryBill.
-  ///
-  /// In en, this message translates to:
-  /// **'Add Accessory Bill'**
-  String get addAccessoryBill;
-
-  /// No description provided for @accessoryName.
-  ///
-  /// In en, this message translates to:
-  /// **'Accessory Name'**
-  String get accessoryName;
-
-  /// No description provided for @billingDate.
-  ///
-  /// In en, this message translates to:
-  /// **'Billing Date'**
-  String get billingDate;
-
-  /// No description provided for @shopName.
-  ///
-  /// In en, this message translates to:
-  /// **'Shop Name'**
-  String get shopName;
-
-  /// No description provided for @shopContact.
-  ///
-  /// In en, this message translates to:
-  /// **'Shop Contact'**
-  String get shopContact;
-
-  /// No description provided for @uploadBill.
-  ///
-  /// In en, this message translates to:
-  /// **'Upload Bill'**
-  String get uploadBill;
-
-  /// No description provided for @yearExtendedWarranty.
-  ///
-  /// In en, this message translates to:
-  /// **'1 year extended warranty'**
-  String get yearExtendedWarranty;
-
-  /// No description provided for @paymentSummary.
-  ///
-  /// In en, this message translates to:
-  /// **'Payment Summary'**
-  String get paymentSummary;
-
-  /// No description provided for @boosterOffer.
-  ///
-  /// In en, this message translates to:
-  /// **'Booster offer @50% OFF'**
-  String get boosterOffer;
-
-  /// No description provided for @toPay.
-  ///
-  /// In en, this message translates to:
-  /// **'To Pay'**
-  String get toPay;
-
-  /// No description provided for @amountPayable.
-  ///
-  /// In en, this message translates to:
-  /// **'Amount Payable {amount}'**
-  String amountPayable(String amount);
 }
 
 class _AppLocalizationsDelegate
