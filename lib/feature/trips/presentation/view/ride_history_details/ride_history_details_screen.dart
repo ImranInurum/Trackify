@@ -515,12 +515,18 @@ class _RideHistoryDetailsScreenState extends State<RideHistoryDetailsScreen>
     setState(() {
       _playController.stop();
       _playController.value = 0.0;
-      _stopOrbitAnimation(); // Stop orbit on stop
+      _stopOrbitAnimation();
       _isPlaying = false;
       _isPlaybackActive = false;
+
+      // Explicitly reset to start point
+      if (_validPoints.isNotEmpty) {
+        _currentVehiclePosition = _validPoints.first;
+      }
+
       _updateVehiclePosition();
     });
-    _createMarkers(); // Update marker size for preview
+    _createMarkers();
     _fitMapToBounds();
   }
 
