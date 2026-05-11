@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:trackify/feature/trips/data/entity/ride_model.dart';
 import 'package:trackify/feature/trips/presentation/view/widgets/all_rides/widgets/polyline_thumbnail.dart';
+import 'package:trackify/l10n/app_localizations.dart';
 
-import '../../../../../../../l10n/app_localizations.dart';
+
 
 class RideCard extends StatelessWidget {
   final Ride ride;
@@ -147,7 +148,7 @@ class RideCard extends StatelessWidget {
                       const SizedBox(width: 8),
                       Expanded(
                         child: Text(
-                          ride.startLocation.replaceAll(' ', '') == '0.0000,0.0000' ? 'N/A' : ride.startLocation,
+                          ride.startLocation.replaceAll(' ', '') == '0.0000,0.0000' ? l10n.notAvailable : ride.startLocation,
                           style: TextStyle(
                             fontSize: 12,
                             color: Theme.of(
@@ -173,7 +174,7 @@ class RideCard extends StatelessWidget {
                       const SizedBox(width: 4),
                       Expanded(
                         child: Text(
-                          ride.endLocation.replaceAll(' ', '') == '0.0000,0.0000' ? 'N/A' : ride.endLocation,
+                          ride.endLocation.replaceAll(' ', '') == '0.0000,0.0000' ? l10n.notAvailable : ride.endLocation,
                           style: TextStyle(
                             fontSize: 12,
                             color: Theme.of(

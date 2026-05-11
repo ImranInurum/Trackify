@@ -1,4 +1,4 @@
-{
+﻿{
     "selectLanguage": "तुमची भाषा निवडा",
     "letsGetStarted": "सुरुवात करूया",
     "email": "ईमेल",
@@ -576,8 +576,95 @@
         "homeAddress": "घराचा पत्ता",
         "officeAddress": "ऑफिसचा पत्ता",
         "proceed": "पुढे जा",
-        "product": "उत्पादने"
+        "product": "उत्पादने",
 
 
 
+
+        "addAccessoryBill": "एक्सेसरी बिल जोडा",
+        "accessoryName": "एक्सेसरीचे नाव",
+        "billingDate": "बिलिंग तारीख",
+        "billingAmount": "बिलिंग रक्कम",
+        "shopName": "दुकानाचे नाव",
+        "shopContact": "दुकान संपर्क",
+        "uploadBill": "बिल अपलोड करा",
+        "addImage": "प्रतिमा जोडा",
+        "maxFileSizeNote": "टीप: कमाल फाइल आकार 5MB आहे",
+        "addDocument": "दस्तऐवज जोडा",
+        "extendedWarranty": "विस्तारित वॉरंटी",
+        "yearExtendedWarranty": "1 वर्षाची विस्तारित वॉरंटी",
+        "paymentSummary": "पेमेंट सारांश",
+        "boosterOffer": "बूस्टर ऑफर @50% सूट",
+        "toPay": "देय रक्कम",
+        "amountPayable": "देय रक्कम {amount}",
+        "@amountPayable": {
+          "placeholders": {
+            "amount": {
+              "type": "String"
+            }
+          }
+        },
+  "distance": "अंतर",
+  "recentToOldest": "अलीकडील ते जुने",
+  "sorting": "वर्गीकरण",
+  "backToDefault": "डीफॉल्टवर परत जा",
+  "sortBy": "याद्वारे वर्गीकरण",
+  "duration": "कालावधी",
+  "oldestToRecent": "जुन्यापासून अलीकडीलपर्यंत",
+  "date": "तारीख",
+  "noTripsFound": "कोणतीही ट्रिप आढळली नाही",
+  "ridesCount": "{count} राइड्स",
+  "@ridesCount": {
+    "placeholders":  {
+                         "count":  {
+                                       "type":  "String"
+                                   }
+                     }
+},
+  "searchTrips": "ट्रिप्स शोधा",
+  "searchRides": "राइड्स शोधा",
+  "notAvailable": "उपलब्ध नाही",
+  "start": "सुरुवात",
+  "end": "शेवट",
+  "yesImSure": "हो, मला खात्री आहे",
+  "topSpeedLabel": "कमाल वेग",
+  "rideDurationLabel": "राइडचा कालावधी",
+  "editRides": "राइड्स संपादित करा",
+  "camera": "कॅमेरा",
+  "tripDetails": "ट्रिप तपशील",
+  "tripQuoteLabel": "ट्रिप कोट",
+  "unmerge": "अनमर्ज करा",
+  "gallery": "गॅलरी",
+  "tripNameLabel": "ट्रिपचे नाव",
+  "ridingBehaviour": "ड्रायव्हिंग वर्तन",
+  "deleteTripConfirmation": "हे तुमची ट्रिप कायमची हटवेल. तुम्हाला खात्री आहे का?",
+  "tripStats": "ट्रिप आकडेवारी",
+  "uploadImage": "प्रतिमा अपलोड करा",
+  "avgSpeedLabel": "सरासरी वेग",
+  "tripQuoteDefault": "प्रत्येक ट्रिपची एक गोष्ट असते. तुमची गोष्ट इथे आहे.",
+  "save": "सेव्ह करा",
+  "deleteTrip": "ट्रिप हटवा",
+  "hrLabel": "तास",
+  "ridesSelectedSummary": "{count} राइड्स निवडल्या | {distance} किमी • {duration}",
+  "@ridesSelectedSummary": {"placeholders": {"count": {"type": "String"}, "distance": {"type": "String"}, "duration": {"type": "String"}} },
+  "clearSelection": "निवड रद्द करा",
+  "skip": "वगळा",
+  "secLabel": "सेकंद",
+  "minLabel": "मिनिट",
+  "selectionTooltipMessage": "आपण आपल्या ट्रिपमध्ये जोडू इच्छित असलेल्या राइड्स निवडा.",
+  "selectRides": "राइड्स निवडा",
+  "createTrip": "ट्रिप तयार करा",
+  "bestAverageSpeed": "सर्वोत्तम सरासरी वेग",
+  "noTripsFound": "\"{query}\" साठी कोणतीही ट्रिप सापडली नाही",
+  "@noTripsFound": {"placeholders": {"query": {"type": "String"}}},
+  "topSpeedClocked": "नोंदवलेला उच्च वेग",
+  "searchTripsHint": "नावाने ट्रिप शोधा",
+  "noRidesFound": "\"{query}\" साठी कोणतीही राइड सापडली नाही",
+  "@noRidesFound": {"placeholders": {"query": {"type": "String"}}},
+  "tripLabel": "ट्रिप {number}",
+  "@tripLabel": {"placeholders": {"number": {"type": "String"}}},
+  "extraordinaryTrips": "विलक्षण ट्रिप",
+  "maxDistanceCovered": "कापलेले कमाल अंतर",
+  "searchTrips": "ट्रिप शोधा",
+  "searchRidesHint": "शहराद्वारे राइड्स शोधा"
 }

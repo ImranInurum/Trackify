@@ -645,7 +645,7 @@ class AppLocalizationsKn extends AppLocalizations {
   String get todayLabel => '(ಇಂದು)';
 
   @override
-  String get ridingBehaviour => 'ರೈಡಿಂಗ್ ನಡವಳಿಕೆ';
+  String get ridingBehaviour => 'ಸವಾರಿ ನಡವಳಿಕೆ';
 
   @override
   String get ridingBehaviourVacationDesc =>
@@ -784,7 +784,7 @@ class AppLocalizationsKn extends AppLocalizations {
   String get startByCreatingTrip => 'Start by creating a New Trip';
 
   @override
-  String get skip => 'Skip';
+  String get skip => 'ಬಿಟ್ಟುಬಿಡಿ';
 
   @override
   String get todayText => 'ಇಂದು';
@@ -1227,7 +1227,7 @@ class AppLocalizationsKn extends AppLocalizations {
   String get appSimRecharge => 'ಆಪ್ ಮತ್ತು ಸಿಮ್ ರೀಚಾರ್ಜ್';
 
   @override
-  String get extendedWarranty => 'ವಿಸ್ತರಿತ ವಾರಂಟಿ';
+  String get extendedWarranty => 'ವಿಸ್ತೃತ ವಾರಂಟಿ';
 
   @override
   String get plusMembership => 'ಪ್ಲಸ್ ಸದಸ್ಯತ್ವ';
@@ -1674,13 +1674,13 @@ class AppLocalizationsKn extends AppLocalizations {
   String get cropVehicleImage => 'Crop Vehicle Image';
 
   @override
-  String get uploadImage => 'Upload Image';
+  String get uploadImage => 'ಚಿತ್ರವನ್ನು ಅಪ್‌ಲೋಡ್ ಮಾಡಿ';
 
   @override
-  String get camera => 'Camera';
+  String get camera => 'ಕ್ಯಾಮೆರಾ';
 
   @override
-  String get gallery => 'Gallery';
+  String get gallery => 'ಗ್ಯಾಲರಿ';
 
   @override
   String get pdf => 'PDF';
@@ -1713,7 +1713,7 @@ class AppLocalizationsKn extends AppLocalizations {
   String get documentsSafe => 'Your documents are encrypted and safe';
 
   @override
-  String get addDocument => 'Add Document';
+  String get addDocument => 'ದಾಖಲೆ ಸೇರಿಸಿ';
 
   @override
   String get frontRequired => 'Front side document is required';
@@ -1982,4 +1982,193 @@ class AppLocalizationsKn extends AppLocalizations {
 
   @override
   String get product => 'ಉತ್ಪನ್ನಗಳು';
+
+  @override
+  String get errorPickingImage => 'Error picking image';
+
+  @override
+  String get frontDocumentRequired => 'Front document image is required';
+
+  @override
+  String get documentUploadedSuccessfully => 'Document uploaded successfully';
+
+  @override
+  String get addAccessoryBill => 'ಅನುಬಂಧ ಬಿಲ್ ಸೇರಿಸಿ';
+
+  @override
+  String get accessoryName => 'ಅನುಬಂಧದ ಹೆಸರು';
+
+  @override
+  String get billingDate => 'ಬಿಲ್ಲಿಂಗ್ ದಿನಾಂಕ';
+
+  @override
+  String get shopName => 'ಅಂಗಡಿ ಹೆಸರು';
+
+  @override
+  String get shopContact => 'ಅಂಗಡಿ ಸಂಪರ್ಕ';
+
+  @override
+  String get uploadBill => 'ಬಿಲ್ ಅಪ್‌ಲೋಡ್ ಮಾಡಿ';
+
+  @override
+  String get yearExtendedWarranty => '1 ವರ್ಷದ ವಿಸ್ತೃತ ವಾರಂಟಿ';
+
+  @override
+  String get paymentSummary => 'ಪಾವತಿ ಸಾರಾಂಶ';
+
+  @override
+  String get boosterOffer => 'ಬೂಸ್ಟರ್ ಆಫರ್ @50% ರಿಯಾಯಿತಿ';
+
+  @override
+  String get toPay => 'ಪಾವತಿಸಲು';
+
+  @override
+  String amountPayable(String amount) {
+    return 'ಪಾವತಿಸಬೇಕಾದ ಮೊತ್ತ $amount';
+  }
+
+  @override
+  String get distance => 'ದೂರ';
+
+  @override
+  String get recentToOldest => 'ಇತ್ತೀಚಿನಿಂದ ಹಳೆಯದಕ್ಕೆ';
+
+  @override
+  String get sorting => 'ವಿಂಗಡಣೆ';
+
+  @override
+  String get backToDefault => 'ಡೀಫಾಲ್ಟ್‌ಗೆ ಹಿಂತಿರುಗಿ';
+
+  @override
+  String get sortBy => 'ಇದರ ಮೂಲಕ ವಿಂಗಡಿಸಿ';
+
+  @override
+  String get duration => 'ಅವಧಿ';
+
+  @override
+  String get oldestToRecent => 'ಹಳೆಯದರಿಂದ ಇತ್ತೀಚಿನದಕ್ಕೆ';
+
+  @override
+  String get date => 'ದಿನಾಂಕ';
+
+  @override
+  String noTripsFound(String query) {
+    return '\"$query\" ಗಾಗಿ ಯಾವುದೇ ಪ್ರವಾಸಗಳು ಕಂಡುಬಂದಿಲ್ಲ';
+  }
+
+  @override
+  String ridesCount(String count) {
+    return '$count ಸವಾರಿಗಳು';
+  }
+
+  @override
+  String get searchTrips => 'ಪ್ರವಾಸಗಳನ್ನು ಹುಡುಕಿ';
+
+  @override
+  String get searchRides => 'ಸವಾರಿಗಳನ್ನು ಹುಡುಕಿ';
+
+  @override
+  String get notAvailable => 'ಲಭ್ಯವಿಲ್ಲ';
+
+  @override
+  String get start => 'ಪ್ರಾರಂಭ';
+
+  @override
+  String get end => 'ಅಂತ್ಯ';
+
+  @override
+  String get yesImSure => 'ಹೌದು ನನಗೆ ಖಚಿತವಿದೆ';
+
+  @override
+  String get topSpeedLabel => 'ಗರಿಷ್ಠ ವೇಗ';
+
+  @override
+  String get rideDurationLabel => 'ಸವಾರಿ ಅವಧಿ';
+
+  @override
+  String get editRides => 'ಸವಾರಿಗಳನ್ನು ಎಡಿಟ್ ಮಾಡಿ';
+
+  @override
+  String get tripDetails => 'ಪ್ರವಾಸದ ವಿವರಗಳು';
+
+  @override
+  String get tripQuoteLabel => 'ಪ್ರವಾಸದ ಉಲ್ಲೇಖ';
+
+  @override
+  String get unmerge => 'ಅನ್-ಮರ್ಜ್';
+
+  @override
+  String get tripNameLabel => 'ಪ್ರವಾಸದ ಹೆಸರು';
+
+  @override
+  String get deleteTripConfirmation =>
+      'ಇದು ನಿಮ್ಮ ಪ್ರವಾಸವನ್ನು ಶಾಶ್ವತವಾಗಿ ಅಳಿಸುತ್ತದೆ. ನೀವು ಮುಂದುವರಿಯಲು ಖಚಿತವಾಗಿದೆಯೇ?';
+
+  @override
+  String get tripStats => 'ಪ್ರವಾಸದ ಅಂಕಿಅಂಶಗಳು';
+
+  @override
+  String get avgSpeedLabel => 'ಸರಾಸರಿ ವೇಗ';
+
+  @override
+  String get tripQuoteDefault =>
+      'ಪ್ರತಿಯೊಂದು ಪ್ರವಾಸಕ್ಕೂ ಒಂದು ಕಥೆ ಇರುತ್ತದೆ. ನಿಮ್ಮದು ಇಲ್ಲಿದೆ.';
+
+  @override
+  String get deleteTrip => 'ಪ್ರವಾಸವನ್ನು ಅಳಿಸಿ';
+
+  @override
+  String get hrLabel => 'ಗಂಟೆ';
+
+  @override
+  String ridesSelectedSummary(String count, String distance, String duration) {
+    return '$count ಸವಾರಿಗಳನ್ನು ಆಯ್ಕೆ ಮಾಡಲಾಗಿದೆ | $distance ಕಿಮೀ • $duration';
+  }
+
+  @override
+  String get clearSelection => 'ಆಯ್ಕೆಯನ್ನು ತೆರವುಗೊಳಿಸಿ';
+
+  @override
+  String get secLabel => 'ಸೆಕೆಂಡ್';
+
+  @override
+  String get minLabel => 'ನಿಮಿಷ';
+
+  @override
+  String get selectionTooltipMessage =>
+      'ನಿಮ್ಮ ಪ್ರವಾಸಕ್ಕೆ ಸೇರಿಸಲು ಬಯಸುವ ಸವಾರಿಗಳನ್ನು ಆಯ್ಕೆಮಾಡಿ.';
+
+  @override
+  String get selectRides => 'ಸವಾರಿಗಳನ್ನು ಆಯ್ಕೆಮಾಡಿ';
+
+  @override
+  String get createTrip => 'ಪ್ರವಾಸವನ್ನು ರಚಿಸಿ';
+
+  @override
+  String get bestAverageSpeed => 'ಉತ್ತಮ ಸರಾಸರಿ ವೇಗ';
+
+  @override
+  String get topSpeedClocked => 'ದಾಖಲಾದ ಗರಿಷ್ಠ ವೇಗ';
+
+  @override
+  String get searchTripsHint => 'ಹೆಸರಿನ ಮೂಲಕ ಪ್ರವಾಸಗಳನ್ನು ಹುಡುಕಿ';
+
+  @override
+  String noRidesFound(String query) {
+    return '\"$query\" ಗಾಗಿ ಯಾವುದೇ ಸವಾರಿಗಳು ಕಂಡುಬಂದಿಲ್ಲ';
+  }
+
+  @override
+  String tripLabel(String number) {
+    return 'ಪ್ರವಾಸ $number';
+  }
+
+  @override
+  String get extraordinaryTrips => 'ಅಸಾಧಾರಣ ಪ್ರವಾಸಗಳು';
+
+  @override
+  String get maxDistanceCovered => 'ಕ್ರಮಿಸಿದ ಗರಿಷ್ಠ ದೂರ';
+
+  @override
+  String get searchRidesHint => 'ನಗರದ ಮೂಲಕ ಸವಾರಿಗಳನ್ನು ಹುಡುಕಿ';
 }

@@ -5,6 +5,7 @@ import 'package:trackify/feature/my_garage/presentation/cubit/my_garage_state.da
 import 'package:trackify/l10n/app_localizations.dart';
 
 import '../../../../core/common/widgets/vehicle_card.dart';
+import '../../../Vehicle_control/presentation/pages/vehicle_control_screen.dart';
 
 class MyGarageScreen extends StatefulWidget {
   const MyGarageScreen({super.key});
@@ -97,7 +98,14 @@ class _MyGarageScreenState extends State<MyGarageScreen> {
                     context: context,
                     vehicle: vehicle,
                     hasDevice: hasDevice,
-                    onVehicleControl: () => debugPrint('Vehicle control'),
+                    onVehicleControl: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => VehicleControlScreen(isFromGarage: hasDevice?false: true),
+                        ),
+                      );
+                    },
                     onLock: () => _handleVehicleLock(context, vehicle),
                     onRecharge: () => _handleRecharge(context, vehicle),
                     onRenew: () => _handleRenew(context, vehicle),

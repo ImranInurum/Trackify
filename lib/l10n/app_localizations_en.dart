@@ -1030,7 +1030,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get addImage => 'Add Image';
 
   @override
-  String get maxFileSizeNote => 'Note: Maximum File Size is 5MB';
+  String get maxFileSizeNote => 'Note: Max file size is 5MB';
 
   @override
   String get serviceDate => 'Service Date';
@@ -1682,7 +1682,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get pdf => 'PDF';
 
   @override
-  String get fileTooLarge => 'File size exceeds 5MB limit';
+  String get fileTooLarge => 'File is too large (max 5MB)';
 
   @override
   String get pickImageError => 'Error picking image';
@@ -1719,7 +1719,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get successMessage => 'Document saved successfully';
 
   @override
-  String get selectExpiryDate => 'Expiry Date';
+  String get selectExpiryDate => 'Select Expiry Date';
 
   @override
   String get documentsEncrypted => 'Your documents are encrypted & safe';
@@ -1978,4 +1978,192 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get product => 'Products';
+
+  @override
+  String get errorPickingImage => 'Error picking image';
+
+  @override
+  String get frontDocumentRequired => 'Front document image is required';
+
+  @override
+  String get documentUploadedSuccessfully => 'Document uploaded successfully';
+
+  @override
+  String get addAccessoryBill => 'Add Accessory Bill';
+
+  @override
+  String get accessoryName => 'Accessory Name';
+
+  @override
+  String get billingDate => 'Billing Date';
+
+  @override
+  String get shopName => 'Shop Name';
+
+  @override
+  String get shopContact => 'Shop Contact';
+
+  @override
+  String get uploadBill => 'Upload Bill';
+
+  @override
+  String get yearExtendedWarranty => '1 year extended warranty';
+
+  @override
+  String get paymentSummary => 'Payment Summary';
+
+  @override
+  String get boosterOffer => 'Booster offer @50% OFF';
+
+  @override
+  String get toPay => 'To Pay';
+
+  @override
+  String amountPayable(String amount) {
+    return 'Amount Payable $amount';
+  }
+
+  @override
+  String get distance => 'Distance';
+
+  @override
+  String get recentToOldest => 'Recent to Oldest';
+
+  @override
+  String get sorting => 'Sorting';
+
+  @override
+  String get backToDefault => 'Back to Default';
+
+  @override
+  String get sortBy => 'Sort By';
+
+  @override
+  String get duration => 'Duration';
+
+  @override
+  String get oldestToRecent => 'Oldest to Recent';
+
+  @override
+  String get date => 'Date';
+
+  @override
+  String noTripsFound(String query) {
+    return 'No trips found for \"$query\"';
+  }
+
+  @override
+  String ridesCount(String count) {
+    return '$count rides';
+  }
+
+  @override
+  String get searchTrips => 'Search Trips';
+
+  @override
+  String get searchRides => 'Search Rides';
+
+  @override
+  String get notAvailable => 'N/A';
+
+  @override
+  String get start => 'Start';
+
+  @override
+  String get end => 'End';
+
+  @override
+  String get yesImSure => 'Yes I\'m Sure';
+
+  @override
+  String get topSpeedLabel => 'Top Speed';
+
+  @override
+  String get rideDurationLabel => 'Ride Duration';
+
+  @override
+  String get editRides => 'Edit Rides';
+
+  @override
+  String get tripDetails => 'Trip Details';
+
+  @override
+  String get tripQuoteLabel => 'Trip Quote';
+
+  @override
+  String get unmerge => 'Unmerge';
+
+  @override
+  String get tripNameLabel => 'Trip Name';
+
+  @override
+  String get deleteTripConfirmation =>
+      'This will permanently delete your trip. Are you sure you want to continue?';
+
+  @override
+  String get tripStats => 'Trip Stats';
+
+  @override
+  String get avgSpeedLabel => 'Avg. Speed';
+
+  @override
+  String get tripQuoteDefault => 'Every trip has a story. Yours goes here.';
+
+  @override
+  String get deleteTrip => 'Delete Trip';
+
+  @override
+  String get hrLabel => 'hr';
+
+  @override
+  String ridesSelectedSummary(String count, String distance, String duration) {
+    return '$count rides selected | $distance km • $duration';
+  }
+
+  @override
+  String get clearSelection => 'Clear Selection';
+
+  @override
+  String get secLabel => 'sec';
+
+  @override
+  String get minLabel => 'min';
+
+  @override
+  String get selectionTooltipMessage =>
+      'Select the rides you want to add to your trip.';
+
+  @override
+  String get selectRides => 'Select Rides';
+
+  @override
+  String get createTrip => 'Create Trip';
+
+  @override
+  String get bestAverageSpeed => 'Best average speed';
+
+  @override
+  String get topSpeedClocked => 'Top speed clocked';
+
+  @override
+  String get searchTripsHint => 'Search Trips by Name';
+
+  @override
+  String noRidesFound(String query) {
+    return 'No rides found for \"$query\"';
+  }
+
+  @override
+  String tripLabel(String number) {
+    return 'Trip $number';
+  }
+
+  @override
+  String get extraordinaryTrips => 'Extraordinary Trips';
+
+  @override
+  String get maxDistanceCovered => 'Max distance covered';
+
+  @override
+  String get searchRidesHint => 'Search Rides by City';
 }

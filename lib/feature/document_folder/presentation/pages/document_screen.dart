@@ -6,6 +6,7 @@ import 'package:image_picker/image_picker.dart';
 
 import '../../../../core/common/models/vehicle_list_model.dart';
 import '../../../../l10n/app_localizations.dart';
+import 'accessory_bill_screen.dart';
 import 'document_license.dart';
 import 'document_otherdocument_screen.dart';
 import 'document_vehicalRC_screen.dart';
@@ -607,7 +608,15 @@ class _DocumentFolderScreenState extends State<DocumentFolderScreen> {
                             context,
                             colorScheme,
                             title: l10n.accessoryBills,
-                            onTap: () {},
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                  const AccessoryBillScreen(),
+                                ),
+                              );
+                            },
                           ),
                         ],
                       ),

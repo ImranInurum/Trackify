@@ -10,7 +10,8 @@ class TripScreen extends StatefulWidget {
   State<TripScreen> createState() => _TripScreenState();
 }
 
-class _TripScreenState extends State<TripScreen> with SingleTickerProviderStateMixin {
+class _TripScreenState extends State<TripScreen>
+    with SingleTickerProviderStateMixin {
   late TabController _tabController;
 
   @override
@@ -56,21 +57,30 @@ class _TripScreenState extends State<TripScreen> with SingleTickerProviderStateM
                 context,
               ).showSnackBar(SnackBar(content: Text(l10n.clicked(value))));
             },
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-            icon: Icon(Icons.more_vert, color: Theme.of(context).colorScheme.onSurface),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            icon: Icon(
+              Icons.more_vert,
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
             itemBuilder: (context) => [
               PopupMenuItem(
                 value: l10n.sharedRides,
                 child: Text(
                   l10n.sharedRides,
-                  style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.onSurface,
+                  ),
                 ),
               ),
               PopupMenuItem(
                 value: l10n.savedRides,
                 child: Text(
                   l10n.savedRides,
-                  style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.onSurface,
+                  ),
                 ),
               ),
             ],
@@ -86,10 +96,7 @@ class _TripScreenState extends State<TripScreen> with SingleTickerProviderStateM
           Expanded(
             child: TabBarView(
               controller: _tabController,
-              children: const [
-                AllRides(),
-                Trips(),
-              ],
+              children: const [AllRides(), Trips()],
             ),
           ),
         ],
@@ -108,10 +115,7 @@ class _TripScreenState extends State<TripScreen> with SingleTickerProviderStateM
         border: Border.all(color: Theme.of(context).dividerColor),
       ),
       child: Row(
-        children: [
-          _buildTab(l10n.allRides, 0),
-          _buildTab(l10n.trips, 1),
-        ],
+        children: [_buildTab(l10n.allRides, 0), _buildTab(l10n.trips, 1)],
       ),
     );
   }
@@ -125,7 +129,9 @@ class _TripScreenState extends State<TripScreen> with SingleTickerProviderStateM
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 12),
           decoration: BoxDecoration(
-            color: isSelected ? theme.colorScheme.primary.withOpacity(0.12) : Colors.transparent,
+            color: isSelected
+                ? theme.colorScheme.primary.withOpacity(0.12)
+                : Colors.transparent,
             borderRadius: BorderRadius.circular(25),
           ),
           child: Center(

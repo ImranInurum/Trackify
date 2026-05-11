@@ -20,7 +20,8 @@ import 'notification_controls_screen.dart';
 import 'edit_vehicle_screen.dart';
 
 class VehicleControlScreen extends StatelessWidget {
-  const VehicleControlScreen({super.key});
+  final bool isFromGarage;
+  const VehicleControlScreen({super.key, this.isFromGarage = false});
 
   @override
   Widget build(BuildContext context) {
@@ -28,13 +29,14 @@ class VehicleControlScreen extends StatelessWidget {
       create: (context) =>
           VehicleControlCubit(VehicleControlRepositoryImpl())
             ..loadVehicleDetails("1"),
-      child: const VehicleControlView(),
+      child: VehicleControlView(isFromGarage: isFromGarage),
     );
   }
 }
 
 class VehicleControlView extends StatelessWidget {
-  const VehicleControlView({super.key});
+  final bool isFromGarage;
+  const VehicleControlView({super.key, this.isFromGarage = false});
 
   @override
   Widget build(BuildContext context) {
@@ -66,360 +68,496 @@ class VehicleControlView extends StatelessWidget {
           }
           if (state is VehicleControlLoaded) {
             final vehicle = state.vehicle;
-            return SingleChildScrollView(
-              child: Column(
-                children: [
-                  /// 🔹 TOP IMAGE SECTION
-                  Stack(
-                    children: [
-                      Container(
-                        height: size.height * 0.45,
-                        width: double.infinity,
-                        decoration: BoxDecoration(
-                          image: DecorationImage(
-                            image: vehicle.bikeImage != null
-                                ? FileImage(File(vehicle.bikeImage!)) as ImageProvider
-                                : AssetImage(AppImages.bikeImage),
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                      ),
-                      Positioned.fill(
-                        child: Container(
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              begin: Alignment.topCenter,
-                              end: Alignment.bottomCenter,
-                              stops: const [0.6, 0.9, 1.0],
-                              colors: [
-                                Colors.transparent,
-                                bgColor.withOpacity(0.8),
-                                bgColor,
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                      Positioned(
-                        top: MediaQuery.of(context).padding.top + 10,
-                        left: 16,
-                        child: GestureDetector(
-                          onTap: () => Navigator.pop(context),
-                          child: Icon(
-                            Icons.arrow_back,
-                            color: theme.colorScheme.onSurface.withOpacity(0.5),
-                            size: 24,
-                          ),
-                        ),
-                      ),
-                      Positioned(
-                        bottom: size.height * 0.1,
-                        right: 20,
-                        child: GestureDetector(
-                          onTap: () => _showImageSourceDialog(context, vehicle.id),
-                          child: Container(
-                            padding: const EdgeInsets.all(12),
-                            decoration: BoxDecoration(
-                              color: Colors.black.withOpacity(0.5),
-                              shape: BoxShape.circle,
-                              border: Border.all(
-                                color: Colors.white.withOpacity(0.2),
-                              ),
-                            ),
-                            child: Icon(
-                              Icons.camera_alt_outlined,
-                              color: Colors.white, // Keep white for better visibility on dark image
-                              size: 28,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
+            return CustomScrollView(
+              slivers: [
+                /// 🔹 TOP IMAGE SECTION
+                SliverAppBar(
+                  expandedHeight: size.height * 0.30,
+                  pinned: true,
+                  backgroundColor: bgColor,
+                  elevation: 0,
+                  leading: GestureDetector(
+                    onTap: () => Navigator.pop(context),
+                    child: Icon(
+                      Icons.arrow_back,
+                      color: Colors.black,
+                      size: 24,
+                    ),
                   ),
+                  flexibleSpace: LayoutBuilder(
+                    builder:
+                        (BuildContext context, BoxConstraints constraints) {
+                          final top = constraints.biggest.height;
+                          final isCollapsed =
+                              top <=
+                              kToolbarHeight +
+                                  MediaQuery.of(context).padding.top +
+                                  30;
 
-                  /// 🔹 VEHICLE DETAILS
-                  Transform.translate(
-                    offset: const Offset(0, -20),
-                    child: Column(
-                      children: [
-                        Text(
-                          vehicle.vehicleName,
-                          style: theme.textTheme.headlineSmall?.copyWith(
-                            fontWeight: FontWeight.w900,
-                            color: primaryTextColor,
-                            letterSpacing: 0.5,
-                          ),
-                        ),
-                        const SizedBox(height: 6),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              "${vehicle.vehicleNumber} | ${vehicle.fuelType}",
-                              style: theme.textTheme.bodyMedium?.copyWith(
-                                color: secondaryTextColor,
-                                fontWeight: FontWeight.w500,
+                          return FlexibleSpaceBar(
+                            centerTitle: false,
+                            title: AnimatedOpacity(
+                              duration: const Duration(milliseconds: 300),
+                              opacity: isCollapsed ? 1.0 : 0.0,
+                              child: Text(
+                                vehicle.vehicleName,
+                                style: theme.textTheme.titleLarge?.copyWith(
+                                  color: theme.colorScheme.onSurface,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                             ),
-                            const SizedBox(width: 8),
-                            GestureDetector(
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (ctx) => BlocProvider.value(
-                                      value: context
-                                          .read<VehicleControlCubit>(),
-                                      child: EditVehicleScreen(
-                                        vehicle: vehicle,
+                            background: Stack(
+                              fit: StackFit.expand,
+                              children: [
+                                Image(
+                                  image: vehicle.bikeImage != null
+                                      ? FileImage(File(vehicle.bikeImage!))
+                                            as ImageProvider
+                                      : AssetImage(AppImages.bikeInfoImage),
+                                  fit: BoxFit.cover,
+                                ),
+                                Container(
+                                  decoration: BoxDecoration(
+                                    gradient: LinearGradient(
+                                      begin: Alignment.topCenter,
+                                      end: Alignment.bottomCenter,
+                                      stops: const [0.6, 0.9, 1.0],
+                                      colors: [
+                                        Colors.transparent,
+                                        bgColor.withOpacity(0.8),
+                                        bgColor,
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                                Positioned(
+                                  bottom: size.height * 0.1,
+                                  right: 20,
+                                  child: GestureDetector(
+                                    onTap: () => _showImageSourceDialog(
+                                      context,
+                                      vehicle.id,
+                                    ),
+                                    child: Container(
+                                      padding: const EdgeInsets.all(12),
+                                      decoration: BoxDecoration(
+                                        color: Colors.black.withOpacity(0.5),
+                                        shape: BoxShape.circle,
+                                        border: Border.all(
+                                          color: Colors.white.withOpacity(0.2),
+                                        ),
+                                      ),
+                                      child: const Icon(
+                                        Icons.camera_alt_outlined,
+                                        color: Colors.white,
+                                        size: 28,
                                       ),
                                     ),
                                   ),
-                                );
-                              },
-                              child: Container(
-                                padding: const EdgeInsets.all(2),
-                                decoration: BoxDecoration(
-                                  color: theme.colorScheme.onSurface.withOpacity(0.1),
-                                  shape: BoxShape.circle,
                                 ),
-                                child: Icon(
-                                  Icons.edit,
-                                  color: theme.colorScheme.onSurface,
-                                  size: 12,
+                              ],
+                            ),
+                          );
+                        },
+                  ),
+                ),
+
+                SliverToBoxAdapter(
+                  child: Column(
+                    children: [
+                      /// 🔹 VEHICLE DETAILS
+                      Column(
+                        children: [
+                          Text(
+                            vehicle.vehicleName,
+                            style: theme.textTheme.headlineSmall?.copyWith(
+                              fontWeight: FontWeight.w900,
+                              color: primaryTextColor,
+                              letterSpacing: 0.5,
+                            ),
+                          ),
+                          const SizedBox(height: 6),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                "${vehicle.vehicleNumber} | ${vehicle.fuelType}",
+                                style: theme.textTheme.bodyMedium?.copyWith(
+                                  color: secondaryTextColor,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              GestureDetector(
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (ctx) => BlocProvider.value(
+                                        value: context
+                                            .read<VehicleControlCubit>(),
+                                        child: EditVehicleScreen(
+                                          vehicle: vehicle,
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                },
+                                child: Container(
+                                  padding: const EdgeInsets.all(2),
+                                  decoration: BoxDecoration(
+                                    color: theme.colorScheme.onSurface
+                                        .withOpacity(0.1),
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: Icon(
+                                    Icons.edit,
+                                    color: theme.colorScheme.onSurface,
+                                    size: 12,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+
+                      const SizedBox(height: 10),
+
+                      /// 🔹 TANK & MILEAGE CARDS
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: MetricCard(
+                                value: vehicle.tankCapacity,
+                                unit: l10n.litresShort,
+                                label: l10n.tankCapacity,
+                                cardColor: cardColor,
+                                onEdit: () => _showTankCapacityDialog(
+                                  context,
+                                  vehicle.id,
+                                  vehicle.tankCapacity,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: MetricCard(
+                                value: vehicle.vehicleMileage,
+                                unit: l10n.kmL,
+                                label: l10n.vehicleMileage,
+                                cardColor: cardColor,
+                                onEdit: () => _showMileageDialog(
+                                  context,
+                                  vehicle.id,
+                                  vehicle.vehicleMileage,
                                 ),
                               ),
                             ),
                           ],
                         ),
-                      ],
-                    ),
-                  ),
-
-                  const SizedBox(height: 10),
-
-                  /// 🔹 TANK & MILEAGE CARDS
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: MetricCard(
-                            value: vehicle.tankCapacity,
-                            unit: l10n.litresShort,
-                            label: l10n.tankCapacity,
-                            cardColor: cardColor,
-                            onEdit: () => _showTankCapacityDialog(
-                              context,
-                              vehicle.id,
-                              vehicle.tankCapacity,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: MetricCard(
-                            value: vehicle.vehicleMileage,
-                            unit: l10n.kmL,
-                            label: l10n.vehicleMileage,
-                            cardColor: cardColor,
-                            onEdit: () => _showMileageDialog(
-                              context,
-                              vehicle.id,
-                              vehicle.vehicleMileage,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-
-                  const SizedBox(height: 20),
-
-                  /// 🔹 LOCK & UNLOCK VEHICLE CARD
-                  LockCard(
-                    cardColor: cardColor,
-                    primaryTextColor: primaryTextColor,
-                    secondaryTextColor: secondaryTextColor,
-                    onLock: () {},
-                    onInfoTap: () => _showSleepModeDialog(context),
-                  ),
-
-                  const SizedBox(height: 20),
-
-                  /// 🔹 VEHICLE ON MAP CARD
-                  VehicleOnMapCard(
-                    cardColor: cardColor,
-                    primaryTextColor: primaryTextColor,
-                    secondaryTextColor: secondaryTextColor,
-                    accentColor: theme.colorScheme.primary,
-                    selectedIcon: state.tempIcon,
-                    selectedColor: state.tempColor,
-                    onUpgrade: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const UpgradeToPlusScreen(),
-                        ),
-                      );
-                    },
-                    onIconChanged: (icon) {
-                      context.read<VehicleControlCubit>().updateLocalIcon(icon);
-                    },
-                    onColorChanged: (color) {
-                      context.read<VehicleControlCubit>().updateLocalColor(
-                        color,
-                      );
-                    },
-                    onSave: () {
-                      context.read<VehicleControlCubit>().saveChanges(
-                        vehicle.id,
-                      );
-                    },
-                    showSaveButton:
-                        state.tempIcon != vehicle.selectedIcon ||
-                        state.tempColor != vehicle.selectedColor,
-                  ),
-
-                  const SizedBox(height: 20),
-
-                  /// 🔹 JOURNEY CARD
-                  JourneyCard(
-                    cardColor: cardColor,
-                    primaryTextColor: primaryTextColor,
-                    secondaryTextColor: secondaryTextColor,
-                    onTap: () {
-                      Navigator.popUntil(context, (route) => route.isFirst);
-                      AppNavigation.setIndex(2);
-                    },
-                  ),
-
-                  const SizedBox(height: 20),
-
-                  /// 🔹 DOCUMENTS CARD
-                  DocumentsCard(
-                    cardColor: cardColor,
-                    primaryTextColor: primaryTextColor,
-                    secondaryTextColor: secondaryTextColor,
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const DocumentFolderScreen(),
-                        ),
-                      );
-                    },
-                  ),
-
-                  const SizedBox(height: 20),
-
-                  Divider(
-                    height: 1,
-                    color: theme.colorScheme.onSurface.withOpacity(0.15),
-                  ),
-
-                  /// 🔹 NOTIFICATION CONTROLS
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) =>
-                              const NotificationControlsScreen(),
-                        ),
-                      );
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 24,
-                        vertical: 20,
                       ),
-                      child: Row(
-                        children: [
-                          Icon(
-                            Icons.settings_outlined,
-                            color: secondaryTextColor,
-                            size: 28,
-                          ),
-                          const SizedBox(width: 16),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
+
+                      const SizedBox(height: 20),
+
+                      /// 🔹 LOCK & UNLOCK VEHICLE CARD
+                      LockCard(
+                        cardColor: cardColor,
+                        primaryTextColor: primaryTextColor,
+                        secondaryTextColor: secondaryTextColor,
+                        onLock: () {},
+                        onInfoTap: () => _showSleepModeDialog(context),
+                      ),
+
+                      const SizedBox(height: 20),
+
+                      /// 🔹 VEHICLE ON MAP CARD
+                      VehicleOnMapCard(
+                        cardColor: cardColor,
+                        primaryTextColor: primaryTextColor,
+                        secondaryTextColor: secondaryTextColor,
+                        accentColor: theme.colorScheme.primary,
+                        selectedIcon: state.tempIcon,
+                        selectedColor: state.tempColor,
+                        onUpgrade: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const UpgradeToPlusScreen(),
+                            ),
+                          );
+                        },
+                        onIconChanged: (icon) {
+                          context.read<VehicleControlCubit>().updateLocalIcon(
+                            icon,
+                          );
+                        },
+                        onColorChanged: (color) {
+                          context.read<VehicleControlCubit>().updateLocalColor(
+                            color,
+                          );
+                        },
+                        onSave: () {
+                          context.read<VehicleControlCubit>().saveChanges(
+                            vehicle.id,
+                          );
+                        },
+                        showSaveButton:
+                            state.tempIcon != vehicle.selectedIcon ||
+                            state.tempColor != vehicle.selectedColor,
+                      ),
+
+                      const SizedBox(height: 20),
+
+                      /// 🔹 JOURNEY CARD
+                      JourneyCard(
+                        cardColor: cardColor,
+                        primaryTextColor: primaryTextColor,
+                        secondaryTextColor: secondaryTextColor,
+                        onTap: () {
+                          Navigator.popUntil(context, (route) => route.isFirst);
+                          AppNavigation.setIndex(2);
+                        },
+                      ),
+
+                      const SizedBox(height: 20),
+
+                      /// 🔹 DOCUMENTS CARD
+                      DocumentsCard(
+                        cardColor: cardColor,
+                        primaryTextColor: primaryTextColor,
+                        secondaryTextColor: secondaryTextColor,
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  const DocumentFolderScreen(),
+                            ),
+                          );
+                        },
+                      ),
+
+                      if (isFromGarage == false) const SizedBox(height: 20),
+
+                      Divider(
+                        height: 1,
+                        color: theme.colorScheme.onSurface.withOpacity(0.15),
+                      ),
+
+                      /// 🔹 NOTIFICATION CONTROLS
+                      if (isFromGarage == false)
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    const NotificationControlsScreen(),
+                              ),
+                            );
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 24,
+                              vertical: 20,
+                            ),
+                            child: Row(
                               children: [
-                                Text(
-                                  l10n.notificationControls,
-                                  style: TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.w700,
-                                    color: primaryTextColor,
+                                Icon(
+                                  Icons.settings_outlined,
+                                  color: secondaryTextColor,
+                                  size: 28,
+                                ),
+                                const SizedBox(width: 16),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        l10n.notificationControls,
+                                        style: TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.w700,
+                                          color: primaryTextColor,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        l10n.changeNotificationPreferences,
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                          color: secondaryTextColor,
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
-                                const SizedBox(height: 4),
-                                Text(
-                                  l10n.changeNotificationPreferences,
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    color: secondaryTextColor,
-                                  ),
+                                Icon(
+                                  Icons.arrow_forward_ios,
+                                  color: secondaryTextColor,
+                                  size: 16,
                                 ),
                               ],
                             ),
                           ),
-                          Icon(
-                            Icons.arrow_forward_ios,
-                            color: secondaryTextColor,
-                            size: 16,
-                          ),
-                        ],
+                        ),
+
+                      Divider(
+                        height: 1,
+                        color: theme.colorScheme.onSurface.withOpacity(0.15),
                       ),
-                    ),
-                  ),
+                      const SizedBox(height: 32),
 
-                  Divider(
-                    height: 1,
-                    color: theme.colorScheme.onSurface.withOpacity(0.15),
-                  ),
-                  const SizedBox(height: 32),
-
-                  /// 🔹 UNMAP SECTION
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 24),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          l10n.unmapTrackify,
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w700,
-                            color: primaryTextColor,
+                      /// 🔹 UNMAP SECTION
+                      if (isFromGarage == false)
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 24),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                l10n.unmapTrackify,
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w700,
+                                  color: primaryTextColor,
+                                ),
+                              ),
+                              const SizedBox(height: 20),
+                              Text(
+                                l10n.unmapStep1,
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: secondaryTextColor,
+                                  height: 1.6,
+                                ),
+                              ),
+                              const SizedBox(height: 12),
+                              Text(
+                                l10n.unmapStep2,
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: secondaryTextColor,
+                                  height: 1.6,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
-                        const SizedBox(height: 20),
-                        Text(
-                          l10n.unmapStep1,
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: secondaryTextColor,
-                            height: 1.6,
+
+                      if (isFromGarage) ...[
+                        const SizedBox(height: 32),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 24),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  Icon(
+                                    Icons.add_ic_call,
+                                    color: theme.colorScheme.onSurface
+                                        .withOpacity(0.6),
+                                    size: 20,
+                                  ),
+                                  const SizedBox(width: 12),
+                                  Text(
+                                    "Emergency Contact/s",
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w700,
+                                      color: primaryTextColor,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 8),
+                              Padding(
+                                padding: const EdgeInsets.only(left: 32),
+                                child: Text(
+                                  "..add 1 more",
+                                  style: TextStyle(
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.w600,
+                                    color: theme.colorScheme.primary,
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
-                        const SizedBox(height: 12),
-                        Text(
-                          l10n.unmapStep2,
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: secondaryTextColor,
-                            height: 1.6,
+                        const SizedBox(height: 24),
+                        Divider(
+                          height: 1,
+                          color: theme.colorScheme.onSurface.withOpacity(0.15),
+                        ),
+                        const SizedBox(height: 24),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 24),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "Remove ${vehicle.vehicleName} ${vehicle.vehicleNumber}",
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w700,
+                                  color: primaryTextColor,
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              Text(
+                                "Warning: this cannot be undone. All your vehicle history will be deleted permanently.",
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: secondaryTextColor,
+                                  height: 1.4,
+                                ),
+                              ),
+                              const SizedBox(height: 20),
+                              SizedBox(
+                                width: double.infinity,
+                                child: ElevatedButton(
+                                  onPressed: () {
+                                    // TODO: Implement Remove Vehicle logic
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: isDark
+                                        ? const Color(0xFF2C2C2C)
+                                        : Colors.grey.shade200,
+                                    foregroundColor: Colors.redAccent,
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 14,
+                                    ),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    elevation: 0,
+                                  ),
+                                  child: const Text(
+                                    "Remove Vehicle",
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ],
-                    ),
-                  ),
 
-                  const SizedBox(height: 60),
-                ],
-              ),
+                      const SizedBox(height: 60),
+                    ],
+                  ),
+                ),
+              ],
             );
           }
           return const SizedBox.shrink();
@@ -510,7 +648,9 @@ class VehicleControlView extends StatelessWidget {
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              border: Border.all(color: theme.colorScheme.onSurface.withOpacity(0.1)),
+              border: Border.all(
+                color: theme.colorScheme.onSurface.withOpacity(0.1),
+              ),
             ),
             child: Icon(icon, size: 30, color: theme.colorScheme.onSurface),
           ),
@@ -540,9 +680,9 @@ class VehicleControlView extends StatelessWidget {
       final croppedFile = await _cropImage(pickedFile.path, l10n);
       if (croppedFile != null && context.mounted) {
         context.read<VehicleControlCubit>().updateVehicleImage(
-              vehicleId,
-              croppedFile.path,
-            );
+          vehicleId,
+          croppedFile.path,
+        );
       }
     }
   }
@@ -558,9 +698,7 @@ class VehicleControlView extends StatelessWidget {
           initAspectRatio: CropAspectRatioPreset.original,
           lockAspectRatio: false,
         ),
-        IOSUiSettings(
-          title: l10n.cropVehicleImage,
-        ),
+        IOSUiSettings(title: l10n.cropVehicleImage),
       ],
     );
   }
@@ -596,7 +734,10 @@ class VehicleControlView extends StatelessWidget {
                   const SizedBox(width: 12),
                   Text(
                     l10n.updateTankCapacity,
-                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ],
               ),
@@ -658,10 +799,7 @@ class VehicleControlView extends StatelessWidget {
                   const SizedBox(width: 16),
                   TextButton(
                     onPressed: () {
-                      cubit.updateTankCapacity(
-                        vehicleId,
-                        controller.text,
-                      );
+                      cubit.updateTankCapacity(vehicleId, controller.text);
                       Navigator.pop(context);
                     },
                     child: Text(
@@ -712,7 +850,10 @@ class VehicleControlView extends StatelessWidget {
                   const SizedBox(width: 12),
                   Text(
                     l10n.updateMileage,
-                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ],
               ),
@@ -782,10 +923,7 @@ class VehicleControlView extends StatelessWidget {
                   const SizedBox(width: 16),
                   TextButton(
                     onPressed: () {
-                      cubit.updateMileage(
-                        vehicleId,
-                        controller.text,
-                      );
+                      cubit.updateMileage(vehicleId, controller.text);
                       Navigator.pop(context);
                     },
                     child: Text(

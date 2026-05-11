@@ -1380,7 +1380,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get cancel => 'रद्द करें';
 
   @override
-  String get save => 'सहेजें';
+  String get save => 'सेव करें';
 
   @override
   String get updateMileageArai => 'माइलेज अपडेट करें (ARAI)';
@@ -1671,7 +1671,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get cropVehicleImage => 'वाहन की छवि क्रॉप करें';
 
   @override
-  String get uploadImage => 'छवि अपलोड करें';
+  String get uploadImage => 'इमेज अपलोड करें';
 
   @override
   String get camera => 'कैमरा';
@@ -1683,7 +1683,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get pdf => 'पीडीएफ';
 
   @override
-  String get fileTooLarge => 'फ़ाइल का आकार 5MB से अधिक है';
+  String get fileTooLarge => 'फ़ाइल बहुत बड़ी है (अधिकतम 5MB)';
 
   @override
   String get pickImageError => 'छवि चुनने में त्रुटि';
@@ -1719,7 +1719,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get successMessage => 'दस्तावेज़ सफलतापूर्वक सहेजा गया';
 
   @override
-  String get selectExpiryDate => 'समाप्ति तिथि';
+  String get selectExpiryDate => 'समाप्ति तिथि चुनें';
 
   @override
   String get documentsEncrypted =>
@@ -1981,4 +1981,193 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get product => 'प्रोडक्ट्स';
+
+  @override
+  String get errorPickingImage => 'छवि चुनने में त्रुटि';
+
+  @override
+  String get frontDocumentRequired => 'सामने के दस्तावेज़ की छवि आवश्यक है';
+
+  @override
+  String get documentUploadedSuccessfully =>
+      'दस्तावेज़ सफलतापूर्वक अपलोड किया गया';
+
+  @override
+  String get addAccessoryBill => 'एक्सेसरी बिल जोड़ें';
+
+  @override
+  String get accessoryName => 'एक्सेसरी का नाम';
+
+  @override
+  String get billingDate => 'बिलिंग तिथि';
+
+  @override
+  String get shopName => 'दुकान का नाम';
+
+  @override
+  String get shopContact => 'दुकान का संपर्क';
+
+  @override
+  String get uploadBill => 'बिल अपलोड करें';
+
+  @override
+  String get yearExtendedWarranty => '1 वर्ष की विस्तारित वारंटी';
+
+  @override
+  String get paymentSummary => 'भुगतान सारांश';
+
+  @override
+  String get boosterOffer => 'बूस्टर ऑफर @50% छूट';
+
+  @override
+  String get toPay => 'भुगतान करने के लिए';
+
+  @override
+  String amountPayable(String amount) {
+    return 'देय राशि $amount';
+  }
+
+  @override
+  String get distance => 'दूरी';
+
+  @override
+  String get recentToOldest => 'नए से पुराना';
+
+  @override
+  String get sorting => 'सॉर्टिंग';
+
+  @override
+  String get backToDefault => 'डिफ़ॉल्ट पर वापस जाएं';
+
+  @override
+  String get sortBy => 'इसके अनुसार सॉर्ट करें';
+
+  @override
+  String get duration => 'अवधि';
+
+  @override
+  String get oldestToRecent => 'पुराने से नया';
+
+  @override
+  String get date => 'तारीख';
+
+  @override
+  String noTripsFound(String query) {
+    return '\"$query\" के लिए कोई ट्रिप नहीं मिली';
+  }
+
+  @override
+  String ridesCount(String count) {
+    return '$count राइड्स';
+  }
+
+  @override
+  String get searchTrips => 'ट्रिप खोजें';
+
+  @override
+  String get searchRides => 'राइड्स खोजें';
+
+  @override
+  String get notAvailable => 'उपलब्ध नहीं';
+
+  @override
+  String get start => 'शुरू';
+
+  @override
+  String get end => 'खत्म';
+
+  @override
+  String get yesImSure => 'हाँ मुझे यकीन है';
+
+  @override
+  String get topSpeedLabel => 'अधिकतम गति';
+
+  @override
+  String get rideDurationLabel => 'राइड की अवधि';
+
+  @override
+  String get editRides => 'राइड्स एडिट करें';
+
+  @override
+  String get tripDetails => 'ट्रिप का विवरण';
+
+  @override
+  String get tripQuoteLabel => 'ट्रिप कोट';
+
+  @override
+  String get unmerge => 'अनमर्ज करें';
+
+  @override
+  String get tripNameLabel => 'ट्रिप का नाम';
+
+  @override
+  String get deleteTripConfirmation =>
+      'यह आपकी ट्रिप को स्थायी रूप से हटा देगा। क्या आप वाकई जारी रखना चाहते हैं?';
+
+  @override
+  String get tripStats => 'ट्रिप के आंकड़े';
+
+  @override
+  String get avgSpeedLabel => 'औसत गति';
+
+  @override
+  String get tripQuoteDefault => 'हर ट्रिप की एक कहानी होती है। आपकी यहाँ है।';
+
+  @override
+  String get deleteTrip => 'ट्रिप हटाएं';
+
+  @override
+  String get hrLabel => 'घंटा';
+
+  @override
+  String ridesSelectedSummary(String count, String distance, String duration) {
+    return '$count राइड्स चुनी गईं | $distance किमी • $duration';
+  }
+
+  @override
+  String get clearSelection => 'चयन साफ़ करें';
+
+  @override
+  String get secLabel => 'सेकंड';
+
+  @override
+  String get minLabel => 'मिनट';
+
+  @override
+  String get selectionTooltipMessage =>
+      'अपनी ट्रिप में जोड़ने के लिए राइड्स चुनें।';
+
+  @override
+  String get selectRides => 'राइड्स चुनें';
+
+  @override
+  String get createTrip => 'ट्रिप बनाएं';
+
+  @override
+  String get bestAverageSpeed => 'सर्वोत्तम औसत गति';
+
+  @override
+  String get topSpeedClocked => 'उच्चतम गति दर्ज की गई';
+
+  @override
+  String get searchTripsHint => 'नाम से ट्रिप खोजें';
+
+  @override
+  String noRidesFound(String query) {
+    return '\"$query\" के लिए कोई राइड नहीं मिली';
+  }
+
+  @override
+  String tripLabel(String number) {
+    return 'ट्रिप $number';
+  }
+
+  @override
+  String get extraordinaryTrips => 'असाधारण ट्रिप';
+
+  @override
+  String get maxDistanceCovered => 'अधिकतम दूरी तय की गई';
+
+  @override
+  String get searchRidesHint => 'शहर से राइड्स खोजें';
 }

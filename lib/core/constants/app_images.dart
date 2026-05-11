@@ -43,6 +43,7 @@ class AppImages {
   static const String bikeUpgrade = "$images/bike upgrade.png";
   static const String upgradeBackground = "$images/bg_upgrade.png";
   static const String plusImg = "$images/plus_img.png";
+  static const String bikeInfoImage = "$images/bike_info_image.png";
 
   static const String deviceImage = "$images/device_image.png";
 

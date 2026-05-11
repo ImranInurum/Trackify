@@ -1,4 +1,4 @@
-{
+﻿{
     "selectLanguage": "اختر لغتك",
     "letsGetStarted": "دعنا نبدأ",
     "email": "البريد الإلكتروني",
@@ -728,8 +728,95 @@
         "homeAddress": "عنوان المنزل",
         "officeAddress": "عنوان المكتب",
         "proceed": "متابعة",
-        "product": "المنتجات"
+        "product": "المنتجات",
 
 
 
+
+        "addAccessoryBill": "إضافة فاتورة ملحقات",
+        "accessoryName": "اسم الملحق",
+        "billingDate": "تاريخ الفاتورة",
+        "billingAmount": "مبلغ الفاتورة",
+        "shopName": "اسم المحل",
+        "shopContact": "اتصال المحل",
+        "uploadBill": "تحميل الفاتورة",
+        "addImage": "إضافة صورة",
+        "maxFileSizeNote": "ملاحظة: الحد الأقصى لحجم الملف هو 5 ميجابايت",
+        "addDocument": "إضافة مستند",
+        "extendedWarranty": "ضمان ممتد",
+        "yearExtendedWarranty": "ضمان ممتد لمدة عام واحد",
+        "paymentSummary": "ملخص الدفع",
+        "boosterOffer": "عرض معزز بخصم 50%",
+        "toPay": "للدفع",
+        "amountPayable": "المبلغ المستحق {amount}",
+        "@amountPayable": {
+          "placeholders": {
+            "amount": {
+              "type": "String"
+            }
+          }
+        },
+  "distance": "المسافة",
+  "recentToOldest": "من الأحدث إلى الأقدم",
+  "sorting": "فرز",
+  "backToDefault": "العودة إلى الافتراضي",
+  "sortBy": "فرز حسب",
+  "duration": "المدة",
+  "oldestToRecent": "من الأقدم إلى الأحدث",
+  "date": "التاريخ",
+  "noTripsFound": "لم يتم العثور على رحلات",
+  "ridesCount": "{count} رحلات",
+  "@ridesCount": {
+    "placeholders":  {
+                         "count":  {
+                                       "type":  "String"
+                                   }
+                     }
+},
+  "searchTrips": "البحث في الرحلات",
+  "searchRides": "بحث في الرحلات",
+  "notAvailable": "غير متوفر",
+  "start": "بداية",
+  "end": "نهاية",
+  "yesImSure": "نعم أنا متأكد",
+  "topSpeedLabel": "السرعة القصوى",
+  "rideDurationLabel": "مدة الرحلة",
+  "editRides": "تعديل الرحلات",
+  "camera": "كاميرا",
+  "tripDetails": "تفاصيل الرحلة",
+  "tripQuoteLabel": "مقولة الرحلة",
+  "unmerge": "فك الدمج",
+  "gallery": "معرض الصور",
+  "tripNameLabel": "اسم الرحلة",
+  "ridingBehaviour": "سلوك القيادة",
+  "deleteTripConfirmation": "سيؤدي هذا إلى حذف رحلتك نهائيًا. هل أنت متأكد أنك تريد الاستمرار؟",
+  "tripStats": "إحصائيات الرحلة",
+  "uploadImage": "تحميل الصورة",
+  "avgSpeedLabel": "متوسط السرعة",
+  "tripQuoteDefault": "كل رحلة لها قصة. قصتك تبدأ هنا.",
+  "save": "حفظ",
+  "deleteTrip": "حذف الرحلة",
+  "hrLabel": "ساعة",
+  "ridesSelectedSummary": "تم اختيار {count} رحلات | {distance} كم • {duration}",
+  "@ridesSelectedSummary": {"placeholders": {"count": {"type": "String"}, "distance": {"type": "String"}, "duration": {"type": "String"}} },
+  "clearSelection": "مسح التحديد",
+  "skip": "تخطي",
+  "secLabel": "ثانية",
+  "minLabel": "دقيقة",
+  "selectionTooltipMessage": "اختر الرحلات التي تريد إضافتها إلى رحلتك.",
+  "selectRides": "اختر الرحلات",
+  "createTrip": "إنشاء رحلة",
+  "bestAverageSpeed": "أفضل متوسط سرعة",
+  "noTripsFound": "لم يتم العثور على رحلات لـ \"{query}\"",
+  "@noTripsFound": {"placeholders": {"query": {"type": "String"}}},
+  "topSpeedClocked": "أعلى سرعة مسجلة",
+  "searchTripsHint": "ابحث عن الرحلات بالاسم",
+  "noRidesFound": "لم يتم العثور على رحلات لـ \"{query}\"",
+  "@noRidesFound": {"placeholders": {"query": {"type": "String"}}},
+  "tripLabel": "رحلة {number}",
+  "@tripLabel": {"placeholders": {"number": {"type": "String"}}},
+  "extraordinaryTrips": "رحلات استثنائية",
+  "maxDistanceCovered": "أقصى مسافة مقطوعة",
+  "searchTrips": "البحث عن الرحلات",
+  "searchRidesHint": "ابحث عن الرحلات بالمدينة"
 }

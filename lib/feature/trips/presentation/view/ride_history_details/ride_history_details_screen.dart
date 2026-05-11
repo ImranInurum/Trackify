@@ -1128,17 +1128,23 @@ class _RideHistoryDetailsScreenState extends State<RideHistoryDetailsScreen>
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              _buildPanelStat(
-                                Icons.route_outlined,
-                                "${widget.ride.distance} ${l10n.km}",
+                              Expanded(
+                                child: _buildPanelStat(
+                                  Icons.route_outlined,
+                                  "${widget.ride.distance.toStringAsFixed(1)} ${l10n.km}",
+                                ),
                               ),
-                              _buildPanelStat(
-                                Icons.timer_outlined,
-                                widget.ride.duration,
+                              Expanded(
+                                child: _buildPanelStat(
+                                  Icons.timer_outlined,
+                                  widget.ride.duration,
+                                ),
                               ),
-                              _buildPanelStat(
-                                Icons.currency_rupee,
-                                "49",
+                              Expanded(
+                                child: _buildPanelStat(
+                                  Icons.currency_rupee,
+                                  "49",
+                                ),
                               ), // Mock Price
                             ],
                           ),
@@ -1146,18 +1152,24 @@ class _RideHistoryDetailsScreenState extends State<RideHistoryDetailsScreen>
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              _buildPanelStat(
-                                Icons.speed,
-                                "${widget.ride.avgSpeed} ${l10n.kmh} AVG",
+                              Expanded(
+                                child: _buildPanelStat(
+                                  Icons.speed,
+                                  "${widget.ride.avgSpeed.toStringAsFixed(1)} ${l10n.kmh} AVG",
+                                ),
                               ),
-                              _buildPanelStat(
-                                Icons.bolt,
-                                "${widget.ride.topSpeed} Top Speed",
-                                isHighlight: true,
+                              Expanded(
+                                child: _buildPanelStat(
+                                  Icons.bolt,
+                                  "${widget.ride.topSpeed.toStringAsFixed(1)} Top",
+                                  isHighlight: true,
+                                ),
                               ),
-                              _buildPanelStat(
-                                Icons.water_drop_outlined,
-                                "₹ 2.1/km",
+                              Expanded(
+                                child: _buildPanelStat(
+                                  Icons.water_drop_outlined,
+                                  "₹ 2.1/km",
+                                ),
                               ), // Mock mileage/cost
                             ],
                           ),
@@ -1280,6 +1292,7 @@ class _RideHistoryDetailsScreenState extends State<RideHistoryDetailsScreen>
     bool isHighlight = false,
   }) {
     return Row(
+      mainAxisSize: MainAxisSize.min,
       children: [
         Icon(
           icon,
@@ -1289,14 +1302,18 @@ class _RideHistoryDetailsScreenState extends State<RideHistoryDetailsScreen>
           size: 16,
         ),
         const SizedBox(width: 6),
-        Text(
-          value,
-          style: TextStyle(
-            color: isHighlight
-                ? Theme.of(context).colorScheme.primary
-                : Theme.of(context).colorScheme.onSurface,
-            fontSize: 14,
-            fontWeight: FontWeight.w600,
+        Flexible(
+          child: Text(
+            value,
+            style: TextStyle(
+              color: isHighlight
+                  ? Theme.of(context).colorScheme.primary
+                  : Theme.of(context).colorScheme.onSurface,
+              fontSize: 13,
+              fontWeight: FontWeight.w600,
+            ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
           ),
         ),
       ],

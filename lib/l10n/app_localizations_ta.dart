@@ -777,7 +777,7 @@ class AppLocalizationsTa extends AppLocalizations {
   String get startByCreatingTrip => 'Start by creating a New Trip';
 
   @override
-  String get skip => 'Skip';
+  String get skip => 'தவிர்';
 
   @override
   String get todayText => 'இன்று';
@@ -1025,10 +1025,10 @@ class AppLocalizationsTa extends AppLocalizations {
   String get uploadServicingBill => 'சேவை மசோதாவை பதிவேற்றவும்';
 
   @override
-  String get addImage => 'படம் சேர்';
+  String get addImage => 'படம் சேர்க்கவும்';
 
   @override
-  String get maxFileSizeNote => 'குறிப்பு: அதிகபட்ச கோப்பு அளவு 5MB ஆகும்';
+  String get maxFileSizeNote => 'குறிப்பு: அதிகபட்ச கோப்பு அளவு 5MB';
 
   @override
   String get serviceDate => 'சேவை தேதி';
@@ -1221,7 +1221,7 @@ class AppLocalizationsTa extends AppLocalizations {
   String get appSimRecharge => 'App & SIM Recharge';
 
   @override
-  String get extendedWarranty => 'Extended Warranty';
+  String get extendedWarranty => 'நீட்டிக்கப்பட்ட உத்தரவாதம்';
 
   @override
   String get plusMembership => 'Plus Membership';
@@ -1671,13 +1671,13 @@ class AppLocalizationsTa extends AppLocalizations {
   String get cropVehicleImage => 'Crop Vehicle Image';
 
   @override
-  String get uploadImage => 'Upload Image';
+  String get uploadImage => 'படத்தை பதிவேற்றவும்';
 
   @override
-  String get camera => 'Camera';
+  String get camera => 'கேமரா';
 
   @override
-  String get gallery => 'Gallery';
+  String get gallery => 'கேலரி';
 
   @override
   String get pdf => 'PDF';
@@ -1710,7 +1710,7 @@ class AppLocalizationsTa extends AppLocalizations {
   String get documentsSafe => 'Your documents are encrypted and safe';
 
   @override
-  String get addDocument => 'Add Document';
+  String get addDocument => 'ஆவணம் சேர்க்கவும்';
 
   @override
   String get frontRequired => 'Front side document is required';
@@ -1979,4 +1979,193 @@ class AppLocalizationsTa extends AppLocalizations {
 
   @override
   String get product => 'தயாரிப்புகள்';
+
+  @override
+  String get errorPickingImage => 'Error picking image';
+
+  @override
+  String get frontDocumentRequired => 'Front document image is required';
+
+  @override
+  String get documentUploadedSuccessfully => 'Document uploaded successfully';
+
+  @override
+  String get addAccessoryBill => 'துணைக்கருவி பில் சேர்க்கவும்';
+
+  @override
+  String get accessoryName => 'துணைக்கருவி பெயர்';
+
+  @override
+  String get billingDate => 'பில்லிங் தேதி';
+
+  @override
+  String get shopName => 'கடை பெயர்';
+
+  @override
+  String get shopContact => 'கடை தொடர்பு';
+
+  @override
+  String get uploadBill => 'பில் பதிவேற்றவும்';
+
+  @override
+  String get yearExtendedWarranty => '1 ஆண்டு நீட்டிக்கப்பட்ட உத்தரவாதம்';
+
+  @override
+  String get paymentSummary => 'கட்டணச் சுருக்கம்';
+
+  @override
+  String get boosterOffer => 'பூஸ்டர் சலுகை @50% தள்ளுபடி';
+
+  @override
+  String get toPay => 'செலுத்த வேண்டியது';
+
+  @override
+  String amountPayable(String amount) {
+    return 'செலுத்த வேண்டிய தொகை $amount';
+  }
+
+  @override
+  String get distance => 'தூரம்';
+
+  @override
+  String get recentToOldest => 'புதியது முதல் பழையது வரை';
+
+  @override
+  String get sorting => 'வரிசைப்படுத்துதல்';
+
+  @override
+  String get backToDefault => 'இயல்புநிலைக்குத் திரும்பு';
+
+  @override
+  String get sortBy => 'இதன் மூலம் வரிசைப்படுத்து';
+
+  @override
+  String get duration => 'கால அளவு';
+
+  @override
+  String get oldestToRecent => 'பழையது முதல் புதியது வரை';
+
+  @override
+  String get date => 'தேதி';
+
+  @override
+  String noTripsFound(String query) {
+    return '\"$query\" க்கான பயணங்கள் எதுவும் கிடைக்கவில்லை';
+  }
+
+  @override
+  String ridesCount(String count) {
+    return '$count சவாரிகள்';
+  }
+
+  @override
+  String get searchTrips => 'பயணங்களைத் தேடுங்கள்';
+
+  @override
+  String get searchRides => 'சவாரிகளைத் தேடுங்கள்';
+
+  @override
+  String get notAvailable => 'கிடைப்பதில்லை';
+
+  @override
+  String get start => 'தொடங்கு';
+
+  @override
+  String get end => 'முடிவு';
+
+  @override
+  String get yesImSure => 'ஆம் எனக்கு நிச்சயமாக தெரியும்';
+
+  @override
+  String get topSpeedLabel => 'அதிக வேகம்';
+
+  @override
+  String get rideDurationLabel => 'சவாரி காலம்';
+
+  @override
+  String get editRides => 'சவாரிகளைத் திருத்தவும்';
+
+  @override
+  String get tripDetails => 'பயண விவரங்கள்';
+
+  @override
+  String get tripQuoteLabel => 'பயண மேற்கோள்';
+
+  @override
+  String get unmerge => 'பிரிக்கவும்';
+
+  @override
+  String get tripNameLabel => 'பயணத்தின் பெயர்';
+
+  @override
+  String get deleteTripConfirmation =>
+      'இது உங்கள் பயணத்தை நிரந்தரமாக நீக்கிவிடும். தொடர விரும்புகிறீர்களா?';
+
+  @override
+  String get tripStats => 'பயண புள்ளிவிவரங்கள்';
+
+  @override
+  String get avgSpeedLabel => 'சராசரி வேகம்';
+
+  @override
+  String get tripQuoteDefault =>
+      'ஒவ்வொரு பயணத்திற்கும் ஒரு கதை உண்டு. உங்களுடையது இங்கே.';
+
+  @override
+  String get deleteTrip => 'பயணத்தை நீக்கு';
+
+  @override
+  String get hrLabel => 'மணி';
+
+  @override
+  String ridesSelectedSummary(String count, String distance, String duration) {
+    return '$count சவாரிகள் தேர்ந்தெடுக்கப்பட்டுள்ளன | $distance கிமீ • $duration';
+  }
+
+  @override
+  String get clearSelection => 'தேர்வை நீக்கு';
+
+  @override
+  String get secLabel => 'விநாடி';
+
+  @override
+  String get minLabel => 'நிமிடம்';
+
+  @override
+  String get selectionTooltipMessage =>
+      'உங்கள் பயணத்தில் சேர்க்க விரும்பும் சவாரிகளைத் தேர்ந்தெடுக்கவும்.';
+
+  @override
+  String get selectRides => 'சவாரிகளைத் தேர்ந்தெடுக்கவும்';
+
+  @override
+  String get createTrip => 'பயணத்தை உருவாக்கவும்';
+
+  @override
+  String get bestAverageSpeed => 'சிறந்த சராசரி வேகம்';
+
+  @override
+  String get topSpeedClocked => 'பதிவு செய்யப்பட்ட அதிகபட்ச வேகம்';
+
+  @override
+  String get searchTripsHint => 'பெயரால் பயணங்களைத் தேடுங்கள்';
+
+  @override
+  String noRidesFound(String query) {
+    return '\"$query\" க்கான சவாரிகள் எதுவும் கிடைக்கவில்லை';
+  }
+
+  @override
+  String tripLabel(String number) {
+    return 'பயணம் $number';
+  }
+
+  @override
+  String get extraordinaryTrips => 'அசாதாரண பயணங்கள்';
+
+  @override
+  String get maxDistanceCovered => 'கடந்து சென்ற அதிகபட்ச தூரம்';
+
+  @override
+  String get searchRidesHint => 'நகரத்தின் மூலம் சவாரிகளைத் தேடுங்கள்';
 }

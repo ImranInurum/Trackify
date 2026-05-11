@@ -1,4 +1,4 @@
-{
+﻿{
     "selectLanguage": "உங்கள் மொழியைத் தேர்ந்தெடுக்கவும்",
     "letsGetStarted": "தொடங்குவோம்",
     "email": "மின்னஞ்சல்",
@@ -680,8 +680,95 @@
         "homeAddress": "வீட்டு முகவரி",
         "officeAddress": "அலுவலக முகவரி",
         "proceed": "தொடரவும்",
-        "product": "தயாரிப்புகள்"
+        "product": "தயாரிப்புகள்",
 
 
 
+
+        "addAccessoryBill": "துணைக்கருவி பில் சேர்க்கவும்",
+        "accessoryName": "துணைக்கருவி பெயர்",
+        "billingDate": "பில்லிங் தேதி",
+        "billingAmount": "பில்லிங் தொகை",
+        "shopName": "கடை பெயர்",
+        "shopContact": "கடை தொடர்பு",
+        "uploadBill": "பில் பதிவேற்றவும்",
+        "addImage": "படம் சேர்க்கவும்",
+        "maxFileSizeNote": "குறிப்பு: அதிகபட்ச கோப்பு அளவு 5MB",
+        "addDocument": "ஆவணம் சேர்க்கவும்",
+        "extendedWarranty": "நீட்டிக்கப்பட்ட உத்தரவாதம்",
+        "yearExtendedWarranty": "1 ஆண்டு நீட்டிக்கப்பட்ட உத்தரவாதம்",
+        "paymentSummary": "கட்டணச் சுருக்கம்",
+        "boosterOffer": "பூஸ்டர் சலுகை @50% தள்ளுபடி",
+        "toPay": "செலுத்த வேண்டியது",
+        "amountPayable": "செலுத்த வேண்டிய தொகை {amount}",
+        "@amountPayable": {
+          "placeholders": {
+            "amount": {
+              "type": "String"
+            }
+          }
+        },
+  "distance": "தூரம்",
+  "recentToOldest": "புதியது முதல் பழையது வரை",
+  "sorting": "வரிசைப்படுத்துதல்",
+  "backToDefault": "இயல்புநிலைக்குத் திரும்பு",
+  "sortBy": "இதன் மூலம் வரிசைப்படுத்து",
+  "duration": "கால அளவு",
+  "oldestToRecent": "பழையது முதல் புதியது வரை",
+  "date": "தேதி",
+  "noTripsFound": "பயணங்கள் எதுவும் இல்லை",
+  "ridesCount": "{count} சவாரிகள்",
+  "@ridesCount": {
+    "placeholders":  {
+                         "count":  {
+                                       "type":  "String"
+                                   }
+                     }
+},
+  "searchTrips": "பயணங்களைத் தேடுங்கள்",
+  "searchRides": "சவாரிகளைத் தேடுங்கள்",
+  "notAvailable": "கிடைப்பதில்லை",
+  "start": "தொடங்கு",
+  "end": "முடிவு",
+  "yesImSure": "ஆம் எனக்கு நிச்சயமாக தெரியும்",
+  "topSpeedLabel": "அதிக வேகம்",
+  "rideDurationLabel": "சவாரி காலம்",
+  "editRides": "சவாரிகளைத் திருத்தவும்",
+  "camera": "கேமரா",
+  "tripDetails": "பயண விவரங்கள்",
+  "tripQuoteLabel": "பயண மேற்கோள்",
+  "unmerge": "பிரிக்கவும்",
+  "gallery": "கேலரி",
+  "tripNameLabel": "பயணத்தின் பெயர்",
+  "ridingBehaviour": "சவாரி நடத்தை",
+  "deleteTripConfirmation": "இது உங்கள் பயணத்தை நிரந்தரமாக நீக்கிவிடும். தொடர விரும்புகிறீர்களா?",
+  "tripStats": "பயண புள்ளிவிவரங்கள்",
+  "uploadImage": "படத்தை பதிவேற்றவும்",
+  "avgSpeedLabel": "சராசரி வேகம்",
+  "tripQuoteDefault": "ஒவ்வொரு பயணத்திற்கும் ஒரு கதை உண்டு. உங்களுடையது இங்கே.",
+  "save": "சேமி",
+  "deleteTrip": "பயணத்தை நீக்கு",
+  "hrLabel": "மணி",
+  "ridesSelectedSummary": "{count} சவாரிகள் தேர்ந்தெடுக்கப்பட்டுள்ளன | {distance} கிமீ • {duration}",
+  "@ridesSelectedSummary": {"placeholders": {"count": {"type": "String"}, "distance": {"type": "String"}, "duration": {"type": "String"}} },
+  "clearSelection": "தேர்வை நீக்கு",
+  "skip": "தவிர்",
+  "secLabel": "விநாடி",
+  "minLabel": "நிமிடம்",
+  "selectionTooltipMessage": "உங்கள் பயணத்தில் சேர்க்க விரும்பும் சவாரிகளைத் தேர்ந்தெடுக்கவும்.",
+  "selectRides": "சவாரிகளைத் தேர்ந்தெடுக்கவும்",
+  "createTrip": "பயணத்தை உருவாக்கவும்",
+  "bestAverageSpeed": "சிறந்த சராசரி வேகம்",
+  "noTripsFound": "\"{query}\" க்கான பயணங்கள் எதுவும் கிடைக்கவில்லை",
+  "@noTripsFound": {"placeholders": {"query": {"type": "String"}}},
+  "topSpeedClocked": "பதிவு செய்யப்பட்ட அதிகபட்ச வேகம்",
+  "searchTripsHint": "பெயரால் பயணங்களைத் தேடுங்கள்",
+  "noRidesFound": "\"{query}\" க்கான சவாரிகள் எதுவும் கிடைக்கவில்லை",
+  "@noRidesFound": {"placeholders": {"query": {"type": "String"}}},
+  "tripLabel": "பயணம் {number}",
+  "@tripLabel": {"placeholders": {"number": {"type": "String"}}},
+  "extraordinaryTrips": "அசாதாரண பயணங்கள்",
+  "maxDistanceCovered": "கடந்து சென்ற அதிகபட்ச தூரம்",
+  "searchTrips": "பயணங்களைத் தேடுங்கள்",
+  "searchRidesHint": "நகரத்தின் மூலம் சவாரிகளைத் தேடுங்கள்"
 }

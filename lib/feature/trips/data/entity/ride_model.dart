@@ -74,6 +74,63 @@ class Ride {
     );
   }
 
+  static Ride mergeRides(List<Ride> rides) {
+    if (rides.isEmpty) {
+      return Ride(
+        id: "empty",
+        date: "",
+        startTime: "",
+        endTime: "",
+        distance: 0,
+        startLocation: "",
+        endLocation: "",
+        duration: "",
+        topSpeed: 0,
+        avgSpeed: 0,
+        mapImageUrl: "",
+        polylinePoints: [],
+        points: [],
+      );
+    }
+
+    final totalDistance =
+        double.parse(rides.fold(0.0, (sum, r) => sum + r.distance).toStringAsFixed(2));
+    final topSpeed = rides.fold(
+      0.0,
+      (max, r) => r.topSpeed > max ? r.topSpeed : max,
+    );
+    final avgSpeed =
+        rides.fold(0.0, (sum, r) => sum + r.avgSpeed) / rides.length;
+
+    // Calculate total duration from duration strings (e.g. "20 min")
+    int totalMinutes = 0;
+    for (var r in rides) {
+      final parts = r.duration.split(' ');
+      if (parts.isNotEmpty) {
+        totalMinutes += int.tryParse(parts[0]) ?? 0;
+      }
+    }
+
+    final allPolylinePoints = rides.expand((r) => r.polylinePoints).toList();
+    final allPoints = rides.expand((r) => r.points).toList();
+
+    return Ride(
+      id: "trip_${rides.first.id}",
+      date: rides.first.date,
+      startTime: rides.first.startTime,
+      endTime: rides.last.endTime,
+      distance: totalDistance,
+      startLocation: rides.first.startLocation,
+      endLocation: rides.last.endLocation,
+      duration: "$totalMinutes min",
+      topSpeed: topSpeed,
+      avgSpeed: avgSpeed,
+      mapImageUrl: rides.first.mapImageUrl,
+      polylinePoints: allPolylinePoints,
+      points: allPoints,
+    );
+  }
+
   factory Ride.fromTripModel(String id, RideTripModel trip) {
     final summary = trip.summary;
 

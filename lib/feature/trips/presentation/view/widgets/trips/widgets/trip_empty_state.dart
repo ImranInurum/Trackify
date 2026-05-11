@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
-import '../../../../../../../l10n/app_localizations.dart';
+import 'package:trackify/l10n/app_localizations.dart';
+import '../../../../../../../core/constants/app_images.dart';
+
+
 
 class TripEmptyState extends StatelessWidget {
   const TripEmptyState({super.key});
@@ -10,7 +13,7 @@ class TripEmptyState extends StatelessWidget {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Image.asset("assets/images/tripScreenBike.png", height: 160),
+        Image.asset(AppImages.bikeInfoImage, height: 160),
         const SizedBox(height: 20),
          Padding(
           padding: const EdgeInsets.symmetric(horizontal: 30),
