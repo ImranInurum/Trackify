@@ -666,5 +666,65 @@
   "extraordinaryTrips": "विलक्षण ट्रिप",
   "maxDistanceCovered": "कापलेले कमाल अंतर",
   "searchTrips": "ट्रिप शोधा",
-  "searchRidesHint": "शहराद्वारे राइड्स शोधा"
+  "searchRidesHint": "शहराद्वारे राइड्स शोधा",
+
+   "healthInsurance": "आरोग्य विमा",
+    "bloodGroup": "रक्तगट",
+    "selectBloodGroup": "रक्तगट निवडा",
+    "healthInsuranceCardNumber": "आरोग्य विमा कार्ड क्रमांक",
+    "policyNumber": "पॉलिसी क्रमांक",
+    "save": "सेव्ह करा",
+
+    "personalDetails": "वैयक्तिक माहिती",
+      "profileUpdatedSuccessfully": "प्रोफाइल यशस्वीरित्या अपडेट झाले",
+
+      "editEmailAddress": "ईमेल पत्ता संपादित करा",
+      "emailAddress": "ईमेल पत्ता",
+      "emailNotVerified": "ईमेल सत्यापित नाही",
+
+      "cancel": "रद्द करा",
+      "saveAndVerify": "जतन करा आणि सत्यापित करा",
+
+      "editMobileNumber": "मोबाईल नंबर संपादित करा",
+      "tenDigitMobileNumber": "दहा अंकी मोबाईल नंबर",
+
+      "firstName": "पहिले नाव",
+      "middleName": "मधले नाव",
+      "lastName": "आडनाव",
+
+      "required": "आवश्यक",
+
+      "mobileNumber": "मोबाईल नंबर",
+
+      "dateOfBirth": "जन्मतारीख",
+
+      "optional": "(पर्यायी)",
+
+      "selectCountry": "देश निवडा",
+      "selectState": "राज्य निवडा",
+      "selectCity": "शहर निवडा",
+
+      "enterAddress": "पत्ता प्रविष्ट करा (कमाल 100 अक्षरे)",
+
+      "save": "जतन करा",
+
+      "india": "भारत",
+      "usa": "अमेरिका",
+      "uk": "युनायटेड किंगडम",
+      "uae": "यूएई",
+
+      "madhyaPradesh": "मध्य प्रदेश",
+      "maharashtra": "महाराष्ट्र",
+      "rajasthan": "राजस्थान",
+      "gujarat": "गुजरात",
+      "karnataka": "कर्नाटक",
+      "tamilNadu": "तामिळनाडू",
+      "uttarPradesh": "उत्तर प्रदेश",
+      "delhi": "दिल्ली",
+
+      "indoreDistrict": "इंदूर जिल्हा",
+      "bhopal": "भोपाळ",
+      "gwalior": "ग्वाल्हेर",
+      "jabalpur": "जबलपूर",
+      "ujjain": "उज्जैन"
 }

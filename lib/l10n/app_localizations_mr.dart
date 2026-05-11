@@ -68,7 +68,7 @@ class AppLocalizationsMr extends AppLocalizations {
   String get nameRequired => 'नाव आवश्यक आहे';
 
   @override
-  String get mobileNumber => 'मोबाइल नंबर';
+  String get mobileNumber => 'मोबाईल नंबर';
 
   @override
   String get mobileNumberHint => 'मोबाईल नंबर प्रविष्ट करा';
@@ -909,7 +909,7 @@ class AppLocalizationsMr extends AppLocalizations {
   String get addProfilePicture => 'तुमचा प्रोफाइल फोटो जोडा';
 
   @override
-  String get personalDetails => 'वैयक्तिक तपशील';
+  String get personalDetails => 'वैयक्तिक माहिती';
 
   @override
   String get userNameLabel => 'नाव';
@@ -1380,7 +1380,7 @@ class AppLocalizationsMr extends AppLocalizations {
   String get cancel => 'रद्द करा';
 
   @override
-  String get save => 'सेव्ह करा';
+  String get save => 'जतन करा';
 
   @override
   String get updateMileageArai => 'Update Mileage (ARAI)';
@@ -2168,4 +2168,121 @@ class AppLocalizationsMr extends AppLocalizations {
 
   @override
   String get searchRidesHint => 'शहराद्वारे राइड्स शोधा';
+
+  @override
+  String get healthInsurance => 'आरोग्य विमा';
+
+  @override
+  String get bloodGroup => 'रक्तगट';
+
+  @override
+  String get selectBloodGroup => 'रक्तगट निवडा';
+
+  @override
+  String get healthInsuranceCardNumber => 'आरोग्य विमा कार्ड क्रमांक';
+
+  @override
+  String get policyNumber => 'पॉलिसी क्रमांक';
+
+  @override
+  String get profileUpdatedSuccessfully => 'प्रोफाइल यशस्वीरित्या अपडेट झाले';
+
+  @override
+  String get editEmailAddress => 'ईमेल पत्ता संपादित करा';
+
+  @override
+  String get emailAddress => 'ईमेल पत्ता';
+
+  @override
+  String get emailNotVerified => 'ईमेल सत्यापित नाही';
+
+  @override
+  String get saveAndVerify => 'जतन करा आणि सत्यापित करा';
+
+  @override
+  String get editMobileNumber => 'मोबाईल नंबर संपादित करा';
+
+  @override
+  String get tenDigitMobileNumber => 'दहा अंकी मोबाईल नंबर';
+
+  @override
+  String get firstName => 'पहिले नाव';
+
+  @override
+  String get middleName => 'मधले नाव';
+
+  @override
+  String get lastName => 'आडनाव';
+
+  @override
+  String get required => 'आवश्यक';
+
+  @override
+  String get dateOfBirth => 'जन्मतारीख';
+
+  @override
+  String get optional => '(पर्यायी)';
+
+  @override
+  String get selectCountry => 'देश निवडा';
+
+  @override
+  String get selectState => 'राज्य निवडा';
+
+  @override
+  String get selectCity => 'शहर निवडा';
+
+  @override
+  String get enterAddress => 'पत्ता प्रविष्ट करा (कमाल 100 अक्षरे)';
+
+  @override
+  String get india => 'भारत';
+
+  @override
+  String get usa => 'अमेरिका';
+
+  @override
+  String get uk => 'युनायटेड किंगडम';
+
+  @override
+  String get uae => 'यूएई';
+
+  @override
+  String get madhyaPradesh => 'मध्य प्रदेश';
+
+  @override
+  String get maharashtra => 'महाराष्ट्र';
+
+  @override
+  String get rajasthan => 'राजस्थान';
+
+  @override
+  String get gujarat => 'गुजरात';
+
+  @override
+  String get karnataka => 'कर्नाटक';
+
+  @override
+  String get tamilNadu => 'तामिळनाडू';
+
+  @override
+  String get uttarPradesh => 'उत्तर प्रदेश';
+
+  @override
+  String get delhi => 'दिल्ली';
+
+  @override
+  String get indoreDistrict => 'इंदूर जिल्हा';
+
+  @override
+  String get bhopal => 'भोपाळ';
+
+  @override
+  String get gwalior => 'ग्वाल्हेर';
+
+  @override
+  String get jabalpur => 'जबलपूर';
+
+  @override
+  String get ujjain => 'उज्जैन';
 }

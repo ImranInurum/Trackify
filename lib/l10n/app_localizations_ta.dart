@@ -1379,7 +1379,7 @@ class AppLocalizationsTa extends AppLocalizations {
   String get cancel => 'ரத்து செய்';
 
   @override
-  String get save => 'சேமி';
+  String get save => 'சேமிக்கவும்';
 
   @override
   String get updateMileageArai => 'மைலேஜைப் புதுப்பிக்கவும் (ARAI)';
@@ -2168,4 +2168,122 @@ class AppLocalizationsTa extends AppLocalizations {
 
   @override
   String get searchRidesHint => 'நகரத்தின் மூலம் சவாரிகளைத் தேடுங்கள்';
+
+  @override
+  String get healthInsurance => 'சுகாதார காப்பீடு';
+
+  @override
+  String get bloodGroup => 'இரத்த வகை';
+
+  @override
+  String get selectBloodGroup => 'இரத்த வகையை தேர்ந்தெடுக்கவும்';
+
+  @override
+  String get healthInsuranceCardNumber => 'சுகாதார காப்பீட்டு அட்டை எண்';
+
+  @override
+  String get policyNumber => 'பாலிசி எண்';
+
+  @override
+  String get profileUpdatedSuccessfully =>
+      'சுயவிவரம் வெற்றிகரமாக புதுப்பிக்கப்பட்டது';
+
+  @override
+  String get editEmailAddress => 'மின்னஞ்சல் முகவரியைத் திருத்தவும்';
+
+  @override
+  String get emailAddress => 'மின்னஞ்சல் முகவரி';
+
+  @override
+  String get emailNotVerified => 'மின்னஞ்சல் சரிபார்க்கப்படவில்லை';
+
+  @override
+  String get saveAndVerify => 'சேமித்து சரிபார்க்கவும்';
+
+  @override
+  String get editMobileNumber => 'மொபைல் எண்ணைத் திருத்தவும்';
+
+  @override
+  String get tenDigitMobileNumber => 'பத்து இலக்க மொபைல் எண்';
+
+  @override
+  String get firstName => 'முதல் பெயர்';
+
+  @override
+  String get middleName => 'நடுத்தர பெயர்';
+
+  @override
+  String get lastName => 'கடைசி பெயர்';
+
+  @override
+  String get required => 'தேவை';
+
+  @override
+  String get dateOfBirth => 'பிறந்த தேதி';
+
+  @override
+  String get optional => '(விருப்பத்தேர்வு)';
+
+  @override
+  String get selectCountry => 'நாட்டைத் தேர்ந்தெடுக்கவும்';
+
+  @override
+  String get selectState => 'மாநிலத்தைத் தேர்ந்தெடுக்கவும்';
+
+  @override
+  String get selectCity => 'நகரத்தைத் தேர்ந்தெடுக்கவும்';
+
+  @override
+  String get enterAddress => 'முகவரியை உள்ளிடவும் (அதிகபட்சம் 100 எழுத்துகள்)';
+
+  @override
+  String get india => 'இந்தியா';
+
+  @override
+  String get usa => 'அமெரிக்கா';
+
+  @override
+  String get uk => 'இங்கிலாந்து';
+
+  @override
+  String get uae => 'யுஏஇ';
+
+  @override
+  String get madhyaPradesh => 'மத்திய பிரதேசம்';
+
+  @override
+  String get maharashtra => 'மகாராஷ்டிரா';
+
+  @override
+  String get rajasthan => 'ராஜஸ்தான்';
+
+  @override
+  String get gujarat => 'குஜராத்';
+
+  @override
+  String get karnataka => 'கர்நாடகா';
+
+  @override
+  String get tamilNadu => 'தமிழ்நாடு';
+
+  @override
+  String get uttarPradesh => 'உத்தர பிரதேசம்';
+
+  @override
+  String get delhi => 'டெல்லி';
+
+  @override
+  String get indoreDistrict => 'இந்தோர் மாவட்டம்';
+
+  @override
+  String get bhopal => 'போபால்';
+
+  @override
+  String get gwalior => 'குவாலியர்';
+
+  @override
+  String get jabalpur => 'ஜபல்பூர்';
+
+  @override
+  String get ujjain => 'உஜ்ஜெயின்';
 }

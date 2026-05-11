@@ -770,5 +770,65 @@
   "extraordinaryTrips": "அசாதாரண பயணங்கள்",
   "maxDistanceCovered": "கடந்து சென்ற அதிகபட்ச தூரம்",
   "searchTrips": "பயணங்களைத் தேடுங்கள்",
-  "searchRidesHint": "நகரத்தின் மூலம் சவாரிகளைத் தேடுங்கள்"
+  "searchRidesHint": "நகரத்தின் மூலம் சவாரிகளைத் தேடுங்கள்",
+
+  "healthInsurance": "சுகாதார காப்பீடு",
+    "bloodGroup": "இரத்த வகை",
+    "selectBloodGroup": "இரத்த வகையை தேர்ந்தெடுக்கவும்",
+    "healthInsuranceCardNumber": "சுகாதார காப்பீட்டு அட்டை எண்",
+    "policyNumber": "பாலிசி எண்",
+    "save": "சேமிக்கவும்",
+
+    "personalDetails": "தனிப்பட்ட விவரங்கள்",
+      "profileUpdatedSuccessfully": "சுயவிவரம் வெற்றிகரமாக புதுப்பிக்கப்பட்டது",
+
+      "editEmailAddress": "மின்னஞ்சல் முகவரியைத் திருத்தவும்",
+      "emailAddress": "மின்னஞ்சல் முகவரி",
+      "emailNotVerified": "மின்னஞ்சல் சரிபார்க்கப்படவில்லை",
+
+      "cancel": "ரத்து செய்",
+      "saveAndVerify": "சேமித்து சரிபார்க்கவும்",
+
+      "editMobileNumber": "மொபைல் எண்ணைத் திருத்தவும்",
+      "tenDigitMobileNumber": "பத்து இலக்க மொபைல் எண்",
+
+      "firstName": "முதல் பெயர்",
+      "middleName": "நடுத்தர பெயர்",
+      "lastName": "கடைசி பெயர்",
+
+      "required": "தேவை",
+
+      "mobileNumber": "மொபைல் எண்",
+
+      "dateOfBirth": "பிறந்த தேதி",
+
+      "optional": "(விருப்பத்தேர்வு)",
+
+      "selectCountry": "நாட்டைத் தேர்ந்தெடுக்கவும்",
+      "selectState": "மாநிலத்தைத் தேர்ந்தெடுக்கவும்",
+      "selectCity": "நகரத்தைத் தேர்ந்தெடுக்கவும்",
+
+      "enterAddress": "முகவரியை உள்ளிடவும் (அதிகபட்சம் 100 எழுத்துகள்)",
+
+      "save": "சேமிக்கவும்",
+
+      "india": "இந்தியா",
+      "usa": "அமெரிக்கா",
+      "uk": "இங்கிலாந்து",
+      "uae": "யுஏஇ",
+
+      "madhyaPradesh": "மத்திய பிரதேசம்",
+      "maharashtra": "மகாராஷ்டிரா",
+      "rajasthan": "ராஜஸ்தான்",
+      "gujarat": "குஜராத்",
+      "karnataka": "கர்நாடகா",
+      "tamilNadu": "தமிழ்நாடு",
+      "uttarPradesh": "உத்தர பிரதேசம்",
+      "delhi": "டெல்லி",
+
+      "indoreDistrict": "இந்தோர் மாவட்டம்",
+      "bhopal": "போபால்",
+      "gwalior": "குவாலியர்",
+      "jabalpur": "ஜபல்பூர்",
+      "ujjain": "உஜ்ஜெயின்"
 }

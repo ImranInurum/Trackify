@@ -2157,4 +2157,121 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get searchRidesHint => 'ابحث عن الرحلات بالمدينة';
+
+  @override
+  String get healthInsurance => 'التأمين الصحي';
+
+  @override
+  String get bloodGroup => 'فصيلة الدم';
+
+  @override
+  String get selectBloodGroup => 'اختر فصيلة الدم';
+
+  @override
+  String get healthInsuranceCardNumber => 'رقم بطاقة التأمين الصحي';
+
+  @override
+  String get policyNumber => 'رقم الوثيقة';
+
+  @override
+  String get profileUpdatedSuccessfully => 'تم تحديث الملف الشخصي بنجاح';
+
+  @override
+  String get editEmailAddress => 'تعديل عنوان البريد الإلكتروني';
+
+  @override
+  String get emailAddress => 'عنوان البريد الإلكتروني';
+
+  @override
+  String get emailNotVerified => 'البريد الإلكتروني غير موثق';
+
+  @override
+  String get saveAndVerify => 'حفظ والتحقق';
+
+  @override
+  String get editMobileNumber => 'تعديل رقم الجوال';
+
+  @override
+  String get tenDigitMobileNumber => 'رقم جوال مكون من 10 أرقام';
+
+  @override
+  String get firstName => 'الاسم الأول';
+
+  @override
+  String get middleName => 'الاسم الأوسط';
+
+  @override
+  String get lastName => 'اسم العائلة';
+
+  @override
+  String get required => 'مطلوب';
+
+  @override
+  String get dateOfBirth => 'تاريخ الميلاد';
+
+  @override
+  String get optional => '(اختياري)';
+
+  @override
+  String get selectCountry => 'اختر الدولة';
+
+  @override
+  String get selectState => 'اختر الولاية';
+
+  @override
+  String get selectCity => 'اختر المدينة';
+
+  @override
+  String get enterAddress => 'أدخل العنوان (100 حرف كحد أقصى)';
+
+  @override
+  String get india => 'الهند';
+
+  @override
+  String get usa => 'الولايات المتحدة';
+
+  @override
+  String get uk => 'المملكة المتحدة';
+
+  @override
+  String get uae => 'الإمارات';
+
+  @override
+  String get madhyaPradesh => 'ماديا براديش';
+
+  @override
+  String get maharashtra => 'ماهاراشترا';
+
+  @override
+  String get rajasthan => 'راجستان';
+
+  @override
+  String get gujarat => 'غوجارات';
+
+  @override
+  String get karnataka => 'كارناتاكا';
+
+  @override
+  String get tamilNadu => 'تاميل نادو';
+
+  @override
+  String get uttarPradesh => 'أوتار براديش';
+
+  @override
+  String get delhi => 'دلهي';
+
+  @override
+  String get indoreDistrict => 'منطقة إندور';
+
+  @override
+  String get bhopal => 'بوبال';
+
+  @override
+  String get gwalior => 'جواليور';
+
+  @override
+  String get jabalpur => 'جابالبور';
+
+  @override
+  String get ujjain => 'أوجاين';
 }

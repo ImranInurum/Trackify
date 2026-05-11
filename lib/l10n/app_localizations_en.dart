@@ -2166,4 +2166,121 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get searchRidesHint => 'Search Rides by City';
+
+  @override
+  String get healthInsurance => 'Health Insurance';
+
+  @override
+  String get bloodGroup => 'Blood Group';
+
+  @override
+  String get selectBloodGroup => 'Select Blood Group';
+
+  @override
+  String get healthInsuranceCardNumber => 'Health Insurance Card Number';
+
+  @override
+  String get policyNumber => 'Policy Number';
+
+  @override
+  String get profileUpdatedSuccessfully => 'Profile updated successfully';
+
+  @override
+  String get editEmailAddress => 'Edit email address';
+
+  @override
+  String get emailAddress => 'Email address';
+
+  @override
+  String get emailNotVerified => 'Email not verified';
+
+  @override
+  String get saveAndVerify => 'Save & Verify';
+
+  @override
+  String get editMobileNumber => 'Edit mobile number';
+
+  @override
+  String get tenDigitMobileNumber => 'Ten digit mobile number';
+
+  @override
+  String get firstName => 'First name';
+
+  @override
+  String get middleName => 'Middle name';
+
+  @override
+  String get lastName => 'Last name';
+
+  @override
+  String get required => 'Required';
+
+  @override
+  String get dateOfBirth => 'Date of birth';
+
+  @override
+  String get optional => '(Optional)';
+
+  @override
+  String get selectCountry => 'Select Country';
+
+  @override
+  String get selectState => 'Select State';
+
+  @override
+  String get selectCity => 'Select City';
+
+  @override
+  String get enterAddress => 'Enter Address (max 100 characters)';
+
+  @override
+  String get india => 'India';
+
+  @override
+  String get usa => 'USA';
+
+  @override
+  String get uk => 'UK';
+
+  @override
+  String get uae => 'UAE';
+
+  @override
+  String get madhyaPradesh => 'Madhya Pradesh';
+
+  @override
+  String get maharashtra => 'Maharashtra';
+
+  @override
+  String get rajasthan => 'Rajasthan';
+
+  @override
+  String get gujarat => 'Gujarat';
+
+  @override
+  String get karnataka => 'Karnataka';
+
+  @override
+  String get tamilNadu => 'Tamil Nadu';
+
+  @override
+  String get uttarPradesh => 'Uttar Pradesh';
+
+  @override
+  String get delhi => 'Delhi';
+
+  @override
+  String get indoreDistrict => 'Indore district';
+
+  @override
+  String get bhopal => 'Bhopal';
+
+  @override
+  String get gwalior => 'Gwalior';
+
+  @override
+  String get jabalpur => 'Jabalpur';
+
+  @override
+  String get ujjain => 'Ujjain';
 }
