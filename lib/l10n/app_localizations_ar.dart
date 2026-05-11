@@ -267,7 +267,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get overspeedAlert => 'تنبيه تجاوز السرعة';
 
   @override
-  String get geoFenceAlert => 'تنبيه السياج الجغرافي';
+  String get geoFenceAlert => 'تنبيه السياج الجغرافية';
 
   @override
   String get more => 'المزيد';
@@ -1827,8 +1827,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get notificationControls => 'Notification controls';
 
   @override
-  String get changeNotificationPreferences =>
-      'Change your notification preferences';
+  String get changeNotificationPreferences => 'غيّر تفضيلات الإشعارات';
 
   @override
   String get unmapTrackify => 'Unmap your Trackify';
@@ -2274,4 +2273,37 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get ujjain => 'أوجاين';
+
+  @override
+  String get notificationSounds => 'أصوات الإشعارات';
+
+  @override
+  String get changeSoundForNotification => 'تغيير الصوت للإشعار المختلف';
+
+  @override
+  String get vibrationAlert => 'تنبيهات الاهتزاز';
+
+  @override
+  String get motionAlert => 'تنبيه الحركة';
+
+  @override
+  String get ignitionAlert => 'تنبيهات الإشعال';
+
+  @override
+  String get fallAlert => 'تنبيهات السقوط';
+
+  @override
+  String get batteryAlert => 'تنبيهات البطارية';
+
+  @override
+  String get geofenceAlert => 'تنبيهات السياج الجغرافي';
+
+  @override
+  String get speedAlert => 'تنبيهات السرعة';
+
+  @override
+  String get otherAlert => 'تنبيهات أخرى';
+
+  @override
+  String get customNotification => 'إشعارات مخصصة';
 }

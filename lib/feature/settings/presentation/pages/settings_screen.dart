@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:trackify/feature/settings/presentation/pages/notification_settings.dart';
+import 'package:trackify/feature/settings/presentation/widgets/setting_list_tile.dart';
 import 'package:trackify/l10n/app_localizations.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -67,29 +69,33 @@ class SettingsScreen extends StatelessWidget {
 
             const SizedBox(height: 10),
 
-            _buildItem(
-              context: context,
+            SettingListTile(
               icon: Icons.cloud_upload_outlined,
               title: l10n.backupAndRestore,
               subtitle: l10n.backupAndRestoreDesc,
               showArrow: true,
+              showIcon: true,
               onTap: () => debugPrint("Backup & Restore tapped"),
             ),
-            _buildItem(
-              context: context,
+
+            SettingListTile(
               icon: Icons.settings_outlined,
               title: l10n.appSettings,
               subtitle: l10n.appSettingsDesc,
               showArrow: true,
+              showIcon: true,
               onTap: () => debugPrint("App Settings tapped"),
             ),
-            _buildItem(
-              context: context,
+            SettingListTile(
               icon: Icons.notifications_none_outlined,
               title: l10n.notificationSettings,
               subtitle: l10n.notificationSettingsDesc,
               showArrow: true,
-              onTap: () => debugPrint("Notification Settings tapped"),
+              showIcon: true,
+              onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const NotificationSettings()),
+                  ),
             ),
             BlocBuilder<AppCubit, AppState>(
               builder: (context, state) {
@@ -98,12 +104,12 @@ class SettingsScreen extends StatelessWidget {
 
                 return Column(
                   children: [
-                    _buildItem(
-                      context: context,
+                    SettingListTile(
                       icon: isDarkMode ? Icons.dark_mode : Icons.light_mode,
                       title: isDarkMode ? "Dark Mode" : "Light Theme",
                       subtitle: "Switch between light and dark themes",
                       showArrow: false,
+                      showIcon: true,
                       trailing: Transform.scale(
                         scale: 0.7,
                         child: Switch(
@@ -123,8 +129,7 @@ class SettingsScreen extends StatelessWidget {
                             );
                       },
                     ),
-                    _buildItem(
-                      context: context,
+                    SettingListTile(
                       icon: Icons.language,
                       title: l10n.selectLanguage,
                       subtitle: AppLanguages.languages.firstWhere(
@@ -132,34 +137,35 @@ class SettingsScreen extends StatelessWidget {
                             orElse: () => AppLanguages.languages.first,
                           )['name'] as String,
                       showArrow: true,
+                      showIcon: true,
                       onTap: () => _showLanguagePicker(context),
                     ),
                   ],
                 );
               },
             ),
-            _buildItem(
-              context: context,
+            SettingListTile(
               icon: Icons.person_outline,
               title: l10n.privacy,
               subtitle: l10n.privacyDesc,
               showArrow: true,
+              showIcon: true,
               onTap: () => debugPrint("Privacy tapped"),
             ),
-            _buildItem(
-              context: context,
+            SettingListTile(
               icon: Icons.play_arrow_outlined,
               title: l10n.rateUsOnPlayStore,
               subtitle: l10n.rateUsOnPlayStoreDesc,
               showArrow: false,
+              showIcon: true,
               onTap: () => debugPrint("Rate us tapped"),
             ),
-            _buildItem(
-              context: context,
+            SettingListTile(
               icon: Icons.logout_outlined,
               title: l10n.logout,
               subtitle: l10n.logoutDesc,
               showArrow: false,
+              showIcon: true,
               onTap: () {
                 final prefs = AppPreference.instance;
                 prefs.clearAll();
@@ -234,40 +240,6 @@ class SettingsScreen extends StatelessWidget {
           },
         );
       },
-    );
-  }
-
-  Widget _buildItem({
-    required BuildContext context,
-    required IconData icon,
-    required String title,
-    required String subtitle,
-    required bool showArrow,
-    required VoidCallback onTap,
-    Widget? trailing,
-  }) {
-    return ListTile(
-      contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
-      leading: Icon(icon, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7), size: 28),
-      title: Text(
-        title,
-        style: TextStyle(
-          fontWeight: FontWeight.w500,
-          fontSize: 16,
-          color: Theme.of(context).colorScheme.onSurface,
-        ),
-      ),
-      subtitle: Padding(
-        padding: const EdgeInsets.only(top: 4),
-        child: Text(
-          subtitle,
-          style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5), fontSize: 13, height: 1.3),
-        ),
-      ),
-      trailing: showArrow
-          ? Icon(Icons.arrow_forward_ios, size: 14, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.3))
-          : trailing,
-      onTap: onTap,
     );
   }
 }
