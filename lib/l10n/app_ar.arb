@@ -818,5 +818,65 @@
   "extraordinaryTrips": "رحلات استثنائية",
   "maxDistanceCovered": "أقصى مسافة مقطوعة",
   "searchTrips": "البحث عن الرحلات",
-  "searchRidesHint": "ابحث عن الرحلات بالمدينة"
+  "searchRidesHint": "ابحث عن الرحلات بالمدينة",
+
+    "healthInsurance": "التأمين الصحي",
+    "bloodGroup": "فصيلة الدم",
+    "selectBloodGroup": "اختر فصيلة الدم",
+    "healthInsuranceCardNumber": "رقم بطاقة التأمين الصحي",
+    "policyNumber": "رقم الوثيقة",
+    "save": "حفظ",
+
+     "personalDetails": "التفاصيل الشخصية",
+      "profileUpdatedSuccessfully": "تم تحديث الملف الشخصي بنجاح",
+
+      "editEmailAddress": "تعديل عنوان البريد الإلكتروني",
+      "emailAddress": "عنوان البريد الإلكتروني",
+      "emailNotVerified": "البريد الإلكتروني غير موثق",
+
+      "cancel": "إلغاء",
+      "saveAndVerify": "حفظ والتحقق",
+
+      "editMobileNumber": "تعديل رقم الجوال",
+      "tenDigitMobileNumber": "رقم جوال مكون من 10 أرقام",
+
+      "firstName": "الاسم الأول",
+      "middleName": "الاسم الأوسط",
+      "lastName": "اسم العائلة",
+
+      "required": "مطلوب",
+
+      "mobileNumber": "رقم الجوال",
+
+      "dateOfBirth": "تاريخ الميلاد",
+
+      "optional": "(اختياري)",
+
+      "selectCountry": "اختر الدولة",
+      "selectState": "اختر الولاية",
+      "selectCity": "اختر المدينة",
+
+      "enterAddress": "أدخل العنوان (100 حرف كحد أقصى)",
+
+      "save": "حفظ",
+
+      "india": "الهند",
+      "usa": "الولايات المتحدة",
+      "uk": "المملكة المتحدة",
+      "uae": "الإمارات",
+
+      "madhyaPradesh": "ماديا براديش",
+      "maharashtra": "ماهاراشترا",
+      "rajasthan": "راجستان",
+      "gujarat": "غوجارات",
+      "karnataka": "كارناتاكا",
+      "tamilNadu": "تاميل نادو",
+      "uttarPradesh": "أوتار براديش",
+      "delhi": "دلهي",
+
+      "indoreDistrict": "منطقة إندور",
+      "bhopal": "بوبال",
+      "gwalior": "جواليور",
+      "jabalpur": "جابالبور",
+      "ujjain": "أوجاين"
 }

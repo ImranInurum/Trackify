@@ -4197,6 +4197,240 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Search Rides by City'**
   String get searchRidesHint;
+
+  /// No description provided for @healthInsurance.
+  ///
+  /// In en, this message translates to:
+  /// **'Health Insurance'**
+  String get healthInsurance;
+
+  /// No description provided for @bloodGroup.
+  ///
+  /// In en, this message translates to:
+  /// **'Blood Group'**
+  String get bloodGroup;
+
+  /// No description provided for @selectBloodGroup.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Blood Group'**
+  String get selectBloodGroup;
+
+  /// No description provided for @healthInsuranceCardNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Health Insurance Card Number'**
+  String get healthInsuranceCardNumber;
+
+  /// No description provided for @policyNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Policy Number'**
+  String get policyNumber;
+
+  /// No description provided for @profileUpdatedSuccessfully.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile updated successfully'**
+  String get profileUpdatedSuccessfully;
+
+  /// No description provided for @editEmailAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit email address'**
+  String get editEmailAddress;
+
+  /// No description provided for @emailAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Email address'**
+  String get emailAddress;
+
+  /// No description provided for @emailNotVerified.
+  ///
+  /// In en, this message translates to:
+  /// **'Email not verified'**
+  String get emailNotVerified;
+
+  /// No description provided for @saveAndVerify.
+  ///
+  /// In en, this message translates to:
+  /// **'Save & Verify'**
+  String get saveAndVerify;
+
+  /// No description provided for @editMobileNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit mobile number'**
+  String get editMobileNumber;
+
+  /// No description provided for @tenDigitMobileNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Ten digit mobile number'**
+  String get tenDigitMobileNumber;
+
+  /// No description provided for @firstName.
+  ///
+  /// In en, this message translates to:
+  /// **'First name'**
+  String get firstName;
+
+  /// No description provided for @middleName.
+  ///
+  /// In en, this message translates to:
+  /// **'Middle name'**
+  String get middleName;
+
+  /// No description provided for @lastName.
+  ///
+  /// In en, this message translates to:
+  /// **'Last name'**
+  String get lastName;
+
+  /// No description provided for @required.
+  ///
+  /// In en, this message translates to:
+  /// **'Required'**
+  String get required;
+
+  /// No description provided for @dateOfBirth.
+  ///
+  /// In en, this message translates to:
+  /// **'Date of birth'**
+  String get dateOfBirth;
+
+  /// No description provided for @optional.
+  ///
+  /// In en, this message translates to:
+  /// **'(Optional)'**
+  String get optional;
+
+  /// No description provided for @selectCountry.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Country'**
+  String get selectCountry;
+
+  /// No description provided for @selectState.
+  ///
+  /// In en, this message translates to:
+  /// **'Select State'**
+  String get selectState;
+
+  /// No description provided for @selectCity.
+  ///
+  /// In en, this message translates to:
+  /// **'Select City'**
+  String get selectCity;
+
+  /// No description provided for @enterAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter Address (max 100 characters)'**
+  String get enterAddress;
+
+  /// No description provided for @india.
+  ///
+  /// In en, this message translates to:
+  /// **'India'**
+  String get india;
+
+  /// No description provided for @usa.
+  ///
+  /// In en, this message translates to:
+  /// **'USA'**
+  String get usa;
+
+  /// No description provided for @uk.
+  ///
+  /// In en, this message translates to:
+  /// **'UK'**
+  String get uk;
+
+  /// No description provided for @uae.
+  ///
+  /// In en, this message translates to:
+  /// **'UAE'**
+  String get uae;
+
+  /// No description provided for @madhyaPradesh.
+  ///
+  /// In en, this message translates to:
+  /// **'Madhya Pradesh'**
+  String get madhyaPradesh;
+
+  /// No description provided for @maharashtra.
+  ///
+  /// In en, this message translates to:
+  /// **'Maharashtra'**
+  String get maharashtra;
+
+  /// No description provided for @rajasthan.
+  ///
+  /// In en, this message translates to:
+  /// **'Rajasthan'**
+  String get rajasthan;
+
+  /// No description provided for @gujarat.
+  ///
+  /// In en, this message translates to:
+  /// **'Gujarat'**
+  String get gujarat;
+
+  /// No description provided for @karnataka.
+  ///
+  /// In en, this message translates to:
+  /// **'Karnataka'**
+  String get karnataka;
+
+  /// No description provided for @tamilNadu.
+  ///
+  /// In en, this message translates to:
+  /// **'Tamil Nadu'**
+  String get tamilNadu;
+
+  /// No description provided for @uttarPradesh.
+  ///
+  /// In en, this message translates to:
+  /// **'Uttar Pradesh'**
+  String get uttarPradesh;
+
+  /// No description provided for @delhi.
+  ///
+  /// In en, this message translates to:
+  /// **'Delhi'**
+  String get delhi;
+
+  /// No description provided for @indoreDistrict.
+  ///
+  /// In en, this message translates to:
+  /// **'Indore district'**
+  String get indoreDistrict;
+
+  /// No description provided for @bhopal.
+  ///
+  /// In en, this message translates to:
+  /// **'Bhopal'**
+  String get bhopal;
+
+  /// No description provided for @gwalior.
+  ///
+  /// In en, this message translates to:
+  /// **'Gwalior'**
+  String get gwalior;
+
+  /// No description provided for @jabalpur.
+  ///
+  /// In en, this message translates to:
+  /// **'Jabalpur'**
+  String get jabalpur;
+
+  /// No description provided for @ujjain.
+  ///
+  /// In en, this message translates to:
+  /// **'Ujjain'**
+  String get ujjain;
 }
 
 class _AppLocalizationsDelegate

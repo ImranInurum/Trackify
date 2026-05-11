@@ -3,7 +3,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:trackify/app/cubit/app_cubit.dart';
 import 'package:trackify/app/cubit/app_state.dart';
 import 'package:trackify/core/theme/app_colors.dart';
+import 'package:trackify/feature/health_insurance/presentation/pages/health_insurance_screen.dart';
 import 'package:trackify/l10n/app_localizations.dart';
+
+import 'edit_profile_screen.dart';
 
 class MyProfileScreen extends StatelessWidget {
   const MyProfileScreen({super.key});
@@ -182,13 +185,19 @@ class MyProfileScreen extends StatelessWidget {
                             l10n.personalDetails,
                             style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onSurface),
                           ),
-                          Container(
-                            padding: const EdgeInsets.all(4),
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: Theme.of(context).colorScheme.primary,
+                          GestureDetector(
+                            onTap: (){
+                              Navigator.push(context, MaterialPageRoute(builder: (context)=>EditProfileScreen()));
+                            },
+
+                            child: Container(
+                              padding: const EdgeInsets.all(4),
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: Theme.of(context).colorScheme.primary,
+                              ),
+                              child: Icon(Icons.edit, size: 14, color: Theme.of(context).colorScheme.onPrimary),
                             ),
-                            child: Icon(Icons.edit, size: 14, color: Theme.of(context).colorScheme.onPrimary),
                           ),
                         ],
                       ),
@@ -219,14 +228,20 @@ class MyProfileScreen extends StatelessWidget {
                       Center(
                         child: Column(
                           children: [
-                            Container(
-                              height: 50,
-                              width: 50,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(8),
-                                border: Border.all(color: Theme.of(context).colorScheme.primary, width: 1),
+                            GestureDetector(
+                              onTap:(){
+                                Navigator.push(context, MaterialPageRoute(builder: (context)=>HealthInsuranceScreen()));
+
+                      },
+                              child: Container(
+                                height: 50,
+                                width: 50,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(8),
+                                  border: Border.all(color: Theme.of(context).colorScheme.primary, width: 1),
+                                ),
+                                child: Icon(Icons.add, color: Theme.of(context).colorScheme.primary, size: 30),
                               ),
-                              child: Icon(Icons.add, color: Theme.of(context).colorScheme.primary, size: 30),
                             ),
                             const SizedBox(height: 12),
                             Text(

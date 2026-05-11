@@ -2170,4 +2170,121 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get searchRidesHint => 'शहर से राइड्स खोजें';
+
+  @override
+  String get healthInsurance => 'स्वास्थ्य बीमा';
+
+  @override
+  String get bloodGroup => 'ब्लड ग्रुप';
+
+  @override
+  String get selectBloodGroup => 'ब्लड ग्रुप चुनें';
+
+  @override
+  String get healthInsuranceCardNumber => 'स्वास्थ्य बीमा कार्ड नंबर';
+
+  @override
+  String get policyNumber => 'पॉलिसी नंबर';
+
+  @override
+  String get profileUpdatedSuccessfully => 'प्रोफ़ाइल सफलतापूर्वक अपडेट हो गई';
+
+  @override
+  String get editEmailAddress => 'ईमेल पता संपादित करें';
+
+  @override
+  String get emailAddress => 'ईमेल पता';
+
+  @override
+  String get emailNotVerified => 'ईमेल सत्यापित नहीं है';
+
+  @override
+  String get saveAndVerify => 'सेव और सत्यापित करें';
+
+  @override
+  String get editMobileNumber => 'मोबाइल नंबर संपादित करें';
+
+  @override
+  String get tenDigitMobileNumber => 'दस अंकों का मोबाइल नंबर';
+
+  @override
+  String get firstName => 'पहला नाम';
+
+  @override
+  String get middleName => 'मध्य नाम';
+
+  @override
+  String get lastName => 'अंतिम नाम';
+
+  @override
+  String get required => 'आवश्यक';
+
+  @override
+  String get dateOfBirth => 'जन्म तिथि';
+
+  @override
+  String get optional => '(वैकल्पिक)';
+
+  @override
+  String get selectCountry => 'देश चुनें';
+
+  @override
+  String get selectState => 'राज्य चुनें';
+
+  @override
+  String get selectCity => 'शहर चुनें';
+
+  @override
+  String get enterAddress => 'पता दर्ज करें (अधिकतम 100 अक्षर)';
+
+  @override
+  String get india => 'भारत';
+
+  @override
+  String get usa => 'अमेरिका';
+
+  @override
+  String get uk => 'यूनाइटेड किंगडम';
+
+  @override
+  String get uae => 'यूएई';
+
+  @override
+  String get madhyaPradesh => 'मध्य प्रदेश';
+
+  @override
+  String get maharashtra => 'महाराष्ट्र';
+
+  @override
+  String get rajasthan => 'राजस्थान';
+
+  @override
+  String get gujarat => 'गुजरात';
+
+  @override
+  String get karnataka => 'कर्नाटक';
+
+  @override
+  String get tamilNadu => 'तमिलनाडु';
+
+  @override
+  String get uttarPradesh => 'उत्तर प्रदेश';
+
+  @override
+  String get delhi => 'दिल्ली';
+
+  @override
+  String get indoreDistrict => 'इंदौर जिला';
+
+  @override
+  String get bhopal => 'भोपाल';
+
+  @override
+  String get gwalior => 'ग्वालियर';
+
+  @override
+  String get jabalpur => 'जबलपुर';
+
+  @override
+  String get ujjain => 'उज्जैन';
 }

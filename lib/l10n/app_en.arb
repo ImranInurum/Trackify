@@ -888,5 +888,67 @@
   "extraordinaryTrips": "Extraordinary Trips",
   "maxDistanceCovered": "Max distance covered",
   "searchTrips": "Search Trips",
-  "searchRidesHint": "Search Rides by City"
+  "searchRidesHint": "Search Rides by City",
+
+  "healthInsurance": "Health Insurance",
+    "bloodGroup": "Blood Group",
+    "selectBloodGroup": "Select Blood Group",
+    "healthInsuranceCardNumber": "Health Insurance Card Number",
+    "policyNumber": "Policy Number",
+    "save": "Save",
+
+
+      "personalDetails": "Personal details",
+      "profileUpdatedSuccessfully": "Profile updated successfully",
+
+      "editEmailAddress": "Edit email address",
+      "emailAddress": "Email address",
+      "emailNotVerified": "Email not verified",
+
+      "cancel": "Cancel",
+      "saveAndVerify": "Save & Verify",
+
+      "editMobileNumber": "Edit mobile number",
+      "tenDigitMobileNumber": "Ten digit mobile number",
+
+      "firstName": "First name",
+      "middleName": "Middle name",
+      "lastName": "Last name",
+
+      "required": "Required",
+
+      "mobileNumber": "Mobile Number",
+
+      "dateOfBirth": "Date of birth",
+
+      "optional": "(Optional)",
+
+      "selectCountry": "Select Country",
+      "selectState": "Select State",
+      "selectCity": "Select City",
+
+      "enterAddress": "Enter Address (max 100 characters)",
+
+      "save": "Save",
+
+      "india": "India",
+      "usa": "USA",
+      "uk": "UK",
+      "uae": "UAE",
+
+      "madhyaPradesh": "Madhya Pradesh",
+      "maharashtra": "Maharashtra",
+      "rajasthan": "Rajasthan",
+      "gujarat": "Gujarat",
+      "karnataka": "Karnataka",
+      "tamilNadu": "Tamil Nadu",
+      "uttarPradesh": "Uttar Pradesh",
+      "delhi": "Delhi",
+
+      "indoreDistrict": "Indore district",
+      "bhopal": "Bhopal",
+      "gwalior": "Gwalior",
+      "jabalpur": "Jabalpur",
+      "ujjain": "Ujjain"
+
 }

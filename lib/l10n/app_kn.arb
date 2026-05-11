@@ -798,5 +798,65 @@
   "extraordinaryTrips": "ಅಸಾಧಾರಣ ಪ್ರವಾಸಗಳು",
   "maxDistanceCovered": "ಕ್ರಮಿಸಿದ ಗರಿಷ್ಠ ದೂರ",
   "searchTrips": "ಪ್ರವಾಸಗಳನ್ನು ಹುಡುಕಿ",
-  "searchRidesHint": "ನಗರದ ಮೂಲಕ ಸವಾರಿಗಳನ್ನು ಹುಡುಕಿ"
+  "searchRidesHint": "ನಗರದ ಮೂಲಕ ಸವಾರಿಗಳನ್ನು ಹುಡುಕಿ",
+
+  "healthInsurance": "ಆರೋಗ್ಯ ವಿಮೆ",
+    "bloodGroup": "ರಕ್ತ ಗುಂಪು",
+    "selectBloodGroup": "ರಕ್ತ ಗುಂಪನ್ನು ಆಯ್ಕೆಮಾಡಿ",
+    "healthInsuranceCardNumber": "ಆರೋಗ್ಯ ವಿಮೆ ಕಾರ್ಡ್ ಸಂಖ್ಯೆ",
+    "policyNumber": "ಪಾಲಿಸಿ ಸಂಖ್ಯೆ",
+    "save": "ಉಳಿಸಿ",
+
+    "personalDetails": "ವೈಯಕ್ತಿಕ ವಿವರಗಳು",
+      "profileUpdatedSuccessfully": "ಪ್ರೊಫೈಲ್ ಯಶಸ್ವಿಯಾಗಿ ನವೀಕರಿಸಲಾಗಿದೆ",
+
+      "editEmailAddress": "ಇಮೇಲ್ ವಿಳಾಸವನ್ನು ಸಂಪಾದಿಸಿ",
+      "emailAddress": "ಇಮೇಲ್ ವಿಳಾಸ",
+      "emailNotVerified": "ಇಮೇಲ್ ಪರಿಶೀಲಿಸಲಾಗಿಲ್ಲ",
+
+      "cancel": "ರದ್ದುಮಾಡಿ",
+      "saveAndVerify": "ಉಳಿಸಿ ಮತ್ತು ಪರಿಶೀಲಿಸಿ",
+
+      "editMobileNumber": "ಮೊಬೈಲ್ ಸಂಖ್ಯೆಯನ್ನು ಸಂಪಾದಿಸಿ",
+      "tenDigitMobileNumber": "ಹತ್ತು ಅಂಕೆಯ ಮೊಬೈಲ್ ಸಂಖ್ಯೆ",
+
+      "firstName": "ಮೊದಲ ಹೆಸರು",
+      "middleName": "ಮಧ್ಯದ ಹೆಸರು",
+      "lastName": "ಕೊನೆಯ ಹೆಸರು",
+
+      "required": "ಅಗತ್ಯವಿದೆ",
+
+      "mobileNumber": "ಮೊಬೈಲ್ ಸಂಖ್ಯೆ",
+
+      "dateOfBirth": "ಹುಟ್ಟಿದ ದಿನಾಂಕ",
+
+      "optional": "(ಐಚ್ಛಿಕ)",
+
+      "selectCountry": "ದೇಶವನ್ನು ಆಯ್ಕೆಮಾಡಿ",
+      "selectState": "ರಾಜ್ಯವನ್ನು ಆಯ್ಕೆಮಾಡಿ",
+      "selectCity": "ನಗರವನ್ನು ಆಯ್ಕೆಮಾಡಿ",
+
+      "enterAddress": "ವಿಳಾಸವನ್ನು ನಮೂದಿಸಿ (ಗರಿಷ್ಠ 100 ಅಕ್ಷರಗಳು)",
+
+      "save": "ಉಳಿಸಿ",
+
+      "india": "ಭಾರತ",
+      "usa": "ಅಮೆರಿಕಾ",
+      "uk": "ಯುನೈಟೆಡ್ ಕಿಂಗ್ಡಮ್",
+      "uae": "ಯುಎಇ",
+
+      "madhyaPradesh": "ಮಧ್ಯ ಪ್ರದೇಶ",
+      "maharashtra": "ಮಹಾರಾಷ್ಟ್ರ",
+      "rajasthan": "ರಾಜಸ್ಥಾನ",
+      "gujarat": "ಗುಜರಾತ್",
+      "karnataka": "ಕರ್ನಾಟಕ",
+      "tamilNadu": "ತಮಿಳುನಾಡು",
+      "uttarPradesh": "ಉತ್ತರ ಪ್ರದೇಶ",
+      "delhi": "ದೆಹಲಿ",
+
+      "indoreDistrict": "ಇಂದೋರ್ ಜಿಲ್ಲೆ",
+      "bhopal": "ಭೋಪಾಲ್",
+      "gwalior": "ಗ್ವಾಲಿಯರ್",
+      "jabalpur": "ಜಬಲ್ಪುರ್",
+      "ujjain": "ಉಜ್ಜೈನ್"
 }

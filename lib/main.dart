@@ -63,6 +63,10 @@ import 'feature/get_more_out/domain/usecase/get_safey_usecase.dart';
 import 'feature/get_more_out/presentation/cubit/discover_cubit.dart';
 import 'feature/get_more_out/presentation/cubit/feature_cubit.dart';
 import 'feature/get_more_out/presentation/cubit/geo_fenc_cubit.dart';
+import 'feature/health_insurance/data/local_data/health_insurance_local_data.dart';
+import 'feature/health_insurance/data/repository_impl/health_insurance_repository_impl.dart';
+import 'feature/health_insurance/domain/usecase/health_insurance_usecase.dart';
+import 'feature/health_insurance/presentation/cubit/health_insurance_cubit.dart';
 import 'feature/my_garage/data/repository_impl/product_repository_impl.dart';
 import 'feature/my_garage/domain/repository/product_repository.dart';
 import 'feature/my_garage/domain/use_case/product_usecase.dart';
@@ -306,6 +310,19 @@ List<BlocProvider> _buildBlocProviders() {
           ProductRepositoryImpl(),
         ),
       ),
+    ),
+    BlocProvider<HealthInsuranceCubit>(
+
+      create: (_) => HealthInsuranceCubit(
+
+        HealthInsuranceUseCase(
+
+          HealthInsuranceRepositoryImpl(
+
+            HealthInsuranceLocalDataSource(),
+          ),
+        ),
+      )..getData(),
     ),
 
 
