@@ -2287,4 +2287,38 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get ujjain => 'उज्जैन';
+
+  @override
+  String get notificationSounds => 'अधिसूचना ध्वनियाँ';
+
+  @override
+  String get changeSoundForNotification =>
+      'विभिन्न अधिसूचना के लिए ध्वनि बदलें';
+
+  @override
+  String get vibrationAlert => 'कंपन अलर्ट';
+
+  @override
+  String get motionAlert => 'गति अलर्ट';
+
+  @override
+  String get ignitionAlert => 'इग्निशन अलर्ट';
+
+  @override
+  String get fallAlert => 'गिरावट अलर्ट';
+
+  @override
+  String get batteryAlert => 'बैटरी अलर्ट';
+
+  @override
+  String get geofenceAlert => 'जियोफेंस अलर्ट';
+
+  @override
+  String get speedAlert => 'गति अलर्ट';
+
+  @override
+  String get otherAlert => 'अन्य अलर्ट';
+
+  @override
+  String get customNotification => 'कस्टम अधिसूचनाएँ';
 }

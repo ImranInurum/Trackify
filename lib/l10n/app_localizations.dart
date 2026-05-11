@@ -4431,6 +4431,72 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Ujjain'**
   String get ujjain;
+
+  /// No description provided for @notificationSounds.
+  ///
+  /// In en, this message translates to:
+  /// **'Notification Sounds'**
+  String get notificationSounds;
+
+  /// No description provided for @changeSoundForNotification.
+  ///
+  /// In en, this message translates to:
+  /// **'Change sound for different Notification'**
+  String get changeSoundForNotification;
+
+  /// No description provided for @vibrationAlert.
+  ///
+  /// In en, this message translates to:
+  /// **'Vibration Alerts'**
+  String get vibrationAlert;
+
+  /// No description provided for @motionAlert.
+  ///
+  /// In en, this message translates to:
+  /// **'Motion Alert'**
+  String get motionAlert;
+
+  /// No description provided for @ignitionAlert.
+  ///
+  /// In en, this message translates to:
+  /// **'Ignition Alerts'**
+  String get ignitionAlert;
+
+  /// No description provided for @fallAlert.
+  ///
+  /// In en, this message translates to:
+  /// **'Fall Alerts'**
+  String get fallAlert;
+
+  /// No description provided for @batteryAlert.
+  ///
+  /// In en, this message translates to:
+  /// **'Battery Alerts'**
+  String get batteryAlert;
+
+  /// No description provided for @geofenceAlert.
+  ///
+  /// In en, this message translates to:
+  /// **'Geofence Alerts'**
+  String get geofenceAlert;
+
+  /// No description provided for @speedAlert.
+  ///
+  /// In en, this message translates to:
+  /// **'Speed Alerts'**
+  String get speedAlert;
+
+  /// No description provided for @otherAlert.
+  ///
+  /// In en, this message translates to:
+  /// **'Other Alerts'**
+  String get otherAlert;
+
+  /// No description provided for @customNotification.
+  ///
+  /// In en, this message translates to:
+  /// **'Custom Notifications'**
+  String get customNotification;
 }
 
 class _AppLocalizationsDelegate

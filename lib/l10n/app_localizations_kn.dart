@@ -1267,7 +1267,7 @@ class AppLocalizationsKn extends AppLocalizations {
   String get pucTitle => 'PUC Certificate';
 
   @override
-  String get notificationControlsTitle => 'Notification Controls';
+  String get notificationControlsTitle => 'ಧ್ವನಿ ಸಮತೋಲನ';
 
   @override
   String get ignitionOnOffTitle => 'Ignition ON/OFF';
@@ -1841,7 +1841,7 @@ class AppLocalizationsKn extends AppLocalizations {
 
   @override
   String get changeNotificationPreferences =>
-      'Change your notification preferences';
+      'ನಿಮ್ಮ ಅಧಿಸೂಚನೆ ಆದ್ಯತೆಗಳನ್ನು ಬದಲಾಯಿಸಿ';
 
   @override
   String get unmapTrackify => 'Unmap your Trackify';
@@ -2288,4 +2288,37 @@ class AppLocalizationsKn extends AppLocalizations {
 
   @override
   String get ujjain => 'ಉಜ್ಜೈನ್';
+
+  @override
+  String get notificationSounds => 'ಸೂಚನೆ ಧ್ವನಿಗಳು';
+
+  @override
+  String get changeSoundForNotification => 'ವಿಭಿನ್ನ ಸೂಚನೆಗೆ ಧ್ವನಿಯನ್ನು ಬದಲಿಸಿ';
+
+  @override
+  String get vibrationAlert => 'ಕಂಪನ ಎಚ್ಚರಿಕೆಗಳು';
+
+  @override
+  String get motionAlert => 'ಚಲನೆ ಎಚ್ಚರಿಕೆ';
+
+  @override
+  String get ignitionAlert => 'ಇಗ್ನಿಷನ್ ಎಚ್ಚರಿಕೆಗಳು';
+
+  @override
+  String get fallAlert => 'ತೆಗೆದುಕೊಂಡು ಬಿದ್ದಿರುವ ಎಚ್ಚರಿಕೆಗಳು';
+
+  @override
+  String get batteryAlert => 'ಬ್ಯಾಟರಿ ಎಚ್ಚರಿಕೆಗಳು';
+
+  @override
+  String get geofenceAlert => 'ಜಿಓಫೆನ್ಸ್ ಎಚ್ಚರಿಕೆಗಳು';
+
+  @override
+  String get speedAlert => 'ವೇಗ ಎಚ್ಚರಿಕೆಗಳು';
+
+  @override
+  String get otherAlert => 'ಇತರೆ ಎಚ್ಚರಿಕೆಗಳು';
+
+  @override
+  String get customNotification => 'ಕಸ್ಟಮ್ ಸೂಚನೆಗಳು';
 }

@@ -949,6 +949,19 @@
       "bhopal": "Bhopal",
       "gwalior": "Gwalior",
       "jabalpur": "Jabalpur",
-      "ujjain": "Ujjain"
+      "ujjain": "Ujjain",
+
+
+"notificationSounds": "Notification Sounds",
+"changeSoundForNotification": "Change sound for different Notification",
+"vibrationAlert": "Vibration Alerts",
+"motionAlert": "Motion Alert",
+"ignitionAlert": "Ignition Alerts",
+"fallAlert": "Fall Alerts",
+"batteryAlert": "Battery Alerts",
+"geofenceAlert": "Geofence Alerts",
+"speedAlert": "Speed Alerts",
+"otherAlert": "Other Alerts",
+"customNotification": "Custom Notifications"
 
 }

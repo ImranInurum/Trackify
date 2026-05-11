@@ -1261,7 +1261,7 @@ class AppLocalizationsTa extends AppLocalizations {
   String get pucTitle => 'PUC Certificate';
 
   @override
-  String get notificationControlsTitle => 'Notification Controls';
+  String get notificationControlsTitle => 'ஒலி சமநிலை';
 
   @override
   String get ignitionOnOffTitle => 'Ignition ON/OFF';
@@ -1838,7 +1838,7 @@ class AppLocalizationsTa extends AppLocalizations {
 
   @override
   String get changeNotificationPreferences =>
-      'Change your notification preferences';
+      'உங்கள் அறிவிப்பு விருப்பங்களை மாற்றவும்';
 
   @override
   String get unmapTrackify => 'Unmap your Trackify';
@@ -2286,4 +2286,38 @@ class AppLocalizationsTa extends AppLocalizations {
 
   @override
   String get ujjain => 'உஜ்ஜெயின்';
+
+  @override
+  String get notificationSounds => 'அறிவிப்பு ஒலிகள்';
+
+  @override
+  String get changeSoundForNotification =>
+      'வேறு அறிவிப்பிற்கான ஒலியை மாற்றவும்';
+
+  @override
+  String get vibrationAlert => 'அதிர்வு எச்சரிக்கைகள்';
+
+  @override
+  String get motionAlert => 'இயக்கு எச்சரிக்கை';
+
+  @override
+  String get ignitionAlert => 'இயக்கு எச்சரிக்கைகள்';
+
+  @override
+  String get fallAlert => 'விழும் எச்சரிக்கைகள்';
+
+  @override
+  String get batteryAlert => 'பேட்டரி எச்சரிக்கைகள்';
+
+  @override
+  String get geofenceAlert => 'ஜியோபென்ஸ் எச்சரிக்கைகள்';
+
+  @override
+  String get speedAlert => 'வேகம் எச்சரிக்கைகள்';
+
+  @override
+  String get otherAlert => 'பிற எச்சரிக்கைகள்';
+
+  @override
+  String get customNotification => 'தனிப்பயன் அறிவிப்புகள்';
 }

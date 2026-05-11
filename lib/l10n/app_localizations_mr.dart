@@ -1262,7 +1262,7 @@ class AppLocalizationsMr extends AppLocalizations {
   String get pucTitle => 'PUC Certificate';
 
   @override
-  String get notificationControlsTitle => 'Notification Controls';
+  String get notificationControlsTitle => 'ध्वनी संतुलन';
 
   @override
   String get ignitionOnOffTitle => 'Ignition ON/OFF';
@@ -1838,7 +1838,7 @@ class AppLocalizationsMr extends AppLocalizations {
 
   @override
   String get changeNotificationPreferences =>
-      'Change your notification preferences';
+      'तुमच्या सूचना प्राधान्यांमध्ये बदल करा';
 
   @override
   String get unmapTrackify => 'Unmap your Trackify';
@@ -2285,4 +2285,37 @@ class AppLocalizationsMr extends AppLocalizations {
 
   @override
   String get ujjain => 'उज्जैन';
+
+  @override
+  String get notificationSounds => 'सूचना ध्वनी';
+
+  @override
+  String get changeSoundForNotification => 'वेगवेगळ्या सूचनेसाठी ध्वनी बदला';
+
+  @override
+  String get vibrationAlert => 'कंपण सूचना';
+
+  @override
+  String get motionAlert => 'हालचाल सूचना';
+
+  @override
+  String get ignitionAlert => 'इग्निशन सूचना';
+
+  @override
+  String get fallAlert => 'पडल्याची सूचना';
+
+  @override
+  String get batteryAlert => 'बॅटरी सूचना';
+
+  @override
+  String get geofenceAlert => 'जिओफेन्स सूचना';
+
+  @override
+  String get speedAlert => 'वेग सूचना';
+
+  @override
+  String get otherAlert => 'इतर सूचना';
+
+  @override
+  String get customNotification => 'सानुकूल सूचना';
 }

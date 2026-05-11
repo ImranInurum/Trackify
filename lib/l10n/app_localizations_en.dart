@@ -2283,4 +2283,38 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get ujjain => 'Ujjain';
+
+  @override
+  String get notificationSounds => 'Notification Sounds';
+
+  @override
+  String get changeSoundForNotification =>
+      'Change sound for different Notification';
+
+  @override
+  String get vibrationAlert => 'Vibration Alerts';
+
+  @override
+  String get motionAlert => 'Motion Alert';
+
+  @override
+  String get ignitionAlert => 'Ignition Alerts';
+
+  @override
+  String get fallAlert => 'Fall Alerts';
+
+  @override
+  String get batteryAlert => 'Battery Alerts';
+
+  @override
+  String get geofenceAlert => 'Geofence Alerts';
+
+  @override
+  String get speedAlert => 'Speed Alerts';
+
+  @override
+  String get otherAlert => 'Other Alerts';
+
+  @override
+  String get customNotification => 'Custom Notifications';
 }
