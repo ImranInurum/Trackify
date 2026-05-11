@@ -85,9 +85,7 @@ class _RideHistoryDetailsScreenState extends State<RideHistoryDetailsScreen>
     );
 
     _orbitController.addListener(() {
-      if (_isPlaying) {
-        _animateCameraToVehicle();
-      }
+      // Orbit disabled per user request to stop spinning camera
     });
 
     _playController.addListener(() {
@@ -238,50 +236,36 @@ class _RideHistoryDetailsScreenState extends State<RideHistoryDetailsScreen>
       return;
     }
 
-    _useTimeForWeights = true;
-    DateTime? firstTime;
-    if (_validRidePoints[0].time != null) {
-      firstTime = _parseDateTime(_validRidePoints[0].time!);
-    }
-    if (firstTime == null) _useTimeForWeights = false;
+    double currentTotal = 0.0;
+    DateTime? prevTime = _parseDateTime(_validRidePoints[0].time);
 
-    // Try calculating time deltas
-    if (_useTimeForWeights) {
-      for (int i = 1; i < _validRidePoints.length; i++) {
-        final tStr = _validRidePoints[i].time;
-        if (tStr == null) {
-          _useTimeForWeights = false;
-          break;
-        }
-        final dt = _parseDateTime(tStr);
-        if (dt == null) {
-          _useTimeForWeights = false;
-          break;
-        }
+    for (int i = 1; i < _validRidePoints.length; i++) {
+      final p1 = _validRidePoints[i - 1].location;
+      final p2 = _validRidePoints[i].location;
+      final tStr = _validRidePoints[i].time;
+      final currTime = _parseDateTime(tStr);
 
-        double seconds = dt.difference(firstTime!).inMilliseconds / 1000.0;
-        if (seconds < _cumulativeWeights.last) {
-          // Time went backwards? Fallback.
-          _useTimeForWeights = false;
-          break;
-        }
-        _cumulativeWeights.add(seconds);
+      // 1. Time-based weight
+      double dt = 0.0;
+      if (currTime != null && prevTime != null) {
+        dt = currTime.difference(prevTime).inMilliseconds / 1000.0;
       }
-    }
 
-    // Fallback to Euclidean distance if time is invalid
-    if (!_useTimeForWeights) {
-      _cumulativeWeights.clear();
-      _cumulativeWeights.add(0.0);
-      double currentDist = 0.0;
-      for (int i = 1; i < _validRidePoints.length; i++) {
-        final p1 = _validRidePoints[i - 1].location;
-        final p2 = _validRidePoints[i].location;
-        final dx = p2.longitude - p1.longitude;
-        final dy = p2.latitude - p1.latitude;
-        currentDist += math.sqrt(dx * dx + dy * dy);
-        _cumulativeWeights.add(currentDist);
-      }
+      // 2. Distance-based weight (to prevent jumping between far points)
+      double dist =
+          _calculateSimpleDist(p1, p2) * 100000; // Scaled for weight space
+
+      // 3. COMBINED SMOOTHING:
+      // We take the max of time and scaled distance, then apply a floor.
+      // This ensures that even if time is 0 (GPS error), distance forces a duration.
+      // And if distance is small but time is large, we respect the time gap.
+      double segmentWeight = math.max(dt, dist);
+      segmentWeight = math.max(segmentWeight, 0.4); // Floor at 400ms
+      segmentWeight = math.min(segmentWeight, 6.0); // Cap huge jumps
+
+      currentTotal += segmentWeight;
+      _cumulativeWeights.add(currentTotal);
+      prevTime = currTime;
     }
 
     _totalWeight = _cumulativeWeights.last;
@@ -416,8 +400,8 @@ class _RideHistoryDetailsScreenState extends State<RideHistoryDetailsScreen>
       avgSpd = widget.ride.avgSpeed;
     }
 
-    // Calculate heading (direction of movement)
-    double heading = _currentHeading;
+    // Calculate heading (direction of movement) with shortest-path lerp
+    double targetHeading = _currentHeading;
     if (p1.location.latitude != p2.location.latitude ||
         p1.location.longitude != p2.location.longitude) {
       final double dLng =
@@ -428,12 +412,30 @@ class _RideHistoryDetailsScreenState extends State<RideHistoryDetailsScreen>
       final double x =
           math.cos(lat1) * math.sin(lat2) -
           math.sin(lat1) * math.cos(lat2) * math.cos(dLng);
-      heading = (math.atan2(y, x) * 180.0 / math.pi + 360) % 360;
+      targetHeading = (math.atan2(y, x) * 180.0 / math.pi + 360) % 360;
+    }
+
+    // Smoothly interpolate heading to prevent "spinning" markers
+    // Using a slightly slower lerp (0.1) for extra fluid movement
+    double heading = _lerpAngle(_currentHeading, targetHeading, 0.1);
+
+    // ── POSITION SMOOTHING ──────────────────────────────────────────
+    final newPos = LatLng(lat, lng);
+    LatLng smoothedPos = newPos;
+
+    // Apply a subtle lerp if we already have a position to dampen jitter
+    if (_currentVehiclePosition != null) {
+      smoothedPos = LatLng(
+        _currentVehiclePosition!.latitude +
+            (newPos.latitude - _currentVehiclePosition!.latitude) * 0.4,
+        _currentVehiclePosition!.longitude +
+            (newPos.longitude - _currentVehiclePosition!.longitude) * 0.4,
+      );
     }
 
     setState(() {
       _currentPointIndex = baseIndex;
-      _currentVehiclePosition = LatLng(lat, lng);
+      _currentVehiclePosition = smoothedPos;
       _currentSpeedDisplay = speed;
       _currentHeading = heading;
       _currentDistanceDisplay = dist;
@@ -452,22 +454,15 @@ class _RideHistoryDetailsScreenState extends State<RideHistoryDetailsScreen>
     final controller = await _controller.future;
 
     if (_isPlaying) {
-      // Calculate bearing: combined heading + orbit offset
-      double bearing = _currentHeading;
-      if (_isOrbiting) {
-        final double curvedValue = Curves.easeInOut.transform(
-          _orbitController.value,
-        );
-        bearing = (bearing + (curvedValue * 360)) % 360;
-      }
-
+      // Removed orbit logic to prevent camera from spinning
+      // The camera will now strictly follow the vehicle heading for a smoother experience
       controller.moveCamera(
         CameraUpdate.newCameraPosition(
           CameraPosition(
             target: _currentVehiclePosition!,
-            zoom: 17.5,
-            tilt: 60.0,
-            bearing: bearing,
+            zoom: 20.0,
+            tilt: 55.0,
+            bearing: _currentHeading,
           ),
         ),
       );
@@ -478,7 +473,7 @@ class _RideHistoryDetailsScreenState extends State<RideHistoryDetailsScreen>
     if (_isPlaying) {
       setState(() {
         _playController.stop();
-        _stopOrbitAnimation(); // Stop orbit when paused
+        _stopOrbitAnimation();
         _isPlaying = false;
       });
     } else {
@@ -489,8 +484,10 @@ class _RideHistoryDetailsScreenState extends State<RideHistoryDetailsScreen>
       setState(() {
         _isPlaying = true;
         _isPlaybackActive = true;
-        _playController.duration = const Duration(seconds: 30);
-        _startOrbitAnimation(); // Start orbit when playback begins
+
+        // Duration based on weighted length to keep speed consistent
+        final targetSeconds = math.max(15, (_totalWeight / 5).toDouble());
+        _playController.duration = Duration(seconds: targetSeconds.toInt());
       });
       _createMarkers(); // Update marker size for playback
 
@@ -1318,5 +1315,12 @@ class _RideHistoryDetailsScreenState extends State<RideHistoryDetailsScreen>
         ),
       ],
     );
+  }
+
+  double _lerpAngle(double a, double b, double t) {
+    double diff = (b - a) % 360;
+    if (diff > 180) diff -= 360;
+    if (diff < -180) diff += 360;
+    return (a + diff * t) % 360;
   }
 }
