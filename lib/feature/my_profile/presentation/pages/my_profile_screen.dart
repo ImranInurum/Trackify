@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:trackify/app/cubit/app_cubit.dart';
 import 'package:trackify/app/cubit/app_state.dart';
-import 'package:trackify/core/theme/app_colors.dart';
+import 'package:trackify/feature/my_profile/presentation/pages/edit_profile_screen.dart';
 import 'package:trackify/l10n/app_localizations.dart';
 
 class MyProfileScreen extends StatelessWidget {
@@ -182,13 +182,23 @@ class MyProfileScreen extends StatelessWidget {
                             l10n.personalDetails,
                             style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onSurface),
                           ),
-                          Container(
-                            padding: const EdgeInsets.all(4),
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: Theme.of(context).colorScheme.primary,
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => const EditProfileScreen(),
+                                ),
+                              );
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.all(4),
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: Theme.of(context).colorScheme.primary,
+                              ),
+                              child: Icon(Icons.edit, size: 14, color: Theme.of(context).colorScheme.onPrimary),
                             ),
-                            child: Icon(Icons.edit, size: 14, color: Theme.of(context).colorScheme.onPrimary),
                           ),
                         ],
                       ),
