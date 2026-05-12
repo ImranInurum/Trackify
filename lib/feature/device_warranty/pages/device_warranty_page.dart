@@ -12,25 +12,25 @@ class WarrantyScreen extends StatefulWidget {
 }
 
 class _WarrantyScreenState extends State<WarrantyScreen> {
-  List<Map<String, dynamic>> _getBenefits() => [
+  List<Map<String, dynamic>> _getBenefits(AppLocalizations l10n) => [
     {
-      "highlight": "Guaranteed replacement",
-      "normal": " in case of failure",
+      "highlight": l10n.benefit1_highlight,
+      "normal": l10n.benefit1_normal,
       "icon": Icons.cached_rounded,
     },
     {
-      "highlight": "Save upto ₹1200",
-      "normal": " on device repair",
+      "highlight": l10n.benefit2_highlight,
+      "normal": l10n.benefit2_normal,
       "icon": Icons.settings_outlined,
     },
     {
-      "highlight": "Instant support",
-      "normal": " for device related issues",
+      "highlight": l10n.benefit3_highlight,
+      "normal": l10n.benefit3_normal,
       "icon": Icons.person_outline_rounded,
     },
     {
-      "highlight": "Free extended subscription upto ₹2000",
-      "normal": " for faulty period",
+      "highlight": l10n.benefit4_highlight,
+      "normal": l10n.benefit4_normal,
       "icon": Icons.subtitles_outlined,
     },
   ];
@@ -86,7 +86,7 @@ class _WarrantyScreenState extends State<WarrantyScreen> {
                   const SizedBox(height: 16),
 
                   /// 🔹 BENEFITS LIST
-                  ..._getBenefits().map(
+                  ..._getBenefits(l10n).map(
                     (benefit) => _benefitTile(
                       theme: theme,
                       colorScheme: colorScheme,
@@ -166,7 +166,7 @@ class _WarrantyScreenState extends State<WarrantyScreen> {
                       ),
                       const SizedBox(height: 6),
                       Text(
-                        'SP 125',
+                        l10n.vehicleNamePlaceholder,
                         style: TextStyle(
                           color: colorScheme.onSurface,
                           fontWeight: FontWeight.w500,

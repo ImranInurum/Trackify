@@ -2317,4 +2317,38 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get customNotification => 'Custom Notifications';
+
+  @override
+  String get orderSummary => 'Order Summary';
+
+  @override
+  String get selectedPlan => 'Selected Plan';
+
+  @override
+  String get validity => 'Validity';
+
+  @override
+  String greatSaving(Object amount) {
+    return 'Great! Saving ₹$amount with this plan';
+  }
+
+  @override
+  String get billSummary => 'Bill Summary';
+
+  @override
+  String get planPrice => 'Plan Price';
+
+  @override
+  String get discount => 'Discount';
+
+  @override
+  String get total => 'Total';
+
+  @override
+  String get gstTaxes => 'GST (govt. taxes)';
+
+  @override
+  String payAmount(Object amount) {
+    return 'Pay ₹$amount';
+  }
 }

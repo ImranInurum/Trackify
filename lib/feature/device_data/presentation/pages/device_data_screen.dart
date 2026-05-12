@@ -1,8 +1,10 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:trackify/core/theme/app_colors.dart';
 import 'package:trackify/l10n/app_localizations.dart';
 
+import '../../../order_summary/domain/entities/order_summary_entity.dart';
+import '../../../order_summary/presentation/pages/order_summary_screen.dart';
 import '../cubit/device_data_cubit.dart';
 import '../cubit/device_data_state.dart';
 
@@ -80,7 +82,7 @@ class _DeviceDataScreenState extends State<DeviceDataScreen> {
                 const SizedBox(height: 4),
                 Row(
                   children: [
-                    Text("SP 125",
+                    Text(l10n.vehicleNamePlaceholder,
                         style: text.titleMedium
                             ?.copyWith(fontWeight: FontWeight.bold)),
                     const SizedBox(width: 8),
@@ -113,10 +115,40 @@ class _DeviceDataScreenState extends State<DeviceDataScreen> {
               style:
               text.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
 
-          const SizedBox(height: 12),
+          const SizedBox(height: 20),
 
           /// 🔥 COMBO PLAN (index 0)
-          _comboPlanCard(context, data),
+          Stack(
+            clipBehavior: Clip.none,
+            children: [
+              _comboPlanCard(context, data),
+              Positioned(
+                top: -20,
+                left: 10,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: AppColors.superCombo,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(Icons.star, color: Colors.yellow, size: 14),
+                      const SizedBox(width: 4),
+                      Text(
+                        l10n.superComboPlan,
+                        style: text.labelSmall?.copyWith(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
 
           const SizedBox(height: 12),
 
@@ -129,6 +161,7 @@ class _DeviceDataScreenState extends State<DeviceDataScreen> {
             price: "₹1186",
             oldPrice: "₹1999",
           ),
+          const SizedBox(height: 12),
 
           _planCard(
             context,
@@ -150,9 +183,59 @@ class _DeviceDataScreenState extends State<DeviceDataScreen> {
                   borderRadius: BorderRadius.circular(12),
                 ),
               ),
-              onPressed: () {},
+              onPressed: () {
+                OrderSummaryEntity selectedPlan;
+                if (data.selectedIndex == 0) {
+                  selectedPlan = OrderSummaryEntity(
+                    title: l10n.superComboPlan,
+                    validity: l10n.month12Validity,
+                    price: 1355,
+                    originalPrice: 3438,
+                    discount: 2083,
+                    gst: 243,
+                    toPay: 1598,
+                    benefit: [
+                      l10n.appSimRecharge,
+                      l10n.extendedWarranty,
+                      l10n.plusMembership
+                    ],
+                    isCombo: true,
+                  );
+                } else if (data.selectedIndex == 1) {
+                  selectedPlan = OrderSummaryEntity(
+                    title: l10n.rechargePlans,
+                    validity: l10n.month12Validity,
+                    price: 1186,
+                    originalPrice: 1999,
+                    discount: 813,
+                    gst: 213,
+                    toPay: 1399,
+                    benefit: [l10n.appSimRecharge],
+                    isCombo: false,
+                  );
+                } else {
+                  selectedPlan = OrderSummaryEntity(
+                    title: l10n.rechargePlans,
+                    validity: l10n.month6Validity,
+                    price: 999,
+                    originalPrice: 1499,
+                    discount: 500,
+                    gst: 180,
+                    toPay: 1179,
+                    benefit: [l10n.appSimRecharge],
+                    isCombo: false,
+                  );
+                }
+
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => OrderSummaryScreen(plan: selectedPlan),
+                  ),
+                );
+              },
               child: Text(
-    _buttonText(l10n, data.selectedIndex)       ,
+                _buttonText(l10n, data.selectedIndex),
                 style: text.labelLarge?.copyWith(
                   color: color.onPrimary,
                   fontWeight: FontWeight.w600,
@@ -180,7 +263,7 @@ class _DeviceDataScreenState extends State<DeviceDataScreen> {
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: theme.cardColor,
+          color: AppColors.shadowColor.withOpacity(0.5),
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
               color: isSelected ? color.primary : color.primary,
@@ -215,11 +298,11 @@ class _DeviceDataScreenState extends State<DeviceDataScreen> {
                         ?.copyWith(fontWeight: FontWeight.w600)),
                 Row(
                   children: [
-                    Text("₹1355",
+                    Text("${l10n.currencySymbol}1355",
                         style: text.titleMedium
                             ?.copyWith(fontWeight: FontWeight.bold)),
                     const SizedBox(width: 8),
-                    Text("₹3438",
+                    Text("${l10n.currencySymbol}3438",
                         style: text.bodySmall?.copyWith(
                           decoration: TextDecoration.lineThrough,
                           color: color.onSurface.withOpacity(0.5),

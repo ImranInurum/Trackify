@@ -983,5 +983,18 @@
       "bhopal": "भोपाल",
       "gwalior": "ग्वालियर",
       "jabalpur": "जबलपुर",
-      "ujjain": "उज्जैन"
+      "ujjain": "उज्जैन",
+
+       "orderSummary": "ऑर्डर सारांश",
+        "selectedPlan": "चयनित प्लान",
+        "validity": "वैधता",
+        "superComboPlan": "सुपर कॉम्बो प्लान",
+        "greatSaving": "शानदार! इस प्लान से ₹{amount} की बचत",
+        "billSummary": "बिल सारांश",
+        "planPrice": "प्लान कीमत",
+        "discount": "छूट",
+        "total": "कुल",
+        "gstTaxes": "GST (सरकारी टैक्स)",
+        "toPay": "भुगतान करें",
+        "payAmount": "₹{amount} भुगतान करें"
 }

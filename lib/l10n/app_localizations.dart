@@ -4497,6 +4497,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Custom Notifications'**
   String get customNotification;
+
+  /// No description provided for @orderSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'Order Summary'**
+  String get orderSummary;
+
+  /// No description provided for @selectedPlan.
+  ///
+  /// In en, this message translates to:
+  /// **'Selected Plan'**
+  String get selectedPlan;
+
+  /// No description provided for @validity.
+  ///
+  /// In en, this message translates to:
+  /// **'Validity'**
+  String get validity;
+
+  /// No description provided for @greatSaving.
+  ///
+  /// In en, this message translates to:
+  /// **'Great! Saving ₹{amount} with this plan'**
+  String greatSaving(Object amount);
+
+  /// No description provided for @billSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'Bill Summary'**
+  String get billSummary;
+
+  /// No description provided for @planPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'Plan Price'**
+  String get planPrice;
+
+  /// No description provided for @discount.
+  ///
+  /// In en, this message translates to:
+  /// **'Discount'**
+  String get discount;
+
+  /// No description provided for @total.
+  ///
+  /// In en, this message translates to:
+  /// **'Total'**
+  String get total;
+
+  /// No description provided for @gstTaxes.
+  ///
+  /// In en, this message translates to:
+  /// **'GST (govt. taxes)'**
+  String get gstTaxes;
+
+  /// No description provided for @payAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Pay ₹{amount}'**
+  String payAmount(Object amount);
 }
 
 class _AppLocalizationsDelegate

@@ -1201,7 +1201,7 @@ class AppLocalizationsTa extends AppLocalizations {
   String get rechargePlans => 'Recharge Plans';
 
   @override
-  String get superComboPlan => 'Super Combo Plan';
+  String get superComboPlan => 'சூப்பர் காம்போ திட்டம்';
 
   @override
   String get month12Validity => '12-Month Validity';
@@ -2320,4 +2320,38 @@ class AppLocalizationsTa extends AppLocalizations {
 
   @override
   String get customNotification => 'தனிப்பயன் அறிவிப்புகள்';
+
+  @override
+  String get orderSummary => 'ஆர்டர் சுருக்கம்';
+
+  @override
+  String get selectedPlan => 'தேர்ந்தெடுக்கப்பட்ட திட்டம்';
+
+  @override
+  String get validity => 'செல்லுபடியாகும் காலம்';
+
+  @override
+  String greatSaving(Object amount) {
+    return 'அருமை! இந்த திட்டத்தில் ₹$amount சேமிக்கிறீர்கள்';
+  }
+
+  @override
+  String get billSummary => 'பில் சுருக்கம்';
+
+  @override
+  String get planPrice => 'திட்ட விலை';
+
+  @override
+  String get discount => 'தள்ளுபடி';
+
+  @override
+  String get total => 'மொத்தம்';
+
+  @override
+  String get gstTaxes => 'GST (அரசு வரிகள்)';
+
+  @override
+  String payAmount(Object amount) {
+    return '₹$amount செலுத்தவும்';
+  }
 }
