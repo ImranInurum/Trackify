@@ -1,107 +1,125 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
+import 'package:trackify/core/utils/active_video_manager.dart';
 import 'package:trackify/feature/map/data/entity/promo_video_model.dart';
+import 'package:video_player/video_player.dart';
 
 class PromoVideoCard extends StatefulWidget {
   final PromoVideoModel video;
 
-  const PromoVideoCard({Key? key, required this.video}) : super(key: key);
+  const PromoVideoCard({
+    Key? key,
+    required this.video,
+  }) : super(key: key);
 
   @override
   State<PromoVideoCard> createState() => _PromoVideoCardState();
 }
 
 class _PromoVideoCardState extends State<PromoVideoCard> {
-  // Video player logic commented out as requested
-  /*
   VideoPlayerController? _videoPlayerController;
   ChewieController? _chewieController;
+
+  bool _isInitialized = false;
   bool _isPlaying = false;
   bool _isLoading = false;
 
   @override
   void dispose() {
-    _cleanupVideo();
+    _disposeCurrentVideo();
     super.dispose();
   }
 
-  Future<void> _cleanupVideo() async {
+  Future<void> _disposeCurrentVideo() async {
     try {
-      final oldChewie = _chewieController;
-      final oldVideo = _videoPlayerController;
-      
+      await _videoPlayerController?.pause();
+
+      _chewieController?.dispose();
+      await _videoPlayerController?.dispose();
+
       _chewieController = null;
       _videoPlayerController = null;
-      
-      oldChewie?.dispose();
-      await oldVideo?.pause();
-      await oldVideo?.dispose();
-      
+
       if (mounted) {
         setState(() {
+          _isInitialized = false;
           _isPlaying = false;
           _isLoading = false;
         });
       }
-      debugPrint("VIDEO: Resources released for ${widget.video.title}");
     } catch (e) {
-      debugPrint("VIDEO CLEANUP ERROR: $e");
+      debugPrint("VIDEO DISPOSE ERROR: $e");
     }
   }
 
-  Future<void> _initializeAndPlay() async {
-    // Prevent multiple clicks while loading
-    if (_isLoading) return;
-
-    if (widget.video.videoUrl.isEmpty) {
-      debugPrint("VIDEO ERROR: URL is empty");
-      return;
-    }
-
-    setState(() {
-      _isLoading = true;
-      _isPlaying = true;
-    });
-
+  Future<void> _handleVideoTap() async {
     try {
-      debugPrint("VIDEO: Initializing ${widget.video.videoUrl}");
-      _videoPlayerController = VideoPlayerController.networkUrl(
-        Uri.parse(widget.video.videoUrl),
-      );
+      if (_isLoading) return;
 
-      await _videoPlayerController!.initialize();
+      // Pause/dispose previous playing video globally
+      if (ActiveVideoManager.currentDispose != null &&
+          ActiveVideoManager.currentDispose != _disposeCurrentVideo) {
+        await ActiveVideoManager.currentDispose!();
+      }
 
-      if (!mounted) return;
+      // FIRST INITIALIZATION
+      if (!_isInitialized) {
+        setState(() {
+          _isLoading = true;
+        });
 
-      _chewieController = ChewieController(
-        videoPlayerController: _videoPlayerController!,
-        aspectRatio: 16 / 9,
-        autoPlay: true,
-        looping: false,
-        placeholder: Container(
-          color: Colors.black,
-          child: const Center(child: CircularProgressIndicator(color: Colors.white)),
-        ),
-        errorBuilder: (context, errorMessage) {
-          return Center(
-            child: Text(
-              errorMessage,
-              style: const TextStyle(color: Colors.white),
-            ),
-          );
-        },
-      );
+        _videoPlayerController = VideoPlayerController.networkUrl(
+          Uri.parse(widget.video.videoUrl),
+        );
+
+        await _videoPlayerController!.initialize();
+
+        _chewieController = ChewieController(
+          videoPlayerController: _videoPlayerController!,
+          autoPlay: true,
+          looping: false,
+          allowFullScreen: true,
+          allowMuting: true,
+          showControls: true,
+          aspectRatio: 16 / 9,
+        );
+
+        ActiveVideoManager.currentDispose = _disposeCurrentVideo;
+
+        setState(() {
+          _isInitialized = true;
+          _isPlaying = true;
+          _isLoading = false;
+        });
+
+        return;
+      }
+
+      // TOGGLE PLAY / PAUSE
+      if (_videoPlayerController!.value.isPlaying) {
+        await _videoPlayerController!.pause();
+
+        setState(() {
+          _isPlaying = false;
+        });
+      } else {
+        await _videoPlayerController!.play();
+
+        ActiveVideoManager.currentDispose = _disposeCurrentVideo;
+
+        setState(() {
+          _isPlaying = true;
+        });
+      }
+    } catch (e) {
+      debugPrint("VIDEO ERROR: $e");
 
       setState(() {
         _isLoading = false;
       });
-      debugPrint("VIDEO: Ready and Playing");
-    } catch (e) {
-      debugPrint("VIDEO PLAY ERROR: $e");
-      _cleanupVideo();
     }
   }
-  */
 
   @override
   Widget build(BuildContext context) {
@@ -112,7 +130,7 @@ class _PromoVideoCardState extends State<PromoVideoCard> {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withOpacity(0.08),
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),
@@ -122,27 +140,79 @@ class _PromoVideoCardState extends State<PromoVideoCard> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           ClipRRect(
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+            borderRadius: const BorderRadius.vertical(
+              top: Radius.circular(12),
+            ),
             child: AspectRatio(
               aspectRatio: 16 / 9,
-              child: CachedNetworkImage(
-                imageUrl: widget.video.thumbnailUrl,
-                fit: BoxFit.cover,
-                placeholder: (context, url) => const Center(
-                  child: CircularProgressIndicator(),
-                ),
-                errorWidget: (context, url, error) => Container(
-                  color: Colors.grey[300],
-                  child: const Icon(Icons.broken_image, color: Colors.grey, size: 50),
+              child: GestureDetector(
+                onTap: _handleVideoTap,
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    // VIDEO
+                    if (_isInitialized &&
+                        _chewieController != null)
+                      Chewie(
+                        controller: _chewieController!,
+                      )
+
+                    // THUMBNAIL
+                    else
+                      CachedNetworkImage(
+                        imageUrl: widget.video.thumbnailUrl,
+                        fit: BoxFit.cover,
+                        width: double.infinity,
+                        height: double.infinity,
+                        placeholder: (context, url) =>
+                            const Center(
+                          child: CircularProgressIndicator(),
+                        ),
+                        errorWidget: (context, url, error) =>
+                            Container(
+                          color: Colors.grey[300],
+                          child: const Icon(
+                            Icons.broken_image,
+                            color: Colors.grey,
+                            size: 50,
+                          ),
+                        ),
+                      ),
+
+                    // LOADING
+                    if (_isLoading)
+                      const CircularProgressIndicator(
+                        color: Colors.white,
+                      ),
+
+                    // PLAY BUTTON
+                    if (!_isLoading && !_isPlaying)
+                      Container(
+                        padding: const EdgeInsets.all(14),
+                        decoration: BoxDecoration(
+                          color: Colors.black.withOpacity(0.7),
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(
+                          Icons.play_arrow,
+                          color: Colors.white,
+                          size: 42,
+                        ),
+                      ),
+                  ],
                 ),
               ),
             ),
           ),
+
           Padding(
-            padding: const EdgeInsets.all(12.0),
+            padding: const EdgeInsets.all(12),
             child: Text(
               widget.video.title,
-              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
             ),
