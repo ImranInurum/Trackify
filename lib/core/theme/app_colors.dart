@@ -133,5 +133,6 @@ class AppColors {
   static const Color plusCardBg = Color(0xFF1A1A1A);
   static const Color plusCardBorder = Color(0xFF333333);
   static const Color premiumBenefitsBg = Color(0xFF121212);
+  static const Color superCombo = Color(0xFF635BDB);
 }
 

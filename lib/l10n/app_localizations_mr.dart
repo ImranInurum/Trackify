@@ -1202,7 +1202,7 @@ class AppLocalizationsMr extends AppLocalizations {
   String get rechargePlans => 'Recharge Plans';
 
   @override
-  String get superComboPlan => 'Super Combo Plan';
+  String get superComboPlan => 'सुपर कॉम्बो प्लान';
 
   @override
   String get month12Validity => '12-Month Validity';
@@ -2318,4 +2318,38 @@ class AppLocalizationsMr extends AppLocalizations {
 
   @override
   String get customNotification => 'सानुकूल सूचना';
+
+  @override
+  String get orderSummary => 'ऑर्डर सारांश';
+
+  @override
+  String get selectedPlan => 'निवडलेला प्लान';
+
+  @override
+  String get validity => 'वैधता';
+
+  @override
+  String greatSaving(Object amount) {
+    return 'छान! या प्लानमुळे ₹$amount ची बचत';
+  }
+
+  @override
+  String get billSummary => 'बिल सारांश';
+
+  @override
+  String get planPrice => 'प्लान किंमत';
+
+  @override
+  String get discount => 'सवलत';
+
+  @override
+  String get total => 'एकूण';
+
+  @override
+  String get gstTaxes => 'GST (सरकारी कर)';
+
+  @override
+  String payAmount(Object amount) {
+    return '₹$amount भरा';
+  }
 }

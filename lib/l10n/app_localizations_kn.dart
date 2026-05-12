@@ -2020,7 +2020,7 @@ class AppLocalizationsKn extends AppLocalizations {
   String get boosterOffer => 'ಬೂಸ್ಟರ್ ಆಫರ್ @50% ರಿಯಾಯಿತಿ';
 
   @override
-  String get toPay => 'ಪಾವತಿಸಲು';
+  String get toPay => 'ಪಾವತಿಸಬೇಕು';
 
   @override
   String amountPayable(String amount) {
@@ -2321,4 +2321,38 @@ class AppLocalizationsKn extends AppLocalizations {
 
   @override
   String get customNotification => 'ಕಸ್ಟಮ್ ಸೂಚನೆಗಳು';
+
+  @override
+  String get orderSummary => 'ಆರ್ಡರ್ ಸಾರಾಂಶ';
+
+  @override
+  String get selectedPlan => 'ಆಯ್ದ ಯೋಜನೆ';
+
+  @override
+  String get validity => 'ಮಾನ್ಯತೆ';
+
+  @override
+  String greatSaving(Object amount) {
+    return 'ಅದ್ಭುತ! ಈ ಯೋಜನೆಯಿಂದ ₹$amount ಉಳಿತಾಯ';
+  }
+
+  @override
+  String get billSummary => 'ಬಿಲ್ ಸಾರಾಂಶ';
+
+  @override
+  String get planPrice => 'ಯೋಜನೆ ಬೆಲೆ';
+
+  @override
+  String get discount => 'ರಿಯಾಯಿತಿ';
+
+  @override
+  String get total => 'ಒಟ್ಟು';
+
+  @override
+  String get gstTaxes => 'GST (ಸರ್ಕಾರಿ ತೆರಿಗೆಗಳು)';
+
+  @override
+  String payAmount(Object amount) {
+    return '₹$amount ಪಾವತಿಸಿ';
+  }
 }

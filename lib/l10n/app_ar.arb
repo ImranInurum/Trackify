@@ -890,5 +890,18 @@
       "bhopal": "بوبال",
       "gwalior": "جواليور",
       "jabalpur": "جابالبور",
-      "ujjain": "أوجاين"
+      "ujjain": "أوجاين",
+
+       "orderSummary": "ملخص الطلب",
+        "selectedPlan": "الخطة المحددة",
+        "validity": "الصلاحية",
+        "superComboPlan": "خطة السوبر كومبو",
+        "greatSaving": "رائع! وفرت ₹{amount} مع هذه الخطة",
+        "billSummary": "ملخص الفاتورة",
+        "planPrice": "سعر الخطة",
+        "discount": "الخصم",
+        "total": "الإجمالي",
+        "gstTaxes": "ضريبة GST (الضرائب الحكومية)",
+        "toPay": "المبلغ المطلوب",
+        "payAmount": "ادفع ₹{amount}"
 }

@@ -88,7 +88,7 @@ class _DeviceWarrantyConfirmScreenState
                 ),
               ),
               Text(
-                '₹730',
+                '${l10n.currencySymbol}730',
                 style: TextStyle(
                   color: colorScheme.onSurface.withValues(alpha: 0.4),
                   fontSize: 13,
@@ -103,7 +103,7 @@ class _DeviceWarrantyConfirmScreenState
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'SP 125(MP09QV8269)',
+                '${l10n.vehicleNamePlaceholder}(${l10n.vehicleNumberPlaceholder})',
                 style: TextStyle(
                   color: colorScheme.onSurface.withValues(alpha: 0.5),
                   fontSize: 13,
@@ -111,7 +111,7 @@ class _DeviceWarrantyConfirmScreenState
                 ),
               ),
               Text(
-                '₹365',
+                '${l10n.currencySymbol}365',
                 style: TextStyle(
                   color: colorScheme.onSurface,
                   fontSize: 14,
@@ -165,7 +165,7 @@ class _DeviceWarrantyConfirmScreenState
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    'SP 125 (MP09QV8269)',
+                    '${l10n.vehicleNamePlaceholder} (${l10n.vehicleNumberPlaceholder})',
                     style: TextStyle(
                       color: colorScheme.onSurface.withValues(alpha: 0.8),
                       fontSize: 13,
@@ -173,7 +173,7 @@ class _DeviceWarrantyConfirmScreenState
                     ),
                   ),
                   Text(
-                    '₹730',
+                    '${l10n.currencySymbol}730',
                     style: TextStyle(
                       color: colorScheme.onSurface.withValues(alpha: 0.8),
                       fontSize: 13,
@@ -204,7 +204,7 @@ class _DeviceWarrantyConfirmScreenState
                     ),
                   ),
                   Text(
-                    '-₹365',
+                    '-${l10n.currencySymbol}365',
                     style: TextStyle(
                       color: colorScheme.onSurface.withValues(alpha: 0.5),
                       fontSize: 13,
@@ -252,7 +252,7 @@ class _DeviceWarrantyConfirmScreenState
                     ),
                   ),
                   Text(
-                    '₹365',
+                    '${l10n.currencySymbol}365',
                     style: TextStyle(
                       color: colorScheme.primary,
                       fontSize: 14,

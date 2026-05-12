@@ -962,6 +962,19 @@
 "geofenceAlert": "Geofence Alerts",
 "speedAlert": "Speed Alerts",
 "otherAlert": "Other Alerts",
-"customNotification": "Custom Notifications"
+"customNotification": "Custom Notifications",
+
+ "orderSummary": "Order Summary",
+  "selectedPlan": "Selected Plan",
+  "validity": "Validity",
+  "superComboPlan": "Super Combo Plan",
+  "greatSaving": "Great! Saving ₹{amount} with this plan",
+  "billSummary": "Bill Summary",
+  "planPrice": "Plan Price",
+  "discount": "Discount",
+  "total": "Total",
+  "gstTaxes": "GST (govt. taxes)",
+  "toPay": "To Pay",
+  "payAmount": "Pay ₹{amount}"
 
 }

@@ -1196,7 +1196,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get rechargePlans => 'خطط الشحن';
 
   @override
-  String get superComboPlan => 'خطة سوبر كومبو';
+  String get superComboPlan => 'خطة السوبر كومبو';
 
   @override
   String get month12Validity => 'صلاحية 12 شهراً';
@@ -2006,7 +2006,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get boosterOffer => 'عرض معزز بخصم 50%';
 
   @override
-  String get toPay => 'للدفع';
+  String get toPay => 'المبلغ المطلوب';
 
   @override
   String amountPayable(String amount) {
@@ -2306,4 +2306,38 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get customNotification => 'إشعارات مخصصة';
+
+  @override
+  String get orderSummary => 'ملخص الطلب';
+
+  @override
+  String get selectedPlan => 'الخطة المحددة';
+
+  @override
+  String get validity => 'الصلاحية';
+
+  @override
+  String greatSaving(Object amount) {
+    return 'رائع! وفرت ₹$amount مع هذه الخطة';
+  }
+
+  @override
+  String get billSummary => 'ملخص الفاتورة';
+
+  @override
+  String get planPrice => 'سعر الخطة';
+
+  @override
+  String get discount => 'الخصم';
+
+  @override
+  String get total => 'الإجمالي';
+
+  @override
+  String get gstTaxes => 'ضريبة GST (الضرائب الحكومية)';
+
+  @override
+  String payAmount(Object amount) {
+    return 'ادفع ₹$amount';
+  }
 }
