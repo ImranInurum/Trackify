@@ -8,7 +8,7 @@ class RideHistoryDetailsState extends Equatable {
   final List<double> cumulativeWeights;
   final double totalWeight;
   final List<double> cumulativeDistances;
-  
+
   final List<LatLng> smoothPositions;
   final List<double> smoothHeadings;
   final List<double> smoothSpeeds;
@@ -110,27 +110,27 @@ class RideHistoryDetailsState extends Equatable {
 
   @override
   List<Object?> get props => [
-        isDataProcessing,
-        validRidePoints,
-        cumulativeWeights,
-        totalWeight,
-        cumulativeDistances,
-        smoothPositions,
-        smoothHeadings,
-        smoothSpeeds,
-        smoothTimes,
-        currentVehiclePosition,
-        currentHeading,
-        currentSpeedDisplay,
-        currentTimeDisplay,
-        currentDistanceDisplay,
-        currentAvgSpeedDisplay,
-        isPlaying,
-        isPlaybackStarted,
-        playProgress,
-        startIcon,
-        endIcon,
-        vehicleIcon,
-        darkMapStyle,
-      ];
+    isDataProcessing,
+    validRidePoints,
+    cumulativeWeights,
+    totalWeight,
+    cumulativeDistances,
+    smoothPositions,
+    smoothHeadings,
+    smoothSpeeds,
+    smoothTimes,
+    currentVehiclePosition,
+    currentHeading,
+    currentSpeedDisplay,
+    currentTimeDisplay,
+    currentDistanceDisplay,
+    currentAvgSpeedDisplay,
+    isPlaying,
+    isPlaybackStarted,
+    playProgress,
+    startIcon,
+    endIcon,
+    vehicleIcon,
+    darkMapStyle,
+  ];
 }
