@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:trackify/l10n/app_localizations.dart';
-// import 'package:video_player/video_player.dart'; //
+import 'package:video_player/video_player.dart';
 
 import '../../../../core/config/font_manager.dart';
 import '../cubit/tutorial_cubit.dart';
@@ -19,8 +19,8 @@ class TutorialScreen extends StatefulWidget {
 
 class _TutorialScreenState extends State<TutorialScreen> {
 
-  // VideoPlayerController? _controller; //
-  // int? playingIndex; //
+  VideoPlayerController? _controller;
+  int? playingIndex;
 
   @override
   void initState() {
@@ -28,23 +28,23 @@ class _TutorialScreenState extends State<TutorialScreen> {
     context.read<TutorialCubit>().load(widget.type);
   }
 
-  // void playVideo(String url, int index) async {
-  //   await _controller?.dispose();
-  //
-  //   _controller = VideoPlayerController.network(url);
-  //
-  //   await _controller!.initialize();
-  //
-  //   _controller!.play();
-  //
-  //   setState(() {
-  //     playingIndex = index;
-  //   });
-  // }
+  void playVideo(String url, int index) async {
+    await _controller?.dispose();
+
+    _controller = VideoPlayerController.networkUrl(Uri.parse(url));
+
+    await _controller!.initialize();
+
+    _controller!.play();
+
+    setState(() {
+      playingIndex = index;
+    });
+  }
 
   @override
   void dispose() {
-    // _controller?.dispose(); //
+    _controller?.dispose();
     super.dispose();
   }
 
@@ -94,7 +94,7 @@ class _TutorialScreenState extends State<TutorialScreen> {
 
                       /// 🖼️ THUMBNAIL ONLY (VIDEO PART COMMENTED)
                       GestureDetector(
-                        // onTap: () => playVideo(video.videoUrl, i),
+                        onTap: () => playVideo(video.videoUrl, i),
                         child: ClipRRect(
                           borderRadius: const BorderRadius.vertical(
                             top: Radius.circular(12),
@@ -103,7 +103,15 @@ class _TutorialScreenState extends State<TutorialScreen> {
                             height: 200,
                             width: double.infinity,
 
-                            child: Stack(
+                            child: playingIndex == i &&
+                                    _controller != null &&
+                                    _controller!.value.isInitialized
+                                ? AspectRatio(
+                                    aspectRatio:
+                                        _controller!.value.aspectRatio,
+                                    child: VideoPlayer(_controller!),
+                                  )
+                                : Stack(
                               alignment: Alignment.center,
                               children: [
                                 Image.network(
@@ -120,16 +128,6 @@ class _TutorialScreenState extends State<TutorialScreen> {
                                 ),
                               ],
                             ),
-
-                            // child: playingIndex == i &&
-                            //         _controller != null &&
-                            //         _controller!.value.isInitialized
-                            //     ? AspectRatio(
-                            //         aspectRatio:
-                            //             _controller!.value.aspectRatio,
-                            //         child: VideoPlayer(_controller!),
-                            //       )
-                            //     : ...
                           ),
                         ),
                       ),
