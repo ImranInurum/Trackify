@@ -1091,17 +1091,26 @@ class _MapScreenState extends State<MapScreen> {
                 if (state.videos.isEmpty) {
                   return const Center(child: Text("No videos found"));
                 }
-                return Column(
-                  children: [
-                    ...state.videos.map((video) {
-                      return PromoVideoCard(video: video);
-                    }).toList(),
-                    if (state.hasMore)
-                      const Padding(
+                return ListView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: state.videos.length + (state.hasMore ? 1 : 0),
+                  itemBuilder: (context, index) {
+
+                    // Loader at bottom
+                    if (index >= state.videos.length) {
+                      return const Padding(
                         padding: EdgeInsets.symmetric(vertical: 20),
+                        child: Center(
                         child: CircularProgressIndicator(),
-                      ),
-                  ],
+                        ),
+                      );
+                    }
+
+                  final video = state.videos[index];
+
+                  return PromoVideoCard(video: video);
+                },
                 );
               }
               return const SizedBox.shrink();
