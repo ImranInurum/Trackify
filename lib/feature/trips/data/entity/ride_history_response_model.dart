@@ -22,7 +22,6 @@ class RideTripModel {
   final CurrentLocationModel? currentLocation;
   final int? count;
   final List<RideDataPointModel>? points;
-  final String? encodedPolyline;
 
   RideTripModel({
     this.date,
@@ -30,7 +29,6 @@ class RideTripModel {
     this.currentLocation,
     this.count,
     this.points,
-    this.encodedPolyline,
   });
 
   factory RideTripModel.fromJson(Map<String, dynamic> json) {
@@ -46,13 +44,16 @@ class RideTripModel {
           : null,
       count: json['count'] as int?,
       points:
-          ((json['data'] ?? json['points'] ?? json['history'] ?? json['route'] ?? json['routeData'])
+          ((json['routeData'] ??
+                      json['route'] ??
+                      json['data'] ??
+                      json['points'] ??
+                      json['history'])
                   as List<dynamic>?)
               ?.map(
                 (e) => RideDataPointModel.fromJson(e as Map<String, dynamic>),
               )
               .toList(),
-      encodedPolyline: json['encodedPolyline'] as String?,
     );
   }
 }
@@ -108,19 +109,19 @@ class CurrentLocationModel {
 }
 
 class RideDataPointModel {
-  final String? lt;
-  final String? lg;
-  final double? sp;
-  final String? createdAt;
+  final String? latitude;
+  final String? longitude;
+  final double? speed;
+  final String? time;
 
-  RideDataPointModel({this.lt, this.lg, this.sp, this.createdAt});
+  RideDataPointModel({this.latitude, this.longitude, this.speed, this.time});
 
   factory RideDataPointModel.fromJson(Map<String, dynamic> json) {
     return RideDataPointModel(
-      lt: (json['lt'] ?? json['lat'] ?? json['latitude'])?.toString(),
-      lg: (json['lg'] ?? json['lng'] ?? json['longitude'])?.toString(),
-      sp: double.tryParse((json['sp'] ?? json['speed'] ?? "0").toString()),
-      createdAt: (json['createdAt'] ?? json['time']) as String?,
+      latitude: (json['latitude'] ?? json['lat'] ?? json['lt'])?.toString(),
+      longitude: (json['longitude'] ?? json['lng'] ?? json['lg'])?.toString(),
+      speed: double.tryParse((json['speed'] ?? json['sp'] ?? "0").toString()),
+      time: (json['time'] ?? json['createdAt']) as String?,
     );
   }
 }
