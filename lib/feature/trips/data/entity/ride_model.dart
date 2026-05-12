@@ -1,6 +1,5 @@
 import 'package:flutter/foundation.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:polyline_codec/polyline_codec.dart';
 import 'ride_history_response_model.dart';
 
 class RidePoint {
@@ -93,8 +92,9 @@ class Ride {
       );
     }
 
-    final totalDistance =
-        double.parse(rides.fold(0.0, (sum, r) => sum + r.distance).toStringAsFixed(2));
+    final totalDistance = double.parse(
+      rides.fold(0.0, (sum, r) => sum + r.distance).toStringAsFixed(2),
+    );
     final topSpeed = rides.fold(
       0.0,
       (max, r) => r.topSpeed > max ? r.topSpeed : max,
@@ -158,33 +158,7 @@ class Ride {
     List<LatLng> polylinePoints = [];
     List<RidePoint> ridePoints = [];
 
-    // 1. Try decoding encodedPolyline first (DISABLED as per user request, using routeData instead)
-    /*
-    if (trip.encodedPolyline != null && trip.encodedPolyline!.isNotEmpty) {
-      try {
-        final decoded = PolylineCodec.decode(trip.encodedPolyline!);
-        debugPrint(
-          "Decoded ${decoded.length} points for trip date: ${trip.date}",
-        );
-        if (decoded.isNotEmpty) {
-          polylinePoints = decoded.map((p) {
-            return LatLng(p[0].toDouble(), p[1].toDouble());
-          }).toList();
-          debugPrint(
-            "First Point: ${polylinePoints.first}, Last Point: ${polylinePoints.last}",
-          );
-
-          ridePoints = polylinePoints
-              .map((p) => RidePoint(location: p, speed: 0.0))
-              .toList();
-        }
-      } catch (e) {
-        debugPrint("Error decoding polyline: $e");
-      }
-    }
-    */
-
-    // 2. Fallback to trip.points or supplement with them for speed data
+    // 2. Use trip.points (populated from routeData)
     if (trip.points != null && trip.points!.isNotEmpty) {
       final parsedPoints = trip.points!
           .map((p) {
@@ -194,15 +168,15 @@ class Ride {
               return double.tryParse(value.toString()) ?? 0.0;
             }
 
-            final lat = parseCoord(p.lt);
-            final lng = parseCoord(p.lg);
+            final lat = parseCoord(p.latitude);
+            final lng = parseCoord(p.longitude);
 
             if (lat == 0.0 && lng == 0.0) return null;
 
             return RidePoint(
               location: LatLng(lat, lng),
-              speed: p.sp ?? 0.0,
-              time: p.createdAt,
+              speed: p.speed ?? 0.0,
+              time: p.time,
             );
           })
           .whereType<RidePoint>()
@@ -210,10 +184,7 @@ class Ride {
 
       if (parsedPoints.isNotEmpty) {
         ridePoints = parsedPoints;
-        // If polylinePoints is empty (no encoded polyline), use these
-        if (polylinePoints.isEmpty) {
-          polylinePoints = parsedPoints.map((p) => p.location).toList();
-        }
+        polylinePoints = parsedPoints.map((p) => p.location).toList();
       }
     }
 
