@@ -1,9 +1,9 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:trackify/l10n/app_localizations.dart';
 import 'package:video_player/video_player.dart';
+import 'package:chewie/chewie.dart';
 
 import '../../../../core/config/font_manager.dart';
 import '../cubit/tutorial_cubit.dart';

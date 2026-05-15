@@ -10,6 +10,9 @@ import 'package:trackify/app/cubit/app_state.dart';
 import 'package:trackify/core/theme/app_colors.dart';
 import 'package:trackify/feature/record_via_phone/presentation/cubit/record_via_phone_cubit.dart';
 import 'package:trackify/feature/record_via_phone/presentation/cubit/record_via_phone_state.dart';
+import 'package:trackify/l10n/app_localizations_ar.dart';
+
+import '../../../../l10n/app_localizations.dart';
 
 class RecordViaPhoneScreen extends StatefulWidget {
   final String imei;
@@ -43,6 +46,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
     });
   }
 
+  late final l10n = AppLocalizations.of(context)!;
   Future<void> _loadMapStyles() async {
     try {
       _lightMapStyle = await rootBundle.loadString(
@@ -120,7 +124,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
             elevation: 0,
             backgroundColor: Colors.transparent,
             title: Text(
-              "Phone Tracking",
+              l10n.phoneTracking,
               style: theme.textTheme.headlineSmall?.copyWith(
                 fontWeight: FontWeight.bold,
                 color: Theme.of(context).colorScheme.onSurface,
@@ -136,10 +140,10 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
               labelStyle: theme.textTheme.titleSmall?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
-              tabs: const [
-                Tab(text: "Live Record"),
-                Tab(text: "History"),
-                Tab(text: "Stats"),
+              tabs:  [
+                Tab(text: l10n.liveRecord),
+                Tab(text: l10n.history),
+                Tab(text: l10n.state),
               ],
             ),
           ),
@@ -173,7 +177,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
               Marker(
                 markerId: const MarkerId("last_api_pos"),
                 position: lastPos,
-                infoWindow: const InfoWindow(title: "Last Reported Position"),
+                infoWindow:  InfoWindow(title: l10n.lastReportedPosition),
                 icon: BitmapDescriptor.defaultMarkerWithHue(
                   BitmapDescriptor.hueAzure,
                 ),
@@ -239,17 +243,17 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             _buildStatItem(
-              "Time",
+        l10n.time,
               _formatDuration(state.rideDuration),
               Icons.timer_outlined,
             ),
             _buildStatItem(
-              "Distance",
+              l10n.distance,
               "${state.rideDistance.toStringAsFixed(2)} km",
               Icons.route_outlined,
             ),
             _buildStatItem(
-              "Speed",
+              l10n.speed,
               "${state.currentSpeed.toStringAsFixed(1)} km/h",
               Icons.speed,
             ),
@@ -347,17 +351,17 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
 
                 markers = {
                   Marker(
-                    markerId: const MarkerId("start"),
+                    markerId:  MarkerId(l10n.start),
                     position: points.first,
-                    infoWindow: const InfoWindow(title: "Start"),
+                    infoWindow:   InfoWindow(title: l10n.start),
                     icon: BitmapDescriptor.defaultMarkerWithHue(
                       BitmapDescriptor.hueGreen,
                     ),
                   ),
                   Marker(
-                    markerId: const MarkerId("end"),
+                    markerId:  MarkerId(l10n.end),
                     position: points.last,
-                    infoWindow: const InfoWindow(title: "End"),
+                    infoWindow:  InfoWindow(title: l10n.end),
                     icon: BitmapDescriptor.defaultMarkerWithHue(
                       BitmapDescriptor.hueRed,
                     ),
@@ -378,7 +382,14 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
   }
 
   Widget _buildHistoryFilterBar() {
-    final filters = ['Today', 'Weekly', 'Monthly', 'Custom'];
+    final l10n = AppLocalizations.of(context)!;
+
+    final filters = [
+      l10n.today,
+      l10n.weekly,
+      l10n.monthly,
+      l10n.custom,
+    ];
     return Positioned(
       bottom: 20,
       left: 10,
@@ -405,13 +416,13 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
       onTap: () async {
         final now = DateTime.now();
         DateTime start = now, end = now;
-        if (label == 'Today') {
+        if (label == l10n.today) {
           start = DateTime(now.year, now.month, now.day);
-        } else if (label == 'Weekly') {
+        } else if (label == l10n.weekly) {
           start = now.subtract(const Duration(days: 7));
-        } else if (label == 'Monthly') {
+        } else if (label ==l10n.monthly) {
           start = DateTime(now.year, now.month - 1, now.day);
-        } else if (label == 'Custom') {
+        } else if (label == l10n.custom) {
           final picked = await showDateRangePicker(
             context: context,
             firstDate: DateTime(2020),
@@ -453,7 +464,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
           _buildSummaryCard(),
           const SizedBox(height: 25),
           Text(
-            "Quick Stats",
+            l10n.quickStats,
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
@@ -470,20 +481,20 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
             childAspectRatio: 1.2,
             children: [
               _buildStatCard(
-                "Total Rides",
+                l10n.totalRides,
                 "24",
                 Icons.directions_car,
                 Colors.blue,
               ),
               _buildStatCard(
-                "Avg Speed",
+                l10n.averageSpeed,
                 "42 km/h",
                 Icons.speed,
                 Colors.orange,
               ),
-              _buildStatCard("Top Speed", "85 km/h", Icons.bolt, Colors.purple),
+              _buildStatCard(l10n.topSpeed, "85 km/h", Icons.bolt, Colors.purple),
               _buildStatCard(
-                "Total Fuel",
+                l10n.totalFuel,
                 "12.5 L",
                 Icons.local_gas_station,
                 Colors.green,
@@ -520,8 +531,8 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            "Overall Distance",
+           Text(
+            l10n.overallDistance,
             style: TextStyle(color: Colors.white70, fontSize: 16),
           ),
           const SizedBox(height: 8),
@@ -536,9 +547,9 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
           const SizedBox(height: 20),
           Row(
             children: [
-              _buildSimpleInfo("128h", "Driving Time"),
+              _buildSimpleInfo("128h", l10n.drivingTime),
               const SizedBox(width: 30),
-              _buildSimpleInfo("92%", "Safety Score"),
+              _buildSimpleInfo("92%", l10n.safetyScore),
             ],
           ),
         ],

@@ -4557,6 +4557,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Pay ₹{amount}'**
   String payAmount(Object amount);
+
+  /// No description provided for @liveRecord.
+  ///
+  /// In en, this message translates to:
+  /// **'Live Record'**
+  String get liveRecord;
+
+  /// No description provided for @history.
+  ///
+  /// In en, this message translates to:
+  /// **'History'**
+  String get history;
+
+  /// No description provided for @stats.
+  ///
+  /// In en, this message translates to:
+  /// **'Stats'**
+  String get stats;
+
+  /// No description provided for @lastReportedPosition.
+  ///
+  /// In en, this message translates to:
+  /// **'Last Reported Position'**
+  String get lastReportedPosition;
+
+  /// No description provided for @time.
+  ///
+  /// In en, this message translates to:
+  /// **'Time'**
+  String get time;
+
+  /// No description provided for @appUpdate.
+  ///
+  /// In en, this message translates to:
+  /// **'App Update'**
+  String get appUpdate;
 }
 
 class _AppLocalizationsDelegate

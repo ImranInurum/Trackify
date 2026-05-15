@@ -959,6 +959,7 @@
 "ignitionAlert": "Ignition Alerts",
 "fallAlert": "Fall Alerts",
 "batteryAlert": "Battery Alerts",
+
 "geofenceAlert": "Geofence Alerts",
 "speedAlert": "Speed Alerts",
 "otherAlert": "Other Alerts",
@@ -975,6 +976,38 @@
   "total": "Total",
   "gstTaxes": "GST (govt. taxes)",
   "toPay": "To Pay",
-  "payAmount": "Pay ₹{amount}"
+  "payAmount": "Pay ₹{amount}",
+
+   "phoneTracking": "Phone Tracking",
+    "liveRecord": "Live Record",
+    "history": "History",
+    "stats": "Stats",
+
+    "lastReportedPosition": "Last Reported Position",
+
+    "time": "Time",
+    "distance": "Distance",
+    "speed": "Speed",
+
+    "today": "Today",
+    "weekly": "Weekly",
+    "monthly": "Monthly",
+    "custom": "Custom",
+
+    "start": "Start",
+    "end": "End",
+
+    "quickStats": "Quick Stats",
+
+    "totalRides": "Total Rides",
+    "avgSpeed": "Avg Speed",
+    "topSpeed": "Top Speed",
+    "totalFuel": "Total Fuel",
+
+    "overallDistance": "Overall Distance",
+    "drivingTime": "Driving Time",
+    "safetyScore": "Safety Score",
+
+    "appUpdate": "App Update"
 
 }

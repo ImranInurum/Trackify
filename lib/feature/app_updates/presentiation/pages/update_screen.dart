@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:trackify/core/config/font_manager.dart';
+import 'package:trackify/l10n/app_localizations_ar.dart';
+import '../../../../l10n/app_localizations.dart';
 import '../cubit/update_cubit.dart';
 import '../cubit/update_cubit_state.dart';
 
@@ -26,6 +28,8 @@ class _UpdateScreenState extends State<UpdateScreen> {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
+    final l10n = AppLocalizations.of(context)!;
+
 
     return Scaffold(
       backgroundColor: colorScheme.onPrimaryContainer,
@@ -40,7 +44,7 @@ class _UpdateScreenState extends State<UpdateScreen> {
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
-          "App Updates",
+          l10n.appUpdates,
           style: TextStyle(
             fontSize: width * .05,
             fontWeight: FontWeightManager.semibold,

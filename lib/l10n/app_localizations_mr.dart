@@ -423,7 +423,7 @@ class AppLocalizationsMr extends AppLocalizations {
   String get electric => 'इलेक्ट्रिक';
 
   @override
-  String get vehicleImage => 'Vehicle Image';
+  String get vehicleImage => 'वाहनाची प्रतिमा';
 
   @override
   String get newLabel => 'NEW';
@@ -733,52 +733,52 @@ class AppLocalizationsMr extends AppLocalizations {
   String get sharedRides => 'सामायिक केलेल्या राइड्स';
 
   @override
-  String get savedRides => 'Saved Rides';
+  String get savedRides => 'जतन केलेल्या राईड्स';
 
   @override
-  String get allRides => 'ALL RIDES';
+  String get allRides => 'सर्व राईड्स';
 
   @override
-  String get trips => 'TRIPS';
+  String get trips => 'ट्रिप्स';
 
   @override
   String clicked(String value) {
-    return '$value Clicked';
+    return '$value क्लिक केले';
   }
 
   @override
-  String get noDailyRides => 'No daily rides to show';
+  String get noDailyRides => 'दाखवण्यासाठी कोणत्याही दैनंदिन राईड्स नाहीत';
 
   @override
-  String get getStartedFirstRide => 'Get started by taking your first ride';
+  String get getStartedFirstRide => 'तुमची पहिली राईड घेऊन सुरुवात करा';
 
   @override
-  String get durationLabel => 'Duration';
+  String get durationLabel => 'कालावधी';
 
   @override
-  String get km => 'km';
+  String get km => 'कि.मी.';
 
   @override
-  String get kmh => 'km/h';
+  String get kmh => 'कि.मी./ता.';
 
   @override
   String get tripEmptyQuote =>
-      '“Group your rides into trips, add memories, and relive the journey”';
+      '“तुमच्या राईड्स ट्रिपमध्ये गटबद्ध करा, आठवणी जोडा आणि प्रवास पुन्हा जगा”';
 
   @override
   String ridesCompletedCount(String completed, String total) {
-    return 'Rides completed: $completed/$total';
+    return 'पूर्ण झालेल्या राईड्स: $completed/$total';
   }
 
   @override
   String get unlockTripsRequirement =>
-      'You need at least 3 rides to unlock trips';
+      'ट्रिप्स अनलॉक करण्यासाठी किमान 3 राईड्स आवश्यक आहेत';
 
   @override
-  String get createNewTrip => 'Create a New Trip';
+  String get createNewTrip => 'नवीन ट्रिप तयार करा';
 
   @override
-  String get startByCreatingTrip => 'Start by creating a New Trip';
+  String get startByCreatingTrip => 'नवीन ट्रिप तयार करून सुरुवात करा';
 
   @override
   String get skip => 'वगळा';
@@ -1054,82 +1054,81 @@ class AppLocalizationsMr extends AppLocalizations {
   String get selectVehicle => 'वाहन निवडा';
 
   @override
-  String get liveTab => 'LIVE';
+  String get liveTab => 'थेट';
 
   @override
-  String get historyTab => 'HISTORY';
+  String get historyTab => 'इतिहास';
 
   @override
-  String get liveLocationSharingActive => 'Live Location Sharing Active';
+  String get liveLocationSharingActive => 'थेट स्थान शेअरिंग सक्रिय';
 
   @override
-  String get noLiveLocationShared => 'No live location shared';
+  String get noLiveLocationShared => 'थेट स्थान शेअर केलेले नाही';
 
   @override
   String get realTimeSharingDesc =>
-      'Your location is being shared in real-time with selected contacts.';
+      'निवडलेल्या संपर्कांसोबत तुमचे स्थान रिअल-टाइममध्ये शेअर केले जात आहे.';
 
   @override
   String get startSharingPhoneDesc =>
-      'Start sharing your phone\'s location to help others track you';
+      'तुमचा शोध घेण्यास इतरांना मदत करण्यासाठी तुमच्या फोनचे स्थान शेअर करणे सुरू करा';
 
   @override
-  String get noHistoryAvailable => 'No history available';
+  String get noHistoryAvailable => 'इतिहास उपलब्ध नाही';
 
   @override
-  String get historyDesc =>
-      'Past location shares will appear here once they are completed.';
+  String get historyDesc => 'मागील स्थान शेअरिंग पूर्ण झाल्यावर येथे दिसेल.';
 
   @override
-  String get stopSharing => 'Stop Sharing';
+  String get stopSharing => 'शेअरिंग थांबवा';
 
   @override
-  String get shareLocation => 'Share Location';
+  String get shareLocation => 'स्थान शेअर करा';
 
   @override
-  String get startSharing => 'Start Sharing';
+  String get startSharing => 'शेअरिंग सुरू करा';
 
   @override
-  String get phoneTracking => 'Phone Tracking';
+  String get phoneTracking => 'फोन ट्रॅकिंग';
 
   @override
-  String get liveRecordTab => 'Live Record';
+  String get liveRecordTab => 'थेट रेकॉर्ड';
 
   @override
-  String get statsTab => 'Stats';
+  String get statsTab => 'आकडेवारी';
 
   @override
-  String get timeLabel => 'Time';
+  String get timeLabel => 'वेळ';
 
   @override
-  String get weekly => 'Weekly';
+  String get weekly => 'साप्ताहिक';
 
   @override
-  String get monthly => 'Monthly';
+  String get monthly => 'मासिक';
 
   @override
-  String get custom => 'Custom';
+  String get custom => 'कस्टम';
 
   @override
-  String get quickStats => 'Quick Stats';
+  String get quickStats => 'झटपट आकडेवारी';
 
   @override
-  String get totalRides => 'Total Rides';
+  String get totalRides => 'एकूण राईड्स';
 
   @override
-  String get avgSpeed => 'Avg Speed';
+  String get avgSpeed => 'सरासरी वेग';
 
   @override
-  String get totalFuel => 'Total Fuel';
+  String get totalFuel => 'एकूण इंधन';
 
   @override
-  String get overallDistance => 'Overall Distance';
+  String get overallDistance => 'एकूण अंतर';
 
   @override
-  String get drivingTime => 'Driving Time';
+  String get drivingTime => 'ड्रायव्हिंग वेळ';
 
   @override
-  String get safetyScore => 'Safety Score';
+  String get safetyScore => 'सुरक्षा स्कोअर';
 
   @override
   String get speedAlertInput => 'वेग इशारा इनपुट';
@@ -1163,218 +1162,216 @@ class AppLocalizationsMr extends AppLocalizations {
   String get kmHr => 'किमी/तास';
 
   @override
-  String get viewMore => 'View more';
+  String get viewMore => 'अधिक पहा';
 
   @override
-  String get viewLess => 'View less';
+  String get viewLess => 'कमी पहा';
 
   @override
-  String get previousRides => 'Previous Rides';
+  String get previousRides => 'मागील राइड्स';
 
   @override
-  String get seeAll => 'See All';
+  String get seeAll => 'सर्व पहा';
 
   @override
-  String get videosYouMightLike => 'Videos You Might Like';
+  String get videosYouMightLike => 'तुम्हाला आवडतील असे व्हिडिओ';
 
   @override
-  String get scrollToTop => 'Scroll to Top';
+  String get scrollToTop => 'वर स्क्रोल करा';
 
   @override
-  String get noRecentRidesFound => 'No recent rides found';
+  String get noRecentRidesFound => 'कोणत्याही अलीकडील राइड्स सापडल्या नाहीत';
 
   @override
-  String get failedToLoadRides => 'Failed to load rides';
+  String get failedToLoadRides => 'राइड्स लोड करण्यात अयशस्वी';
 
   @override
-  String get hrMin => 'hr:min';
+  String get hrMin => 'तास:मिनिट';
 
   @override
-  String get vehicleLabel => 'Vehicle';
+  String get vehicleLabel => 'वाहन';
 
   @override
-  String get switchLabel => 'Switch';
+  String get switchLabel => 'स्विच';
 
   @override
-  String get expiryDate => 'Expiry Date';
+  String get expiryDate => 'कालबाह्यता तारीख';
 
   @override
-  String get rechargePlans => 'Recharge Plans';
+  String get rechargePlans => 'रिचार्ज प्लॅन्स';
 
   @override
   String get superComboPlan => 'सुपर कॉम्बो प्लान';
 
   @override
-  String get month12Validity => '12-Month Validity';
+  String get month12Validity => '१२-महिन्यांची वैधता';
 
   @override
-  String get month6Validity => '6-Month Validity';
+  String get month6Validity => '६-महिन्यांची वैधता';
 
   @override
   String saveAmount(Object amount) {
-    return 'Save ₹$amount with this plan';
+    return 'या प्लॅनसह ₹$amount वाचवा';
   }
 
   @override
-  String get superComboPopularity => '95% of users choose the Super Combo Plan';
+  String get superComboPopularity => '९५% वापरकर्ते सुपर कॉम्बो प्लॅन निवडतात';
 
   @override
-  String get appSimRecharge => 'App & SIM Recharge';
+  String get appSimRecharge => 'अ‍ॅप आणि सिम रिचार्ज';
 
   @override
   String get extendedWarranty => 'विस्तारित वॉरंटी';
 
   @override
-  String get plusMembership => 'Plus Membership';
+  String get plusMembership => 'प्लस मेंबरशिप';
 
   @override
-  String get continueSuperCombo => 'Continue with Super Combo Plan';
+  String get continueSuperCombo => 'सुपर कॉम्बो प्लॅनसह पुढे जा';
 
   @override
-  String get continue12Month => 'Continue with 12-Month Plan';
+  String get continue12Month => '१२-महिन्यांच्या प्लॅनसह पुढे जा';
 
   @override
-  String get continue6Month => 'Continue with 6-Month Plan';
+  String get continue6Month => '६-महिन्यांच्या प्लॅनसह पुढे जा';
 
   @override
-  String get vehicleDocumentsTitle => 'Vehicle Documents';
+  String get vehicleDocumentsTitle => 'वाहन दस्तऐवज';
 
   @override
   String get personalDocumentsSubtitle =>
-      'Keep your vehicle documents handy by uploading them';
+      'तुमचे वाहन दस्तऐवज अपलोड करून सहज उपलब्ध ठेवा';
 
   @override
-  String get vehicleRC => 'Vehicle RC';
+  String get vehicleRC => 'वाहन RC';
 
   @override
-  String get insurance => 'Insurance Details';
+  String get insurance => 'विमा';
 
   @override
-  String get puc => 'PUC Certificate';
+  String get puc => 'PUC';
 
   @override
-  String get vehicleRCTitle => 'Vehicle RC';
+  String get vehicleRCTitle => 'वाहन RC';
 
   @override
-  String get insuranceTitle => 'Insurance Details';
+  String get insuranceTitle => 'विमा तपशील';
 
   @override
-  String get pucTitle => 'PUC Certificate';
+  String get pucTitle => 'PUC प्रमाणपत्र';
 
   @override
-  String get notificationControlsTitle => 'ध्वनी संतुलन';
+  String get notificationControlsTitle => 'अधिसूचना नियंत्रणे';
 
   @override
-  String get ignitionOnOffTitle => 'Ignition ON/OFF';
+  String get ignitionOnOffTitle => 'इग्निशन ऑन/ऑफ';
 
   @override
   String get ignitionOnOffDesc =>
-      'Get notified when vehicle ignition is turned ON or OFF';
+      'वाहनाचे इग्निशन चालू किंवा बंद असताना सूचना मिळवा';
 
   @override
-  String get motionWithIgnitionOffTitle => 'Motion with Ignition OFF';
+  String get motionWithIgnitionOffTitle => 'इग्निशन बंद असताना हालचाल';
 
   @override
   String get motionWithIgnitionOffDesc =>
-      'Get notified when vehicle is moving while ignition is OFF';
+      'इग्निशन बंद असताना वाहन हलल्यावर सूचना मिळवा';
 
   @override
-  String get powerSupplyOffTitle => 'Power Supply OFF';
+  String get powerSupplyOffTitle => 'पॉवर सप्लाय बंद';
 
   @override
-  String get powerSupplyOffDesc =>
-      'Get notified when Trackify is not receiving power';
+  String get powerSupplyOffDesc => 'Trackify ला वीज मिळत नसताना सूचना मिळवा';
 
   @override
-  String get appNotification => 'App Notification';
+  String get appNotification => 'अ‍ॅप सूचना';
 
   @override
-  String get odometerReading => 'Odometer Reading';
+  String get odometerReading => 'ओडोमीटर वाचन';
 
   @override
-  String get update => 'Update';
+  String get update => 'अपडेट करा';
 
   @override
-  String get gpsReadingNote =>
-      'GPS-based reading, minor differences may occur.';
+  String get gpsReadingNote => 'GPS-आधारित वाचन, किरकोळ फरक असू शकतो.';
 
   @override
-  String get tankCapacity => 'Tank Capacity';
+  String get tankCapacity => 'टाकीची क्षमता';
 
   @override
-  String get afterLastRefuel => 'After Last Refuel';
+  String get afterLastRefuel => 'शेवटच्या इंधन भरल्यानंतर';
 
   @override
-  String get fuelRemaining => 'Fuel Remaining';
+  String get fuelRemaining => 'उर्वरित इंधन';
 
   @override
-  String get distanceRemaining => 'Distance Remaining';
+  String get distanceRemaining => 'उर्वरित अंतर';
 
   @override
-  String get mileageArai => 'Mileage (ARAI)';
+  String get mileageArai => 'मायलेज (ARAI)';
 
   @override
-  String get spendingOnFuel => 'Spending on Fuel';
+  String get spendingOnFuel => 'इंधनावरील खर्च';
 
   @override
-  String get today => 'Today';
+  String get today => 'आज';
 
   @override
-  String get thisWeek => 'This week';
+  String get thisWeek => 'या आठवड्यात';
 
   @override
-  String get thisMonth => 'This month';
+  String get thisMonth => 'या महिन्यात';
 
   @override
-  String get thisYear => 'This year';
+  String get thisYear => 'या वर्षी';
 
   @override
-  String get all => 'All';
+  String get all => 'सर्व';
 
   @override
-  String get customDates => 'Custom dates';
+  String get customDates => 'सानुकूल तारखा';
 
   @override
-  String get refuelHistory => 'Refuel History';
+  String get refuelHistory => 'इंधन भरण्याचा इतिहास';
 
   @override
-  String get addRefuelingDetails => 'Add refueling details';
+  String get addRefuelingDetails => 'इंधन भरण्याचे तपशील जोडा';
 
   @override
-  String get fuelStations => 'Fuel Stations';
+  String get fuelStations => 'इंधन स्टेशन';
 
   @override
-  String get dashboard => 'Dashboard';
+  String get dashboard => 'डॅशबोर्ड';
 
   @override
-  String get litersShort => 'L';
+  String get litersShort => 'लि';
 
   @override
   String get fuelEstimateNote =>
-      'These values are estimates based on your fuel entries. Add fuel logs regularly for better accuracy.';
+      'ही मूल्ये तुमच्या इंधन नोंदींवर आधारित अंदाज आहेत. अधिक अचूकतेसाठी नियमितपणे इंधन नोंदी जोडा.';
 
   @override
   String get gotIt => 'समजले';
 
   @override
-  String get currentOdometerReading => 'Current Odometer Reading';
+  String get currentOdometerReading => 'वर्तमान ओडोमीटर वाचन';
 
   @override
   String get odometerUpdateDesc =>
-      'Regularly update your odometer for accurate fuel and distance estimates';
+      'अचूक इंधन आणि अंतर अंदाजासाठी नियमितपणे तुमचा ओडोमीटर अपडेट करा';
 
   @override
-  String get updateTankCapacity => 'Update Tank Capacity';
+  String get updateTankCapacity => 'टाकीची क्षमता अपडेट करा';
 
   @override
   String get tankCapacityDesc =>
-      'Enter the maximum fuel capacity of your vehicle tank';
+      'तुमच्या वाहनाच्या टाकीची कमाल इंधन क्षमता प्रविष्ट करा';
 
   @override
-  String get litres => 'Litres';
+  String get litres => 'लिटर';
 
   @override
-  String get kms => 'Kms';
+  String get kms => 'किमी';
 
   @override
   String get cancel => 'रद्द करा';
@@ -1383,26 +1380,26 @@ class AppLocalizationsMr extends AppLocalizations {
   String get save => 'जतन करा';
 
   @override
-  String get updateMileageArai => 'Update Mileage (ARAI)';
+  String get updateMileageArai => 'मायलेज (ARAI) अपडेट करा';
 
   @override
   String get mileageDesc =>
-      'Enter current mileage (Km/L) to track remaining fuel & distance accurately.';
+      'अचूक इंधन आणि अंतर अंदाजासाठी वर्तमान मायलेज (किमी/लि) प्रविष्ट करा.';
 
   @override
-  String get kmL => 'Km/L';
+  String get kmL => 'किमी/लि';
 
   @override
-  String get serviceLogAddedSuccess => 'Service log added successfully';
+  String get serviceLogAddedSuccess => 'सर्व्हिस लॉग यशस्वीरित्या जोडला गेला';
 
   @override
   String get currencySymbol => '₹';
 
   @override
-  String get refuelHistoryComingSoon => 'Refuel History Coming Soon';
+  String get refuelHistoryComingSoon => 'इंधन भरण्याचा इतिहास लवकरच येत आहे';
 
   @override
-  String get fuelStationsComingSoon => 'Fuel Stations Coming Soon';
+  String get fuelStationsComingSoon => 'इंधन स्टेशन लवकरच येत आहेत';
 
   @override
   String percentageValue(String value) {
@@ -1410,75 +1407,75 @@ class AppLocalizationsMr extends AppLocalizations {
   }
 
   @override
-  String get totalFuelAdded => 'Total Fuel Added';
+  String get totalFuelAdded => 'एकूण जोडलेले इंधन';
 
   @override
-  String get totalSpendings => 'Total spendings';
+  String get totalSpendings => 'एकूण खर्च';
 
   @override
-  String get avgMileage => 'Avg Mileage';
+  String get avgMileage => 'सरासरी मायलेज';
 
   @override
-  String get refuels => 'Refuels';
+  String get refuels => 'इंधन भरल्याची संख्या';
 
   @override
-  String get refuelingHistory => 'Refueling History';
+  String get refuelingHistory => 'इंधन भरण्याचा इतिहास';
 
   @override
-  String get newestFirst => 'Newest First';
+  String get newestFirst => 'नवीनतम आधी';
 
   @override
-  String get oldestFirst => 'Oldest First';
+  String get oldestFirst => 'सर्वात जुने आधी';
 
   @override
-  String get mostExpensive => 'Most Expensive';
+  String get mostExpensive => 'सर्वात महाग';
 
   @override
-  String get leastExpensive => 'Least Expensive';
+  String get leastExpensive => 'सर्वात स्वस्त';
 
   @override
-  String get bestMileage => 'Best Mileage';
+  String get bestMileage => 'सर्वोत्तम मायलेज';
 
   @override
-  String get worstMileage => 'Worst Mileage';
+  String get worstMileage => 'सर्वात खराब मायलेज';
 
   @override
-  String get edit => 'Edit';
+  String get edit => 'संपादन करा';
 
   @override
-  String get delete => 'Delete';
+  String get delete => 'हटवा';
 
   @override
-  String get error => 'Something went wrong';
+  String get error => 'काहीतरी चुकले';
 
   @override
-  String get noDataAvailable => 'No data available';
+  String get noDataAvailable => 'कोणताही डेटा उपलब्ध नाही';
 
   @override
   String hintEg(String value) {
-    return 'e.g., $value';
+    return 'उदा., $value';
   }
 
   @override
-  String get addStation => 'Add Station';
+  String get addStation => 'स्टेशन जोडा';
 
   @override
-  String get nearby => 'Nearby';
+  String get nearby => 'जवळपास';
 
   @override
-  String get favourites => 'Favourites';
+  String get favourites => 'आवडते';
 
   @override
-  String get addedByMe => 'Added by me';
+  String get addedByMe => 'माझ्याद्वारे जोडलेले';
 
   @override
-  String get noFavourites => 'No favourites yet';
+  String get noFavourites => 'अद्याप कोणतेही आवडते नाहीत';
 
   @override
-  String get noStationsAdded => 'No stations added yet';
+  String get noStationsAdded => 'अद्याप कोणतीही स्टेशन जोडलेली नाहीत';
 
   @override
-  String get fuelStationNearVehicle => 'Fuel Station Near Vehicle';
+  String get fuelStationNearVehicle => 'वाहनाजवळचे इंधन स्टेशन';
 
   @override
   String get warranty_title => 'डिव्हाइस वॉरंटी';
@@ -1541,89 +1538,89 @@ class AppLocalizationsMr extends AppLocalizations {
   String get sendNow => 'आता पाठवा';
 
   @override
-  String get geoFenceTitle => 'Geo-fence';
+  String get geoFenceTitle => 'जिओ-फेन्स';
 
   @override
   String geoFenceRadius(String radius) {
-    return 'Radius: ${radius}m';
+    return 'त्रिज्या: $radiusमी';
   }
 
   @override
-  String get geoFenceLocating => 'Locating...';
+  String get geoFenceLocating => 'स्थान शोधत आहे...';
 
   @override
-  String get geoFenceNameRequired => 'Please enter a geo-fence name';
+  String get geoFenceNameRequired => 'कृपया जिओ-फेन्स नाव प्रविष्ट करा';
 
   @override
-  String get geoFenceSaveSuccess => 'Geo-fence saved successfully!';
+  String get geoFenceSaveSuccess => 'जिओ-फेन्स यशस्वीरित्या जतन केला!';
 
   @override
-  String get geoFenceSearchHint => 'Search location...';
+  String get geoFenceSearchHint => 'स्थान शोधा...';
 
   @override
-  String get geoFenceSelectType => 'Select Geo-fence type for ';
+  String get geoFenceSelectType => 'साठी जिओ-फेन्स प्रकार निवडा ';
 
   @override
-  String get geoFenceTypeHome => 'Home';
+  String get geoFenceTypeHome => 'घर';
 
   @override
-  String get geoFenceTypeOffice => 'Office';
+  String get geoFenceTypeOffice => 'कार्यालय';
 
   @override
-  String get geoFenceTypeFamily => 'Family';
+  String get geoFenceTypeFamily => 'कुटुंब';
 
   @override
-  String get geoFenceTypeParking => 'Parking';
+  String get geoFenceTypeParking => 'पार्किंग';
 
   @override
-  String get geoFenceTypeOthers => 'Others';
+  String get geoFenceTypeOthers => 'इतर';
 
   @override
-  String get geoFenceNameFieldHint => 'Enter Geo-fence name, eg: Home';
+  String get geoFenceNameFieldHint => 'जिओ-फेन्स नाव प्रविष्ट करा, उदा: घर';
 
   @override
-  String get geoFenceAddSmsContacts => 'Add Contacts for SMS Alert';
+  String get geoFenceAddSmsContacts => 'SMS अलर्टसाठी संपर्क जोडा';
 
   @override
   String get geoFenceEmptyStateDesc =>
-      'Draw a circle on the map and be alerted whenever a bike enters or exits the circle.';
+      'नकाशावर वर्तुळ काढा आणि जेव्हा बाईक वर्तुळात प्रवेश करते किंवा बाहेर पडते तेव्हा अलर्ट मिळवा.';
 
   @override
-  String get addGeoFenceButton => 'Add Geo-fence';
+  String get addGeoFenceButton => 'जिओ-फेन्स जोडा';
 
   @override
-  String get safeParkingTitle => 'Safe Parking';
+  String get safeParkingTitle => 'सुरक्षित पार्किंग';
 
   @override
-  String get schedule => 'Schedule';
+  String get schedule => 'वेळापत्रक';
 
   @override
-  String get setupSafeParking => 'Set up Safe Parking';
+  String get setupSafeParking => 'सुरक्षित पार्किंग सेट करा';
 
   @override
   String get safeParkingSubtitle =>
-      'Get call alerts for engine ON & towing alerts';
+      'इंजिन सुरू आणि टोइंग अलर्टसाठी कॉल अलर्ट मिळवा';
 
   @override
-  String get activate => 'Activate';
+  String get activate => 'सक्रिय करा';
 
   @override
-  String get activated => 'Activated';
+  String get activated => 'सक्रिय झाले';
 
   @override
   String get safeParkingDescription =>
-      'Enable alerts when engine is turned ON or towing is detected';
+      'इंजिन सुरू झाल्यावर किंवा टोइंग आढळल्यावर अलर्ट सक्षम करा';
 
   @override
   String get geoFenceDeleteConfirmation =>
-      'Are you sure you want to delete this Geo-Fence?';
+      'तुम्हाला खात्री आहे की तुम्ही हा जिओ-फेन्स हटवू इच्छिता?';
 
   @override
   String get geoFenceTurnOffConfirmation =>
-      'Are you sure you want to turn Off this geo fence?';
+      'तुम्हाला खात्री आहे की तुम्ही हा जिओ-फेन्स बंद करू इच्छिता?';
 
   @override
-  String get turnOff => 'Turn off';
+  String get turnOff => 'बंद करा';
 
   @override
   String get plusMembershipTitle => 'प्लस सदस्यता';
@@ -1665,10 +1662,10 @@ class AppLocalizationsMr extends AppLocalizations {
       'प्रत्येक बाईक स्मार्ट आणि प्रत्येक रायडर सुरक्षित\nअसेल अशा भविष्याची निर्मिती करत आहोत';
 
   @override
-  String get cropDocument => 'Crop Document';
+  String get cropDocument => 'दस्तऐवज क्रॉप करा';
 
   @override
-  String get cropVehicleImage => 'Crop Vehicle Image';
+  String get cropVehicleImage => 'वाहन प्रतिमा क्रॉप करा';
 
   @override
   String get uploadImage => 'प्रतिमा अपलोड करा';
@@ -1683,83 +1680,85 @@ class AppLocalizationsMr extends AppLocalizations {
   String get pdf => 'PDF';
 
   @override
-  String get fileTooLarge => 'File size exceeds 5MB';
+  String get fileTooLarge => 'फाइलचा आकार 5MB मर्यादेपेक्षा जास्त आहे';
 
   @override
-  String get pickImageError => 'Error picking image';
+  String get pickImageError => 'प्रतिमा निवडताना त्रुटी आली';
 
   @override
-  String get pickPdfError => 'Error picking PDF';
+  String get pickPdfError => 'PDF निवडताना त्रुटी आली';
 
   @override
-  String get pdfTooLarge => 'PDF size exceeds 5MB';
+  String get pdfTooLarge => 'PDF चा आकार 5MB मर्यादेपेक्षा जास्त आहे';
 
   @override
-  String get uploadDocuments => 'Upload Documents';
+  String get uploadDocuments => 'दस्तऐवज अपलोड करा';
 
   @override
-  String get frontSide => 'Front Side*';
+  String get frontSide => 'समोरील बाजू';
 
   @override
-  String get backSide => 'Back Side';
+  String get backSide => 'मागील बाजू';
 
   @override
-  String get commitmentText => 'Your Documents\nOur Commitment';
+  String get commitmentText =>
+      'आम्ही तुमची गोपनीयता जपण्यासाठी आणि तुमचे दस्तऐवज सुरक्षित ठेवण्यासाठी वचनबद्ध आहोत.';
 
   @override
-  String get documentsSafe => 'Your documents are encrypted and safe';
+  String get documentsSafe => 'तुमचे दस्तऐवज आमच्यासोबत सुरक्षित आहेत';
 
   @override
   String get addDocument => 'दस्तऐवज जोडा';
 
   @override
-  String get frontRequired => 'Front side document is required';
+  String get frontRequired => 'समोरील दस्तऐवज आवश्यक आहे';
 
   @override
-  String get successMessage => 'Document added successfully';
+  String get successMessage => 'दस्तऐवज यशस्वीरित्या जतन केला';
 
   @override
-  String get selectExpiryDate => 'Select Expiry Date';
+  String get selectExpiryDate => 'कालबाह्यता तारीख निवडा';
 
   @override
-  String get documentsEncrypted => 'Your documents are encrypted & safe';
+  String get documentsEncrypted =>
+      'तुमचे दस्तऐवज एन्क्रिप्टेड आणि सुरक्षित आहेत';
 
   @override
-  String get fileSizeNote => 'Note: Max file size is 5MB';
+  String get fileSizeNote => 'टीप: कमाल फाइल आकार 5MB आहे';
 
   @override
-  String get personalDocumentsTitle => 'Personal Documents';
+  String get personalDocumentsTitle => 'वैयक्तिक दस्तऐवज';
 
   @override
-  String get drivingLicense => 'Driving License';
+  String get drivingLicense => 'ड्रायव्हिंग लायसन्स';
 
   @override
-  String get drivingLicenseTitle => 'Driving License';
+  String get drivingLicenseTitle => 'ड्रायव्हिंग लायसन्स';
 
   @override
-  String get otherDocuments => 'Other Documents';
+  String get otherDocuments => 'इतर दस्तऐवज';
 
   @override
-  String get otherDocumentTitle => 'Other Documents';
+  String get otherDocumentTitle => 'इतर दस्तऐवज';
 
   @override
-  String get documentName => 'Document Name*';
+  String get documentName => 'दस्तऐवजाचे नाव*';
 
   @override
-  String get billsTitle => 'Bills';
+  String get billsTitle => 'बिले';
 
   @override
   String get billsDescription =>
-      'Add and set reminders for your vehicle servicing days, upload bills and more';
+      'तुमच्या वाहनाशी संबंधित बिले अपलोड आणि व्यवस्थापित करा';
 
   @override
-  String get movedTo => 'Moved to';
+  String get movedTo => 'हलवले गेले';
 
   @override
-  String get viewNow => 'View Now';
+  String get viewNow => 'आता पहा';
 
   @override
-  String get accessoryBills => 'Accessory Bills';
+  String get accessoryBills => 'अॅक्सेसरी बिले';
 
   @override
   String get tutorialVideos => 'ट्युटोरियल व्हिडिओ';
@@ -1780,80 +1779,81 @@ class AppLocalizationsMr extends AppLocalizations {
   String get noVideos => 'कोणतेही व्हिडिओ उपलब्ध नाहीत';
 
   @override
-  String get apply => 'Apply';
+  String get apply => 'लागू करा';
 
   @override
-  String get noRecordsFound => 'No records found';
+  String get noRecordsFound => 'कोणतेही रेकॉर्ड सापडले नाहीत';
 
   @override
-  String get selectDateRange => 'Select date range';
+  String get selectDateRange => 'तारीख श्रेणी निवडा';
 
   @override
-  String get notificationTypes => 'Notification types';
+  String get notificationTypes => 'अधिसूचना प्रकार';
 
   @override
-  String get motionSensed => 'Motion sensed';
+  String get motionSensed => 'हालचाल आढळली';
 
   @override
-  String get ignitionOff => 'Ignition off';
+  String get ignitionOff => 'इग्निशन बंद';
 
   @override
-  String get ignitionOn => 'Ignition on';
+  String get ignitionOn => 'इग्निशन सुरू';
 
   @override
-  String get accidentDetected => 'Accident detected';
+  String get accidentDetected => 'अपघात आढळला';
 
   @override
-  String get stationaryFallDetected => 'Stationary fall detected';
+  String get stationaryFallDetected => 'स्थिर पडणे आढळले';
 
   @override
-  String get vehicleSwitchedOff => 'Vehicle switched off';
+  String get vehicleSwitchedOff => 'वाहन बंद झाले';
 
   @override
-  String get vehicleSwitchedOn => 'Vehicle switched on';
+  String get vehicleSwitchedOn => 'वाहन सुरू झाले';
 
   @override
-  String get powerSupplyOn => 'Power supply on';
+  String get powerSupplyOn => 'पावर सप्लाय सुरू';
 
   @override
-  String get vibrationSensed => 'Vibration sensed';
+  String get vibrationSensed => 'कंपन आढळले';
 
   @override
-  String get editVehicle => 'Edit Vehicle';
+  String get editVehicle => 'वाहन संपादित करा';
 
   @override
-  String get diesel => 'Diesel';
+  String get diesel => 'डिझेल';
 
   @override
-  String get cng => 'CNG';
+  String get cng => 'सीएनजी';
 
   @override
-  String get updateVehicle => 'Update Vehicle';
+  String get updateVehicle => 'वाहन अपडेट करा';
 
   @override
-  String get vehicleMileage => 'Vehicle Mileage';
+  String get vehicleMileage => 'वाहनाचे मायलेज';
 
   @override
-  String get notificationControls => 'Notification controls';
+  String get notificationControls => 'अधिसूचना नियंत्रणे';
 
   @override
   String get changeNotificationPreferences =>
-      'तुमच्या सूचना प्राधान्यांमध्ये बदल करा';
+      'तुमच्या अधिसूचना प्राधान्ये बदला';
 
   @override
-  String get unmapTrackify => 'Unmap your Trackify';
+  String get unmapTrackify => 'तुमचे ट्रॅकिफाय अन-मॅप करा';
 
   @override
-  String get unmapStep1 => 'Step 1: To un-map device, call at +918061971443';
+  String get unmapStep1 =>
+      'हंत १: डिव्हाइस अन-मॅप करण्यासाठी, +९१८०६१९७१४४३ वर कॉल करा';
 
   @override
-  String get unmapStep2 => 'Step 2: Remove vehicle';
+  String get unmapStep2 => 'हंत २: वाहन काढून टाका';
 
   @override
-  String get updateMileage => 'Update Mileage';
+  String get updateMileage => 'मायलेज अपडेट करा';
 
   @override
-  String get lastUpdated => 'Last updated: ';
+  String get lastUpdated => 'शेवटचे अपडेट: ';
 
   @override
   String get lockUnlockVehicle => 'वाहन लॉक आणि अनलॉक';
@@ -1945,7 +1945,7 @@ class AppLocalizationsMr extends AppLocalizations {
   String get litresShort => 'लि.';
 
   @override
-  String get discoverTrackifyFeatures => 'Discover Trackify Features';
+  String get discoverTrackifyFeatures => 'ट्रॅकिफाय वैशिष्ट्ये शोधा';
 
   @override
   String get checkout => 'चेकआउट';
@@ -1981,13 +1981,13 @@ class AppLocalizationsMr extends AppLocalizations {
   String get product => 'उत्पादने';
 
   @override
-  String get errorPickingImage => 'Error picking image';
+  String get errorPickingImage => 'प्रतिमा निवडण्यात त्रुटी';
 
   @override
-  String get frontDocumentRequired => 'Front document image is required';
+  String get frontDocumentRequired => 'पुढील बाजूची दस्तऐवज प्रतिमा आवश्यक आहे';
 
   @override
-  String get documentUploadedSuccessfully => 'Document uploaded successfully';
+  String get documentUploadedSuccessfully => 'दस्तऐवज यशस्वीरित्या अपलोड झाले';
 
   @override
   String get addAccessoryBill => 'एक्सेसरी बिल जोडा';
@@ -2071,7 +2071,7 @@ class AppLocalizationsMr extends AppLocalizations {
   String get start => 'सुरुवात';
 
   @override
-  String get end => 'शेवट';
+  String get end => 'समाप्त';
 
   @override
   String get yesImSure => 'हो, मला खात्री आहे';
@@ -2352,4 +2352,22 @@ class AppLocalizationsMr extends AppLocalizations {
   String payAmount(Object amount) {
     return '₹$amount भरा';
   }
+
+  @override
+  String get liveRecord => 'लाईव्ह रेकॉर्ड';
+
+  @override
+  String get history => 'इतिहास';
+
+  @override
+  String get stats => 'आकडेवारी';
+
+  @override
+  String get lastReportedPosition => 'शेवटचे नोंदवलेले स्थान';
+
+  @override
+  String get time => 'वेळ';
+
+  @override
+  String get appUpdate => 'अॅप अपडेट';
 }

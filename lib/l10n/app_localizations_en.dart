@@ -2351,4 +2351,22 @@ class AppLocalizationsEn extends AppLocalizations {
   String payAmount(Object amount) {
     return 'Pay ₹$amount';
   }
+
+  @override
+  String get liveRecord => 'Live Record';
+
+  @override
+  String get history => 'History';
+
+  @override
+  String get stats => 'Stats';
+
+  @override
+  String get lastReportedPosition => 'Last Reported Position';
+
+  @override
+  String get time => 'Time';
+
+  @override
+  String get appUpdate => 'App Update';
 }

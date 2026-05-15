@@ -1449,10 +1449,10 @@ class AppLocalizationsHi extends AppLocalizations {
   String get delete => 'हटाएं';
 
   @override
-  String get error => 'Something went wrong';
+  String get error => 'कुछ गलत हो गया';
 
   @override
-  String get noDataAvailable => 'No data available';
+  String get noDataAvailable => 'कोई डेटा उपलब्ध नहीं है';
 
   @override
   String hintEg(String value) {
@@ -1932,22 +1932,22 @@ class AppLocalizationsHi extends AppLocalizations {
   String get filters => 'फ़िल्टर';
 
   @override
-  String get tankCapacityHint => 'e.g., 13';
+  String get tankCapacityHint => 'जैसे, 13';
 
   @override
-  String get mileageHint => 'e.g., 50';
+  String get mileageHint => 'जैसे, 50';
 
   @override
-  String get powerSupplyOff => 'Power supply off';
+  String get powerSupplyOff => 'पावर सप्लाई बंद';
 
   @override
-  String get lastUpdatedLabel => 'Last updated: ';
+  String get lastUpdatedLabel => 'अंतिम अपडेट: ';
 
   @override
-  String get litresShort => 'L';
+  String get litresShort => 'ली.';
 
   @override
-  String get discoverTrackifyFeatures => 'Discover Trackify Features';
+  String get discoverTrackifyFeatures => 'Trackify की विशेषताओं को जानें';
 
   @override
   String get checkout => 'चेकआउट';
@@ -2071,10 +2071,10 @@ class AppLocalizationsHi extends AppLocalizations {
   String get notAvailable => 'उपलब्ध नहीं';
 
   @override
-  String get start => 'शुरू';
+  String get start => 'शुरुआत';
 
   @override
-  String get end => 'खत्म';
+  String get end => 'समाप्त';
 
   @override
   String get yesImSure => 'हाँ मुझे यकीन है';
@@ -2355,4 +2355,22 @@ class AppLocalizationsHi extends AppLocalizations {
   String payAmount(Object amount) {
     return '₹$amount भुगतान करें';
   }
+
+  @override
+  String get liveRecord => 'लाइव रिकॉर्ड';
+
+  @override
+  String get history => 'इतिहास';
+
+  @override
+  String get stats => 'आंकड़े';
+
+  @override
+  String get lastReportedPosition => 'अंतिम रिपोर्ट की गई स्थिति';
+
+  @override
+  String get time => 'समय';
+
+  @override
+  String get appUpdate => 'ऐप अपडेट';
 }
