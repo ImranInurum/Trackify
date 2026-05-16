@@ -1,17 +1,17 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:trackify/feature/add_fuel/presentation/pages/add_fuel_screen.dart';
 import 'package:trackify/feature/fuel_logs/presentation/pages/widgets/refuel_history_tab_view.dart';
-import '../../../../l10n/app_localizations.dart';
-import '../../../service_logs/presentation/cubit/service_logs_cubit.dart';
-import '../../../service_logs/presentation/cubit/service_logs_state.dart';
-import '../../../service_logs/presentation/widgets/vehicle_selection_app_bar.dart';
-import '../cubit/fuel_logs_cubit.dart';
-import '../cubit/fuel_stations_cubit.dart';
-import '../../data/repository/overpass_service.dart';
-import 'widgets/dashboard_tab_view.dart';
-import 'widgets/fuel_stations_tab_view.dart';
-import '../../../add_fuel/add_fuel_screen.dart';
+import 'package:trackify/l10n/app_localizations.dart';
+import 'package:trackify/feature/service_logs/presentation/cubit/service_logs_cubit.dart';
+import 'package:trackify/feature/service_logs/presentation/cubit/service_logs_state.dart';
+import 'package:trackify/feature/service_logs/presentation/widgets/vehicle_selection_app_bar.dart';
+import 'package:trackify/feature/fuel_logs/presentation/cubit/fuel_logs_cubit.dart';
+import 'package:trackify/feature/fuel_logs/presentation/cubit/fuel_stations_cubit.dart';
+import 'package:trackify/feature/fuel_logs/data/repository/overpass_service.dart';
+import 'package:trackify/feature/fuel_logs/presentation/pages/widgets/dashboard_tab_view.dart';
+import 'package:trackify/feature/fuel_logs/presentation/pages/widgets/fuel_stations_tab_view.dart';
 
 class FuelLogsScreen extends StatefulWidget {
   const FuelLogsScreen({super.key});
@@ -113,6 +113,7 @@ class _FuelLogsScreenState extends State<FuelLogsScreen>
             body: Column(
               children: [
                 VehicleSelectionAppBar(
+                  isMinimal: true,
                   title: l10n.fuelLogs,
                   selectedVehicle: currentState.selectedVehicle,
                   vehicles: currentState.vehicles,

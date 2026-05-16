@@ -1338,7 +1338,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get refuelHistory => 'Refuel History';
 
   @override
-  String get addRefuelingDetails => 'Add refueling details';
+  String get addRefuelingDetails => 'Add Refueling Details';
 
   @override
   String get fuelStations => 'Fuel Stations';
@@ -2351,4 +2351,74 @@ class AppLocalizationsEn extends AppLocalizations {
   String payAmount(Object amount) {
     return 'Pay ₹$amount';
   }
+
+  @override
+  String get liveRecord => 'Live Record';
+
+  @override
+  String get history => 'History';
+
+  @override
+  String get stats => 'Stats';
+
+  @override
+  String get lastReportedPosition => 'Last Reported Position';
+
+  @override
+  String get time => 'Time';
+
+  @override
+  String get appUpdate => 'App Update';
+
+  @override
+  String get fuelStation => 'Fuel Station';
+
+  @override
+  String get change => 'Change';
+
+  @override
+  String get currentOdometer => 'Current Odometer (Km)';
+
+  @override
+  String get lastRecorded => 'Last Recorded: 32789km';
+
+  @override
+  String get totalAmount => 'Total Amount';
+
+  @override
+  String get pricePerLitre => 'Price / Litre';
+
+  @override
+  String get tankStatus => 'Tank Status';
+
+  @override
+  String get fullTank => 'Full tank';
+
+  @override
+  String get partialTank => 'Partial Tank';
+
+  @override
+  String get fuelBeforeRefuel => 'Fuel Before Refuel';
+
+  @override
+  String get liters => 'Liters';
+
+  @override
+  String get fuelBeforeRefuelDesc =>
+      'Enter the estimated amount of fuel that was in the tank you refuelled.';
+
+  @override
+  String get savedSuccessfully => 'Saved Successfully';
+
+  @override
+  String get fuelStationName => 'C.M. Petro Point, BPCL petr...';
+
+  @override
+  String get yourPhoneLocation => 'Your Phone\'s Location';
+
+  @override
+  String get sharingActive => 'Sharing active';
+
+  @override
+  String get noActiveSharing => 'No active sharing';
 }

@@ -3,10 +3,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:trackify/app/cubit/app_cubit.dart';
 import 'package:trackify/app/cubit/app_state.dart';
 
-import '../core/config/theme_manager.dart';
-import '../feature/onboarding/presentation/pages/splash.dart';
-import '../l10n/app_localizations.dart';
-import '../main.dart';
+import 'package:trackify/core/config/theme_manager.dart';
+import 'package:trackify/feature/onboarding/presentation/pages/splash.dart';
+import 'package:trackify/l10n/app_localizations.dart';
+import 'package:trackify/main.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});

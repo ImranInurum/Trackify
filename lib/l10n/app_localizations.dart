@@ -2623,7 +2623,7 @@ abstract class AppLocalizations {
   /// No description provided for @addRefuelingDetails.
   ///
   /// In en, this message translates to:
-  /// **'Add refueling details'**
+  /// **'Add Refueling Details'**
   String get addRefuelingDetails;
 
   /// No description provided for @fuelStations.
@@ -4557,6 +4557,144 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Pay ₹{amount}'**
   String payAmount(Object amount);
+
+  /// No description provided for @liveRecord.
+  ///
+  /// In en, this message translates to:
+  /// **'Live Record'**
+  String get liveRecord;
+
+  /// No description provided for @history.
+  ///
+  /// In en, this message translates to:
+  /// **'History'**
+  String get history;
+
+  /// No description provided for @stats.
+  ///
+  /// In en, this message translates to:
+  /// **'Stats'**
+  String get stats;
+
+  /// No description provided for @lastReportedPosition.
+  ///
+  /// In en, this message translates to:
+  /// **'Last Reported Position'**
+  String get lastReportedPosition;
+
+  /// No description provided for @time.
+  ///
+  /// In en, this message translates to:
+  /// **'Time'**
+  String get time;
+
+  /// No description provided for @appUpdate.
+  ///
+  /// In en, this message translates to:
+  /// **'App Update'**
+  String get appUpdate;
+
+  /// No description provided for @fuelStation.
+  ///
+  /// In en, this message translates to:
+  /// **'Fuel Station'**
+  String get fuelStation;
+
+  /// No description provided for @change.
+  ///
+  /// In en, this message translates to:
+  /// **'Change'**
+  String get change;
+
+  /// No description provided for @currentOdometer.
+  ///
+  /// In en, this message translates to:
+  /// **'Current Odometer (Km)'**
+  String get currentOdometer;
+
+  /// No description provided for @lastRecorded.
+  ///
+  /// In en, this message translates to:
+  /// **'Last Recorded: 32789km'**
+  String get lastRecorded;
+
+  /// No description provided for @totalAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Amount'**
+  String get totalAmount;
+
+  /// No description provided for @pricePerLitre.
+  ///
+  /// In en, this message translates to:
+  /// **'Price / Litre'**
+  String get pricePerLitre;
+
+  /// No description provided for @tankStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Tank Status'**
+  String get tankStatus;
+
+  /// No description provided for @fullTank.
+  ///
+  /// In en, this message translates to:
+  /// **'Full tank'**
+  String get fullTank;
+
+  /// No description provided for @partialTank.
+  ///
+  /// In en, this message translates to:
+  /// **'Partial Tank'**
+  String get partialTank;
+
+  /// No description provided for @fuelBeforeRefuel.
+  ///
+  /// In en, this message translates to:
+  /// **'Fuel Before Refuel'**
+  String get fuelBeforeRefuel;
+
+  /// No description provided for @liters.
+  ///
+  /// In en, this message translates to:
+  /// **'Liters'**
+  String get liters;
+
+  /// No description provided for @fuelBeforeRefuelDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the estimated amount of fuel that was in the tank you refuelled.'**
+  String get fuelBeforeRefuelDesc;
+
+  /// No description provided for @savedSuccessfully.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved Successfully'**
+  String get savedSuccessfully;
+
+  /// No description provided for @fuelStationName.
+  ///
+  /// In en, this message translates to:
+  /// **'C.M. Petro Point, BPCL petr...'**
+  String get fuelStationName;
+
+  /// No description provided for @yourPhoneLocation.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Phone\'s Location'**
+  String get yourPhoneLocation;
+
+  /// No description provided for @sharingActive.
+  ///
+  /// In en, this message translates to:
+  /// **'Sharing active'**
+  String get sharingActive;
+
+  /// No description provided for @noActiveSharing.
+  ///
+  /// In en, this message translates to:
+  /// **'No active sharing'**
+  String get noActiveSharing;
 }
 
 class _AppLocalizationsDelegate

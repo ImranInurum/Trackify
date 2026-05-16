@@ -252,7 +252,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get documentFolder => 'مجلد المستندات';
 
   @override
-  String get voiceMonitoring => 'ಧ್ವನಿ ಮೇಲ್ವಿಚಾರಣೆ';
+  String get voiceMonitoring => 'مراقبة الصوت';
 
   @override
   String get remoteEngineOff => 'إيقاف المحرك عن بعد';
@@ -664,7 +664,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get averageSpeed => 'متوسط السرعة';
 
   @override
-  String get topSpeed => 'السرعة القصوى';
+  String get topSpeed => 'أعلى سرعة';
 
   @override
   String get fuel => 'وقود';
@@ -688,7 +688,7 @@ class AppLocalizationsAr extends AppLocalizations {
       'قائمة موديلات المركبات فارغة لهذا الاختيار';
 
   @override
-  String get deviceInstallation => 'ಸಾಧನ ಸ್ಥಾಪನೆ';
+  String get deviceInstallation => 'تثبيت الجهاز';
 
   @override
   String get scanActivationCode => 'مسح كود التفعيل';
@@ -1117,7 +1117,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get totalFuel => 'إجمالي الوقود';
 
   @override
-  String get overallDistance => 'المسافة الكلية';
+  String get overallDistance => 'المسافة الإجمالية';
 
   @override
   String get drivingTime => 'وقت القيادة';
@@ -1232,23 +1232,23 @@ class AppLocalizationsAr extends AppLocalizations {
   String get continue6Month => 'المتابعة مع خطة 6 أشهر';
 
   @override
-  String get vehicleDocumentsTitle => 'مستندات المركبة';
+  String get vehicleDocumentsTitle => 'وثائق المركبة';
 
   @override
   String get personalDocumentsSubtitle =>
-      'احتفظ بمستندات مركبتك في متناول اليد عن طريق رفعها';
+      'احتفظ بمستندات مركبتك في متناول اليد عن طريق تحميلها';
 
   @override
-  String get vehicleRC => 'مركبة RC';
+  String get vehicleRC => 'رخصة المركبة';
 
   @override
-  String get insurance => 'تفاصيل التأمين';
+  String get insurance => 'التأمين';
 
   @override
-  String get puc => 'شهادة PUC';
+  String get puc => 'شهادة التلوث';
 
   @override
-  String get vehicleRCTitle => 'مركبة RC';
+  String get vehicleRCTitle => 'تفاصيل رخصة المركبة';
 
   @override
   String get insuranceTitle => 'تفاصيل التأمين';
@@ -1257,28 +1257,28 @@ class AppLocalizationsAr extends AppLocalizations {
   String get pucTitle => 'شهادة PUC';
 
   @override
-  String get notificationControlsTitle => 'التحكم في الإشعارات';
+  String get notificationControlsTitle => 'عناصر التحكم في الإشعارات';
 
   @override
   String get ignitionOnOffTitle => 'تشغيل/إيقاف الإشعال';
 
   @override
   String get ignitionOnOffDesc =>
-      'احصل على إشعار عند تشغيل أو إيقاف إشعال المركبة';
+      'احصل على إشعار عندما يكون إشعال المركبة في وضع التشغيل أو الإيقاف';
 
   @override
-  String get motionWithIgnitionOffTitle => 'حركة مع إيقاف الإشعال';
+  String get motionWithIgnitionOffTitle => 'الحركة مع إيقاف الإشعال';
 
   @override
   String get motionWithIgnitionOffDesc =>
-      'احصل على إشعار عندما تتحرك المركبة أثناء إيقاف الإشعال';
+      'احصل على إشعار عندما تتحرك المركبة وهي في وضع إيقاف الإشعال';
 
   @override
   String get powerSupplyOffTitle => 'إيقاف مزود الطاقة';
 
   @override
   String get powerSupplyOffDesc =>
-      'احصل على إشعار عندما لا يتلقى Trackify طاقة';
+      'احصل على إشعار عندما لا يتلقى Trackify الطاقة';
 
   @override
   String get appNotification => 'إشعار التطبيق';
@@ -1332,7 +1332,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get refuelHistory => 'سجل تزويد الوقود';
 
   @override
-  String get addRefuelingDetails => 'أضف تفاصيل تزويد الوقود';
+  String get addRefuelingDetails => 'إضافة تفاصيل التزود بالوقود';
 
   @override
   String get fuelStations => 'محطات الوقود';
@@ -1441,10 +1441,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String get delete => 'حذف';
 
   @override
-  String get error => 'Something went wrong';
+  String get error => 'حدث خطأ ما';
 
   @override
-  String get noDataAvailable => 'No data available';
+  String get noDataAvailable => 'لا تتوفر بيانات';
 
   @override
   String hintEg(String value) {
@@ -1655,61 +1655,62 @@ class AppLocalizationsAr extends AppLocalizations {
       'بناء مستقبل حيث تكون كل دراجة ذكية\nوكل راكب آمناً';
 
   @override
-  String get cropDocument => 'قص المستند';
+  String get cropDocument => 'اقتصاص المستند';
 
   @override
-  String get cropVehicleImage => 'قص صورة المركبة';
+  String get cropVehicleImage => 'اقتصاص صورة المركبة';
 
   @override
-  String get uploadImage => 'تحميل الصورة';
+  String get uploadImage => 'رفع صورة';
 
   @override
-  String get camera => 'كاميرا';
+  String get camera => 'الكاميرا';
 
   @override
-  String get gallery => 'معرض الصور';
+  String get gallery => 'المعرض';
 
   @override
   String get pdf => 'PDF';
 
   @override
-  String get fileTooLarge => 'حجم الملف يتجاوز 5 ميجابايت';
+  String get fileTooLarge => 'حجم الملف يتجاوز حد 5 ميجابايت';
 
   @override
   String get pickImageError => 'خطأ في اختيار الصورة';
 
   @override
-  String get pickPdfError => 'خطأ في اختيار PDF';
+  String get pickPdfError => 'خطأ في اختيار ملف PDF';
 
   @override
-  String get pdfTooLarge => 'حجم PDF يتجاوز 5 ميجابايت';
+  String get pdfTooLarge => 'حجم ملف PDF يتجاوز حد 5 ميجابايت';
 
   @override
   String get uploadDocuments => 'رفع المستندات';
 
   @override
-  String get frontSide => 'الجانب الأمامي*';
+  String get frontSide => 'الجانب الأمامي';
 
   @override
   String get backSide => 'الجانب الخلفي';
 
   @override
-  String get commitmentText => 'مستنداتك\nالتزامنا';
+  String get commitmentText =>
+      'نحن ملتزمون بحماية خصوصيتك وضمان أمان مستنداتك معنا.';
 
   @override
-  String get documentsSafe => 'مستنداتك مشفرة وآمنة';
+  String get documentsSafe => 'مستنداتك آمنة معنا';
 
   @override
   String get addDocument => 'إضافة مستند';
 
   @override
-  String get frontRequired => 'مستند الجانب الأمامي مطلوب';
+  String get frontRequired => 'الوثيقة الأمامية مطلوبة';
 
   @override
-  String get successMessage => 'تم إضافة المستند بنجاح';
+  String get successMessage => 'تم حفظ المستند بنجاح';
 
   @override
-  String get selectExpiryDate => 'تاريخ الانتهاء';
+  String get selectExpiryDate => 'اختر تاريخ الانتهاء';
 
   @override
   String get documentsEncrypted => 'مستنداتك مشفرة وآمنة';
@@ -1721,13 +1722,13 @@ class AppLocalizationsAr extends AppLocalizations {
   String get personalDocumentsTitle => 'المستندات الشخصية';
 
   @override
-  String get drivingLicense => 'Driving License';
+  String get drivingLicense => 'رخصة القيادة';
 
   @override
   String get drivingLicenseTitle => 'رخصة القيادة';
 
   @override
-  String get otherDocuments => 'Other Documents';
+  String get otherDocuments => 'مستندات أخرى';
 
   @override
   String get otherDocumentTitle => 'مستندات أخرى';
@@ -1739,11 +1740,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String get billsTitle => 'الفواتير';
 
   @override
-  String get billsDescription =>
-      'أضف واضبط تذكيرات لأيام خدمة مركبتك، وارفع الفواتير والمزيد';
+  String get billsDescription => 'قم برفع وإدارة فواتير مركبتك';
 
   @override
-  String get movedTo => 'انتقل إلى';
+  String get movedTo => 'تم النقل إلى';
 
   @override
   String get viewNow => 'عرض الآن';
@@ -1752,97 +1752,98 @@ class AppLocalizationsAr extends AppLocalizations {
   String get accessoryBills => 'فواتير الملحقات';
 
   @override
-  String get tutorialVideos => 'ಟ್ಯುಟೋರಿಯಲ್ ವೀಡಿಯೊಗಳು';
+  String get tutorialVideos => 'فيديوهات تعليمية';
 
   @override
-  String get videos => 'ವೀಡಿಯೊಗಳು';
+  String get videos => 'فيديوهات';
 
   @override
-  String get location => 'ಸ್ಥಳ';
+  String get location => 'الموقع';
 
   @override
-  String get amazingFeatures => 'ಅದ್ಭುತ ವೈಶಿಷ್ಟ್ಯಗಳು';
+  String get amazingFeatures => 'ميزات رائعة';
 
   @override
-  String get loading => 'ಲೋಡ್ ಆಗುತ್ತಿದೆ...';
+  String get loading => 'جارٍ التحميل...';
 
   @override
-  String get noVideos => 'ಯಾವುದೇ ವೀಡಿಯೊಗಳು ಲಭ್ಯವಿಲ್ಲ';
+  String get noVideos => 'لا توجد فيديوهات متاحة';
 
   @override
-  String get apply => 'Apply';
+  String get apply => 'تطبيق';
 
   @override
-  String get noRecordsFound => 'No records found';
+  String get noRecordsFound => 'لم يتم العور على سجلات';
 
   @override
-  String get selectDateRange => 'Select date range';
+  String get selectDateRange => 'اختر نطاق التاريخ';
 
   @override
-  String get notificationTypes => 'Notification types';
+  String get notificationTypes => 'أنواع الإشعارات';
 
   @override
-  String get motionSensed => 'Motion sensed';
+  String get motionSensed => 'تم اكتشاف حركة';
 
   @override
-  String get ignitionOff => 'Ignition off';
+  String get ignitionOff => 'إيقاف الإشعال';
 
   @override
-  String get ignitionOn => 'Ignition on';
+  String get ignitionOn => 'بدء الإشعال';
 
   @override
-  String get accidentDetected => 'Accident detected';
+  String get accidentDetected => 'تم اكتشاف حادث';
 
   @override
-  String get stationaryFallDetected => 'Stationary fall detected';
+  String get stationaryFallDetected => 'تم اكتشاف سقوط أثناء التوقف';
 
   @override
-  String get vehicleSwitchedOff => 'Vehicle switched off';
+  String get vehicleSwitchedOff => 'تم إيقاف تشغيل المركبة';
 
   @override
-  String get vehicleSwitchedOn => 'Vehicle switched on';
+  String get vehicleSwitchedOn => 'تم تشغيل المركبة';
 
   @override
-  String get powerSupplyOn => 'Power supply on';
+  String get powerSupplyOn => 'بدء مزود الطاقة';
 
   @override
-  String get vibrationSensed => 'Vibration sensed';
+  String get vibrationSensed => 'تم اكتشاف اهتزاز';
 
   @override
-  String get editVehicle => 'Edit Vehicle';
+  String get editVehicle => 'تعديل المركبة';
 
   @override
-  String get diesel => 'Diesel';
+  String get diesel => 'ديزل';
 
   @override
-  String get cng => 'CNG';
+  String get cng => 'الغاز الطبيعي المضغوط';
 
   @override
-  String get updateVehicle => 'Update Vehicle';
+  String get updateVehicle => 'تحديث المركبة';
 
   @override
-  String get vehicleMileage => 'Vehicle Mileage';
+  String get vehicleMileage => 'استهلاك المركبة';
 
   @override
-  String get notificationControls => 'Notification controls';
+  String get notificationControls => 'عناصر التحكم في الإشعارات';
 
   @override
-  String get changeNotificationPreferences => 'غيّر تفضيلات الإشعارات';
+  String get changeNotificationPreferences => 'تغيير تفضيلات الإشعارات';
 
   @override
-  String get unmapTrackify => 'Unmap your Trackify';
+  String get unmapTrackify => 'إلغاء ربط Trackify الخاص بك';
 
   @override
-  String get unmapStep1 => 'Step 1: To un-map device, call at +918061971443';
+  String get unmapStep1 =>
+      'الخطوة 1: لإلغاء ربط الجهاز، اتصل على +918061971443';
 
   @override
-  String get unmapStep2 => 'Step 2: Remove vehicle';
+  String get unmapStep2 => 'الخطوة 2: إزالة المركبة';
 
   @override
-  String get updateMileage => 'Update Mileage';
+  String get updateMileage => 'تحديث الاستهلاك';
 
   @override
-  String get lastUpdated => 'Last updated: ';
+  String get lastUpdated => 'آخر تحديث: ';
 
   @override
   String get lockUnlockVehicle => 'قفل وفتح السيارة';
@@ -1919,22 +1920,22 @@ class AppLocalizationsAr extends AppLocalizations {
   String get filters => 'تصفية';
 
   @override
-  String get tankCapacityHint => 'e.g., 13';
+  String get tankCapacityHint => 'مثال: 13';
 
   @override
-  String get mileageHint => 'e.g., 50';
+  String get mileageHint => 'مثال: 50';
 
   @override
-  String get powerSupplyOff => 'Power supply off';
+  String get powerSupplyOff => 'إيقاف مزود الطاقة';
 
   @override
-  String get lastUpdatedLabel => 'Last updated: ';
+  String get lastUpdatedLabel => 'آخر تحديث: ';
 
   @override
-  String get litresShort => 'L';
+  String get litresShort => 'لتر';
 
   @override
-  String get discoverTrackifyFeatures => 'Discover Trackify Features';
+  String get discoverTrackifyFeatures => 'اكتشف ميزات Trackify';
 
   @override
   String get checkout => 'إتمام الشراء';
@@ -1970,13 +1971,13 @@ class AppLocalizationsAr extends AppLocalizations {
   String get product => 'المنتجات';
 
   @override
-  String get errorPickingImage => 'Error picking image';
+  String get errorPickingImage => 'خطأ في اختيار الصورة';
 
   @override
-  String get frontDocumentRequired => 'Front document image is required';
+  String get frontDocumentRequired => 'صورة المستند الأمامية مطلوبة';
 
   @override
-  String get documentUploadedSuccessfully => 'Document uploaded successfully';
+  String get documentUploadedSuccessfully => 'تم رفع المستند بنجاح';
 
   @override
   String get addAccessoryBill => 'إضافة فاتورة ملحقات';
@@ -2057,10 +2058,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String get notAvailable => 'غير متوفر';
 
   @override
-  String get start => 'بداية';
+  String get start => 'البداية';
 
   @override
-  String get end => 'نهاية';
+  String get end => 'النهاية';
 
   @override
   String get yesImSure => 'نعم أنا متأكد';
@@ -2340,4 +2341,74 @@ class AppLocalizationsAr extends AppLocalizations {
   String payAmount(Object amount) {
     return 'ادفع ₹$amount';
   }
+
+  @override
+  String get liveRecord => 'تسجيل مباشر';
+
+  @override
+  String get history => 'السجل';
+
+  @override
+  String get stats => 'الإحصائيات';
+
+  @override
+  String get lastReportedPosition => 'آخر موقع تم الإبلاغ عنه';
+
+  @override
+  String get time => 'الوقت';
+
+  @override
+  String get appUpdate => 'تحديث التطبيق';
+
+  @override
+  String get fuelStation => 'محطة الوقود';
+
+  @override
+  String get change => 'تغيير';
+
+  @override
+  String get currentOdometer => 'عداد المسافة الحالي (كم)';
+
+  @override
+  String get lastRecorded => 'آخر تسجيل: 32789 كم';
+
+  @override
+  String get totalAmount => 'المبلغ الإجمالي';
+
+  @override
+  String get pricePerLitre => 'السعر لكل لتر';
+
+  @override
+  String get tankStatus => 'حالة الخزان';
+
+  @override
+  String get fullTank => 'خزان ممتلئ';
+
+  @override
+  String get partialTank => 'خزان جزئي';
+
+  @override
+  String get fuelBeforeRefuel => 'الوقود قبل التعبئة';
+
+  @override
+  String get liters => 'لتر';
+
+  @override
+  String get fuelBeforeRefuelDesc =>
+      'أدخل الكمية التقديرية للوقود الموجودة في الخزان قبل إعادة التعبئة.';
+
+  @override
+  String get savedSuccessfully => 'تم الحفظ بنجاح';
+
+  @override
+  String get fuelStationName => 'سي إم بترو بوينت، بي بي سي إل بتر...';
+
+  @override
+  String get yourPhoneLocation => 'موقع هاتفك';
+
+  @override
+  String get sharingActive => 'المشاركة نشطة';
+
+  @override
+  String get noActiveSharing => 'لا توجد مشاركة نشطة';
 }
