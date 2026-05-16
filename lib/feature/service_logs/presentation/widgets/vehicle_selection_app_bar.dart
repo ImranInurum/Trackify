@@ -8,6 +8,7 @@ class VehicleSelectionAppBar extends StatelessWidget {
   final List<Vehicle> vehicles;
   final VoidCallback onBack;
   final Function(Vehicle) onVehicleSelected;
+  final bool isMinimal;
 
   const VehicleSelectionAppBar({
     super.key,
@@ -16,75 +17,82 @@ class VehicleSelectionAppBar extends StatelessWidget {
     required this.vehicles,
     required this.onBack,
     required this.onVehicleSelected,
+    this.isMinimal = false,
   });
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context)!;
+    final screenWidth = MediaQuery.of(context).size.width;
 
     return Container(
       padding: EdgeInsets.only(
-        top: MediaQuery.of(context).padding.top,
-        bottom: 20,
+        top: MediaQuery.of(context).padding.top + (isMinimal ? 10 : 0),
+        bottom: isMinimal ? 10 : 20,
       ),
-      decoration: BoxDecoration(
-        color: theme.cardColor.withOpacity(0.8),
-        borderRadius: const BorderRadius.only(
-          bottomLeft: Radius.circular(30),
-          bottomRight: Radius.circular(30),
-        ),
-      ),
+      decoration: isMinimal 
+        ? null 
+        : BoxDecoration(
+            color: theme.cardColor.withOpacity(0.8),
+            borderRadius: const BorderRadius.only(
+              bottomLeft: Radius.circular(30),
+              bottomRight: Radius.circular(30),
+            ),
+          ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0),
-            child: Row(
-              children: [
-                IconButton(
-                  icon: Icon(
-                    Icons.arrow_back,
-                    color: theme.colorScheme.onSurface,
+          if (!isMinimal) ...[
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              child: Row(
+                children: [
+                  IconButton(
+                    icon: Icon(
+                      Icons.arrow_back,
+                      color: theme.colorScheme.onSurface,
+                    ),
+                    onPressed: onBack,
                   ),
-                  onPressed: onBack,
-                ),
-                Text(
-                  title,
-                  style: theme.textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
+                  Text(
+                    title,
+                    style: theme.textTheme.titleLarge?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-          const SizedBox(height: 12),
+            const SizedBox(height: 12),
+          ],
           GestureDetector(
             onTap: () => _showVehicleSelector(context),
             child: Container(
-              margin: const EdgeInsets.symmetric(horizontal: 20),
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              margin: EdgeInsets.symmetric(horizontal: screenWidth * 0.04),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
               decoration: BoxDecoration(
-                color: theme.scaffoldBackgroundColor,
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: theme.dividerColor, width: 1),
+                color: theme.colorScheme.surfaceContainerHighest.withOpacity(0.5),
+                borderRadius: BorderRadius.circular(16),
               ),
               child: Row(
                 children: [
                   Expanded(
                     child: Text(
                       selectedVehicle != null
-                          ? "${selectedVehicle!.vehicleMaker ?? ""} ${selectedVehicle!.vehicleModel ?? ""}".trim() + " (${selectedVehicle!.vehicleNumber ?? ""})"
+                          ? "${selectedVehicle!.vehicleMaker ?? ""} ${selectedVehicle!.vehicleModel ?? ""}".trim() +
+                              " (${selectedVehicle!.vehicleNumber ?? ""})"
                           : l10n.selectVehicle,
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        fontWeight: FontWeight.w500,
+                      style: theme.textTheme.bodyLarge?.copyWith(
+                        fontWeight: FontWeight.w600,
+                        color: theme.colorScheme.onSurface,
                       ),
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),
                   Icon(
                     Icons.keyboard_arrow_down,
-                    color: theme.colorScheme.onSurface.withOpacity(0.6),
+                    color: theme.colorScheme.onSurface,
                   ),
                 ],
               ),

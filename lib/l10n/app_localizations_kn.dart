@@ -1342,7 +1342,7 @@ class AppLocalizationsKn extends AppLocalizations {
   String get refuelHistory => 'ರಿಫ್ಯೂಯಲ್ ಇತಿಹಾಸ';
 
   @override
-  String get addRefuelingDetails => 'ರಿಫ್ಯೂಯಲಿಂಗ್ ವಿವರಗಳನ್ನು ಸೇರಿಸಿ';
+  String get addRefuelingDetails => 'ಇಂಧನ ತುಂಬುವ ವಿವರಗಳನ್ನು ಸೇರಿಸಿ';
 
   @override
   String get fuelStations => 'ಇಂಧನ ಕೇಂದ್ರಗಳು';
@@ -2377,4 +2377,56 @@ class AppLocalizationsKn extends AppLocalizations {
 
   @override
   String get appUpdate => 'ಆಪ್ ನವೀಕರಣ';
+
+  @override
+  String get fuelStation => 'ಇಂಧನ ಕೇಂದ್ರ';
+
+  @override
+  String get change => 'ಬದಲಿಸಿ';
+
+  @override
+  String get currentOdometer => 'ಪ್ರಸ್ತುತ ಓಡೋಮೀಟರ್ (ಕಿ.ಮೀ)';
+
+  @override
+  String get lastRecorded => 'ಕೊನೆಯ ದಾಖಲೆ: 32789 ಕಿ.ಮೀ';
+
+  @override
+  String get totalAmount => 'ಒಟ್ಟು ಮೊತ್ತ';
+
+  @override
+  String get pricePerLitre => 'ಪ್ರತಿ ಲೀಟರ್ ಬೆಲೆ';
+
+  @override
+  String get tankStatus => 'ಟ್ಯಾಂಕ್ ಸ್ಥಿತಿ';
+
+  @override
+  String get fullTank => 'ಪೂರ್ಣ ಟ್ಯಾಂಕ್';
+
+  @override
+  String get partialTank => 'ಭಾಗಶಃ ಟ್ಯಾಂಕ್';
+
+  @override
+  String get fuelBeforeRefuel => 'ಇಂಧನ ತುಂಬುವ ಮೊದಲು';
+
+  @override
+  String get liters => 'ಲೀಟರ್';
+
+  @override
+  String get fuelBeforeRefuelDesc =>
+      'ನೀವು ಇಂಧನ ತುಂಬುವ ಮೊದಲು ಟ್ಯಾಂಕ್‌ನಲ್ಲಿ ಇದ್ದ ಇಂಧನದ ಅಂದಾಜು ಪ್ರಮಾಣವನ್ನು ನಮೂದಿಸಿ.';
+
+  @override
+  String get savedSuccessfully => 'ಯಶಸ್ವಿಯಾಗಿ ಉಳಿಸಲಾಗಿದೆ';
+
+  @override
+  String get fuelStationName => 'ಸಿ.எಂ. ಪೆಟ್ರೋ ಪಾಯಿಂಟ್, ಬಿಪಿಸಿಎಲ್ ಪೆಟ್ರೋ...';
+
+  @override
+  String get yourPhoneLocation => 'ನಿಮ್ಮ ಫೋನ್ ಸ್ಥಳ';
+
+  @override
+  String get sharingActive => 'ಹಂಚಿಕೆ ಸಕ್ರಿಯವಾಗಿದೆ';
+
+  @override
+  String get noActiveSharing => 'ಯಾವುದೇ ಸಕ್ರಿಯ ಹಂಚಿಕೆ ಇಲ್ಲ';
 }

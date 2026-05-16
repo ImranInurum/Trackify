@@ -246,7 +246,7 @@ class AppLocalizationsMr extends AppLocalizations {
   String get fuelLogs => 'इंधन लॉग';
 
   @override
-  String get locationSharing => 'स्थान सामायिकरण';
+  String get locationSharing => 'लोकेशन शेअरिंग';
 
   @override
   String get documentFolder => 'दस्तऐवज फोल्डर';
@@ -2370,4 +2370,56 @@ class AppLocalizationsMr extends AppLocalizations {
 
   @override
   String get appUpdate => 'अॅप अपडेट';
+
+  @override
+  String get fuelStation => 'इंधन स्टेशन';
+
+  @override
+  String get change => 'बदला';
+
+  @override
+  String get currentOdometer => 'सध्याचा ओडोमीटर (कि.मी.)';
+
+  @override
+  String get lastRecorded => 'शेवटची नोंद: 32789 कि.मी.';
+
+  @override
+  String get totalAmount => 'एकूण रक्कम';
+
+  @override
+  String get pricePerLitre => 'प्रति लिटर किंमत';
+
+  @override
+  String get tankStatus => 'टाकी स्थिती';
+
+  @override
+  String get fullTank => 'पूर्ण टाकी';
+
+  @override
+  String get partialTank => 'अर्धी टाकी';
+
+  @override
+  String get fuelBeforeRefuel => 'रिफ्यूलपूर्वीचे इंधन';
+
+  @override
+  String get liters => 'लिटर';
+
+  @override
+  String get fuelBeforeRefuelDesc =>
+      'रिफ्यूल करण्यापूर्वी टाकीत असलेल्या इंधनाचे अंदाजित प्रमाण भरा.';
+
+  @override
+  String get savedSuccessfully => 'यशस्वीरित्या जतन केले';
+
+  @override
+  String get fuelStationName => 'सी.एम. पेट्रो पॉइंट, बीपीसीएल पेट्रोल...';
+
+  @override
+  String get yourPhoneLocation => 'तुमच्या फोनचे लोकेशन';
+
+  @override
+  String get sharingActive => 'शेअरिंग सक्रिय आहे';
+
+  @override
+  String get noActiveSharing => 'कोणतीही सक्रिय शेअरिंग नाही';
 }

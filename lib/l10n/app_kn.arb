@@ -959,5 +959,29 @@
       "drivingTime": "ಚಾಲನಾ ಸಮಯ",
       "safetyScore": "ಭದ್ರತಾ ಸ್ಕೋರ್",
 
-      "appUpdate": "ಆಪ್ ನವೀಕರಣ"
+      "appUpdate": "ಆಪ್ ನವೀಕರಣ",
+
+       "addRefuelingDetails": "ಇಂಧನ ತುಂಬುವ ವಿವರಗಳನ್ನು ಸೇರಿಸಿ",
+        "date": "ದಿನಾಂಕ",
+        "time": "ಸಮಯ",
+        "fuelStation": "ಇಂಧನ ಕೇಂದ್ರ",
+        "change": "ಬದಲಿಸಿ",
+        "currentOdometer": "ಪ್ರಸ್ತುತ ಓಡೋಮೀಟರ್ (ಕಿ.ಮೀ)",
+        "lastRecorded": "ಕೊನೆಯ ದಾಖಲೆ: 32789 ಕಿ.ಮೀ",
+        "totalAmount": "ಒಟ್ಟು ಮೊತ್ತ",
+        "pricePerLitre": "ಪ್ರತಿ ಲೀಟರ್ ಬೆಲೆ",
+        "tankStatus": "ಟ್ಯಾಂಕ್ ಸ್ಥಿತಿ",
+        "fullTank": "ಪೂರ್ಣ ಟ್ಯಾಂಕ್",
+        "partialTank": "ಭಾಗಶಃ ಟ್ಯಾಂಕ್",
+        "fuelBeforeRefuel": "ಇಂಧನ ತುಂಬುವ ಮೊದಲು",
+        "liters": "ಲೀಟರ್",
+        "fuelBeforeRefuelDesc": "ನೀವು ಇಂಧನ ತುಂಬುವ ಮೊದಲು ಟ್ಯಾಂಕ್‌ನಲ್ಲಿ ಇದ್ದ ಇಂಧನದ ಅಂದಾಜು ಪ್ರಮಾಣವನ್ನು ನಮೂದಿಸಿ.",
+        "save": "ಉಳಿಸಿ",
+        "savedSuccessfully": "ಯಶಸ್ವಿಯಾಗಿ ಉಳಿಸಲಾಗಿದೆ",
+        "fuelStationName": "ಸಿ.எಂ. ಪೆಟ್ರೋ ಪಾಯಿಂಟ್, ಬಿಪಿಸಿಎಲ್ ಪೆಟ್ರೋ...",
+
+         "locationSharing": "ಸ್ಥಳ ಹಂಚಿಕೆ",
+          "yourPhoneLocation": "ನಿಮ್ಮ ಫೋನ್ ಸ್ಥಳ",
+          "sharingActive": "ಹಂಚಿಕೆ ಸಕ್ರಿಯವಾಗಿದೆ",
+          "noActiveSharing": "ಯಾವುದೇ ಸಕ್ರಿಯ ಹಂಚಿಕೆ ಇಲ್ಲ"
 }

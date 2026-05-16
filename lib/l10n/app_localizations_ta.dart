@@ -246,7 +246,7 @@ class AppLocalizationsTa extends AppLocalizations {
   String get fuelLogs => 'எரிபொருள் பதிவுகள்';
 
   @override
-  String get locationSharing => 'இருப்பிடப் பகிர்வு';
+  String get locationSharing => 'இடம் பகிர்வு';
 
   @override
   String get documentFolder => 'ஆவணக் கோப்புறை';
@@ -1339,7 +1339,8 @@ class AppLocalizationsTa extends AppLocalizations {
   String get refuelHistory => 'எரிபொருள் வரலாறு';
 
   @override
-  String get addRefuelingDetails => 'எரிபொருள் விவரங்களைச் சேர்க்கவும்';
+  String get addRefuelingDetails =>
+      'எரிபொருள் நிரப்புதல் விவரங்களைச் சேர்க்கவும்';
 
   @override
   String get fuelStations => 'எரிபொருள் நிலையங்கள்';
@@ -2380,4 +2381,56 @@ class AppLocalizationsTa extends AppLocalizations {
 
   @override
   String get appUpdate => 'ஆப் புதுப்பிப்பு';
+
+  @override
+  String get fuelStation => 'எரிபொருள் நிலையம்';
+
+  @override
+  String get change => 'மாற்று';
+
+  @override
+  String get currentOdometer => 'தற்போதைய ஓடோமீட்டர் (கிமீ)';
+
+  @override
+  String get lastRecorded => 'கடைசியாக பதிவு: 32789 கிமீ';
+
+  @override
+  String get totalAmount => 'மொத்த தொகை';
+
+  @override
+  String get pricePerLitre => 'ஒரு லிட்டரின் விலை';
+
+  @override
+  String get tankStatus => 'டேங்க் நிலை';
+
+  @override
+  String get fullTank => 'முழு டேங்க்';
+
+  @override
+  String get partialTank => 'பகுதி டேங்க்';
+
+  @override
+  String get fuelBeforeRefuel => 'எரிபொருள் நிரப்புவதற்கு முன்';
+
+  @override
+  String get liters => 'லிட்டர்கள்';
+
+  @override
+  String get fuelBeforeRefuelDesc =>
+      'நீங்கள் எரிபொருள் நிரப்புவதற்கு முன் டேங்கில் இருந்த எரிபொருளின் மதிப்பிடப்பட்ட அளவை உள்ளிடவும்.';
+
+  @override
+  String get savedSuccessfully => 'வெற்றிகரமாக சேமிக்கப்பட்டது';
+
+  @override
+  String get fuelStationName => 'சி.எம். பெட்ரோ பாயிண்ட், பிபிசிஎல் பெட்ரோ...';
+
+  @override
+  String get yourPhoneLocation => 'உங்கள் தொலைபேசியின் இருப்பிடம்';
+
+  @override
+  String get sharingActive => 'பகிர்வு செயல்பாட்டில் உள்ளது';
+
+  @override
+  String get noActiveSharing => 'செயலில் உள்ள பகிர்வு இல்லை';
 }

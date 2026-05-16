@@ -28,79 +28,83 @@ import 'package:trackify/feature/upgrade_to_plus/presentation/cubit/upgrade_to_p
 import 'package:trackify/feature/video_tutorial/data/repository/tutorial_repository_impl.dart';
 import 'package:trackify/feature/video_tutorial/domain/usecase/tutorial_usecase.dart';
 
-import 'app/app.dart';
-import 'app/cubit/app_cubit.dart';
+import 'package:trackify/app/app.dart';
+import 'package:trackify/app/cubit/app_cubit.dart';
 import 'package:trackify/feature/overspeed_alert/presentation/cubit/overspeed_alert_cubit.dart';
-import 'core/services/connectivity_service.dart';
-import 'core/services/location_service.dart';
-import 'core/services/notification_service.dart';
-import 'core/services/socket_service.dart';
-import 'core/utils/shared_preferences.dart';
-import 'feature/add_vehicle_and_device/add_vehicle/data/repository/add_vehicle_repository_impl.dart';
-import 'feature/add_vehicle_and_device/add_vehicle/presentation/cubit/add_vehicle_cubit.dart';
-import 'feature/app_updates/data/data_source/update_remote_data.dart';
-import 'feature/app_updates/domain/repositories/update_repository_impl.dart';
-import 'feature/app_updates/domain/use_case/get_update_use_case.dart';
-import 'feature/app_updates/presentiation/cubit/update_cubit.dart';
+import 'package:trackify/core/services/connectivity_service.dart';
+import 'package:trackify/core/services/location_service.dart';
+import 'package:trackify/core/services/notification_service.dart';
+import 'package:trackify/core/services/socket_service.dart';
+import 'package:trackify/core/utils/shared_preferences.dart';
+import 'package:trackify/feature/add_fuel/data/data_source/add_fuel_datasource.dart';
+import 'package:trackify/feature/add_fuel/data/repository_impl/add_fuel_repository_impl.dart';
+import 'package:trackify/feature/add_fuel/domain/usecase/add_fuel_usecase.dart';
+import 'package:trackify/feature/add_fuel/presentation/cubit/add_fuel_cubit.dart';
+import 'package:trackify/feature/add_vehicle_and_device/add_vehicle/data/repository/add_vehicle_repository_impl.dart';
+import 'package:trackify/feature/add_vehicle_and_device/add_vehicle/presentation/cubit/add_vehicle_cubit.dart';
+import 'package:trackify/feature/app_updates/data/data_source/update_remote_data.dart';
+import 'package:trackify/feature/app_updates/domain/repositories/update_repository_impl.dart';
+import 'package:trackify/feature/app_updates/domain/use_case/get_update_use_case.dart';
+import 'package:trackify/feature/app_updates/presentiation/cubit/update_cubit.dart';
 
-import 'feature/auth/data/repository/auth_repository_impl.dart';
-import 'feature/auth/domain/usecase/auth_case.dart';
-import 'feature/auth/presentation/cubit/auth_cubit.dart';
-import 'feature/device_data/presentation/cubit/device_data_cubit.dart';
-import 'feature/document_folder/presentation/pages/document_screen.dart';
-import 'feature/emergency_sos/data/data_source/emergency_alert_remote_data.dart';
-import 'feature/emergency_sos/data/repository/emergency_alert_repository_impl.dart';
-import 'feature/emergency_sos/domain/usecase/emergency_alert_usecase.dart';
-import 'feature/emergency_sos/presentation/cubit/emergency_alert_cubit.dart';
-import 'feature/emergency_sos/presentation/cubit/emergency_alert_state.dart' show EmergencySent;
-import 'feature/geo_fence/presentation/cubit/geo_fence_cubit.dart';
-import 'feature/get_more_out/data/repository/discover_repository_impl.dart';
-import 'feature/get_more_out/data/repository/feature_repository_impl.dart';
-import 'feature/get_more_out/data/repository/geo_fenc_repository_impl.dart';
-import 'feature/get_more_out/domain/usecase/disover_usecase.dart';
-import 'feature/get_more_out/domain/usecase/geo_fenc_usecase.dart';
-import 'feature/get_more_out/domain/usecase/get_safey_usecase.dart';
-import 'feature/get_more_out/presentation/cubit/discover_cubit.dart';
-import 'feature/get_more_out/presentation/cubit/feature_cubit.dart';
-import 'feature/get_more_out/presentation/cubit/geo_fenc_cubit.dart';
-import 'feature/health_insurance/data/local_data/health_insurance_local_data.dart';
-import 'feature/health_insurance/data/repository_impl/health_insurance_repository_impl.dart';
-import 'feature/health_insurance/domain/usecase/health_insurance_usecase.dart';
-import 'feature/health_insurance/presentation/cubit/health_insurance_cubit.dart';
-import 'feature/my_garage/data/repository_impl/product_repository_impl.dart';
-import 'feature/my_garage/domain/repository/product_repository.dart';
-import 'feature/my_garage/domain/use_case/product_usecase.dart';
-import 'feature/my_garage/presentation/cubit/product_cubit.dart';
-import 'feature/service_logs/data/data_source/service_logs_remote_data_source.dart';
-import 'feature/service_logs/data/repository/service_logs_repository_impl.dart';
-import 'feature/service_logs/domain/usecase/get_service_logs_usecase.dart';
-import 'feature/service_logs/domain/usecase/save_service_log_usecase.dart';
-import 'feature/service_logs/presentation/cubit/service_logs_cubit.dart';
-import 'feature/onboarding/data/repositories/splash_repository_impl.dart';
-import 'feature/onboarding/domain/usecases/get_logo_usecase.dart';
-import 'feature/onboarding/presentation/cubit/splash_cubit.dart';
-import 'feature/device_installation/data/repository/device_installation_repository_impl.dart';
-import 'feature/device_installation/domain/usecase/assign_device_use_case.dart';
-import 'feature/device_installation/presentation/cubit/device_installation_cubit.dart';
-import 'feature/safe_parking/presentation/cubit/safe_parking_cubit.dart';
-import 'feature/trips/data/repository/ride_history_repository_impl.dart';
-import 'feature/trips/domain/usecase/ride_history_use_case.dart';
-import 'feature/trips/presentation/cubit/ride_history_cubit.dart';
-import 'core/common/repositories/common_repo_impl.dart';
-import 'feature/geo_fence/data/data_source/geo_fence_remote_data_source.dart';
-import 'feature/geo_fence/data/repository/geo_fence_repository_impl.dart';
-import 'feature/geo_fence/domain/usecase/get_geo_fence_usecase.dart';
-import 'feature/geo_fence/domain/usecase/add_geo_fence_usecase.dart';
-import 'feature/geo_fence/domain/usecase/delete_geo_fence_usecase.dart';
-import 'core/common/usecase/get_user_vehicles_usecase.dart';
-import 'core/config/network/network_api_service.dart';
-import 'feature/overspeed_alert/data/data_source/overspeed_alert_remote_data_source.dart';
-import 'feature/overspeed_alert/data/repository/overspeed_alert_repository_impl.dart';
-import 'feature/overspeed_alert/domain/usecase/create_overspeed_alert_usecase.dart';
-import 'feature/overspeed_alert/domain/usecase/get_overspeed_alerts_usecase.dart';
+import 'package:trackify/feature/auth/data/repository/auth_repository_impl.dart';
+import 'package:trackify/feature/auth/domain/usecase/auth_case.dart';
+import 'package:trackify/feature/auth/presentation/cubit/auth_cubit.dart';
+import 'package:trackify/feature/device_data/presentation/cubit/device_data_cubit.dart';
+import 'package:trackify/feature/document_folder/presentation/pages/document_screen.dart';
+import 'package:trackify/feature/emergency_sos/data/data_source/emergency_alert_remote_data.dart';
+import 'package:trackify/feature/emergency_sos/data/repository/emergency_alert_repository_impl.dart';
+import 'package:trackify/feature/emergency_sos/domain/usecase/emergency_alert_usecase.dart';
+import 'package:trackify/feature/emergency_sos/presentation/cubit/emergency_alert_cubit.dart';
+import 'package:trackify/feature/emergency_sos/presentation/cubit/emergency_alert_state.dart' show EmergencySent;
+import 'package:trackify/feature/geo_fence/presentation/cubit/geo_fence_cubit.dart';
+import 'package:trackify/feature/get_more_out/data/repository/discover_repository_impl.dart';
+import 'package:trackify/feature/get_more_out/data/repository/feature_repository_impl.dart';
+import 'package:trackify/feature/get_more_out/data/repository/geo_fenc_repository_impl.dart';
+import 'package:trackify/feature/get_more_out/domain/usecase/disover_usecase.dart';
+import 'package:trackify/feature/get_more_out/domain/usecase/geo_fenc_usecase.dart';
+import 'package:trackify/feature/get_more_out/domain/usecase/get_safey_usecase.dart';
+import 'package:trackify/feature/get_more_out/presentation/cubit/discover_cubit.dart';
+import 'package:trackify/feature/get_more_out/presentation/cubit/feature_cubit.dart';
+import 'package:trackify/feature/get_more_out/presentation/cubit/geo_fenc_cubit.dart';
+import 'package:trackify/feature/health_insurance/data/local_data/health_insurance_local_data.dart';
+import 'package:trackify/feature/health_insurance/data/repository_impl/health_insurance_repository_impl.dart';
+import 'package:trackify/feature/health_insurance/domain/usecase/health_insurance_usecase.dart';
+import 'package:trackify/feature/health_insurance/presentation/cubit/health_insurance_cubit.dart';
+import 'package:trackify/feature/my_garage/data/repository_impl/product_repository_impl.dart';
+import 'package:trackify/feature/my_garage/domain/repository/product_repository.dart';
+import 'package:trackify/feature/my_garage/domain/use_case/product_usecase.dart';
+import 'package:trackify/feature/my_garage/presentation/cubit/product_cubit.dart';
+import 'package:trackify/feature/service_logs/data/data_source/service_logs_remote_data_source.dart';
+import 'package:trackify/feature/service_logs/data/repository/service_logs_repository_impl.dart';
+import 'package:trackify/feature/service_logs/domain/usecase/get_service_logs_usecase.dart';
+import 'package:trackify/feature/service_logs/domain/usecase/save_service_log_usecase.dart';
+import 'package:trackify/feature/service_logs/presentation/cubit/service_logs_cubit.dart';
+import 'package:trackify/feature/onboarding/data/repositories/splash_repository_impl.dart';
+import 'package:trackify/feature/onboarding/domain/usecases/get_logo_usecase.dart';
+import 'package:trackify/feature/onboarding/presentation/cubit/splash_cubit.dart';
+import 'package:trackify/feature/device_installation/data/repository/device_installation_repository_impl.dart';
+import 'package:trackify/feature/device_installation/domain/usecase/assign_device_use_case.dart';
+import 'package:trackify/feature/device_installation/presentation/cubit/device_installation_cubit.dart';
+import 'package:trackify/feature/safe_parking/presentation/cubit/safe_parking_cubit.dart';
+import 'package:trackify/feature/trips/data/repository/ride_history_repository_impl.dart';
+import 'package:trackify/feature/trips/domain/usecase/ride_history_use_case.dart';
+import 'package:trackify/feature/trips/presentation/cubit/ride_history_cubit.dart';
+import 'package:trackify/core/common/repositories/common_repo_impl.dart';
+import 'package:trackify/feature/geo_fence/data/data_source/geo_fence_remote_data_source.dart';
+import 'package:trackify/feature/geo_fence/data/repository/geo_fence_repository_impl.dart';
+import 'package:trackify/feature/geo_fence/domain/usecase/get_geo_fence_usecase.dart';
+import 'package:trackify/feature/geo_fence/domain/usecase/add_geo_fence_usecase.dart';
+import 'package:trackify/feature/geo_fence/domain/usecase/delete_geo_fence_usecase.dart';
+import 'package:trackify/core/common/usecase/get_user_vehicles_usecase.dart';
+import 'package:trackify/core/config/network/network_api_service.dart';
+import 'package:trackify/feature/overspeed_alert/data/data_source/overspeed_alert_remote_data_source.dart';
+import 'package:trackify/feature/overspeed_alert/data/repository/overspeed_alert_repository_impl.dart';
+import 'package:trackify/feature/overspeed_alert/domain/usecase/create_overspeed_alert_usecase.dart';
+import 'package:trackify/feature/overspeed_alert/domain/usecase/get_overspeed_alerts_usecase.dart';
 
-import 'feature/video_tutorial/data/datasource/tutorial_remote_data.dart';
-import 'feature/video_tutorial/presentation/cubit/tutorial_cubit.dart';
+import 'package:trackify/feature/video_tutorial/data/datasource/tutorial_remote_data.dart';
+import 'package:trackify/feature/video_tutorial/presentation/cubit/tutorial_cubit.dart';
 import 'firebase_options.dart';
 
 final GlobalKey<NavigatorState> rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -324,16 +328,14 @@ List<BlocProvider> _buildBlocProviders() {
         ),
       )..getData(),
     ),
-
-
-
-
-
-
-
-
-
-
-
+    BlocProvider<AddFuelCubit>(
+      create: (_) => AddFuelCubit(
+        AddFuelUseCase(
+          AddFuelRepositoryImpl(
+            AddFuelDataSource(),
+          ),
+        ),
+      ),
+    ),
   ];
 }

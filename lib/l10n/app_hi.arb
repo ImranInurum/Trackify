@@ -955,5 +955,31 @@
       "drivingTime": "ड्राइविंग समय",
       "safetyScore": "सुरक्षा स्कोर",
 
-      "appUpdate": "ऐप अपडेट"
+      "appUpdate": "ऐप अपडेट",
+
+       "addRefuelingDetails": "ईंधन भरने का विवरण जोड़ें",
+        "date": "तारीख",
+        "time": "समय",
+        "fuelStation": "फ्यूल स्टेशन",
+        "change": "बदलें",
+        "currentOdometer": "वर्तमान ओडोमीटर (किमी)",
+        "lastRecorded": "अंतिम रिकॉर्ड: 32789 किमी",
+        "totalAmount": "कुल राशि",
+        "pricePerLitre": "प्रति लीटर कीमत",
+        "tankStatus": "टैंक स्थिति",
+        "fullTank": "फुल टैंक",
+        "partialTank": "आंशिक टैंक",
+        "fuelBeforeRefuel": "रिफ्यूल से पहले ईंधन",
+        "liters": "लीटर",
+        "fuelBeforeRefuelDesc": "रिफ्यूल करने से पहले टैंक में मौजूद अनुमानित ईंधन दर्ज करें।",
+        "save": "सेव करें",
+        "savedSuccessfully": "सफलतापूर्वक सेव किया गया",
+        "fuelStationName": "सी.एम. पेट्रो पॉइंट, बीपीसीएल पेट्रोल...",
+
+        "locationSharing": "लोकेशन शेयरिंग",
+          "yourPhoneLocation": "आपके फोन की लोकेशन",
+          "sharingActive": "शेयरिंग सक्रिय है",
+          "noActiveSharing": "कोई सक्रिय शेयरिंग नहीं"
+
+
 }

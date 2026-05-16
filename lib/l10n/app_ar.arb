@@ -958,6 +958,30 @@
       "drivingTime": "وقت القيادة",
       "safetyScore": "درجة الأمان",
 
-      "appUpdate": "تحديث التطبيق"
+      "appUpdate": "تحديث التطبيق",
+
+       "addRefuelingDetails": "إضافة تفاصيل التزود بالوقود",
+        "date": "التاريخ",
+        "time": "الوقت",
+        "fuelStation": "محطة الوقود",
+        "change": "تغيير",
+        "currentOdometer": "عداد المسافة الحالي (كم)",
+        "lastRecorded": "آخر تسجيل: 32789 كم",
+        "totalAmount": "المبلغ الإجمالي",
+        "pricePerLitre": "السعر لكل لتر",
+        "tankStatus": "حالة الخزان",
+        "fullTank": "خزان ممتلئ",
+        "partialTank": "خزان جزئي",
+        "fuelBeforeRefuel": "الوقود قبل التعبئة",
+        "liters": "لتر",
+        "fuelBeforeRefuelDesc": "أدخل الكمية التقديرية للوقود الموجودة في الخزان قبل إعادة التعبئة.",
+        "save": "حفظ",
+        "savedSuccessfully": "تم الحفظ بنجاح",
+        "fuelStationName": "سي إم بترو بوينت، بي بي سي إل بتر...",
+
+          "locationSharing": "مشاركة الموقع",
+          "yourPhoneLocation": "موقع هاتفك",
+          "sharingActive": "المشاركة نشطة",
+          "noActiveSharing": "لا توجد مشاركة نشطة"
 
 }
