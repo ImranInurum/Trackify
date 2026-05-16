@@ -246,7 +246,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get fuelLogs => 'ईंधन लॉग';
 
   @override
-  String get locationSharing => 'स्थान साझाकरण';
+  String get locationSharing => 'लोकेशन शेयरिंग';
 
   @override
   String get documentFolder => 'दस्तावेज़ फ़ोल्डर';
@@ -1338,7 +1338,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get refuelHistory => 'रिफ्यूल इतिहास';
 
   @override
-  String get addRefuelingDetails => 'रिफ्यूलिंग विवरण जोड़ें';
+  String get addRefuelingDetails => 'ईंधन भरने का विवरण जोड़ें';
 
   @override
   String get fuelStations => 'ईंधन स्टेशन';
@@ -2373,4 +2373,56 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get appUpdate => 'ऐप अपडेट';
+
+  @override
+  String get fuelStation => 'फ्यूल स्टेशन';
+
+  @override
+  String get change => 'बदलें';
+
+  @override
+  String get currentOdometer => 'वर्तमान ओडोमीटर (किमी)';
+
+  @override
+  String get lastRecorded => 'अंतिम रिकॉर्ड: 32789 किमी';
+
+  @override
+  String get totalAmount => 'कुल राशि';
+
+  @override
+  String get pricePerLitre => 'प्रति लीटर कीमत';
+
+  @override
+  String get tankStatus => 'टैंक स्थिति';
+
+  @override
+  String get fullTank => 'फुल टैंक';
+
+  @override
+  String get partialTank => 'आंशिक टैंक';
+
+  @override
+  String get fuelBeforeRefuel => 'रिफ्यूल से पहले ईंधन';
+
+  @override
+  String get liters => 'लीटर';
+
+  @override
+  String get fuelBeforeRefuelDesc =>
+      'रिफ्यूल करने से पहले टैंक में मौजूद अनुमानित ईंधन दर्ज करें।';
+
+  @override
+  String get savedSuccessfully => 'सफलतापूर्वक सेव किया गया';
+
+  @override
+  String get fuelStationName => 'सी.एम. पेट्रो पॉइंट, बीपीसीएल पेट्रोल...';
+
+  @override
+  String get yourPhoneLocation => 'आपके फोन की लोकेशन';
+
+  @override
+  String get sharingActive => 'शेयरिंग सक्रिय है';
+
+  @override
+  String get noActiveSharing => 'कोई सक्रिय शेयरिंग नहीं';
 }

@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../l10n/app_localizations.dart';
+import '../../../map/data/entity/user_vehicles.dart';
 import '../cubit/location_sharing_cubit.dart';
 import '../cubit/location_sharing_state.dart';
 import 'location_sharing_detail_screen.dart';
 import 'widgets/location_sharing_card.dart';
 
 class LocationSharingScreen extends StatefulWidget {
-  const LocationSharingScreen({super.key});
+  final Vehicles? selectedVehicle;
+  const LocationSharingScreen({super.key, this.selectedVehicle});
 
   @override
   State<LocationSharingScreen> createState() => _LocationSharingScreenState();
@@ -28,7 +30,7 @@ class _LocationSharingScreenState extends State<LocationSharingScreen> {
     final theme = Theme.of(context);
 
     return BlocProvider(
-      create: (context) => LocationSharingCubit()..loadLocations(),
+      create: (context) => LocationSharingCubit()..loadLocations(selectedVehicle: widget.selectedVehicle),
       child: Scaffold(
         appBar: AppBar(
           backgroundColor: theme.appBarTheme.backgroundColor,

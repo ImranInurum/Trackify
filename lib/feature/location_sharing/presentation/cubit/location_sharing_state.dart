@@ -32,14 +32,14 @@ class LocationSharingError extends LocationSharingState {
 class LocationSharingItem extends Equatable {
   final String id;
   final String name;
-  final String? subtitle;
+  // final String? subtitle;
   final bool isSharing;
   final bool isPhone;
 
   const LocationSharingItem({
     required this.id,
     required this.name,
-    this.subtitle,
+    // this.subtitle,
     this.isSharing = false,
     this.isPhone = false,
   });
@@ -54,12 +54,12 @@ class LocationSharingItem extends Equatable {
     return LocationSharingItem(
       id: id ?? this.id,
       name: name ?? this.name,
-      subtitle: subtitle ?? this.subtitle,
+      // subtitle: subtitle ?? this.subtitle,
       isSharing: isSharing ?? this.isSharing,
       isPhone: isPhone ?? this.isPhone,
     );
   }
 
   @override
-  List<Object?> get props => [id, name, subtitle, isSharing, isPhone];
+  List<Object?> get props => [id, name, isSharing, isPhone];
 }

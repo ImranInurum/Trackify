@@ -1332,7 +1332,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get refuelHistory => 'سجل تزويد الوقود';
 
   @override
-  String get addRefuelingDetails => 'أضف تفاصيل تزويد الوقود';
+  String get addRefuelingDetails => 'إضافة تفاصيل التزود بالوقود';
 
   @override
   String get fuelStations => 'محطات الوقود';
@@ -2359,4 +2359,56 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get appUpdate => 'تحديث التطبيق';
+
+  @override
+  String get fuelStation => 'محطة الوقود';
+
+  @override
+  String get change => 'تغيير';
+
+  @override
+  String get currentOdometer => 'عداد المسافة الحالي (كم)';
+
+  @override
+  String get lastRecorded => 'آخر تسجيل: 32789 كم';
+
+  @override
+  String get totalAmount => 'المبلغ الإجمالي';
+
+  @override
+  String get pricePerLitre => 'السعر لكل لتر';
+
+  @override
+  String get tankStatus => 'حالة الخزان';
+
+  @override
+  String get fullTank => 'خزان ممتلئ';
+
+  @override
+  String get partialTank => 'خزان جزئي';
+
+  @override
+  String get fuelBeforeRefuel => 'الوقود قبل التعبئة';
+
+  @override
+  String get liters => 'لتر';
+
+  @override
+  String get fuelBeforeRefuelDesc =>
+      'أدخل الكمية التقديرية للوقود الموجودة في الخزان قبل إعادة التعبئة.';
+
+  @override
+  String get savedSuccessfully => 'تم الحفظ بنجاح';
+
+  @override
+  String get fuelStationName => 'سي إم بترو بوينت، بي بي سي إل بتر...';
+
+  @override
+  String get yourPhoneLocation => 'موقع هاتفك';
+
+  @override
+  String get sharingActive => 'المشاركة نشطة';
+
+  @override
+  String get noActiveSharing => 'لا توجد مشاركة نشطة';
 }

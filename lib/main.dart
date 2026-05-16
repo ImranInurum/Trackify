@@ -2,6 +2,10 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:trackify/feature/add_fuel/data/data_source/add_fuel_datasource.dart';
+import 'package:trackify/feature/add_fuel/data/repository_impl/add_fuel_repository_impl.dart';
+import 'package:trackify/feature/add_fuel/domain/usecase/add_fuel_usecase.dart';
+import 'package:trackify/feature/add_fuel/presentation/cubit/add_fuel_cubit.dart';
 import 'package:trackify/feature/add_vehicle_and_device/add_vehicle/domain/use_case/add_vehicle_use_case.dart';
 import 'package:trackify/feature/document_folder/presentation/cubit/document_cubit.dart';
 import 'package:trackify/feature/help_and_support/data/repository_impl/help_support_repository_impl.dart';
@@ -324,6 +328,16 @@ List<BlocProvider> _buildBlocProviders() {
         ),
       )..getData(),
     ),
+
+    BlocProvider<AddFuelCubit>(
+      create: (_) => AddFuelCubit(
+        AddFuelUseCase(
+          AddFuelRepositoryImpl(
+            AddFuelDataSource(),
+          ),
+        ),
+      ),
+    )
 
 
 

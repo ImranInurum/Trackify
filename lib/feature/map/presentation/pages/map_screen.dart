@@ -860,7 +860,10 @@ class _MapScreenState extends State<MapScreen> {
     } else if (label == l10n.locationSharing.replaceAll(' ', '\n')) {
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => LocationSharingScreen()),
+        MaterialPageRoute(
+          builder: (context) =>
+              LocationSharingScreen(selectedVehicle: selectedDevice),
+        ),
       );
     } else if (label == l10n.serviceLogs.replaceAll(' ', '\n')) {
       Navigator.push(

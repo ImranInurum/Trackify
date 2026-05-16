@@ -11,7 +11,7 @@ import '../cubit/fuel_stations_cubit.dart';
 import '../../data/repository/overpass_service.dart';
 import 'widgets/dashboard_tab_view.dart';
 import 'widgets/fuel_stations_tab_view.dart';
-import '../../../add_fuel/add_fuel_screen.dart';
+import '../../../add_fuel/presentation/pages/add_fuel_screen.dart';
 
 class FuelLogsScreen extends StatefulWidget {
   const FuelLogsScreen({super.key});

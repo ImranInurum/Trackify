@@ -9,6 +9,8 @@ class VehicleSelectionAppBar extends StatelessWidget {
   final VoidCallback onBack;
   final Function(Vehicle) onVehicleSelected;
 
+  final bool isMinimal;
+
   const VehicleSelectionAppBar({
     super.key,
     required this.title,
@@ -16,6 +18,7 @@ class VehicleSelectionAppBar extends StatelessWidget {
     required this.vehicles,
     required this.onBack,
     required this.onVehicleSelected,
+    this.isMinimal = false,
   });
 
   @override
@@ -23,13 +26,48 @@ class VehicleSelectionAppBar extends StatelessWidget {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context)!;
 
+    if (isMinimal) {
+      return GestureDetector(
+        onTap: () => _showVehicleSelector(context),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 15),
+          decoration: BoxDecoration(
+            color: theme.colorScheme.surfaceContainerHighest,
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: Row(
+            children: [
+              Expanded(
+                child: Text(
+                  selectedVehicle != null
+                      ? "${selectedVehicle!.vehicleMaker ?? ""} ${selectedVehicle!.vehicleModel ?? ""}"
+                              .trim() +
+                          " (${selectedVehicle!.vehicleNumber ?? ""})"
+                      : l10n.selectVehicle,
+                  style: theme.textTheme.bodyLarge?.copyWith(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 16,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+              Icon(
+                Icons.keyboard_arrow_down,
+                color: theme.colorScheme.onSurface.withOpacity(0.6),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
     return Container(
       padding: EdgeInsets.only(
         top: MediaQuery.of(context).padding.top,
         bottom: 20,
       ),
       decoration: BoxDecoration(
-        color: theme.cardColor.withOpacity(0.8),
+        color: theme.colorScheme.surface.withOpacity(0.8),
         borderRadius: const BorderRadius.only(
           bottomLeft: Radius.circular(30),
           bottomRight: Radius.circular(30),
@@ -65,16 +103,18 @@ class VehicleSelectionAppBar extends StatelessWidget {
               margin: const EdgeInsets.symmetric(horizontal: 20),
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               decoration: BoxDecoration(
-                color: theme.scaffoldBackgroundColor,
+                color: theme.colorScheme.surface,
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: theme.dividerColor, width: 1),
+                border: Border.all(color: theme.colorScheme.outlineVariant, width: 1),
               ),
               child: Row(
                 children: [
                   Expanded(
                     child: Text(
                       selectedVehicle != null
-                          ? "${selectedVehicle!.vehicleMaker ?? ""} ${selectedVehicle!.vehicleModel ?? ""}".trim() + " (${selectedVehicle!.vehicleNumber ?? ""})"
+                          ? "${selectedVehicle!.vehicleMaker ?? ""} ${selectedVehicle!.vehicleModel ?? ""}"
+                                  .trim() +
+                              " (${selectedVehicle!.vehicleNumber ?? ""})"
                           : l10n.selectVehicle,
                       style: theme.textTheme.bodyMedium?.copyWith(
                         fontWeight: FontWeight.w500,
@@ -96,9 +136,10 @@ class VehicleSelectionAppBar extends StatelessWidget {
   }
 
   void _showVehicleSelector(BuildContext context) {
+    final theme = Theme.of(context);
     showModalBottomSheet(
       context: context,
-      backgroundColor: Colors.transparent,
+      backgroundColor: theme.colorScheme.surface.withOpacity(0),
       builder: (context) => _VehicleSelectorSheet(
         vehicles: vehicles,
         selectedVehicle: selectedVehicle,
@@ -128,7 +169,7 @@ class _VehicleSelectorSheet extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
-        color: theme.cardColor,
+        color: theme.colorScheme.surface,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
       ),
       child: Column(
@@ -139,7 +180,7 @@ class _VehicleSelectorSheet extends StatelessWidget {
             width: 40,
             height: 4,
             decoration: BoxDecoration(
-              color: theme.dividerColor,
+              color: theme.colorScheme.outlineVariant,
               borderRadius: BorderRadius.circular(2),
             ),
           ),
@@ -154,8 +195,8 @@ class _VehicleSelectorSheet extends StatelessWidget {
               return Container(
                 decoration: BoxDecoration(
                   color: isSelected
-                      ? theme.scaffoldBackgroundColor.withOpacity(1)
-                      : theme.cardColor,
+                      ? theme.colorScheme.primaryContainer.withOpacity(0.3)
+                      : theme.colorScheme.surface,
                 ),
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
@@ -166,11 +207,11 @@ class _VehicleSelectorSheet extends StatelessWidget {
                       height: 50,
                     ),
                     title: Text(
-                      "${vehicle.vehicleMaker ?? ""} ${vehicle.vehicleModel ?? ""}".trim(),
+                      "${vehicle.vehicleMaker ?? ""} ${vehicle.vehicleModel ?? ""}"
+                          .trim(),
                       style: theme.textTheme.bodyLarge?.copyWith(
-                        fontWeight: isSelected
-                            ? FontWeight.bold
-                            : FontWeight.normal,
+                        fontWeight:
+                            isSelected ? FontWeight.bold : FontWeight.normal,
                         color: isSelected
                             ? theme.colorScheme.primary
                             : theme.colorScheme.onSurface,
