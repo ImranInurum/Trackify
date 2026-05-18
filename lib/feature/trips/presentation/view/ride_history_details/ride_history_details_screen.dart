@@ -522,6 +522,9 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final double fuelRate = widget.ride.avgSpeed > 0
+        ? (2.1 * (1.0 + 0.005 * (widget.ride.avgSpeed - 35.0).abs())).clamp(1.5, 3.5)
+        : 2.1;
     return BlocListener<RideHistoryDetailsCubit, RideHistoryDetailsState>(
       listenWhen: (previous, current) {
         return previous.isDataProcessing != current.isDataProcessing ||
@@ -1017,7 +1020,7 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
                       Transform.translate(
                         offset: const Offset(0, -16),
                         child: Text(
-                          "Running Time: ${widget.ride.duration}",
+                          "${l10n.rideDuration}: ${widget.ride.duration}",
                           style: TextStyle(
                             color: Theme.of(context).colorScheme.onSurface,
                             fontSize: 16,
@@ -1047,7 +1050,7 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
                                 Expanded(
                                   child: _buildPanelStat(
                                     Icons.currency_rupee,
-                                    "49",
+                                    "${l10n.currencySymbol}${(widget.ride.distance * fuelRate).toStringAsFixed(0)}",
                                   ),
                                 ),
                               ],
@@ -1058,20 +1061,20 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
                                 Expanded(
                                   child: _buildPanelStat(
                                     Icons.speed,
-                                    "${widget.ride.avgSpeed.toStringAsFixed(1)} ${l10n.kmh} AVG",
+                                    "${widget.ride.avgSpeed.toStringAsFixed(1)} ${l10n.kmh} ${l10n.averageSpeed.split(' ')[0]}",
                                   ),
                                 ),
                                 Expanded(
                                   child: _buildPanelStat(
                                     Icons.bolt,
-                                    "${widget.ride.topSpeed.toStringAsFixed(1)} Top",
+                                    "${widget.ride.topSpeed.toStringAsFixed(1)} ${l10n.topSpeed.split(' ')[0]}",
                                     isHighlight: true,
                                   ),
                                 ),
                                 Expanded(
                                   child: _buildPanelStat(
                                     Icons.water_drop_outlined,
-                                    "₹ 2.1/km",
+                                    "${l10n.currencySymbol} ${fuelRate.toStringAsFixed(1)}/${l10n.km}",
                                   ),
                                 ),
                               ],

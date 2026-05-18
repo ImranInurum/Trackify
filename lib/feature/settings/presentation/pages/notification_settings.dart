@@ -3,6 +3,8 @@ import 'package:trackify/feature/settings/presentation/pages/notification_sounds
 import 'package:trackify/feature/settings/presentation/widgets/setting_list_tile.dart';
 import 'package:trackify/l10n/app_localizations.dart';
 
+import '../../../Vehicle_control/presentation/pages/notification_controls_screen.dart';
+
 class NotificationSettings extends StatelessWidget{
 
   const NotificationSettings({super.key});
@@ -39,7 +41,11 @@ class NotificationSettings extends StatelessWidget{
             showArrow: true,
             showIcon: true,
             onTap: () {
-              debugPrint('Tapped on Notification Controls');
+
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const NotificationControlsScreen()),
+              );
             }
           ),
 
