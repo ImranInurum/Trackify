@@ -1,5 +1,4 @@
-
- name: Android CI/CD (FVM)
+name: Android CI/CD (FVM)
 
 on:
   push:
