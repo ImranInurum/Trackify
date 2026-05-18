@@ -113,24 +113,45 @@ class RideHistoryDetailsCubit extends Cubit<RideHistoryDetailsState> {
   void updateProgress(double progress) {
     if (state.isDataProcessing || state.smoothPositions.isEmpty) return;
     
-    // Log once at start of progress
-    if (progress == 0.0) {
-      print('DEBUG_MARKER: Playback Progress Started');
-    }
 
-    final int index = (progress * (state.smoothPositions.length - 1)).toInt();
-    final clampedIndex = index.clamp(0, state.smoothPositions.length - 1);
 
-    final pos = state.smoothPositions[clampedIndex];
-    final heading = state.smoothHeadings[clampedIndex];
-    final speed = state.smoothSpeeds[clampedIndex];
-    final time = state.smoothTimes[clampedIndex];
-    final distance = state.cumulativeDistances.isNotEmpty 
-        ? state.cumulativeDistances[clampedIndex] 
-        : 0.0;
-    final avgSpeed = state.smoothAvgSpeeds.isNotEmpty
-        ? state.smoothAvgSpeeds[clampedIndex]
-        : 0.0;
+    // 1. Calculate fractional index for ultra-smooth sub-coordinate mathematical LERP
+    final double exactIndex = progress * (state.smoothPositions.length - 1);
+    final int index1 = exactIndex.floor().clamp(0, state.smoothPositions.length - 1);
+    final int index2 = exactIndex.ceil().clamp(0, state.smoothPositions.length - 1);
+    final double t = exactIndex - exactIndex.floor();
+
+    // 2. Continuous LatLng LERP (infinitely smooth frame-by-frame coordinate movement)
+    final pos1 = state.smoothPositions[index1];
+    final pos2 = state.smoothPositions[index2];
+    final double lat = pos1.latitude + (pos2.latitude - pos1.latitude) * t;
+    final double lng = pos1.longitude + (pos2.longitude - pos1.longitude) * t;
+    final pos = LatLng(lat, lng);
+
+    // 3. Continuous Heading LERP (circular shortest-path to prevent snap stutters)
+    final double heading1 = state.smoothHeadings[index1];
+    final double heading2 = state.smoothHeadings[index2];
+    double diffHeading = heading2 - heading1;
+    if (diffHeading > 180) diffHeading -= 360;
+    if (diffHeading < -180) diffHeading += 360;
+    final double heading = (heading1 + diffHeading * t) % 360;
+
+    // 4. Continuous Speed & Average Speed LERP
+    final double speed1 = state.smoothSpeeds[index1];
+    final double speed2 = state.smoothSpeeds[index2];
+    final double speed = speed1 + (speed2 - speed1) * t;
+
+    final double avgSpeed1 = state.smoothAvgSpeeds.isNotEmpty ? state.smoothAvgSpeeds[index1] : 0.0;
+    final double avgSpeed2 = state.smoothAvgSpeeds.isNotEmpty ? state.smoothAvgSpeeds[index2] : 0.0;
+    final double avgSpeed = avgSpeed1 + (avgSpeed2 - avgSpeed1) * t;
+
+    // 5. Continuous Distance LERP
+    final double dist1 = state.cumulativeDistances.isNotEmpty ? state.cumulativeDistances[index1] : 0.0;
+    final double dist2 = state.cumulativeDistances.isNotEmpty ? state.cumulativeDistances[index2] : 0.0;
+    final double distance = dist1 + (dist2 - dist1) * t;
+
+    // 6. Closest point's time display
+    final String time = t < 0.5 ? state.smoothTimes[index1] : state.smoothTimes[index2];
 
     emit(
       state.copyWith(
@@ -145,8 +166,7 @@ class RideHistoryDetailsCubit extends Cubit<RideHistoryDetailsState> {
       ),
     );
 
-    // Print current position for debugging (using print for better visibility)
-    print('DEBUG_MARKER: Lat: ${pos.latitude}, Lng: ${pos.longitude}');
+
   }
 
   void resetPlayback() {
@@ -248,9 +268,10 @@ _TripProcessingResult _processTripDataInBackground(
               DateTime.tryParse(p2.time!) ??
               DateTime.tryParse(p2.time!.replaceAll(' ', 'T'));
           if (t1 != null && t2 != null) {
-            double dt = t2.difference(t1).inMilliseconds.toDouble() / 1000.0;
-            // High-speed Playback: Dynamic speed based on API, Max 0.5s stop
-            timeWeight = dt.clamp(0.01, 0.5);
+            final double dt = t2.difference(t1).inMilliseconds.toDouble() / 1000.0;
+            // Compress stops longer than 5.0 seconds to keep the animation engaging,
+            // otherwise use actual real-time dt for exact 1x speed matching!
+            timeWeight = dt.clamp(0.01, 5.0);
           }
         } catch (_) {}
       }

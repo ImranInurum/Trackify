@@ -51,7 +51,6 @@ import '../cubit/map_state.dart';
 import '../../../../l10n/app_localizations.dart';
 import 'package:trackify/core/common/models/vehicle_list_model.dart';
 
-
 class MapScreen extends StatefulWidget {
   const MapScreen({super.key});
 
@@ -114,8 +113,6 @@ class _MapScreenState extends State<MapScreen> {
         _customMarker = BitmapDescriptor.fromBytes(markerIcon);
       });
     }
-
-
   }
 
   @override
@@ -133,7 +130,6 @@ class _MapScreenState extends State<MapScreen> {
                 if (state is MapLoaded) {
                   final vehicles = state.vehicleList.vehicles ?? [];
                   if (vehicles.isNotEmpty && _selectedDevice == null) {
-
                     prefs.get(key: AppPreference.IMEI).then((savedImei) {
                       if (mounted) {
                         final savedVehicle = vehicles.firstWhere(
@@ -148,7 +144,6 @@ class _MapScreenState extends State<MapScreen> {
                       }
                     });
                     print("slected device is ${_selectedDevice?.imei}");
-
                   }
                 }
               },
@@ -292,7 +287,6 @@ class _MapScreenState extends State<MapScreen> {
           color: Theme.of(context).cardColor,
           borderRadius: const BorderRadius.all(Radius.circular(5)),
           boxShadow: [
-
             BoxShadow(
               color: Colors.black.withOpacity(0.1),
               blurRadius: 2,
@@ -315,7 +309,7 @@ class _MapScreenState extends State<MapScreen> {
                 _selectedDevice!.currentLocation!.lng!,
               );
             }
-         print("live data on map ${appState.livePosition}");
+            print("live data on map ${appState.livePosition}");
             bestPos ??= LatLng(currentPos.latitude, currentPos.longitude);
 
             return Column(
@@ -327,7 +321,7 @@ class _MapScreenState extends State<MapScreen> {
                       child: GoogleMap(
                         key: ValueKey(_selectedDevice?.id),
                         initialCameraPosition: CameraPosition(
-                          target: appState.livePosition??bestPos,
+                          target: appState.livePosition ?? bestPos,
                           zoom: 15,
                         ),
                         myLocationEnabled: false,
@@ -480,82 +474,82 @@ class _MapScreenState extends State<MapScreen> {
         );
       },
       child: Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16),
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: Theme.of(context).cardColor,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: Theme.of(context).dividerColor.withOpacity(0.5),
+        margin: const EdgeInsets.symmetric(horizontal: 16),
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: Theme.of(context).cardColor,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: Theme.of(context).dividerColor.withOpacity(0.5),
+          ),
+        ),
+        child: Row(
+          children: [
+            SizedBox(
+              width: 44,
+              height: 44,
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  CircularProgressIndicator(
+                    value: 0.63,
+                    strokeWidth: 3.5,
+                    backgroundColor: Theme.of(context).dividerColor,
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                      Theme.of(context).colorScheme.primary,
+                    ),
+                  ),
+                  Text(
+                    l10n.progressPercentage("63"),
+                    style: getBoldStyle(
+                      color: Theme.of(context).colorScheme.primary,
+                      fontSize: 10,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Text(
+                        l10n.getMoreOutOfTrackify,
+                        style: getBoldStyle(
+                          color: Theme.of(context).colorScheme.primary,
+                          fontSize: 14,
+                        ),
+                      ),
+                      Icon(
+                        Icons.chevron_right,
+                        color: Theme.of(context).colorScheme.primary,
+                        size: 18,
+                      ),
+                    ],
+                  ),
+                  Text(
+                    l10n.discoverMoreDesc,
+                    style: getRegularStyle(
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.onSurface.withOpacity(0.6),
+                      fontSize: 11,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Icon(
+              Icons.close,
+              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.4),
+              size: 18,
+            ),
+          ],
         ),
       ),
-      child: Row(
-        children: [
-          SizedBox(
-            width: 44,
-            height: 44,
-            child: Stack(
-              alignment: Alignment.center,
-              children: [
-                CircularProgressIndicator(
-                  value: 0.63,
-                  strokeWidth: 3.5,
-                  backgroundColor: Theme.of(context).dividerColor,
-                  valueColor: AlwaysStoppedAnimation<Color>(
-                    Theme.of(context).colorScheme.primary,
-                  ),
-                ),
-                Text(
-                  l10n.progressPercentage("63"),
-                  style: getBoldStyle(
-                    color: Theme.of(context).colorScheme.primary,
-                    fontSize: 10,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Text(
-                      l10n.getMoreOutOfTrackify,
-                      style: getBoldStyle(
-                        color: Theme.of(context).colorScheme.primary,
-                        fontSize: 14,
-                      ),
-                    ),
-                    Icon(
-                      Icons.chevron_right,
-                      color: Theme.of(context).colorScheme.primary,
-                      size: 18,
-                    ),
-                  ],
-                ),
-                Text(
-                  l10n.discoverMoreDesc,
-                  style: getRegularStyle(
-                    color: Theme.of(
-                      context,
-                    ).colorScheme.onSurface.withOpacity(0.6),
-                    fontSize: 11,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Icon(
-            Icons.close,
-            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.4),
-            size: 18,
-          ),
-        ],
-      ),
-      )
     );
   }
 
@@ -869,17 +863,21 @@ class _MapScreenState extends State<MapScreen> {
         MaterialPageRoute(builder: (context) => const ServiceLogsScreen()),
       );
     } else if (label == l10n.overspeedAlert.replaceAll(' ', '\n')) {
-      final vehicle = selectedDevice != null ? Vehicle(
-        id: selectedDevice.id,
-        userId: selectedDevice.userId,
-        vehicleMaker: selectedDevice.vehicleMaker,
-        vehicleNumber: selectedDevice.vehicleNumber,
-        vehicleModel: selectedDevice.vehicleModel,
-        imei: selectedDevice.imei,
-      ) : null;
+      final vehicle = selectedDevice != null
+          ? Vehicle(
+              id: selectedDevice.id,
+              userId: selectedDevice.userId,
+              vehicleMaker: selectedDevice.vehicleMaker,
+              vehicleNumber: selectedDevice.vehicleNumber,
+              vehicleModel: selectedDevice.vehicleModel,
+              imei: selectedDevice.imei,
+            )
+          : null;
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => OverSpeedAlertScreen(vehicle: vehicle)),
+        MaterialPageRoute(
+          builder: (context) => OverSpeedAlertScreen(vehicle: vehicle),
+        ),
       );
     } else if (label == l10n.fuelLogs.replaceAll(' ', '\n')) {
       Navigator.push(
@@ -891,51 +889,37 @@ class _MapScreenState extends State<MapScreen> {
         context,
         MaterialPageRoute(builder: (context) => WarrantyScreen()),
       );
-    }
-    else if (label == l10n.appUpdates.replaceAll(' ', '\n')) {
+    } else if (label == l10n.appUpdates.replaceAll(' ', '\n')) {
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => UpdateScreen()));
-          }
-    else if (label == l10n.helpAndSupport.replaceAll(' ', '\n')) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => HelpSuggestionScreen(),
-        ),
+        MaterialPageRoute(builder: (context) => UpdateScreen()),
       );
-    }else if (label == l10n.emergency.replaceAll(' ', '\n')) {
+    } else if (label == l10n.helpAndSupport.replaceAll(' ', '\n')) {
       Navigator.push(
         context,
-        MaterialPageRoute(
-          builder: (context) => EmergencyAlertScreen(),
-        ),
+        MaterialPageRoute(builder: (context) => HelpSuggestionScreen()),
       );
-    }
-    else if (label == l10n.safeParking.replaceAll(' ', '\n')) {
+    } else if (label == l10n.emergency.replaceAll(' ', '\n')) {
       Navigator.push(
         context,
-        MaterialPageRoute(
-          builder: (context) => const SafeParkingScreen(),
-        ),
+        MaterialPageRoute(builder: (context) => EmergencyAlertScreen()),
       );
-    }else if (label == l10n.documentFolder.replaceAll(' ', '\n')) {
+    } else if (label == l10n.safeParking.replaceAll(' ', '\n')) {
       Navigator.push(
         context,
-        MaterialPageRoute(
-          builder: (context) => const DocumentFolderScreen(),
-        ),
+        MaterialPageRoute(builder: (context) => const SafeParkingScreen()),
       );
-    }else if (label == l10n.videoTutorials.replaceAll(' ', '\n')) {
+    } else if (label == l10n.documentFolder.replaceAll(' ', '\n')) {
       Navigator.push(
         context,
-        MaterialPageRoute(
-          builder: (context) => const CategoryScreen(),
-        ),
+        MaterialPageRoute(builder: (context) => const DocumentFolderScreen()),
       );
-    }
-
-    else if (label == l10n.deviceDataPlanLabel.replaceAll(' ', '\n')) {
+    } else if (label == l10n.videoTutorials.replaceAll(' ', '\n')) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const CategoryScreen()),
+      );
+    } else if (label == l10n.deviceDataPlanLabel.replaceAll(' ', '\n')) {
       if (selectedDevice?.imei == null) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -943,39 +927,27 @@ class _MapScreenState extends State<MapScreen> {
             backgroundColor: Colors.red,
           ),
         );
-      }
-
-
-      else {
+      } else {
         Navigator.push(
           context,
-          MaterialPageRoute(
-            builder: (context) => DeviceDataScreen(
-
-            ),
-          ),
+          MaterialPageRoute(builder: (context) => DeviceDataScreen()),
         );
       }
-    }else if (label == l10n.geoFenceAlert.replaceAll(' ', '\n')) {
+    } else if (label == l10n.geoFenceAlert.replaceAll(' ', '\n')) {
       final vName = selectedDevice != null
           ? "${selectedDevice.vehicleMaker} ${selectedDevice.vehicleNumber}"
           : null;
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => GeoFenceScreen(
-            vehicleName: vName,
-            imei: selectedDevice?.imei,
-          ),
+          builder: (context) =>
+              GeoFenceScreen(vehicleName: vName, imei: selectedDevice?.imei),
         ),
       );
-    }
-    else if (label == l10n.upgradeToPlus.replaceAll(' ', '\n')) {
+    } else if (label == l10n.upgradeToPlus.replaceAll(' ', '\n')) {
       Navigator.push(
         context,
-        MaterialPageRoute(
-          builder: (context) => const UpgradeToPlusScreen(),
-        ),
+        MaterialPageRoute(builder: (context) => const UpgradeToPlusScreen()),
       );
     }
   }
@@ -1097,21 +1069,18 @@ class _MapScreenState extends State<MapScreen> {
                   physics: const NeverScrollableScrollPhysics(),
                   itemCount: state.videos.length + (state.hasMore ? 1 : 0),
                   itemBuilder: (context, index) {
-
                     // Loader at bottom
                     if (index >= state.videos.length) {
                       return const Padding(
                         padding: EdgeInsets.symmetric(vertical: 20),
-                        child: Center(
-                        child: CircularProgressIndicator(),
-                        ),
+                        child: Center(child: CircularProgressIndicator()),
                       );
                     }
 
-                  final video = state.videos[index];
+                    final video = state.videos[index];
 
-                  return PromoVideoCard(video: video);
-                },
+                    return PromoVideoCard(video: video);
+                  },
                 );
               }
               return const SizedBox.shrink();
@@ -1175,7 +1144,6 @@ class _MapScreenState extends State<MapScreen> {
         }
 
         context.read<AppCubit>().initializeSocket(imei: device.imei);
-
       },
     );
   }
