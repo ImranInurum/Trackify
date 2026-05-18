@@ -9,14 +9,16 @@ class RideHistoryDetailsCubit extends Cubit<RideHistoryDetailsState> {
   final Ride ride;
 
   RideHistoryDetailsCubit({required this.ride})
-    : super(const RideHistoryDetailsState());
+      : super(const RideHistoryDetailsState()) {
+    _processTripData();
+  }
 
   void initialize(
     BitmapDescriptor start,
     BitmapDescriptor end,
     BitmapDescriptor vehicle,
     String? mapStyle,
-  ) async {
+  ) {
     emit(
       state.copyWith(
         startIcon: start,
@@ -25,7 +27,9 @@ class RideHistoryDetailsCubit extends Cubit<RideHistoryDetailsState> {
         darkMapStyle: mapStyle,
       ),
     );
+  }
 
+  void _processTripData() async {
     final validPoints = ride.polylinePoints
         .where((p) => p.latitude != 0.0 || p.longitude != 0.0)
         .toList();

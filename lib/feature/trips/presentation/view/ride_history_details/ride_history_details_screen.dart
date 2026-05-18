@@ -50,6 +50,13 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
   bool _hasZoomedToRoute = false;
   CameraPosition? _lastCameraPosition;
   bool _isGliding = false;
+  late Color _primaryColor;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _primaryColor = Theme.of(context).colorScheme.primary;
+  }
 
   @override
   void initState() {
@@ -98,23 +105,35 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
   }
 
   void _initializeAssets() async {
-    final start = await _createStartMarker();
-    final end = await _createEndMarker();
-    final vehicle = await _createVehicleMarker();
-    String? mapStyle;
     try {
-      mapStyle = await rootBundle.loadString('assets/map_styles/dark_map.json');
-    } catch (e) {
-      debugPrint('Error loading map style: $e');
-    }
+      final start = await _createStartMarker();
+      final end = await _createEndMarker();
+      final vehicle = await _createVehicleMarker();
+      String? mapStyle;
+      try {
+        mapStyle = await rootBundle.loadString('assets/map_styles/dark_map.json');
+      } catch (e) {
+        debugPrint('Error loading map style: $e');
+      }
 
-    if (mounted) {
-      context.read<RideHistoryDetailsCubit>().initialize(
-        start,
-        end,
-        vehicle,
-        mapStyle,
-      );
+      if (mounted) {
+        context.read<RideHistoryDetailsCubit>().initialize(
+          start,
+          end,
+          vehicle,
+          mapStyle,
+        );
+      }
+    } catch (e) {
+      debugPrint('Error initializing map assets: $e');
+      if (mounted) {
+        context.read<RideHistoryDetailsCubit>().initialize(
+          BitmapDescriptor.defaultMarker,
+          BitmapDescriptor.defaultMarker,
+          BitmapDescriptor.defaultMarker,
+          null,
+        );
+      }
     }
   }
 
@@ -442,7 +461,7 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
     final Canvas canvas = Canvas(pictureRecorder);
     const double size = 60.0; // Standard size always
     final Paint arrowPaint = Paint()
-      ..color = Theme.of(context).colorScheme.primary
+      ..color = _primaryColor
       ..style = PaintingStyle.fill;
     final Paint borderPaint = Paint()
       ..color = Colors.white
