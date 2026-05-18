@@ -292,6 +292,7 @@ class _MapScreenState extends State<MapScreen> {
           color: Theme.of(context).cardColor,
           borderRadius: const BorderRadius.all(Radius.circular(5)),
           boxShadow: [
+
             BoxShadow(
               color: Colors.black.withOpacity(0.1),
               blurRadius: 2,

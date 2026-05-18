@@ -12,6 +12,7 @@ class RideHistoryDetailsState extends Equatable {
   final List<LatLng> smoothPositions;
   final List<double> smoothHeadings;
   final List<double> smoothSpeeds;
+  final List<double> smoothAvgSpeeds;
   final List<String> smoothTimes;
 
   final LatLng? currentVehiclePosition;
@@ -24,6 +25,7 @@ class RideHistoryDetailsState extends Equatable {
   final bool isPlaying;
   final bool isPlaybackStarted;
   final double playProgress;
+  final int playbackSpeed;
 
   final BitmapDescriptor? startIcon;
   final BitmapDescriptor? endIcon;
@@ -39,6 +41,7 @@ class RideHistoryDetailsState extends Equatable {
     this.smoothPositions = const [],
     this.smoothHeadings = const [],
     this.smoothSpeeds = const [],
+    this.smoothAvgSpeeds = const [],
     this.smoothTimes = const [],
     this.currentVehiclePosition,
     this.currentHeading = 0.0,
@@ -49,6 +52,7 @@ class RideHistoryDetailsState extends Equatable {
     this.isPlaying = false,
     this.isPlaybackStarted = false,
     this.playProgress = 0.0,
+    this.playbackSpeed = 1,
     this.startIcon,
     this.endIcon,
     this.vehicleIcon,
@@ -64,6 +68,7 @@ class RideHistoryDetailsState extends Equatable {
     List<LatLng>? smoothPositions,
     List<double>? smoothHeadings,
     List<double>? smoothSpeeds,
+    List<double>? smoothAvgSpeeds,
     List<String>? smoothTimes,
     LatLng? currentVehiclePosition,
     double? currentHeading,
@@ -74,6 +79,7 @@ class RideHistoryDetailsState extends Equatable {
     bool? isPlaying,
     bool? isPlaybackStarted,
     double? playProgress,
+    int? playbackSpeed,
     BitmapDescriptor? startIcon,
     BitmapDescriptor? endIcon,
     BitmapDescriptor? vehicleIcon,
@@ -88,6 +94,7 @@ class RideHistoryDetailsState extends Equatable {
       smoothPositions: smoothPositions ?? this.smoothPositions,
       smoothHeadings: smoothHeadings ?? this.smoothHeadings,
       smoothSpeeds: smoothSpeeds ?? this.smoothSpeeds,
+      smoothAvgSpeeds: smoothAvgSpeeds ?? this.smoothAvgSpeeds,
       smoothTimes: smoothTimes ?? this.smoothTimes,
       currentVehiclePosition:
           currentVehiclePosition ?? this.currentVehiclePosition,
@@ -101,6 +108,7 @@ class RideHistoryDetailsState extends Equatable {
       isPlaying: isPlaying ?? this.isPlaying,
       isPlaybackStarted: isPlaybackStarted ?? this.isPlaybackStarted,
       playProgress: playProgress ?? this.playProgress,
+      playbackSpeed: playbackSpeed ?? this.playbackSpeed,
       startIcon: startIcon ?? this.startIcon,
       endIcon: endIcon ?? this.endIcon,
       vehicleIcon: vehicleIcon ?? this.vehicleIcon,
@@ -118,6 +126,7 @@ class RideHistoryDetailsState extends Equatable {
     smoothPositions,
     smoothHeadings,
     smoothSpeeds,
+    smoothAvgSpeeds,
     smoothTimes,
     currentVehiclePosition,
     currentHeading,
@@ -128,6 +137,7 @@ class RideHistoryDetailsState extends Equatable {
     isPlaying,
     isPlaybackStarted,
     playProgress,
+    playbackSpeed,
     startIcon,
     endIcon,
     vehicleIcon,

@@ -46,7 +46,6 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
 
   late AnimationController _playController;
   late AnimationController _orbitController;
-  late List<LatLng> _validPoints;
   bool _isOrbiting = false;
   bool _isPlaybackActive = false;
   bool _hasZoomedToRoute = false;
@@ -54,10 +53,6 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
   @override
   void initState() {
     super.initState();
-
-    _validPoints = widget.ride.polylinePoints
-        .where((p) => p.latitude != 0.0 || p.longitude != 0.0)
-        .toList();
 
     _playController = AnimationController(
       vsync: this,
@@ -118,8 +113,9 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
   }
 
   void _animateCameraToVehicle(RideHistoryDetailsState state) async {
-    if (state.currentVehiclePosition == null || !_controller.isCompleted)
+    if (state.currentVehiclePosition == null || !_controller.isCompleted) {
       return;
+    }
     final controller = await _controller.future;
 
     if (state.isPlaying) {
@@ -149,11 +145,14 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
         _playController.reset();
       }
 
-      final targetSeconds = math.max(
+      final baseSeconds = math.max(
         15,
         (cubit.state.totalWeight / 5).toDouble(),
       );
-      _playController.duration = Duration(seconds: targetSeconds.toInt());
+      final targetSeconds = baseSeconds / cubit.state.playbackSpeed;
+      _playController.duration = Duration(
+        milliseconds: (targetSeconds * 1000).toInt(),
+      );
 
       cubit.updatePlaybackStatus(true);
       _isPlaybackActive = true;
@@ -204,6 +203,24 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
   void _onSliderChanged(double value) {
     _playController.value = value;
     context.read<RideHistoryDetailsCubit>().updateProgress(value);
+  }
+
+  void _updatePlaybackSpeed(int speed) {
+    final cubit = context.read<RideHistoryDetailsCubit>();
+    cubit.updatePlaybackSpeed(speed);
+
+    if (cubit.state.isPlaying) {
+      final currentProgress = _playController.value;
+      final baseSeconds = math.max(
+        15,
+        (cubit.state.totalWeight / 5).toDouble(),
+      );
+      final targetSeconds = baseSeconds / speed;
+      _playController.duration = Duration(
+        milliseconds: (targetSeconds * 1000).toInt(),
+      );
+      _playController.forward(from: currentProgress);
+    }
   }
 
   @override
@@ -340,7 +357,6 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
         _animateCameraToVehicle(state);
       },
       builder: (context, state) {
-        final validPoints = _validPoints;
         return Scaffold(
           backgroundColor: Theme.of(context).colorScheme.surface,
           body: Stack(
@@ -684,67 +700,180 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
                       children: [
                         Transform.translate(
                           offset: const Offset(0, -24),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              GestureDetector(
-                                onTap: _togglePlayback,
-                                child: Container(
-                                  width: 50,
-                                  height: 50,
-                                  decoration: BoxDecoration(
-                                    color: Theme.of(
-                                      context,
-                                    ).colorScheme.primary,
-                                    shape: BoxShape.circle,
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.black.withValues(
-                                          alpha: 0.5,
-                                        ),
-                                        blurRadius: 8,
-                                      ),
-                                    ],
-                                  ),
-                                  child: Icon(
-                                    state.isPlaying
-                                        ? Icons.pause
-                                        : Icons.play_arrow,
-                                    color: Colors.white,
-                                    size: 28,
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(width: 16),
-                              if (state.isPlaying || _playController.value > 0)
+                          child: Container(
+                            height: 60,
+                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                            child: Stack(
+                              alignment: Alignment.center,
+                              children: [
+                                // Play Button strictly in the center
                                 GestureDetector(
-                                  onTap: _stopPlayback,
+                                  onTap: _togglePlayback,
                                   child: Container(
-                                    width: 45,
-                                    height: 45,
-                                    margin: const EdgeInsets.only(right: 16),
+                                    width: 56,
+                                    height: 56,
                                     decoration: BoxDecoration(
                                       color: Theme.of(
                                         context,
-                                      ).cardColor.withValues(alpha: 0.8),
+                                      ).colorScheme.primary,
                                       shape: BoxShape.circle,
-                                      border: Border.all(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .onSurface
-                                            .withValues(alpha: 0.2),
-                                      ),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.black.withValues(
+                                            alpha: 0.4,
+                                          ),
+                                          blurRadius: 8,
+                                          offset: const Offset(0, 4),
+                                        ),
+                                      ],
                                     ),
                                     child: Icon(
-                                      Icons.close,
-                                      color: Theme.of(
-                                        context,
-                                      ).colorScheme.onSurface,
-                                      size: 20,
+                                      state.isPlaying
+                                          ? Icons.pause
+                                          : Icons.play_arrow,
+                                      color: Colors.white,
+                                      size: 32,
                                     ),
                                   ),
                                 ),
-                            ],
+
+                                // Play Button strictly in the center
+                                Align(
+                                  alignment: Alignment.center,
+                                  child: GestureDetector(
+                                    onTap: _togglePlayback,
+                                    child: Container(
+                                      width: 56,
+                                      height: 56,
+                                      decoration: BoxDecoration(
+                                        color: Theme.of(
+                                          context,
+                                        ).colorScheme.primary,
+                                        shape: BoxShape.circle,
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Colors.black.withValues(
+                                              alpha: 0.4,
+                                            ),
+                                            blurRadius: 8,
+                                            offset: const Offset(0, 4),
+                                          ),
+                                        ],
+                                      ),
+                                      child: Icon(
+                                        state.isPlaying
+                                            ? Icons.pause
+                                            : Icons.play_arrow,
+                                        color: Colors.white,
+                                        size: 32,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+
+                                // Right-side controls (Close & Speed)
+                                Align(
+                                  alignment: Alignment.centerRight,
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      if (state.isPlaybackStarted) ...[
+                                        GestureDetector(
+                                          onTap: _stopPlayback,
+                                          child: Container(
+                                            width: 38,
+                                            height: 38,
+                                            decoration: BoxDecoration(
+                                              color: Theme.of(
+                                                context,
+                                              ).cardColor.withValues(
+                                                alpha: 0.9,
+                                              ),
+                                              shape: BoxShape.circle,
+                                              border: Border.all(
+                                                color: Theme.of(context)
+                                                    .colorScheme
+                                                    .onSurface
+                                                    .withValues(alpha: 0.15),
+                                              ),
+                                            ),
+                                            child: Icon(
+                                              Icons.close,
+                                              color: Theme.of(
+                                                context,
+                                              ).colorScheme.onSurface,
+                                              size: 18,
+                                            ),
+                                          ),
+                                        ),
+                                        const SizedBox(width: 10), // Gap
+                                      ],
+                                      Container(
+                                        padding: const EdgeInsets.all(2),
+                                        decoration: BoxDecoration(
+                                          color: Theme.of(
+                                            context,
+                                          ).cardColor.withValues(alpha: 0.95),
+                                          borderRadius: BorderRadius.circular(
+                                            20,
+                                          ),
+                                          border: Border.all(
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .onSurface
+                                                .withValues(alpha: 0.1),
+                                          ),
+                                        ),
+                                        child: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [1, 2, 3, 4].map((speed) {
+                                            final isSelected =
+                                                state.playbackSpeed == speed;
+                                            return GestureDetector(
+                                              onTap:
+                                                  () => _updatePlaybackSpeed(
+                                                    speed,
+                                                  ),
+                                              child: Container(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                      horizontal: 8,
+                                                      vertical: 4,
+                                                    ),
+                                                decoration: BoxDecoration(
+                                                  color:
+                                                      isSelected
+                                                          ? Theme.of(
+                                                            context,
+                                                          ).colorScheme.primary
+                                                          : Colors.transparent,
+                                                  borderRadius:
+                                                      BorderRadius.circular(16),
+                                                ),
+                                                child: Text(
+                                                  "${speed}x",
+                                                  style: TextStyle(
+                                                    color:
+                                                        isSelected
+                                                            ? Colors.white
+                                                            : Theme.of(context)
+                                                                .colorScheme
+                                                                .onSurface,
+                                                    fontSize: 10,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                              ),
+                                            );
+                                          }).toList(),
+                                        ),
+                                      ),
+                                      const SizedBox(width: 8), // Right edge
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
 

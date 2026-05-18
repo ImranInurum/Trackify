@@ -50,6 +50,7 @@ class RideHistoryDetailsCubit extends Cubit<RideHistoryDetailsState> {
             smoothPositions: [],
             smoothHeadings: [],
             smoothSpeeds: [],
+            smoothAvgSpeeds: [],
             smoothTimes: [],
           );
         });
@@ -75,10 +76,12 @@ class RideHistoryDetailsCubit extends Cubit<RideHistoryDetailsState> {
         smoothPositions: result.smoothPositions,
         smoothHeadings: result.smoothHeadings,
         smoothSpeeds: result.smoothSpeeds,
+        smoothAvgSpeeds: result.smoothAvgSpeeds,
         smoothTimes: result.smoothTimes,
         currentVehiclePosition: null,
         currentHeading: initialHeading,
         currentSpeedDisplay: initialSpeed,
+        currentAvgSpeedDisplay: initialSpeed,
         currentTimeDisplay: initialTime,
       ),
     );
@@ -108,7 +111,12 @@ class RideHistoryDetailsCubit extends Cubit<RideHistoryDetailsState> {
   }
 
   void updateProgress(double progress) {
-    if (state.smoothPositions.isEmpty) return;
+    if (state.isDataProcessing || state.smoothPositions.isEmpty) return;
+    
+    // Log once at start of progress
+    if (progress == 0.0) {
+      print('DEBUG_MARKER: Playback Progress Started');
+    }
 
     final int index = (progress * (state.smoothPositions.length - 1)).toInt();
     final clampedIndex = index.clamp(0, state.smoothPositions.length - 1);
@@ -117,6 +125,12 @@ class RideHistoryDetailsCubit extends Cubit<RideHistoryDetailsState> {
     final heading = state.smoothHeadings[clampedIndex];
     final speed = state.smoothSpeeds[clampedIndex];
     final time = state.smoothTimes[clampedIndex];
+    final distance = state.cumulativeDistances.isNotEmpty 
+        ? state.cumulativeDistances[clampedIndex] 
+        : 0.0;
+    final avgSpeed = state.smoothAvgSpeeds.isNotEmpty
+        ? state.smoothAvgSpeeds[clampedIndex]
+        : 0.0;
 
     emit(
       state.copyWith(
@@ -125,9 +139,14 @@ class RideHistoryDetailsCubit extends Cubit<RideHistoryDetailsState> {
         currentSpeedDisplay: speed,
         currentHeading: heading,
         currentTimeDisplay: time,
+        currentDistanceDisplay: distance,
+        currentAvgSpeedDisplay: avgSpeed,
         isPlaybackStarted: true,
       ),
     );
+
+    // Print current position for debugging (using print for better visibility)
+    print('DEBUG_MARKER: Lat: ${pos.latitude}, Lng: ${pos.longitude}');
   }
 
   void resetPlayback() {
@@ -138,8 +157,13 @@ class RideHistoryDetailsCubit extends Cubit<RideHistoryDetailsState> {
         currentVehiclePosition: null,
         currentDistanceDisplay: 0.0,
         currentAvgSpeedDisplay: 0.0,
+        playbackSpeed: 1,
       ),
     );
+  }
+
+  void updatePlaybackSpeed(int speed) {
+    emit(state.copyWith(playbackSpeed: speed));
   }
 }
 
@@ -160,6 +184,7 @@ class _TripProcessingResult {
   final List<LatLng> smoothPositions;
   final List<double> smoothHeadings;
   final List<double> smoothSpeeds;
+  final List<double> smoothAvgSpeeds;
   final List<String> smoothTimes;
 
   _TripProcessingResult({
@@ -170,6 +195,7 @@ class _TripProcessingResult {
     required this.smoothPositions,
     required this.smoothHeadings,
     required this.smoothSpeeds,
+    required this.smoothAvgSpeeds,
     required this.smoothTimes,
   });
 }
@@ -320,6 +346,37 @@ _TripProcessingResult _processTripDataInBackground(
     } else {
       smoothTimes.add("--:--");
     }
+
+    // Calculate cumulative distances for smooth positions
+    List<double> smoothDistances = [0.0];
+    double currentTotalDist = 0.0;
+    for (int i = 1; i < smoothPositions.length; i++) {
+      currentTotalDist += _calculateDistance(
+        smoothPositions[i - 1],
+        smoothPositions[i],
+      );
+      smoothDistances.add(currentTotalDist);
+    }
+
+    // Calculate running average speeds
+    List<double> smoothAvgSpeeds = [];
+    double sumSpeeds = 0.0;
+    for (int i = 0; i < smoothSpeeds.length; i++) {
+      sumSpeeds += smoothSpeeds[i];
+      smoothAvgSpeeds.add(sumSpeeds / (i + 1));
+    }
+
+    return _TripProcessingResult(
+      mergedPoints: merged,
+      cumulativeWeights: weights,
+      totalWeight: smoothedTotal,
+      cumulativeDistances: smoothDistances,
+      smoothPositions: smoothPositions,
+      smoothHeadings: smoothHeadings,
+      smoothSpeeds: smoothSpeeds,
+      smoothAvgSpeeds: smoothAvgSpeeds,
+      smoothTimes: smoothTimes,
+    );
   }
 
   return _TripProcessingResult(
@@ -330,8 +387,23 @@ _TripProcessingResult _processTripDataInBackground(
     smoothPositions: smoothPositions,
     smoothHeadings: smoothHeadings,
     smoothSpeeds: smoothSpeeds,
+    smoothAvgSpeeds: [],
     smoothTimes: smoothTimes,
   );
+}
+
+double _calculateDistance(LatLng p1, LatLng p2) {
+  const double R = 6371; // Earth's radius in km
+  final double dLat = (p2.latitude - p1.latitude) * math.pi / 180;
+  final double dLon = (p2.longitude - p1.longitude) * math.pi / 180;
+  final double a =
+      math.sin(dLat / 2) * math.sin(dLat / 2) +
+      math.cos(p1.latitude * math.pi / 180) *
+          math.cos(p2.latitude * math.pi / 180) *
+          math.sin(dLon / 2) *
+          math.sin(dLon / 2);
+  final double c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a));
+  return R * c;
 }
 
 String _formatTime(DateTime time) {
