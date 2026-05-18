@@ -1,6 +1,9 @@
+import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:path_provider/path_provider.dart';
 import 'package:trackify/core/utils/active_video_manager.dart';
 import 'package:trackify/feature/map/data/entity/promo_video_model.dart';
 import 'package:video_player/video_player.dart';
@@ -69,9 +72,31 @@ class _PromoVideoCardState extends State<PromoVideoCard> {
           _isLoading = true;
         });
 
-        _videoPlayerController = VideoPlayerController.networkUrl(
-          Uri.parse(widget.video.videoUrl),
-        );
+        final directory = await getTemporaryDirectory();
+        
+        final uri = Uri.parse(widget.video.videoUrl);
+        String fileExtension = 'mp4';
+        final segments = uri.pathSegments;
+        if (segments.isNotEmpty) {
+          final lastSegment = segments.last;
+          if (lastSegment.contains('.')) {
+            fileExtension = lastSegment.split('.').last;
+          }
+        }
+        
+        final fileName = 'promo_video_${widget.video.id}.$fileExtension';
+        final file = File('${directory.path}/$fileName');
+
+        if (!await file.exists()) {
+          final response = await http.get(uri);
+          if (response.statusCode == 200) {
+            await file.writeAsBytes(response.bodyBytes);
+          } else {
+            throw Exception('Failed to download video: HTTP ${response.statusCode}');
+          }
+        }
+
+        _videoPlayerController = VideoPlayerController.file(file);
 
         await _videoPlayerController!.initialize();
 
