@@ -983,5 +983,9 @@
          "locationSharing": "ಸ್ಥಳ ಹಂಚಿಕೆ",
           "yourPhoneLocation": "ನಿಮ್ಮ ಫೋನ್ ಸ್ಥಳ",
           "sharingActive": "ಹಂಚಿಕೆ ಸಕ್ರಿಯವಾಗಿದೆ",
-          "noActiveSharing": "ಯಾವುದೇ ಸಕ್ರಿಯ ಹಂಚಿಕೆ ಇಲ್ಲ"
+          "noActiveSharing": "ಯಾವುದೇ ಸಕ್ರಿಯ ಹಂಚಿಕೆ ಇಲ್ಲ",
+
+          "darkMode": "ಡಾರ್ಕ್ ಮೋಡ್",
+            "lightTheme": "ಲೈಟ್ ಥೀಮ್",
+            "switchBetweenLightAndDarkThemes": "ಲೈಟ್ ಮತ್ತು ಡಾರ್ಕ್ ಥೀಮ್‌ಗಳ ನಡುವೆ ಬದಲಾಯಿಸಿ"
 }

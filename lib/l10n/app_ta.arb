@@ -983,7 +983,13 @@
   "locationSharing": "இடம் பகிர்வு",
   "yourPhoneLocation": "உங்கள் தொலைபேசியின் இருப்பிடம்",
   "sharingActive": "பகிர்வு செயல்பாட்டில் உள்ளது",
-  "noActiveSharing": "செயலில் உள்ள பகிர்வு இல்லை"
+  "noActiveSharing": "செயலில் உள்ள பகிர்வு இல்லை",
+
+    "darkMode": "டார்க் மோடு",
+    "lightTheme": "லைட் தீம்",
+    "switchBetweenLightAndDarkThemes": "லைட் மற்றும் டார்க் தீம்களுக்கு இடையில் மாற்றவும்"
+
+
 
 
 

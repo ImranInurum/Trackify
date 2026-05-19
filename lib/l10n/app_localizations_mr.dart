@@ -2422,4 +2422,13 @@ class AppLocalizationsMr extends AppLocalizations {
 
   @override
   String get noActiveSharing => 'कोणतीही सक्रिय शेअरिंग नाही';
+
+  @override
+  String get darkMode => 'डार्क मोड';
+
+  @override
+  String get lightTheme => 'लाइट थीम';
+
+  @override
+  String get switchBetweenLightAndDarkThemes => 'लाइट आणि डार्क थीममध्ये बदला';
 }

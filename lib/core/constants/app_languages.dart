@@ -27,5 +27,10 @@ class AppLanguages {
       'name': 'ಕನ್ನಡ',
       'locale': Locale('kn'),
     },
+    {
+      'key': 'arabic',
+      'name': 'العربية',
+      'locale': Locale('ar'),
+    },
   ];
 }

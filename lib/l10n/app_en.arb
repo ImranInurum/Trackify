@@ -1032,7 +1032,11 @@
         "locationSharing": "Location Sharing",
         "yourPhoneLocation": "Your Phone's Location",
         "sharingActive": "Sharing active",
-        "noActiveSharing": "No active sharing"
+        "noActiveSharing": "No active sharing",
+
+        "darkMode": "Dark Mode",
+          "lightTheme": "Light Theme",
+          "switchBetweenLightAndDarkThemes": "Switch between light and dark themes"
 
 
 }

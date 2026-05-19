@@ -2411,4 +2411,14 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get noActiveSharing => 'لا توجد مشاركة نشطة';
+
+  @override
+  String get darkMode => 'الوضع الداكن';
+
+  @override
+  String get lightTheme => 'السمة الفاتحة';
+
+  @override
+  String get switchBetweenLightAndDarkThemes =>
+      'التبديل بين السمات الفاتحة والداكنة';
 }

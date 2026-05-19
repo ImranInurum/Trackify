@@ -2433,4 +2433,14 @@ class AppLocalizationsTa extends AppLocalizations {
 
   @override
   String get noActiveSharing => 'செயலில் உள்ள பகிர்வு இல்லை';
+
+  @override
+  String get darkMode => 'டார்க் மோடு';
+
+  @override
+  String get lightTheme => 'லைட் தீம்';
+
+  @override
+  String get switchBetweenLightAndDarkThemes =>
+      'லைட் மற்றும் டார்க் தீம்களுக்கு இடையில் மாற்றவும்';
 }
