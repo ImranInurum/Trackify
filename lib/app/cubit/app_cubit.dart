@@ -18,7 +18,7 @@ import '../../core/constants/app_languages.dart';
 import '../../feature/auth/data/entity/login_response_model.dart';
 import 'app_state.dart';
 
-class AppCubit extends Cubit<AppState> {
+class AppCubit extends Cubit<AppState> with WidgetsBindingObserver {
   final ConnectivityService _connectivityService;
   final LocationService _locationService;
   final SocketService _socketService;
@@ -37,6 +37,7 @@ class AppCubit extends Cubit<AppState> {
        _socketService = socketService,
        super(const AppState()) {
     print("AppCubit constructed");
+    WidgetsBinding.instance.addObserver(this);
   }
 
   Future<void> initialize() async {
@@ -99,12 +100,52 @@ class AppCubit extends Cubit<AppState> {
     _connectivitySubscription = _connectivityService.connectivityStream.listen((
       isConnected,
     ) {
-      print("IsConnected : $isConnected");
+      print("Connectivity Changed : $isConnected");
       emit(state.copyWith(isConnected: isConnected));
-      if (isConnected && !_socketService.isConnected) {
+      if (isConnected) {
+        // When connection is restored, attempt to reconnect socket and refresh data
         _reconnectSocket();
+        refreshAppData();
       }
     });
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    print("AppLifecycleState changed to: $state");
+    if (state == AppLifecycleState.resumed) {
+      // App came to foreground - sync everything
+      _handleAppResumed();
+    } else if (state == AppLifecycleState.paused) {
+      // Optional: Handle cleanup or background mode if needed
+      print("App moved to background");
+    }
+  }
+
+  Future<void> _handleAppResumed() async {
+    print("Syncing data on app resume...");
+    
+    // 1. Check connectivity
+    final isConnected = await _connectivityService.checkConnectivity();
+    emit(state.copyWith(isConnected: isConnected));
+
+    if (isConnected) {
+      // 2. Reconnect socket if needed
+      if (!_socketService.isConnected && !_socketService.isConnecting) {
+        _reconnectSocket();
+      }
+
+      // 3. Refresh critical data from API (Background Sync)
+      await refreshAppData();
+    }
+  }
+
+  Future<void> refreshAppData() async {
+    print("Refreshing app data...");
+    // Fetch theme, user session, and any other critical state
+    await fetchTheme();
+    await loadUserSession();
+    // Add other API refresh calls here if needed (e.g., active orders, notifications)
   }
 
   Future<void> _initializeLocation() async {
@@ -186,11 +227,18 @@ class AppCubit extends Cubit<AppState> {
   }
 
   void _reconnectSocket() async {
+    if (state.isSocketConnected && _socketService.isConnected) return;
+    
+    print('Attempting to reconnect socket...');
     try {
-      await _socketService.connect(ApiURL.socketURL);
-      emit(state.copyWith(isSocketConnected: true));
+      final imei = await AppPreference.instance.get(key: AppPreference.IMEI);
+      if (imei.isNotEmpty) {
+        await _socketService.connect(ApiURL.socketURL, imei: imei);
+        emit(state.copyWith(isSocketConnected: true));
+      }
     } catch (e) {
       print('Socket reconnection error: $e');
+      emit(state.copyWith(isSocketConnected: false));
     }
   }
 
@@ -303,6 +351,7 @@ class AppCubit extends Cubit<AppState> {
 
   @override
   Future<void> close() {
+    WidgetsBinding.instance.removeObserver(this);
     _connectivitySubscription?.cancel();
     _locationSubscription?.cancel();
     _socketSubscription?.cancel();

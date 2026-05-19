@@ -35,8 +35,12 @@ class _FullScreenMapState extends State<FullScreenMap> {
   }
 
   Future<void> _loadMapStyles() async {
-    _lightMapStyle = await MapUtils.loadStyle('assets/map_styles/light_map.json');
-    _darkMapStyle = await MapUtils.loadStyle('assets/map_styles/full_map_style.json');
+    _lightMapStyle = await MapUtils.loadStyle(
+      'assets/map_styles/light_map.json',
+    );
+    _darkMapStyle = await MapUtils.loadStyle(
+      'assets/map_styles/full_map_style.json',
+    );
   }
 
   Future<void> _loadCustomMarker() async {
@@ -53,7 +57,7 @@ class _FullScreenMapState extends State<FullScreenMap> {
 
   Future<void> _updateMapStyle(GoogleMapController controller) async {
     final appConfig = context.read<AppCubit>().state;
-    
+
     if (appConfig.mapType == 'satellite') {
       await MapUtils.setStyle(controller, null);
       return;
@@ -76,22 +80,22 @@ class _FullScreenMapState extends State<FullScreenMap> {
       context: context,
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       barrierColor: Colors.black45,
-      shape:  RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(36),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(36)),
       builder: (context) {
         return BlocBuilder<AppCubit, AppState>(
           builder: (context, state) {
             final l10n = AppLocalizations.of(context)!;
             return Container(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-              decoration: BoxDecoration(            boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
-                  blurRadius: 15,
-                  spreadRadius: 2,
-                ),
-              ],),
+              decoration: BoxDecoration(
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.1),
+                    blurRadius: 15,
+                    spreadRadius: 2,
+                  ),
+                ],
+              ),
 
               child: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -120,8 +124,16 @@ class _FullScreenMapState extends State<FullScreenMap> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      _buildStyleOption(l10n.darkStyle, AppImages.darkMapStyle, state),
-                      _buildStyleOption(l10n.lightStyle, AppImages.lightMapStyle, state),
+                      _buildStyleOption(
+                        l10n.darkStyle,
+                        AppImages.darkMapStyle,
+                        state,
+                      ),
+                      _buildStyleOption(
+                        l10n.lightStyle,
+                        AppImages.lightMapStyle,
+                        state,
+                      ),
                       _buildStyleOption(
                         l10n.simpleStyle,
                         AppImages.simpleMapStyle,
@@ -150,14 +162,18 @@ class _FullScreenMapState extends State<FullScreenMap> {
                         l10n.trafficLabel,
                         AppImages.trafficMapStyle,
                         state.isTrafficEnabled,
-                        (val) => context.read<AppCubit>().updateMapConfig(isTrafficEnabled: val),
+                        (val) => context.read<AppCubit>().updateMapConfig(
+                          isTrafficEnabled: val,
+                        ),
                       ),
                       const SizedBox(width: 24),
                       _buildMapOption(
                         l10n.labelsLabel,
                         AppImages.darkMapStyle,
                         state.isLabelsEnabled,
-                        (val) => context.read<AppCubit>().updateMapConfig(isLabelsEnabled: val),
+                        (val) => context.read<AppCubit>().updateMapConfig(
+                          isLabelsEnabled: val,
+                        ),
                       ),
                     ],
                   ),
@@ -178,11 +194,17 @@ class _FullScreenMapState extends State<FullScreenMap> {
     return GestureDetector(
       onTap: () async {
         if (name == "Satellite") {
-          context.read<AppCubit>().updateMapConfig(mapType: 'satellite', mapStyle: 'Satellite');
+          context.read<AppCubit>().updateMapConfig(
+            mapType: 'satellite',
+            mapStyle: 'Satellite',
+          );
         } else {
-          context.read<AppCubit>().updateMapConfig(mapType: 'normal', mapStyle: name);
+          context.read<AppCubit>().updateMapConfig(
+            mapType: 'normal',
+            mapStyle: name,
+          );
         }
-        
+
         if (_mapController != null) {
           _updateMapStyle(_mapController!);
         }
@@ -193,15 +215,23 @@ class _FullScreenMapState extends State<FullScreenMap> {
             height: 68,
             width: 68,
             decoration: BoxDecoration(
-              image: DecorationImage(image: AssetImage(imagePath), fit: BoxFit.cover),
+              image: DecorationImage(
+                image: AssetImage(imagePath),
+                fit: BoxFit.cover,
+              ),
               borderRadius: BorderRadius.circular(16),
               border: isSelected
-                  ? Border.all(color: Theme.of(context).colorScheme.primary, width: 2.5)
+                  ? Border.all(
+                      color: Theme.of(context).colorScheme.primary,
+                      width: 2.5,
+                    )
                   : Border.all(color: Theme.of(context).dividerColor),
               boxShadow: [
                 if (isSelected)
                   BoxShadow(
-                    color: Theme.of(context).colorScheme.primary.withOpacity(0.2),
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.primary.withOpacity(0.2),
                     blurRadius: 10,
                     offset: const Offset(0, 4),
                   ),
@@ -240,10 +270,16 @@ class _FullScreenMapState extends State<FullScreenMap> {
                 height: 68,
                 width: 68,
                 decoration: BoxDecoration(
-                  image: DecorationImage(image: AssetImage(imagePath), fit: BoxFit.cover),
+                  image: DecorationImage(
+                    image: AssetImage(imagePath),
+                    fit: BoxFit.cover,
+                  ),
                   borderRadius: BorderRadius.circular(16),
                   border: isActive
-                      ? Border.all(color: Theme.of(context).colorScheme.primary, width: 2)
+                      ? Border.all(
+                          color: Theme.of(context).colorScheme.primary,
+                          width: 2,
+                        )
                       : Border.all(color: Colors.transparent),
                   boxShadow: [
                     BoxShadow(
@@ -264,7 +300,11 @@ class _FullScreenMapState extends State<FullScreenMap> {
                       color: Theme.of(context).colorScheme.primary,
                       shape: BoxShape.circle,
                     ),
-                    child: const Icon(Icons.check, size: 10, color: Colors.white),
+                    child: const Icon(
+                      Icons.check,
+                      size: 10,
+                      color: Colors.white,
+                    ),
                   ),
                 ),
             ],
@@ -335,17 +375,13 @@ class _FullScreenMapState extends State<FullScreenMap> {
 
         return GoogleMap(
           key: ValueKey(widget.selectedVehicle?.id),
-          initialCameraPosition: CameraPosition(
-            target: bestPos,
-            zoom: 15,
-          ),
+          initialCameraPosition: CameraPosition(target: bestPos, zoom: 15),
           myLocationEnabled: false,
           zoomControlsEnabled: false,
           myLocationButtonEnabled: false,
-          mapType:
-              appState.mapType == 'satellite'
-                  ? MapType.satellite
-                  : MapType.normal,
+          mapType: appState.mapType == 'satellite'
+              ? MapType.satellite
+              : MapType.normal,
           trafficEnabled: appState.isTrafficEnabled,
           markers: {
             Marker(
@@ -378,13 +414,17 @@ class _FullScreenMapState extends State<FullScreenMap> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildRoundButton(Icons.arrow_back, onTap: () => Navigator.pop(context)),
+          _buildRoundButton(
+            Icons.arrow_back,
+            onTap: () => Navigator.pop(context),
+          ),
           Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               _buildRoundButton(
                 Icons.more_vert,
-                onTap: () => setState(() => _showSharedWithMe = !_showSharedWithMe),
+                onTap: () =>
+                    setState(() => _showSharedWithMe = !_showSharedWithMe),
               ),
               if (_showSharedWithMe)
                 TweenAnimationBuilder<double>(
@@ -401,7 +441,10 @@ class _FullScreenMapState extends State<FullScreenMap> {
                   },
                   child: Container(
                     margin: const EdgeInsets.only(top: 8),
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 10,
+                    ),
                     decoration: BoxDecoration(
                       color: Theme.of(context).cardColor.withOpacity(0.95),
                       borderRadius: BorderRadius.circular(12),
@@ -467,7 +510,10 @@ class _FullScreenMapState extends State<FullScreenMap> {
                 decoration: BoxDecoration(
                   color: Theme.of(context).colorScheme.primary,
                   shape: BoxShape.circle,
-                  border: Border.all(color: Theme.of(context).cardColor, width: 2),
+                  border: Border.all(
+                    color: Theme.of(context).cardColor,
+                    width: 2,
+                  ),
                 ),
               ),
             ),
@@ -505,11 +551,12 @@ class _FullScreenMapState extends State<FullScreenMap> {
 
   Widget _buildDraggableBottomCard() {
     return DraggableScrollableSheet(
-      initialChildSize: 0.18,
-      minChildSize: 0.18,
-      maxChildSize: 0.38,
+      initialChildSize:
+          0.14, // Increased slightly to accommodate the new layout
+      minChildSize: 0.14,
+      maxChildSize: 0.40,
       snap: true,
-      snapSizes: const [0.18, 0.38],
+      snapSizes: const [0.20, 0.40],
       builder: (context, scrollController) {
         return Container(
           decoration: BoxDecoration(
@@ -520,7 +567,7 @@ class _FullScreenMapState extends State<FullScreenMap> {
             ),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.1),
+                color: Colors.black.withOpacity(0.08),
                 blurRadius: 15,
                 spreadRadius: 2,
               ),
@@ -541,12 +588,15 @@ class _FullScreenMapState extends State<FullScreenMap> {
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 16,
+                  ),
                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       _buildVehicleHeader(),
-                      const SizedBox(height: 16),
-                      _buildStatusRow(),
+                      // Removed separate _buildStatusRow as it's now integrated in header
 
                       // Mid-Stop content
                       const SizedBox(height: 30),
@@ -554,7 +604,7 @@ class _FullScreenMapState extends State<FullScreenMap> {
 
                       // Fully-Expanded content
                       const SizedBox(height: 24),
-                      _buildFuelGauge(),
+                      _buildBottomInfoCards(),
                     ],
                   ),
                 ),
@@ -567,85 +617,160 @@ class _FullScreenMapState extends State<FullScreenMap> {
   }
 
   Widget _buildVehicleHeader() {
-    return Row(
-      children: [
-        Container(
-          padding: const EdgeInsets.all(4),
-          decoration: BoxDecoration(
-            color: Colors.transparent, // Clean transparent look
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Image.asset(
-            AppImages.bikeImage,
-            height: 44,
-            width: 44,
-            fit: BoxFit.contain,
-          ),
-        ),
-        const SizedBox(width: 8),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                widget.selectedVehicle?.vehicleMaker ?? AppLocalizations.of(context)!.vehicleNamePlaceholder,
-                style: const TextStyle(
-                  fontSize: 19,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              Text(
-                widget.selectedVehicle?.vehicleNumber ?? AppLocalizations.of(context)!.vehicleNumberPlaceholder,
-                style: TextStyle(
-                  fontSize: 15,
-                  color: Theme.of(context).colorScheme.primary,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
-        ),
-        Column(
+    return BlocBuilder<AppCubit, AppState>(
+      builder: (context, state) {
+        final liveDevice = state.devices.firstWhere(
+          (d) =>
+              d['imei']?.toString() == widget.selectedVehicle?.id?.toString(),
+          orElse: () => {},
+        );
+
+        final liveSpeed =
+            liveDevice['sp']?.toString() ??
+            widget.selectedVehicle?.currentLocation?.speed?.toString() ??
+            "0";
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.end,
           children: [
-            Icon(Icons.keyboard_arrow_up, color: Colors.grey.shade400, size: 20),
-            Icon(Icons.keyboard_arrow_down, color: Colors.grey.shade400, size: 20),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                // Vehicle Icon
+                Image.asset(
+                  AppImages.bikeImage,
+                  height: 48,
+                  width: 48,
+                  fit: BoxFit.contain,
+                ),
+                const SizedBox(width: 12),
+                // Vehicle Name and Number
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        widget.selectedVehicle?.vehicleMaker ??
+                            AppLocalizations.of(
+                              context,
+                            )!.vehicleNamePlaceholder,
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Theme.of(context).colorScheme.onSurface,
+                        ),
+                      ),
+                      Text(
+                        widget.selectedVehicle?.vehicleNumber ??
+                            AppLocalizations.of(
+                              context,
+                            )!.vehicleNumberPlaceholder,
+                        style: const TextStyle(
+                          fontSize: 14,
+                          color: Color(
+                            0xFF4A90A4,
+                          ), // Matched blue from screenshot
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                // Speed Info
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.baseline,
+                      textBaseline: TextBaseline.alphabetic,
+                      children: [
+                        Text(
+                          liveSpeed,
+                          style: TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                            color: Theme.of(context).colorScheme.onSurface,
+                          ),
+                        ),
+                        const SizedBox(width: 2),
+                        Text(
+                          AppLocalizations.of(context)!.kmh,
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                            color: Theme.of(context).colorScheme.onSurface,
+                          ),
+                        ),
+                      ],
+                    ),
+                    Text(
+                      AppLocalizations.of(
+                        context,
+                      )!.speedLabel, // Using "Speed" label
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.onSurface.withOpacity(0.4),
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(width: 12),
+                // Up/Down Arrows
+                Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    _buildSmallArrowButton(Icons.keyboard_arrow_up),
+                    const SizedBox(height: 6),
+                    _buildSmallArrowButton(Icons.keyboard_arrow_down),
+                  ],
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            // Parked Since Status
+            Text(
+              AppLocalizations.of(context)!.parkedSinceTime("11:17 AM, Today"),
+              style: TextStyle(
+                fontSize: 14,
+                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
+                fontWeight: FontWeight.w500,
+              ),
+            ),
           ],
-        ),
-      ],
+        );
+      },
     );
   }
 
-  Widget _buildStatusRow() {
-    final l10n = AppLocalizations.of(context)!;
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        _buildStatusItem(l10n.parkedSinceTime("07:16 PM, 23 Feb")),
-        _buildStatusItem("0${l10n.minutesShort} 0${l10n.secondsShort}", isDuration: true),
-      ],
-    );
-  }
-
-  Widget _buildStatusItem(String label, {bool isDuration = false}) {
-    return Column(
-      crossAxisAlignment: isDuration ? CrossAxisAlignment.end : CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 14,
-            color: Theme.of(context).colorScheme.onSurface,
-          ),
+  Widget _buildSmallArrowButton(IconData icon) {
+    return Container(
+      padding: const EdgeInsets.all(2),
+      decoration: BoxDecoration(
+        color: Theme.of(context).cardColor,
+        borderRadius: BorderRadius.circular(4),
+        border: Border.all(
+          color: Theme.of(context).dividerColor.withOpacity(0.5),
         ),
-        Text(
-          isDuration ? AppLocalizations.of(context)!.durationLabel : AppLocalizations.of(context)!.status,
-          style: TextStyle(
-            fontSize: 12,
-            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 2,
+            offset: const Offset(0, 1),
           ),
-        ),
-      ],
+        ],
+      ),
+      child: Icon(
+        icon,
+        size: 16,
+        color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+      ),
     );
   }
 
@@ -654,13 +779,16 @@ class _FullScreenMapState extends State<FullScreenMap> {
       builder: (context, state) {
         // Find current device in the live devices list to get live speed/odometer
         final liveDevice = state.devices.firstWhere(
-          (d) => d['imei']?.toString() == widget.selectedVehicle?.id?.toString(),
+          (d) =>
+              d['imei']?.toString() == widget.selectedVehicle?.id?.toString(),
           orElse: () => {},
         );
 
-        final liveSpeed = liveDevice['sp']?.toString() ?? 
-                         widget.selectedVehicle?.currentLocation?.speed?.toString() ?? "0";
-        
+        final liveSpeed =
+            liveDevice['sp']?.toString() ??
+            widget.selectedVehicle?.currentLocation?.speed?.toString() ??
+            "0";
+
         final odometer = liveDevice['odometer']?.toString() ?? "0";
 
         return Column(
@@ -668,16 +796,33 @@ class _FullScreenMapState extends State<FullScreenMap> {
           children: [
             Text(
               AppLocalizations.of(context)!.todaysStats,
-              style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.grey),
+              style: const TextStyle(
+                fontSize: 15,
+                fontWeight: FontWeight.bold,
+                color: Colors.grey,
+              ),
             ),
             const SizedBox(height: 16),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                _buildGridItem("$odometer ${AppLocalizations.of(context)!.km}", AppLocalizations.of(context)!.distanceLabel),
-                _buildGridItem("0${AppLocalizations.of(context)!.minutesShort} 0${AppLocalizations.of(context)!.secondsShort}", AppLocalizations.of(context)!.durationLabel),
-                _buildGridItem("$liveSpeed ${AppLocalizations.of(context)!.kmh}", AppLocalizations.of(context)!.averageSpeed),
-                _buildGridItem(AppLocalizations.of(context)!.plusLabel, AppLocalizations.of(context)!.topSpeed, isPlus: true),
+                _buildGridItem(
+                  "$odometer ${AppLocalizations.of(context)!.km}",
+                  AppLocalizations.of(context)!.distanceLabel,
+                ),
+                _buildGridItem(
+                  "0${AppLocalizations.of(context)!.minutesShort} 0${AppLocalizations.of(context)!.secondsShort}",
+                  AppLocalizations.of(context)!.durationLabel,
+                ),
+                _buildGridItem(
+                  "$liveSpeed ${AppLocalizations.of(context)!.kmh}",
+                  AppLocalizations.of(context)!.averageSpeed,
+                ),
+                _buildGridItem(
+                  AppLocalizations.of(context)!.plusLabel,
+                  AppLocalizations.of(context)!.topSpeed,
+                  isPlus: true,
+                ),
               ],
             ),
           ],
@@ -691,18 +836,25 @@ class _FullScreenMapState extends State<FullScreenMap> {
       children: [
         if (isPlus)
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
             decoration: BoxDecoration(
               gradient: const LinearGradient(
-                colors: [Color(0xFFDBBE8F), Color(0xFFC5A367)],
+                colors: [Color(0xFFE6BE75), Color(0xFFD4AF37)],
               ),
-              borderRadius: BorderRadius.circular(4),
+              borderRadius: BorderRadius.circular(6),
+              boxShadow: [
+                BoxShadow(
+                  color: const Color(0xFFD4AF37).withOpacity(0.3),
+                  blurRadius: 4,
+                  offset: const Offset(0, 2),
+                ),
+              ],
             ),
             child: Text(
               AppLocalizations.of(context)!.plusLabel,
               style: const TextStyle(
                 fontWeight: FontWeight.bold,
-                fontSize: 12,
+                fontSize: 14,
                 color: Colors.black87,
               ),
             ),
@@ -710,70 +862,138 @@ class _FullScreenMapState extends State<FullScreenMap> {
         else
           Text(
             value,
-            style: const TextStyle(
+            style: TextStyle(
               fontWeight: FontWeight.bold,
-              fontSize: 16,
-              color: Color(0xFF2C3E50),
+              fontSize: 20,
+              color: Theme.of(context).colorScheme.onSurface,
             ),
           ),
-        const SizedBox(height: 6),
+        const SizedBox(height: 8),
         Text(
           label,
           style: TextStyle(
-            fontSize: 12,
-            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+            fontSize: 13,
+            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.4),
+            fontWeight: FontWeight.w500,
           ),
         ),
       ],
     );
   }
 
-  Widget _buildFuelGauge() {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Theme.of(context).cardColor,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Theme.of(context).dividerColor),
-      ),
-      child: Row(
-        children: [
-          Icon(Icons.local_gas_station, size: 20, color: Colors.grey),
-          const SizedBox(width: 8),
-          Text(AppLocalizations.of(context)!.fuelEmpty, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
-          const SizedBox(width: 8),
-          Expanded(
-            child: Row(
-              children: List.generate(
-                8,
-                (i) => Expanded(
-                  child: Container(
-                    height: 10,
-                    margin: const EdgeInsets.symmetric(horizontal: 1.5),
-                    decoration: BoxDecoration(
-                      color: i < 3
-                          ? Theme.of(context).colorScheme.onSurface.withOpacity(0.4)
-                          : Theme.of(context).dividerColor,
-                      borderRadius: BorderRadius.circular(2),
+  Widget _buildBottomInfoCards() {
+    return Row(
+      children: [
+        // Fuel Card
+        Expanded(
+          child: Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: Theme.of(context).cardColor,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: Theme.of(context).dividerColor.withOpacity(0.5)),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.02),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            child: Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.local_gas_station, size: 18, color: Colors.grey[600]),
+                    const SizedBox(width: 8),
+                    const Text("E", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.grey)),
+                    const SizedBox(width: 4),
+                    Row(
+                      children: List.generate(
+                        5,
+                        (i) => Container(
+                          width: 8,
+                          height: 12,
+                          margin: const EdgeInsets.symmetric(horizontal: 1),
+                          decoration: BoxDecoration(
+                            color: i < 3 ? const Color(0xFF3498DB) : Colors.grey[300],
+                            borderRadius: BorderRadius.circular(1),
+                          ),
+                        ),
+                      ),
                     ),
+                    const SizedBox(width: 4),
+                    const Text("F", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.grey)),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  "260.6 kms more to go", // TODO: Add to localization (kmsMoreToGo key missing)
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Theme.of(context).colorScheme.onSurface.withOpacity(0.4),
+                    fontWeight: FontWeight.w500,
                   ),
                 ),
-              ),
+              ],
             ),
           ),
-          const SizedBox(width: 8),
-          Text(AppLocalizations.of(context)!.fuelFull, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
-          const SizedBox(width: 8),
-          Text(
-            AppLocalizations.of(context)!.kmsMoreToGo("0.0"),
-            style: const TextStyle(
-              fontSize: 13,
-              color: Colors.grey,
-              fontWeight: FontWeight.w600,
+        ),
+        const SizedBox(width: 12),
+        // Battery Card
+        Expanded(
+          child: Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: Theme.of(context).cardColor,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: Theme.of(context).dividerColor.withOpacity(0.5)),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.02),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            child: Column(
+              children: [
+                const Text(
+                  "Vehicle Battery", // TODO: Add to localization (vehicleBattery key missing)
+                  style: TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(4),
+                      decoration: BoxDecoration(
+                        color: Colors.green.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      child: const Icon(Icons.battery_charging_full, size: 14, color: Colors.green),
+                    ),
+                    const SizedBox(width: 6),
+                    const Text(
+                      "Normal (12.2V)",
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.green,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
             ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 

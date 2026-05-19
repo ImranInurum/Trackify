@@ -46,18 +46,21 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
 
   late AnimationController _playController;
   late AnimationController _orbitController;
-  late List<LatLng> _validPoints;
   bool _isOrbiting = false;
-  bool _isPlaybackActive = false;
   bool _hasZoomedToRoute = false;
+  CameraPosition? _lastCameraPosition;
+  bool _isGliding = false;
+  late Color _primaryColor;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _primaryColor = Theme.of(context).colorScheme.primary;
+  }
 
   @override
   void initState() {
     super.initState();
-
-    _validPoints = widget.ride.polylinePoints
-        .where((p) => p.latitude != 0.0 || p.longitude != 0.0)
-        .toList();
 
     _playController = AnimationController(
       vsync: this,
@@ -69,16 +72,21 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
       duration: const Duration(seconds: 8),
     );
 
+    int lastUpdateMs = 0;
     _playController.addListener(() {
-      final cubit = context.read<RideHistoryDetailsCubit>();
-      cubit.updateProgress(_playController.value);
-      _animateCameraToVehicle(cubit.state);
+      final now = DateTime.now().millisecondsSinceEpoch;
+      // Throttle BLoC emissions to 20 FPS (approx. every 50ms) to completely eliminate 
+      // native thread congestion, ensuring butter-smooth marker movement and zero stutters!
+      if (now - lastUpdateMs >= 50 || _playController.value == 0.0 || _playController.value == 1.0) {
+        lastUpdateMs = now;
+        final cubit = context.read<RideHistoryDetailsCubit>();
+        cubit.updateProgress(_playController.value);
+      }
     });
 
     _playController.addStatusListener((status) async {
       if (status == AnimationStatus.completed) {
         context.read<RideHistoryDetailsCubit>().updatePlaybackStatus(false);
-        _isPlaybackActive = false;
         final icon = await _createVehicleMarker();
         if (mounted) {
           context.read<RideHistoryDetailsCubit>().updateVehicleIcon(icon);
@@ -97,42 +105,219 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
   }
 
   void _initializeAssets() async {
-    final start = await _createStartMarker();
-    final end = await _createEndMarker();
-    final vehicle = await _createVehicleMarker();
-    String? mapStyle;
     try {
-      mapStyle = await rootBundle.loadString('assets/map_styles/dark_map.json');
-    } catch (e) {
-      debugPrint('Error loading map style: $e');
-    }
+      final start = await _createStartMarker();
+      final end = await _createEndMarker();
+      final vehicle = await _createVehicleMarker();
+      String? mapStyle;
+      try {
+        mapStyle = await rootBundle.loadString('assets/map_styles/dark_map.json');
+      } catch (e) {
+        debugPrint('Error loading map style: $e');
+      }
 
-    if (mounted) {
-      context.read<RideHistoryDetailsCubit>().initialize(
-        start,
-        end,
-        vehicle,
-        mapStyle,
-      );
+      if (mounted) {
+        context.read<RideHistoryDetailsCubit>().initialize(
+          start,
+          end,
+          vehicle,
+          mapStyle,
+        );
+      }
+    } catch (e) {
+      debugPrint('Error initializing map assets: $e');
+      if (mounted) {
+        context.read<RideHistoryDetailsCubit>().initialize(
+          BitmapDescriptor.defaultMarker,
+          BitmapDescriptor.defaultMarker,
+          BitmapDescriptor.defaultMarker,
+          null,
+        );
+      }
     }
   }
 
   void _animateCameraToVehicle(RideHistoryDetailsState state) async {
-    if (state.currentVehiclePosition == null || !_controller.isCompleted)
-      return;
-    final controller = await _controller.future;
-
-    if (state.isPlaying) {
-      controller.moveCamera(
-        CameraUpdate.newCameraPosition(
-          CameraPosition(
-            target: state.currentVehiclePosition!,
-            zoom: 20.0,
-            tilt: 60.0,
-            bearing: 0.0, // Fixed North-up
-          ),
-        ),
+    if (_isGliding) return; // Ignore regular updates during dynamic cinematic glides
+    if (state.currentVehiclePosition != null && state.isPlaying) {
+      final controller = await _controller.future;
+      
+      // Fetch the actual current position or default to target
+      final currentPos = _lastCameraPosition ?? CameraPosition(
+        target: state.currentVehiclePosition!,
+        zoom: 17.5,
+        tilt: 45.0,
+        bearing: state.currentHeading,
       );
+
+      final currentTarget = currentPos.target;
+      final currentZoom = currentPos.zoom;
+      final currentTilt = currentPos.tilt;
+      final currentBearing = currentPos.bearing;
+
+      final targetTarget = state.currentVehiclePosition!;
+      final targetZoom = 17.5;
+      final targetTilt = 45.0;
+      final double targetBearing = 0.0; // Lock bearing strictly to 0.0 (North direction)
+
+      // Premium Drone-style physics damping factors:
+      // Optimized for 20 FPS updates to keep tracking snappy yet incredibly smooth
+      const double posFactor = 0.15;     // Base follow factor
+      const double zoomFactor = 0.10;    // Gradual altitude adjustment
+      const double tiltFactor = 0.10;    // Smooth perspective changes
+      const double bearingFactor = 0.08; // Immersive camera swivel around turns
+
+      // Dynamic navigation view offset: Keep marker slightly below center (approx 65% down)
+      // by placing the camera target slightly North of the vehicle for constant North stability.
+      final double offsetDist = 0.00015 * math.pow(2.0, 17.5 - targetZoom);
+
+      final LatLng adjustedTarget = LatLng(
+        targetTarget.latitude + offsetDist,
+        targetTarget.longitude,
+      );
+
+      // Calculate distance difference in degrees to prevent the marker from drifting off-screen
+      final double latDiff = (adjustedTarget.latitude - currentTarget.latitude).abs();
+      final double lngDiff = (adjustedTarget.longitude - currentTarget.longitude).abs();
+      final double distanceDiff = latDiff + lngDiff;
+
+      // Dynamic catch-up acceleration: Automatically increases camera speed
+      // if the vehicle starts moving fast or drifts towards the screen edge!
+      double dynamicPosFactor = posFactor;
+      if (distanceDiff > 0.002) {
+        dynamicPosFactor = 1.0; // Snap instantly if too far (prevents off-screen drifting)
+      } else if (distanceDiff > 0.0006) {
+        // Gradual speed boost to catch up smoothly
+        dynamicPosFactor = posFactor + (1.0 - posFactor) * ((distanceDiff - 0.0006) / 0.0014);
+      }
+
+      // Coordinate linear interpolation (smooth glide-follow using dynamicPosFactor)
+      final double lat = currentTarget.latitude + (adjustedTarget.latitude - currentTarget.latitude) * dynamicPosFactor;
+      final double lng = currentTarget.longitude + (adjustedTarget.longitude - currentTarget.longitude) * dynamicPosFactor;
+      
+      // Zoom & Tilt linear interpolation
+      final double zoom = currentZoom + (targetZoom - currentZoom) * zoomFactor;
+      final double tilt = currentTilt + (targetTilt - currentTilt) * tiltFactor;
+
+      // Bearing circular interpolation (shortest angle wrap-around to prevent spin stutters)
+      double diffBearing = targetBearing - currentBearing;
+      if (diffBearing > 180) diffBearing -= 360;
+      if (diffBearing < -180) diffBearing += 360;
+      final double bearing = currentBearing + diffBearing * bearingFactor;
+
+      final nextPos = CameraPosition(
+        target: LatLng(lat, lng),
+        zoom: zoom,
+        tilt: tilt,
+        bearing: bearing,
+      );
+
+      // Save instantly so the next tick interpolates starting from this new frame
+      _lastCameraPosition = nextPos;
+
+      controller.moveCamera(
+        CameraUpdate.newCameraPosition(nextPos),
+      );
+    }
+  }
+
+  double _getBoundsZoomLevel(LatLngBounds bounds, double mapWidth, double mapHeight) {
+    final northeast = bounds.northeast;
+    final southwest = bounds.southwest;
+
+    final lngFraction = (southwest.longitude - northeast.longitude).abs() / 360.0;
+
+    final double latRadSW = southwest.latitude * math.pi / 180.0;
+    final double latRadNE = northeast.latitude * math.pi / 180.0;
+    final double latFractionMercator = (math.log(math.tan(latRadSW / 2 + math.pi / 4)) - 
+        math.log(math.tan(latRadNE / 2 + math.pi / 4))).abs() / (2 * math.pi);
+
+    final double latZoom = (math.log(mapHeight / 256.0 / latFractionMercator) / math.log(2.0));
+    final double lngZoom = (math.log(mapWidth / 256.0 / lngFraction) / math.log(2.0));
+
+    if (latZoom.isNaN || latZoom.isInfinite || lngZoom.isNaN || lngZoom.isInfinite) {
+      return 12.0; // safe fallback
+    }
+
+    // Choose the lower zoom to ensure everything fits, minus a small padding
+    return math.min(latZoom, lngZoom) - 0.4;
+  }
+
+  Future<void> _runCinematicGlide({
+    required LatLng targetLatLng,
+    required double targetZoom,
+    required double targetTilt,
+    required double targetBearing,
+    required Duration duration,
+  }) async {
+    _isGliding = true;
+    try {
+      final controller = await _controller.future;
+      
+      final startPos = _lastCameraPosition ?? const CameraPosition(
+        target: LatLng(20.5937, 78.9629),
+        zoom: 4.2,
+        tilt: 0.0,
+        bearing: 0.0,
+      );
+
+      final startTarget = startPos.target;
+      final startZoom = startPos.zoom;
+      final startTilt = startPos.tilt;
+      final startBearing = startPos.bearing;
+
+      final endTarget = targetLatLng;
+      final endZoom = targetZoom;
+      final endTilt = targetTilt;
+      final endBearing = targetBearing;
+
+      const int totalSteps = 45;
+      final delayPerStep = duration.inMilliseconds ~/ totalSteps;
+
+      for (int i = 0; i <= totalSteps; i++) {
+        if (!mounted) return;
+        final double t = i / totalSteps;
+        
+        // Eased curves:
+        // 1. Pan (LatLng): Snaps/glides to center on the target location within the first 25% of the flight duration
+        final double panProgress = math.min(1.0, t / 0.25);
+        final double panT = (1 - math.pow(1 - panProgress, 3)).toDouble(); // Ease-out cubic
+        
+        // 2. Zoom & Tilt: Gradual ease-in-out to peak smoothly after centering is fully complete
+        final double zoomT = (t < 0.5 
+            ? 4 * t * t * t 
+            : 1 - math.pow(-2 * t + 2, 3) / 2).toDouble(); // Ease-in-out cubic
+
+        // Coordinate linear interpolation using panT (centers instantly)
+        final double lat = startTarget.latitude + (endTarget.latitude - startTarget.latitude) * panT;
+        final double lng = startTarget.longitude + (endTarget.longitude - startTarget.longitude) * panT;
+        
+        // Zoom & Tilt interpolation using zoomT (zooms smoothly)
+        final double zoom = startZoom + (endZoom - startZoom) * zoomT;
+        final double tilt = startTilt + (endTilt - startTilt) * zoomT;
+        
+        // Bearing circular interpolation (shortest angle) using zoomT
+        double diffBearing = endBearing - startBearing;
+        if (diffBearing > 180) diffBearing -= 360;
+        if (diffBearing < -180) diffBearing += 360;
+        final double bearing = startBearing + diffBearing * zoomT;
+
+        final nextGlidePos = CameraPosition(
+          target: LatLng(lat, lng),
+          zoom: zoom,
+          tilt: tilt,
+          bearing: bearing,
+        );
+        _lastCameraPosition = nextGlidePos;
+
+        controller.moveCamera(
+          CameraUpdate.newCameraPosition(nextGlidePos),
+        );
+
+        await Future.delayed(Duration(milliseconds: delayPerStep));
+      }
+    } finally {
+      _isGliding = false;
     }
   }
 
@@ -149,44 +334,38 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
         _playController.reset();
       }
 
-      final targetSeconds = math.max(
-        15,
-        (cubit.state.totalWeight / 5).toDouble(),
+      // Playback duration matches the actual trip duration (totalWeight) in real-time at 1x speed!
+      final double baseSeconds = math.max(5.0, cubit.state.totalWeight);
+      final targetSeconds = baseSeconds / cubit.state.playbackSpeed;
+      _playController.duration = Duration(
+        milliseconds: (targetSeconds * 1000).toInt(),
       );
-      _playController.duration = Duration(seconds: targetSeconds.toInt());
 
       cubit.updatePlaybackStatus(true);
-      _isPlaybackActive = true;
       _updateVehicleIcon();
 
-      if (cubit.state.currentVehiclePosition != null &&
-          _controller.isCompleted) {
-        final controller = await _controller.future;
-        // STAGE 1: Glide & Approach
-        await controller.animateCamera(
-          CameraUpdate.newCameraPosition(
-            CameraPosition(
-              target: cubit.state.currentVehiclePosition!,
-              zoom: 15.0,
-              tilt: 45.0,
-              bearing: 0.0,
-            ),
-          ),
+      // Cinematic drone glide zoom & tilt onto the vehicle (locked North direction)
+      if (cubit.state.currentVehiclePosition != null) {
+        final double offsetDist = 0.00015; // Shift target North so vehicle lands in bottom half
+        final LatLng targetCoords = LatLng(
+          cubit.state.currentVehiclePosition!.latitude + offsetDist,
+          cubit.state.currentVehiclePosition!.longitude,
         );
-        // STAGE 2: Tight Close-up Focus
-        await controller.animateCamera(
-          CameraUpdate.newCameraPosition(
-            CameraPosition(
-              target: cubit.state.currentVehiclePosition!,
-              zoom: 20.0,
-              tilt: 60.0,
-              bearing: 0.0,
-            ),
-          ),
+        await _runCinematicGlide(
+          targetLatLng: targetCoords,
+          targetZoom: 17.5,
+          targetTilt: 45.0,
+          targetBearing: 0.0, // Always point North
+          duration: const Duration(milliseconds: 1800),
         );
       }
 
-      _playController.forward();
+      // Add a tiny delay for a premium settling feel before starting the playback
+      await Future.delayed(const Duration(milliseconds: 300));
+
+      if (mounted && cubit.state.isPlaying) {
+        _playController.forward();
+      }
     }
   }
 
@@ -195,7 +374,6 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
     _playController.stop();
     _playController.value = 0.0;
     _stopOrbitAnimation();
-    _isPlaybackActive = false;
     _updateVehicleIcon();
     cubit.resetPlayback();
     _fitMapToBounds();
@@ -204,6 +382,21 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
   void _onSliderChanged(double value) {
     _playController.value = value;
     context.read<RideHistoryDetailsCubit>().updateProgress(value);
+  }
+
+  void _updatePlaybackSpeed(int speed) {
+    final cubit = context.read<RideHistoryDetailsCubit>();
+    cubit.updatePlaybackSpeed(speed);
+
+    if (cubit.state.isPlaying) {
+      final currentProgress = _playController.value;
+      final double baseSeconds = math.max(5.0, cubit.state.totalWeight);
+      final targetSeconds = baseSeconds / speed;
+      _playController.duration = Duration(
+        milliseconds: (targetSeconds * 1000).toInt(),
+      );
+      _playController.forward(from: currentProgress);
+    }
   }
 
   @override
@@ -266,9 +459,9 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
   Future<BitmapDescriptor> _createVehicleMarker() async {
     final ui.PictureRecorder pictureRecorder = ui.PictureRecorder();
     final Canvas canvas = Canvas(pictureRecorder);
-    final double size = _isPlaybackActive ? 65.0 : 60.0;
+    const double size = 60.0; // Standard size always
     final Paint arrowPaint = Paint()
-      ..color = Theme.of(context).colorScheme.primary
+      ..color = _primaryColor
       ..style = PaintingStyle.fill;
     final Paint borderPaint = Paint()
       ..color = Colors.white
@@ -295,7 +488,7 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
     final cubit = context.read<RideHistoryDetailsCubit>();
     final validPoints = cubit.state.validRidePoints;
     if (validPoints.isEmpty) return;
-    final controller = await _controller.future;
+    final size = MediaQuery.sizeOf(context); // Get size synchronously BEFORE async gap!
 
     double minLat = validPoints[0].location.latitude,
         maxLat = validPoints[0].location.latitude;
@@ -315,21 +508,30 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
       northeast: LatLng(maxLat, maxLng),
     );
 
-    // STEP 1: Fly to center at medium altitude
-    await controller.animateCamera(
-      CameraUpdate.newCameraPosition(
-        CameraPosition(target: center, zoom: 8.0, tilt: 25.0),
-      ),
-    );
+    final double targetZoom = _getBoundsZoomLevel(bounds, size.width, size.height);
 
-    // STEP 2: Smoothly fit bounds
-    await controller.animateCamera(CameraUpdate.newLatLngBounds(bounds, 110.0));
+    await _runCinematicGlide(
+      targetLatLng: center,
+      targetZoom: targetZoom,
+      targetTilt: 0.0,
+      targetBearing: 0.0,
+      duration: const Duration(milliseconds: 2200), // Highly elegant 2.2s drone flight on load
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    return BlocConsumer<RideHistoryDetailsCubit, RideHistoryDetailsState>(
+    final double fuelRate = widget.ride.avgSpeed > 0
+        ? (2.1 * (1.0 + 0.005 * (widget.ride.avgSpeed - 35.0).abs())).clamp(1.5, 3.5)
+        : 2.1;
+    return BlocListener<RideHistoryDetailsCubit, RideHistoryDetailsState>(
+      listenWhen: (previous, current) {
+        return previous.isDataProcessing != current.isDataProcessing ||
+               previous.isPlaying != current.isPlaying ||
+               previous.currentVehiclePosition != current.currentVehiclePosition ||
+               previous.validRidePoints.length != current.validRidePoints.length;
+      },
       listener: (context, state) {
         if (!state.isDataProcessing &&
             state.validRidePoints.isNotEmpty &&
@@ -339,544 +541,605 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
         }
         _animateCameraToVehicle(state);
       },
-      builder: (context, state) {
-        final validPoints = _validPoints;
-        return Scaffold(
-          backgroundColor: Theme.of(context).colorScheme.surface,
-          body: Stack(
-            children: [
-              GoogleMap(
-                initialCameraPosition: const CameraPosition(
-                  target: LatLng(20.5937, 78.9629), // Start at India
-                  zoom: 4.2,
-                ),
-                mapType: MapType.normal,
-                style: state.darkMapStyle,
-                zoomControlsEnabled: false,
-                myLocationButtonEnabled: false,
-                compassEnabled: false,
-                mapToolbarEnabled: false,
-                padding: const EdgeInsets.only(bottom: 220),
-                polylines: {
-                  if (state.validRidePoints.isNotEmpty)
-                    Polyline(
-                      polylineId: const PolylineId('route'),
-                      points: state.validRidePoints
-                          .map((p) => p.location)
-                          .toList(),
-                      color: Theme.of(context).colorScheme.primary,
-                      width: 5,
-                      startCap: Cap.roundCap,
-                      endCap: Cap.roundCap,
-                      jointType: JointType.round,
+      child: Scaffold(
+        backgroundColor: Theme.of(context).colorScheme.surface,
+        body: Stack(
+          children: [
+            // High-performance isolated Google Map view using RepaintBoundary and builder filtering
+            BlocBuilder<RideHistoryDetailsCubit, RideHistoryDetailsState>(
+              buildWhen: (previous, current) {
+                return previous.currentVehiclePosition != current.currentVehiclePosition ||
+                       previous.currentHeading != current.currentHeading ||
+                       previous.isPlaybackStarted != current.isPlaybackStarted ||
+                       previous.darkMapStyle != current.darkMapStyle ||
+                       previous.startIcon != current.startIcon ||
+                       previous.endIcon != current.endIcon ||
+                       previous.vehicleIcon != current.vehicleIcon ||
+                       previous.validRidePoints.length != current.validRidePoints.length;
+              },
+              builder: (context, mapState) {
+                return RepaintBoundary(
+                  child: GoogleMap(
+                    initialCameraPosition: const CameraPosition(
+                      target: LatLng(20.5937, 78.9629), // Start at India
+                      zoom: 4.2,
                     ),
-                },
-                markers: {
-                  if (state.startIcon != null &&
-                      state.validRidePoints.isNotEmpty)
-                    Marker(
-                      markerId: const MarkerId('start'),
-                      position: state.validRidePoints.first.location,
-                      icon: state.startIcon!,
-                      anchor: const Offset(0.5, 0.5),
-                    ),
-                  if (state.endIcon != null && state.validRidePoints.isNotEmpty)
-                    Marker(
-                      markerId: const MarkerId('end'),
-                      position: state.validRidePoints.last.location,
-                      icon: state.endIcon!,
-                      anchor: const Offset(0.5, 1.0),
-                    ),
-                  if (state.vehicleIcon != null &&
-                      state.currentVehiclePosition != null &&
-                      state.isPlaybackStarted)
-                    Marker(
-                      markerId: const MarkerId('vehicle'),
-                      position: state.currentVehiclePosition!,
-                      icon: state.vehicleIcon!,
-                      anchor: const Offset(0.5, 0.5),
-                      rotation: state.currentHeading,
-                      flat: true,
-                      zIndex: 2,
-                    ),
-                },
-                onMapCreated: _onMapCreated,
-              ),
+                    mapType: MapType.normal,
+                    style: mapState.darkMapStyle,
+                    zoomControlsEnabled: false,
+                    myLocationButtonEnabled: false,
+                    compassEnabled: false,
+                    mapToolbarEnabled: false,
+                    padding: const EdgeInsets.only(bottom: 220),
+                    polylines: {
+                      if (mapState.validRidePoints.isNotEmpty)
+                        Polyline(
+                          polylineId: const PolylineId('route'),
+                          points: mapState.validRidePoints
+                              .map((p) => p.location)
+                              .toList(),
+                          color: Theme.of(context).colorScheme.primary,
+                          width: 5,
+                          startCap: Cap.roundCap,
+                          endCap: Cap.roundCap,
+                          jointType: JointType.round,
+                        ),
+                    },
+                    markers: {
+                      if (mapState.startIcon != null &&
+                          mapState.validRidePoints.isNotEmpty)
+                        Marker(
+                          markerId: const MarkerId('start'),
+                          position: mapState.validRidePoints.first.location,
+                          icon: mapState.startIcon!,
+                          anchor: const Offset(0.5, 0.5),
+                        ),
+                      if (mapState.endIcon != null && mapState.validRidePoints.isNotEmpty)
+                        Marker(
+                          markerId: const MarkerId('end'),
+                          position: mapState.validRidePoints.last.location,
+                          icon: mapState.endIcon!,
+                          anchor: const Offset(0.5, 1.0),
+                        ),
+                      if (mapState.vehicleIcon != null &&
+                          mapState.currentVehiclePosition != null &&
+                          mapState.isPlaybackStarted)
+                        Marker(
+                          markerId: const MarkerId('vehicle'),
+                          position: mapState.currentVehiclePosition!,
+                          icon: mapState.vehicleIcon!,
+                          anchor: const Offset(0.5, 0.5),
+                          rotation: mapState.currentHeading,
+                          flat: true,
+                          zIndexInt: 2,
+                        ),
+                    },
+                    onMapCreated: _onMapCreated,
+                    onCameraMove: (position) {
+                      if (_isGliding || (mounted && context.read<RideHistoryDetailsCubit>().state.isPlaying)) {
+                        return; // Ignore laggy async native updates during active programmatic tracking/glides
+                      }
+                      _lastCameraPosition = position;
+                    },
+                  ),
+                );
+              },
+            ),
 
-              // Custom AppBar
-              Positioned(
-                top: 0,
-                left: 0,
-                right: 0,
-                child: Container(
-                  padding: EdgeInsets.only(
-                    top: MediaQuery.of(context).padding.top,
-                    left: 8.0,
-                    right: 8.0,
-                    bottom: 8.0,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).cardColor.withValues(alpha: 0.8),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.1),
-                        blurRadius: 10,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
-                  ),
-                  child: Row(
-                    children: [
-                      IconButton(
-                        icon: Icon(
-                          Icons.arrow_back,
-                          color: Theme.of(context).colorScheme.onSurface,
-                        ),
-                        onPressed: () => Navigator.pop(context),
-                      ),
-                      Expanded(
-                        child: Text(
-                          widget.ride.date,
-                          style: TextStyle(
-                            color: Theme.of(context).colorScheme.onSurface,
-                            fontSize: 18,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
+            // Custom AppBar (Static back button layer)
+            Positioned(
+              top: 0,
+              left: 0,
+              right: 0,
+              child: Container(
+                padding: EdgeInsets.only(
+                  top: MediaQuery.of(context).padding.top,
+                  left: 8.0,
+                  right: 8.0,
+                  bottom: 8.0,
                 ),
-              ),
-
-              // Top Floating Stats
-              if (!state.isPlaying && state.playProgress == 0.0)
-                Positioned(
-                  top: MediaQuery.of(context).padding.top + 60,
-                  right: 16,
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 8,
+                decoration: BoxDecoration(
+                  color: Theme.of(context).cardColor.withValues(alpha: 0.8),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.1),
+                      blurRadius: 10,
+                      offset: const Offset(0, 2),
                     ),
-                    decoration: BoxDecoration(
-                      color: Theme.of(
-                        context,
-                      ).cardColor.withValues(alpha: 0.85),
-                      borderRadius: BorderRadius.circular(30),
-                      border: Border.all(
-                        color: Theme.of(
-                          context,
-                        ).colorScheme.onSurface.withValues(alpha: 0.1),
-                      ),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Column(
-                          children: [
-                            Container(
-                              width: 24,
-                              height: 24,
-                              decoration: BoxDecoration(
-                                color: Theme.of(
-                                  context,
-                                ).colorScheme.primary.withValues(alpha: 0.2),
-                                shape: BoxShape.circle,
-                              ),
-                              child: Center(
-                                child: Icon(
-                                  Icons.two_wheeler,
-                                  color: Theme.of(context).colorScheme.primary,
-                                  size: 14,
-                                ),
-                              ),
-                            ),
-                            const SizedBox(height: 2),
-                            Text(
-                              "Trackify",
-                              style: TextStyle(
-                                color: Theme.of(context).colorScheme.primary,
-                                fontSize: 8,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(width: 12),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Text(
-                              l10n.speed,
-                              textAlign: TextAlign.center,
-                              style: const TextStyle(
-                                color: Colors.grey,
-                                fontSize: 10,
-                              ),
-                            ),
-                            Text(
-                              l10n.kmh,
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                color: Theme.of(context).colorScheme.onSurface,
-                                fontSize: 7,
-                              ),
-                            ),
-                            Text(
-                              state.currentSpeedDisplay.toStringAsFixed(1),
-                              style: TextStyle(
-                                color: Theme.of(context).colorScheme.onSurface,
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(width: 12),
-                        Container(
-                          width: 1,
-                          height: 30,
-                          color: Theme.of(
-                            context,
-                          ).colorScheme.onSurface.withValues(alpha: 0.2),
-                        ),
-                        const SizedBox(width: 12),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Text(
-                              l10n.timeLabel,
-                              textAlign: TextAlign.center,
-                              style: const TextStyle(
-                                color: Colors.grey,
-                                fontSize: 10,
-                              ),
-                            ),
-                            Text(
-                              l10n.hrMin,
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                color: Theme.of(context).colorScheme.onSurface,
-                                fontSize: 7,
-                              ),
-                            ),
-                            Text(
-                              state.currentTimeDisplay ?? widget.ride.startTime,
-                              style: TextStyle(
-                                color: Theme.of(context).colorScheme.onSurface,
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                )
-              else
-                Positioned(
-                  top: MediaQuery.of(context).padding.top + 80,
-                  left: 16,
-                  right: 16,
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 12,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Theme.of(
-                        context,
-                      ).cardColor.withValues(alpha: 0.85),
-                      borderRadius: BorderRadius.circular(16),
-                      border: Border.all(
-                        color: Theme.of(
-                          context,
-                        ).colorScheme.onSurface.withValues(alpha: 0.1),
-                      ),
-                    ),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: _buildLiveStatColumn(
-                            l10n.speed,
-                            "${state.currentSpeedDisplay.toStringAsFixed(1)} ${l10n.kmh}",
-                          ),
-                        ),
-                        Container(
-                          width: 1,
-                          height: 30,
-                          color: Theme.of(
-                            context,
-                          ).colorScheme.onSurface.withValues(alpha: 0.2),
-                        ),
-                        Expanded(
-                          child: _buildLiveStatColumn(
-                            l10n.timeLabel,
-                            state.currentTimeDisplay ?? widget.ride.startTime,
-                          ),
-                        ),
-                        Container(
-                          width: 1,
-                          height: 30,
-                          color: Theme.of(
-                            context,
-                          ).colorScheme.onSurface.withValues(alpha: 0.2),
-                        ),
-                        Expanded(
-                          child: _buildLiveStatColumn(
-                            l10n.distanceLabel,
-                            "${state.currentDistanceDisplay.toStringAsFixed(2)} ${l10n.km}",
-                          ),
-                        ),
-                        Container(
-                          width: 1,
-                          height: 30,
-                          color: Theme.of(
-                            context,
-                          ).colorScheme.onSurface.withValues(alpha: 0.2),
-                        ),
-                        Expanded(
-                          child: _buildLiveStatColumn(
-                            l10n.averageSpeed,
-                            "${state.currentAvgSpeedDisplay.toStringAsFixed(1)} ${l10n.kmh}",
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+                  ],
                 ),
-
-              // Map Control Buttons
-              Positioned(
-                right: 16,
-                bottom: 240,
-                child: Column(
+                child: Row(
                   children: [
-                    _buildMapFloatingBtn(Icons.layers_outlined),
-                    const SizedBox(height: 12),
-                    _buildMapFloatingBtn(Icons.my_location),
+                    IconButton(
+                      icon: Icon(
+                        Icons.arrow_back,
+                        color: Theme.of(context).colorScheme.onSurface,
+                      ),
+                      onPressed: () => Navigator.pop(context),
+                    ),
+                    Expanded(
+                      child: Text(
+                        widget.ride.date,
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.onSurface,
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               ),
+            ),
 
-              Align(
-                alignment: Alignment.bottomCenter,
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).cardColor,
-                    borderRadius: const BorderRadius.vertical(
-                      top: Radius.circular(24),
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.5),
-                        blurRadius: 10,
-                        offset: const Offset(0, -2),
+            // Top Floating Live Stats Card (Granular BlocBuilder to isolate text updates)
+            BlocBuilder<RideHistoryDetailsCubit, RideHistoryDetailsState>(
+              buildWhen: (previous, current) {
+                return previous.currentSpeedDisplay != current.currentSpeedDisplay ||
+                       previous.currentTimeDisplay != current.currentTimeDisplay ||
+                       previous.currentDistanceDisplay != current.currentDistanceDisplay ||
+                       previous.currentAvgSpeedDisplay != current.currentAvgSpeedDisplay ||
+                       previous.isPlaying != current.isPlaying ||
+                       previous.playProgress != current.playProgress;
+              },
+              builder: (context, statsState) {
+                if (!statsState.isPlaying && statsState.playProgress == 0.0) {
+                  return Positioned(
+                    top: MediaQuery.of(context).padding.top + 60,
+                    right: 16,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 8,
                       ),
-                    ],
-                  ),
-                  child: SafeArea(
-                    top: false,
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Transform.translate(
-                          offset: const Offset(0, -24),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).cardColor.withValues(alpha: 0.85),
+                        borderRadius: BorderRadius.circular(30),
+                        border: Border.all(
+                          color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.1),
+                        ),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Column(
                             children: [
-                              GestureDetector(
-                                onTap: _togglePlayback,
-                                child: Container(
-                                  width: 50,
-                                  height: 50,
-                                  decoration: BoxDecoration(
-                                    color: Theme.of(
-                                      context,
-                                    ).colorScheme.primary,
-                                    shape: BoxShape.circle,
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.black.withValues(
-                                          alpha: 0.5,
-                                        ),
-                                        blurRadius: 8,
-                                      ),
-                                    ],
-                                  ),
+                              Container(
+                                width: 24,
+                                height: 24,
+                                decoration: BoxDecoration(
+                                  color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.2),
+                                  shape: BoxShape.circle,
+                                ),
+                                child: Center(
                                   child: Icon(
-                                    state.isPlaying
-                                        ? Icons.pause
-                                        : Icons.play_arrow,
-                                    color: Colors.white,
-                                    size: 28,
+                                    Icons.two_wheeler,
+                                    color: Theme.of(context).colorScheme.primary,
+                                    size: 14,
                                   ),
                                 ),
                               ),
-                              const SizedBox(width: 16),
-                              if (state.isPlaying || _playController.value > 0)
-                                GestureDetector(
-                                  onTap: _stopPlayback,
-                                  child: Container(
-                                    width: 45,
-                                    height: 45,
-                                    margin: const EdgeInsets.only(right: 16),
-                                    decoration: BoxDecoration(
-                                      color: Theme.of(
-                                        context,
-                                      ).cardColor.withValues(alpha: 0.8),
-                                      shape: BoxShape.circle,
-                                      border: Border.all(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .onSurface
-                                            .withValues(alpha: 0.2),
-                                      ),
-                                    ),
-                                    child: Icon(
-                                      Icons.close,
-                                      color: Theme.of(
-                                        context,
-                                      ).colorScheme.onSurface,
-                                      size: 20,
-                                    ),
-                                  ),
+                              const SizedBox(height: 2),
+                              Text(
+                                "Trackify",
+                                style: TextStyle(
+                                  color: Theme.of(context).colorScheme.primary,
+                                  fontSize: 8,
+                                  fontWeight: FontWeight.bold,
                                 ),
+                              ),
                             ],
                           ),
+                          const SizedBox(width: 12),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Text(
+                                l10n.speed,
+                                textAlign: TextAlign.center,
+                                style: const TextStyle(
+                                  color: Colors.grey,
+                                  fontSize: 10,
+                                ),
+                              ),
+                              Text(
+                                l10n.kmh,
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  color: Theme.of(context).colorScheme.onSurface,
+                                  fontSize: 7,
+                                ),
+                              ),
+                              Text(
+                                statsState.currentSpeedDisplay.toStringAsFixed(1),
+                                style: TextStyle(
+                                  color: Theme.of(context).colorScheme.onSurface,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(width: 12),
+                          Container(
+                            width: 1,
+                            height: 30,
+                            color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.2),
+                          ),
+                          const SizedBox(width: 12),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Text(
+                                l10n.timeLabel,
+                                textAlign: TextAlign.center,
+                                style: const TextStyle(
+                                  color: Colors.grey,
+                                  fontSize: 10,
+                                ),
+                              ),
+                              Text(
+                                l10n.hrMin,
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  color: Theme.of(context).colorScheme.onSurface,
+                                  fontSize: 7,
+                                ),
+                              ),
+                              Text(
+                                statsState.currentTimeDisplay ?? widget.ride.startTime,
+                                style: TextStyle(
+                                  color: Theme.of(context).colorScheme.onSurface,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                } else {
+                  return Positioned(
+                    top: MediaQuery.of(context).padding.top + 80,
+                    left: 16,
+                    right: 16,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 12,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).cardColor.withValues(alpha: 0.85),
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(
+                          color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.1),
                         ),
-
-                        Transform.translate(
-                          offset: const Offset(0, -16),
-                          child: Text(
-                            "Running Time: ${widget.ride.duration}",
-                            style: TextStyle(
-                              color: Theme.of(context).colorScheme.onSurface,
-                              fontSize: 16,
-                              fontWeight: FontWeight.w500,
+                      ),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: _buildLiveStatColumn(
+                              l10n.speed,
+                              "${statsState.currentSpeedDisplay.toStringAsFixed(1)} ${l10n.kmh}",
                             ),
                           ),
-                        ),
-
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                          child: Column(
-                            children: [
-                              Row(
-                                children: [
-                                  Expanded(
-                                    child: _buildPanelStat(
-                                      Icons.route_outlined,
-                                      "${widget.ride.distance.toStringAsFixed(1)} ${l10n.km}",
-                                    ),
-                                  ),
-                                  Expanded(
-                                    child: _buildPanelStat(
-                                      Icons.timer_outlined,
-                                      widget.ride.duration,
-                                    ),
-                                  ),
-                                  Expanded(
-                                    child: _buildPanelStat(
-                                      Icons.currency_rupee,
-                                      "49",
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 16),
-                              Row(
-                                children: [
-                                  Expanded(
-                                    child: _buildPanelStat(
-                                      Icons.speed,
-                                      "${widget.ride.avgSpeed.toStringAsFixed(1)} ${l10n.kmh} AVG",
-                                    ),
-                                  ),
-                                  Expanded(
-                                    child: _buildPanelStat(
-                                      Icons.bolt,
-                                      "${widget.ride.topSpeed.toStringAsFixed(1)} Top",
-                                      isHighlight: true,
-                                    ),
-                                  ),
-                                  Expanded(
-                                    child: _buildPanelStat(
-                                      Icons.water_drop_outlined,
-                                      "₹ 2.1/km",
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
+                          Container(
+                            width: 1,
+                            height: 30,
+                            color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.2),
                           ),
-                        ),
-
-                        const SizedBox(height: 12),
-
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                          child: Row(
-                            children: [
-                              Text(
-                                widget.ride.startTime,
-                                style: TextStyle(
-                                  color: Theme.of(
-                                    context,
-                                  ).colorScheme.onSurface,
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              Expanded(
-                                child: SliderTheme(
-                                  data: SliderThemeData(
-                                    activeTrackColor: Theme.of(
-                                      context,
-                                    ).colorScheme.primary,
-                                    inactiveTrackColor: Theme.of(context)
-                                        .colorScheme
-                                        .onSurface
-                                        .withValues(alpha: 0.2),
-                                    thumbColor: Theme.of(
-                                      context,
-                                    ).colorScheme.primary,
-                                    trackHeight: 4.0,
-                                    thumbShape: const RoundSliderThumbShape(
-                                      enabledThumbRadius: 6.0,
-                                    ),
-                                  ),
-                                  child: Slider(
-                                    value: _playController.value,
-                                    onChanged: _onSliderChanged,
-                                  ),
-                                ),
-                              ),
-                              Text(
-                                widget.ride.endTime,
-                                style: TextStyle(
-                                  color: Theme.of(
-                                    context,
-                                  ).colorScheme.onSurface,
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ],
+                          Expanded(
+                            child: _buildLiveStatColumn(
+                              l10n.timeLabel,
+                              statsState.currentTimeDisplay ?? widget.ride.startTime,
+                            ),
                           ),
-                        ),
-                        const SizedBox(height: 16),
-                      ],
+                          Container(
+                            width: 1,
+                            height: 30,
+                            color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.2),
+                          ),
+                          Expanded(
+                            child: _buildLiveStatColumn(
+                              l10n.distanceLabel,
+                              "${statsState.currentDistanceDisplay.toStringAsFixed(2)} ${l10n.km}",
+                            ),
+                          ),
+                          Container(
+                            width: 1,
+                            height: 30,
+                            color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.2),
+                          ),
+                          Expanded(
+                            child: _buildLiveStatColumn(
+                              l10n.averageSpeed,
+                              "${statsState.currentAvgSpeedDisplay.toStringAsFixed(1)} ${l10n.kmh}",
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
+                  );
+                }
+              },
+            ),
+
+            // Map Control Buttons (Static layers)
+            Positioned(
+              right: 16,
+              bottom: 240,
+              child: Column(
+                children: [
+                  _buildMapFloatingBtn(Icons.layers_outlined),
+                  const SizedBox(height: 12),
+                  _buildMapFloatingBtn(Icons.my_location),
+                ],
+              ),
+            ),
+
+            // Bottom Panel Container sheet
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Theme.of(context).cardColor,
+                  borderRadius: const BorderRadius.vertical(
+                    top: Radius.circular(24),
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.5),
+                      blurRadius: 10,
+                      offset: const Offset(0, -2),
+                    ),
+                  ],
+                ),
+                child: SafeArea(
+                  top: false,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      // Isolated Bottom Controls (Play/Pause, Speed controls)
+                      BlocBuilder<RideHistoryDetailsCubit, RideHistoryDetailsState>(
+                        buildWhen: (previous, current) {
+                          return previous.isPlaying != current.isPlaying ||
+                                 previous.isPlaybackStarted != current.isPlaybackStarted ||
+                                 previous.playbackSpeed != current.playbackSpeed;
+                        },
+                        builder: (context, controlState) {
+                          return Transform.translate(
+                            offset: const Offset(0, -24),
+                            child: Container(
+                              height: 60,
+                              padding: const EdgeInsets.symmetric(horizontal: 16),
+                              child: Stack(
+                                alignment: Alignment.center,
+                                children: [
+                                  // Play Button strictly in the center
+                                  GestureDetector(
+                                    onTap: _togglePlayback,
+                                    child: Container(
+                                      width: 56,
+                                      height: 56,
+                                      decoration: BoxDecoration(
+                                        color: Theme.of(context).colorScheme.primary,
+                                        shape: BoxShape.circle,
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Colors.black.withValues(alpha: 0.4),
+                                            blurRadius: 8,
+                                            offset: const Offset(0, 4),
+                                          ),
+                                        ],
+                                      ),
+                                      child: Icon(
+                                        controlState.isPlaying ? Icons.pause : Icons.play_arrow,
+                                        color: Colors.white,
+                                        size: 32,
+                                      ),
+                                    ),
+                                  ),
+
+                                  // Right-side controls (Close & Playback Speed selectors)
+                                  Align(
+                                    alignment: Alignment.centerRight,
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        if (controlState.isPlaybackStarted) ...[
+                                          GestureDetector(
+                                            onTap: _stopPlayback,
+                                            child: Container(
+                                              width: 38,
+                                              height: 38,
+                                              decoration: BoxDecoration(
+                                                color: Theme.of(context).cardColor.withValues(alpha: 0.9),
+                                                shape: BoxShape.circle,
+                                                border: Border.all(
+                                                  color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.15),
+                                                ),
+                                              ),
+                                              child: Icon(
+                                                Icons.close,
+                                                color: Theme.of(context).colorScheme.onSurface,
+                                                size: 18,
+                                              ),
+                                            ),
+                                          ),
+                                          const SizedBox(width: 10),
+                                        ],
+                                        Container(
+                                          padding: const EdgeInsets.all(2),
+                                          decoration: BoxDecoration(
+                                            color: Theme.of(context).cardColor.withValues(alpha: 0.95),
+                                            borderRadius: BorderRadius.circular(20),
+                                            border: Border.all(
+                                              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.1),
+                                            ),
+                                          ),
+                                          child: Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [1, 2, 3, 4].map((speed) {
+                                              final isSelected = controlState.playbackSpeed == speed;
+                                              return GestureDetector(
+                                                onTap: () => _updatePlaybackSpeed(speed),
+                                                child: Container(
+                                                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                                  decoration: BoxDecoration(
+                                                    color: isSelected
+                                                        ? Theme.of(context).colorScheme.primary
+                                                        : Colors.transparent,
+                                                    borderRadius: BorderRadius.circular(16),
+                                                  ),
+                                                  child: Text(
+                                                    "${speed}x",
+                                                    style: TextStyle(
+                                                      color: isSelected ? Colors.white : Theme.of(context).colorScheme.onSurface,
+                                                      fontSize: 10,
+                                                      fontWeight: FontWeight.bold,
+                                                    ),
+                                                  ),
+                                                ),
+                                              );
+                                            }).toList(),
+                                          ),
+                                        ),
+                                        const SizedBox(width: 8),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+
+                      Transform.translate(
+                        offset: const Offset(0, -16),
+                        child: Text(
+                          "${l10n.rideDuration}: ${widget.ride.duration}",
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.onSurface,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                        child: Column(
+                          children: [
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: _buildPanelStat(
+                                    Icons.route_outlined,
+                                    "${widget.ride.distance.toStringAsFixed(1)} ${l10n.km}",
+                                  ),
+                                ),
+                                Expanded(
+                                  child: _buildPanelStat(
+                                    Icons.timer_outlined,
+                                    widget.ride.duration,
+                                  ),
+                                ),
+                                Expanded(
+                                  child: _buildPanelStat(
+                                    Icons.currency_rupee,
+                                    "${l10n.currencySymbol}${(widget.ride.distance * fuelRate).toStringAsFixed(0)}",
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 16),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: _buildPanelStat(
+                                    Icons.speed,
+                                    "${widget.ride.avgSpeed.toStringAsFixed(1)} ${l10n.kmh} ${l10n.averageSpeed.split(' ')[0]}",
+                                  ),
+                                ),
+                                Expanded(
+                                  child: _buildPanelStat(
+                                    Icons.bolt,
+                                    "${widget.ride.topSpeed.toStringAsFixed(1)} ${l10n.topSpeed.split(' ')[0]}",
+                                    isHighlight: true,
+                                  ),
+                                ),
+                                Expanded(
+                                  child: _buildPanelStat(
+                                    Icons.water_drop_outlined,
+                                    "${l10n.currencySymbol} ${fuelRate.toStringAsFixed(1)}/${l10n.km}",
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+
+                      const SizedBox(height: 12),
+
+                      // Isolated Bottom Slider driven locally by AnimatedBuilder (Buttery 60 FPS slider movement)
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                        child: Row(
+                          children: [
+                            Text(
+                              widget.ride.startTime,
+                              style: TextStyle(
+                                color: Theme.of(context).colorScheme.onSurface,
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            Expanded(
+                              child: SliderTheme(
+                                data: SliderThemeData(
+                                  activeTrackColor: Theme.of(context).colorScheme.primary,
+                                  inactiveTrackColor: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.2),
+                                  thumbColor: Theme.of(context).colorScheme.primary,
+                                  trackHeight: 4.0,
+                                  thumbShape: const RoundSliderThumbShape(
+                                    enabledThumbRadius: 6.0,
+                                  ),
+                                ),
+                                child: AnimatedBuilder(
+                                  animation: _playController,
+                                  builder: (context, child) {
+                                    return Slider(
+                                      value: _playController.value,
+                                      onChanged: _onSliderChanged,
+                                    );
+                                  },
+                                ),
+                              ),
+                            ),
+                            Text(
+                              widget.ride.endTime,
+                              style: TextStyle(
+                                color: Theme.of(context).colorScheme.onSurface,
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                    ],
                   ),
                 ),
               ),
-            ],
-          ),
-        );
-      },
+            ),
+          ],
+        ),
+      ),
     );
   }
 

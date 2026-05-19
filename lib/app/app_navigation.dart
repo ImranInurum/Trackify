@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+
 import 'package:trackify/core/constants/app_images.dart';
 import 'package:trackify/feature/profile/presentation/pages/profile_screen.dart';
 
@@ -21,12 +23,16 @@ class AppNavigation extends StatefulWidget {
 class _AppNavigationState extends State<AppNavigation> {
   int _currentIndex = 0;
 
-  final List<Widget> _pages = [
-    const MapScreen(),
-    const TripScreen(),
-    const StatisticsScreen(),
-    const ProfileScreen(),
-  ];
+  late final List<GlobalKey<NavigatorState>> _navigatorKeys;
+
+  @override
+  void initState() {
+    super.initState();
+    _navigatorKeys = List.generate(
+      4,
+      (index) => GlobalKey<NavigatorState>(),
+    );
+  }
 
   final List<String> _icons = [
     AppImages.homeIcon,
@@ -36,94 +42,130 @@ class _AppNavigationState extends State<AppNavigation> {
   ];
 
   void _onTabTap(int index) {
-    if (_currentIndex == index) return;
+    if (_currentIndex == index) {
+      // If tapping the same tab, pop to root of that tab
+      _navigatorKeys[index].currentState?.popUntil((route) => route.isFirst);
+      return;
+    }
     setState(() {
       _currentIndex = index;
     });
   }
 
+  Widget _buildNavigator(int index, Widget child) {
+    return Navigator(
+      key: _navigatorKeys[index],
+      onGenerateRoute: (settings) => MaterialPageRoute(builder: (context) => child),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: _pages[_currentIndex],
-      bottomNavigationBar: Container(
-        decoration: ShapeDecoration(
-          color: Theme.of(context).cardColor,
-          shape: RoundedRectangleBorder(
-            borderRadius: const BorderRadius.only(
-              topLeft: Radius.circular(26),
-              topRight: Radius.circular(26),
-            ),
-            side: BorderSide(color: Theme.of(context).dividerColor.withOpacity(0.5), width: 0.8),
-          ),
-          shadows: [
-            BoxShadow(
-              color: Colors.black.withOpacity(Theme.of(context).brightness == Brightness.dark ? 0.3 : 0.1),
-              blurRadius: 10,
-              offset: const Offset(0, -2),
-            ),
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) async {
+        if (didPop) return;
+
+        final navigator = _navigatorKeys[_currentIndex].currentState;
+        if (navigator != null && navigator.canPop()) {
+          navigator.pop();
+        } else {
+          if (_currentIndex != 0) {
+            _onTabTap(0);
+          } else {
+            SystemNavigator.pop();
+          }
+        }
+      },
+      child: Scaffold(
+        body: IndexedStack(
+          index: _currentIndex,
+          children: [
+            _buildNavigator(0, const MapScreen()),
+            _buildNavigator(1, const TripScreen()),
+            _buildNavigator(2, const StatisticsScreen()),
+            _buildNavigator(3, const ProfileScreen()),
           ],
         ),
-        child: ClipRRect(
-          borderRadius: const BorderRadius.only(
-            topLeft: Radius.circular(24),
-            topRight: Radius.circular(24),
-          ),
-          child: Stack(
-            children: [
-              /// 🔵 INNER SHADOW (IMPORTANT: placed ABOVE)
-              Positioned(
-                top: 0,
-                left: 0,
-                right: 0,
-                child: IgnorePointer(
-                  child: Align(
-                    alignment: Alignment.topCenter,
-                    child: Container(
-                      height: 20,
-                      decoration: BoxDecoration(
-                        // border: Border(top: BorderSide(color: Colors.grey, width: 0.15)),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.15),
-                            blurRadius: 20,
-                            offset: const Offset(1, 0),
-                          ),
-                        ],
-                        gradient: LinearGradient(
-                          begin: Alignment.bottomCenter,
-                          end: Alignment.topCenter,
-                          colors: [
-                            Theme.of(context).colorScheme.primaryContainer.withOpacity(0.02),
-                            Theme.of(context).colorScheme.primaryContainer.withOpacity(0.2),
-                            Theme.of(context).colorScheme.primaryContainer.withOpacity(0.4),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
+        bottomNavigationBar: Container(
+          decoration: ShapeDecoration(
+            color: Theme.of(context).cardColor,
+            shape: RoundedRectangleBorder(
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(26),
+                topRight: Radius.circular(26),
               ),
-
-              SafeArea(
-                top: false,
-                child: SizedBox(
-                  height: 64,
-                  child: Row(
-                    children: List.generate(
-                      _icons.length,
-                      (index) => Expanded(
-                        child: _RippleNavItem(
-                          assetPath: _icons[index],
-                          isSelected: _currentIndex == index,
-                          onTap: () => _onTabTap(index),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
+              side: BorderSide(color: Theme.of(context).dividerColor.withOpacity(0.5), width: 0.8),
+            ),
+            shadows: [
+              BoxShadow(
+                color: Colors.black.withOpacity(Theme.of(context).brightness == Brightness.dark ? 0.3 : 0.1),
+                blurRadius: 10,
+                offset: const Offset(0, -2),
               ),
             ],
+          ),
+          child: ClipRRect(
+            borderRadius: const BorderRadius.only(
+              topLeft: Radius.circular(24),
+              topRight: Radius.circular(24),
+            ),
+            child: Stack(
+              children: [
+                /// 🔵 INNER SHADOW (IMPORTANT: placed ABOVE)
+                Positioned(
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  child: IgnorePointer(
+                    child: Align(
+                      alignment: Alignment.topCenter,
+                      child: Container(
+                        height: 20,
+                        decoration: BoxDecoration(
+                          // border: Border(top: BorderSide(color: Colors.grey, width: 0.15)),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.15),
+                              blurRadius: 20,
+                              offset: const Offset(1, 0),
+                            ),
+                          ],
+                          gradient: LinearGradient(
+                            begin: Alignment.bottomCenter,
+                            end: Alignment.topCenter,
+                            colors: [
+                              Theme.of(context).colorScheme.primaryContainer.withOpacity(0.02),
+                              Theme.of(context).colorScheme.primaryContainer.withOpacity(0.2),
+                              Theme.of(context).colorScheme.primaryContainer.withOpacity(0.4),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+
+                SafeArea(
+                  top: false,
+                  child: SizedBox(
+                    height: 64,
+                    child: Row(
+                      children: List.generate(
+                        _icons.length,
+                        (index) => Expanded(
+                          child: _RippleNavItem(
+                            assetPath: _icons[index],
+                            isSelected: _currentIndex == index,
+                            onTap: () => _onTabTap(index),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

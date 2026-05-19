@@ -25,7 +25,11 @@ class SocketService {
   String? _host;
   int? _port;
   bool _shouldReconnect = false;
-  Duration _reconnectDelay = const Duration(seconds: 3);
+  int _reconnectAttempts = 0;
+  final int _maxReconnectAttempts = 10;
+  final Duration _minReconnectDelay = const Duration(seconds: 2);
+  final Duration _maxReconnectDelay = const Duration(minutes: 1);
+  Timer? _heartbeatTimer;
 
   Stream<Map<String, dynamic>> get deviceDataStream =>
       _deviceDataController.stream;
@@ -57,6 +61,7 @@ class SocketService {
     }
 
     _shouldReconnect = true;
+    _reconnectAttempts = 0; // Reset attempts on manual connect
     await _connectInternal();
   }
 
@@ -64,11 +69,10 @@ class SocketService {
     if (_host == null || _port == null) return;
     if (_isConnecting) return;
 
-    print('[SocketService] Attempting TCP connection to $_host:$_port');
+    print('[SocketService] Attempting TCP connection to $_host:$_port (Attempt: ${_reconnectAttempts + 1})');
     _isConnecting = true;
 
     try {
-      // ✅ Using raw Socket.connect for TCP
       _socket = await Socket.connect(
         _host!,
         _port!,
@@ -77,7 +81,10 @@ class SocketService {
 
       _isConnected = true;
       _isConnecting = false;
+      _reconnectAttempts = 0; // Reset on successful connection
       print('[SocketService] ✅ TCP Connected successfully to $_host:$_port');
+
+      _startHeartbeat();
 
       // Register device/handshake
       await _sendHandshake();
@@ -90,8 +97,6 @@ class SocketService {
               "[SocketService] 🔄 Received (Length: ${rawResponse.length}): $rawResponse",
             );
 
-            // TCP streams can be noisy or contain multiple messages.
-            // We find all substrings that look like JSON objects.
             final RegExp jsonRegExp = RegExp(r'\{.*?\}', dotAll: true);
             final Iterable<RegExpMatch> matches = jsonRegExp.allMatches(
               rawResponse,
@@ -103,19 +108,12 @@ class SocketService {
                 try {
                   final decoded = jsonDecode(jsonPart);
                   if (decoded is Map<String, dynamic>) {
-                    print("[SocketService] ✅ Decoded: $decoded");
                     _deviceDataController.add(decoded);
                   }
                 } catch (e) {
-                  print(
-                    '[SocketService] ❌ JSON part decode error: $e | Part: $jsonPart',
-                  );
+                  print('[SocketService] ❌ JSON part decode error: $e');
                 }
               }
-            }
-
-            if (matches.isEmpty) {
-              print('[SocketService] ⚠️ No JSON found in chunk');
             }
           } catch (e) {
             print('[SocketService] ❌ Raw data decode error: $e');
@@ -141,34 +139,50 @@ class SocketService {
   Future<void> _sendHandshake() async {
     if (_socket != null && _isConnected) {
       String iMEI = _currentImei ?? await prefs.get(key: AppPreference.IMEI);
-      print("Handshake IMEI: $iMEI");
-
       final handshake = {"type": "flutter", "imei": iMEI};
       _socket!.write(jsonEncode(handshake));
       print('[SocketService] 📤 Handshake sent: $handshake');
     }
   }
 
-  // void send(Map<String, dynamic> data) {
-  //   if (_socket != null && _isConnected) {
-  //     _socket!.write(jsonEncode(data));
-  //   } else {
-  //     print('[SocketService] Cannot send — not connected');
-  //   }
-  // }
+  void _startHeartbeat() {
+    _heartbeatTimer?.cancel();
+    _heartbeatTimer = Timer.periodic(const Duration(seconds: 10), (timer) {
+      if (_isConnected) {
+        print('[SocketService] 💓 Socket still connected...');
+      } else {
+        timer.cancel();
+      }
+    });
+  }
 
   void _handleDisconnect() {
     _isConnected = false;
     _isConnecting = false;
+    _heartbeatTimer?.cancel();
     _socketSubscription?.cancel();
-    _socket?.destroy(); // destroy() is better for raw sockets than close()
+    _socket?.destroy();
     _socket = null;
 
     if (_shouldReconnect && _host != null) {
-      print(
-        '[SocketService] Disconnected. Reconnecting in ${_reconnectDelay.inSeconds}s...',
+      _reconnectAttempts++;
+      
+      // Exponential backoff: 2, 4, 8, 16, 32, 60...
+      int delaySeconds = (_minReconnectDelay.inSeconds * (1 << (_reconnectAttempts - 1)));
+      if (delaySeconds > _maxReconnectDelay.inSeconds) {
+        delaySeconds = _maxReconnectDelay.inSeconds;
+      }
+      
+      final delay = Duration(seconds: delaySeconds);
+      
+       print(
+        '[SocketService] Reconnecting in ${delay.inSeconds}s (Attempt $_reconnectAttempts)...',
       );
-      Future.delayed(_reconnectDelay, () => _connectInternal());
+      Future.delayed(delay, () {
+        if (_shouldReconnect && !_isConnected && !_isConnecting) {
+          _connectInternal();
+        }
+      });
     }
   }
 
@@ -176,6 +190,7 @@ class SocketService {
     _shouldReconnect = false;
     _isConnected = false;
     _isConnecting = false;
+    _heartbeatTimer?.cancel();
     _socketSubscription?.cancel();
     _socket?.destroy();
     _socket = null;
@@ -186,6 +201,7 @@ class SocketService {
     _shouldReconnect = false;
     _isConnected = false;
     _isConnecting = false;
+    _heartbeatTimer?.cancel();
     _socketSubscription?.cancel();
     _socket?.destroy();
     _deviceDataController.close();
