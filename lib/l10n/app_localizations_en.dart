@@ -2421,4 +2421,14 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get noActiveSharing => 'No active sharing';
+
+  @override
+  String get darkMode => 'Dark Mode';
+
+  @override
+  String get lightTheme => 'Light Theme';
+
+  @override
+  String get switchBetweenLightAndDarkThemes =>
+      'Switch between light and dark themes';
 }

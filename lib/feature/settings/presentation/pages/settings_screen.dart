@@ -106,8 +106,11 @@ class SettingsScreen extends StatelessWidget {
                   children: [
                     SettingListTile(
                       icon: isDarkMode ? Icons.dark_mode : Icons.light_mode,
-                      title: isDarkMode ? "Dark Mode" : "Light Theme",
-                      subtitle: "Switch between light and dark themes",
+                      title: isDarkMode
+                          ? l10n.darkMode
+                          :l10n.lightTheme,
+                      subtitle:
+                      l10n.switchBetweenLightAndDarkThemes,
                       showArrow: false,
                       showIcon: true,
                       trailing: Transform.scale(

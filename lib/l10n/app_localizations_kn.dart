@@ -2429,4 +2429,14 @@ class AppLocalizationsKn extends AppLocalizations {
 
   @override
   String get noActiveSharing => 'ಯಾವುದೇ ಸಕ್ರಿಯ ಹಂಚಿಕೆ ಇಲ್ಲ';
+
+  @override
+  String get darkMode => 'ಡಾರ್ಕ್ ಮೋಡ್';
+
+  @override
+  String get lightTheme => 'ಲೈಟ್ ಥೀಮ್';
+
+  @override
+  String get switchBetweenLightAndDarkThemes =>
+      'ಲೈಟ್ ಮತ್ತು ಡಾರ್ಕ್ ಥೀಮ್‌ಗಳ ನಡುವೆ ಬದಲಾಯಿಸಿ';
 }

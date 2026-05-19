@@ -4695,6 +4695,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No active sharing'**
   String get noActiveSharing;
+
+  /// No description provided for @darkMode.
+  ///
+  /// In en, this message translates to:
+  /// **'Dark Mode'**
+  String get darkMode;
+
+  /// No description provided for @lightTheme.
+  ///
+  /// In en, this message translates to:
+  /// **'Light Theme'**
+  String get lightTheme;
+
+  /// No description provided for @switchBetweenLightAndDarkThemes.
+  ///
+  /// In en, this message translates to:
+  /// **'Switch between light and dark themes'**
+  String get switchBetweenLightAndDarkThemes;
 }
 
 class _AppLocalizationsDelegate

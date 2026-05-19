@@ -982,6 +982,10 @@
           "locationSharing": "مشاركة الموقع",
           "yourPhoneLocation": "موقع هاتفك",
           "sharingActive": "المشاركة نشطة",
-          "noActiveSharing": "لا توجد مشاركة نشطة"
+          "noActiveSharing": "لا توجد مشاركة نشطة",
+
+           "darkMode": "الوضع الداكن",
+            "lightTheme": "السمة الفاتحة",
+            "switchBetweenLightAndDarkThemes": "التبديل بين السمات الفاتحة والداكنة"
 
 }

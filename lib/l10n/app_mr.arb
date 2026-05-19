@@ -982,6 +982,10 @@
           "locationSharing": "लोकेशन शेअरिंग",
           "yourPhoneLocation": "तुमच्या फोनचे लोकेशन",
           "sharingActive": "शेअरिंग सक्रिय आहे",
-          "noActiveSharing": "कोणतीही सक्रिय शेअरिंग नाही"
+          "noActiveSharing": "कोणतीही सक्रिय शेअरिंग नाही",
+
+           "darkMode": "डार्क मोड",
+            "lightTheme": "लाइट थीम",
+            "switchBetweenLightAndDarkThemes": "लाइट आणि डार्क थीममध्ये बदला"
 
 }
