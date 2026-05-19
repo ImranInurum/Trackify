@@ -28,10 +28,10 @@ class VehicleControlScreen extends StatelessWidget {
     return BlocProvider(
       create: (context) =>
           VehicleControlCubit(VehicleControlRepositoryImpl())
-            ..loadVehicleDetails("1"),
-      child: VehicleControlView(isFromGarage: isFromGarage),
-    );
+            ..loadVehicleDetails(),
+      child: VehicleControlView(isFromGarage: isFromGarage)); 
   }
+
 }
 
 class VehicleControlView extends StatelessWidget {
@@ -53,23 +53,43 @@ class VehicleControlView extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: bgColor,
-      body: BlocBuilder<VehicleControlCubit, VehicleControlState>(
-        builder: (context, state) {
-          if (state is VehicleControlLoading) {
-            return const Center(child: CircularProgressIndicator());
+      body: BlocListener<VehicleControlCubit, VehicleControlState>(
+        listener: (context, state) {
+          if (state is VehicleControlDeleted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text("Vehicle removed successfully"),
+                backgroundColor: Colors.green,
+              ),
+            );
+            Navigator.pop(context);
           }
-          if (state is VehicleControlError) {
-            return Center(
-              child: Text(
-                state.message,
-                style: TextStyle(color: theme.colorScheme.error),
+          if (state is VehicleControlLoaded && state.actionError != null) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(state.actionError!),
+                backgroundColor: theme.colorScheme.error,
               ),
             );
           }
-          if (state is VehicleControlLoaded) {
-            final vehicle = state.vehicle;
-            return CustomScrollView(
-              slivers: [
+        },
+        child: BlocBuilder<VehicleControlCubit, VehicleControlState>(
+          builder: (context, state) {
+            if (state is VehicleControlLoading) {
+              return const Center(child: CircularProgressIndicator());
+            }
+            if (state is VehicleControlError) {
+              return Center(
+                child: Text(
+                  state.message,
+                  style: TextStyle(color: theme.colorScheme.error),
+                ),
+              );
+            }
+            if (state is VehicleControlLoaded) {
+              final vehicle = state.vehicle;
+              return CustomScrollView(
+                slivers: [
                 /// 🔹 TOP IMAGE SECTION
                 SliverAppBar(
                   expandedHeight: size.height * 0.30,
@@ -112,8 +132,9 @@ class VehicleControlView extends StatelessWidget {
                               children: [
                                 Image(
                                   image: vehicle.bikeImage != null
-                                      ? FileImage(File(vehicle.bikeImage!))
-                                            as ImageProvider
+                                      ? (vehicle.bikeImage!.startsWith('http')
+                                          ? NetworkImage(vehicle.bikeImage!)
+                                          : FileImage(File(vehicle.bikeImage!)) as ImageProvider)
                                       : AssetImage(AppImages.bikeInfoImage),
                                   fit: BoxFit.cover,
                                 ),
@@ -268,7 +289,13 @@ class VehicleControlView extends StatelessWidget {
                         cardColor: cardColor,
                         primaryTextColor: primaryTextColor,
                         secondaryTextColor: secondaryTextColor,
-                        onLock: () {},
+                        isLocked: vehicle.vehicleLock,
+                        onLock: () {
+                          context.read<VehicleControlCubit>().updateVehicleLock(
+                                vehicle.id,
+                                !vehicle.vehicleLock,
+                              );
+                        },
                         onInfoTap: () => _showSleepModeDialog(context),
                       ),
 
@@ -524,7 +551,7 @@ class VehicleControlView extends StatelessWidget {
                                 width: double.infinity,
                                 child: ElevatedButton(
                                   onPressed: () {
-                                    // TODO: Implement Remove Vehicle logic
+                                    _showDeleteConfirmationDialog(context, vehicle.id);
                                   },
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: isDark
@@ -553,6 +580,7 @@ class VehicleControlView extends StatelessWidget {
                         ),
                       ],
 
+
                       const SizedBox(height: 60),
                     ],
                   ),
@@ -563,10 +591,11 @@ class VehicleControlView extends StatelessWidget {
           return const SizedBox.shrink();
         },
       ),
-    );
+    ),
+  );
   }
 
-  void _showImageSourceDialog(BuildContext context, String vehicleId) {
+  void _showImageSourceDialog(BuildContext context, String vehicleIMEI) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
     final l10n = AppLocalizations.of(context)!;
@@ -611,7 +640,7 @@ class VehicleControlView extends StatelessWidget {
                   label: l10n.camera,
                   onTap: () {
                     Navigator.pop(ctx);
-                    _pickImage(context, ImageSource.camera, vehicleId);
+                    _pickImage(context, ImageSource.camera, vehicleIMEI);
                   },
                 ),
                 const SizedBox(width: 40),
@@ -621,7 +650,7 @@ class VehicleControlView extends StatelessWidget {
                   label: l10n.gallery,
                   onTap: () {
                     Navigator.pop(ctx);
-                    _pickImage(context, ImageSource.gallery, vehicleId);
+                    _pickImage(context, ImageSource.gallery, vehicleIMEI);
                   },
                 ),
               ],
@@ -670,7 +699,7 @@ class VehicleControlView extends StatelessWidget {
   Future<void> _pickImage(
     BuildContext context,
     ImageSource source,
-    String vehicleId,
+    String vehicleIMEI,
   ) async {
     final l10n = AppLocalizations.of(context)!;
     final picker = ImagePicker();
@@ -680,7 +709,7 @@ class VehicleControlView extends StatelessWidget {
       final croppedFile = await _cropImage(pickedFile.path, l10n);
       if (croppedFile != null && context.mounted) {
         context.read<VehicleControlCubit>().updateVehicleImage(
-          vehicleId,
+          vehicleIMEI,
           croppedFile.path,
         );
       }
@@ -690,22 +719,26 @@ class VehicleControlView extends StatelessWidget {
   Future<CroppedFile?> _cropImage(String path, AppLocalizations l10n) async {
     return await ImageCropper().cropImage(
       sourcePath: path,
+      aspectRatio: const CropAspectRatio(ratioX: 3, ratioY: 2),
       uiSettings: [
         AndroidUiSettings(
           toolbarTitle: l10n.cropVehicleImage,
           toolbarColor: Colors.black,
           toolbarWidgetColor: Colors.amber,
-          initAspectRatio: CropAspectRatioPreset.original,
-          lockAspectRatio: false,
+          initAspectRatio: CropAspectRatioPreset.ratio3x2,
+          lockAspectRatio: true,
         ),
-        IOSUiSettings(title: l10n.cropVehicleImage),
+        IOSUiSettings(
+          title: l10n.cropVehicleImage,
+          aspectRatioLockEnabled: true,
+        ),
       ],
     );
   }
 
   void _showTankCapacityDialog(
     BuildContext context,
-    String vehicleId,
+    String vehicleIMEI,
     String currentVal,
   ) {
     final cubit = context.read<VehicleControlCubit>();
@@ -733,7 +766,7 @@ class VehicleControlView extends StatelessWidget {
                   ),
                   const SizedBox(width: 12),
                   Text(
-                    l10n.updateTankCapacity,
+                     l10n.updateTankCapacity,
                     style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
@@ -799,7 +832,7 @@ class VehicleControlView extends StatelessWidget {
                   const SizedBox(width: 16),
                   TextButton(
                     onPressed: () {
-                      cubit.updateTankCapacity(vehicleId, controller.text);
+                      cubit.updateTankCapacity(vehicleIMEI, controller.text);
                       Navigator.pop(context);
                     },
                     child: Text(
@@ -821,7 +854,7 @@ class VehicleControlView extends StatelessWidget {
 
   void _showMileageDialog(
     BuildContext context,
-    String vehicleId,
+    String vehicleIMEI,
     String currentVal,
   ) {
     final cubit = context.read<VehicleControlCubit>();
@@ -923,7 +956,7 @@ class VehicleControlView extends StatelessWidget {
                   const SizedBox(width: 16),
                   TextButton(
                     onPressed: () {
-                      cubit.updateMileage(vehicleId, controller.text);
+                      cubit.updateMileage(vehicleIMEI, controller.text);
                       Navigator.pop(context);
                     },
                     child: Text(
@@ -1005,6 +1038,33 @@ class VehicleControlView extends StatelessWidget {
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  void _showDeleteConfirmationDialog(BuildContext context, String vehicleIMEI) {
+    final cubit = context.read<VehicleControlCubit>();
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: isDark ? const Color(0xFF1E1E1E) : theme.cardColor,
+        title: const Text("Remove Vehicle"),
+        content: const Text("Are you sure you want to remove this vehicle? This action cannot be undone."),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: Text("Cancel", style: TextStyle(color: theme.colorScheme.onSurface.withOpacity(0.6))),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(ctx);
+              cubit.deleteVehicle(vehicleIMEI);
+            },
+            child: const Text("Remove", style: TextStyle(color: Colors.redAccent, fontWeight: FontWeight.bold)),
+          ),
+        ],
       ),
     );
   }

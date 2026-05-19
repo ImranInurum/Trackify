@@ -8,6 +8,11 @@ class VehicleControlEntity {
   final String? bikeImage;
   final String selectedIcon;
   final String selectedColor;
+  final bool vehicleLock;
+  // From vehicleDetails
+  final String vehicleType;
+  final String vehicleMaker;
+  final String vehicleModel;
 
   VehicleControlEntity({
     required this.id,
@@ -19,5 +24,9 @@ class VehicleControlEntity {
     this.bikeImage,
     required this.selectedIcon,
     required this.selectedColor,
+    required this.vehicleLock,
+    this.vehicleType = '',
+    this.vehicleMaker = '',
+    this.vehicleModel = '',
   });
 }

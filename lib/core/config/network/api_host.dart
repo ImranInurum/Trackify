@@ -38,8 +38,12 @@ class ApiURL {
 
   // -------------------------
   // Vehicle
-  // -------------------------
   static const String addVehicle = "$baseURL/api/vehicle/vehicle";
+  static String updateVehicleDetails(String imei) => "$baseURL/api/vehicle/update-vehicle/$imei";
+  static String updateVehicleControl(String imei) => "$baseURL/api/vehicle-control/update/$imei";
+  static String lockUnlockVehicle(String imei) => "$baseURL/api/vehicle-control/lock-unlock/$imei";
+  static String getVehicleControl(String imei) => "$baseURL/api/vehicle-control/$imei";
+  static String deleteVehicle(String imei) => "$baseURL/api/vehicle-control/delete/$imei";
 
   static String getVehiclesByUserId(String userId) =>
       "$baseURL/api/vehicle/get-vehicles?userId=$userId";

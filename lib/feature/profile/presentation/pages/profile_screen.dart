@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:trackify/app/app_navigation.dart';
 import 'package:trackify/app/cubit/app_cubit.dart';
 import 'package:trackify/app/cubit/app_state.dart';
 import 'package:trackify/core/constants/app_images.dart';
@@ -21,6 +22,8 @@ import '../../../device_warranty/pages/device_warranty_page.dart';
 import '../../../get_more_out/presentation/pages/disover_screen.dart';
 import '../../../upgrade_to_plus/presentation/pages/upgrade_to_plus.dart';
 import '../../../notifications/presentation/screen/notification_timeline.dart';
+import 'package:trackify/core/common/models/vehicle_list_model.dart';
+import '../../../Vehicle_control/data/repositories/vehicle_control_repository_impl.dart';
 
 
 class ProfileScreen extends StatefulWidget {
@@ -31,11 +34,78 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+  final Map<String, bool> _vehicleLockStates = {};
+
+  Future<void> _fetchLockStatus(String imei) async {
+    if (imei.isEmpty || _vehicleLockStates.containsKey(imei)) return;
+    try {
+      final repo = VehicleControlRepositoryImpl();
+      final controlDetails = await repo.getVehicleControlDetails(imei);
+      if (mounted) {
+        setState(() {
+          _vehicleLockStates[imei] = controlDetails.vehicleLock;
+        });
+      }
+    } catch (e) {
+      debugPrint("Error fetching lock status in profile: $e");
+    }
+  }
+
   @override
   void initState() {
     super.initState();
     context.read<AppCubit>().loadUserSession();
     context.read<ProfileCubit>().fetchVehicles();
+    AppNavigation.currentTabNotifier.addListener(_onTabChanged);
+  }
+
+  @override
+  void dispose() {
+    AppNavigation.currentTabNotifier.removeListener(_onTabChanged);
+    super.dispose();
+  }
+
+  void _onTabChanged() {
+    if (AppNavigation.currentTabNotifier.value == 3) {
+      if (mounted) {
+        context.read<ProfileCubit>().fetchVehicles();
+        setState(() {});
+      }
+    }
+  }
+
+  void _handleVehicleLock(BuildContext context, Vehicle vehicle) async {
+    if (vehicle.imei == null || vehicle.imei!.isEmpty) return;
+
+    final imei = vehicle.imei!;
+    final currentLockState = _vehicleLockStates[imei] ?? false;
+    final targetLockState = !currentLockState;
+
+    try {
+      final repo = VehicleControlRepositoryImpl();
+      await repo.updateVehicleLock(imei, targetLockState);
+
+      if (context.mounted) {
+        setState(() {
+          _vehicleLockStates[imei] = targetLockState;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("Vehicle ${targetLockState ? 'Locked' : 'Unlocked'} successfully!"),
+            backgroundColor: Colors.green,
+          ),
+        );
+      }
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("Failed to update lock status: $e"),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
   }
 
   @override
@@ -260,21 +330,40 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             return const Center(child: CircularProgressIndicator());
                           }
                           if (state is VehiclesLoaded && state.vehicles.isNotEmpty) {
-                            final vehicle = state.vehicles.first;
+                            final selectedImei = AppPreference.instance.getSync(key: AppPreference.IMEI);
+                            final vehicle = state.vehicles.firstWhere(
+                              (v) => v.imei == selectedImei,
+                              orElse: () => state.vehicles.first,
+                            );
+
+                            if (vehicle.imei != null) {
+                              _fetchLockStatus(vehicle.imei!);
+                            }
+
+                            final isLocked = _vehicleLockStates[vehicle.imei] ?? false;
+
                             return VehicleCard(
                               context: context,
                               vehicle: vehicle,
                               hasDevice: true,
-                              // Assuming first vehicle has device for now
-                              onVehicleControl: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => const VehicleControlScreen(),
-                                  ),
-                                );
+                              isLocked: isLocked,
+                              onVehicleControl: () async {
+                                if (vehicle.imei != null && vehicle.imei!.isNotEmpty) {
+                                  await AppPreference.instance.set(
+                                    key: AppPreference.IMEI,
+                                    value: vehicle.imei!,
+                                  );
+                                }
+                                if (context.mounted) {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => const VehicleControlScreen(),
+                                    ),
+                                  );
+                                }
                               },
-                              onLock: () => debugPrint("Locked!"),
+                              onLock: () => _handleVehicleLock(context, vehicle),
                               onRecharge: () {
                                 Navigator.push(
                                   context,

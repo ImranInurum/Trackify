@@ -6,6 +6,7 @@ class LockCard extends StatelessWidget {
   final Color cardColor;
   final Color primaryTextColor;
   final Color secondaryTextColor;
+  final bool isLocked;
   final VoidCallback onLock;
   final VoidCallback onInfoTap;
 
@@ -14,6 +15,7 @@ class LockCard extends StatelessWidget {
     required this.cardColor,
     required this.primaryTextColor,
     required this.secondaryTextColor,
+    required this.isLocked,
     required this.onLock,
     required this.onInfoTap,
   });
@@ -32,7 +34,11 @@ class LockCard extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(Icons.lock_outline, color: secondaryTextColor, size: 24),
+              Icon(
+                isLocked ? Icons.lock : Icons.lock_open_outlined,
+                color: isLocked ? Colors.redAccent : secondaryTextColor,
+                size: 24,
+              ),
               const SizedBox(width: 12),
               Text(
                 AppLocalizations.of(context)!.lockUnlockVehicle,
@@ -45,7 +51,10 @@ class LockCard extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 24),
-          InteractiveSwipeButton(onSwipe: onLock),
+          InteractiveSwipeButton(
+            onSwipe: onLock,
+            isLocked: isLocked,
+          ),
           const SizedBox(height: 24),
           Center(
             child: GestureDetector(

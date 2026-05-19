@@ -240,7 +240,7 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
     }
 
     // Choose the lower zoom to ensure everything fits, minus a small padding
-    return math.min(latZoom, lngZoom) - 0.4;
+    return math.min(latZoom, lngZoom) - 1.2;
   }
 
   Future<void> _runCinematicGlide({

@@ -10,6 +10,7 @@ import 'secure_banner.dart';
 class VehicleCard extends StatelessWidget {
   final Vehicle vehicle;
   final bool hasDevice;
+  final bool isLocked;
   final VoidCallback onLock;
   final VoidCallback onRecharge;
   final VoidCallback onRenew;
@@ -20,6 +21,7 @@ class VehicleCard extends StatelessWidget {
     super.key,
     required this.vehicle,
     required this.hasDevice,
+    this.isLocked = false,
     required this.onLock,
     required this.onRecharge,
     required this.onRenew,
@@ -126,7 +128,10 @@ class VehicleCard extends StatelessWidget {
           ),
           const SizedBox(height: 20),
           if (hasDevice) ...[
-            InteractiveSwipeButton(onSwipe: onLock),
+            InteractiveSwipeButton(
+              onSwipe: onLock,
+              isLocked: isLocked,
+            ),
             const SizedBox(height: 20),
             _buildActionRow(
               l10n,

@@ -61,6 +61,8 @@ class AppPreference {
   // --- Basic Getters/Setters ---
   Future<String> get({required String key}) async => _prefs.getString(key) ?? "";
 
+  String getSync({required String key}) => _prefs.getString(key) ?? "";
+
   Future<void> set({required String key, required String value}) async =>
       _prefs.setString(key, value);
 
