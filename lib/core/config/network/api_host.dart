@@ -1,3 +1,5 @@
+import 'package:trackify/feature/reach_me_sticker/presentation/widgets/sticker_action_buttons.dart';
+
 class ApiURL {
   final String hostUrl;
 
@@ -95,6 +97,16 @@ class ApiURL {
   // -------------------------
   static const String createOverspeedAlert = "$baseURL/api/overspeed/create-alert";
   static String getOverspeedAlerts(String imei) => "$baseURL/api/overspeed/get-overspeed/$imei";
+
+
+// -------------------------
+// Add Fuel
+// -------------------------
+  static const String addFuel = "$baseURL/api/vehicle-refuel/create";
+  static String dashboard(String imei) => "$baseURL/api/vehicle-refuel/fuel-log-details/$imei";
+  static String refuel(String imei) =>
+      "$baseURL/api/vehicle-refuel/$imei";
+
 
   // NEED TO IMPLEMENT CORRECT API
   // static const String logout = '$baseURL/users/logout';

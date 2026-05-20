@@ -12,6 +12,8 @@ import 'package:trackify/feature/fuel_logs/presentation/cubit/fuel_stations_cubi
 import 'package:trackify/feature/fuel_logs/data/repository/overpass_service.dart';
 import 'package:trackify/feature/fuel_logs/presentation/pages/widgets/dashboard_tab_view.dart';
 import 'package:trackify/feature/fuel_logs/presentation/pages/widgets/fuel_stations_tab_view.dart';
+import 'package:trackify/feature/fuel_logs/data/data source/refuel_data_source.dart';
+import 'package:trackify/feature/fuel_logs/presentation/cubit/refuel_history_cubit.dart';
 
 class FuelLogsScreen extends StatefulWidget {
   const FuelLogsScreen({super.key});
@@ -76,7 +78,28 @@ class _FuelLogsScreenState extends State<FuelLogsScreen>
 
     return MultiBlocProvider(
       providers: [
-        BlocProvider(create: (context) => FuelLogsCubit()..loadFuelLogs()),
+        BlocProvider(
+          create: (context) {
+            final serviceState = context.read<ServiceLogsCubit>().state;
+            final imei = serviceState is ServiceLogsLoaded 
+                ? (serviceState.selectedVehicle?.imei ?? '') 
+                : '';
+            return FuelLogsCubit()..loadFuelLogs(imei);
+          },
+        ),
+        BlocProvider(
+          create: (context) {
+            final serviceState = context.read<ServiceLogsCubit>().state;
+            final imei = serviceState is ServiceLogsLoaded 
+                ? (serviceState.selectedVehicle?.imei ?? '') 
+                : '';
+            final cubit = RefuelHistoryCubit(RefuelDataSource());
+            if (imei.isNotEmpty) {
+              cubit.loadRefuelHistory(imei);
+            }
+            return cubit;
+          },
+        ),
         BlocProvider(
           create: (context) =>
               FuelStationsCubit(OverpassService())..fetchNearbyStations(),
@@ -120,7 +143,8 @@ class _FuelLogsScreenState extends State<FuelLogsScreen>
                   onBack: () => Navigator.pop(context),
                   onVehicleSelected: (vehicle) {
                     context.read<ServiceLogsCubit>().selectVehicle(vehicle.id!);
-                    context.read<FuelLogsCubit>().loadFuelLogs();
+                    context.read<FuelLogsCubit>().loadFuelLogs(vehicle.imei ?? '');
+                    context.read<RefuelHistoryCubit>().loadRefuelHistory(vehicle.imei ?? '');
                   },
                 ),
                 Padding(
@@ -166,7 +190,7 @@ class _FuelLogsScreenState extends State<FuelLogsScreen>
                     controller: _tabController,
                     children: [
                       const DashboardTabView(),
-                      const RefuelHistoryTabView(),
+                      RefuelHistoryTabView(imei: currentState.selectedVehicle?.imei ?? ''),
                       const FuelStationsTabView(),
                     ],
                   ),
@@ -174,11 +198,16 @@ class _FuelLogsScreenState extends State<FuelLogsScreen>
               ],
             ),
             floatingActionButton: FloatingActionButton.extended(
-              onPressed: () {
-                Navigator.push(
+              onPressed: () async {
+                await Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => const AddFuelScreen()),
                 );
+                // Refresh both cubits when returning from AddFuelScreen
+                if (context.mounted) {
+                  context.read<FuelLogsCubit>().reloadFuelLogs();
+                  context.read<RefuelHistoryCubit>().reloadHistory();
+                }
               },
               tooltip: l10n.addRefuelingDetails,
               backgroundColor: theme.primaryColor,

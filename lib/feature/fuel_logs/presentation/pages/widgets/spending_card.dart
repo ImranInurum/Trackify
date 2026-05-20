@@ -46,7 +46,7 @@ class SpendingCard extends StatelessWidget {
             children: [
               Expanded(
                 child: Text(
-                  "${l10n.currencySymbol} ${state.spendingAmount} • ${state.spendingLiters} ${l10n.litersShort}",
+                  "₹${(state.totalSpendings.isEmpty || state.totalSpendings == 'null') ? '0' : state.totalSpendings} • ${(state.totalFuelAdded.isEmpty || state.totalFuelAdded == 'null') ? '0' : state.totalFuelAdded} L",
                   style: TextStyle(
                     color: theme.textTheme.titleLarge?.color,
                     fontSize: mediaQuery.textScaler.scale(20),

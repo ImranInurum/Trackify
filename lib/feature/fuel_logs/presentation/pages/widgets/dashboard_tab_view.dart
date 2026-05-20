@@ -4,10 +4,14 @@ import 'package:trackify/l10n/app_localizations.dart';
 
 import '../../cubit/fuel_logs_cubit.dart';
 import '../../cubit/fuel_logs_state.dart';
+
 import 'odometer_card.dart';
 import 'last_refuel_card.dart';
 import 'spending_card.dart';
 import 'nearby_fuel_stations_list.dart';
+
+import 'package:trackify/feature/service_logs/presentation/cubit/service_logs_cubit.dart';
+import 'package:trackify/feature/service_logs/presentation/cubit/service_logs_state.dart';
 
 class DashboardTabView extends StatelessWidget {
   const DashboardTabView({super.key});
@@ -23,16 +27,17 @@ class DashboardTabView extends StatelessWidget {
     return BlocBuilder<FuelLogsCubit, FuelLogsState>(
       builder: (context, state) {
         if (state is FuelLogsInitial) {
-          // Trigger load if cubit was created but loadFuelLogs wasn't called yet
-          context.read<FuelLogsCubit>().loadFuelLogs();
-          return Center(child: CircularProgressIndicator(color: theme.primaryColor));
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            final serviceState = context.read<ServiceLogsCubit>().state;
+
+            if (serviceState is ServiceLogsLoaded) {
+              final imei = serviceState.selectedVehicle?.imei ?? '';
+
+              context.read<FuelLogsCubit>().loadFuelLogs(imei);
+            }
+          });
         }
-        if (state is FuelLogsLoading) {
-          return Center(child: CircularProgressIndicator(color: theme.primaryColor));
-        }
-        if (state is FuelLogsError) {
-          return Center(child: Text(state.message));
-        }
+
         if (state is FuelLogsLoaded) {
           return Container(
             color: theme.scaffoldBackgroundColor,
