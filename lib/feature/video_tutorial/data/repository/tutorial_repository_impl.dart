@@ -8,8 +8,11 @@ class TutorialRepositoryImplement implements TutorialRepository{
   TutorialRepositoryImplement(this.remote);
 
   @override
-  Future<List<Tutorial>> getTutorials() {
-   return remote.fetchTutorial();
+  Future<List<Tutorial>> getTutorials(
+      String categoryId) async {
+
+    return await remote
+        .fetchTutorial(categoryId);
   }
 
 }

@@ -4,12 +4,50 @@ import 'package:trackify/feature/video_tutorial/presentation/pages/tutorial_scre
 import 'package:trackify/l10n/app_localizations_ar.dart';
 
 import '../../../../l10n/app_localizations.dart';
+import '../../data/datasource/category_datasource.dart';
+import '../../data/model/category_model.dart';
 
-class CategoryScreen extends StatelessWidget {
+class CategoryScreen extends StatefulWidget {
   const CategoryScreen({super.key});
 
   @override
+  State<CategoryScreen> createState() => _CategoryScreenState();
+}
+
+class _CategoryScreenState extends State<CategoryScreen> {
+  List<CategoryModel> categories = [];
+  bool isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    loadCategories();
+  }
+
+  Future<void> loadCategories() async {
+
+    try {
+
+      final data =
+      await CategoryRemoteData()
+          .fetchCategories();
+
+      setState(() {
+        categories = data;
+        isLoading = false;
+      });
+
+    } catch (e) {
+
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+  @override
   Widget build(BuildContext context) {
+
+
 
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
@@ -38,10 +76,26 @@ class CategoryScreen extends StatelessWidget {
           padding: const EdgeInsets.all(15),
       child:  Column(
         children: [
-          _card(context, l10n.location, "location"),
-          _card(context, l10n.amazingFeatures, "features"),
-          _card(context, l10n.deviceInstallation, "installation"),
-          _card(context, l10n.voiceMonitoring, "voice"),
+          isLoading
+              ? const Center(
+            child:
+            CircularProgressIndicator(),
+          )
+              : ListView.builder(
+            shrinkWrap: true,
+            itemCount: categories.length,
+            itemBuilder: (context, index) {
+
+              final category =
+              categories[index];
+
+              return _card(
+                context,
+                category.name,
+                category.id,
+              );
+            },
+          )
 
         ],
       ),
@@ -56,7 +110,7 @@ class CategoryScreen extends StatelessWidget {
     return GestureDetector(
       onTap: (){
         Navigator.push(context,
-            MaterialPageRoute(builder: (context)=>TutorialScreen(type:type, title: title,)
+            MaterialPageRoute(builder: (context)=>TutorialScreen(title: title, categoryId: type,)
             )
         );
       },

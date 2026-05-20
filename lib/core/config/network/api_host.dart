@@ -1,4 +1,3 @@
-import 'package:trackify/feature/reach_me_sticker/presentation/widgets/sticker_action_buttons.dart';
 
 class ApiURL {
   final String hostUrl;
@@ -111,6 +110,17 @@ class ApiURL {
   static String refuel(String imei) =>
       "$baseURL/api/vehicle-refuel/$imei";
 
+
+// -------------------------
+// Video Tutorial
+// -------------------------
+static const String tutorial  = "$baseURL/api/api/video-tutorials-list";
+static const String category  = "$baseURL/api/video-tutorials-category";
+
+// -------------------------
+// App Update
+// -------------------------
+static const String appUpdate ="$baseURL/api/app-update/app-updates";
 
   // NEED TO IMPLEMENT CORRECT API
   // static const String logout = '$baseURL/users/logout';
