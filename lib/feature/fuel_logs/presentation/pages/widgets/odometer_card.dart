@@ -53,7 +53,9 @@ class OdometerCard extends StatelessWidget {
             onTap: () => _showUpdateOdometerDialog(context, l10n),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
-              children: state.odometerReading
+              children: (state.odometerReading.isNotEmpty && state.odometerReading != 'null'
+                  ? state.odometerReading
+                  : "000000")
                   .split('')
                   .map((d) => _buildDigitBox(context, d))
                   .toList(),
@@ -90,7 +92,7 @@ class OdometerCard extends StatelessWidget {
               ),
               const Spacer(),
               Text(
-                "${state.tankCapacity} ${l10n.litersShort}",
+                "${state.tankCapacity == 'null' ? '0' : state.tankCapacity} ${l10n.litersShort}",
                 style: TextStyle(
                   color: theme.textTheme.bodyLarge?.color,
                   fontSize: mediaQuery.textScaler.scale(16),

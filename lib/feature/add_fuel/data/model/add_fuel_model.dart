@@ -31,13 +31,15 @@ class AddFuelModel extends AddFuelEntity {
 
   Map<String, dynamic> toMap() {
     return {
-      'vehicle': vehicle,
-      'dateTime': dateTime.toIso8601String(),
-      'fuelStation': fuelStation,
-      'amount': amount,
-      'odometer': odometer,
-      'fullTank': fullTank,
-      'pricePerLitre': pricePerLitre,
+      'imei': vehicle,
+      'refuelDate': "${dateTime.year}-${dateTime.month.toString().padLeft(2,'0')}-${dateTime.day.toString().padLeft(2,'0')}",
+      'refuelTime' : "${dateTime.hour.toString().padLeft(2,'0')}-${dateTime.minute.toString().padLeft(2,'0')}",
+      "currentOdometer": odometer,
+      "totalAmount": amount,
+      "stationName": fuelStation,
+      "pricePerLiter": pricePerLitre,
+      "tankStatus": fullTank ? 1 : 0,
+      "fuelBeforeRefuel": 15,
     };
   }
 }

@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 
 class RefuelLog extends Equatable {
+
   final String id;
   final DateTime dateTime;
   final String odometer;
@@ -25,19 +26,20 @@ class RefuelLog extends Equatable {
 
   @override
   List<Object?> get props => [
-        id,
-        dateTime,
-        odometer,
-        location,
-        amount,
-        rate,
-        distanceSinceLast,
-        liters,
-        mileage,
-      ];
+    id,
+    dateTime,
+    odometer,
+    location,
+    amount,
+    rate,
+    distanceSinceLast,
+    liters,
+    mileage,
+  ];
 }
 
 abstract class FuelLogsState extends Equatable {
+
   const FuelLogsState();
 
   @override
@@ -49,6 +51,8 @@ class FuelLogsInitial extends FuelLogsState {}
 class FuelLogsLoading extends FuelLogsState {}
 
 class FuelLogsLoaded extends FuelLogsState {
+
+  // OLD DATA
   final String odometerReading;
   final String tankCapacity;
   final String fuelRemaining;
@@ -60,16 +64,30 @@ class FuelLogsLoaded extends FuelLogsState {
   final String lastRefuelDate;
   final String lastRefuelAmount;
   final String lastRefuelLiters;
-  
-  // New fields for Refuel History tab
+
   final List<RefuelLog> refuelLogs;
   final String totalFuelAdded;
   final String totalSpendings;
   final String averageMileage;
   final String refuelCount;
 
-  const FuelLogsLoaded({
+  // NEW API DATA
+  final String imei;
+  final String vehicleImage;
+  final String vehicleIcon;
+  final String vehicleColor;
+
+  final String thisWeekAmount;
+  final String thisWeekFuel;
+  final String thisMonthAmount;
+  final String thisMonthFuel;
+  final String id;
+
+  const FuelLogsLoaded( {
+
+    // OLD
     required this.odometerReading,
+    required this.id,
     required this.tankCapacity,
     required this.fuelRemaining,
     required this.distanceRemaining,
@@ -80,35 +98,61 @@ class FuelLogsLoaded extends FuelLogsState {
     required this.lastRefuelDate,
     required this.lastRefuelAmount,
     required this.lastRefuelLiters,
+
     this.refuelLogs = const [],
-    this.totalFuelAdded = "0.0",
+    this.totalFuelAdded = "0",
     this.totalSpendings = "0",
-    this.averageMileage = "0.0",
+    this.averageMileage = "0",
     this.refuelCount = "0",
+
+
+    // NEW
+    this.imei = '',
+    this.vehicleImage = '',
+    this.vehicleIcon = '',
+    this.vehicleColor = '',
+    this.thisWeekAmount = '0',
+    this.thisWeekFuel = '0',
+    this.thisMonthAmount = '0',
+    this.thisMonthFuel = '0',
+
   });
 
   @override
   List<Object?> get props => [
-        odometerReading,
-        tankCapacity,
-        fuelRemaining,
-        distanceRemaining,
-        mileageArai,
-        distanceTravelled,
-        spendingAmount,
-        spendingLiters,
-        lastRefuelDate,
-        lastRefuelAmount,
-        lastRefuelLiters,
-        refuelLogs,
-        totalFuelAdded,
-        totalSpendings,
-        averageMileage,
-        refuelCount,
-      ];
+
+    // OLD
+    odometerReading,
+    tankCapacity,
+    fuelRemaining,
+    distanceRemaining,
+    mileageArai,
+    distanceTravelled,
+    spendingAmount,
+    spendingLiters,
+    lastRefuelDate,
+    lastRefuelAmount,
+    lastRefuelLiters,
+    refuelLogs,
+    totalFuelAdded,
+    totalSpendings,
+    averageMileage,
+    refuelCount,
+
+    // NEW
+    imei,
+    vehicleImage,
+    vehicleIcon,
+    vehicleColor,
+    thisWeekAmount,
+    thisWeekFuel,
+    thisMonthAmount,
+    thisMonthFuel,
+  ];
 }
 
 class FuelLogsError extends FuelLogsState {
+
   final String message;
 
   const FuelLogsError(this.message);

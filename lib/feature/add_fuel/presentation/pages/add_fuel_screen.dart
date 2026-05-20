@@ -99,7 +99,7 @@ class _AddFuelScreenState extends State<AddFuelScreen> with TickerProviderStateM
               ),
             ),
             onPressed: (isFullTankSelected || isPartialTankSelected)
-                ? () {
+                ? () async {
                     final combinedDateTime = DateTime(
                       _selectedDate.year,
                       _selectedDate.month,
@@ -108,23 +108,29 @@ class _AddFuelScreenState extends State<AddFuelScreen> with TickerProviderStateM
                       _selectedTime.minute,
                     );
 
-                    final entity = AddFuelEntity(
-                      vehicle: 'SP 125',
-                      dateTime: combinedDateTime,
-                      fuelStation: 'C.M. Petro Point',
-                      odometer: int.parse(
-                        odometerController.text,
-                      ),
-                      amount: double.parse(
-                        amountController.text,
-                      ),
-                      pricePerLitre: double.parse(
-                        priceController.text,
-                      ),
-                      fullTank: isFullTankSelected,
-                    );
+                    final currentServiceState = context.read<ServiceLogsCubit>().state;
+                    if (currentServiceState is ServiceLogsLoaded) {
+                      final entity = AddFuelEntity(
+                        vehicle: currentServiceState.selectedVehicle?.imei ?? '',
+                        dateTime: combinedDateTime,
+                        fuelStation: 'C.M. Petro Point',
+                        odometer: int.tryParse(
+                          odometerController.text,
+                        ) ?? 0,
+                        amount: double.tryParse(
+                          amountController.text,
+                        ) ?? 0,
+                        pricePerLitre: double.tryParse(
+                          priceController.text,
+                        ) ?? 0,
+                        fullTank: isFullTankSelected,
+                      );
+                      await context.read<AddFuelCubit>().saveFuel(entity);
+                    }
+                    if (context.mounted) {
+                      Navigator.pop(context);
+                    }
 
-                    context.read<AddFuelCubit>().saveFuel(entity);
                   }
                 : null,
             child: Text(
@@ -205,7 +211,7 @@ class _AddFuelScreenState extends State<AddFuelScreen> with TickerProviderStateM
                             onBack: () => Navigator.pop(context),
                             onVehicleSelected: (vehicle) {
                               context.read<ServiceLogsCubit>().selectVehicle(vehicle.id!);
-                              context.read<FuelLogsCubit>().loadFuelLogs();
+                              context.read<FuelLogsCubit>().loadFuelLogs(vehicle.imei ?? '');
                             },
                           ),
 

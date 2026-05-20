@@ -1,51 +1,169 @@
+import 'dart:convert';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:http/http.dart' as http;
+import 'package:trackify/core/config/network/api_host.dart';
+
 import 'fuel_logs_state.dart';
 
 class FuelLogsCubit extends Cubit<FuelLogsState> {
+
+  /// Stores the current IMEI so we can reload after adding a refuel.
+  String _currentImei = '';
+
   FuelLogsCubit() : super(FuelLogsInitial());
 
-  void loadFuelLogs() {
-    emit(FuelLogsLoading());
-    // Simulating API call
-    Future.delayed(const Duration(milliseconds: 500), () {
-      emit(FuelLogsLoaded(
-        odometerReading: "031782",
-        tankCapacity: "11.0",
-        fuelRemaining: "7.5",
-        distanceRemaining: "374.0",
-        mileageArai: "50",
-        distanceTravelled: "0.0",
-        spendingAmount: "0.00",
-        spendingLiters: "0.00",
-        lastRefuelDate: "15 April",
-        lastRefuelAmount: "800",
-        lastRefuelLiters: "7.48",
-        totalFuelAdded: "14.99",
-        totalSpendings: "1,600",
-        averageMileage: "0.0",
-        refuelCount: "02",
-        refuelLogs: [
-          RefuelLog(
-            id: "1",
-            dateTime: DateTime(2026, 4, 27, 22, 57),
-            odometer: "32105",
-            location: "C.m. Petro Point, Bpcl Petrol Pump",
-            amount: "800",
-            rate: "106.54",
-            distanceSinceLast: "323",
-            liters: "6.5",
-            mileage: "50",
+  Future<void> loadFuelLogs(
+      String imei,
+      ) async {
+
+    try {
+
+      _currentImei = imei;
+
+      emit(FuelLogsLoading());
+
+      final response = await http.get(
+
+        Uri.parse(
+          ApiURL.dashboard(imei),
+        ),
+      );
+
+      print("=========== FUEL LOG API HIT ===========");
+
+      print("STATUS CODE : ${response.statusCode}");
+
+      print("RESPONSE BODY : ${response.body}");
+
+      if (response.statusCode == 200) {
+
+        final decodedData =
+        jsonDecode(response.body);
+
+        final data =
+        decodedData['data'];
+
+        final lastRefuel =
+        data['lastRefuel'];
+
+        emit(
+
+          FuelLogsLoaded(
+
+            // =========================
+            // OLD STATE DATA
+            // =========================
+
+            odometerReading:
+            data['odometerReading']?.toString() ?? '0',
+
+            tankCapacity:
+            data['tankCapacity']?.toString() ?? '0',
+
+            fuelRemaining:
+            data['fuelRemaining']?.toString() ?? '0',
+
+            distanceRemaining:
+            data['distanceRemaining']?.toString() ?? '0',
+
+            mileageArai:
+            data['vehicleMileage']?.toString() ?? '0',
+
+            distanceTravelled:
+            data['distanceTravelled']?.toString() ?? '0',
+
+            spendingAmount:
+            data['spending']?['thisMonthAmount']?.toString() ?? '0',
+
+            spendingLiters:
+            data['spending']?['thisMonthFuel']?.toString() ?? '0',
+
+            lastRefuelDate:
+            lastRefuel?['date']?.toString() ?? "N/A",
+
+            lastRefuelAmount:
+            lastRefuel?['amount']?.toString() ?? "0",
+
+            lastRefuelLiters:
+            lastRefuel?['fuelFilled']?.toString() ?? "0",
+
+            totalFuelAdded:
+            data['spending']?['thisMonthFuel']?.toString() ?? '0',
+
+            totalSpendings:
+            data['spending']?['thisMonthAmount']?.toString() ?? '0',
+
+            averageMileage:
+            data['vehicleMileage']?.toString() ?? '0',
+
+            refuelCount:
+            data['refuelCount']?.toString() ?? '0',
+
+            refuelLogs: const [],
+
+            // =========================
+            // NEW API DATA
+            // =========================
+
+            imei:
+            data['imei']?.toString() ?? '',
+
+            vehicleImage:
+            data['vehicleImage']?.toString() ?? '',
+
+            vehicleIcon:
+            data['vehicleIcon']?.toString() ?? '',
+
+            vehicleColor:
+            data['vehicleColor']?.toString() ?? '',
+
+            thisWeekAmount:
+            data['spending']?['thisWeekAmount']?.toString() ?? '0',
+
+            thisWeekFuel:
+            data['spending']?['thisWeekFuel']?.toString() ?? '0',
+
+            thisMonthAmount:
+            data['spending']?['thisMonthAmount']?.toString() ?? '0',
+
+            thisMonthFuel:
+            data['spending']?['thisMonthFuel']?.toString() ?? '0',
+            
+            id: '',
           ),
-          RefuelLog(
-            id: "2",
-            dateTime: DateTime(2026, 4, 15, 21, 16),
-            odometer: "31782",
-            location: "C.m. Petro Point, Bpcl Petrol Pump",
-            amount: "800",
-            rate: "106.97",
+        );
+
+      } else {
+
+        emit(
+
+          const FuelLogsError(
+            "Failed To Load Fuel Logs",
           ),
-        ],
-      ));
-    });
+        );
+      }
+
+    } catch (e) {
+
+      print(
+        "FUEL LOG ERROR : $e",
+      );
+
+      emit(
+
+        FuelLogsError(
+          e.toString(),
+        ),
+      );
+    }
+  }
+
+  /// Reloads the fuel logs using the last known IMEI.
+  /// Call this after successfully adding a new refuel entry.
+  Future<void> reloadFuelLogs() async {
+    if (_currentImei.isNotEmpty) {
+      await loadFuelLogs(_currentImei);
+    }
   }
 }

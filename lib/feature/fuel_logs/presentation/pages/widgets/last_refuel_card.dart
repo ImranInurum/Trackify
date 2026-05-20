@@ -42,7 +42,7 @@ class LastRefuelCard extends StatelessWidget {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      "${state.lastRefuelDate} | ${l10n.currencySymbol}${state.lastRefuelAmount} | ${state.lastRefuelLiters} ${l10n.litersShort}",
+                      "${(state.lastRefuelDate.isEmpty || state.lastRefuelDate == 'null') ? '--' : state.lastRefuelDate} | ₹${(state.lastRefuelAmount.isEmpty || state.lastRefuelAmount == 'null') ? '0' : state.lastRefuelAmount} | ${(state.lastRefuelLiters.isEmpty || state.lastRefuelLiters == 'null') ? '0' : state.lastRefuelLiters} ${l10n.litersShort}",
                       style: TextStyle(
                         color: theme.hintColor,
                         fontSize: mediaQuery.textScaler.scale(11),
@@ -68,7 +68,7 @@ class LastRefuelCard extends StatelessWidget {
                 child: _buildStatItem(
                   context,
                   l10n.fuelRemaining,
-                  "${state.fuelRemaining} ${l10n.litersShort}",
+                  "${state.fuelRemaining == 'null' ? '0' : state.fuelRemaining}L",
                   Icons.local_gas_station_outlined,
                 ),
               ),
@@ -76,7 +76,7 @@ class LastRefuelCard extends StatelessWidget {
                 child: _buildStatItem(
                   context,
                   l10n.distanceRemaining,
-                  "${state.distanceRemaining} ${l10n.km}",
+                  "${state.distanceRemaining == 'null' ? '0' : state.distanceRemaining}km",
                   Icons.directions_car_outlined,
                 ),
               ),
@@ -89,7 +89,7 @@ class LastRefuelCard extends StatelessWidget {
                 child: _buildStatItem(
                   context,
                   l10n.mileageArai,
-                  "${state.mileageArai} ${l10n.km}/${l10n.litersShort}",
+                  "${state.mileageArai == 'null' ? '0' : state.mileageArai}km/L",
                   Icons.bolt_outlined,
                   isEditable: true,
                   onTap: () => _showUpdateMileageDialog(context, l10n),
@@ -99,7 +99,7 @@ class LastRefuelCard extends StatelessWidget {
                 child: _buildStatItem(
                   context,
                   l10n.distanceTravelled,
-                  "${state.distanceTravelled} ${l10n.km}",
+                  "${state.distanceTravelled == 'null' ? '0' : state.distanceTravelled} ${l10n.km}",
                   Icons.route_outlined,
                 ),
               ),
