@@ -1,4 +1,4 @@
-﻿{
+{
   "selectLanguage": "Select your language",
   "letsGetStarted": "Let's Get Started",
   "email": "Email",
@@ -554,6 +554,10 @@
   "kmL": "Km/L",
   "serviceLogAddedSuccess": "Service log added successfully",
   "currencySymbol": "₹",
+  "validityLabel": "Validity",
+  "plusGst": "+ GST",
+  "currentPlan": "Current Plan",
+  "vehicle": "Vehicle",
   "refuelHistoryComingSoon": "Refuel History Coming Soon",
   "fuelStationsComingSoon": "Fuel Stations Coming Soon",
   "percentageValue": "{value}%",

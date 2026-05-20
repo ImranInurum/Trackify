@@ -2734,6 +2734,30 @@ abstract class AppLocalizations {
   /// **'₹'**
   String get currencySymbol;
 
+  /// No description provided for @validityLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Validity'**
+  String get validityLabel;
+
+  /// No description provided for @plusGst.
+  ///
+  /// In en, this message translates to:
+  /// **'+ GST'**
+  String get plusGst;
+
+  /// No description provided for @currentPlan.
+  ///
+  /// In en, this message translates to:
+  /// **'Current Plan'**
+  String get currentPlan;
+
+  /// No description provided for @vehicle.
+  ///
+  /// In en, this message translates to:
+  /// **'Vehicle'**
+  String get vehicle;
+
   /// No description provided for @refuelHistoryComingSoon.
   ///
   /// In en, this message translates to:

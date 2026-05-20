@@ -1,38 +1,33 @@
-import 'package:bloc/bloc.dart';
-import 'package:trackify/feature/order_summary/domain/entities/order_summary_entity.dart';
-import 'package:trackify/feature/order_summary/domain/usecase/order_summary_usecase.dart';
-import 'package:trackify/feature/order_summary/presentation/cubit/order_summary_state.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../data/model/purchase_plan_request_model.dart';
+import '../../domain/usecase/purchase_data_plan_usecase.dart';
+import 'order_summary_state.dart';
 
-class OrderSummaryCubit extends Cubit<OrderSummaryState>{
+class OrderSummaryCubit extends Cubit<OrderSummaryState> {
+  final PurchaseDataPlanUseCase _purchaseDataPlanUseCase;
 
-  final GetOrderSummary summary;
+  OrderSummaryCubit(this._purchaseDataPlanUseCase) : super(OrderSummaryInitial());
 
-  OrderSummaryCubit(this.summary) : super(OrderSummaryInitial());
+  Future<void> purchaseDataPlan({
+    required String imei,
+    required String planId,
+    required String paymentStatus,
+    required num amountPaid,
+  }) async {
+    emit(OrderSummaryPurchaseLoading());
 
-  Future<void>getPlans ()async {
-    emit(OrderSummaryLoading());
+    final request = PurchasePlanRequestModel(
+      imei: imei,
+      planId: planId,
+      paymentStatus: paymentStatus,
+      amountPaid: amountPaid,
+    );
 
-    try{
-      final plans = await summary();
+    final result = await _purchaseDataPlanUseCase(request);
 
-      emit(OrderSummaryLoaded(
-          plans: plans,
-          selectedPlans: plans.first
-      )
-       );
-
-    }catch(e){
-      emit(OrderSummaryError(e.toString()));
-    }
-  }
-
-  void selectPlan(OrderSummaryEntity plan){
-    if(state is OrderSummaryLoaded){
-      final currentState = state as OrderSummaryLoaded;
-      
-      emit(OrderSummaryLoaded(
-          plans: currentState.plans,
-          selectedPlans: plan));
-    }
+    result.fold(
+      (failure) => emit(OrderSummaryPurchaseError(failure.message)),
+      (response) => emit(OrderSummaryPurchaseSuccess(response.message)),
+    );
   }
 }

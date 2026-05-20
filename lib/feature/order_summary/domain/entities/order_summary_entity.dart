@@ -1,4 +1,5 @@
 class OrderSummaryEntity {
+  final String id;
   final String title;
   final String validity;
   final int price;
@@ -10,6 +11,7 @@ class OrderSummaryEntity {
   final bool isCombo;
 
   OrderSummaryEntity({
+    required this.id,
     required this.title,
     required this.validity,
     required this.price,
@@ -18,6 +20,6 @@ class OrderSummaryEntity {
     required this.gst,
     required this.toPay,
     required this.benefit,
-    required this.isCombo
-});
+    required this.isCombo,
+  });
 }

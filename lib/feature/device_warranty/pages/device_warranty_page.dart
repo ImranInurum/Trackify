@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:trackify/core/config/font_manager.dart';
 import 'package:trackify/core/constants/app_images.dart';
+import 'package:trackify/feature/device_warranty/presentation/cubit/device_warranty_cubit.dart';
+import 'package:trackify/feature/device_warranty/presentation/cubit/device_warranty_state.dart';
+import 'package:trackify/feature/device_warranty/domain/entities/device_warranty_entity.dart';
 import '../../../l10n/app_localizations.dart';
 import 'device_warranty_confirm_screen.dart';
 
@@ -12,6 +17,12 @@ class WarrantyScreen extends StatefulWidget {
 }
 
 class _WarrantyScreenState extends State<WarrantyScreen> {
+  @override
+  void initState() {
+    super.initState();
+    context.read<DeviceWarrantyCubit>().load();
+  }
+
   List<Map<String, dynamic>> _getBenefits(AppLocalizations l10n) => [
     {
       "highlight": l10n.benefit1_highlight,
@@ -34,6 +45,21 @@ class _WarrantyScreenState extends State<WarrantyScreen> {
       "icon": Icons.subtitles_outlined,
     },
   ];
+
+  IconData _getBenefitIcon(int index) {
+    switch (index) {
+      case 0:
+        return Icons.cached_rounded;
+      case 1:
+        return Icons.settings_outlined;
+      case 2:
+        return Icons.person_outline_rounded;
+      case 3:
+        return Icons.subtitles_outlined;
+      default:
+        return Icons.check_circle_outline_rounded;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -64,46 +90,115 @@ class _WarrantyScreenState extends State<WarrantyScreen> {
           ),
         ),
       ),
-      body: Column(
-        children: [
-          Expanded(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _topCard(l10n, theme, colorScheme),
-                  const SizedBox(height: 24),
+      body: BlocBuilder<DeviceWarrantyCubit, DeviceWarrantyState>(
+        builder: (context, state) {
+          if (state is DeviceWarrantyLoading || state is DeviceWarrantyInitial) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
 
-                  Text(
-                    l10n.warranty_benefitsTitle,
-                    style: theme.textTheme.titleSmall?.copyWith(
-                      fontSize: 15,
-                      fontWeight: FontWeightManager.regular,
-                      color: colorScheme.onSurface.withValues(alpha: 0.6),
+          if (state is DeviceWarrantyError) {
+            return Center(
+              child: Padding(
+                padding: const EdgeInsets.all(24.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.error_outline_rounded,
+                      color: colorScheme.error,
+                      size: 48,
                     ),
-                  ),
-                  const SizedBox(height: 16),
-
-                  /// 🔹 BENEFITS LIST
-                  ..._getBenefits(l10n).map(
-                    (benefit) => _benefitTile(
-                      theme: theme,
-                      colorScheme: colorScheme,
-                      highlightText: benefit['highlight'] as String,
-                      normalText: benefit['normal'] as String,
-                      icon: benefit['icon'] as IconData,
+                    const SizedBox(height: 16),
+                    Text(
+                      state.message,
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        color: colorScheme.onSurface.withValues(alpha: 0.7),
+                      ),
+                      textAlign: TextAlign.center,
                     ),
-                  ),
-                ],
+                    const SizedBox(height: 24),
+                    ElevatedButton.icon(
+                      onPressed: () => context.read<DeviceWarrantyCubit>().load(),
+                      icon: const Icon(Icons.refresh_rounded),
+                      label: const Text("Retry"),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: colorScheme.primary,
+                        foregroundColor: colorScheme.onPrimary,
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
-            child: _bottomButton(l10n, theme, colorScheme),
-          ),
-        ],
+            );
+          }
+
+          if (state is DeviceWarrantyLoaded) {
+            final warrantyData = state.warranty;
+            final offer = warrantyData.offer;
+
+            return Column(
+              children: [
+                Expanded(
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _topCard(l10n, theme, colorScheme, warrantyData),
+                        const SizedBox(height: 24),
+
+                        Text(
+                          l10n.warranty_benefitsTitle,
+                          style: theme.textTheme.titleSmall?.copyWith(
+                            fontSize: 15,
+                            fontWeight: FontWeightManager.regular,
+                            color: colorScheme.onSurface.withValues(alpha: 0.6),
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+
+                        /// 🔹 BENEFITS LIST
+                        if (offer != null && offer.benefits.isNotEmpty)
+                          ...offer.benefits.asMap().entries.map(
+                            (entry) {
+                              final index = entry.key;
+                              final benefit = entry.value;
+                              return _benefitTile(
+                                theme: theme,
+                                colorScheme: colorScheme,
+                                highlightText: "${benefit.title} ",
+                                normalText: benefit.subtitle,
+                                icon: _getBenefitIcon(index),
+                              );
+                            },
+                          )
+                        else
+                          ..._getBenefits(l10n).map(
+                            (benefit) => _benefitTile(
+                              theme: theme,
+                              colorScheme: colorScheme,
+                              highlightText: benefit['highlight'] as String,
+                              normalText: benefit['normal'] as String,
+                              icon: benefit['icon'] as IconData,
+                            ),
+                          ),
+                      ],
+                    ),
+                  ),
+                ),
+                if (offer != null)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+                    child: _bottomButton(l10n, theme, colorScheme, warrantyData),
+                  ),
+              ],
+            );
+          }
+
+          return const SizedBox.shrink();
+        },
       ),
     );
   }
@@ -113,7 +208,42 @@ class _WarrantyScreenState extends State<WarrantyScreen> {
     AppLocalizations l10n,
     ThemeData theme,
     ColorScheme colorScheme,
+    DeviceWarrantyEntity warrantyData,
   ) {
+    final offer = warrantyData.offer;
+    final vehicle = warrantyData.vehicle;
+    final warranty = warrantyData.warranty;
+
+    Widget imageWidget;
+    if (offer != null && offer.productImage.isNotEmpty) {
+      imageWidget = CachedNetworkImage(
+        imageUrl: offer.productImage,
+        height: 100,
+        width: 100,
+        fit: BoxFit.contain,
+        placeholder: (context, url) => const SizedBox(
+          height: 100,
+          width: 100,
+          child: Center(
+            child: CircularProgressIndicator(strokeWidth: 2),
+          ),
+        ),
+        errorWidget: (context, url, error) => Image.asset(
+          AppImages.installDevices,
+          height: 100,
+          width: 100,
+          fit: BoxFit.contain,
+        ),
+      );
+    } else {
+      imageWidget = Image.asset(
+        AppImages.installDevices,
+        height: 100,
+        width: 100,
+        fit: BoxFit.contain,
+      );
+    }
+
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
@@ -124,16 +254,11 @@ class _WarrantyScreenState extends State<WarrantyScreen> {
         children: [
           Row(
             children: [
-              Image.asset(
-                AppImages.installDevices,
-                height: 100,
-                width: 100,
-                fit: BoxFit.contain,
-              ),
+              imageWidget,
               const SizedBox(width: 16),
               Expanded(
                 child: Text(
-                  l10n.warranty_extend,
+                  offer?.title.isNotEmpty == true ? offer!.title : l10n.warranty_extend,
                   style: TextStyle(
                     color: colorScheme.onSurface.withValues(alpha: 0.9),
                     fontWeight: FontWeight.w400,
@@ -166,7 +291,7 @@ class _WarrantyScreenState extends State<WarrantyScreen> {
                       ),
                       const SizedBox(height: 6),
                       Text(
-                        l10n.vehicleNamePlaceholder,
+                        vehicle?.displayName ?? l10n.vehicleNamePlaceholder,
                         style: TextStyle(
                           color: colorScheme.onSurface,
                           fontWeight: FontWeight.w500,
@@ -192,7 +317,7 @@ class _WarrantyScreenState extends State<WarrantyScreen> {
                         text: TextSpan(
                           children: [
                             TextSpan(
-                              text: '23 Feb 2027 ',
+                              text: '${warranty?.expiryDateText ?? '--'} ',
                               style: TextStyle(
                                 color: colorScheme.onSurface,
                                 fontWeight: FontWeight.w500,
@@ -200,7 +325,9 @@ class _WarrantyScreenState extends State<WarrantyScreen> {
                               ),
                             ),
                             TextSpan(
-                              text: '(301 days left)',
+                              text: warranty?.daysLeftText.isNotEmpty == true
+                                  ? '(${warranty!.daysLeftText})'
+                                  : '',
                               style: TextStyle(
                                 color: const Color(0xFF81C784),
                                 fontSize: 11,
@@ -286,7 +413,11 @@ class _WarrantyScreenState extends State<WarrantyScreen> {
     AppLocalizations l10n,
     ThemeData theme,
     ColorScheme colorScheme,
+    DeviceWarrantyEntity warrantyData,
   ) {
+    final offer = warrantyData.offer;
+    if (offer == null) return const SizedBox.shrink();
+
     return Container(
       width: double.infinity,
       height: 45,
@@ -306,9 +437,13 @@ class _WarrantyScreenState extends State<WarrantyScreen> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => const DeviceWarrantyConfirmScreen(),
+                builder: (context) => DeviceWarrantyConfirmScreen(warrantyData: warrantyData),
               ),
-            );
+            ).then((success) {
+              if (success == true && mounted) {
+                context.read<DeviceWarrantyCubit>().load();
+              }
+            });
           },
           borderRadius: BorderRadius.circular(8),
           child: Center(
@@ -320,9 +455,9 @@ class _WarrantyScreenState extends State<WarrantyScreen> {
                   fontSize: 15,
                 ),
                 children: [
-                  TextSpan(text: l10n.warranty_button),
+                  TextSpan(text: "Extend warranty now @ ${l10n.currencySymbol}${offer.offerPrice.toInt()} "),
                   TextSpan(
-                    text: l10n.warranty_button_old,
+                    text: "${l10n.currencySymbol}${offer.originalPrice.toInt()}",
                     style: TextStyle(
                       decoration: TextDecoration.lineThrough,
                       color: Colors.black.withValues(alpha: 0.5),

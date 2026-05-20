@@ -1399,6 +1399,18 @@ class AppLocalizationsHi extends AppLocalizations {
   String get currencySymbol => '₹';
 
   @override
+  String get validityLabel => 'वैधता';
+
+  @override
+  String get plusGst => '+ GST';
+
+  @override
+  String get currentPlan => 'वर्तमान योजना';
+
+  @override
+  String get vehicle => 'वाहन';
+
+  @override
   String get refuelHistoryComingSoon => 'रिफ्यूल इतिहास जल्द ही आ रहा है';
 
   @override

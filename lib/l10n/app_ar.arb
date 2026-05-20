@@ -1,4 +1,4 @@
-﻿{
+{
     "selectLanguage": "اختر لغتك",
     "letsGetStarted": "دعنا نبدأ",
     "email": "البريد الإلكتروني",
@@ -536,6 +536,10 @@
     "kmL": "كم/لتر",
     "serviceLogAddedSuccess": "تم إضافة سجل الخدمة بنجاح",
     "currencySymbol": "₹",
+    "validityLabel": "الصلاحية",
+    "plusGst": "+ GST",
+    "currentPlan": "الخطة الحالية",
+    "vehicle": "المركبة",
     "refuelHistoryComingSoon": "سجل تزويد الوقود قريباً",
     "fuelStationsComingSoon": "محطات الوقود قريباً",
     "percentageValue": "{value}%",

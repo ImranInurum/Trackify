@@ -1391,6 +1391,18 @@ class AppLocalizationsAr extends AppLocalizations {
   String get currencySymbol => '₹';
 
   @override
+  String get validityLabel => 'الصلاحية';
+
+  @override
+  String get plusGst => '+ GST';
+
+  @override
+  String get currentPlan => 'الخطة الحالية';
+
+  @override
+  String get vehicle => 'المركبة';
+
+  @override
   String get refuelHistoryComingSoon => 'سجل تزويد الوقود قريباً';
 
   @override

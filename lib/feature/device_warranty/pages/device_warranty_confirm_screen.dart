@@ -1,10 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:trackify/core/config/font_manager.dart';
+import 'package:trackify/feature/device_warranty/domain/entities/device_warranty_entity.dart';
+import 'package:trackify/feature/order_summary/domain/entities/order_summary_entity.dart';
+import 'package:trackify/feature/order_summary/presentation/pages/order_summary_screen.dart';
 
 import '../../../l10n/app_localizations.dart';
 
 class DeviceWarrantyConfirmScreen extends StatefulWidget {
-  const DeviceWarrantyConfirmScreen({super.key});
+  final DeviceWarrantyEntity warrantyData;
+
+  const DeviceWarrantyConfirmScreen({
+    super.key,
+    required this.warrantyData,
+  });
 
   @override
   State<DeviceWarrantyConfirmScreen> createState() =>
@@ -49,7 +57,7 @@ class _DeviceWarrantyConfirmScreenState
             const SizedBox(height: 16),
             _deviceInfoCard(theme, colorScheme, l10n),
             const SizedBox(height: 24),
-            _paymentSummaryCard(theme, colorScheme,l10n),
+            _paymentSummaryCard(theme, colorScheme, l10n),
             const Spacer(),
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 24),
@@ -66,6 +74,9 @@ class _DeviceWarrantyConfirmScreenState
     ColorScheme colorScheme,
     AppLocalizations l10n,
   ) {
+    final offer = widget.warrantyData.offer;
+    final vehicle = widget.warrantyData.vehicle;
+
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -80,7 +91,7 @@ class _DeviceWarrantyConfirmScreenState
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                l10n.yearExtendedWarranty,
+                offer?.planName ?? l10n.yearExtendedWarranty,
                 style: TextStyle(
                   color: colorScheme.onSurface.withValues(alpha: 0.7),
                   fontSize: 13,
@@ -88,7 +99,7 @@ class _DeviceWarrantyConfirmScreenState
                 ),
               ),
               Text(
-                '${l10n.currencySymbol}730',
+                '${l10n.currencySymbol}${offer?.originalPrice.toInt() ?? 730}',
                 style: TextStyle(
                   color: colorScheme.onSurface.withValues(alpha: 0.4),
                   fontSize: 13,
@@ -103,7 +114,7 @@ class _DeviceWarrantyConfirmScreenState
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                '${l10n.vehicleNamePlaceholder}(${l10n.vehicleNumberPlaceholder})',
+                vehicle?.displayName ?? '${l10n.vehicleNamePlaceholder}(${l10n.vehicleNumberPlaceholder})',
                 style: TextStyle(
                   color: colorScheme.onSurface.withValues(alpha: 0.5),
                   fontSize: 13,
@@ -111,7 +122,7 @@ class _DeviceWarrantyConfirmScreenState
                 ),
               ),
               Text(
-                '${l10n.currencySymbol}365',
+                '${l10n.currencySymbol}${offer?.offerPrice.toInt() ?? 365}',
                 style: TextStyle(
                   color: colorScheme.onSurface,
                   fontSize: 14,
@@ -122,7 +133,7 @@ class _DeviceWarrantyConfirmScreenState
           ),
           const SizedBox(height: 4),
           Text(
-            'Trackify Lite',
+            offer?.productName ?? 'Trackify Lite',
             style: TextStyle(
               color: colorScheme.onSurface.withValues(alpha: 0.5),
               fontSize: 13,
@@ -134,7 +145,15 @@ class _DeviceWarrantyConfirmScreenState
     );
   }
 
-  Widget _paymentSummaryCard(ThemeData theme, ColorScheme colorScheme, AppLocalizations l10n) {
+  Widget _paymentSummaryCard(
+    ThemeData theme,
+    ColorScheme colorScheme,
+    AppLocalizations l10n,
+  ) {
+    final offer = widget.warrantyData.offer;
+    final vehicle = widget.warrantyData.vehicle;
+    final discount = (offer?.originalPrice ?? 730) - (offer?.offerPrice ?? 365);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -165,7 +184,7 @@ class _DeviceWarrantyConfirmScreenState
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    '${l10n.vehicleNamePlaceholder} (${l10n.vehicleNumberPlaceholder})',
+                    vehicle?.displayName ?? '${l10n.vehicleNamePlaceholder} (${l10n.vehicleNumberPlaceholder})',
                     style: TextStyle(
                       color: colorScheme.onSurface.withValues(alpha: 0.8),
                       fontSize: 13,
@@ -173,7 +192,7 @@ class _DeviceWarrantyConfirmScreenState
                     ),
                   ),
                   Text(
-                    '${l10n.currencySymbol}730',
+                    '${l10n.currencySymbol}${offer?.originalPrice.toInt() ?? 730}',
                     style: TextStyle(
                       color: colorScheme.onSurface.withValues(alpha: 0.8),
                       fontSize: 13,
@@ -184,7 +203,7 @@ class _DeviceWarrantyConfirmScreenState
               ),
               const SizedBox(height: 4),
               Text(
-                'Trackify Lite',
+                offer?.productName ?? 'Trackify Lite',
                 style: TextStyle(
                   color: colorScheme.onSurface.withValues(alpha: 0.6),
                   fontSize: 13,
@@ -204,7 +223,7 @@ class _DeviceWarrantyConfirmScreenState
                     ),
                   ),
                   Text(
-                    '-${l10n.currencySymbol}365',
+                    '-${l10n.currencySymbol}${discount.toInt()}',
                     style: TextStyle(
                       color: colorScheme.onSurface.withValues(alpha: 0.5),
                       fontSize: 13,
@@ -220,8 +239,7 @@ class _DeviceWarrantyConfirmScreenState
                   const dashWidth = 4.0;
                   const dashHeight = 1.0;
                   const dashSpace = 2.0;
-                  final dashCount = (boxWidth / (dashWidth + dashSpace))
-                      .floor();
+                  final dashCount = (boxWidth / (dashWidth + dashSpace)).floor();
                   return Flex(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     direction: Axis.horizontal,
@@ -252,7 +270,7 @@ class _DeviceWarrantyConfirmScreenState
                     ),
                   ),
                   Text(
-                    '${l10n.currencySymbol}365',
+                    '${l10n.currencySymbol}${offer?.offerPrice.toInt() ?? 365}',
                     style: TextStyle(
                       color: colorScheme.primary,
                       fontSize: 14,
@@ -268,8 +286,13 @@ class _DeviceWarrantyConfirmScreenState
     );
   }
 
-  /// BOTTOM BUTTON
-  Widget _bottomButton(ThemeData theme, ColorScheme colorScheme, AppLocalizations l10n) {
+  Widget _bottomButton(
+    ThemeData theme,
+    ColorScheme colorScheme,
+    AppLocalizations l10n,
+  ) {
+    final offer = widget.warrantyData.offer;
+
     return Container(
       width: double.infinity,
       height: 45,
@@ -286,17 +309,37 @@ class _DeviceWarrantyConfirmScreenState
         color: Colors.transparent,
         child: InkWell(
           onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => DeviceWarrantyConfirmScreen(),
-              ),
-            );
+            if (offer != null) {
+              final discount = (offer.originalPrice - offer.offerPrice).toInt();
+              final orderSummaryPlan = OrderSummaryEntity(
+                id: offer.planId,
+                title: offer.planName,
+                validity: "${offer.durationMonths} Months",
+                price: offer.offerPrice.toInt(),
+                originalPrice: offer.originalPrice.toInt(),
+                discount: discount,
+                gst: 0,
+                toPay: offer.offerPrice.toInt(),
+                benefit: offer.benefits.map((b) => b.title).toList(),
+                isCombo: false,
+              );
+
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => OrderSummaryScreen(plan: orderSummaryPlan),
+                ),
+              ).then((success) {
+                if (success == true && mounted) {
+                  Navigator.pop(context, true);
+                }
+              });
+            }
           },
           borderRadius: BorderRadius.circular(8),
           child: Center(
             child: Text(
-              l10n.amountPayable('₹365'),
+              l10n.amountPayable('${l10n.currencySymbol}${offer?.offerPrice.toInt() ?? 365}'),
               style: TextStyle(
                 color: colorScheme.onTertiary,
                 fontWeight: FontWeight.bold,

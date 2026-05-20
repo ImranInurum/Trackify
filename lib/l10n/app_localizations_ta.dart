@@ -1401,6 +1401,18 @@ class AppLocalizationsTa extends AppLocalizations {
   String get currencySymbol => '₹';
 
   @override
+  String get validityLabel => 'செல்லுபடியாகும் காலம்';
+
+  @override
+  String get plusGst => '+ GST';
+
+  @override
+  String get currentPlan => 'தற்போதைய திட்டம்';
+
+  @override
+  String get vehicle => 'வாகனம்';
+
+  @override
   String get refuelHistoryComingSoon => 'எரிபொருள் வரலாறு விரைவில் வரும்';
 
   @override

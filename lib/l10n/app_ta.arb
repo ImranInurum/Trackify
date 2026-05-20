@@ -1,4 +1,4 @@
-﻿{
+{
     "selectLanguage": "உங்கள் மொழியைத் தேர்ந்தெடுக்கவும்",
     "letsGetStarted": "தொடங்குவோம்",
     "email": "மின்னஞ்சல்",
@@ -512,6 +512,10 @@
     "kmL": "கி.மீ/லி",
     "serviceLogAddedSuccess": "சேவை பதிவு வெற்றிகரமாக சேர்க்கப்பட்டது",
     "currencySymbol": "₹",
+    "validityLabel": "செல்லுபடியாகும் காலம்",
+    "plusGst": "+ GST",
+    "currentPlan": "தற்போதைய திட்டம்",
+    "vehicle": "வாகனம்",
     "refuelHistoryComingSoon": "எரிபொருள் வரலாறு விரைவில் வரும்",
     "fuelStationsComingSoon": "எரிபொருள் நிலையங்கள் விரைவில் வரும்",
     "percentageValue": "{value}%",
