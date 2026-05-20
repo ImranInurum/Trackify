@@ -110,6 +110,20 @@ class ApiURL {
   static String refuel(String imei) =>
       "$baseURL/api/vehicle-refuel/$imei";
 
+  // -------------------------
+  // Recharge Plans
+  // -------------------------
+  static const String getRechargePlans = "$baseURL/api/data-plans/recharge-plans";
+  static String getCurrentDataPlan(String imei) =>
+      "$baseURL/api/data-plans/current-data-plan/$imei";
+  static const String purchaseDataPlan = "$baseURL/api/data-plans/vehicle-data-plan";
+
+  // -------------------------
+  // Warranty
+  // -------------------------
+  static String getDeviceWarranty(String imei) =>
+      "$baseURL/api/warranty/device-warranty/$imei";
+
 
 // -------------------------
 // Video Tutorial

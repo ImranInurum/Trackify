@@ -1,4 +1,4 @@
-﻿{
+{
     "selectLanguage": "ನಿಮ್ಮ ಭಾಷೆಯನ್ನು ಆಯ್ಕೆ ಮಾಡಿ",
     "letsGetStarted": "ಪ್ರಾರಂಭಿಸೋಣ",
     "email": "ಇಮೇಲ್",
@@ -531,6 +531,10 @@
     "kmL": "ಕಿಮೀ/ಲೀ",
     "serviceLogAddedSuccess": "ಸೇವಾ ಲಾಗ್ ಅನ್ನು ಯಶಸ್ವಿಯಾಗಿ ಸೇರಿಸಲಾಗಿದೆ",
     "currencySymbol": "₹",
+    "validityLabel": "ಮಾನ್ಯತೆ",
+    "plusGst": "+ GST",
+    "currentPlan": "ಪ್ರಸ್ತುತ ಯೋಜನೆ",
+    "vehicle": "ವಾಹನ",
     "refuelHistoryComingSoon": "ರಿಫ್ಯೂಯಲ್ ಇತಿಹಾಸ ಶೀಘ್ರದಲ್ಲೇ ಬರಲಿದೆ",
     "fuelStationsComingSoon": "ಇಂಧನ ಕೇಂದ್ರಗಳು ಶೀಘ್ರದಲ್ಲೇ ಬರಲಿವೆ",
     "percentageValue": "{value}%",

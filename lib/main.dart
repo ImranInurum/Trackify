@@ -51,6 +51,19 @@ import 'package:trackify/feature/auth/data/repository/auth_repository_impl.dart'
 import 'package:trackify/feature/auth/domain/usecase/auth_case.dart';
 import 'package:trackify/feature/auth/presentation/cubit/auth_cubit.dart';
 import 'package:trackify/feature/device_data/presentation/cubit/device_data_cubit.dart';
+import 'package:trackify/feature/device_data/domain/usecase/get_recharge_plans_usecase.dart';
+import 'package:trackify/feature/device_data/domain/usecase/get_current_data_plan_usecase.dart';
+import 'package:trackify/feature/device_data/data/repository/device_data_repository_impl.dart';
+import 'package:trackify/feature/device_data/data/data_source/device_data_remote_data_source.dart';
+import 'package:trackify/feature/order_summary/data/data_source/order_summary_data_source.dart';
+import 'package:trackify/feature/order_summary/data/repository_impl/order_summary_repository_impl.dart';
+import 'package:trackify/feature/order_summary/domain/usecase/purchase_data_plan_usecase.dart';
+import 'package:trackify/feature/order_summary/presentation/cubit/order_summary_cubit.dart';
+
+import 'package:trackify/feature/device_warranty/presentation/cubit/device_warranty_cubit.dart';
+import 'package:trackify/feature/device_warranty/domain/usecase/get_device_warranty_usecase.dart';
+import 'package:trackify/feature/device_warranty/data/repository/device_warranty_repository_impl.dart';
+import 'package:trackify/feature/device_warranty/data/data_source/device_warranty_data_source.dart';
 import 'package:trackify/feature/document_folder/presentation/pages/document_screen.dart';
 import 'package:trackify/feature/emergency_sos/data/data_source/emergency_alert_remote_data.dart';
 import 'package:trackify/feature/emergency_sos/data/repository/emergency_alert_repository_impl.dart';
@@ -210,7 +223,35 @@ List<BlocProvider> _buildBlocProviders() {
       },
     ),
     BlocProvider<DeviceDataCubit>(
-      create: (_) => DeviceDataCubit(),
+      create: (_) {
+        final repository = DeviceDataRepositoryImpl(
+          DeviceDataRemoteDataSourceImpl(NetworkApiService()),
+        );
+        return DeviceDataCubit(
+          GetRechargePlansUseCase(repository),
+          GetCurrentDataPlanUseCase(repository),
+        );
+      },
+    ),
+    BlocProvider<DeviceWarrantyCubit>(
+      create: (_) {
+        final repository = DeviceWarrantyRepositoryImpl(
+          DeviceWarrantyRemoteDataSourceImpl(NetworkApiService()),
+        );
+        return DeviceWarrantyCubit(
+          GetDeviceWarrantyUseCase(repository),
+        );
+      },
+    ),
+    BlocProvider<OrderSummaryCubit>(
+      create: (_) {
+        final repository = OrderSummaryRepositoryImpl(
+          OrderSummaryRemoteDataSourceImpl(NetworkApiService()),
+        );
+        return OrderSummaryCubit(
+          PurchaseDataPlanUseCase(repository),
+        );
+      },
     ),
     BlocProvider<UpdateCubit>(
       create: (_) => UpdateCubit(

@@ -1,4 +1,4 @@
-﻿{
+{
     "selectLanguage": "अपनी भाषा चुनें",
     "letsGetStarted": "चलिए शुरू करते हैं",
     "email": "ईमेल",
@@ -536,6 +536,10 @@
     "kmL": "किमी/ली.",
     "serviceLogAddedSuccess": "सेवा लॉग सफलतापूर्वक जोड़ा गया",
     "currencySymbol": "₹",
+    "validityLabel": "वैधता",
+    "plusGst": "+ GST",
+    "currentPlan": "वर्तमान योजना",
+    "vehicle": "वाहन",
     "refuelHistoryComingSoon": "रिफ्यूल इतिहास जल्द ही आ रहा है",
     "fuelStationsComingSoon": "ईंधन स्टेशन जल्द ही आ रहे हैं",
     "percentageValue": "{value}%",

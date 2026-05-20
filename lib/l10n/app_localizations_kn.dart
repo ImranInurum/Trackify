@@ -1403,6 +1403,18 @@ class AppLocalizationsKn extends AppLocalizations {
   String get currencySymbol => '₹';
 
   @override
+  String get validityLabel => 'ಮಾನ್ಯತೆ';
+
+  @override
+  String get plusGst => '+ GST';
+
+  @override
+  String get currentPlan => 'ಪ್ರಸ್ತುತ ಯೋಜನೆ';
+
+  @override
+  String get vehicle => 'ವಾಹನ';
+
+  @override
   String get refuelHistoryComingSoon => 'ರಿಫ್ಯೂಯಲ್ ಇತಿಹಾಸ ಶೀಘ್ರದಲ್ಲೇ ಬರಲಿದೆ';
 
   @override

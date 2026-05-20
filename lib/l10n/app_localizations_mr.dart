@@ -1396,6 +1396,18 @@ class AppLocalizationsMr extends AppLocalizations {
   String get currencySymbol => '₹';
 
   @override
+  String get validityLabel => 'वैधता';
+
+  @override
+  String get plusGst => '+ GST';
+
+  @override
+  String get currentPlan => 'सध्याची योजना';
+
+  @override
+  String get vehicle => 'वाहन';
+
+  @override
   String get refuelHistoryComingSoon => 'इंधन भरण्याचा इतिहास लवकरच येत आहे';
 
   @override
