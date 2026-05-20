@@ -9,5 +9,5 @@ class UpdateEntity {
     required this.version,
     required this.titles,
     required this.descriptions,
-});
+  });
 }

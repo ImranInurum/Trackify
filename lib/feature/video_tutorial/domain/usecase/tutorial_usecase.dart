@@ -7,8 +7,10 @@ class GetTutorial {
 
   GetTutorial(this.repository);
 
-  Future<List<Tutorial>>call(String type)async{
-    final all = await repository.getTutorials();
-    return all.where((e)=>e.type.toLowerCase()==type.toLowerCase()).toList();
+  Future<List<Tutorial>> call(
+      String categoryId) async {
+
+    return await repository
+        .getTutorials(categoryId);
   }
 }

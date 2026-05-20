@@ -1,31 +1,38 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:trackify/l10n/app_localizations.dart';
+import 'package:trackify/core/config/font_manager.dart';
+import 'package:trackify/feature/video_tutorial/presentation/cubit/tutorial_cubit.dart';
+import 'package:trackify/feature/video_tutorial/presentation/cubit/tutorial_state.dart';
 import 'package:video_player/video_player.dart';
-import 'package:chewie/chewie.dart';
-
-import '../../../../core/config/font_manager.dart';
-import '../cubit/tutorial_cubit.dart';
-import '../cubit/tutorial_state.dart';
+import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 class TutorialScreen extends StatefulWidget {
-  final String type;
+  final String categoryId;
   final String title;
 
   const TutorialScreen({
     super.key,
-    required this.type,
+    required this.categoryId,
     required this.title,
   });
 
   @override
-  State<TutorialScreen> createState() => _TutorialScreenState();
+  State<TutorialScreen> createState() =>
+      _TutorialScreenState();
 }
 
-class _TutorialScreenState extends State<TutorialScreen> {
+class _TutorialScreenState
+    extends State<TutorialScreen> {
 
-  VideoPlayerController? _videoPlayerController;
+  // YOUTUBE
+  YoutubePlayerController? _youtubeController;
+
+  // NORMAL VIDEO
+  VideoPlayerController?
+  _videoPlayerController;
+
   ChewieController? _chewieController;
 
   int? playingIndex;
@@ -37,55 +44,75 @@ class _TutorialScreenState extends State<TutorialScreen> {
   @override
   void initState() {
     super.initState();
-    context.read<TutorialCubit>().load(widget.type);
+
+    context
+        .read<TutorialCubit>()
+        .load(widget.categoryId);
   }
 
   @override
   void dispose() {
-    _disposeCurrentVideo();
+
+    _youtubeController?.dispose();
+
+    _chewieController?.dispose();
+
+    _videoPlayerController?.dispose();
+
     super.dispose();
   }
 
-  Future<void> _disposeCurrentVideo() async {
-    try {
-      await _videoPlayerController?.pause();
+  bool _isYoutubeUrl(String url) {
 
-      _chewieController?.dispose();
-      await _videoPlayerController?.dispose();
+    return url.contains("youtube.com") ||
+        url.contains("youtu.be");
+  }
 
-      _chewieController = null;
-      _videoPlayerController = null;
+  Future<void> _disposeNormalVideo() async {
 
-      if (mounted) {
-        setState(() {
-          _isInitialized = false;
-          _isPlaying = false;
-          _isLoading = false;
-          playingIndex = null;
-        });
-      }
-    } catch (e) {
-      debugPrint("VIDEO DISPOSE ERROR: $e");
-    }
+    await _videoPlayerController?.pause();
+
+    _chewieController?.dispose();
+
+    await _videoPlayerController?.dispose();
+
+    _chewieController = null;
+
+    _videoPlayerController = null;
   }
 
   Future<void> _handleVideoTap(
-    String url,
-    int index,
-  ) async {
+      String url,
+      int index,
+      ) async {
 
-    try {
+    print("VIDEO URL => $url");
 
-      if (_isLoading) return;
+    // =========================
+    // YOUTUBE VIDEO
+    // =========================
+
+    if (_isYoutubeUrl(url)) {
+
+      final videoId =
+      YoutubePlayer.convertUrlToId(
+        url,
+      );
+
+      if (videoId == null) {
+        debugPrint(
+          "Invalid YouTube URL",
+        );
+        return;
+      }
 
       // SAME VIDEO TOGGLE
       if (playingIndex == index &&
-          _videoPlayerController != null &&
-          _isInitialized) {
+          _youtubeController != null) {
 
-        if (_videoPlayerController!.value.isPlaying) {
+        if (_isPlaying) {
 
-          await _videoPlayerController!.pause();
+          _youtubeController!.pause();
 
           setState(() {
             _isPlaying = false;
@@ -93,7 +120,7 @@ class _TutorialScreenState extends State<TutorialScreen> {
 
         } else {
 
-          await _videoPlayerController!.play();
+          _youtubeController!.play();
 
           setState(() {
             _isPlaying = true;
@@ -103,8 +130,42 @@ class _TutorialScreenState extends State<TutorialScreen> {
         return;
       }
 
-      // NEW VIDEO
-      await _disposeCurrentVideo();
+      // NEW YOUTUBE VIDEO
+
+      await _disposeNormalVideo();
+
+      _youtubeController?.dispose();
+
+      _youtubeController =
+          YoutubePlayerController(
+            initialVideoId: videoId,
+
+            flags:
+            const YoutubePlayerFlags(
+              autoPlay: true,
+              mute: false,
+            ),
+          );
+
+      setState(() {
+        playingIndex = index;
+        _isPlaying = true;
+      });
+
+      return;
+    }
+
+    // =========================
+    // NORMAL MP4 VIDEO
+    // =========================
+
+    try {
+
+      if (_isLoading) return;
+
+      _youtubeController?.pause();
+
+      await _disposeNormalVideo();
 
       setState(() {
         _isLoading = true;
@@ -113,24 +174,26 @@ class _TutorialScreenState extends State<TutorialScreen> {
 
       _videoPlayerController =
           VideoPlayerController.networkUrl(
-        Uri.parse(url),
-      );
+            Uri.parse(url),
+          );
 
-      await _videoPlayerController!.initialize();
+      await _videoPlayerController!
+          .initialize();
 
-      _chewieController = ChewieController(
-        videoPlayerController:
+      _chewieController =
+          ChewieController(
+            videoPlayerController:
             _videoPlayerController!,
-        autoPlay: true,
-        looping: false,
-        showControls: true,
-        allowMuting: true,
-        allowFullScreen: true,
-        aspectRatio:
+            autoPlay: true,
+            looping: false,
+            showControls: true,
+            allowMuting: true,
+            allowFullScreen: true,
+            aspectRatio:
             _videoPlayerController!
                 .value
                 .aspectRatio,
-      );
+          );
 
       setState(() {
         _isInitialized = true;
@@ -148,20 +211,27 @@ class _TutorialScreenState extends State<TutorialScreen> {
     }
   }
 
-  Widget _buildVideoCard(dynamic video, int index) {
+  Widget _buildVideoCard(
+      dynamic video,
+      int index,
+      ) {
 
     final bool isCurrentVideo =
-        playingIndex == index &&
-        _isInitialized &&
-        _chewieController != null;
+        playingIndex == index;
 
     return Container(
       margin: const EdgeInsets.all(10),
+
       decoration: BoxDecoration(
         color: Colors.grey[900],
-        borderRadius: BorderRadius.circular(12),
+        borderRadius:
+        BorderRadius.circular(12),
       ),
+
       child: Column(
+        crossAxisAlignment:
+        CrossAxisAlignment.start,
+
         children: [
 
           GestureDetector(
@@ -173,7 +243,7 @@ class _TutorialScreenState extends State<TutorialScreen> {
 
             child: ClipRRect(
               borderRadius:
-                  const BorderRadius.vertical(
+              const BorderRadius.vertical(
                 top: Radius.circular(12),
               ),
 
@@ -182,43 +252,101 @@ class _TutorialScreenState extends State<TutorialScreen> {
 
                 child: Stack(
                   alignment: Alignment.center,
+
                   children: [
 
-                    // VIDEO
+                    // ====================
+                    // VIDEO PLAYER
+                    // ====================
+
                     if (isCurrentVideo)
-                      Chewie(
-                        controller:
-                            _chewieController!,
+
+                      _isYoutubeUrl(
+                        video.videoUrl,
                       )
 
+                          ? YoutubePlayer(
+                        controller:
+                        _youtubeController!,
+                        showVideoProgressIndicator:
+                        true,
+                      )
+
+                          : Chewie(
+                        controller:
+                        _chewieController!,
+                      )
+
+                    // ====================
                     // THUMBNAIL
+                    // ====================
+
                     else
                       CachedNetworkImage(
-                        imageUrl: video.thumbnail,
+                        imageUrl:
+                        video.thumbnail,
+
                         fit: BoxFit.cover,
-                        width: double.infinity,
-                        height: double.infinity,
+
+                        width:
+                        double.infinity,
+
+                        height:
+                        double.infinity,
+
+                        placeholder:
+                            (
+                            context,
+                            url,
+                            ) =>
+                        const Center(
+                          child:
+                          CircularProgressIndicator(),
+                        ),
+
+                        errorWidget:
+                            (
+                            context,
+                            url,
+                            error,
+                            ) =>
+                        const Icon(
+                          Icons.error,
+                          color: Colors.white,
+                        ),
                       ),
 
+                    // ====================
                     // LOADER
+                    // ====================
+
                     if (_isLoading &&
-                        playingIndex == index)
+                        playingIndex ==
+                            index)
                       const CircularProgressIndicator(
                         color: Colors.white,
                       ),
 
+                    // ====================
                     // PLAY BUTTON
-                    if ((!isCurrentVideo ||
-                            !_isPlaying) &&
-                        !_isLoading)
+                    // ====================
+
+                    if (!isCurrentVideo)
                       Container(
                         padding:
-                            const EdgeInsets.all(14),
-                        decoration: BoxDecoration(
+                        const EdgeInsets.all(
+                          14,
+                        ),
+
+                        decoration:
+                        BoxDecoration(
                           color: Colors.black
                               .withOpacity(0.7),
-                          shape: BoxShape.circle,
+
+                          shape:
+                          BoxShape.circle,
                         ),
+
                         child: const Icon(
                           Icons.play_arrow,
                           color: Colors.white,
@@ -232,12 +360,17 @@ class _TutorialScreenState extends State<TutorialScreen> {
           ),
 
           Padding(
-            padding: const EdgeInsets.all(10),
+            padding:
+            const EdgeInsets.all(12),
+
             child: Text(
               video.title,
+
               style: const TextStyle(
                 color: Colors.white,
                 fontSize: 16,
+                fontWeight:
+                FontWeight.w500,
               ),
             ),
           ),
@@ -250,27 +383,36 @@ class _TutorialScreenState extends State<TutorialScreen> {
   Widget build(BuildContext context) {
 
     final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
+
+    final colorScheme =
+        theme.colorScheme;
 
     return Scaffold(
-      backgroundColor: colorScheme.surface,
+      backgroundColor:
+      colorScheme.surface,
 
       appBar: AppBar(
-        backgroundColor: colorScheme.surface,
-        centerTitle: false,
+        backgroundColor:
+        colorScheme.surface,
+
         elevation: 0,
+        centerTitle: false,
 
         title: Text(
           widget.title,
+
           style: TextStyle(
-            color: colorScheme.onSurface,
+            color:
+            colorScheme.onSurface,
+
             fontWeight:
-                FontWeightManager.medium,
+            FontWeightManager.medium,
           ),
         ),
 
         iconTheme: IconThemeData(
-          color: colorScheme.onSurface,
+          color:
+          colorScheme.onSurface,
         ),
       ),
 
@@ -279,26 +421,48 @@ class _TutorialScreenState extends State<TutorialScreen> {
           TutorialState>(
         builder: (context, state) {
 
-          if (state is TutorialLoading) {
+          if (state
+          is TutorialLoading) {
+
             return const Center(
-              child: CircularProgressIndicator(),
+              child:
+              CircularProgressIndicator(),
             );
           }
 
-          if (state is TutorialError) {
+          if (state
+          is TutorialError) {
+
             return Center(
-              child: Text(state.message),
+              child:
+              Text(state.message),
             );
           }
 
-          if (state is TutorialLoaded) {
+          if (state
+          is TutorialLoaded) {
+
+            if (state.list.isEmpty) {
+
+              return const Center(
+                child: Text(
+                  "No videos found",
+                ),
+              );
+            }
 
             return ListView.builder(
-              itemCount: state.list.length,
+              itemCount:
+              state.list.length,
 
-              itemBuilder: (context, index) {
+              itemBuilder:
+                  (
+                  context,
+                  index,
+                  ) {
 
-                final video = state.list[index];
+                final video =
+                state.list[index];
 
                 return _buildVideoCard(
                   video,

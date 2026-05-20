@@ -161,6 +161,8 @@ class _UpdateScreenState extends State<UpdateScreen> {
                       ),
                     ],
                   );
+                  print(item.title);
+                  print(item.description);
                 },
               );
             }

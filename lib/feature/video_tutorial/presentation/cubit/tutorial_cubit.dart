@@ -8,11 +8,11 @@ class TutorialCubit extends Cubit<TutorialState>{
 
   TutorialCubit(this.tutorial) : super(TutorialInitial());
 
-  void load(String type)async{
+  void load(String categoryId)async{
     emit(TutorialLoading());
 
     try{
-      final data = await tutorial(type);
+      final data = await tutorial(categoryId);
       emit(TutorialLoaded(data));
     }catch(e){
       emit(TutorialError('Failed'));
