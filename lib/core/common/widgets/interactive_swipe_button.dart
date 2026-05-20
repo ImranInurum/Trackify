@@ -111,7 +111,8 @@ import 'package:trackify/l10n/app_localizations.dart';
 
 class InteractiveSwipeButton extends StatefulWidget {
   final VoidCallback onSwipe;
-  const InteractiveSwipeButton({super.key, required this.onSwipe});
+  final bool isLocked;
+  const InteractiveSwipeButton({super.key, required this.onSwipe, this.isLocked = false});
 
   @override
   State<InteractiveSwipeButton> createState() => _InteractiveSwipeButtonState();
@@ -122,6 +123,17 @@ class _InteractiveSwipeButtonState extends State<InteractiveSwipeButton> {
   final double _sliderHeight = 48.0;
   final double _handleSize = 36.0;
   bool _isWaiting = false;
+
+  @override
+  void didUpdateWidget(covariant InteractiveSwipeButton oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.isLocked != widget.isLocked) {
+      setState(() {
+        _isWaiting = false;
+        _dragPosition = 0;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -156,14 +168,14 @@ class _InteractiveSwipeButtonState extends State<InteractiveSwipeButton> {
                   ),
                 ),
 
-              // Right-aligned "SWIPE TO LOCK" Text
+              // Right-aligned "SWIPE TO LOCK/UNLOCK" Text
               if (!_isWaiting)
                 Positioned(
                   right: 20,
                   child: Opacity(
                     opacity: (1.0 - (_dragPosition / maxDrag)).clamp(0.0, 1.0),
                     child: Text(
-                      l10n.swipeToLock,
+                      widget.isLocked ? "SWIPE TO UNLOCK" : l10n.swipeToLock,
                       style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.bold,
@@ -173,7 +185,7 @@ class _InteractiveSwipeButtonState extends State<InteractiveSwipeButton> {
                     ),
                   ),
                 ),
-              // Revealed "WAITING TO LOCK" from the left as we drag
+              // Revealed "WAITING TO LOCK/UNLOCK" from the left as we drag
               if (!_isWaiting)
                 Positioned(
                   left: 5,
@@ -246,7 +258,7 @@ class _InteractiveSwipeButtonState extends State<InteractiveSwipeButton> {
                       Expanded(
                         child: Center(
                           child: Text(
-                            "WAITING TO LOCK",
+                            widget.isLocked ? "WAITING TO UNLOCK" : "WAITING TO LOCK",
                             style: TextStyle(
                               fontSize: 12,
                               fontWeight: FontWeight.bold,
@@ -263,12 +275,12 @@ class _InteractiveSwipeButtonState extends State<InteractiveSwipeButton> {
                           color: Theme.of(context).colorScheme.surface,
                           shape: BoxShape.circle,
                           border: Border.all(
-                            color: const Color(0xFFC7514D).withOpacity(0.3),
+                            color: widget.isLocked ? Colors.green.withOpacity(0.3) : const Color(0xFFC7514D).withOpacity(0.3),
                           ),
                         ),
-                        child: const Icon(
-                          Icons.lock_rounded,
-                          color: Color(0xFFC7514D),
+                        child: Icon(
+                          widget.isLocked ? Icons.lock_open_rounded : Icons.lock_rounded,
+                          color: widget.isLocked ? Colors.green : const Color(0xFFC7514D),
                           size: 18,
                         ),
                       ),
@@ -308,9 +320,9 @@ class _InteractiveSwipeButtonState extends State<InteractiveSwipeButton> {
                         shape: BoxShape.circle,
                         border: Border.all(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5), width: 1.5),
                       ),
-                      child: const Icon(
-                        Icons.lock_open_rounded,
-                        color: Color(0xFFC7514D),
+                      child: Icon(
+                        widget.isLocked ? Icons.lock_rounded : Icons.lock_open_rounded,
+                        color: widget.isLocked ? Colors.green : const Color(0xFFC7514D),
                         size: 20,
                       ),
                     ),

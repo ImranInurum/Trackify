@@ -10,6 +10,7 @@ import '../feature/trips/presentation/view/trip_screen.dart';
 
 class AppNavigation extends StatefulWidget {
   static final GlobalKey<_AppNavigationState> navigationKey = GlobalKey<_AppNavigationState>();
+  static final ValueNotifier<int> currentTabNotifier = ValueNotifier<int>(0);
   AppNavigation() : super(key: navigationKey);
 
   @override
@@ -50,6 +51,7 @@ class _AppNavigationState extends State<AppNavigation> {
     setState(() {
       _currentIndex = index;
     });
+    AppNavigation.currentTabNotifier.value = index;
   }
 
   Widget _buildNavigator(int index, Widget child) {

@@ -139,11 +139,12 @@ class _MapScreenState extends State<MapScreen> {
                         setState(() {
                           _selectedDevice = savedVehicle;
                         });
+                        prefs.set(key: AppPreference.IMEI, value: savedVehicle.imei ?? '');
+                        print("selected device is ${savedVehicle.imei}");
                         // Refresh rides for the initially selected vehicle
                         context.read<RideHistoryCubit>().getRideHistoryData();
                       }
                     });
-                    print("slected device is ${_selectedDevice?.imei}");
                   }
                 }
               },
@@ -1124,6 +1125,7 @@ class _MapScreenState extends State<MapScreen> {
         MaterialPageRoute(builder: (context) => const ChoiceSelector()),
       ),
       onDeviceTap: (device) async {
+        print("device.imei----------------------------------${device.imei}");
         await prefs.set(key: AppPreference.IMEI, value: device.imei ?? '');
         setState(() => _selectedDevice = device);
         if (mounted) {

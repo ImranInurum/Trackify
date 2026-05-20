@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:trackify/feature/device_data/presentation/pages/device_data_screen.dart';
+import 'package:trackify/feature/device_warranty/pages/device_warranty_page.dart';
 import 'package:trackify/feature/my_garage/presentation/cubit/my_garage_cubit.dart';
 import 'package:trackify/feature/my_garage/presentation/cubit/my_garage_state.dart';
 import 'package:trackify/l10n/app_localizations.dart';
+import 'package:trackify/core/utils/shared_preferences.dart';
+import 'package:trackify/core/common/models/vehicle_list_model.dart';
 
 import '../../../../core/common/widgets/vehicle_card.dart';
 import '../../../Vehicle_control/presentation/pages/vehicle_control_screen.dart';
+import '../../../Vehicle_control/data/repositories/vehicle_control_repository_impl.dart';
 
 class MyGarageScreen extends StatefulWidget {
   const MyGarageScreen({super.key});
@@ -15,6 +20,23 @@ class MyGarageScreen extends StatefulWidget {
 }
 
 class _MyGarageScreenState extends State<MyGarageScreen> {
+  final Map<String, bool> _vehicleLockStates = {};
+
+  Future<void> _fetchLockStatus(String imei) async {
+    if (imei.isEmpty || _vehicleLockStates.containsKey(imei)) return;
+    try {
+      final repo = VehicleControlRepositoryImpl();
+      final controlDetails = await repo.getVehicleControlDetails(imei);
+      if (mounted) {
+        setState(() {
+          _vehicleLockStates[imei] = controlDetails.vehicleLock;
+        });
+      }
+    } catch (e) {
+      debugPrint("Error fetching lock status in garage: $e");
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -63,7 +85,20 @@ class _MyGarageScreenState extends State<MyGarageScreen> {
           }
 
           if (state is VehiclesLoaded) {
-            final vehicles = state.vehicles;
+            final selectedImei = AppPreference.instance.getSync(
+              key: AppPreference.IMEI,
+            );
+            final vehicles = List<Vehicle>.from(state.vehicles);
+
+            if (selectedImei.isNotEmpty) {
+              final selectedIndex = vehicles.indexWhere(
+                (v) => v.imei == selectedImei,
+              );
+              if (selectedIndex > 0) {
+                final selectedVehicle = vehicles.removeAt(selectedIndex);
+                vehicles.insert(0, selectedVehicle);
+              }
+            }
 
             if (vehicles.isEmpty) {
               return Center(
@@ -72,7 +107,7 @@ class _MyGarageScreenState extends State<MyGarageScreen> {
                   style: TextStyle(
                     color: Theme.of(
                       context,
-                    ).colorScheme.onSurface.withOpacity(0.6),
+                    ).colorScheme.onSurface.withValues(alpha: 0.6),
                   ),
                 ),
               );
@@ -90,25 +125,55 @@ class _MyGarageScreenState extends State<MyGarageScreen> {
                 itemCount: vehicles.length,
                 itemBuilder: (context, index) {
                   final vehicle = vehicles[index];
-                  // TODO: Use real device check once available in Vehicle model
-                  // Example: final bool hasDevice = vehicle.deviceId != null;
-                  final bool hasDevice = index == 0;
+                  final bool hasDevice =
+                      selectedImei.isNotEmpty && vehicle.imei == selectedImei;
+
+                  if (hasDevice && vehicle.imei != null) {
+                    _fetchLockStatus(vehicle.imei!);
+                  }
+
+                  final isLocked = _vehicleLockStates[vehicle.imei] ?? false;
 
                   return VehicleCard(
                     context: context,
                     vehicle: vehicle,
                     hasDevice: hasDevice,
-                    onVehicleControl: () {
+                    isLocked: isLocked,
+                    onVehicleControl: () async {
+                      if (vehicle.imei != null && vehicle.imei!.isNotEmpty) {
+                        await AppPreference.instance.set(
+                          key: AppPreference.IMEI,
+                          value: vehicle.imei!,
+                        );
+                      }
+                      if (context.mounted) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => VehicleControlScreen(
+                              isFromGarage: hasDevice ? false : true,
+                            ),
+                          ),
+                        );
+                      }
+                    },
+                    onLock: () => _handleVehicleLock(context, vehicle),
+                    onRecharge: () {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => VehicleControlScreen(isFromGarage: hasDevice?false: true),
+                          builder: (context) => DeviceDataScreen(),
                         ),
                       );
                     },
-                    onLock: () => _handleVehicleLock(context, vehicle),
-                    onRecharge: () => _handleRecharge(context, vehicle),
-                    onRenew: () => _handleRenew(context, vehicle),
+                    onRenew: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => WarrantyScreen(),
+                        ),
+                      );
+                    },
                   );
                 },
               ),
@@ -155,11 +220,40 @@ class _MyGarageScreenState extends State<MyGarageScreen> {
     );
   }
 
-  void _handleVehicleLock(BuildContext context, dynamic vehicle) {
-    // TODO: Implement vehicle lock API call via Cubit
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text("Locking vehicle ${vehicle.vehicleNumber}...")),
-    );
+  void _handleVehicleLock(BuildContext context, Vehicle vehicle) async {
+    if (vehicle.imei == null || vehicle.imei!.isEmpty) return;
+
+    final imei = vehicle.imei!;
+    final currentLockState = _vehicleLockStates[imei] ?? false;
+    final targetLockState = !currentLockState;
+
+    try {
+      final repo = VehicleControlRepositoryImpl();
+      await repo.updateVehicleLock(imei, targetLockState);
+
+      if (context.mounted) {
+        setState(() {
+          _vehicleLockStates[imei] = targetLockState;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              "Vehicle ${targetLockState ? 'Locked' : 'Unlocked'} successfully!",
+            ),
+            backgroundColor: Colors.green,
+          ),
+        );
+      }
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("Failed to update lock status: $e"),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
   }
 
   void _handleRecharge(BuildContext context, dynamic vehicle) {

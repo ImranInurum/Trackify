@@ -11,6 +11,7 @@ class VehicleControlModel extends VehicleControlEntity {
     super.bikeImage,
     required super.selectedIcon,
     required super.selectedColor,
+    required super.vehicleLock,
   });
 
   factory VehicleControlModel.fromJson(Map<String, dynamic> json) {
@@ -24,6 +25,7 @@ class VehicleControlModel extends VehicleControlEntity {
       bikeImage: json['bikeImage'],
       selectedIcon: json['selectedIcon'] ?? 'Bike',
       selectedColor: json['selectedColor'] ?? 'White',
+      vehicleLock: json['vehicleLock'] ?? false,
     );
   }
 
@@ -38,6 +40,7 @@ class VehicleControlModel extends VehicleControlEntity {
       'bikeImage': bikeImage,
       'selectedIcon': selectedIcon,
       'selectedColor': selectedColor,
+      'vehicleLock': vehicleLock,
     };
   }
 }

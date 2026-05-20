@@ -16,6 +16,12 @@ class VehicleConfig {
       supportedFuelTypes: List<String>.from(json['supportedFuelTypes'] ?? []),
     );
   }
+
+  @override
+  bool operator ==(Object other) => other is VehicleConfig && other.id == id;
+
+  @override
+  int get hashCode => id.hashCode;
 }
 
 class VehicleMaker {
@@ -27,6 +33,12 @@ class VehicleMaker {
   factory VehicleMaker.fromJson(Map<String, dynamic> json) {
     return VehicleMaker(id: json['_id'] ?? '', name: json['name'] ?? '');
   }
+
+  @override
+  bool operator ==(Object other) => other is VehicleMaker && other.id == id;
+
+  @override
+  int get hashCode => id.hashCode;
 }
 
 class VehicleModelInfo {
@@ -53,4 +65,10 @@ class VehicleModelInfo {
       fuelType: List<String>.from(json['fuelType'] ?? []),
     );
   }
+
+  @override
+  bool operator ==(Object other) => other is VehicleModelInfo && other.id == id;
+
+  @override
+  int get hashCode => id.hashCode;
 }

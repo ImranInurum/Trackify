@@ -12,6 +12,9 @@ import 'package:trackify/feature/trips/presentation/view/widgets/sorting_bottom_
 import '../../trip_search_screen.dart';
 
 
+import 'package:trackify/app/app_navigation.dart';
+import 'package:trackify/core/utils/shared_preferences.dart';
+
 class AllRides extends StatefulWidget {
   const AllRides({super.key});
 
@@ -21,11 +24,32 @@ class AllRides extends StatefulWidget {
 
 class _AllRidesState extends State<AllRides> {
   String _searchQuery = '';
+  String? _loadedImei;
 
   @override
   void initState() {
     super.initState();
+    _loadedImei = AppPreference.instance.getSync(key: AppPreference.IMEI);
     context.read<RideHistoryCubit>().getRideHistoryData();
+    AppNavigation.currentTabNotifier.addListener(_onTabChanged);
+  }
+
+  @override
+  void dispose() {
+    AppNavigation.currentTabNotifier.removeListener(_onTabChanged);
+    super.dispose();
+  }
+
+  void _onTabChanged() {
+    if (AppNavigation.currentTabNotifier.value == 1) {
+      final currentImei = AppPreference.instance.getSync(key: AppPreference.IMEI);
+      if (currentImei != _loadedImei) {
+        _loadedImei = currentImei;
+        if (mounted) {
+          context.read<RideHistoryCubit>().getRideHistoryData();
+        }
+      }
+    }
   }
 
   @override
