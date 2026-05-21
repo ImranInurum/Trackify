@@ -1,49 +1,16 @@
-import 'package:trackify/feature/get_more_out/domain/entities/feature_entity.dart';
-import 'package:trackify/feature/get_more_out/domain/repository/feature_repository.dart';
+import '../entities/feature_entity.dart';
+import '../repository/feature_repository.dart';
 
-class GetSafetyUseCase{
-
-  final FeatureRepository repository;
-
-  GetSafetyUseCase(this.repository);
-
-  List<FeatureEntity>call(){
-    return repository.safetyItems();
-  }
-}
- //TRACKING
-
-class GetTrackingUseCase{
+class GetFeatureUseCase {
 
   final FeatureRepository repository;
 
-  GetTrackingUseCase(this.repository);
+  GetFeatureUseCase(this.repository);
 
-  List<FeatureEntity> call(){
-    return repository.trackingItems();
-  }
-}
+  Future<List<FeatureEntity>>
+  call(String categoryId) async {
 
- //RIDE
-
-class GetRideUseCase {
-  final FeatureRepository repository;
-
-  GetRideUseCase(this.repository);
-
-  List<FeatureEntity>call(){
-    return repository.ridesItems();
-  }
-}
-
-  //DEVICE
-
-class GetDeviceUseCase {
-  final FeatureRepository repository;
-
-  GetDeviceUseCase(this.repository);
-
-  List<FeatureEntity>call(){
-    return repository.deviceItems();
+    return await repository
+        .getFeatures(categoryId);
   }
 }

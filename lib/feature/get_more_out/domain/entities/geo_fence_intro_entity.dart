@@ -1,17 +1,21 @@
 class GeoFenceIntroEntity {
 
-  final String image;
-
   final String title;
 
   final String description;
 
-  GeoFenceIntroEntity({
+  final String image;
 
-    required this.image,
+  final String buttonText;
+
+  GeoFenceIntroEntity({
 
     required this.title,
 
     required this.description,
+
+    required this.image,
+
+    required this.buttonText,
   });
 }

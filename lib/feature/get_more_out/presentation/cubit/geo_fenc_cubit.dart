@@ -1,9 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-
 import '../../domain/usecase/geo_fenc_usecase.dart';
 import 'geo_fenc_state.dart';
-
 
 class GeoFenceIntroCubit
     extends Cubit<GeoFenceIntroState> {
@@ -15,13 +13,30 @@ class GeoFenceIntroCubit
       this.getGeoFenceIntroUseCase)
       : super(GeoFenceIntroInitial());
 
-  void loadSlides() {
+  Future<void> loadSlides({
+    required String categoryId,
+  }) async {
 
-    final slides =
-    getGeoFenceIntroUseCase.call();
+    try {
 
-    emit(
-      GeoFenceIntroLoaded(slides),
-    );
+      emit(GeoFenceIntroLoading());
+
+      final slides =
+      await getGeoFenceIntroUseCase(
+        categoryId,
+      );
+
+      emit(
+        GeoFenceIntroLoaded(slides),
+      );
+
+    } catch (e) {
+
+      emit(
+        GeoFenceIntroError(
+          e.toString(),
+        ),
+      );
+    }
   }
 }

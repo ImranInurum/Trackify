@@ -2,6 +2,6 @@ import '../entities/geo_fence_intro_entity.dart';
 
 abstract class GeoFenceIntroRepository {
 
-  List<GeoFenceIntroEntity>
-  getIntroSlides();
+  Future<List<GeoFenceIntroEntity>>
+  getIntroSlides(String categoryId);
 }

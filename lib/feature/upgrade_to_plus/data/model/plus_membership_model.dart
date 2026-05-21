@@ -1,6 +1,7 @@
 import '../../domain/entity/plus_membership_entity.dart';
 
 class PlusMembershipModel extends PlusMembershipEntity {
+
   const PlusMembershipModel({
     required super.currentPrice,
     required super.originalPrice,
@@ -11,42 +12,82 @@ class PlusMembershipModel extends PlusMembershipEntity {
     required super.reviews,
   });
 
-  factory PlusMembershipModel.fromJson(Map<String, dynamic> json) {
+  factory PlusMembershipModel.fromJson(
+      Map<String, dynamic> json,
+      ) {
+
+    final data = json['data'] ?? {};
+
+    final plan = data['plan'] ?? {};
+
     return PlusMembershipModel(
-      currentPrice: (json['current_price'] as num).toDouble(),
-      originalPrice: (json['original_price'] as num).toDouble(),
-      duration: json['duration'] as String,
-      usersCountMessage: json['users_count_message'] as String,
-      premiumBenefits: (json['premium_benefits'] as List)
-          .map((e) => PremiumBenefitModel.fromJson(e as Map<String, dynamic>))
+
+      currentPrice:
+      (plan['price'] ?? 0).toDouble(),
+
+      originalPrice:
+      (plan['originalPrice'] ?? 0).toDouble(),
+
+      duration:
+      plan['durationText'] ?? "",
+
+      usersCountMessage:
+      plan['boughtText'] ?? "",
+
+      premiumBenefits:
+      (data['premiumBenefits'] as List? ?? [])
+          .map(
+            (e) => PremiumBenefitModel.fromJson(e),
+      )
           .toList(),
-      otherBenefits: (json['other_benefits'] as List)
-          .map((e) => OtherBenefitModel.fromJson(e as Map<String, dynamic>))
+
+      otherBenefits:
+      (data['otherBenefits'] as List? ?? [])
+          .map(
+            (e) => OtherBenefitModel.fromJson(e),
+      )
           .toList(),
-      reviews: (json['reviews'] as List)
-          .map((e) => PlusReviewModel.fromJson(e as Map<String, dynamic>))
+
+      reviews:
+      (data['reviews'] as List? ?? [])
+          .map(
+            (e) => PlusReviewModel.fromJson(e),
+      )
           .toList(),
     );
   }
 }
 
-class PremiumBenefitModel extends PremiumBenefitEntity {
+class PremiumBenefitModel
+    extends PremiumBenefitEntity {
+
   const PremiumBenefitModel({
     required super.title,
     required super.subtitle,
     required super.iconType,
   });
 
-  factory PremiumBenefitModel.fromJson(Map<String, dynamic> json) {
+  factory PremiumBenefitModel.fromJson(
+      Map<String, dynamic> json,
+      ) {
+
     return PremiumBenefitModel(
-      title: json['title'] as String,
-      subtitle: json['subtitle'] as String,
-      iconType: json['icon_type'] as String,
+
+      title:
+      json['title'] ?? "",
+
+      subtitle:
+      json['description'] ?? "",
+
+      iconType:
+      json['icon'] ?? "",
     );
   }
 }
 
-class OtherBenefitModel extends OtherBenefitEntity {
+class OtherBenefitModel
+    extends OtherBenefitEntity {
+
   const OtherBenefitModel({
     required super.title,
     required super.description,
@@ -54,17 +95,30 @@ class OtherBenefitModel extends OtherBenefitEntity {
     required super.plusValue,
   });
 
-  factory OtherBenefitModel.fromJson(Map<String, dynamic> json) {
+  factory OtherBenefitModel.fromJson(
+      Map<String, dynamic> json,
+      ) {
+
     return OtherBenefitModel(
-      title: json['title'] as String,
-      description: json['description'] as String,
-      regularValue: json['regular_value'] as String,
-      plusValue: json['plus_value'] as String,
+
+      title:
+      json['offering'] ?? "",
+
+      description:
+      json['description'] ?? "",
+
+      regularValue:
+      json['regular'] ?? "",
+
+      plusValue:
+      json['plus'] ?? "",
     );
   }
 }
 
-class PlusReviewModel extends PlusReviewEntity {
+class PlusReviewModel
+    extends PlusReviewEntity {
+
   const PlusReviewModel({
     required super.name,
     required super.duration,
@@ -72,12 +126,23 @@ class PlusReviewModel extends PlusReviewEntity {
     super.profileImageUrl,
   });
 
-  factory PlusReviewModel.fromJson(Map<String, dynamic> json) {
+  factory PlusReviewModel.fromJson(
+      Map<String, dynamic> json,
+      ) {
+
     return PlusReviewModel(
-      name: json['name'] as String,
-      duration: json['duration'] as String,
-      review: json['review'] as String,
-      profileImageUrl: json['profile_image_url'] as String?,
+
+      name:
+      json['name'] ?? "",
+
+      duration:
+      json['subtitle'] ?? "",
+
+      review:
+      json['review'] ?? "",
+
+      profileImageUrl:
+      json['image'],
     );
   }
 }

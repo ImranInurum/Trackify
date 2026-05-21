@@ -6,61 +6,74 @@ import '../cubit/feature_state.dart';
 import 'geo_fenc_screen.dart';
 
 class FeatureDetailsScreen extends StatefulWidget {
+
   final String appBarTitle;
-  final int featureIndex;
+
+  /// CATEGORY ID FROM API
+  final String categoryId;
 
   const FeatureDetailsScreen({
     super.key,
     required this.appBarTitle,
-    required this.featureIndex,
+    required this.categoryId,
   });
 
   @override
-  State<FeatureDetailsScreen> createState() => _FeatureDetailsScreenState();
+  State<FeatureDetailsScreen> createState() =>
+      _FeatureDetailsScreenState();
 }
 
-class _FeatureDetailsScreenState extends State<FeatureDetailsScreen> {
+class _FeatureDetailsScreenState
+    extends State<FeatureDetailsScreen> {
+
   @override
   void initState() {
+
     super.initState();
 
-    /// LOAD DATA FROM CUBIT BASED ON INDEX
-    final cubit = context.read<FeatureCubit>();
-    switch (widget.featureIndex) {
-      case 0:
-        cubit.loadSafetyItems();
-        break;
-      case 1:
-        cubit.loadTrackingItems();
-        break;
-      case 2:
-        cubit.loadRideItems();
-        break;
-      case 3:
-        cubit.loadDeviceItems();
-        break;
-    }
+    /// LOAD FEATURES FROM API
+    context
+        .read<FeatureCubit>()
+        .loadFeatures(
+      widget.categoryId,
+    );
   }
 
   @override
   Widget build(BuildContext context) {
+
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
     return Scaffold(
+
       backgroundColor: colorScheme.surface,
 
       /// ================= APP BAR =================
       appBar: AppBar(
+
         backgroundColor: colorScheme.surface,
+
         elevation: 0,
+
         centerTitle: false,
+
         leading: IconButton(
-          onPressed: () => Navigator.pop(context),
-          icon: Icon(Icons.arrow_back_ios, color: colorScheme.onSurface, size: 18),
+
+          onPressed: () =>
+              Navigator.pop(context),
+
+          icon: Icon(
+            Icons.arrow_back_ios,
+            color: colorScheme.onSurface,
+            size: 18,
+          ),
         ),
+
         title: Text(
+
           widget.appBarTitle,
+
           style: TextStyle(
             color: colorScheme.onSurface,
             fontSize: 18,
@@ -70,54 +83,149 @@ class _FeatureDetailsScreenState extends State<FeatureDetailsScreen> {
       ),
 
       /// ================= BODY =================
-      body: BlocBuilder<FeatureCubit, FeatureState>(
+      body: BlocBuilder<
+          FeatureCubit,
+          FeatureState>(
+
         builder: (context, state) {
-          /// ================= LOADED STATE =================
+
+          /// ================= LOADING =================
+          if (state is FeatureLoading) {
+
+            return Center(
+              child: CircularProgressIndicator(
+                color: colorScheme.primary,
+              ),
+            );
+          }
+
+          /// ================= ERROR =================
+          if (state is FeatureError) {
+
+            return Center(
+              child: Text(state.message),
+            );
+          }
+
+          /// ================= LOADED =================
           if (state is FeatureLoaded) {
+
             return ListView.builder(
-              padding: const EdgeInsets.all(16),
-              itemCount: state.items.length,
-              itemBuilder: (context, index) {
-                /// CURRENT ITEM
-                final item = state.items[index];
+
+              padding:
+              const EdgeInsets.all(16),
+
+              itemCount:
+              state.items.length,
+
+              itemBuilder:
+                  (context, index) {
+
+                final item =
+                state.items[index];
 
                 return GestureDetector(
+
                   onTap: () {
+
                     Navigator.push(
+
                       context,
+
                       MaterialPageRoute(
-                        builder: (_) => GeofancyScreen(title: item.title),
+
+                        builder: (_) =>
+                            GeofancyScreen(
+                              title: item.title,
+                              categoryId: item.id,
+                            ),
                       ),
                     );
                   },
+
                   child: Container(
-                    margin: const EdgeInsets.only(bottom: 16),
-                    padding: const EdgeInsets.all(16),
+
+                    margin:
+                    const EdgeInsets.only(
+                      bottom: 16,
+                    ),
+
+                    padding:
+                    const EdgeInsets.all(16),
+
                     decoration: BoxDecoration(
-                      color: Theme.of(context).cardColor,
-                      borderRadius: BorderRadius.circular(16),
+
+                      color:
+                      Theme.of(context)
+                          .cardColor,
+
+                      borderRadius:
+                      BorderRadius.circular(16),
+
                       border: Border.all(
-                        color: colorScheme.outlineVariant.withOpacity(0.1),
+
+                        color: colorScheme
+                            .outlineVariant
+                            .withOpacity(0.1),
                       ),
                     ),
+
                     child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+
+                      crossAxisAlignment:
+                      CrossAxisAlignment.start,
+
                       children: [
+
                         /// ================= ICON BOX =================
                         Container(
+
                           height: 70,
                           width: 70,
+
                           decoration: BoxDecoration(
-                            color: colorScheme.surface.withOpacity(0.54),
-                            borderRadius: BorderRadius.circular(16),
+
+                            color: colorScheme
+                                .surface
+                                .withOpacity(0.54),
+
+                            borderRadius:
+                            BorderRadius.circular(
+                              16,
+                            ),
+
                             border: Border.all(
-                              color: colorScheme.outlineVariant.withOpacity(0.1),
+
+                              color: colorScheme
+                                  .outlineVariant
+                                  .withOpacity(0.1),
                             ),
                           ),
-                          child: Icon(
+
+                          child: Padding(
+
+                            padding:
+                            const EdgeInsets.all(14),
+
+                            child:Image.network(
                               item.icon,
-                            color: colorScheme.onSurface,
-                            size: 32,
+
+                              fit: BoxFit.contain,
+
+                              errorBuilder:
+                                  (
+                                  context,
+                                  error,
+                                  stackTrace,
+                                  ) {
+
+                                return Icon(
+                                  Icons.image_not_supported,
+                                  color: colorScheme
+                                      .onSurface,
+                                );
+                              },
+                            ),
                           ),
                         ),
 
@@ -125,16 +233,28 @@ class _FeatureDetailsScreenState extends State<FeatureDetailsScreen> {
 
                         /// ================= TEXT AREA =================
                         Expanded(
+
                           child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+
+                            crossAxisAlignment:
+                            CrossAxisAlignment.start,
+
                             children: [
+
                               /// TITLE
                               Text(
+
                                 item.title,
+
                                 style: TextStyle(
-                                  color: colorScheme.onSurface,
+
+                                  color: colorScheme
+                                      .onSurface,
+
                                   fontSize: 16,
-                                  fontWeight: FontWeight.bold,
+
+                                  fontWeight:
+                                  FontWeight.bold,
                                 ),
                               ),
 
@@ -142,10 +262,17 @@ class _FeatureDetailsScreenState extends State<FeatureDetailsScreen> {
 
                               /// SUBTITLE
                               Text(
+
                                 item.subtitle,
+
                                 style: TextStyle(
-                                  color: colorScheme.onSurface.withOpacity(0.7),
+
+                                  color: colorScheme
+                                      .onSurface
+                                      .withOpacity(0.7),
+
                                   fontSize: 13,
+
                                   height: 1.4,
                                 ),
                               ),
@@ -160,12 +287,7 @@ class _FeatureDetailsScreenState extends State<FeatureDetailsScreen> {
             );
           }
 
-          /// ================= LOADING =================
-          return Center(
-            child: CircularProgressIndicator(
-              color: colorScheme.primary,
-            ),
-          );
+          return const SizedBox();
         },
       ),
     );

@@ -136,6 +136,21 @@ static const String category  = "$baseURL/api/video-tutorials-category";
 // -------------------------
 static const String appUpdate ="$baseURL/api/app-update/app-updates";
 
+// -------------------------
+// Discover feature
+// -------------------------
+static const String discover = "$baseURL/api/features/discover-features";
+  static const String featureDetails = "$baseURL/api/features/feature-category";
+  static const String geoFenceIntro = "$baseURL/api/features/feature-intro/{featureId}";
+
+// -------------------------
+//Plus Membership
+// -------------------------
+  static const String plusMembership = "$baseURL/api/plus-membership/plus-plan";
+
+
+
+
   // NEED TO IMPLEMENT CORRECT API
   // static const String logout = '$baseURL/users/logout';
   // static const String userDetails = '$baseURL/users/get-details';
