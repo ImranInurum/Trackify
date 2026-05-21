@@ -62,7 +62,11 @@ import 'package:trackify/feature/order_summary/domain/usecase/purchase_data_plan
 import 'package:trackify/feature/order_summary/presentation/cubit/order_summary_cubit.dart';
 
 import 'package:trackify/feature/device_warranty/presentation/cubit/device_warranty_cubit.dart';
+import 'package:trackify/feature/device_warranty/presentation/cubit/warranty_payment_summary_cubit.dart';
+import 'package:trackify/feature/device_warranty/presentation/cubit/extend_warranty_cubit.dart';
 import 'package:trackify/feature/device_warranty/domain/usecase/get_device_warranty_usecase.dart';
+import 'package:trackify/feature/device_warranty/domain/usecase/get_warranty_payment_summary_usecase.dart';
+import 'package:trackify/feature/device_warranty/domain/usecase/extend_warranty_usecase.dart';
 import 'package:trackify/feature/device_warranty/data/repository/device_warranty_repository_impl.dart';
 import 'package:trackify/feature/device_warranty/data/data_source/device_warranty_data_source.dart';
 import 'package:trackify/feature/document_folder/presentation/pages/document_screen.dart';
@@ -82,8 +86,10 @@ import 'package:trackify/feature/get_more_out/presentation/cubit/discover_cubit.
 import 'package:trackify/feature/get_more_out/presentation/cubit/feature_cubit.dart';
 import 'package:trackify/feature/get_more_out/presentation/cubit/geo_fenc_cubit.dart';
 import 'package:trackify/feature/health_insurance/data/local_data/health_insurance_local_data.dart';
+import 'package:trackify/feature/health_insurance/data/remote_data/health_insurance_remote_data_source.dart';
 import 'package:trackify/feature/health_insurance/data/repository_impl/health_insurance_repository_impl.dart';
 import 'package:trackify/feature/health_insurance/domain/usecase/health_insurance_usecase.dart';
+import 'package:trackify/feature/health_insurance/domain/usecase/save_health_insurance_usecase.dart';
 import 'package:trackify/feature/health_insurance/presentation/cubit/health_insurance_cubit.dart';
 import 'package:trackify/feature/my_garage/data/repository_impl/product_repository_impl.dart';
 import 'package:trackify/feature/my_garage/domain/repository/product_repository.dart';
@@ -122,6 +128,9 @@ import 'package:trackify/feature/video_tutorial/presentation/cubit/tutorial_cubi
 import 'feature/get_more_out/data/data source/discover_data_source.dart';
 import 'feature/get_more_out/data/data source/feature_local_data.dart';
 import 'feature/get_more_out/data/data source/geo_fence_local_data.dart';
+import 'package:trackify/feature/statistics/data/data_source/statistics_remote_data_source.dart';
+import 'package:trackify/feature/statistics/data/repository/statistics_repository_impl.dart';
+import 'package:trackify/feature/statistics/presentation/cubit/statistics_cubit.dart';
 import 'firebase_options.dart';
 
 final GlobalKey<NavigatorState> rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -247,6 +256,26 @@ List<BlocProvider> _buildBlocProviders() {
         );
       },
     ),
+    BlocProvider<WarrantyPaymentSummaryCubit>(
+      create: (_) {
+        final repository = DeviceWarrantyRepositoryImpl(
+          DeviceWarrantyRemoteDataSourceImpl(NetworkApiService()),
+        );
+        return WarrantyPaymentSummaryCubit(
+          GetWarrantyPaymentSummaryUseCase(repository),
+        );
+      },
+    ),
+    BlocProvider<ExtendWarrantyCubit>(
+      create: (_) {
+        final repository = DeviceWarrantyRepositoryImpl(
+          DeviceWarrantyRemoteDataSourceImpl(NetworkApiService()),
+        );
+        return ExtendWarrantyCubit(
+          ExtendWarrantyUseCase(repository),
+        );
+      },
+    ),
     BlocProvider<OrderSummaryCubit>(
       create: (_) {
         final repository = OrderSummaryRepositoryImpl(
@@ -362,17 +391,16 @@ List<BlocProvider> _buildBlocProviders() {
       ),
     ),
     BlocProvider<HealthInsuranceCubit>(
-
-      create: (_) => HealthInsuranceCubit(
-
-        HealthInsuranceUseCase(
-
-          HealthInsuranceRepositoryImpl(
-
-            HealthInsuranceLocalDataSource(),
-          ),
-        ),
-      )..getData(),
+      create: (_) {
+        final repository = HealthInsuranceRepositoryImpl(
+          localDataSource: HealthInsuranceLocalDataSource(),
+          remoteDataSource: HealthInsuranceRemoteDataSource(NetworkApiService()),
+        );
+        return HealthInsuranceCubit(
+          useCase: HealthInsuranceUseCase(repository),
+          saveUseCase: SaveHealthInsuranceUseCase(repository),
+        )..getData();
+      },
     ),
     BlocProvider<AddFuelCubit>(
       create: (_) => AddFuelCubit(
@@ -382,6 +410,17 @@ List<BlocProvider> _buildBlocProviders() {
           ),
         ),
       ),
+    ),
+    BlocProvider<StatisticsCubit>(
+      create: (_) {
+        final repository = StatisticsRepositoryImpl(
+          StatisticsRemoteDataSourceImpl(NetworkApiService()),
+        );
+        return StatisticsCubit(
+          getUserVehiclesUsecase: GetUserVehiclesUsecase(CommonRepositoryImpl()),
+          repository: repository,
+        );
+      },
     ),
   ];
 }

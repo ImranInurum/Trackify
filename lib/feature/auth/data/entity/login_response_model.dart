@@ -36,6 +36,11 @@ class User {
   String? country;
   String? state;
   String? city;
+  String? middleName;
+  String? lastName;
+  String? dateOfBirth;
+  String? address;
+  String? userProfile;
 
   User({
     this.id,
@@ -46,6 +51,11 @@ class User {
     this.country,
     this.state,
     this.city,
+    this.middleName,
+    this.lastName,
+    this.dateOfBirth,
+    this.address,
+    this.userProfile,
   });
 
   User.fromJson(Map<String, dynamic> json) {
@@ -57,11 +67,17 @@ class User {
     country = json['country'];
     state = json['state'];
     city = json['city'];
+    middleName = json['middleName'];
+    lastName = json['lastName'];
+    dateOfBirth = json['dateOfBirth'];
+    address = json['address'];
+    userProfile = json['userProfile'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['_id'] = id;
+    data['id'] = id;
     data['name'] = name;
     data['email'] = email;
     data['role'] = role;
@@ -69,6 +85,11 @@ class User {
     data['country'] = country;
     data['state'] = state;
     data['city'] = city;
+    data['middleName'] = middleName;
+    data['lastName'] = lastName;
+    data['dateOfBirth'] = dateOfBirth;
+    data['address'] = address;
+    data['userProfile'] = userProfile;
     return data;
   }
 }

@@ -20,7 +20,8 @@ class AddFuelRepositoryImpl implements AddFuelRepository{
         amount: entity.amount,
         odometer: entity.odometer,
         fullTank: entity.fullTank,
-        pricePerLitre: entity.pricePerLitre
+        pricePerLitre: entity.pricePerLitre,
+        fuelBeforeRefuel: entity.fuelBeforeRefuel
     );
     await dataSource.saveFuel(model);
 

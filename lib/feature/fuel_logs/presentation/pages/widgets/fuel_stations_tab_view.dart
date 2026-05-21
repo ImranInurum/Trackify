@@ -15,7 +15,8 @@ class FuelStationsTabView extends StatefulWidget {
 
 class _FuelStationsTabViewState extends State<FuelStationsTabView> {
   GoogleMapController? _mapController;
-  final DraggableScrollableController _sheetController = DraggableScrollableController();
+  final DraggableScrollableController _sheetController =
+      DraggableScrollableController();
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +27,9 @@ class _FuelStationsTabViewState extends State<FuelStationsTabView> {
     return BlocBuilder<FuelStationsCubit, FuelStationsState>(
       builder: (context, state) {
         if (state is FuelStationsLoading) {
-          return Center(child: CircularProgressIndicator(color: theme.primaryColor));
+          return Center(
+            child: CircularProgressIndicator(color: theme.primaryColor),
+          );
         }
 
         if (state is FuelStationsError) {
@@ -34,10 +37,14 @@ class _FuelStationsTabViewState extends State<FuelStationsTabView> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(state.message, style: TextStyle(color: theme.colorScheme.error)),
+                Text(
+                  state.message,
+                  style: TextStyle(color: theme.colorScheme.error),
+                ),
                 const SizedBox(height: 16),
                 ElevatedButton(
-                  onPressed: () => context.read<FuelStationsCubit>().fetchNearbyStations(),
+                  onPressed: () =>
+                      context.read<FuelStationsCubit>().fetchNearbyStations(),
                   child: Text(l10n.retry),
                 ),
               ],
@@ -68,10 +75,7 @@ class _FuelStationsTabViewState extends State<FuelStationsTabView> {
                 bottom: mediaQuery.size.height * 0.45,
                 child: Column(
                   children: [
-                    _buildMapAction(
-                      icon: Icons.person_outline,
-                      onTap: () {},
-                    ),
+                    _buildMapAction(icon: Icons.person_outline, onTap: () {}),
                     const SizedBox(height: 12),
                     _buildMapAction(
                       icon: Icons.my_location,
@@ -97,99 +101,112 @@ class _FuelStationsTabViewState extends State<FuelStationsTabView> {
                   return SafeArea(
                     top: false,
                     child: Container(
-                    decoration: BoxDecoration(
-                      color: theme.scaffoldBackgroundColor,
-                      borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.1),
-                          blurRadius: 10,
-                          offset: const Offset(0, -5),
+                      decoration: BoxDecoration(
+                        color: theme.scaffoldBackgroundColor,
+                        borderRadius: const BorderRadius.vertical(
+                          top: Radius.circular(24),
                         ),
-                      ],
-                    ),
-                    child: Column(
-                      children: [
-                        // Handle bar
-                        Center(
-                          child: Container(
-                            margin: const EdgeInsets.symmetric(vertical: 12),
-                            width: 40,
-                            height: 4,
-                            decoration: BoxDecoration(
-                              color: theme.dividerColor,
-                              borderRadius: BorderRadius.circular(2),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.1),
+                            blurRadius: 10,
+                            offset: const Offset(0, -5),
+                          ),
+                        ],
+                      ),
+                      child: Column(
+                        children: [
+                          // Handle bar
+                          Center(
+                            child: Container(
+                              margin: const EdgeInsets.symmetric(vertical: 12),
+                              width: 40,
+                              height: 4,
+                              decoration: BoxDecoration(
+                                color: theme.dividerColor,
+                                borderRadius: BorderRadius.circular(2),
+                              ),
                             ),
                           ),
-                        ),
-                        
-                        // Header with Add Station
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                l10n.fuelStations,
-                                style: TextStyle(
-                                  fontSize: mediaQuery.textScaler.scale(18),
-                                  fontWeight: FontWeight.bold,
-                                  color: theme.textTheme.titleLarge?.color,
-                                ),
-                              ),
-                              TextButton.icon(
-                                onPressed: () {},
-                                icon: const Icon(Icons.add, size: 18),
-                                label: Text(l10n.addStation),
-                                style: TextButton.styleFrom(
-                                  backgroundColor: theme.primaryColor.withOpacity(0.1),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(20),
+
+                          // Header with Add Station
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  l10n.fuelStations,
+                                  style: TextStyle(
+                                    fontSize: mediaQuery.textScaler.scale(18),
+                                    fontWeight: FontWeight.bold,
+                                    color: theme.textTheme.titleLarge?.color,
                                   ),
                                 ),
-                              ),
-                            ],
-                          ),
-                        ),
-
-                        // Tabs
-                        Expanded(
-                          child: DefaultTabController(
-                            length: 3,
-                            child: Column(
-                              children: [
-                                TabBar(
-                                  isScrollable: true,
-                                  tabAlignment: TabAlignment.start,
-                                  indicatorColor: theme.primaryColor,
-                                  labelColor: theme.primaryColor,
-                                  unselectedLabelColor: theme.hintColor,
-                                  labelStyle: const TextStyle(fontWeight: FontWeight.bold),
-                                  labelPadding: const EdgeInsets.symmetric(horizontal: 16),
-                                  tabs: [
-                                    Tab(text: l10n.nearby),
-                                    Tab(text: l10n.favourites),
-                                    Tab(text: l10n.addedByMe),
-                                  ],
-                                ),
-                                Expanded(
-                                  child: TabBarView(
-                                    children: [
-                                      state.stations.isEmpty
-                                          ? _buildPlaceholder("No stations found nearby")
-                                          : _buildStationList(state.stations, scrollController),
-                                      _buildPlaceholder(l10n.noFavourites),
-                                      _buildPlaceholder(l10n.noStationsAdded),
-                                    ],
+                                TextButton.icon(
+                                  onPressed: () {},
+                                  icon: const Icon(Icons.add, size: 18),
+                                  label: Text(l10n.addStation),
+                                  style: TextButton.styleFrom(
+                                    backgroundColor: theme.primaryColor
+                                        .withOpacity(0.1),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(20),
+                                    ),
                                   ),
                                 ),
                               ],
                             ),
                           ),
-                        ),
-                      ],
+
+                          // Tabs
+                          Expanded(
+                            child: DefaultTabController(
+                              length: 3,
+                              child: Column(
+                                children: [
+                                  TabBar(
+                                    isScrollable: true,
+                                    tabAlignment: TabAlignment.start,
+                                    indicatorColor: theme.primaryColor,
+                                    labelColor: theme.primaryColor,
+                                    unselectedLabelColor: theme.hintColor,
+                                    labelStyle: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                    labelPadding: const EdgeInsets.symmetric(
+                                      horizontal: 16,
+                                    ),
+                                    tabs: [
+                                      Tab(text: l10n.nearby),
+                                      Tab(text: l10n.favourites),
+                                      Tab(text: l10n.addedByMe),
+                                    ],
+                                  ),
+                                  Expanded(
+                                    child: TabBarView(
+                                      children: [
+                                        state.stations.isEmpty
+                                            ? _buildPlaceholder(
+                                                "No stations found nearby",
+                                              )
+                                            : _buildStationList(
+                                                state.stations,
+                                                scrollController,
+                                              ),
+                                        _buildPlaceholder(l10n.noFavourites),
+                                        _buildPlaceholder(l10n.noStationsAdded),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                  ));
+                  );
                 },
               ),
             ],
@@ -201,7 +218,10 @@ class _FuelStationsTabViewState extends State<FuelStationsTabView> {
     );
   }
 
-  Widget _buildMapAction({required IconData icon, required VoidCallback onTap}) {
+  Widget _buildMapAction({
+    required IconData icon,
+    required VoidCallback onTap,
+  }) {
     final theme = Theme.of(context);
     return GestureDetector(
       onTap: onTap,
@@ -223,7 +243,10 @@ class _FuelStationsTabViewState extends State<FuelStationsTabView> {
     );
   }
 
-  Widget _buildStationList(List<FuelStation> stations, ScrollController scrollController) {
+  Widget _buildStationList(
+    List<FuelStation> stations,
+    ScrollController scrollController,
+  ) {
     return ListView.builder(
       controller: scrollController,
       padding: const EdgeInsets.all(16),
@@ -239,75 +262,82 @@ class _FuelStationsTabViewState extends State<FuelStationsTabView> {
     final theme = Theme.of(context);
     final mediaQuery = MediaQuery.of(context);
 
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: theme.cardColor.withOpacity(0.5),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: theme.dividerColor, width: 0.5),
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Logo placeholder
-          Container(
-            width: 48,
-            height: 48,
-            decoration: BoxDecoration(
-              color: Colors.white,
-              shape: BoxShape.circle,
-              border: Border.all(color: theme.dividerColor),
+    return GestureDetector(
+      onTap: () {
+        Navigator.pop(context, station.name);
+      },
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 12),
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: theme.cardColor.withOpacity(0.5),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: theme.dividerColor, width: 0.5),
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Logo placeholder
+            Container(
+              width: 48,
+              height: 48,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                shape: BoxShape.circle,
+                border: Border.all(color: theme.dividerColor),
+              ),
+              child: ClipOval(child: _getBrandLogo(station.brand)),
             ),
-            child: ClipOval(
-              child: _getBrandLogo(station.brand),
-            ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        station.name,
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: mediaQuery.textScaler.scale(15),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          station.name,
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: mediaQuery.textScaler.scale(15),
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
                       ),
-                    ),
-                    if (station.distance != null) ...[
-                      Icon(Icons.near_me_outlined, size: 14, color: theme.hintColor),
-                      const SizedBox(width: 4),
-                      Text(
-                        "${station.distance!.toStringAsFixed(2)} km",
-                        style: TextStyle(
+                      if (station.distance != null) ...[
+                        Icon(
+                          Icons.near_me_outlined,
+                          size: 14,
                           color: theme.hintColor,
-                          fontSize: mediaQuery.textScaler.scale(12),
                         ),
-                      ),
+                        const SizedBox(width: 4),
+                        Text(
+                          "${station.distance!.toStringAsFixed(2)} km",
+                          style: TextStyle(
+                            color: theme.hintColor,
+                            fontSize: mediaQuery.textScaler.scale(12),
+                          ),
+                        ),
+                      ],
                     ],
-                  ],
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  station.address ?? 'Address not available',
-                  style: TextStyle(
-                    color: theme.hintColor,
-                    fontSize: mediaQuery.textScaler.scale(12),
                   ),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ],
+                  const SizedBox(height: 4),
+                  Text(
+                    station.address ?? 'Address not available',
+                    style: TextStyle(
+                      color: theme.hintColor,
+                      fontSize: mediaQuery.textScaler.scale(12),
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -315,24 +345,27 @@ class _FuelStationsTabViewState extends State<FuelStationsTabView> {
   Widget _getBrandLogo(String? brand) {
     const errorIcon = Icon(Icons.local_gas_station, color: Colors.grey);
     if (brand == null) return errorIcon;
-    
+
     final b = brand.toLowerCase();
     String? logoUrl;
     if (b.contains('indian oil')) {
-       logoUrl = 'https://upload.wikimedia.org/wikipedia/en/thumb/8/8c/Indian_Oil_Logo.svg/200px-Indian_Oil_Logo.svg.png';
+      logoUrl =
+          'https://upload.wikimedia.org/wikipedia/en/thumb/8/8c/Indian_Oil_Logo.svg/200px-Indian_Oil_Logo.svg.png';
     } else if (b.contains('bpcl') || b.contains('bharat petroleum')) {
-       logoUrl = 'https://upload.wikimedia.org/wikipedia/en/thumb/e/ef/Bharat_Petroleum_Logo.svg/200px-Bharat_Petroleum_Logo.svg.png';
+      logoUrl =
+          'https://upload.wikimedia.org/wikipedia/en/thumb/e/ef/Bharat_Petroleum_Logo.svg/200px-Bharat_Petroleum_Logo.svg.png';
     } else if (b.contains('hp') || b.contains('hindustan petroleum')) {
-       logoUrl = 'https://upload.wikimedia.org/wikipedia/en/thumb/5/52/HP_Logo.svg/200px-HP_Logo.svg.png';
+      logoUrl =
+          'https://upload.wikimedia.org/wikipedia/en/thumb/5/52/HP_Logo.svg/200px-HP_Logo.svg.png';
     }
-    
+
     if (logoUrl != null) {
       return Image.network(
         logoUrl,
         errorBuilder: (context, error, stackTrace) => errorIcon,
       );
     }
-    
+
     return errorIcon;
   }
 

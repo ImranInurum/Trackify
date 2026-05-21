@@ -10,6 +10,7 @@ class AddFuelModel extends AddFuelEntity {
     required super.odometer,
     required super.fullTank,
     required super.pricePerLitre,
+    required super.fuelBeforeRefuel,
   });
 
   factory AddFuelModel.fromMap(
@@ -23,9 +24,11 @@ class AddFuelModel extends AddFuelEntity {
       fuelStation: map['fuelStation'] ?? '',
       amount: (map['amount'] ?? 0).toDouble(),
       odometer: map['odometer'] ?? 0,
-      fullTank: map['fullTank'] ?? false,
+      fullTank: map['fullTank'] ?? 1,
       pricePerLitre:
       (map['pricePerLitre'] ?? 0).toDouble(),
+      fuelBeforeRefuel:
+      (map['fuelBeforeRefuel'] ?? "0"),
     );
   }
 
@@ -38,8 +41,8 @@ class AddFuelModel extends AddFuelEntity {
       "totalAmount": amount,
       "stationName": fuelStation,
       "pricePerLiter": pricePerLitre,
-      "tankStatus": fullTank ? 1 : 0,
-      "fuelBeforeRefuel": 15,
+      "tankStatus": fullTank,
+      "fuelBeforeRefuel": fuelBeforeRefuel,
     };
   }
 }

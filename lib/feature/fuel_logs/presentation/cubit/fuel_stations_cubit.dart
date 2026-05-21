@@ -15,9 +15,11 @@ class FuelStationsCubit extends Cubit<FuelStationsState> {
     try {
       // 1. Get current location
       Position position = await Geolocator.getCurrentPosition(
-        locationSettings: const LocationSettings(accuracy: LocationAccuracy.high),
+        locationSettings: const LocationSettings(
+          accuracy: LocationAccuracy.high,
+        ),
       );
-      
+
       final latLng = LatLng(position.latitude, position.longitude);
 
       // 2. Fetch stations from Overpass
@@ -31,18 +33,17 @@ class FuelStationsCubit extends Cubit<FuelStationsState> {
         return Marker(
           markerId: MarkerId(station.id),
           position: LatLng(station.lat, station.lon),
-          infoWindow: InfoWindow(
-            title: station.name,
-            snippet: station.address,
-          ),
+          infoWindow: InfoWindow(title: station.name, snippet: station.address),
         );
       }).toSet();
 
-      emit(FuelStationsLoaded(
-        stations: stations,
-        userLocation: latLng,
-        markers: markers,
-      ));
+      emit(
+        FuelStationsLoaded(
+          stations: stations,
+          userLocation: latLng,
+          markers: markers,
+        ),
+      );
     } catch (e) {
       emit(FuelStationsError(e.toString()));
     }

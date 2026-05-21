@@ -6,6 +6,8 @@ import 'package:trackify/feature/add_fuel/presentation/cubit/add_fuel_cubit.dart
 import 'package:trackify/feature/add_fuel/presentation/cubit/add_fuel_state.dart';
 import 'package:trackify/feature/fuel_logs/presentation/pages/fuel_station_screen.dart';
 import 'package:trackify/l10n/app_localizations.dart';
+import 'package:trackify/feature/fuel_logs/data/repository/overpass_service.dart';
+import 'package:geolocator/geolocator.dart';
 
 import 'package:trackify/feature/fuel_logs/presentation/cubit/fuel_logs_cubit.dart';
 import 'package:trackify/feature/service_logs/presentation/cubit/service_logs_cubit.dart';
@@ -38,6 +40,58 @@ class _AddFuelScreenState extends State<AddFuelScreen> with TickerProviderStateM
   bool isPartialTankSelected = false;
   DateTime _selectedDate = DateTime.now();
   TimeOfDay _selectedTime = TimeOfDay.now();
+  String? selectedFuelStationName;
+  bool _isLoadingNearest = false;
+
+  Future<void> _loadNearestFuelStation() async {
+    setState(() {
+      _isLoadingNearest = true;
+    });
+    try {
+      bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+      if (!serviceEnabled) {
+        return;
+      }
+
+      LocationPermission permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+        if (permission == LocationPermission.denied) {
+          return;
+        }
+      }
+      
+      if (permission == LocationPermission.deniedForever) {
+        return;
+      }
+
+      final position = await Geolocator.getCurrentPosition(
+        locationSettings: const LocationSettings(
+          accuracy: LocationAccuracy.low,
+        ),
+      ).timeout(const Duration(seconds: 5));
+
+      final overpassService = OverpassService();
+      final stations = await overpassService.fetchNearbyFuelStations(
+        position.latitude,
+        position.longitude,
+      );
+
+      if (stations.isNotEmpty && mounted) {
+        setState(() {
+          selectedFuelStationName = stations.first.name;
+        });
+      }
+    } catch (e) {
+      debugPrint('Error getting nearest station: $e');
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoadingNearest = false;
+        });
+      }
+    }
+  }
 
   Future<void> _selectDate() async {
     final DateTime? picked = await showDatePicker(
@@ -71,6 +125,7 @@ class _AddFuelScreenState extends State<AddFuelScreen> with TickerProviderStateM
   void initState() {
     super.initState();
     _tabController = TabController(length: 3, vsync: this);
+    _loadNearestFuelStation();
   }
 
   @override
@@ -113,7 +168,7 @@ class _AddFuelScreenState extends State<AddFuelScreen> with TickerProviderStateM
                       final entity = AddFuelEntity(
                         vehicle: currentServiceState.selectedVehicle?.imei ?? '',
                         dateTime: combinedDateTime,
-                        fuelStation: 'C.M. Petro Point',
+                        fuelStation: selectedFuelStationName ?? l10n.fuelStationName,
                         odometer: int.tryParse(
                           odometerController.text,
                         ) ?? 0,
@@ -123,7 +178,8 @@ class _AddFuelScreenState extends State<AddFuelScreen> with TickerProviderStateM
                         pricePerLitre: double.tryParse(
                           priceController.text,
                         ) ?? 0,
-                        fullTank: isFullTankSelected,
+                        fullTank: isFullTankSelected?"1":"2",
+                        fuelBeforeRefuel: fuelBeforeRefuelController.text
                       );
                       await context.read<AddFuelCubit>().saveFuel(entity);
                     }
@@ -281,13 +337,18 @@ class _AddFuelScreenState extends State<AddFuelScreen> with TickerProviderStateM
                       const SizedBox(height: 12),
 
                       GestureDetector(
-                        onTap: () {
-                          Navigator.push(
+                        onTap: () async {
+                          final result = await Navigator.push<String>(
                             context,
                             MaterialPageRoute(
                               builder: (_) => const FuelStationScreen(),
                             ),
                           );
+                          if (result != null) {
+                            setState(() {
+                              selectedFuelStationName = result;
+                            });
+                          }
                         },
                         child: Container(
                           height: 60,
@@ -319,16 +380,35 @@ class _AddFuelScreenState extends State<AddFuelScreen> with TickerProviderStateM
                                   width: 12),
 
                               Expanded(
-                                child: Text(
-                                  l10n.fuelStationName,
-                                   style: TextStyle(
-                                    color: colorScheme.secondary,
-                                    fontSize: 16,
-                                  ),
-                                  overflow:
-                                  TextOverflow
-                                      .ellipsis,
-                                ),
+                                child: _isLoadingNearest
+                                    ? Row(
+                                        children: [
+                                          SizedBox(
+                                            width: 16,
+                                            height: 16,
+                                            child: CircularProgressIndicator(
+                                              strokeWidth: 2,
+                                              color: colorScheme.secondary,
+                                            ),
+                                          ),
+                                          const SizedBox(width: 8),
+                                          Text(
+                                            'Locating nearest...',
+                                            style: TextStyle(
+                                              color: colorScheme.secondary,
+                                              fontSize: 16,
+                                            ),
+                                          ),
+                                        ],
+                                      )
+                                    : Text(
+                                        selectedFuelStationName ?? l10n.fuelStationName,
+                                        style: TextStyle(
+                                          color: colorScheme.secondary,
+                                          fontSize: 16,
+                                        ),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
                               ),
 
                               Container(
