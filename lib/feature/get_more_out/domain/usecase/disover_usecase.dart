@@ -9,7 +9,7 @@ class GetDiscoverUseCase {
       this.repository,
       );
 
-  List<DiscoverEntity> call() {
+  Future<List<DiscoverEntity>> call() {
 
     return repository.getDiscoverFeatures();
   }

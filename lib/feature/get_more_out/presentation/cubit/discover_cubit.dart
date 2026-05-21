@@ -1,24 +1,35 @@
-import 'package:flutter_bloc/flutter_bloc.dart';
+// ===============================
+// discover_cubit.dart
+// ===============================
 
+import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../domain/usecase/disover_usecase.dart';
 import 'disocver_state.dart';
 
-
-
 class DiscoverCubit extends Cubit<DiscoverState> {
 
-  final GetDiscoverUseCase
-  getDiscoverFeaturesUseCase;
+  final GetDiscoverUseCase getDiscoverUseCase;
 
-  DiscoverCubit(
-      this.getDiscoverFeaturesUseCase,
-      ) : super(DiscoverInitial());
+  DiscoverCubit(this.getDiscoverUseCase)
+      : super(DiscoverInitial());
 
-  void loadFeatures() {
+  Future<void> fetchDiscoverFeatures() async {
 
-    final data =
-    getDiscoverFeaturesUseCase.call();
+    try {
 
-    emit(DiscoverLoaded(data));
+      emit(DiscoverLoading());
+
+      final result = await getDiscoverUseCase();
+
+      emit(DiscoverLoaded(result));
+
+    } catch (e) {
+
+      emit(
+        DiscoverError(
+          e.toString(),
+        ),
+      );
+    }
   }
 }

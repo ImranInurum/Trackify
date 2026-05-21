@@ -27,6 +27,7 @@ import 'package:trackify/feature/upgrade_to_plus/domain/usecase/get_plus_members
 import 'package:trackify/feature/upgrade_to_plus/presentation/cubit/upgrade_to_plus_cubit.dart';
 import 'package:trackify/feature/video_tutorial/data/repository/tutorial_repository_impl.dart';
 import 'package:trackify/feature/video_tutorial/domain/usecase/tutorial_usecase.dart';
+import 'package:trackify/core/config/network/api_host.dart';
 
 import 'package:trackify/app/app.dart';
 import 'package:trackify/app/cubit/app_cubit.dart';
@@ -118,6 +119,9 @@ import 'package:trackify/feature/overspeed_alert/domain/usecase/get_overspeed_al
 
 import 'package:trackify/feature/video_tutorial/data/datasource/tutorial_remote_data.dart';
 import 'package:trackify/feature/video_tutorial/presentation/cubit/tutorial_cubit.dart';
+import 'feature/get_more_out/data/data source/discover_data_source.dart';
+import 'feature/get_more_out/data/data source/feature_local_data.dart';
+import 'feature/get_more_out/data/data source/geo_fence_local_data.dart';
 import 'firebase_options.dart';
 
 final GlobalKey<NavigatorState> rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -289,7 +293,11 @@ List<BlocProvider> _buildBlocProviders() {
     ),
     BlocProvider<UpgradeToPlusCubit>(
       create: (_) {
-        final repository = PlusMembershipRepositoryImpl(PlusMembershipRemoteDataSourceImpl());
+        final repository = PlusMembershipRepositoryImpl(
+          PlusMembershipRemoteDataSourceImpl(
+            baseUrl: ApiURL.baseURL,
+          ),
+        );
         return UpgradeToPlusCubit(
           getPlusMembershipDetails: GetPlusMembershipDetails(repository),
           repository: repository,
@@ -311,40 +319,37 @@ List<BlocProvider> _buildBlocProviders() {
 
         GetDiscoverUseCase(
 
-          DiscoverRepositoryImpl(),
+          DiscoverRepositoryImpl(
+
+            DiscoverDataSource(),
+
+          ),
         ),
       ),
     ),
 
-    BlocProvider<FeatureCubit>(
+
+    BlocProvider(
 
       create: (_) => FeatureCubit(
 
-        GetSafetyUseCase(
-          FeatureRepositoryImpl(),
-        ),
+        GetFeatureUseCase(
 
-        GetTrackingUseCase(
-          FeatureRepositoryImpl(),
-        ),
+          FeatureRepositoryImpl(
 
-        GetRideUseCase(
-          FeatureRepositoryImpl(),
-        ),
+            FeatureDataSource(),
 
-        GetDeviceUseCase(
-          FeatureRepositoryImpl(),
+          ),
         ),
       ),
     ),
 
     BlocProvider<GeoFenceIntroCubit>(
-
       create: (_) => GeoFenceIntroCubit(
-
         GetGeoFenceIntroUseCase(
-
-          GeoFenceIntroRepositoryImpl(),
+          GeoFenceIntroRepositoryImpl(
+            GeoFenceIntroDataSource(),
+          ),
         ),
       ),
     ),

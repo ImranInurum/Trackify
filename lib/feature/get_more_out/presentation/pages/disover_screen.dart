@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:trackify/feature/get_more_out/presentation/pages/feature_details_screen.dart';
-import 'package:trackify/l10n/app_localizations_ar.dart';
 
 import '../../../../l10n/app_localizations.dart';
+import '../../data/data source/feature_local_data.dart';
+import '../../data/repository/feature_repository_impl.dart';
+import '../../domain/usecase/get_safey_usecase.dart';
 import '../cubit/discover_cubit.dart';
 import '../cubit/disocver_state.dart';
+import '../cubit/feature_cubit.dart';
 
 
 class DiscoverFeaturesScreen extends StatefulWidget {
@@ -22,7 +25,7 @@ class _DiscoverFeaturesScreenState
 
   @override
   void initState() {
-    context.read<DiscoverCubit>().loadFeatures();
+    context.read<DiscoverCubit>().fetchDiscoverFeatures();
     super.initState();
   }
 
@@ -66,18 +69,36 @@ class _DiscoverFeaturesScreenState
           if (state is DiscoverLoaded) {
             return ListView.builder(
               padding: const EdgeInsets.all(16),
-              itemCount: state.features.length,
+              itemCount: state.discoverList.length,
               itemBuilder: (context, index) {
-                final feature = state.features[index];
+                final feature = state.discoverList[index];
 
                 return GestureDetector(
                   onTap: () {
                     Navigator.push(
+
                       context,
+
                       MaterialPageRoute(
-                        builder: (_) => FeatureDetailsScreen(
-                          appBarTitle: feature.title,
-                          featureIndex: index,
+
+                        builder: (_) => BlocProvider(
+
+                          create: (_) => FeatureCubit(
+
+                            GetFeatureUseCase(
+
+                              FeatureRepositoryImpl(
+                                FeatureDataSource(),
+                              ),
+                            ),
+                          ),
+
+                          child: FeatureDetailsScreen(
+
+                            appBarTitle: feature.title,
+
+                            categoryId: feature.id,
+                          ),
                         ),
                       ),
                     );
@@ -91,7 +112,7 @@ class _DiscoverFeaturesScreenState
                         color: colorScheme.outlineVariant.withOpacity(0.2),
                       ),
                       image: DecorationImage(
-                        image: AssetImage(feature.image),
+                        image: NetworkImage(feature.image),
                         fit: BoxFit.cover,
                       ),
                     ),

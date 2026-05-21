@@ -9,8 +9,8 @@ class GetGeoFenceIntroUseCase {
   GetGeoFenceIntroUseCase(
       this.repository);
 
-  List<GeoFenceIntroEntity> call() {
+  Future<List<GeoFenceIntroEntity>> call(String categoryId) {
 
-    return repository.getIntroSlides();
+    return repository.getIntroSlides(categoryId);
   }
 }

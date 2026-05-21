@@ -1,64 +1,44 @@
-import 'package:flutter_bloc/flutter_bloc.dart';
+// ===============================
+// feature_cubit.dart
+// ===============================
 
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../domain/usecase/get_safey_usecase.dart';
 import 'feature_state.dart';
 
+class FeatureCubit
+    extends Cubit<FeatureState> {
 
-class FeatureCubit extends Cubit<FeatureState> {
+  final GetFeatureUseCase
+  getFeatureUseCase;
 
-  final GetSafetyUseCase
-  getSafetyItemsUseCase;
+  FeatureCubit(this.getFeatureUseCase)
+      : super(FeatureInitial());
 
-  final GetTrackingUseCase
-  getTrackingItemsUseCase;
+  Future<void>
+  loadFeatures(String categoryId) async {
 
-  final GetRideUseCase
-  getRideItemsUseCase;
+    try {
 
-  final GetDeviceUseCase
-  getDeviceItemsUseCase;
+      emit(FeatureLoading());
 
-  FeatureCubit(
-      this.getSafetyItemsUseCase,
-      this.getTrackingItemsUseCase,
-      this.getRideItemsUseCase,
-      this.getDeviceItemsUseCase,
-      ) : super(FeatureInitial());
+      final items =
+      await getFeatureUseCase(
+        categoryId,
+      );
 
-  /// SAFETY
-  void loadSafetyItems() {
+      emit(
+        FeatureLoaded(items),
+      );
 
-    final items =
-    getSafetyItemsUseCase.call();
+    } catch (e) {
 
-    emit(FeatureLoaded(items));
-  }
-
-  /// TRACKING
-  void loadTrackingItems() {
-
-    final items =
-    getTrackingItemsUseCase.call();
-
-    emit(FeatureLoaded(items));
-  }
-
-  /// RIDES
-  void loadRideItems() {
-
-    final items =
-    getRideItemsUseCase.call();
-
-    emit(FeatureLoaded(items));
-  }
-
-  /// DEVICE
-  void loadDeviceItems() {
-
-    final items =
-    getDeviceItemsUseCase.call();
-
-    emit(FeatureLoaded(items));
+      emit(
+        FeatureError(
+          e.toString(),
+        ),
+      );
+    }
   }
 }

@@ -9,7 +9,12 @@ import '../cubit/geo_fenc_state.dart';
 
 class GeofancyScreen extends StatefulWidget {
   final String title;
-  const GeofancyScreen({super.key, required this.title});
+  final String categoryId;
+  const GeofancyScreen({
+    super.key,
+    required this.title,
+    required this.categoryId,
+  });
 
   @override
   State<GeofancyScreen> createState() => _GeofancyScreenState();
@@ -25,11 +30,13 @@ class _GeofancyScreenState extends State<GeofancyScreen> {
   @override
   void initState() {
 
+    super.initState();
+
     context
         .read<GeoFenceIntroCubit>()
-        .loadSlides();
-
-    super.initState();
+        .loadSlides(
+      categoryId: widget.categoryId,
+    );
   }
 
   late final l10n = AppLocalizations.of(context)!;
@@ -69,6 +76,12 @@ class _GeofancyScreenState extends State<GeofancyScreen> {
           if (state is GeoFenceIntroLoaded) {
             final slides = state.slides;
 
+            if (slides.isEmpty) {
+              return const Center(
+                child: Text("No intro data available"),
+              );
+            }
+
             return Padding(
               padding: const EdgeInsets.all(20),
               child: Column(
@@ -100,9 +113,18 @@ class _GeofancyScreenState extends State<GeofancyScreen> {
                               ),
                               child: ClipRRect(
                                 borderRadius: BorderRadius.circular(30),
-                                child: Image.asset(
+                                child: Image.network(
                                   slide.image,
                                   fit: BoxFit.cover,
+                                  errorBuilder: (context, error, stackTrace) {
+                                    return Center(
+                                      child: Icon(
+                                        Icons.image_not_supported,
+                                        size: 50,
+                                        color: colorScheme.onSurface.withOpacity(0.5),
+                                      ),
+                                    );
+                                  },
                                 ),
                               ),
                             ),
@@ -172,7 +194,9 @@ class _GeofancyScreenState extends State<GeofancyScreen> {
                       ),
                       onPressed: () {},
                       child: Text(
-                        "Go to ${widget.title}",
+                        slides[currentIndex].buttonText.isNotEmpty 
+                            ? slides[currentIndex].buttonText 
+                            : "Go to ${widget.title}",
                         style: const TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
@@ -180,8 +204,37 @@ class _GeofancyScreenState extends State<GeofancyScreen> {
                       ),
                     ),
                   ),
-                  SizedBox(height: 13.5,),
+                  const SizedBox(height: 11.5,),
                 ],
+              ),
+            );
+          }
+
+          if (state is GeoFenceIntroError) {
+            return Center(
+              child: Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.error_outline, color: colorScheme.error, size: 48),
+                    const SizedBox(height: 16),
+                    Text(
+                      state.message,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(color: colorScheme.onErrorContainer),
+                    ),
+                    const SizedBox(height: 16),
+                    ElevatedButton(
+                      onPressed: () {
+                        context.read<GeoFenceIntroCubit>().loadSlides(
+                          categoryId: widget.categoryId,
+                        );
+                      },
+                      child: const Text("Retry"),
+                    ),
+                  ],
+                ),
               ),
             );
           }

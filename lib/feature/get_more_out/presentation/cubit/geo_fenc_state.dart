@@ -5,6 +5,9 @@ abstract class GeoFenceIntroState {}
 class GeoFenceIntroInitial
     extends GeoFenceIntroState {}
 
+class GeoFenceIntroLoading
+    extends GeoFenceIntroState {}
+
 class GeoFenceIntroLoaded
     extends GeoFenceIntroState {
 
@@ -12,4 +15,12 @@ class GeoFenceIntroLoaded
   slides;
 
   GeoFenceIntroLoaded(this.slides);
+}
+
+class GeoFenceIntroError
+    extends GeoFenceIntroState {
+
+  final String message;
+
+  GeoFenceIntroError(this.message);
 }
