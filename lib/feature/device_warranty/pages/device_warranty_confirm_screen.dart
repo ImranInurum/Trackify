@@ -1,18 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:trackify/core/config/font_manager.dart';
+import 'package:trackify/core/utils/shared_preferences.dart';
 import 'package:trackify/feature/device_warranty/domain/entities/device_warranty_entity.dart';
-import 'package:trackify/feature/order_summary/domain/entities/order_summary_entity.dart';
-import 'package:trackify/feature/order_summary/presentation/pages/order_summary_screen.dart';
+import 'package:trackify/feature/device_warranty/domain/entities/warranty_payment_summary_entity.dart';
+import 'package:trackify/feature/device_warranty/presentation/cubit/warranty_payment_summary_cubit.dart';
+import 'package:trackify/feature/device_warranty/presentation/cubit/warranty_payment_summary_state.dart';
+import 'package:trackify/feature/device_warranty/presentation/cubit/extend_warranty_cubit.dart';
+import 'package:trackify/feature/device_warranty/presentation/cubit/extend_warranty_state.dart';
 
 import '../../../l10n/app_localizations.dart';
 
 class DeviceWarrantyConfirmScreen extends StatefulWidget {
   final DeviceWarrantyEntity warrantyData;
 
-  const DeviceWarrantyConfirmScreen({
-    super.key,
-    required this.warrantyData,
-  });
+  const DeviceWarrantyConfirmScreen({super.key, required this.warrantyData});
 
   @override
   State<DeviceWarrantyConfirmScreen> createState() =>
@@ -21,6 +23,19 @@ class DeviceWarrantyConfirmScreen extends StatefulWidget {
 
 class _DeviceWarrantyConfirmScreenState
     extends State<DeviceWarrantyConfirmScreen> {
+  @override
+  void initState() {
+    super.initState();
+    final imei = widget.warrantyData.vehicle?.imei.isNotEmpty == true
+        ? widget.warrantyData.vehicle!.imei
+        : AppPreference.instance.getSync(key: AppPreference.IMEI);
+    final planId = widget.warrantyData.offer?.planId ?? '';
+    context.read<WarrantyPaymentSummaryCubit>().load(
+      imei: imei,
+      planId: planId,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -50,20 +65,115 @@ class _DeviceWarrantyConfirmScreenState
           ),
         ),
       ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        child: Column(
-          children: [
-            const SizedBox(height: 16),
-            _deviceInfoCard(theme, colorScheme, l10n),
-            const SizedBox(height: 24),
-            _paymentSummaryCard(theme, colorScheme, l10n),
-            const Spacer(),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 24),
-              child: _bottomButton(theme, colorScheme, l10n),
-            ),
-          ],
+      body: BlocListener<ExtendWarrantyCubit, ExtendWarrantyState>(
+        listener: (context, extendState) {
+          if (extendState is ExtendWarrantySuccess) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(extendState.message),
+                backgroundColor: Colors.green,
+              ),
+            );
+            Navigator.pop(context, true);
+          } else if (extendState is ExtendWarrantyError) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(extendState.message),
+                backgroundColor: Colors.red,
+              ),
+            );
+          }
+        },
+        child: BlocBuilder<WarrantyPaymentSummaryCubit, WarrantyPaymentSummaryState>(
+          builder: (context, state) {
+            if (state is WarrantyPaymentSummaryLoading ||
+                state is WarrantyPaymentSummaryInitial) {
+              return const Center(child: CircularProgressIndicator());
+            }
+
+            if (state is WarrantyPaymentSummaryError) {
+              return Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(24.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.error_outline_rounded,
+                        color: colorScheme.error,
+                        size: 48,
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        state.message,
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          color: colorScheme.onSurface.withValues(alpha: 0.7),
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: 24),
+                      ElevatedButton.icon(
+                        onPressed: () {
+                          final imei =
+                              widget.warrantyData.vehicle?.imei.isNotEmpty ==
+                                  true
+                              ? widget.warrantyData.vehicle!.imei
+                              : AppPreference.instance.getSync(
+                                  key: AppPreference.IMEI,
+                                );
+                          final planId =
+                              widget.warrantyData.offer?.planId ?? '';
+                          context.read<WarrantyPaymentSummaryCubit>().load(
+                            imei: imei,
+                            planId: planId,
+                          );
+                        },
+                        icon: const Icon(Icons.refresh_rounded),
+                        label: const Text("Retry"),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: colorScheme.primary,
+                          foregroundColor: colorScheme.onPrimary,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            }
+
+            if (state is WarrantyPaymentSummaryLoaded) {
+              final summaryData = state.paymentSummary;
+
+              return Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Column(
+                  children: [
+                    const SizedBox(height: 16),
+                    _deviceInfoCard(theme, colorScheme, l10n, summaryData),
+                    const SizedBox(height: 24),
+                    _paymentSummaryCard(
+                      theme,
+                      colorScheme,
+                      l10n,
+                      summaryData,
+                    ),
+                    const Spacer(),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 24),
+                      child: _bottomButton(
+                        theme,
+                        colorScheme,
+                        l10n,
+                        summaryData,
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }
+
+            return const SizedBox.shrink();
+          },
         ),
       ),
     );
@@ -73,9 +183,9 @@ class _DeviceWarrantyConfirmScreenState
     ThemeData theme,
     ColorScheme colorScheme,
     AppLocalizations l10n,
+    WarrantyPaymentSummaryEntity summaryData,
   ) {
-    final offer = widget.warrantyData.offer;
-    final vehicle = widget.warrantyData.vehicle;
+    final selectedPlan = summaryData.selectedPlan;
 
     return Container(
       padding: const EdgeInsets.all(16),
@@ -91,7 +201,7 @@ class _DeviceWarrantyConfirmScreenState
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                offer?.planName ?? l10n.yearExtendedWarranty,
+                selectedPlan?.planName ?? l10n.yearExtendedWarranty,
                 style: TextStyle(
                   color: colorScheme.onSurface.withValues(alpha: 0.7),
                   fontSize: 13,
@@ -99,7 +209,7 @@ class _DeviceWarrantyConfirmScreenState
                 ),
               ),
               Text(
-                '${l10n.currencySymbol}${offer?.originalPrice.toInt() ?? 730}',
+                '${l10n.currencySymbol}${selectedPlan?.originalPrice.toInt() ?? 730}',
                 style: TextStyle(
                   color: colorScheme.onSurface.withValues(alpha: 0.4),
                   fontSize: 13,
@@ -114,7 +224,8 @@ class _DeviceWarrantyConfirmScreenState
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                vehicle?.displayName ?? '${l10n.vehicleNamePlaceholder}(${l10n.vehicleNumberPlaceholder})',
+                selectedPlan?.displayName ??
+                    '${l10n.vehicleNamePlaceholder}(${l10n.vehicleNumberPlaceholder})',
                 style: TextStyle(
                   color: colorScheme.onSurface.withValues(alpha: 0.5),
                   fontSize: 13,
@@ -122,7 +233,7 @@ class _DeviceWarrantyConfirmScreenState
                 ),
               ),
               Text(
-                '${l10n.currencySymbol}${offer?.offerPrice.toInt() ?? 365}',
+                '${l10n.currencySymbol}${selectedPlan?.offerPrice.toInt() ?? 365}',
                 style: TextStyle(
                   color: colorScheme.onSurface,
                   fontSize: 14,
@@ -133,7 +244,7 @@ class _DeviceWarrantyConfirmScreenState
           ),
           const SizedBox(height: 4),
           Text(
-            offer?.productName ?? 'Trackify Lite',
+            selectedPlan?.productName ?? 'Trackify Lite',
             style: TextStyle(
               color: colorScheme.onSurface.withValues(alpha: 0.5),
               fontSize: 13,
@@ -149,10 +260,9 @@ class _DeviceWarrantyConfirmScreenState
     ThemeData theme,
     ColorScheme colorScheme,
     AppLocalizations l10n,
+    WarrantyPaymentSummaryEntity summaryData,
   ) {
-    final offer = widget.warrantyData.offer;
-    final vehicle = widget.warrantyData.vehicle;
-    final discount = (offer?.originalPrice ?? 730) - (offer?.offerPrice ?? 365);
+    final payment = summaryData.paymentSummary;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -184,7 +294,8 @@ class _DeviceWarrantyConfirmScreenState
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    vehicle?.displayName ?? '${l10n.vehicleNamePlaceholder} (${l10n.vehicleNumberPlaceholder})',
+                    payment?.vehicleText ??
+                        '${l10n.vehicleNamePlaceholder} (${l10n.vehicleNumberPlaceholder})',
                     style: TextStyle(
                       color: colorScheme.onSurface.withValues(alpha: 0.8),
                       fontSize: 13,
@@ -192,7 +303,7 @@ class _DeviceWarrantyConfirmScreenState
                     ),
                   ),
                   Text(
-                    '${l10n.currencySymbol}${offer?.originalPrice.toInt() ?? 730}',
+                    '${l10n.currencySymbol}${payment?.originalPrice.toInt() ?? 730}',
                     style: TextStyle(
                       color: colorScheme.onSurface.withValues(alpha: 0.8),
                       fontSize: 13,
@@ -203,7 +314,7 @@ class _DeviceWarrantyConfirmScreenState
               ),
               const SizedBox(height: 4),
               Text(
-                offer?.productName ?? 'Trackify Lite',
+                payment?.productName ?? 'Trackify Lite',
                 style: TextStyle(
                   color: colorScheme.onSurface.withValues(alpha: 0.6),
                   fontSize: 13,
@@ -215,7 +326,7 @@ class _DeviceWarrantyConfirmScreenState
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    l10n.boosterOffer,
+                    payment?.discountText ?? l10n.boosterOffer,
                     style: TextStyle(
                       color: colorScheme.onSurface.withValues(alpha: 0.5),
                       fontSize: 13,
@@ -223,7 +334,7 @@ class _DeviceWarrantyConfirmScreenState
                     ),
                   ),
                   Text(
-                    '-${l10n.currencySymbol}${discount.toInt()}',
+                    '-${l10n.currencySymbol}${payment?.discountAmount.toInt() ?? 0}',
                     style: TextStyle(
                       color: colorScheme.onSurface.withValues(alpha: 0.5),
                       fontSize: 13,
@@ -239,7 +350,8 @@ class _DeviceWarrantyConfirmScreenState
                   const dashWidth = 4.0;
                   const dashHeight = 1.0;
                   const dashSpace = 2.0;
-                  final dashCount = (boxWidth / (dashWidth + dashSpace)).floor();
+                  final dashCount = (boxWidth / (dashWidth + dashSpace))
+                      .floor();
                   return Flex(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     direction: Axis.horizontal,
@@ -270,7 +382,7 @@ class _DeviceWarrantyConfirmScreenState
                     ),
                   ),
                   Text(
-                    '${l10n.currencySymbol}${offer?.offerPrice.toInt() ?? 365}',
+                    '${l10n.currencySymbol}${payment?.payableAmount.toInt() ?? 365}',
                     style: TextStyle(
                       color: colorScheme.primary,
                       fontSize: 14,
@@ -290,65 +402,74 @@ class _DeviceWarrantyConfirmScreenState
     ThemeData theme,
     ColorScheme colorScheme,
     AppLocalizations l10n,
+    WarrantyPaymentSummaryEntity summaryData,
   ) {
-    final offer = widget.warrantyData.offer;
+    final selectedPlan = summaryData.selectedPlan;
 
-    return Container(
-      width: double.infinity,
-      height: 45,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(8),
-        gradient: LinearGradient(
-          colors: [
-            colorScheme.tertiary.withValues(alpha: 0.8),
-            colorScheme.tertiary,
-          ],
-        ),
-      ),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: () {
-            if (offer != null) {
-              final discount = (offer.originalPrice - offer.offerPrice).toInt();
-              final orderSummaryPlan = OrderSummaryEntity(
-                id: offer.planId,
-                title: offer.planName,
-                validity: "${offer.durationMonths} Months",
-                price: offer.offerPrice.toInt(),
-                originalPrice: offer.originalPrice.toInt(),
-                discount: discount,
-                gst: 0,
-                toPay: offer.offerPrice.toInt(),
-                benefit: offer.benefits.map((b) => b.title).toList(),
-                isCombo: false,
-              );
+    return BlocBuilder<ExtendWarrantyCubit, ExtendWarrantyState>(
+      builder: (context, extendState) {
+        final isExtending = extendState is ExtendWarrantyLoading;
 
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => OrderSummaryScreen(plan: orderSummaryPlan),
-                ),
-              ).then((success) {
-                if (success == true && mounted) {
-                  Navigator.pop(context, true);
-                }
-              });
-            }
-          },
-          borderRadius: BorderRadius.circular(8),
-          child: Center(
-            child: Text(
-              l10n.amountPayable('${l10n.currencySymbol}${offer?.offerPrice.toInt() ?? 365}'),
-              style: TextStyle(
-                color: colorScheme.onTertiary,
-                fontWeight: FontWeight.bold,
-                fontSize: 13,
+        return Container(
+          width: double.infinity,
+          height: 45,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(8),
+            gradient: LinearGradient(
+              colors: [
+                colorScheme.tertiary.withValues(alpha: 0.8),
+                colorScheme.tertiary,
+              ],
+            ),
+          ),
+          child: Material(
+            color: Colors.transparent,
+            child: InkWell(
+              onTap: isExtending || selectedPlan == null
+                  ? null
+                  : () {
+                      final imei = widget.warrantyData.vehicle?.imei.isNotEmpty == true
+                          ? widget.warrantyData.vehicle!.imei
+                          : AppPreference.instance.getSync(key: AppPreference.IMEI);
+                      context.read<ExtendWarrantyCubit>().extendWarranty(
+                            imei: imei,
+                            planId: selectedPlan.planId,
+                            paymentStatus: "paid",
+                            transactionId: "txn_9876543210",
+                            paymentMethod: "Razorpay",
+                            amountPaid: selectedPlan.offerPrice,
+                          );
+                    },
+              borderRadius: BorderRadius.circular(8),
+              child: Center(
+                child: isExtending
+                    ? SizedBox(
+                        height: 20,
+                        width: 20,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            colorScheme.onTertiary,
+                          ),
+                        ),
+                      )
+                    : Text(
+                        summaryData.buttonText.isNotEmpty
+                            ? summaryData.buttonText
+                            : l10n.amountPayable(
+                                '${l10n.currencySymbol}${selectedPlan?.offerPrice.toInt() ?? 365}',
+                              ),
+                        style: TextStyle(
+                          color: colorScheme.onTertiary,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 13,
+                        ),
+                      ),
               ),
             ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }

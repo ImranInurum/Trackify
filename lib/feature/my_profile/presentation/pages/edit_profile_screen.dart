@@ -3,9 +3,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:trackify/app/cubit/app_cubit.dart';
 import 'package:trackify/app/cubit/app_state.dart';
 import 'package:trackify/core/widgets/square_flat_button.dart';
-import 'package:trackify/l10n/app_localizations_ar.dart';
 
 import '../../../../l10n/app_localizations.dart';
+import 'package:trackify/feature/my_profile/presentation/cubit/my_profile_cubit.dart';
+import 'package:trackify/feature/my_profile/presentation/cubit/my_profile_state.dart';
+import 'package:trackify/feature/my_profile/data/models/update_profile_request.dart';
+import 'package:intl/intl.dart';
 
 class EditProfileScreen extends StatefulWidget {
   const EditProfileScreen({super.key});
@@ -38,30 +41,63 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   // --- Static lists (replace with API data as needed) ---
   late final List<Map<String, String>> _countries = [
-    {'name': l10n.india, 'flag': '🇮🇳'},
-    {'name': l10n.usa, 'flag': '🇺🇸'},
-    {'name': l10n.uk, 'flag': '🇬🇧'},
-    {'name': l10n.uae, 'flag': '🇦🇪'},
+    {'value': 'India', 'flag': '🇮🇳', 'label': l10n.india},
+    {'value': 'USA', 'flag': '🇺🇸', 'label': l10n.usa},
+    {'value': 'UK', 'flag': '🇬🇧', 'label': l10n.uk},
+    {'value': 'UAE', 'flag': '🇦🇪', 'label': l10n.uae},
   ];
 
-  late final List<String> _states = [
-    l10n.madhyaPradesh,
-    l10n.maharashtra,
-    l10n.rajasthan,
-    l10n.gujarat,
-    l10n.karnataka,
-    l10n.tamilNadu,
-    l10n.uttarPradesh,
-    l10n.delhi,
+  late final List<Map<String, String>> _states = [
+    {'value': 'Madhya Pradesh', 'label': l10n.madhyaPradesh},
+    {'value': 'Maharashtra', 'label': l10n.maharashtra},
+    {'value': 'Rajasthan', 'label': l10n.rajasthan},
+    {'value': 'Gujarat', 'label': l10n.gujarat},
+    {'value': 'Karnataka', 'label': l10n.karnataka},
+    {'value': 'Tamil Nadu', 'label': l10n.tamilNadu},
+    {'value': 'Uttar Pradesh', 'label': l10n.uttarPradesh},
+    {'value': 'Delhi', 'label': l10n.delhi},
   ];
 
-  late final List<String> _cities = [
-    l10n.indoreDistrict,
-    l10n.bhopal,
-    l10n.gwalior,
-    l10n.jabalpur,
-    l10n.ujjain,
+  late final List<Map<String, String>> _cities = [
+    {'value': 'Indore district', 'label': l10n.indoreDistrict},
+    {'value': 'Bhopal', 'label': l10n.bhopal},
+    {'value': 'Gwalior', 'label': l10n.gwalior},
+    {'value': 'Jabalpur', 'label': l10n.jabalpur},
+    {'value': 'Ujjain', 'label': l10n.ujjain},
   ];
+
+  String? _findMatchingCountry(String? country) {
+    if (country == null || country.trim().isEmpty) return 'India';
+    for (var c in _countries) {
+      if (c['value']!.toLowerCase() == country.trim().toLowerCase() ||
+          c['label']!.toLowerCase() == country.trim().toLowerCase()) {
+        return c['value'];
+      }
+    }
+    return country.trim();
+  }
+
+  String? _findMatchingState(String? state) {
+    if (state == null || state.trim().isEmpty) return 'Madhya Pradesh';
+    for (var s in _states) {
+      if (s['value']!.toLowerCase() == state.trim().toLowerCase() ||
+          s['label']!.toLowerCase() == state.trim().toLowerCase()) {
+        return s['value'];
+      }
+    }
+    return state.trim();
+  }
+
+  String? _findMatchingCity(String? city) {
+    if (city == null || city.trim().isEmpty) return 'Indore district';
+    for (var c in _cities) {
+      if (c['value']!.toLowerCase() == city.trim().toLowerCase() ||
+          c['label']!.toLowerCase() == city.trim().toLowerCase()) {
+        return c['value'];
+      }
+    }
+    return city.trim();
+  }
 
   @override
   void initState() {
@@ -69,15 +105,34 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final user = context.read<AppCubit>().state.userData;
       if (user != null) {
-        final fullName = user.name ?? '';
-        final parts = fullName.trim().split(' ');
-        _firstNameCtrl.text = parts.isNotEmpty ? parts[0] : '';
-        _lastNameCtrl.text = parts.length > 1 ? parts.sublist(1).join(' ') : '';
-        _mobile = user.mobileNumber ?? '';
-        _email = user.email ?? '';
-        _selectedCountry = user.country;
-        _selectedState = user.state;
-        _selectedCity = user.city;
+        if (user.middleName != null || user.lastName != null) {
+          _firstNameCtrl.text = user.name ?? '';
+          _middleNameCtrl.text = user.middleName ?? '';
+          _lastNameCtrl.text = user.lastName ?? '';
+        } else {
+          final fullName = user.name ?? '';
+          final parts = fullName.trim().split(' ');
+          _firstNameCtrl.text = parts.isNotEmpty ? parts[0] : '';
+          _lastNameCtrl.text = parts.length > 1 ? parts.sublist(1).join(' ') : '';
+        }
+        _mobile = (user.mobileNumber != null && user.mobileNumber!.trim().isNotEmpty)
+            ? user.mobileNumber!
+            : '+918602945222';
+        _email = (user.email != null && user.email!.trim().isNotEmpty)
+            ? user.email!
+            : 'sonukushwah221@gmail.com';
+        _selectedCountry = _findMatchingCountry(user.country);
+        _selectedState = _findMatchingState(user.state);
+        _selectedCity = _findMatchingCity(user.city);
+        _addressCtrl.text = user.address ?? '';
+        if (user.dateOfBirth != null && user.dateOfBirth!.isNotEmpty) {
+          try {
+            final parsedDate = DateTime.parse(user.dateOfBirth!);
+            _dob = DateFormat('yyyy-MM-dd').format(parsedDate);
+          } catch (_) {
+            _dob = user.dateOfBirth!;
+          }
+        }
       } else {
         _firstNameCtrl.text = 'Kk';
         _mobile = '+918602945222';
@@ -101,23 +156,36 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   Future<void> _onSave() async {
     if (!(_formKey.currentState?.validate() ?? false)) return;
-    setState(() => _isSaving = true);
-    await Future.delayed(const Duration(milliseconds: 700));
-    if (mounted) {
-      setState(() => _isSaving = false);
+
+    final appCubit = context.read<AppCubit>();
+    final userId = appCubit.state.userData?.id;
+    if (userId == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(l10n.profileUpdatedSuccessfully),
-          backgroundColor: Theme.of(context).colorScheme.primary,
-          behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
-          margin: const EdgeInsets.all(12),
+        const SnackBar(
+          content: Text('User session not found. Please log in again.'),
+          backgroundColor: Colors.red,
         ),
       );
-      Navigator.pop(context);
+      return;
     }
+
+    final request = UpdateProfileRequest(
+      name: _firstNameCtrl.text.trim(),
+      middleName: _middleNameCtrl.text.trim(),
+      lastName: _lastNameCtrl.text.trim(),
+      mobileNumber: _mobile,
+      email: _email,
+      dateOfBirth: _dob == l10n.notAvailable ? null : _dob,
+      country: _selectedCountry,
+      state: _selectedState,
+      city: _selectedCity,
+      address: _addressCtrl.text.trim(),
+    );
+
+    context.read<MyProfileCubit>().updateProfile(
+      userId: userId,
+      request: request,
+    );
   }
 
   /// Show a simple dialog to edit read-only field
@@ -125,7 +193,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     final ctrl = TextEditingController(text: _email);
     showDialog(
       context: context,
-      builder: (_) => AlertDialog(
+      builder: (dialogCtx) => AlertDialog(
         backgroundColor: Theme.of(context).cardColor,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         titlePadding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
@@ -168,7 +236,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
+            onPressed: () => Navigator.pop(dialogCtx),
             child: Text(
               l10n.cancel,
               style: TextStyle(
@@ -179,7 +247,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           TextButton(
             onPressed: () {
               setState(() => _email = ctrl.text.trim());
-              Navigator.pop(context);
+              Navigator.pop(dialogCtx);
             },
             child: Text(
               l10n.saveAndVerify,
@@ -198,7 +266,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     final ctrl = TextEditingController(text: _mobile.replaceAll('+91', ''));
     showDialog(
       context: context,
-      builder: (_) => AlertDialog(
+      builder: (dialogCtx) => AlertDialog(
         backgroundColor: Theme.of(context).cardColor,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         titlePadding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
@@ -256,7 +324,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
+            onPressed: () => Navigator.pop(dialogCtx),
             child: Text(
               l10n.cancel,
               style: TextStyle(
@@ -267,7 +335,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           TextButton(
             onPressed: () {
               setState(() => _mobile = '+91${ctrl.text.trim()}');
-              Navigator.pop(context);
+              Navigator.pop(dialogCtx);
             },
             child: Text(
               l10n.saveAndVerify,
@@ -324,8 +392,46 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       fontWeight: FontWeight.w400,
     );
 
-    return BlocBuilder<AppCubit, AppState>(
-      builder: (context, state) {
+    return BlocListener<MyProfileCubit, MyProfileState>(
+      listener: (context, state) {
+        if (state is MyProfileLoading) {
+          setState(() => _isSaving = true);
+        } else if (state is MyProfileSuccess) {
+          setState(() => _isSaving = false);
+          context.read<AppCubit>().updateUserSession(state.user);
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                state.message.isNotEmpty
+                    ? state.message
+                    : l10n.profileUpdatedSuccessfully,
+              ),
+              backgroundColor: Theme.of(context).colorScheme.primary,
+              behavior: SnackBarBehavior.floating,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+              margin: const EdgeInsets.all(12),
+            ),
+          );
+          Navigator.pop(context);
+        } else if (state is MyProfileError) {
+          setState(() => _isSaving = false);
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(state.errorMessage),
+              backgroundColor: Colors.red,
+              behavior: SnackBarBehavior.floating,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+              margin: const EdgeInsets.all(12),
+            ),
+          );
+        }
+      },
+      child: BlocBuilder<AppCubit, AppState>(
+        builder: (context, state) {
         return Scaffold(
           backgroundColor: theme.scaffoldBackgroundColor,
           appBar: AppBar(
@@ -435,7 +541,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     hint: l10n.selectCountry,
                     items: _countries.map((c) {
                       return DropdownMenuItem<String>(
-                        value: c['name'],
+                        value: c['value'],
                         child: Row(
                           children: [
                             Text(
@@ -444,7 +550,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                             ),
                             const SizedBox(width: 10),
                             Text(
-                              c['name']!,
+                              c['label']!,
                               style: TextStyle(color: onSurface, fontSize: 15),
                             ),
                           ],
@@ -463,9 +569,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     hint: l10n.selectState,
                     items: _states.map((s) {
                       return DropdownMenuItem<String>(
-                        value: s,
+                        value: s['value'],
                         child: Text(
-                          s,
+                          s['label']!,
                           style: TextStyle(color: onSurface, fontSize: 15),
                         ),
                       );
@@ -482,9 +588,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     hint: l10n.selectCity,
                     items: _cities.map((c) {
                       return DropdownMenuItem<String>(
-                        value: c,
+                        value: c['value'],
                         child: Text(
-                          c,
+                          c['label']!,
                           style: TextStyle(color: onSurface, fontSize: 15),
                         ),
                       );
@@ -538,8 +644,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           ),
         );
       },
-    );
-  }
+    ),
+  );
+}
 
   // ─── Underline Field (editable) ─────────────────────────────────────────────
   Widget _buildUnderlineField({
@@ -725,6 +832,20 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     required Color dividerColor,
     required Color onSurface,
   }) {
+    // Safety check to prevent dropdown assertion crashes
+    final List<DropdownMenuItem<T>> safeItems = List.from(items);
+    if (value != null && !safeItems.any((item) => item.value == value)) {
+      safeItems.add(
+        DropdownMenuItem<T>(
+          value: value,
+          child: Text(
+            value.toString(),
+            style: TextStyle(color: onSurface, fontSize: 15),
+          ),
+        ),
+      );
+    }
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       decoration: BoxDecoration(
@@ -748,7 +869,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               fontSize: 15,
             ),
           ),
-          items: items,
+          items: safeItems,
           onChanged: onChanged,
           style: TextStyle(color: onSurface, fontSize: 15),
         ),

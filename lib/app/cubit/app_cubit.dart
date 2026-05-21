@@ -198,6 +198,15 @@ class AppCubit extends Cubit<AppState> with WidgetsBindingObserver {
     }
   }
 
+  Future<void> updateUserSession(User user) async {
+    final prefs = AppPreference.instance;
+    await prefs.set(
+      key: AppPreference.KEY_USER_DETAILS,
+      value: jsonEncode(user.toJson()),
+    );
+    emit(state.copyWith(userData: user));
+  }
+
   Future<void> initializeSocket({String? imei}) async {
     print('initializeSocket for IMEI: $imei');
 

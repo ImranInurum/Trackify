@@ -1,4 +1,3 @@
-
 class ApiURL {
   final String hostUrl;
 
@@ -38,11 +37,16 @@ class ApiURL {
   // -------------------------
   // Vehicle
   static const String addVehicle = "$baseURL/api/vehicle/vehicle";
-  static String updateVehicleDetails(String imei) => "$baseURL/api/vehicle/update-vehicle/$imei";
-  static String updateVehicleControl(String imei) => "$baseURL/api/vehicle-control/update/$imei";
-  static String lockUnlockVehicle(String imei) => "$baseURL/api/vehicle-control/lock-unlock/$imei";
-  static String getVehicleControl(String imei) => "$baseURL/api/vehicle-control/$imei";
-  static String deleteVehicle(String imei) => "$baseURL/api/vehicle-control/delete/$imei";
+  static String updateVehicleDetails(String imei) =>
+      "$baseURL/api/vehicle/update-vehicle/$imei";
+  static String updateVehicleControl(String imei) =>
+      "$baseURL/api/vehicle-control/update/$imei";
+  static String lockUnlockVehicle(String imei) =>
+      "$baseURL/api/vehicle-control/lock-unlock/$imei";
+  static String getVehicleControl(String imei) =>
+      "$baseURL/api/vehicle-control/$imei";
+  static String deleteVehicle(String imei) =>
+      "$baseURL/api/vehicle-control/delete/$imei";
 
   static String getVehiclesByUserId(String userId) =>
       "$baseURL/api/vehicle/get-vehicles?userId=$userId";
@@ -86,8 +90,10 @@ class ApiURL {
   // Geo-Fence
   // -------------------------
   static const String updateGeoFence = "$baseURL/api/geoFance/update_geofence";
-  static String getGeoFenceData(String imei) => "$baseURL/api/geoFance/geofenceData/$imei";
-  static String deleteGeoFence(String imei) => "$baseURL/api/geoFance/geofence/$imei";
+  static String getGeoFenceData(String imei) =>
+      "$baseURL/api/geoFance/geofenceData/$imei";
+  static String deleteGeoFence(String imei) =>
+      "$baseURL/api/geoFance/geofence/$imei";
 
   // -------------------------
   // Service Logs
@@ -98,25 +104,28 @@ class ApiURL {
   // -------------------------
   // Overspeed Alert
   // -------------------------
-  static const String createOverspeedAlert = "$baseURL/api/overspeed/create-alert";
-  static String getOverspeedAlerts(String imei) => "$baseURL/api/overspeed/get-overspeed/$imei";
+  static const String createOverspeedAlert =
+      "$baseURL/api/overspeed/create-alert";
+  static String getOverspeedAlerts(String imei) =>
+      "$baseURL/api/overspeed/get-overspeed/$imei";
 
-
-// -------------------------
-// Add Fuel
-// -------------------------
+  // -------------------------
+  // Add Fuel
+  // -------------------------
   static const String addFuel = "$baseURL/api/vehicle-refuel/create";
-  static String dashboard(String imei) => "$baseURL/api/vehicle-refuel/fuel-log-details/$imei";
-  static String refuel(String imei) =>
-      "$baseURL/api/vehicle-refuel/$imei";
+  static String dashboard(String imei) =>
+      "$baseURL/api/vehicle-refuel/fuel-log-details/$imei";
+  static String refuel(String imei) => "$baseURL/api/vehicle-refuel/$imei";
 
   // -------------------------
   // Recharge Plans
   // -------------------------
-  static const String getRechargePlans = "$baseURL/api/data-plans/recharge-plans";
+  static const String getRechargePlans =
+      "$baseURL/api/data-plans/recharge-plans";
   static String getCurrentDataPlan(String imei) =>
       "$baseURL/api/data-plans/current-data-plan/$imei";
-  static const String purchaseDataPlan = "$baseURL/api/data-plans/vehicle-data-plan";
+  static const String purchaseDataPlan =
+      "$baseURL/api/data-plans/vehicle-data-plan";
 
   // -------------------------
   // Warranty
@@ -124,17 +133,29 @@ class ApiURL {
   static String getDeviceWarranty(String imei) =>
       "$baseURL/api/warranty/device-warranty/$imei";
 
+  static String getWarrantyPaymentSummary(String imei, String planId) =>
+      "$baseURL/api/warranty/warranty-payment-summary/$imei/$planId";
 
-// -------------------------
-// Video Tutorial
-// -------------------------
-static const String tutorial  = "$baseURL/api/api/video-tutorials-list";
-static const String category  = "$baseURL/api/video-tutorials-category";
+  static const String extendWarranty = "$baseURL/api/warranty/extend-warranty";
 
-// -------------------------
-// App Update
-// -------------------------
-static const String appUpdate ="$baseURL/api/app-update/app-updates";
+  // -------------------------
+  // Health Insurance
+  // -------------------------
+  static const String healthInsuranceOptions =
+      "$baseURL/api/health-insurance/health-insurance-options";
+  static const String saveHealthInsurance =
+      "$baseURL/api/health-insurance/health-insurance";
+
+  // -------------------------
+  // Video Tutorial
+  // -------------------------
+  static const String tutorial = "$baseURL/api/api/video-tutorials-list";
+  static const String category = "$baseURL/api/video-tutorials-category";
+
+  // -------------------------
+  // App Update
+  // -------------------------
+  static const String appUpdate = "$baseURL/api/app-update/app-updates";
 
 // -------------------------
 // Discover feature
@@ -155,4 +176,17 @@ static const String discover = "$baseURL/api/features/discover-features";
   // static const String logout = '$baseURL/users/logout';
   // static const String userDetails = '$baseURL/users/get-details';
   // static const String updateUserDetails = '$baseURL/users/update-user-details';
+
+  static String updateProfile(String userId) =>
+      "$baseURL/api/auth/user-detail/$userId";
+
+  // -------------------------
+  // Statistics
+  // -------------------------
+  static String statistics(String imei, {String? date}) {
+    if (date != null && date.isNotEmpty) {
+      return "$baseURL/api/statistics/$imei?date=$date";
+    }
+    return "$baseURL/api/statistics/$imei";
+  }
 }

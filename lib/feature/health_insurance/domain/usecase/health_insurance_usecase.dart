@@ -6,7 +6,7 @@ class HealthInsuranceUseCase {
 
   HealthInsuranceUseCase(this.repository);
 
-  Future<HealthInsuranceEntity>call ()async{
+  Future<HealthInsuranceEntity> call() async {
     return await repository.getInsuranceData();
   }
 }

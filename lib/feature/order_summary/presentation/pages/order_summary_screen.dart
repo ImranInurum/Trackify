@@ -117,7 +117,7 @@ class OrderSummaryScreen extends StatelessWidget {
                                               ),
                                             ),
                                             TextSpan(
-                                              text: l10n.validity,
+                                              text: " ${l10n.validity}",
                                               style: text.bodyMedium?.copyWith(
                                                 color: color.onSurface.withOpacity(0.5),
                                                 fontWeight: FontWeight.w500,

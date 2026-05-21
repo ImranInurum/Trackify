@@ -5,7 +5,9 @@ class AddFuelEntity{
   final int odometer;
   final double amount;
   final double pricePerLitre;
-  final bool fullTank;
+  final String fullTank;
+  final String? fuelBeforeRefuel;
+
 
   AddFuelEntity({
     required this.vehicle,
@@ -14,6 +16,7 @@ class AddFuelEntity{
     required this.amount,
     required this.odometer,
     required this.fullTank,
-    required this.pricePerLitre
+    required this.pricePerLitre,
+    required this.fuelBeforeRefuel,
 });
 }

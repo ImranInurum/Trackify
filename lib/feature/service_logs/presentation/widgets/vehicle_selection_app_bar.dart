@@ -9,6 +9,7 @@ class VehicleSelectionAppBar extends StatelessWidget {
   final VoidCallback onBack;
   final Function(Vehicle) onVehicleSelected;
   final bool isMinimal;
+  final bool showBackButton;
 
   const VehicleSelectionAppBar({
     super.key,
@@ -18,6 +19,7 @@ class VehicleSelectionAppBar extends StatelessWidget {
     required this.onBack,
     required this.onVehicleSelected,
     this.isMinimal = false,
+    this.showBackButton = true,
   });
 
   @override
@@ -31,15 +33,15 @@ class VehicleSelectionAppBar extends StatelessWidget {
         top: MediaQuery.of(context).padding.top + (isMinimal ? 10 : 0),
         bottom: isMinimal ? 10 : 20,
       ),
-      decoration: isMinimal 
-        ? null 
-        : BoxDecoration(
-            color: theme.cardColor.withOpacity(0.8),
-            borderRadius: const BorderRadius.only(
-              bottomLeft: Radius.circular(30),
-              bottomRight: Radius.circular(30),
+      decoration: isMinimal
+          ? null
+          : BoxDecoration(
+              color: theme.cardColor.withOpacity(0.8),
+              borderRadius: const BorderRadius.only(
+                bottomLeft: Radius.circular(30),
+                bottomRight: Radius.circular(30),
+              ),
             ),
-          ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -48,13 +50,16 @@ class VehicleSelectionAppBar extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 8.0),
               child: Row(
                 children: [
-                  IconButton(
-                    icon: Icon(
-                      Icons.arrow_back,
-                      color: theme.colorScheme.onSurface,
-                    ),
-                    onPressed: onBack,
-                  ),
+                  if (showBackButton)
+                    IconButton(
+                      icon: Icon(
+                        Icons.arrow_back,
+                        color: theme.colorScheme.onSurface,
+                      ),
+                      onPressed: onBack,
+                    )
+                  else
+                    const SizedBox(width: 8),
                   Text(
                     title,
                     style: theme.textTheme.titleLarge?.copyWith(
@@ -72,7 +77,9 @@ class VehicleSelectionAppBar extends StatelessWidget {
               margin: EdgeInsets.symmetric(horizontal: screenWidth * 0.04),
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
               decoration: BoxDecoration(
-                color: theme.colorScheme.surfaceContainerHighest.withOpacity(0.5),
+                color: theme.colorScheme.surfaceContainerHighest.withOpacity(
+                  0.5,
+                ),
                 borderRadius: BorderRadius.circular(16),
               ),
               child: Row(
@@ -80,8 +87,9 @@ class VehicleSelectionAppBar extends StatelessWidget {
                   Expanded(
                     child: Text(
                       selectedVehicle != null
-                          ? "${selectedVehicle!.vehicleMaker ?? ""} ${selectedVehicle!.vehicleModel ?? ""}".trim() +
-                              " (${selectedVehicle!.vehicleNumber ?? ""})"
+                          ? "${selectedVehicle!.vehicleMaker ?? ""} ${selectedVehicle!.vehicleModel ?? ""}"
+                                    .trim() +
+                                " (${selectedVehicle!.vehicleNumber ?? ""})"
                           : l10n.selectVehicle,
                       style: theme.textTheme.bodyLarge?.copyWith(
                         fontWeight: FontWeight.w600,
@@ -174,7 +182,8 @@ class _VehicleSelectorSheet extends StatelessWidget {
                       height: 50,
                     ),
                     title: Text(
-                      "${vehicle.vehicleMaker ?? ""} ${vehicle.vehicleModel ?? ""}".trim(),
+                      "${vehicle.vehicleMaker ?? ""} ${vehicle.vehicleModel ?? ""}"
+                          .trim(),
                       style: theme.textTheme.bodyLarge?.copyWith(
                         fontWeight: isSelected
                             ? FontWeight.bold
