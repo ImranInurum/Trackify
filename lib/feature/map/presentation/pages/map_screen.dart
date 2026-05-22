@@ -58,7 +58,7 @@ class MapScreen extends StatefulWidget {
   State<MapScreen> createState() => _MapScreenState();
 }
 
-class _MapScreenState extends State<MapScreen> {
+class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
   GoogleMapController? _mapController;
   String? _lightMapStyle;
   String? _darkMapStyle;
@@ -69,8 +69,30 @@ class _MapScreenState extends State<MapScreen> {
   final ScrollController _scrollController = ScrollController();
   bool _showScrollToTop = false;
 
+  // Animation controller for cinematic camera movements
+  AnimationController? _cameraAnimationController;
+
+  // Current camera state (tracked locally to avoid async calls)
+  LatLng? _cameraTarget;
+  double _cameraZoom = 14.0;
+  double _cameraTilt = 0.0;
+  double _cameraBearing = 0.0;
+
+  // Animation start/end states
+  LatLng? _animStartTarget;
+  LatLng? _animEndTarget;
+  double _animStartZoom = 14.0;
+  double _animEndZoom = 16.0;
+  double _animStartTilt = 0.0;
+  double _animEndTilt = 0.0;
+  double _animStartBearing = 0.0;
+  double _animEndBearing = 0.0;
+
+  bool _isInitialFocusDone = false;
+
   @override
   void dispose() {
+    _cameraAnimationController?.dispose();
     _scrollController.dispose();
     super.dispose();
   }
@@ -115,6 +137,137 @@ class _MapScreenState extends State<MapScreen> {
     }
   }
 
+  LatLng? _getBestPosition() {
+    final appState = context.read<AppCubit>().state;
+    final currentPos = appState.currentLocation;
+    LatLng? bestPos = appState.livePosition;
+
+    if (bestPos == null &&
+        _selectedDevice?.currentLocation != null &&
+        _selectedDevice!.currentLocation!.lat != null &&
+        _selectedDevice!.currentLocation!.lng != null) {
+      bestPos = LatLng(
+        _selectedDevice!.currentLocation!.lat!,
+        _selectedDevice!.currentLocation!.lng!,
+      );
+    }
+
+    if (bestPos == null && currentPos != null) {
+      bestPos = LatLng(currentPos.latitude, currentPos.longitude);
+    }
+    return bestPos;
+  }
+
+  void _triggerInitialFocusAnimation() {
+    LatLng? target = _getBestPosition();
+    if (target == null) return;
+
+    final appState = context.read<AppCubit>().state;
+
+    // Glide smoothly focusing on the vehicle (drone camera zoom & rotate effect)
+    // 600ms delay ensures native layout/tiles/styles are ready before animation starts
+    Future.delayed(const Duration(milliseconds: 600), () {
+      if (!mounted) return;
+      _animateCameraTo(
+        target: target,
+        zoom: 15.0,
+        tilt: 0.0,
+        bearing: appState.liveBearing,
+        duration: const Duration(milliseconds: 4000), // slow cinematic glide
+        curve: Curves.easeInOutCubic,
+      );
+      setState(() {
+        _isInitialFocusDone = true;
+      });
+    });
+  }
+
+  void _animateCameraTo({
+    required LatLng target,
+    required double zoom,
+    required double tilt,
+    required double bearing,
+    required Duration duration,
+    Curve curve = Curves.easeInOutCubic,
+  }) {
+    if (_mapController == null) return;
+
+    _cameraAnimationController?.stop();
+
+    _animStartTarget = _cameraTarget ?? target;
+    _animStartZoom = _cameraZoom;
+    _animStartTilt = _cameraTilt;
+    _animStartBearing = _cameraBearing;
+
+    _animEndTarget = target;
+    _animEndZoom = zoom;
+    _animEndTilt = tilt;
+
+    _animStartBearing = _normalizeBearing(_animStartBearing);
+    double endBearingNormalized = _normalizeBearing(bearing);
+
+    double diff = endBearingNormalized - _animStartBearing;
+    if (diff > 180) {
+      diff -= 360;
+    } else if (diff < -180) {
+      diff += 360;
+    }
+    _animEndBearing = _animStartBearing + diff;
+
+    _cameraAnimationController?.dispose();
+    _cameraAnimationController = AnimationController(
+      vsync: this,
+      duration: duration,
+    );
+
+    final curvedAnimation = CurvedAnimation(
+      parent: _cameraAnimationController!,
+      curve: curve,
+    );
+
+    _cameraAnimationController!.addListener(() {
+      final t = curvedAnimation.value;
+      if (_animStartTarget == null || _animEndTarget == null) return;
+
+      double lat =
+          _animStartTarget!.latitude +
+          (_animEndTarget!.latitude - _animStartTarget!.latitude) * t;
+      double lng =
+          _animStartTarget!.longitude +
+          (_animEndTarget!.longitude - _animStartTarget!.longitude) * t;
+      LatLng newTarget = LatLng(lat, lng);
+
+      double newZoom = _animStartZoom + (_animEndZoom - _animStartZoom) * t;
+      double newTilt = _animStartTilt + (_animEndTilt - _animStartTilt) * t;
+      double newBearing =
+          _animStartBearing + (_animEndBearing - _animStartBearing) * t;
+
+      _cameraTarget = newTarget;
+      _cameraZoom = newZoom;
+      _cameraTilt = newTilt;
+      _cameraBearing = newBearing;
+
+      _mapController?.moveCamera(
+        CameraUpdate.newCameraPosition(
+          CameraPosition(
+            target: newTarget,
+            zoom: newZoom,
+            tilt: newTilt,
+            bearing: newBearing,
+          ),
+        ),
+      );
+    });
+
+    _cameraAnimationController!.forward();
+  }
+
+  double _normalizeBearing(double bearing) {
+    double b = bearing % 360;
+    if (b < 0) b += 360;
+    return b;
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
@@ -139,7 +292,10 @@ class _MapScreenState extends State<MapScreen> {
                         setState(() {
                           _selectedDevice = savedVehicle;
                         });
-                        prefs.set(key: AppPreference.IMEI, value: savedVehicle.imei ?? '');
+                        prefs.set(
+                          key: AppPreference.IMEI,
+                          value: savedVehicle.imei ?? '',
+                        );
                         print("selected device is ${savedVehicle.imei}");
                         // Refresh rides for the initially selected vehicle
                         context.read<RideHistoryCubit>().getRideHistoryData();
@@ -153,9 +309,22 @@ class _MapScreenState extends State<MapScreen> {
               listenWhen: (prev, curr) =>
                   prev.mapStyle != curr.mapStyle ||
                   prev.mapType != curr.mapType ||
-                  prev.isTrafficEnabled != curr.isTrafficEnabled,
+                  prev.isTrafficEnabled != curr.isTrafficEnabled ||
+                  prev.livePosition != curr.livePosition ||
+                  prev.liveBearing != curr.liveBearing,
               listener: (context, state) async {
                 if (_mapController != null) {
+                  if (state.livePosition != null && _isInitialFocusDone) {
+                    _animateCameraTo(
+                      target: state.livePosition!,
+                      zoom: 16.0,
+                      tilt: 0.0,
+                      bearing: state.liveBearing,
+                      duration: const Duration(milliseconds: 1500),
+                      curve: Curves.easeOutCubic,
+                    );
+                  }
+
                   String? style;
                   if (state.mapStyle == 'Dark') {
                     style = _darkMapStyle;
@@ -323,7 +492,8 @@ class _MapScreenState extends State<MapScreen> {
                         key: ValueKey(_selectedDevice?.id),
                         initialCameraPosition: CameraPosition(
                           target: appState.livePosition ?? bestPos,
-                          zoom: 15,
+                          zoom: 13,
+                          bearing: _normalizeBearing(appState.liveBearing - 120.0),
                         ),
                         myLocationEnabled: false,
                         zoomControlsEnabled: false,
@@ -366,6 +536,16 @@ class _MapScreenState extends State<MapScreen> {
                           }
 
                           await MapUtils.setStyle(controller, style);
+
+                          // Initialize camera state fields
+                          _cameraTarget = appState.livePosition ?? bestPos;
+                          _cameraZoom = 13.0;
+                          _cameraTilt = 0.0;
+                          _cameraBearing = _normalizeBearing(appState.liveBearing - 120.0);
+
+                          WidgetsBinding.instance.addPostFrameCallback((_) {
+                            _triggerInitialFocusAnimation();
+                          });
                         },
                       ),
                     ),
@@ -575,12 +755,12 @@ class _MapScreenState extends State<MapScreen> {
       {
         "icon": Icons.share_outlined,
         "label": l10n.locationSharing.replaceAll(' ', '\n'),
-        "badge": null,
+        "badge": "Coming Soon",
       },
       {
         "icon": Icons.local_parking_rounded,
         "label": l10n.safeParking.replaceAll(' ', '\n'),
-        "badge": null,
+        "badge": "Coming Soon",
       },
       {
         "icon": Icons.campaign_outlined,
@@ -625,7 +805,7 @@ class _MapScreenState extends State<MapScreen> {
       {
         "icon": Icons.sos_outlined,
         "label": l10n.emergency.replaceAll(' ', '\n'),
-        "badge": null,
+        "badge": "Coming Soon",
       },
       {
         "icon": Icons.play_arrow_outlined,
@@ -749,7 +929,9 @@ class _MapScreenState extends State<MapScreen> {
     AppLocalizations l10n,
   ) {
     return InkWell(
-      onTap: () => _handleExploreTap(option, selectedDevice, l10n),
+      onTap: () => option["badge"] == "Coming Soon"
+          ? null
+          : _handleExploreTap(option, selectedDevice, l10n),
       child: Column(
         children: [
           if (option["isPlus"] == true)
@@ -808,7 +990,9 @@ class _MapScreenState extends State<MapScreen> {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
               decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.primary,
+                color: option["badge"] == "Coming Soon"
+                    ? Theme.of(context).disabledColor
+                    : Theme.of(context).colorScheme.primary,
                 borderRadius: BorderRadius.circular(4),
               ),
               child: Text(

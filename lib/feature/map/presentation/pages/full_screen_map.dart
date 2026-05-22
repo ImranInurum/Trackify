@@ -20,18 +20,46 @@ class FullScreenMap extends StatefulWidget {
   State<FullScreenMap> createState() => _FullScreenMapState();
 }
 
-class _FullScreenMapState extends State<FullScreenMap> {
+class _FullScreenMapState extends State<FullScreenMap> with TickerProviderStateMixin {
   GoogleMapController? _mapController;
   String? _lightMapStyle;
   String? _darkMapStyle;
   bool _showSharedWithMe = false;
   BitmapDescriptor? _customMarker;
 
+  // Animation controller for cinematic camera movements
+  AnimationController? _cameraAnimationController;
+
+  // Current camera state (tracked locally to avoid async calls)
+  LatLng? _cameraTarget;
+  double _cameraZoom = 13.0;
+  double _cameraTilt = 0.0;
+  double _cameraBearing = 0.0;
+
+  // Animation start/end states
+  LatLng? _animStartTarget;
+  LatLng? _animEndTarget;
+  double _animStartZoom = 13.0;
+  double _animEndZoom = 15.0;
+  double _animStartTilt = 0.0;
+  double _animEndTilt = 0.0;
+  double _animStartBearing = 0.0;
+  double _animEndBearing = 0.0;
+
+  bool _isInitialFocusDone = false;
+  bool _isAutoFollowing = true;
+
   @override
   void initState() {
     super.initState();
     _loadMapStyles();
     _loadCustomMarker();
+  }
+
+  @override
+  void dispose() {
+    _cameraAnimationController?.dispose();
+    super.dispose();
   }
 
   Future<void> _loadMapStyles() async {
@@ -53,6 +81,150 @@ class _FullScreenMapState extends State<FullScreenMap> {
         _customMarker = BitmapDescriptor.fromBytes(markerIcon);
       });
     }
+  }
+
+  LatLng? _getBestPosition() {
+    final appState = context.read<AppCubit>().state;
+    final currentPos = appState.currentLocation;
+    LatLng? bestPos = appState.livePosition;
+
+    if (bestPos == null &&
+        widget.selectedVehicle?.currentLocation != null &&
+        widget.selectedVehicle!.currentLocation!.lat != null &&
+        widget.selectedVehicle!.currentLocation!.lng != null) {
+      bestPos = LatLng(
+        widget.selectedVehicle!.currentLocation!.lat!,
+        widget.selectedVehicle!.currentLocation!.lng!,
+      );
+    }
+
+    if (bestPos == null && currentPos != null) {
+      bestPos = LatLng(currentPos.latitude, currentPos.longitude);
+    }
+    return bestPos;
+  }
+
+  void _triggerInitialFocusAnimation() {
+    LatLng? target = _getBestPosition();
+    if (target == null) return;
+
+    final appState = context.read<AppCubit>().state;
+
+    // Glide smoothly focusing on the vehicle (drone camera zoom & rotate effect)
+    // 600ms delay ensures native layout/tiles/styles are ready before animation starts
+    Future.delayed(const Duration(milliseconds: 600), () {
+      if (!mounted) return;
+      _animateCameraTo(
+        target: target,
+        zoom: 15.0,
+        tilt: 0.0,
+        bearing: appState.liveBearing,
+        duration: const Duration(milliseconds: 4000), // slow cinematic glide
+        curve: Curves.easeInOutCubic,
+      );
+      setState(() {
+        _isInitialFocusDone = true;
+      });
+    });
+  }
+
+  void _recenterCamera() {
+    setState(() {
+      _isAutoFollowing = true;
+    });
+    LatLng? target = _getBestPosition();
+    if (target != null) {
+      final appState = context.read<AppCubit>().state;
+      _animateCameraTo(
+        target: target,
+        zoom: 15.0,
+        tilt: 0.0,
+        bearing: appState.liveBearing,
+        duration: const Duration(milliseconds: 1500),
+        curve: Curves.easeInOutCubic,
+      );
+    }
+  }
+
+  void _animateCameraTo({
+    required LatLng target,
+    required double zoom,
+    required double tilt,
+    required double bearing,
+    required Duration duration,
+    Curve curve = Curves.easeInOutCubic,
+  }) {
+    if (_mapController == null) return;
+
+    _cameraAnimationController?.stop();
+
+    _animStartTarget = _cameraTarget ?? target;
+    _animStartZoom = _cameraZoom;
+    _animStartTilt = _cameraTilt;
+    _animStartBearing = _cameraBearing;
+
+    _animEndTarget = target;
+    _animEndZoom = zoom;
+    _animEndTilt = tilt;
+
+    _animStartBearing = _normalizeBearing(_animStartBearing);
+    double endBearingNormalized = _normalizeBearing(bearing);
+
+    double diff = endBearingNormalized - _animStartBearing;
+    if (diff > 180) {
+      diff -= 360;
+    } else if (diff < -180) {
+      diff += 360;
+    }
+    _animEndBearing = _animStartBearing + diff;
+
+    _cameraAnimationController?.dispose();
+    _cameraAnimationController = AnimationController(
+      vsync: this,
+      duration: duration,
+    );
+
+    final curvedAnimation = CurvedAnimation(
+      parent: _cameraAnimationController!,
+      curve: curve,
+    );
+
+    _cameraAnimationController!.addListener(() {
+      final t = curvedAnimation.value;
+      if (_animStartTarget == null || _animEndTarget == null) return;
+
+      double lat = _animStartTarget!.latitude + (_animEndTarget!.latitude - _animStartTarget!.latitude) * t;
+      double lng = _animStartTarget!.longitude + (_animEndTarget!.longitude - _animStartTarget!.longitude) * t;
+      LatLng newTarget = LatLng(lat, lng);
+
+      double newZoom = _animStartZoom + (_animEndZoom - _animStartZoom) * t;
+      double newTilt = _animStartTilt + (_animEndTilt - _animStartTilt) * t;
+      double newBearing = _animStartBearing + (_animEndBearing - _animStartBearing) * t;
+
+      _cameraTarget = newTarget;
+      _cameraZoom = newZoom;
+      _cameraTilt = newTilt;
+      _cameraBearing = newBearing;
+
+      _mapController?.moveCamera(
+        CameraUpdate.newCameraPosition(
+          CameraPosition(
+            target: newTarget,
+            zoom: newZoom,
+            tilt: newTilt,
+            bearing: newBearing,
+          ),
+        ),
+      );
+    });
+
+    _cameraAnimationController!.forward();
+  }
+
+  double _normalizeBearing(double bearing) {
+    double b = bearing % 360;
+    if (b < 0) b += 360;
+    return b;
   }
 
   Future<void> _updateMapStyle(GoogleMapController controller) async {
@@ -327,12 +499,20 @@ class _FullScreenMapState extends State<FullScreenMap> {
   Widget build(BuildContext context) {
     return BlocListener<AppCubit, AppState>(
       listenWhen: (previous, current) =>
-          previous.livePosition != current.livePosition,
+          previous.livePosition != current.livePosition ||
+          previous.liveBearing != current.liveBearing,
       listener: (context, state) {
-        if (state.livePosition != null && _mapController != null) {
-          _mapController!.animateCamera(
-            CameraUpdate.newLatLng(state.livePosition!),
-          );
+        if (_isAutoFollowing && state.livePosition != null && _mapController != null) {
+          if (_isInitialFocusDone) {
+            _animateCameraTo(
+              target: state.livePosition!,
+              zoom: 15.0,
+              tilt: 0.0,
+              bearing: state.liveBearing,
+              duration: const Duration(milliseconds: 1500),
+              curve: Curves.easeOutCubic,
+            );
+          }
         }
       },
       child: Scaffold(
@@ -373,9 +553,16 @@ class _FullScreenMapState extends State<FullScreenMap> {
         // Final fallback to phone location
         bestPos ??= LatLng(currentPos.latitude, currentPos.longitude);
 
+        // Start with a 120-degree rotation offset for a cinematic entrance
+        double startBearing = _normalizeBearing(appState.liveBearing - 120.0);
+
         return GoogleMap(
           key: ValueKey(widget.selectedVehicle?.id),
-          initialCameraPosition: CameraPosition(target: bestPos, zoom: 15),
+          initialCameraPosition: CameraPosition(
+            target: bestPos,
+            zoom: 13,
+            bearing: startBearing,
+          ),
           myLocationEnabled: false,
           zoomControlsEnabled: false,
           myLocationButtonEnabled: false,
@@ -383,6 +570,22 @@ class _FullScreenMapState extends State<FullScreenMap> {
               ? MapType.satellite
               : MapType.normal,
           trafficEnabled: appState.isTrafficEnabled,
+          padding: EdgeInsets.only(bottom: MediaQuery.of(context).size.height * 0.16),
+          onCameraMove: (position) {
+            if (_cameraAnimationController == null || !_cameraAnimationController!.isAnimating) {
+              _cameraTarget = position.target;
+              _cameraZoom = position.zoom;
+              _cameraTilt = position.tilt;
+              _cameraBearing = position.bearing;
+            }
+          },
+          onCameraMoveStarted: () {
+            if (_cameraAnimationController == null || !_cameraAnimationController!.isAnimating) {
+              setState(() {
+                _isAutoFollowing = false;
+              });
+            }
+          },
           markers: {
             Marker(
               markerId: const MarkerId('vehicle_marker'),
@@ -399,6 +602,16 @@ class _FullScreenMapState extends State<FullScreenMap> {
               await _loadMapStyles();
             }
             _updateMapStyle(controller);
+
+            // Initialize camera state fields
+            _cameraTarget = bestPos;
+            _cameraZoom = 13.0;
+            _cameraTilt = 0.0;
+            _cameraBearing = startBearing;
+
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              _triggerInitialFocusAnimation();
+            });
           },
         );
       },
@@ -483,7 +696,11 @@ class _FullScreenMapState extends State<FullScreenMap> {
           _buildMapActionButton(Icons.motorcycle, hasNotification: true),
           _buildMapActionButton(Icons.map_outlined, onTap: _showMapStyleSheet),
           _buildMapActionButton(Icons.person_pin_circle_outlined),
-          _buildMapActionButton(Icons.my_location),
+          _buildMapActionButton(
+            Icons.my_location,
+            onTap: _recenterCamera,
+            isActiveColor: _isAutoFollowing,
+          ),
           _buildMapActionButton(Icons.fullscreen),
         ],
       ),
@@ -494,12 +711,13 @@ class _FullScreenMapState extends State<FullScreenMap> {
     IconData icon, {
     bool hasNotification = false,
     VoidCallback? onTap,
+    bool isActiveColor = false,
   }) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: Stack(
         children: [
-          _buildRoundButton(icon, onTap: onTap),
+          _buildRoundButton(icon, onTap: onTap, isActiveColor: isActiveColor),
           if (hasNotification)
             Positioned(
               right: 0,
@@ -522,16 +740,17 @@ class _FullScreenMapState extends State<FullScreenMap> {
     );
   }
 
-  Widget _buildRoundButton(IconData icon, {VoidCallback? onTap}) {
+  Widget _buildRoundButton(IconData icon, {VoidCallback? onTap, bool isActiveColor = false}) {
+    final theme = Theme.of(context);
     return BouncingWidget(
       onTap: onTap ?? () {},
       child: Container(
         height: 48,
         width: 48,
         decoration: BoxDecoration(
-          color: Theme.of(context).cardColor,
+          color: isActiveColor ? theme.colorScheme.primary : theme.cardColor,
           shape: BoxShape.circle,
-          border: Border.all(color: Theme.of(context).dividerColor),
+          border: Border.all(color: isActiveColor ? theme.colorScheme.primary : theme.dividerColor),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.1),
@@ -542,7 +761,9 @@ class _FullScreenMapState extends State<FullScreenMap> {
         ),
         child: Icon(
           icon,
-          color: Theme.of(context).colorScheme.onSurface.withOpacity(0.85),
+          color: isActiveColor
+              ? theme.colorScheme.onPrimary
+              : theme.colorScheme.onSurface.withOpacity(0.85),
           size: 24,
         ),
       ),

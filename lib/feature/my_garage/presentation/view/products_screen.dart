@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:trackify/core/widgets/coming_soon_page.dart';
 import 'package:trackify/l10n/app_localizations.dart';
 
 import '../../domain/entities/product_entity.dart';
@@ -253,12 +254,19 @@ class _ProductScreenState extends State<ProductScreen> {
                         height: size.height * 0.065,
                         child: ElevatedButton(
                           onPressed: () {
+
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (_) => const CheckoutScreen(),
+                                builder: (_) => const ComingSoonPage(),
                               ),
                             );
+                            // Navigator.push(
+                            //   context,
+                            //   MaterialPageRoute(
+                            //     builder: (_) => const CheckoutScreen(),
+                            //   ),
+                            // );
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: colorScheme.primary,

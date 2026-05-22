@@ -5,6 +5,7 @@ import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:trackify/app/app_navigation.dart';
 import 'package:trackify/core/constants/app_images.dart';
+import 'package:trackify/core/widgets/coming_soon_page.dart';
 import 'package:trackify/l10n/app_localizations.dart';
 import '../../../document_folder/presentation/pages/document_screen.dart';
 import '../../../upgrade_to_plus/presentation/pages/upgrade_to_plus.dart';
@@ -46,10 +47,11 @@ class VehicleControlView extends StatelessWidget {
     final l10n = AppLocalizations.of(context)!;
 
     // Use theme colors
+    final colorScheme = theme.colorScheme;
     final bgColor = theme.scaffoldBackgroundColor;
     final cardColor = isDark ? const Color(0xFF1E1E1E) : theme.cardColor;
-    final primaryTextColor = theme.colorScheme.onSurface;
-    final secondaryTextColor = theme.colorScheme.onSurface.withOpacity(0.6);
+    final primaryTextColor = colorScheme.onSurface;
+    final secondaryTextColor = colorScheme.onSurface.withOpacity(0.6);
 
     return Scaffold(
       backgroundColor: bgColor,
@@ -482,41 +484,46 @@ class VehicleControlView extends StatelessWidget {
                         const SizedBox(height: 32),
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 24),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                children: [
-                                  Icon(
-                                    Icons.add_ic_call,
-                                    color: theme.colorScheme.onSurface
-                                        .withOpacity(0.6),
-                                    size: 20,
-                                  ),
-                                  const SizedBox(width: 12),
-                                  Text(
-                                    "Emergency Contact/s",
+                          child: InkWell(
+                            onTap: () {
+                              Navigator.push(context,MaterialPageRoute(builder: (context) => ComingSoonPage(),) );
+                            },
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    Icon(
+                                      Icons.add_ic_call,
+                                      color: theme.colorScheme.onSurface
+                                          .withOpacity(0.6),
+                                      size: 20,
+                                    ),
+                                    const SizedBox(width: 12),
+                                    Text(
+                                      "Emergency Contact/s",
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w700,
+                                        color: primaryTextColor,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 8),
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 32),
+                                  child: Text(
+                                    "..add 1 more",
                                     style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w700,
-                                      color: primaryTextColor,
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.w600,
+                                      color: theme.colorScheme.primary,
                                     ),
                                   ),
-                                ],
-                              ),
-                              const SizedBox(height: 8),
-                              Padding(
-                                padding: const EdgeInsets.only(left: 32),
-                                child: Text(
-                                  "..add 1 more",
-                                  style: TextStyle(
-                                    fontSize: 13,
-                                    fontWeight: FontWeight.w600,
-                                    color: theme.colorScheme.primary,
-                                  ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         ),
                         const SizedBox(height: 24),
@@ -555,10 +562,8 @@ class VehicleControlView extends StatelessWidget {
                                     _showDeleteConfirmationDialog(context, vehicle.id);
                                   },
                                   style: ElevatedButton.styleFrom(
-                                    backgroundColor: isDark
-                                        ? const Color(0xFF2C2C2C)
-                                        : Colors.grey.shade200,
-                                    foregroundColor: Colors.redAccent,
+                                    backgroundColor: colorScheme.error.withOpacity(0.12),
+                                    foregroundColor: colorScheme.error,
                                     padding: const EdgeInsets.symmetric(
                                       vertical: 14,
                                     ),
@@ -1063,7 +1068,7 @@ class VehicleControlView extends StatelessWidget {
               Navigator.pop(ctx);
               cubit.deleteVehicle(vehicleIMEI);
             },
-            child: const Text("Remove", style: TextStyle(color: Colors.redAccent, fontWeight: FontWeight.bold)),
+            child: Text("Remove", style: TextStyle(color: theme.colorScheme.error, fontWeight: FontWeight.bold)),
           ),
         ],
       ),
