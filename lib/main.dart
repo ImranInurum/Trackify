@@ -125,9 +125,9 @@ import 'package:trackify/feature/overspeed_alert/domain/usecase/get_overspeed_al
 
 import 'package:trackify/feature/video_tutorial/data/datasource/tutorial_remote_data.dart';
 import 'package:trackify/feature/video_tutorial/presentation/cubit/tutorial_cubit.dart';
-import 'feature/get_more_out/data/data source/discover_data_source.dart';
-import 'feature/get_more_out/data/data source/feature_local_data.dart';
-import 'feature/get_more_out/data/data source/geo_fence_local_data.dart';
+import 'package:trackify/feature/get_more_out/data/data source/discover_data_source.dart';
+import 'package:trackify/feature/get_more_out/data/data source/feature_local_data.dart';
+import 'package:trackify/feature/get_more_out/data/data source/geo_fence_local_data.dart';
 import 'package:trackify/feature/statistics/data/data_source/statistics_remote_data_source.dart';
 import 'package:trackify/feature/statistics/data/repository/statistics_repository_impl.dart';
 import 'package:trackify/feature/statistics/presentation/cubit/statistics_cubit.dart';

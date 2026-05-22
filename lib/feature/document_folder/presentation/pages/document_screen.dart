@@ -15,6 +15,7 @@ import 'package:image_cropper/image_cropper.dart';
 import '../../../service_logs/presentation/screens/service_logs_screen.dart';
 import '../../../service_logs/presentation/cubit/service_logs_cubit.dart';
 import '../../../service_logs/presentation/cubit/service_logs_state.dart';
+import '../../../Vehicle_control/data/repositories/vehicle_control_repository_impl.dart';
 
 class DocumentFolderScreen extends StatefulWidget {
   const DocumentFolderScreen({super.key});
@@ -26,8 +27,15 @@ class DocumentFolderScreen extends StatefulWidget {
 class _DocumentFolderScreenState extends State<DocumentFolderScreen> {
   File? _vehicleImage;
   bool _isPickerActive = false;
+  bool _isUploading = false;
 
-  Future<void> _pickImage(ImageSource source) async {
+  @override
+  void initState() {
+    super.initState();
+    context.read<ServiceLogsCubit>().loadVehicles();
+  }
+
+  Future<void> _pickImage(ImageSource source, String? imei) async {
     if (_isPickerActive) return;
     setState(() => _isPickerActive = true);
 
@@ -35,14 +43,16 @@ class _DocumentFolderScreenState extends State<DocumentFolderScreen> {
       final picker = ImagePicker();
       final pickedFile = await picker.pickImage(
         source: source,
-        imageQuality: 50,
+        imageQuality: 80,
       );
       if (pickedFile != null) {
         final croppedFile = await _cropImage(File(pickedFile.path));
         if (croppedFile != null) {
-          setState(() {
-            _vehicleImage = croppedFile;
-          });
+          setState(() => _vehicleImage = croppedFile);
+          // Upload if vehicle is selected
+          if (imei != null && imei.isNotEmpty) {
+            await _uploadVehicleImage(croppedFile, imei);
+          }
         }
       }
     } finally {
@@ -50,25 +60,57 @@ class _DocumentFolderScreenState extends State<DocumentFolderScreen> {
     }
   }
 
+  Future<void> _uploadVehicleImage(File imageFile, String imei) async {
+    if (!mounted) return;
+    setState(() => _isUploading = true);
+    try {
+      await VehicleControlRepositoryImpl().updateVehicleImage(imei, imageFile.path);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(AppLocalizations.of(context)!.successMessage),
+            backgroundColor: Colors.green,
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Upload failed: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _isUploading = false);
+    }
+  }
+
   Future<File?> _cropImage(File imageFile) async {
     final l10n = AppLocalizations.of(context)!;
     final croppedFile = await ImageCropper().cropImage(
       sourcePath: imageFile.path,
+      aspectRatio: const CropAspectRatio(ratioX: 3, ratioY: 2),
       uiSettings: [
         AndroidUiSettings(
           toolbarTitle: l10n.cropVehicleImage,
           toolbarColor: Colors.black,
           toolbarWidgetColor: Colors.white,
-          initAspectRatio: CropAspectRatioPreset.original,
-          lockAspectRatio: false,
+          initAspectRatio: CropAspectRatioPreset.ratio3x2,
+          lockAspectRatio: true,
         ),
-        IOSUiSettings(title: l10n.cropVehicleImage),
+        IOSUiSettings(
+          title: l10n.cropVehicleImage,
+          aspectRatioLockEnabled: true,
+          resetAspectRatioEnabled: false,
+        ),
       ],
     );
     return croppedFile != null ? File(croppedFile.path) : null;
   }
 
-  void _showImagePicker() {
+  void _showImagePicker(String? imei) {
     final colorScheme = Theme.of(context).colorScheme;
     final l10n = AppLocalizations.of(context)!;
 
@@ -114,7 +156,7 @@ class _DocumentFolderScreenState extends State<DocumentFolderScreen> {
                     onTap: () async {
                       Navigator.pop(context);
                       await Future.delayed(const Duration(milliseconds: 300));
-                      _pickImage(ImageSource.camera);
+                      _pickImage(ImageSource.camera, imei);
                     },
                   ),
                   const SizedBox(width: 32),
@@ -124,7 +166,7 @@ class _DocumentFolderScreenState extends State<DocumentFolderScreen> {
                     onTap: () async {
                       Navigator.pop(context);
                       await Future.delayed(const Duration(milliseconds: 300));
-                      _pickImage(ImageSource.gallery);
+                      _pickImage(ImageSource.gallery, imei);
                     },
                   ),
                 ],
@@ -264,11 +306,19 @@ class _DocumentFolderScreenState extends State<DocumentFolderScreen> {
                             colorScheme,
                             title: l10n.drivingLicense,
                             onTap: () {
+                              final vehicle = selectedVehicle;
+                              if (vehicle == null) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text(l10n.selectVehicle)),
+                                );
+                                return;
+                              }
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                   builder: (_) => DocumentLicense(
                                     title: l10n.drivingLicenseTitle,
+                                    imei: vehicle.imei ?? '',
                                   ),
                                 ),
                               );
@@ -280,11 +330,19 @@ class _DocumentFolderScreenState extends State<DocumentFolderScreen> {
                             colorScheme,
                             title: l10n.otherDocuments,
                             onTap: () {
+                              final vehicle = selectedVehicle;
+                              if (vehicle == null) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text(l10n.selectVehicle)),
+                                );
+                                return;
+                              }
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                   builder: (_) => DocumentOtherdocumentScreen(
                                     title: l10n.otherDocumentTitle,
+                                    imei: vehicle.imei ?? '',
                                   ),
                                 ),
                               );
@@ -329,7 +387,7 @@ class _DocumentFolderScreenState extends State<DocumentFolderScreen> {
                 children: [
                   // 📷 Vehicle Image
                   GestureDetector(
-                    onTap: _showImagePicker,
+                    onTap: () => _showImagePicker(selectedVehicle?.imei),
                     child: Container(
                       width: screenWidth * 0.20,
                       height: screenHeight * 0.07,
@@ -340,31 +398,39 @@ class _DocumentFolderScreenState extends State<DocumentFolderScreen> {
                           color: colorScheme.outlineVariant.withOpacity(0.5),
                         ),
                       ),
-                      child: _vehicleImage == null
-                          ? Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(
-                                  Icons.camera_alt,
-                                  color: colorScheme.onSurfaceVariant,
-                                  size: 20,
-                                ),
-                                const SizedBox(height: 4),
-                                Text(
-                                  l10n.vehicleImage,
-                                  style: theme.textTheme.labelSmall?.copyWith(
-                                    color: colorScheme.onSurfaceVariant,
+                      child: _isUploading
+                          ? const Center(
+                              child: SizedBox(
+                                width: 20,
+                                height: 20,
+                                child: CircularProgressIndicator(strokeWidth: 2),
+                              ),
+                            )
+                          : _vehicleImage == null
+                              ? Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(
+                                      Icons.camera_alt,
+                                      color: colorScheme.onSurfaceVariant,
+                                      size: 20,
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      l10n.vehicleImage,
+                                      style: theme.textTheme.labelSmall?.copyWith(
+                                        color: colorScheme.onSurfaceVariant,
+                                      ),
+                                    ),
+                                  ],
+                                )
+                              : ClipRRect(
+                                  borderRadius: BorderRadius.circular(12),
+                                  child: Image.file(
+                                    _vehicleImage!,
+                                    fit: BoxFit.cover,
                                   ),
                                 ),
-                              ],
-                            )
-                          : ClipRRect(
-                              borderRadius: BorderRadius.circular(12),
-                              child: Image.file(
-                                _vehicleImage!,
-                                fit: BoxFit.cover,
-                              ),
-                            ),
                     ),
                   ),
 
@@ -376,16 +442,42 @@ class _DocumentFolderScreenState extends State<DocumentFolderScreen> {
                       onTap: () {
                         showModalBottomSheet(
                           context: context,
-                          builder: (_) => _VehicleSelectorSheet(
-                            vehicles: vehicles,
-                            selectedVehicle: selectedVehicle,
-
-                            onSelected: (vehicle) {
-                              context.read<ServiceLogsCubit>().selectVehicle(
-                                vehicle.id!,
-                              );
-                              Navigator.pop(context);
-                            },
+                          backgroundColor: Colors.transparent,
+                          isScrollControlled: true,
+                          builder: (sheetContext) => BlocProvider.value(
+                            value: context.read<ServiceLogsCubit>(),
+                            child:
+                                BlocBuilder<ServiceLogsCubit, ServiceLogsState>(
+                                  builder: (context, state) {
+                                    List<Vehicle> vehicles = [];
+                                    Vehicle? selectedVehicle;
+                                    bool isLoading = false;
+                                    String? errorMessage;
+                                    if (state is ServiceLogsError) {
+                                      errorMessage = state.message;
+                                      vehicles = state.vehicles;
+                                      selectedVehicle = state.selectedVehicle;
+                                    } else if (state is ServiceLogsLoaded) {
+                                      vehicles = state.vehicles;
+                                      selectedVehicle = state.selectedVehicle;
+                                    } else if (state is ServiceLogsLoading ||
+                                        state is ServiceLogsInitial) {
+                                      isLoading = true;
+                                    }
+                                    return _VehicleSelectorSheet(
+                                      vehicles: vehicles,
+                                      selectedVehicle: selectedVehicle,
+                                      isLoading: isLoading,
+                                      errorMessage: errorMessage,
+                                      onSelected: (vehicle) {
+                                        context
+                                            .read<ServiceLogsCubit>()
+                                            .selectVehicle(vehicle.id!);
+                                        Navigator.pop(sheetContext);
+                                      },
+                                    );
+                                  },
+                                ),
                           ),
                         );
                       },
@@ -454,11 +546,19 @@ class _DocumentFolderScreenState extends State<DocumentFolderScreen> {
                             colorScheme,
                             title: l10n.vehicleRC,
                             onTap: () {
+                              final vehicle = selectedVehicle;
+                              if (vehicle == null) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text(l10n.selectVehicle)),
+                                );
+                                return;
+                              }
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                   builder: (_) => DocumentVehicleRCScreen(
                                     title: l10n.vehicleRCTitle,
+                                    imei: vehicle.imei ?? '',
                                   ),
                                 ),
                               );
@@ -470,11 +570,20 @@ class _DocumentFolderScreenState extends State<DocumentFolderScreen> {
                             colorScheme,
                             title: l10n.insurance,
                             onTap: () {
+                              final vehicle = selectedVehicle;
+                              if (vehicle == null) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text(l10n.selectVehicle)),
+                                );
+                                return;
+                              }
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                   builder: (_) => DocumentSubScreen(
                                     title: l10n.insuranceTitle,
+                                    imei: vehicle.imei ?? '',
+                                    subtype: 'insurance',
                                   ),
                                 ),
                               );
@@ -486,11 +595,21 @@ class _DocumentFolderScreenState extends State<DocumentFolderScreen> {
                             colorScheme,
                             title: l10n.puc,
                             onTap: () {
+                              final vehicle = selectedVehicle;
+                              if (vehicle == null) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text(l10n.selectVehicle)),
+                                );
+                                return;
+                              }
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (_) =>
-                                      DocumentSubScreen(title: l10n.pucTitle),
+                                  builder: (_) => DocumentSubScreen(
+                                    title: l10n.pucTitle,
+                                    imei: vehicle.imei ?? '',
+                                    subtype: 'puc',
+                                  ),
                                 ),
                               );
                             },
@@ -533,6 +652,13 @@ class _DocumentFolderScreenState extends State<DocumentFolderScreen> {
                             colorScheme,
                             title: l10n.serviceLogs,
                             onTap: () {
+                              final vehicle = selectedVehicle;
+                              if (vehicle == null) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text(l10n.selectVehicle)),
+                                );
+                                return;
+                              }
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
@@ -549,13 +675,13 @@ class _DocumentFolderScreenState extends State<DocumentFolderScreen> {
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                    Text(
-                                      l10n.movedTo,
+                                  Text(
+                                    l10n.movedTo,
                                     style: const TextStyle(
                                       color: Colors.white,
-                                        fontSize: 10,
-                                      ),
+                                      fontSize: 10,
                                     ),
+                                  ),
                                   Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
@@ -609,11 +735,20 @@ class _DocumentFolderScreenState extends State<DocumentFolderScreen> {
                             colorScheme,
                             title: l10n.accessoryBills,
                             onTap: () {
+                              final vehicle = selectedVehicle;
+                              if (vehicle == null) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text(l10n.selectVehicle)),
+                                );
+                                return;
+                              }
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) =>
-                                  const AccessoryBillScreen(),
+                                      AccessoryBillScreen(
+                                        imei: vehicle.imei ?? '',
+                                      ),
                                 ),
                               );
                             },
@@ -710,24 +845,29 @@ class _DocumentFolderScreenState extends State<DocumentFolderScreen> {
 class _VehicleSelectorSheet extends StatelessWidget {
   final List<Vehicle> vehicles;
   final Vehicle? selectedVehicle;
+  final bool isLoading;
+  final String? errorMessage;
   final ValueChanged<Vehicle> onSelected;
 
   const _VehicleSelectorSheet({
     required this.vehicles,
     required this.selectedVehicle,
+    required this.isLoading,
+    this.errorMessage,
     required this.onSelected,
   });
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
     final l10n = AppLocalizations.of(context)!;
-    final colorScheme = Theme.of(context).colorScheme;
     return Container(
       decoration: BoxDecoration(
         color: colorScheme.surface,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
       ),
-      padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
+      padding: const EdgeInsets.fromLTRB(0, 12, 0, 24),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -744,16 +884,35 @@ class _VehicleSelectorSheet extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 16),
-          Text(
-            l10n.selectVehicle,
-            style: TextStyle(
-              color: colorScheme.onSurface,
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Text(
+              l10n.selectVehicle,
+              style: TextStyle(
+                color: colorScheme.onSurface,
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+              ),
             ),
           ),
           const SizedBox(height: 12),
-          if (vehicles.isEmpty)
+          if (isLoading)
+            const Padding(
+              padding: EdgeInsets.symmetric(vertical: 24),
+              child: Center(child: CircularProgressIndicator()),
+            )
+          else if (errorMessage != null)
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
+              child: Center(
+                child: Text(
+                  errorMessage!,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(color: Colors.red),
+                ),
+              ),
+            )
+          else if (vehicles.isEmpty)
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 24),
               child: Center(
@@ -764,52 +923,73 @@ class _VehicleSelectorSheet extends StatelessWidget {
               ),
             )
           else
-            ListView.separated(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: vehicles.length,
-              separatorBuilder: (_, __) =>
-                  Divider(color: colorScheme.outlineVariant, height: 1),
-              itemBuilder: (context, index) {
-                final vehicle = vehicles[index];
-                final isSelected = selectedVehicle?.id == vehicle.id;
-                return ListTile(
-                  contentPadding: EdgeInsets.zero,
-                  leading: const Icon(
-                    Icons.directions_car,
-                    color: Colors.amber,
-                  ),
-                  title: Text(
-                    '${vehicle.vehicleMaker ?? ''} ${vehicle.vehicleModel ?? ''}'
-                        .trim(),
-                    style: TextStyle(
+            Flexible(
+              child: ListView.builder(
+                shrinkWrap: true,
+                itemCount: vehicles.length,
+                itemBuilder: (context, index) {
+                  final vehicle = vehicles[index];
+                  final isSelected = selectedVehicle?.id == vehicle.id;
+                  return Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                    decoration: BoxDecoration(
                       color: isSelected
-                          ? colorScheme.primary
-                          : colorScheme.onSurface,
-                      fontWeight: isSelected
-                          ? FontWeight.w600
-                          : FontWeight.normal,
+                          ? colorScheme.primaryContainer.withOpacity(0.15)
+                          : theme.cardColor,
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: isSelected
+                            ? colorScheme.primary
+                            : colorScheme.outlineVariant.withOpacity(0.4),
+                        width: isSelected ? 1.5 : 1,
+                      ),
                     ),
-                  ),
-                  subtitle: vehicle.vehicleNumber != null
-                      ? Text(
-                          vehicle.vehicleNumber!,
-                          style: TextStyle(
-                            color: colorScheme.onSurfaceVariant,
-                            fontSize: 12,
-                          ),
-                        )
-                      : null,
-                  trailing: isSelected
-                      ? Icon(
-                          Icons.check_circle,
-                          color: colorScheme.primary,
-                          size: 20,
-                        )
-                      : null,
-                  onTap: () => onSelected(vehicle),
-                );
-              },
+                    child: ListTile(
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                      leading: Container(
+                        padding: const EdgeInsets.all(6),
+                        decoration: BoxDecoration(
+                          color: colorScheme.surface,
+                          shape: BoxShape.circle,
+                        ),
+                        child: Image.asset(
+                          'assets/icons/bike2.png',
+                          width: 40,
+                          height: 40,
+                        ),
+                      ),
+                      title: Text(
+                        '${vehicle.vehicleMaker ?? ''} ${vehicle.vehicleModel ?? ''}'.trim(),
+                        style: TextStyle(
+                          color: isSelected
+                              ? colorScheme.primary
+                              : colorScheme.onSurface,
+                          fontWeight: isSelected
+                              ? FontWeight.w600
+                              : FontWeight.w500,
+                        ),
+                      ),
+                      subtitle: vehicle.vehicleNumber != null
+                          ? Text(
+                              vehicle.vehicleNumber!,
+                              style: TextStyle(
+                                color: colorScheme.onSurfaceVariant,
+                                fontSize: 12,
+                              ),
+                            )
+                          : null,
+                      trailing: isSelected
+                          ? Icon(
+                              Icons.check_circle,
+                              color: colorScheme.primary,
+                              size: 22,
+                            )
+                          : null,
+                      onTap: () => onSelected(vehicle),
+                    ),
+                  );
+                },
+              ),
             ),
         ],
       ),

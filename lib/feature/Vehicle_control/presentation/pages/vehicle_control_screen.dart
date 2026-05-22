@@ -357,6 +357,7 @@ class VehicleControlView extends StatelessWidget {
                         cardColor: cardColor,
                         primaryTextColor: primaryTextColor,
                         secondaryTextColor: secondaryTextColor,
+                        imei: vehicle.id,
                         onTap: () {
                           Navigator.push(
                             context,

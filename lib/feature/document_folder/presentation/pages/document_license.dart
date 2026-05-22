@@ -7,11 +7,15 @@ import 'package:image_cropper/image_cropper.dart';
 import 'package:intl/intl.dart';
 import 'package:trackify/core/config/font_manager.dart';
 import 'package:trackify/l10n/app_localizations.dart';
+import 'package:trackify/feature/document_folder/data/models/document_upload_request.dart';
+import 'package:trackify/feature/document_folder/data/repository/document_repository_impl.dart';
+import 'package:trackify/feature/document_folder/data/data_sources/document_local_datasources.dart';
 
 class DocumentLicense extends StatefulWidget {
   final String title;
+  final String imei;
 
-  const DocumentLicense({super.key, required this.title});
+  const DocumentLicense({super.key, required this.title, required this.imei});
 
   @override
   State<DocumentLicense> createState() =>
@@ -288,21 +292,73 @@ class _DocumentLicenseState extends State<DocumentLicense> {
     );
   }
 
-  // ── SUBMIT ─────────────────────────────────────────────
-
-  void _submit() {
+  void _submit() async {
     final l10n = AppLocalizations.of(context)!;
 
     if (_frontFile == null) {
-      setState(() => _error = l10n.frontRequired);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(l10n.frontRequired)),
+      );
       return;
     }
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(l10n.successMessage)),
-    );
+    setState(() {
+      _isLoading = true;
+      _error = null;
+    });
 
-    Navigator.pop(context);
+    try {
+      final frontBytes = await _frontFile!.readAsBytes();
+      final frontName = _frontFile!.path.split('/').last;
+
+      List<int>? backBytes;
+      String? backName;
+      if (_backFile != null) {
+        backBytes = await _backFile!.readAsBytes();
+        backName = _backFile!.path.split('/').last;
+      }
+
+      final request = DocumentUploadRequest(
+        imei: widget.imei,
+        type: 'personal',
+        subtype: 'driving_license',
+        expiryDate: _selectedDate != null
+            ? DateFormat('yyyy-MM-dd').format(_selectedDate!)
+            : null,
+      );
+
+      final repo = DocumentRepositoryImpl(DocumentLocalDataSource(ImagePicker()));
+      final result = await repo.uploadDocument(
+        request: request,
+        frontImageBytes: frontBytes,
+        frontImageName: frontName,
+        backImageBytes: backBytes,
+        backImageName: backName,
+      );
+
+      result.fold(
+        (failure) {
+          setState(() {
+            _error = failure.message;
+            _isLoading = false;
+          });
+        },
+        (response) {
+          setState(() {
+            _isLoading = false;
+          });
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(response.message ?? l10n.successMessage)),
+          );
+          Navigator.pop(context);
+        },
+      );
+    } catch (e) {
+      setState(() {
+        _error = e.toString();
+        _isLoading = false;
+      });
+    }
   }
 
   // ── UI ─────────────────────────────────────────────
@@ -466,12 +522,24 @@ class _DocumentLicenseState extends State<DocumentLicense> {
               ),
 
               GestureDetector(
-                onTap: _frontFile == null ? null : _submit,
+                onTap: _isLoading
+                    ? null
+                    : () {
+                        if (_frontFile == null) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(AppLocalizations.of(context)!.frontRequired),
+                            ),
+                          );
+                          return;
+                        }
+                        _submit();
+                      },
                 child: Container(
                   height: screenHeight * 0.055,
                   width: double.infinity,
                   decoration: BoxDecoration(
-                    color: _frontFile == null
+                    color: (_frontFile == null || _isLoading)
                         ? colorScheme.outline
                         : colorScheme.primary,
                     borderRadius: BorderRadius.circular(12),

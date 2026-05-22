@@ -15,6 +15,12 @@ abstract class BaseApiServices {
     String fileKey,
     String method,
   );
+  ResultFuture<dynamic> postUploadMultipleFilesApiResponse({
+    required String url,
+    required Map<String, String> fields,
+    required List<Map<String, dynamic>> files,
+    required String method,
+  });
   ResultFuture<dynamic> deleteResponse(String url, Map<String, dynamic> body);
   ResultFuture<dynamic> pathResponse(String url, Map<String, dynamic> body);
 }
