@@ -575,12 +575,12 @@ class _MapScreenState extends State<MapScreen> {
       {
         "icon": Icons.share_outlined,
         "label": l10n.locationSharing.replaceAll(' ', '\n'),
-        "badge": null,
+        "badge": "Coming Soon",
       },
       {
         "icon": Icons.local_parking_rounded,
         "label": l10n.safeParking.replaceAll(' ', '\n'),
-        "badge": null,
+        "badge": "Coming Soon",
       },
       {
         "icon": Icons.campaign_outlined,
@@ -625,7 +625,7 @@ class _MapScreenState extends State<MapScreen> {
       {
         "icon": Icons.sos_outlined,
         "label": l10n.emergency.replaceAll(' ', '\n'),
-        "badge": null,
+        "badge": "Coming Soon",
       },
       {
         "icon": Icons.play_arrow_outlined,
@@ -749,7 +749,7 @@ class _MapScreenState extends State<MapScreen> {
     AppLocalizations l10n,
   ) {
     return InkWell(
-      onTap: () => _handleExploreTap(option, selectedDevice, l10n),
+      onTap: () => option["badge"]=="Coming Soon"?null: _handleExploreTap(option, selectedDevice, l10n),
       child: Column(
         children: [
           if (option["isPlus"] == true)
@@ -799,7 +799,7 @@ class _MapScreenState extends State<MapScreen> {
         Icon(
           option["icon"] as IconData,
           size: 26,
-          color: Theme.of(context).colorScheme.onSurface,
+          color:  Theme.of(context).colorScheme.onSurface,
         ),
         if (option["badge"] != null)
           Positioned(
@@ -808,7 +808,7 @@ class _MapScreenState extends State<MapScreen> {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
               decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.primary,
+                color: option["badge"]=="Coming Soon"? Theme.of(context).disabledColor:Theme.of(context).colorScheme.primary,
                 borderRadius: BorderRadius.circular(4),
               ),
               child: Text(
