@@ -165,7 +165,7 @@ class ApiURL {
 // -------------------------
 // Discover feature
 // -------------------------
-static const String discover = "$baseURL/api/features/discover-features";
+  static const String discover = "$baseURL/api/features/discover-features";
   static const String featureDetails = "$baseURL/api/features/feature-category";
   static const String geoFenceIntro = "$baseURL/api/features/feature-intro/{featureId}";
 
@@ -175,7 +175,15 @@ static const String discover = "$baseURL/api/features/discover-features";
   static const String plusMembership = "$baseURL/api/plus-membership/plus-plan";
 
 
-
+  // -------------------------
+//Help & suggestion
+// -------------------------
+  static const String myIssue = "$baseURL/api/help/my-issues";
+  static const String mySuggestions = "$baseURL/api/help/my-suggestions";
+  static const String timeSlots = "$baseURL/api/help/call-slots";
+  static const String report = "$baseURL/api/help/book-call-slot";
+  static const String suggestion = "$baseURL/api/help/suggestions";
+  static const String bookingSlot = "$baseURL/api/help/call-slots";
 
   // NEED TO IMPLEMENT CORRECT API
   // static const String logout = '$baseURL/users/logout';

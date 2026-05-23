@@ -177,6 +177,11 @@ class AppCubit extends Cubit<AppState> with WidgetsBindingObserver {
     print("UserDetails : $userData");
     print("SelectedLanguageKey : $selectedLanguageKey");
 
+    final token = await prefs.get(key: AppPreference.KEY_TOKEN);
+    if (token.isNotEmpty) {
+      ApiURL.updateAuthToken(token);
+    }
+
     if (userData.isNotEmpty) {
       final user = User.fromJson(jsonDecode(userData));
       emit(state.copyWith(userData: user));

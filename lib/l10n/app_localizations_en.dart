@@ -601,7 +601,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get suggestion => 'Suggestion';
 
   @override
-  String get whatIsYourIssueRelatedTo => 'What is your issue related to ?';
+  String get whatIsYourIssueRelatedTo => 'What is your issue related to?';
 
   @override
   String get shortDescriptionHint =>
@@ -612,6 +612,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get myIssues => 'My Issues';
+
+  @override
+  String get mySuggestions => 'My Suggestions';
 
   @override
   String get whatsApp => 'WhatsApp';
@@ -2443,4 +2446,58 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get switchBetweenLightAndDarkThemes =>
       'Switch between light and dark themes';
+
+  @override
+  String get iHaveAnIssueWith => 'I have an issue with';
+
+  @override
+  String get iWantToProvideSuggestion => 'I want to provide a suggestion for';
+
+  @override
+  String get selectType => 'Select Type';
+
+  @override
+  String get whatIsSuggestionSubject =>
+      'What is the subject of your suggestion?';
+
+  @override
+  String get giveShortDescription => 'Give short description';
+
+  @override
+  String get giveSuggestionFeedback =>
+      'Give your suggestion/feedback (max 200 characters)';
+
+  @override
+  String get giveSuggestionFeedbackTitle => 'Give a suggestion/feedback';
+
+  @override
+  String get send => 'Send';
+
+  @override
+  String get bookCallSlotTitle => 'Book Call Slot';
+
+  @override
+  String get bookCallSlotHeading => 'Book Call Slot for Solving Your Issue';
+
+  @override
+  String get importantPoint => 'Important Point';
+
+  @override
+  String get callSlotDescription =>
+      'You need to be next to your vehicle during the issue resolution. Please keep yourself free :)';
+
+  @override
+  String get selectDay => 'Select Day';
+
+  @override
+  String get selectTimeSlot => 'Select Time Slot';
+
+  @override
+  String get bookNow => 'Book now';
+
+  @override
+  String get slotUnavailable => 'Slot Unavailable';
+
+  @override
+  String get slotAvailable => 'Slot Available';
 }

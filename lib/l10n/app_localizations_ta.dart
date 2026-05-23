@@ -597,7 +597,7 @@ class AppLocalizationsTa extends AppLocalizations {
   String get suggestion => 'சலுகை';
 
   @override
-  String get whatIsYourIssueRelatedTo => 'உங்கள் பிரச்சனை என்ன?';
+  String get whatIsYourIssueRelatedTo => 'உங்கள் பிரச்சனை எதனைப் பற்றியது?';
 
   @override
   String get shortDescriptionHint => 'சுருக்கமான விளக்கம்';
@@ -607,6 +607,9 @@ class AppLocalizationsTa extends AppLocalizations {
 
   @override
   String get myIssues => 'எனது பிரச்சனைகள்';
+
+  @override
+  String get mySuggestions => 'என் பரிந்துரைகள்';
 
   @override
   String get whatsApp => 'WhatsApp';
@@ -2455,4 +2458,59 @@ class AppLocalizationsTa extends AppLocalizations {
   @override
   String get switchBetweenLightAndDarkThemes =>
       'லைட் மற்றும் டார்க் தீம்களுக்கு இடையில் மாற்றவும்';
+
+  @override
+  String get iHaveAnIssueWith => 'இந்த விஷயத்தில் எனக்கு பிரச்சனை உள்ளது';
+
+  @override
+  String get iWantToProvideSuggestion =>
+      'இதற்காக நான் ஒரு பரிந்துரை வழங்க விரும்புகிறேன்';
+
+  @override
+  String get selectType => 'வகையைத் தேர்ந்தெடுக்கவும்';
+
+  @override
+  String get whatIsSuggestionSubject => 'உங்கள் பரிந்துரையின் பொருள் என்ன?';
+
+  @override
+  String get giveShortDescription => 'சுருக்கமான விளக்கம் அளிக்கவும்';
+
+  @override
+  String get giveSuggestionFeedback =>
+      'உங்கள் பரிந்துரை/கருத்தை வழங்கவும் (அதிகபட்சம் 200 எழுத்துகள்)';
+
+  @override
+  String get giveSuggestionFeedbackTitle => 'பரிந்துரை/கருத்து வழங்கவும்';
+
+  @override
+  String get send => 'அனுப்பு';
+
+  @override
+  String get bookCallSlotTitle => 'அழைப்பு நேரத்தை பதிவு செய்யவும்';
+
+  @override
+  String get bookCallSlotHeading =>
+      'உங்கள் பிரச்சினையை தீர்க்க அழைப்பு நேரத்தை பதிவு செய்யவும்';
+
+  @override
+  String get importantPoint => 'முக்கிய குறிப்பு';
+
+  @override
+  String get callSlotDescription =>
+      'பிரச்சினை தீர்க்கும் போது நீங்கள் உங்கள் வாகனத்தின் அருகில் இருக்க வேண்டும். தயவுசெய்து உங்களை காலியாக வைத்திருங்கள் :)';
+
+  @override
+  String get selectDay => 'நாளை தேர்ந்தெடுக்கவும்';
+
+  @override
+  String get selectTimeSlot => 'நேர இடைவெளியை தேர்ந்தெடுக்கவும்';
+
+  @override
+  String get bookNow => 'இப்போது பதிவு செய்யவும்';
+
+  @override
+  String get slotUnavailable => 'நேரம் கிடைக்கவில்லை';
+
+  @override
+  String get slotAvailable => 'நேரம் கிடைக்கிறது';
 }
