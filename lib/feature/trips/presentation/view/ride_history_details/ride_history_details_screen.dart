@@ -528,13 +528,22 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
     });
   }
 
+  void _checkAndFitMapBounds() {
+    if (_hasZoomedToRoute) return;
+    final cubit = context.read<RideHistoryDetailsCubit>();
+    if (!cubit.state.isDataProcessing &&
+        cubit.state.validRidePoints.isNotEmpty &&
+        _controller.isCompleted) {
+      _hasZoomedToRoute = true;
+      _fitMapToBounds();
+    }
+  }
+
   void _onMapCreated(GoogleMapController controller) {
-    _controller.complete(controller);
-    Future.delayed(const Duration(milliseconds: 600), () {
-      if (mounted) {
-        _fitMapToBounds();
-      }
-    });
+    if (!_controller.isCompleted) {
+      _controller.complete(controller);
+    }
+    _checkAndFitMapBounds();
   }
 
   Future<BitmapDescriptor> _createStartMarker() async {
@@ -658,12 +667,7 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
             previous.validRidePoints.length != current.validRidePoints.length;
       },
       listener: (context, state) {
-        if (!state.isDataProcessing &&
-            state.validRidePoints.isNotEmpty &&
-            !_hasZoomedToRoute) {
-          _hasZoomedToRoute = true;
-          _fitMapToBounds();
-        }
+        _checkAndFitMapBounds();
         _animateCameraToVehicle(state);
       },
       child: Scaffold(
