@@ -1,10 +1,18 @@
+import 'package:fpdart/fpdart.dart';
+import 'package:trackify/core/config/network/api_host.dart';
+import 'package:trackify/core/config/network/base_api_service.dart';
+import 'package:trackify/core/config/network/exceptions.dart';
+import 'package:trackify/core/config/network/network_api_service.dart';
+import 'package:trackify/core/utils/typedefs.dart';
 import 'package:trackify/feature/document_folder/data/data_sources/document_local_datasources.dart';
+import 'package:trackify/feature/document_folder/data/models/document_upload_request.dart';
+import 'package:trackify/feature/document_folder/data/models/document_upload_response.dart';
 import 'package:trackify/feature/document_folder/domain/entities/doucment_entity.dart';
 import 'package:trackify/feature/document_folder/domain/repository/document_repository.dart';
 
-class DocumentRepositoryImpl implements DocumentRepository{
-
+class DocumentRepositoryImpl implements DocumentRepository {
   final DocumentLocalDataSource dataSource;
+  static final BaseApiServices _apiServices = NetworkApiService();
 
   DocumentRepositoryImpl(this.dataSource);
 
@@ -23,6 +31,49 @@ class DocumentRepositoryImpl implements DocumentRepository{
     return dataSource.save(doc);
   }
 
+  @override
+  ResultFuture<DocumentUploadResponse> uploadDocument({
+    required DocumentUploadRequest request,
+    required List<int> frontImageBytes,
+    required String frontImageName,
+    List<int>? backImageBytes,
+    String? backImageName,
+  }) async {
+    try {
+      final url = ApiURL.uploadDocument;
+      final fields = request.toFields();
 
+      final files = <Map<String, dynamic>>[
+        {
+          'key': 'frontImage',
+          'bytes': frontImageBytes,
+          'name': frontImageName,
+        }
+      ];
 
+      if (backImageBytes != null && backImageName != null && backImageBytes.isNotEmpty) {
+        files.add({
+          'key': 'backImage',
+          'bytes': backImageBytes,
+          'name': backImageName,
+        });
+      }
+
+      final result = await _apiServices.postUploadMultipleFilesApiResponse(
+        url: url,
+        fields: fields,
+        files: files,
+        method: 'POST',
+      );
+
+      return result.fold(
+        (failure) => Left(failure),
+        (data) => Right(DocumentUploadResponse.fromJson(data)),
+      );
+    } on AppException catch (e) {
+      return Left(e);
+    } catch (e) {
+      return Left(FetchDataException('Unexpected repository error: $e'));
+    }
+  }
 }

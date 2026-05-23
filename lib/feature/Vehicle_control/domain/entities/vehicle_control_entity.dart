@@ -1,5 +1,6 @@
 class VehicleControlEntity {
   final String id;
+  final String imei;
   final String vehicleName;
   final String vehicleNumber;
   final String fuelType;
@@ -16,6 +17,7 @@ class VehicleControlEntity {
 
   VehicleControlEntity({
     required this.id,
+    String? imei,
     required this.vehicleName,
     required this.vehicleNumber,
     required this.fuelType,
@@ -28,5 +30,5 @@ class VehicleControlEntity {
     this.vehicleType = '',
     this.vehicleMaker = '',
     this.vehicleModel = '',
-  });
+  }) : imei = imei ?? id;
 }

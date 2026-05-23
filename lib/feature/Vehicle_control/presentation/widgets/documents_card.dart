@@ -12,12 +12,15 @@ class DocumentsCard extends StatelessWidget {
   final Color primaryTextColor;
   final Color secondaryTextColor;
   final VoidCallback? onTap;
+  final String imei;
+
   const DocumentsCard({
     super.key,
     required this.cardColor,
     required this.primaryTextColor,
     required this.secondaryTextColor,
     required this.onTap,
+    required this.imei,
   });
 
   @override
@@ -60,20 +63,49 @@ class DocumentsCard extends StatelessWidget {
             child: Row(
               children: [
                 _docTile(context, colorScheme, title: l10n.vehicleRC, onTap: () {
+                  if (imei.isEmpty) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text(l10n.selectVehicle)),
+                    );
+                    return;
+                  }
                   Navigator.push(context, MaterialPageRoute(
-                    builder: (_) => DocumentVehicleRCScreen(title: l10n.vehicleRCTitle),
+                    builder: (_) => DocumentVehicleRCScreen(
+                      title: l10n.vehicleRCTitle,
+                      imei: imei,
+                    ),
                   ));
                 }),
                 const SizedBox(width: 12),
                 _docTile(context, colorScheme, title: l10n.insurance, onTap: () {
+                  if (imei.isEmpty) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text(l10n.selectVehicle)),
+                    );
+                    return;
+                  }
                   Navigator.push(context, MaterialPageRoute(
-                    builder: (_) => DocumentSubScreen(title: l10n.insuranceTitle),
+                    builder: (_) => DocumentSubScreen(
+                      title: l10n.insuranceTitle,
+                      imei: imei,
+                      subtype: 'insurance',
+                    ),
                   ));
                 }),
                 const SizedBox(width: 12),
                 _docTile(context, colorScheme, title: l10n.puc, onTap: () {
+                  if (imei.isEmpty) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text(l10n.selectVehicle)),
+                    );
+                    return;
+                  }
                   Navigator.push(context, MaterialPageRoute(
-                    builder: (_) => DocumentSubScreen(title: l10n.pucTitle),
+                    builder: (_) => DocumentSubScreen(
+                      title: l10n.pucTitle,
+                      imei: imei,
+                      subtype: 'puc',
+                    ),
                   ));
                 }),
               ],

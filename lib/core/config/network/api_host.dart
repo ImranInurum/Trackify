@@ -96,6 +96,11 @@ class ApiURL {
       "$baseURL/api/geoFance/geofence/$imei";
 
   // -------------------------
+  // Documents / Upload
+  // -------------------------
+  static const String uploadDocument = "$baseURL/api/documents/document";
+
+  // -------------------------
   // Service Logs
   // -------------------------
   static const String serviceLogs = "$baseURL/api/service/service-logs";

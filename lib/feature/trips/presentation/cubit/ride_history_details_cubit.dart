@@ -229,68 +229,194 @@ _TripProcessingResult _processTripDataInBackground(
 ) {
   final polylinePoints = params.polylinePoints;
   final ridePoints = params.ridePoints;
-  List<RidePoint> merged = [];
 
-  if (ridePoints.isEmpty) {
-    merged = polylinePoints
-        .map((p) => RidePoint(location: p, speed: 0.0))
-        .toList();
-  } else {
-    for (var latLng in polylinePoints) {
-      RidePoint nearest = ridePoints.first;
+  if (polylinePoints.isEmpty) {
+    return _TripProcessingResult(
+      mergedPoints: [],
+      cumulativeWeights: [],
+      totalWeight: 0,
+      cumulativeDistances: [],
+      smoothPositions: [],
+      smoothHeadings: [],
+      smoothSpeeds: [],
+      smoothAvgSpeeds: [],
+      smoothTimes: [],
+    );
+  }
+
+  // 1. Decoupled Speed Points (Use all available ride points for speed interpolation)
+  final List<RidePoint> validSpeedPoints = ridePoints;
+
+  // 2. Decoupled Time Points (Filter to keep only ones with valid parseable times)
+  final List<RidePoint> validTimePoints = [];
+  final List<DateTime> parsedTimes = [];
+  for (var rp in ridePoints) {
+    final t = _parseDateTime(rp.time);
+    if (t != null) {
+      validTimePoints.add(rp);
+      parsedTimes.add(t);
+    }
+  }
+
+  final int N = polylinePoints.length;
+  List<RidePoint> merged = [];
+  List<double> segmentWeights = List.filled(N - 1, 0.01);
+  List<double> speeds = List.filled(N, 0.0);
+  List<DateTime> times = List.filled(N, parsedTimes.isNotEmpty ? parsedTimes.first : DateTime.now());
+
+  // Calculate cumulative distances along polylinePoints
+  List<double> polylineDistances = [0.0];
+  double totalDist = 0.0;
+  for (int i = 1; i < N; i++) {
+    totalDist += _calculateDistance(polylinePoints[i - 1], polylinePoints[i]);
+    polylineDistances.add(totalDist);
+  }
+
+  // 3. Interpolate Speeds across all polyline points
+  if (validSpeedPoints.length >= 2) {
+    List<int> closestSpeedIndices = [];
+    int prevIdx = 0;
+    for (var rp in validSpeedPoints) {
       double minDist = double.infinity;
-      for (var sampled in ridePoints) {
-        double d = math.sqrt(
-          math.pow(latLng.latitude - sampled.location.latitude, 2) +
-              math.pow(latLng.longitude - sampled.location.longitude, 2),
-        );
+      int closestIdx = prevIdx;
+      for (int i = prevIdx; i < N; i++) {
+        double d = _calculateDistance(rp.location, polylinePoints[i]);
         if (d < minDist) {
           minDist = d;
-          nearest = sampled;
+          closestIdx = i;
         }
       }
-      merged.add(
-        RidePoint(location: latLng, speed: nearest.speed, time: nearest.time),
-      );
+      closestSpeedIndices.add(closestIdx);
+      prevIdx = closestIdx;
     }
-  }
 
-  List<double> rawWeights = [0.0];
-  double currentWeightTotal = 0.0;
+    // Prefix speeds
+    final firstSpeedIdx = closestSpeedIndices.first;
+    for (int i = 0; i <= firstSpeedIdx; i++) {
+      speeds[i] = validSpeedPoints.first.speed;
+    }
 
-  if (merged.length >= 2) {
-    for (int i = 1; i < merged.length; i++) {
-      final p1 = merged[i - 1];
-      final p2 = merged[i];
-      double timeWeight = 1.0;
-      if (p1.time != null && p2.time != null) {
-        try {
-          final t1 =
-              DateTime.tryParse(p1.time!) ??
-              DateTime.tryParse(p1.time!.replaceAll(' ', 'T'));
-          final t2 =
-              DateTime.tryParse(p2.time!) ??
-              DateTime.tryParse(p2.time!.replaceAll(' ', 'T'));
-          if (t1 != null && t2 != null) {
-            final double dt = t2.difference(t1).inMilliseconds.toDouble() / 1000.0;
-            // Compress stops longer than 5.0 seconds to keep the animation engaging,
-            // otherwise use actual real-time dt for exact 1x speed matching!
-            timeWeight = dt.clamp(0.01, 5.0);
+    // Interval speeds
+    for (int k = 0; k < validSpeedPoints.length - 1; k++) {
+      int startIdx = closestSpeedIndices[k];
+      int endIdx = closestSpeedIndices[k + 1];
+      double speed1 = validSpeedPoints[k].speed;
+      double speed2 = validSpeedPoints[k + 1].speed;
+
+      if (endIdx > startIdx) {
+        double intervalDist = polylineDistances[endIdx] - polylineDistances[startIdx];
+        for (int i = startIdx; i <= endIdx; i++) {
+          double ratio = 0.0;
+          if (intervalDist > 0.00001) {
+            ratio = (polylineDistances[i] - polylineDistances[startIdx]) / intervalDist;
           }
-        } catch (_) {}
+          speeds[i] = speed1 + (speed2 - speed1) * ratio;
+        }
+      } else {
+        speeds[startIdx] = speed2;
       }
-      currentWeightTotal += timeWeight;
-      rawWeights.add(currentWeightTotal);
+    }
+
+    // Suffix speeds
+    final lastSpeedIdx = closestSpeedIndices.last;
+    for (int i = lastSpeedIdx; i < N; i++) {
+      speeds[i] = validSpeedPoints.last.speed;
+    }
+  } else if (validSpeedPoints.isNotEmpty) {
+    double baseSpeed = validSpeedPoints.first.speed;
+    for (int i = 0; i < N; i++) {
+      speeds[i] = baseSpeed;
     }
   }
 
-  // SMOOTH WEIGHTS
+  // 4. Interpolate Times across all polyline points
+  if (validTimePoints.length >= 2) {
+    List<int> closestTimeIndices = [];
+    int prevIdx = 0;
+    for (var rp in validTimePoints) {
+      double minDist = double.infinity;
+      int closestIdx = prevIdx;
+      for (int i = prevIdx; i < N; i++) {
+        double d = _calculateDistance(rp.location, polylinePoints[i]);
+        if (d < minDist) {
+          minDist = d;
+          closestIdx = i;
+        }
+      }
+      closestTimeIndices.add(closestIdx);
+      prevIdx = closestIdx;
+    }
+
+    // Prefix times
+    final firstTimeIdx = closestTimeIndices.first;
+    for (int i = 0; i <= firstTimeIdx; i++) {
+      times[i] = parsedTimes.first;
+    }
+
+    // Interval times
+    for (int k = 0; k < validTimePoints.length - 1; k++) {
+      int startIdx = closestTimeIndices[k];
+      int endIdx = closestTimeIndices[k + 1];
+      DateTime t1 = parsedTimes[k];
+      DateTime t2 = parsedTimes[k + 1];
+
+      if (endIdx > startIdx) {
+        double intervalDist = polylineDistances[endIdx] - polylineDistances[startIdx];
+        double dt = t2.difference(t1).inMilliseconds.toDouble() / 1000.0;
+        for (int i = startIdx; i <= endIdx; i++) {
+          double ratio = 0.0;
+          if (intervalDist > 0.00001) {
+            ratio = (polylineDistances[i] - polylineDistances[startIdx]) / intervalDist;
+          }
+          times[i] = t1.add(Duration(milliseconds: (dt * ratio * 1000).toInt()));
+        }
+      } else {
+        times[startIdx] = t2;
+      }
+    }
+
+    // Suffix times
+    final lastTimeIdx = closestTimeIndices.last;
+    for (int i = lastTimeIdx; i < N; i++) {
+      times[i] = parsedTimes.last;
+    }
+  } else if (parsedTimes.isNotEmpty) {
+    DateTime baseTime = parsedTimes.first;
+    for (int i = 0; i < N; i++) {
+      times[i] = baseTime.add(Duration(seconds: i));
+    }
+  } else {
+    DateTime baseTime = DateTime.now();
+    for (int i = 0; i < N; i++) {
+      times[i] = baseTime.add(Duration(seconds: i));
+    }
+  }
+
+  // 5. Calculate segmentWeights using the fully interpolated speeds
+  for (int i = 0; i < N - 1; i++) {
+    double segDist = polylineDistances[i + 1] - polylineDistances[i];
+    double segSpeed = (speeds[i] + speeds[i + 1]) / 2.0;
+    double segWeight = 3600.0 * segDist / math.max(5.0, segSpeed);
+    segmentWeights[i] = math.max(0.001, segWeight);
+  }
+
+  // Generate merged points list
+  for (int i = 0; i < N; i++) {
+    merged.add(
+      RidePoint(
+        location: polylinePoints[i],
+        speed: speeds[i],
+        time: _formatTime(times[i]),
+      ),
+    );
+  }
+
+  // Calculate cumulative weights
   List<double> weights = [0.0];
-  double smoothedTotal = 0.0;
-  for (int i = 1; i < rawWeights.length; i++) {
-    double w = rawWeights[i] - rawWeights[i - 1];
-    smoothedTotal += w;
-    weights.add(smoothedTotal);
+  double currentTotalWeight = 0.0;
+  for (int i = 0; i < N - 1; i++) {
+    currentTotalWeight += segmentWeights[i];
+    weights.add(currentTotalWeight);
   }
 
   List<LatLng> smoothPositions = [];
@@ -300,7 +426,19 @@ _TripProcessingResult _processTripDataInBackground(
 
   if (merged.length >= 2) {
     const double resolution = 0.016; // 60 points per logical second (16ms)
+
+    // Initialize starting heading to the heading of the first segment
     double currentHeading = 0.0;
+    final firstP1 = merged[0];
+    final firstP2 = merged[1];
+    if (firstP1.location != firstP2.location) {
+      currentHeading = math.atan2(
+            firstP2.location.longitude - firstP1.location.longitude,
+            firstP2.location.latitude - firstP1.location.latitude,
+          ) *
+          180 /
+          math.pi;
+    }
 
     for (int i = 0; i < merged.length - 1; i++) {
       final p1 = merged[i];
@@ -319,14 +457,8 @@ _TripProcessingResult _processTripDataInBackground(
             math.pi;
       }
 
-      DateTime? t1 = p1.time != null
-          ? (DateTime.tryParse(p1.time!) ??
-                DateTime.tryParse(p1.time!.replaceAll(' ', 'T')))
-          : null;
-      DateTime? t2 = p2.time != null
-          ? (DateTime.tryParse(p2.time!) ??
-                DateTime.tryParse(p2.time!.replaceAll(' ', 'T')))
-          : null;
+      final DateTime t1 = times[i];
+      final DateTime t2 = times[i + 1];
 
       for (int s = 0; s < steps; s++) {
         double t = s / steps;
@@ -340,37 +472,26 @@ _TripProcessingResult _processTripDataInBackground(
         );
         smoothSpeeds.add(p1.speed + (p2.speed - p1.speed) * t);
 
-        // Smooth Heading
+        // Smooth Heading using responsive filter (0.35)
         double diff = (targetHeading - currentHeading) % 360;
         if (diff > 180) diff -= 360;
         if (diff < -180) diff += 360;
-        currentHeading = (currentHeading + diff * 0.1) % 360;
+        currentHeading = (currentHeading + diff * 0.35) % 360;
         smoothHeadings.add(currentHeading);
 
-        // Smooth Time Display
-        if (t1 != null && t2 != null) {
-          final interpTime = t1.add(
-            Duration(
-              milliseconds: (t2.difference(t1).inMilliseconds * t).toInt(),
-            ),
-          );
-          smoothTimes.add(_formatTime(interpTime));
-        } else {
-          smoothTimes.add("--:--");
-        }
+        // Smooth Time Display using raw DateTime interpolation directly
+        final interpTime = t1.add(
+          Duration(
+            milliseconds: (t2.difference(t1).inMilliseconds * t).toInt(),
+          ),
+        );
+        smoothTimes.add(_formatTime(interpTime));
       }
     }
     smoothPositions.add(merged.last.location);
     smoothHeadings.add(currentHeading);
     smoothSpeeds.add(merged.last.speed);
-    if (merged.last.time != null) {
-      final finalTime =
-          DateTime.tryParse(merged.last.time!) ??
-          DateTime.tryParse(merged.last.time!.replaceAll(' ', 'T'));
-      smoothTimes.add(finalTime != null ? _formatTime(finalTime) : "--:--");
-    } else {
-      smoothTimes.add("--:--");
-    }
+    smoothTimes.add(_formatTime(times.last));
 
     // Calculate cumulative distances for smooth positions
     List<double> smoothDistances = [0.0];
@@ -394,7 +515,7 @@ _TripProcessingResult _processTripDataInBackground(
     return _TripProcessingResult(
       mergedPoints: merged,
       cumulativeWeights: weights,
-      totalWeight: smoothedTotal,
+      totalWeight: currentTotalWeight,
       cumulativeDistances: smoothDistances,
       smoothPositions: smoothPositions,
       smoothHeadings: smoothHeadings,
@@ -407,7 +528,7 @@ _TripProcessingResult _processTripDataInBackground(
   return _TripProcessingResult(
     mergedPoints: merged,
     cumulativeWeights: weights,
-    totalWeight: smoothedTotal,
+    totalWeight: currentTotalWeight,
     cumulativeDistances: [],
     smoothPositions: smoothPositions,
     smoothHeadings: smoothHeadings,
@@ -433,4 +554,55 @@ double _calculateDistance(LatLng p1, LatLng p2) {
 
 String _formatTime(DateTime time) {
   return "${time.hour > 12 ? time.hour - 12 : (time.hour == 0 ? 12 : time.hour)}:${time.minute.toString().padLeft(2, '0')}:${time.second.toString().padLeft(2, '0')} ${time.hour >= 12 ? 'PM' : 'AM'}";
+}
+
+DateTime? _parseDateTime(String? timeStr) {
+  if (timeStr == null || timeStr.trim().isEmpty) return null;
+  
+  final cleanStr = timeStr.trim();
+  
+  // 1. Try ISO parsing directly
+  DateTime? dt = DateTime.tryParse(cleanStr);
+  if (dt != null) return dt;
+  
+  // 2. Try replacing spaces with 'T' (e.g. "2026-05-23 15:41:10")
+  dt = DateTime.tryParse(cleanStr.replaceAll(' ', 'T'));
+  if (dt != null) return dt;
+
+  // 3. Try parsing Unix timestamp
+  final isDigitsOnly = RegExp(r'^\d+$').hasMatch(cleanStr);
+  if (isDigitsOnly) {
+    final val = int.tryParse(cleanStr);
+    if (val != null) {
+      if (cleanStr.length == 10) {
+        return DateTime.fromMillisecondsSinceEpoch(val * 1000);
+      } else if (cleanStr.length >= 13) {
+        return DateTime.fromMillisecondsSinceEpoch(val);
+      }
+    }
+  }
+
+  // 4. Try parsing time-only formats (e.g., "15:41:10" or "15:41:10.123")
+  if (RegExp(r'^\d{2}:\d{2}:\d{2}(\.\d+)?$').hasMatch(cleanStr)) {
+    final today = DateTime.now();
+    final datePrefix = "${today.year.toString().padLeft(4, '0')}-${today.month.toString().padLeft(2, '0')}-${today.day.toString().padLeft(2, '0')}";
+    dt = DateTime.tryParse("${datePrefix}T$cleanStr");
+    if (dt != null) return dt;
+  }
+
+  // 5. Try parsing 12-hour formats (e.g. "03:41:10 PM" or "3:41:10 PM" or "03:41 PM")
+  final amPmMatch = RegExp(r'^(\d{1,2}):(\d{2})(?::(\d{2}))?\s*(AM|PM|am|pm)$').firstMatch(cleanStr);
+  if (amPmMatch != null) {
+    int hour = int.parse(amPmMatch.group(1)!);
+    final int minute = int.parse(amPmMatch.group(2)!);
+    final int second = amPmMatch.group(3) != null ? int.parse(amPmMatch.group(3)!) : 0;
+    final String amPm = amPmMatch.group(4)!.toUpperCase();
+    if (amPm == 'PM' && hour < 12) hour += 12;
+    if (amPm == 'AM' && hour == 12) hour = 0;
+    
+    final today = DateTime.now();
+    return DateTime(today.year, today.month, today.day, hour, minute, second);
+  }
+
+  return null;
 }

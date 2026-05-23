@@ -314,6 +314,53 @@ class NetworkApiService implements BaseApiServices {
     }
   }
 
+  @override
+  ResultFuture<dynamic> postUploadMultipleFilesApiResponse({
+    required String url,
+    required Map<String, String> fields,
+    required List<Map<String, dynamic>> files,
+    required String method,
+  }) async {
+    try {
+      final request = http.MultipartRequest(
+        method.toUpperCase().isEmpty ? 'POST' : method.toUpperCase(),
+        Uri.parse(url),
+      );
+
+      request.fields.addAll(fields);
+
+      for (final fileInfo in files) {
+        final bytes = fileInfo['bytes'] as List<int>?;
+        final name = fileInfo['name'] as String?;
+        final key = fileInfo['key'] as String?;
+        if (bytes != null && bytes.isNotEmpty && name != null && key != null) {
+          request.files.add(
+            http.MultipartFile.fromBytes(
+              key,
+              bytes,
+              filename: name,
+              contentType: getContentType(name),
+            ),
+          );
+        }
+      }
+
+      final headers = _buildHeaders(isMultipart: true);
+      request.headers.addAll(headers);
+
+      final streamedResponse = await request.send().timeout(_timeout);
+      final response = await http.Response.fromStream(streamedResponse);
+
+      return _parseHttpResponse(response);
+    } on SocketException {
+      return const Left(NoInternetException('Check your connection.'));
+    } on TimeoutException {
+      return const Left(RequestTimeoutException('Upload timed out.'));
+    } catch (e) {
+      return Left(FetchDataException('Multipart Error: $e'));
+    }
+  }
+
   /// Helper to read file bytes from a local path.
   Future<List<int>> getFileBytes(String filePath) async {
     final file = File(filePath);

@@ -8,10 +8,14 @@ import 'package:intl/intl.dart';
 import 'package:trackify/core/config/font_manager.dart';
 import 'package:trackify/feature/document_folder/presentation/widegt/text_field_widgets.dart';
 import 'package:trackify/l10n/app_localizations.dart';
-
+import 'package:trackify/feature/document_folder/data/models/document_upload_request.dart';
+import 'package:trackify/feature/document_folder/data/repository/document_repository_impl.dart';
+import 'package:trackify/feature/document_folder/data/data_sources/document_local_datasources.dart';
 
 class AccessoryBillScreen extends StatefulWidget {
-  const AccessoryBillScreen({super.key});
+  final String imei;
+
+  const AccessoryBillScreen({super.key, required this.imei});
 
   @override
   State<AccessoryBillScreen> createState() => _AccessoryBillScreenState();
@@ -19,9 +23,13 @@ class AccessoryBillScreen extends StatefulWidget {
 
 class _AccessoryBillScreenState extends State<AccessoryBillScreen> {
   final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _amountController = TextEditingController();
+  final TextEditingController _shopNameController = TextEditingController();
+  final TextEditingController _shopContactController = TextEditingController();
   File? _frontFile;
   File? _backFile;
-  DateTime? _selectedDate;
+  DateTime? _billingDate;
+  DateTime? _warrantyExpiryDate;
   bool _isLoading = false;
   String? _error = null;
   bool _isPickerActive = false;
@@ -42,23 +50,36 @@ class _AccessoryBillScreenState extends State<AccessoryBillScreen> {
   @override
   void dispose() {
     _nameController.dispose();
+    _amountController.dispose();
+    _shopNameController.dispose();
+    _shopContactController.dispose();
     super.dispose();
   }
 
   // ── DATE PICKER ─────────────────────────────────────────────
 
-  Future<void> _pickDate() async {
-
-
+  Future<void> _pickBillingDate() async {
     final now = DateTime.now();
     final picked = await showDatePicker(
       context: context,
-      initialDate: _selectedDate ?? now.add(const Duration(days: 365)),
+      initialDate: _billingDate ?? now,
+      firstDate: DateTime(2000),
+      lastDate: now,
+    );
+
+    if (picked != null) setState(() => _billingDate = picked);
+  }
+
+  Future<void> _pickWarrantyExpiryDate() async {
+    final now = DateTime.now();
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: _warrantyExpiryDate ?? now.add(const Duration(days: 365)),
       firstDate: now,
       lastDate: DateTime(2100),
     );
 
-    if (picked != null) setState(() => _selectedDate = picked);
+    if (picked != null) setState(() => _warrantyExpiryDate = picked);
   }
 
   Future<void> _pickImage(bool isFront, ImageSource source) async {
@@ -245,21 +266,85 @@ class _AccessoryBillScreenState extends State<AccessoryBillScreen> {
     );
   }
 
-  // ── SUBMIT ─────────────────────────────────────────────
-
-  void _submit() {
-
-
+  void _submit() async {
+    final l10n = AppLocalizations.of(context)!;
     if (_frontFile == null) {
-      setState(() => _error = AppLocalizations.of(context)!.frontDocumentRequired);
+      setState(() => _error = l10n.frontDocumentRequired);
       return;
     }
 
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.documentUploadedSuccessfully)));
+    if (_nameController.text.trim().isEmpty) {
+      setState(() => _error = l10n.accessoryName + " is required");
+      return;
+    }
 
-    Navigator.pop(context);
+    if (_billingDate == null) {
+      setState(() => _error = l10n.billingDate + " is required");
+      return;
+    }
+
+    setState(() {
+      _isLoading = true;
+      _error = null;
+    });
+
+    try {
+      final frontBytes = await _frontFile!.readAsBytes();
+      final frontName = _frontFile!.path.split('/').last;
+
+      List<int>? backBytes;
+      String? backName;
+      if (_backFile != null) {
+        backBytes = await _backFile!.readAsBytes();
+        backName = _backFile!.path.split('/').last;
+      }
+
+      final request = DocumentUploadRequest(
+        imei: widget.imei,
+        type: 'personal',
+        subtype: 'accessory_bill',
+        title: _nameController.text.trim(),
+        billingDate: DateFormat('yyyy-MM-dd').format(_billingDate!),
+        billingAmount: double.tryParse(_amountController.text.trim()),
+        shopName: _shopNameController.text.trim(),
+        shopContact: _shopContactController.text.trim(),
+        warrantyExpiry: _warrantyExpiryDate != null
+            ? DateFormat('yyyy-MM-dd').format(_warrantyExpiryDate!)
+            : null,
+      );
+
+      final repo = DocumentRepositoryImpl(DocumentLocalDataSource(ImagePicker()));
+      final result = await repo.uploadDocument(
+        request: request,
+        frontImageBytes: frontBytes,
+        frontImageName: frontName,
+        backImageBytes: backBytes,
+        backImageName: backName,
+      );
+
+      result.fold(
+        (failure) {
+          setState(() {
+            _error = failure.message;
+            _isLoading = false;
+          });
+        },
+        (response) {
+          setState(() {
+            _isLoading = false;
+          });
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(response.message ?? l10n.documentUploadedSuccessfully)),
+          );
+          Navigator.pop(context);
+        },
+      );
+    } catch (e) {
+      setState(() {
+        _error = e.toString();
+        _isLoading = false;
+      });
+    }
   }
 
   // ── UI ─────────────────────────────────────────────
@@ -272,9 +357,12 @@ class _AccessoryBillScreenState extends State<AccessoryBillScreen> {
     final size = MediaQuery.of(context).size;
     final screenWidth = size.width;
     final screenHeight = size.height;
-    final dateLabel = _selectedDate == null
+    final billingDateLabel = _billingDate == null
+        ? null
+        : DateFormat('dd / MM / yyyy').format(_billingDate!);
+    final warrantyExpiryLabel = _warrantyExpiryDate == null
         ? AppLocalizations.of(context)!.selectExpiryDate
-        : DateFormat('dd / MM / yyyy').format(_selectedDate!);
+        : DateFormat('dd / MM / yyyy').format(_warrantyExpiryDate!);
 
     return Scaffold(
       backgroundColor: colorScheme.surface,
@@ -330,7 +418,7 @@ class _AccessoryBillScreenState extends State<AccessoryBillScreen> {
                       children: [
                         Expanded(
                           child:          GestureDetector(
-                            onTap: _pickDate,
+                            onTap: _pickBillingDate,
                             child: Container(
                               height: screenHeight * 0.055,
                               width: screenWidth * 0.42,
@@ -346,24 +434,31 @@ class _AccessoryBillScreenState extends State<AccessoryBillScreen> {
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
                                   Expanded(
-                                    child: Text.rich(
-                                      TextSpan(
-                                        text: AppLocalizations.of(context)!.billingDate,
-                                        children: const [
-                                          TextSpan(
-                                            text: '*',
-                                            style: TextStyle(color: Colors.red),
+                                    child: billingDateLabel != null
+                                        ? Text(
+                                            billingDateLabel,
+                                            style: TextStyle(
+                                              color: colorScheme.onSurface,
+                                              fontSize: 14,
+                                            ),
+                                            overflow: TextOverflow.ellipsis,
+                                          )
+                                        : Text.rich(
+                                            TextSpan(
+                                              text: AppLocalizations.of(context)!.billingDate,
+                                              children: const [
+                                                TextSpan(
+                                                  text: '*',
+                                                  style: TextStyle(color: Colors.red),
+                                                ),
+                                              ],
+                                            ),
+                                            style: TextStyle(
+                                              color: colorScheme.onSurfaceVariant,
+                                              fontSize: 14,
+                                            ),
+                                            overflow: TextOverflow.ellipsis,
                                           ),
-                                        ],
-                                      ),
-                                      style: TextStyle(
-                                        color: _selectedDate == null
-                                            ? colorScheme.onSurfaceVariant
-                                            : colorScheme.onSurface,
-                                        fontSize: 14,
-                                      ),
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
                                   ),
                                   const SizedBox(width: 8),
                                   Icon(
@@ -379,7 +474,7 @@ class _AccessoryBillScreenState extends State<AccessoryBillScreen> {
                         const SizedBox(width: 10),
                         Expanded(
                           child: TextFieldWidgets(
-                            controller: _nameController,
+                            controller: _amountController,
                             hintText: AppLocalizations.of(context)!.billingAmount,
                             isRequired: true,
                             keyboardType: TextInputType.number,
@@ -393,18 +488,18 @@ class _AccessoryBillScreenState extends State<AccessoryBillScreen> {
                     ),
                     const SizedBox(height: 20),
                     TextFieldWidgets(
-                      controller: _nameController,
+                      controller: _shopNameController,
                       hintText: AppLocalizations.of(context)!.shopName,
                     ),
                     const SizedBox(height: 20),
                     TextFieldWidgets(
-                      controller: _nameController,
+                      controller: _shopContactController,
                       hintText: AppLocalizations.of(context)!.shopContact,
                       keyboardType: TextInputType.phone,
                     ),
                     const SizedBox(height: 20),
                     GestureDetector(
-                      onTap: _pickDate,
+                      onTap: _pickWarrantyExpiryDate,
                       child: Container(
                         height: screenHeight * 0.055,
                         width: screenWidth * 0.42,
@@ -421,9 +516,9 @@ class _AccessoryBillScreenState extends State<AccessoryBillScreen> {
                           children: [
                             Expanded(
                               child: Text(
-                                dateLabel,
+                                warrantyExpiryLabel,
                                 style: TextStyle(
-                                  color: _selectedDate == null
+                                  color: _warrantyExpiryDate == null
                                       ? colorScheme.onSurfaceVariant
                                       : colorScheme.onSurface,
                                   fontSize: 14,
@@ -474,12 +569,12 @@ class _AccessoryBillScreenState extends State<AccessoryBillScreen> {
             ),
 
             GestureDetector(
-              onTap: _frontFile == null ? null : _submit,
+              onTap: (_frontFile == null || _isLoading) ? null : _submit,
               child: Container(
                 height: screenHeight * 0.055,
                 width: double.infinity,
                 decoration: BoxDecoration(
-                  color: _frontFile == null
+                  color: (_frontFile == null || _isLoading)
                       ? colorScheme.outline
                       : colorScheme.primary,
                   borderRadius: BorderRadius.circular(12),

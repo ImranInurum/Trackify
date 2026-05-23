@@ -149,7 +149,7 @@ class SocketService {
     _heartbeatTimer?.cancel();
     _heartbeatTimer = Timer.periodic(const Duration(seconds: 10), (timer) {
       if (_isConnected) {
-        print('[SocketService] 💓 Socket still connected...');
+        print('[SocketService] Socket still connected...');
       } else {
         timer.cancel();
       }

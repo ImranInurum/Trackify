@@ -6,13 +6,18 @@ import 'package:image_picker/image_picker.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:intl/intl.dart';
 import 'package:trackify/l10n/app_localizations.dart';
+import 'package:trackify/feature/document_folder/data/models/document_upload_request.dart';
+import 'package:trackify/feature/document_folder/data/repository/document_repository_impl.dart';
+import 'package:trackify/feature/document_folder/data/data_sources/document_local_datasources.dart';
 
 /// Generic single-document upload screen — reused for Insurance, PUC, etc.
 /// Pass the [title] that should appear in the header.
 class DocumentSubScreen extends StatefulWidget {
   final String title;
+  final String imei;
+  final String subtype;
 
-  const DocumentSubScreen({super.key, required this.title});
+  const DocumentSubScreen({super.key, required this.title, required this.imei, required this.subtype});
 
   @override
   State<DocumentSubScreen> createState() => _DocumentSubScreenState();
@@ -273,18 +278,72 @@ class _DocumentSubScreenState extends State<DocumentSubScreen> {
     );
   }
 
-  // ── SUBMIT ───────────────────────────────────────────────────
-
-  void _submit() {
+  void _submit() async {
     final l10n = AppLocalizations.of(context)!;
     if (_frontFile == null) {
-      setState(() => _error = l10n.frontRequired);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(l10n.frontRequired)),
+      );
       return;
     }
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(content: Text(l10n.successMessage)));
-    Navigator.pop(context);
+
+    setState(() {
+      _isLoading = true;
+      _error = null;
+    });
+
+    try {
+      final frontBytes = await _frontFile!.readAsBytes();
+      final frontName = _frontFile!.path.split('/').last;
+
+      List<int>? backBytes;
+      String? backName;
+      if (_backFile != null) {
+        backBytes = await _backFile!.readAsBytes();
+        backName = _backFile!.path.split('/').last;
+      }
+
+      final request = DocumentUploadRequest(
+        imei: widget.imei,
+        type: 'personal',
+        subtype: widget.subtype,
+        expiryDate: _selectedDate != null
+            ? DateFormat('yyyy-MM-dd').format(_selectedDate!)
+            : null,
+      );
+
+      final repo = DocumentRepositoryImpl(DocumentLocalDataSource(ImagePicker()));
+      final result = await repo.uploadDocument(
+        request: request,
+        frontImageBytes: frontBytes,
+        frontImageName: frontName,
+        backImageBytes: backBytes,
+        backImageName: backName,
+      );
+
+      result.fold(
+        (failure) {
+          setState(() {
+            _error = failure.message;
+            _isLoading = false;
+          });
+        },
+        (response) {
+          setState(() {
+            _isLoading = false;
+          });
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(response.message ?? l10n.successMessage)),
+          );
+          Navigator.pop(context);
+        },
+      );
+    } catch (e) {
+      setState(() {
+        _error = e.toString();
+        _isLoading = false;
+      });
+    }
   }
 
   // ── BUILD ────────────────────────────────────────────────────
@@ -303,135 +362,157 @@ class _DocumentSubScreenState extends State<DocumentSubScreen> {
     return Scaffold(
       backgroundColor: colorScheme.surface,
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: 14),
+        child: Column(
+          children: [
+            // ── Scrollable content ────────────────────────────
+            Expanded(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 14),
 
-              // ── Header ──────────────────────────────────────
-              Row(
-                children: [
-                  GestureDetector(
-                    onTap: () => Navigator.pop(context),
-                    child: Icon(Icons.arrow_back, color: colorScheme.onSurface),
-                  ),
-                  Expanded(
-                    child: Center(
-                      child: Text(
-                        widget.title,
-                        style: TextStyle(
-                          color: colorScheme.onSurface,
-                          fontSize: 18,
-                          fontWeight: FontWeight.w600,
+                    // ── Header ──────────────────────────────────
+                    Row(
+                      children: [
+                        GestureDetector(
+                          onTap: () => Navigator.pop(context),
+                          child: Icon(Icons.arrow_back, color: colorScheme.onSurface),
                         ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-
-              const SizedBox(height: 24),
-
-              if (_isLoading) const LinearProgressIndicator(),
-              if (_error != null)
-                Text(_error!, style: const TextStyle(color: Colors.red)),
-
-              const SizedBox(height: 20),
-
-              // ── Expiry Date ──────────────────────────────────
-              GestureDetector(
-                onTap: _pickDate,
-                child: Container(
-                  height: screenHeight * 0.055,
-                  width: screenWidth * 0.45,
-                  padding: const EdgeInsets.symmetric(horizontal: 14),
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).cardColor,
-                    borderRadius: BorderRadius.circular(10),
-                    border: Border.all(
-                      color: colorScheme.outlineVariant.withOpacity(0.2),
-                    ),
-                  ),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Text(
-                          dateLabel,
-                          style: TextStyle(
-                            color: _selectedDate == null
-                                ? colorScheme.onSurfaceVariant
-                                : colorScheme.onSurface,
-                            fontSize: 13,
+                        Expanded(
+                          child: Center(
+                            child: Text(
+                              widget.title,
+                              style: TextStyle(
+                                color: colorScheme.onSurface,
+                                fontSize: 18,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
                           ),
-                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ],
+                    ),
+
+                    const SizedBox(height: 24),
+
+                    if (_isLoading) const LinearProgressIndicator(),
+                    if (_error != null)
+                      Text(_error!, style: const TextStyle(color: Colors.red)),
+
+                    const SizedBox(height: 20),
+
+                    // ── Expiry Date ────────────────────────────
+                    GestureDetector(
+                      onTap: _pickDate,
+                      child: Container(
+                        height: screenHeight * 0.055,
+                        width: screenWidth * 0.45,
+                        padding: const EdgeInsets.symmetric(horizontal: 14),
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).cardColor,
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(
+                            color: colorScheme.outlineVariant.withOpacity(0.2),
+                          ),
+                        ),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                dateLabel,
+                                style: TextStyle(
+                                  color: _selectedDate == null
+                                      ? colorScheme.onSurfaceVariant
+                                      : colorScheme.onSurface,
+                                  fontSize: 13,
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            Icon(
+                              Icons.calendar_today_outlined,
+                              size: 18,
+                              color: colorScheme.onSurfaceVariant,
+                            ),
+                          ],
                         ),
                       ),
-                      const SizedBox(width: 8),
-                      Icon(
-                        Icons.calendar_today_outlined,
-                        size: 18,
-                        color: colorScheme.onSurfaceVariant,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-
-              const SizedBox(height: 20),
-
-              Text(
-                l10n.uploadDocuments,
-                style: TextStyle(color: colorScheme.onSurface),
-              ),
-
-              const SizedBox(height: 20),
-
-              Row(
-                children: [
-                  _uploadBox(true, _frontFile, l10n.frontSide),
-                  const SizedBox(width: 12),
-                  _uploadBox(false, _backFile, l10n.backSide),
-                ],
-              ),
-
-              const SizedBox(height: 20),
-
-              Text(
-                l10n.commitmentText,
-                style: TextStyle(
-                  color: colorScheme.onSurface.withOpacity(0.5),
-                  fontSize: screenHeight * 0.045,
-                ),
-              ),
-
-              SizedBox(height: screenHeight * 0.03),
-
-              Row(
-                children: [
-                  const Icon(Icons.shield, color: Colors.green, size: 20),
-                  const SizedBox(width: 6),
-                  Text(
-                    l10n.documentsSafe,
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: colorScheme.onSurface,
                     ),
-                  ),
-                ],
+
+                    const SizedBox(height: 20),
+
+                    Text(
+                      l10n.uploadDocuments,
+                      style: TextStyle(color: colorScheme.onSurface),
+                    ),
+
+                    const SizedBox(height: 20),
+
+                    Row(
+                      children: [
+                        _uploadBox(true, _frontFile, l10n.frontSide),
+                        const SizedBox(width: 12),
+                        _uploadBox(false, _backFile, l10n.backSide),
+                      ],
+                    ),
+
+                    const SizedBox(height: 20),
+
+                    Text(
+                      l10n.commitmentText,
+                      style: TextStyle(
+                        color: colorScheme.onSurface.withOpacity(0.5),
+                        fontSize: 14,
+                      ),
+                    ),
+
+                    const SizedBox(height: 16),
+
+                    Row(
+                      children: [
+                        const Icon(Icons.shield, color: Colors.green, size: 20),
+                        const SizedBox(width: 6),
+                        Text(
+                          l10n.documentsSafe,
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: colorScheme.onSurface,
+                          ),
+                        ),
+                      ],
+                    ),
+
+                    const SizedBox(height: 24),
+                  ],
+                ),
               ),
+            ),
 
-              const Spacer(),
-
-              // ── Save Button ──────────────────────────────────
-              GestureDetector(
-                onTap: _frontFile == null ? null : _submit,
+            // ── Sticky Save Button ─────────────────────────────
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+              child: GestureDetector(
+                onTap: _isLoading
+                    ? null
+                    : () {
+                        if (_frontFile == null) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(AppLocalizations.of(context)!.frontRequired),
+                            ),
+                          );
+                          return;
+                        }
+                        _submit();
+                      },
                 child: Container(
                   height: screenHeight * 0.055,
                   width: double.infinity,
                   decoration: BoxDecoration(
-                    color: _frontFile == null
+                    color: (_frontFile == null || _isLoading)
                         ? colorScheme.outline
                         : colorScheme.primary,
                     borderRadius: BorderRadius.circular(12),
@@ -447,10 +528,8 @@ class _DocumentSubScreenState extends State<DocumentSubScreen> {
                   ),
                 ),
               ),
-
-              SizedBox(height: screenHeight * 0.02),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
