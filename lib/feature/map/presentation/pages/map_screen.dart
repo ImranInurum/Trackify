@@ -170,7 +170,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
       if (!mounted) return;
       _animateCameraTo(
         target: target,
-        zoom: 15.0,
+        zoom: 13.0,
         tilt: 0.0,
         bearing: appState.liveBearing,
         duration: const Duration(milliseconds: 4000), // slow cinematic glide
@@ -492,7 +492,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                         key: ValueKey(_selectedDevice?.id),
                         initialCameraPosition: CameraPosition(
                           target: appState.livePosition ?? bestPos,
-                          zoom: 13,
+                          zoom: 11,
                           bearing: _normalizeBearing(appState.liveBearing - 120.0),
                         ),
                         myLocationEnabled: false,
@@ -539,7 +539,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
 
                           // Initialize camera state fields
                           _cameraTarget = appState.livePosition ?? bestPos;
-                          _cameraZoom = 13.0;
+                          _cameraZoom = 11.0;
                           _cameraTilt = 0.0;
                           _cameraBearing = _normalizeBearing(appState.liveBearing - 120.0);
 

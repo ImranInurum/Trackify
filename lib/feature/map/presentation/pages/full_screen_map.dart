@@ -1,9 +1,11 @@
 import 'dart:async';
+import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:trackify/app/cubit/app_cubit.dart';
 import 'package:trackify/app/cubit/app_state.dart';
 import 'package:trackify/core/constants/app_images.dart';
@@ -20,12 +22,14 @@ class FullScreenMap extends StatefulWidget {
   State<FullScreenMap> createState() => _FullScreenMapState();
 }
 
-class _FullScreenMapState extends State<FullScreenMap> with TickerProviderStateMixin {
+class _FullScreenMapState extends State<FullScreenMap>
+    with TickerProviderStateMixin {
   GoogleMapController? _mapController;
   String? _lightMapStyle;
   String? _darkMapStyle;
   bool _showSharedWithMe = false;
   BitmapDescriptor? _customMarker;
+  BitmapDescriptor? _currentLocationMarker;
 
   // Animation controller for cinematic camera movements
   AnimationController? _cameraAnimationController;
@@ -48,12 +52,24 @@ class _FullScreenMapState extends State<FullScreenMap> with TickerProviderStateM
 
   bool _isInitialFocusDone = false;
   bool _isAutoFollowing = true;
+  bool _showCurrentLocation =
+      false; // Default OFF — turns off when leaving screen
 
   @override
   void initState() {
     super.initState();
     _loadMapStyles();
     _loadCustomMarker();
+    // Create user location marker after first frame (needs context for AppCubit)
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        final appState = context.read<AppCubit>().state;
+        final name = appState.userData?.name ?? 'Me';
+        final letter = name.isNotEmpty ? name[0].toUpperCase() : 'M';
+        final primaryColor = Theme.of(context).colorScheme.primary;
+        _createUserLocationMarker(letter, primaryColor);
+      }
+    });
   }
 
   @override
@@ -74,11 +90,89 @@ class _FullScreenMapState extends State<FullScreenMap> with TickerProviderStateM
   Future<void> _loadCustomMarker() async {
     final Uint8List markerIcon = await MapUtils.getBytesFromAsset(
       AppImages.bikeImage,
-      100,
+      140,
     );
     if (mounted) {
       setState(() {
         _customMarker = BitmapDescriptor.fromBytes(markerIcon);
+      });
+    }
+  }
+
+  Future<void> _createUserLocationMarker(
+    String letter,
+    Color primaryColor,
+  ) async {
+    const int size = 120;
+    final ui.PictureRecorder recorder = ui.PictureRecorder();
+    final Canvas canvas = Canvas(recorder);
+    const double center = size / 2;
+    const double pinBodyRadius = 36.0;
+    const double tipHeight = 18.0;
+
+    // Outer glow ring
+    final Paint glowPaint = Paint()
+      ..color = const Color(0xFFFFB300).withOpacity(0.22)
+      ..style = PaintingStyle.fill;
+    canvas.drawCircle(
+      const Offset(center, center - tipHeight / 2),
+      pinBodyRadius + 12,
+      glowPaint,
+    );
+
+    // White border
+    final Paint borderPaint = Paint()
+      ..color = Colors.white
+      ..style = PaintingStyle.fill;
+    canvas.drawCircle(
+      const Offset(center, center - tipHeight / 2),
+      pinBodyRadius + 3.5,
+      borderPaint,
+    );
+
+    // Circle body with theme primary color
+    final Paint bodyPaint = Paint()
+      ..color = primaryColor
+      ..style = PaintingStyle.fill;
+    canvas.drawCircle(
+      const Offset(center, center - tipHeight / 2),
+      pinBodyRadius,
+      bodyPaint,
+    );
+
+    // Draw the letter
+    final ui.ParagraphBuilder pb =
+        ui.ParagraphBuilder(
+            ui.ParagraphStyle(
+              fontSize: 38,
+              fontWeight: ui.FontWeight.w700,
+              textAlign: TextAlign.center,
+            ),
+          )
+          ..pushStyle(
+            ui.TextStyle(
+              color: Colors.white,
+              fontSize: 38,
+              fontWeight: ui.FontWeight.w700,
+            ),
+          )
+          ..addText(letter);
+    final ui.Paragraph paragraph = pb.build();
+    paragraph.layout(ui.ParagraphConstraints(width: size.toDouble()));
+    canvas.drawParagraph(
+      paragraph,
+      Offset(0, center - tipHeight / 2 - paragraph.height / 2),
+    );
+
+    final ui.Image image = await recorder.endRecording().toImage(size, size);
+    final ByteData? byteData = await image.toByteData(
+      format: ui.ImageByteFormat.png,
+    );
+    if (byteData != null && mounted) {
+      setState(() {
+        _currentLocationMarker = BitmapDescriptor.fromBytes(
+          byteData.buffer.asUint8List(),
+        );
       });
     }
   }
@@ -132,18 +226,103 @@ class _FullScreenMapState extends State<FullScreenMap> with TickerProviderStateM
     setState(() {
       _isAutoFollowing = true;
     });
-    LatLng? target = _getBestPosition();
-    if (target != null) {
-      final appState = context.read<AppCubit>().state;
+    _applyCameraForCurrentMode();
+  }
+
+  /// Builds the markers set — called from build so it always reads latest _showCurrentLocation.
+  Set<Marker> _buildMarkers(
+    LatLng vehiclePos,
+    dynamic currentPos,
+    double bearing,
+  ) {
+    final markers = <Marker>{
+      Marker(
+        markerId: const MarkerId('vehicle_marker'),
+        position: vehiclePos,
+        icon: _customMarker ?? BitmapDescriptor.defaultMarker,
+        anchor: const Offset(0.5, 0.5),
+        rotation: bearing,
+      ),
+    };
+
+    if (_showCurrentLocation && currentPos != null) {
+      markers.add(
+        Marker(
+          markerId: const MarkerId('current_location'),
+          position: LatLng(currentPos.latitude, currentPos.longitude),
+          icon:
+              _currentLocationMarker ??
+              BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure),
+          anchor: const Offset(0.5, 0.5),
+          infoWindow: const InfoWindow(title: 'Your location'),
+        ),
+      );
+    }
+
+    return markers;
+  }
+
+  /// Applies the correct camera position based on _showCurrentLocation mode.
+  void _applyCameraForCurrentMode() {
+    final appState = context.read<AppCubit>().state;
+    final vehiclePos = _getBestPosition();
+    if (vehiclePos == null) return;
+
+    if (_showCurrentLocation && appState.currentLocation != null) {
+      final phonePos = LatLng(
+        appState.currentLocation!.latitude,
+        appState.currentLocation!.longitude,
+      );
+      _fitBothMarkersOnMap(vehiclePos, phonePos, appState.liveBearing);
+    } else {
       _animateCameraTo(
-        target: target,
+        target: vehiclePos,
         zoom: 15.0,
         tilt: 0.0,
         bearing: appState.liveBearing,
-        duration: const Duration(milliseconds: 1500),
+        duration: const Duration(milliseconds: 1200),
         curve: Curves.easeInOutCubic,
       );
     }
+  }
+
+  /// Calculates midpoint + zoom to fit both points on screen.
+  void _fitBothMarkersOnMap(
+    LatLng vehiclePos,
+    LatLng phonePos,
+    double bearing,
+  ) {
+    final double midLat = (vehiclePos.latitude + phonePos.latitude) / 2;
+    final double midLng = (vehiclePos.longitude + phonePos.longitude) / 2;
+    final LatLng midpoint = LatLng(midLat, midLng);
+
+    // Calculate distance between points to determine zoom
+    final double latDiff = (vehiclePos.latitude - phonePos.latitude).abs();
+    final double lngDiff = (vehiclePos.longitude - phonePos.longitude).abs();
+    final double maxDiff = latDiff > lngDiff ? latDiff : lngDiff;
+
+    // Map degree difference to zoom level (approximate)
+    double zoom = 15.0;
+    if (maxDiff > 0.5) {
+      zoom = 10.0;
+    } else if (maxDiff > 0.2) {
+      zoom = 11.5;
+    } else if (maxDiff > 0.1) {
+      zoom = 12.5;
+    } else if (maxDiff > 0.05) {
+      zoom = 13.5;
+    } else if (maxDiff > 0.01) {
+      zoom = 14.5;
+    }
+
+    _animateCameraTo(
+      target: midpoint,
+      zoom: zoom,
+      tilt: 0.0,
+      bearing: bearing,
+      duration: const Duration(milliseconds: 1400),
+      curve: Curves.easeInOutCubic,
+    );
   }
 
   void _animateCameraTo({
@@ -193,13 +372,18 @@ class _FullScreenMapState extends State<FullScreenMap> with TickerProviderStateM
       final t = curvedAnimation.value;
       if (_animStartTarget == null || _animEndTarget == null) return;
 
-      double lat = _animStartTarget!.latitude + (_animEndTarget!.latitude - _animStartTarget!.latitude) * t;
-      double lng = _animStartTarget!.longitude + (_animEndTarget!.longitude - _animStartTarget!.longitude) * t;
+      double lat =
+          _animStartTarget!.latitude +
+          (_animEndTarget!.latitude - _animStartTarget!.latitude) * t;
+      double lng =
+          _animStartTarget!.longitude +
+          (_animEndTarget!.longitude - _animStartTarget!.longitude) * t;
       LatLng newTarget = LatLng(lat, lng);
 
       double newZoom = _animStartZoom + (_animEndZoom - _animStartZoom) * t;
       double newTilt = _animStartTilt + (_animEndTilt - _animStartTilt) * t;
-      double newBearing = _animStartBearing + (_animEndBearing - _animStartBearing) * t;
+      double newBearing =
+          _animStartBearing + (_animEndBearing - _animStartBearing) * t;
 
       _cameraTarget = newTarget;
       _cameraZoom = newZoom;
@@ -502,16 +686,32 @@ class _FullScreenMapState extends State<FullScreenMap> with TickerProviderStateM
           previous.livePosition != current.livePosition ||
           previous.liveBearing != current.liveBearing,
       listener: (context, state) {
-        if (_isAutoFollowing && state.livePosition != null && _mapController != null) {
+        if (_isAutoFollowing &&
+            state.livePosition != null &&
+            _mapController != null) {
           if (_isInitialFocusDone) {
-            _animateCameraTo(
-              target: state.livePosition!,
-              zoom: 15.0,
-              tilt: 0.0,
-              bearing: state.liveBearing,
-              duration: const Duration(milliseconds: 1500),
-              curve: Curves.easeOutCubic,
-            );
+            if (_showCurrentLocation && state.currentLocation != null) {
+              // Both markers mode: fit vehicle + phone location
+              final phonePos = LatLng(
+                state.currentLocation!.latitude,
+                state.currentLocation!.longitude,
+              );
+              _fitBothMarkersOnMap(
+                state.livePosition!,
+                phonePos,
+                state.liveBearing,
+              );
+            } else {
+              // Vehicle only mode: focus on vehicle with rotation
+              _animateCameraTo(
+                target: state.livePosition!,
+                zoom: 15.0,
+                tilt: 0.0,
+                bearing: state.liveBearing,
+                duration: const Duration(milliseconds: 1500),
+                curve: Curves.easeOutCubic,
+              );
+            }
           }
         }
       },
@@ -520,6 +720,7 @@ class _FullScreenMapState extends State<FullScreenMap> with TickerProviderStateM
           children: [
             _buildMap(),
             _buildTopActions(),
+            _buildLeftSideActions(),
             _buildRightSideActions(),
             _buildDraggableBottomCard(),
           ],
@@ -566,13 +767,17 @@ class _FullScreenMapState extends State<FullScreenMap> with TickerProviderStateM
           myLocationEnabled: false,
           zoomControlsEnabled: false,
           myLocationButtonEnabled: false,
+          mapToolbarEnabled: false,
           mapType: appState.mapType == 'satellite'
               ? MapType.satellite
               : MapType.normal,
           trafficEnabled: appState.isTrafficEnabled,
-          padding: EdgeInsets.only(bottom: MediaQuery.of(context).size.height * 0.16),
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(context).size.height * 0.16,
+          ),
           onCameraMove: (position) {
-            if (_cameraAnimationController == null || !_cameraAnimationController!.isAnimating) {
+            if (_cameraAnimationController == null ||
+                !_cameraAnimationController!.isAnimating) {
               _cameraTarget = position.target;
               _cameraZoom = position.zoom;
               _cameraTilt = position.tilt;
@@ -580,21 +785,14 @@ class _FullScreenMapState extends State<FullScreenMap> with TickerProviderStateM
             }
           },
           onCameraMoveStarted: () {
-            if (_cameraAnimationController == null || !_cameraAnimationController!.isAnimating) {
+            if (_cameraAnimationController == null ||
+                !_cameraAnimationController!.isAnimating) {
               setState(() {
                 _isAutoFollowing = false;
               });
             }
           },
-          markers: {
-            Marker(
-              markerId: const MarkerId('vehicle_marker'),
-              position: bestPos,
-              icon: _customMarker ?? BitmapDescriptor.defaultMarker,
-              anchor: const Offset(0.5, 0.5),
-              rotation: appState.liveBearing,
-            ),
-          },
+          markers: _buildMarkers(bestPos, currentPos, appState.liveBearing),
           onMapCreated: (controller) async {
             _mapController = controller;
 
@@ -687,6 +885,137 @@ class _FullScreenMapState extends State<FullScreenMap> with TickerProviderStateM
     );
   }
 
+  Widget _buildLeftSideActions() {
+    return Positioned(
+      left: 16,
+      bottom: 240, // Same level as right side actions
+      child: Column(
+        children: [
+          _buildMapActionButton(
+            Icons.share_outlined,
+            onTap: () {
+              final appState = context.read<AppCubit>().state;
+              LatLng? pos = appState.livePosition;
+              if (pos == null &&
+                  widget.selectedVehicle?.currentLocation != null &&
+                  widget.selectedVehicle!.currentLocation!.lat != null &&
+                  widget.selectedVehicle!.currentLocation!.lng != null) {
+                pos = LatLng(
+                  widget.selectedVehicle!.currentLocation!.lat!,
+                  widget.selectedVehicle!.currentLocation!.lng!,
+                );
+              }
+              pos ??= appState.currentLocation != null
+                  ? LatLng(
+                      appState.currentLocation!.latitude,
+                      appState.currentLocation!.longitude,
+                    )
+                  : null;
+
+              if (pos != null) {
+                final url =
+                    'https://maps.google.com/?q=${pos.latitude},${pos.longitude}';
+                // Share via platform share sheet / Clipboard
+                Clipboard.setData(ClipboardData(text: url));
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Vehicle location link copied to clipboard!'),
+                    duration: Duration(seconds: 2),
+                  ),
+                );
+              }
+            },
+          ),
+          // Google Maps open button with custom asset icon
+          Padding(
+            padding: const EdgeInsets.only(bottom: 12),
+            child: BouncingWidget(
+              onTap: () async {
+                final appState = context.read<AppCubit>().state;
+                LatLng? pos = appState.livePosition;
+                if (pos == null &&
+                    widget.selectedVehicle?.currentLocation != null &&
+                    widget.selectedVehicle!.currentLocation!.lat != null &&
+                    widget.selectedVehicle!.currentLocation!.lng != null) {
+                  pos = LatLng(
+                    widget.selectedVehicle!.currentLocation!.lat!,
+                    widget.selectedVehicle!.currentLocation!.lng!,
+                  );
+                }
+                pos ??= appState.currentLocation != null
+                    ? LatLng(
+                        appState.currentLocation!.latitude,
+                        appState.currentLocation!.longitude,
+                      )
+                    : null;
+
+                if (pos == null) return;
+                final vehicleNameParts = [
+                  widget.selectedVehicle?.vehicleMaker,
+                  widget.selectedVehicle?.vehicleNumber,
+                ].where((e) => e != null && e.isNotEmpty).toList();
+                final label = vehicleNameParts.isEmpty
+                    ? 'Vehicle'
+                    : vehicleNameParts.join(' - ');
+                final encodedLabel = Uri.encodeComponent(label);
+
+                final geoUri = Uri.parse(
+                  'geo:${pos.latitude},${pos.longitude}?q=${pos.latitude},${pos.longitude}($encodedLabel)',
+                );
+                final webUri = Uri.parse(
+                  'https://www.google.com/maps/search/?api=1&query=${pos.latitude},${pos.longitude}',
+                );
+                if (await canLaunchUrl(geoUri)) {
+                  await launchUrl(geoUri);
+                } else {
+                  await launchUrl(webUri, mode: LaunchMode.externalApplication);
+                }
+              },
+              child: Container(
+                height: 48,
+                width: 48,
+                decoration: BoxDecoration(
+                  color: Theme.of(context).cardColor,
+                  shape: BoxShape.circle,
+                  border: Border.all(color: Theme.of(context).dividerColor),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.1),
+                      blurRadius: 4,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(6),
+                  child: Stack(
+                    children: [
+                      Center(
+                        child: Image.asset(
+                          'assets/icons/map_icon.png',
+                          height: 28,
+                          width: 28,
+                          fit: BoxFit.contain,
+                        ),
+                      ),
+                      Positioned.fill(
+                        child: ClipOval(
+                          child: Container(
+                            color: Colors.grey.withValues(alpha: 0.15),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildRightSideActions() {
     return Positioned(
       right: 16,
@@ -695,7 +1024,17 @@ class _FullScreenMapState extends State<FullScreenMap> with TickerProviderStateM
         children: [
           _buildMapActionButton(Icons.motorcycle, hasNotification: true),
           _buildMapActionButton(Icons.map_outlined, onTap: _showMapStyleSheet),
-          _buildMapActionButton(Icons.person_pin_circle_outlined),
+          _buildMapActionButton(
+            Icons.person_pin_circle_outlined,
+            onTap: () {
+              setState(() {
+                _showCurrentLocation = !_showCurrentLocation;
+                _isAutoFollowing = true;
+              });
+              _applyCameraForCurrentMode();
+            },
+            isActiveColor: _showCurrentLocation,
+          ),
           _buildMapActionButton(
             Icons.my_location,
             onTap: _recenterCamera,
@@ -740,7 +1079,11 @@ class _FullScreenMapState extends State<FullScreenMap> with TickerProviderStateM
     );
   }
 
-  Widget _buildRoundButton(IconData icon, {VoidCallback? onTap, bool isActiveColor = false}) {
+  Widget _buildRoundButton(
+    IconData icon, {
+    VoidCallback? onTap,
+    bool isActiveColor = false,
+  }) {
     final theme = Theme.of(context);
     return BouncingWidget(
       onTap: onTap ?? () {},
@@ -750,7 +1093,11 @@ class _FullScreenMapState extends State<FullScreenMap> with TickerProviderStateM
         decoration: BoxDecoration(
           color: isActiveColor ? theme.colorScheme.primary : theme.cardColor,
           shape: BoxShape.circle,
-          border: Border.all(color: isActiveColor ? theme.colorScheme.primary : theme.dividerColor),
+          border: Border.all(
+            color: isActiveColor
+                ? theme.colorScheme.primary
+                : theme.dividerColor,
+          ),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.1),
@@ -842,7 +1189,7 @@ class _FullScreenMapState extends State<FullScreenMap> with TickerProviderStateM
       builder: (context, state) {
         final liveDevice = state.devices.firstWhere(
           (d) =>
-              d['imei']?.toString() == widget.selectedVehicle?.id?.toString(),
+              d['imei']?.toString() == widget.selectedVehicle?.id,
           orElse: () => {},
         );
 
@@ -1001,7 +1348,7 @@ class _FullScreenMapState extends State<FullScreenMap> with TickerProviderStateM
         // Find current device in the live devices list to get live speed/odometer
         final liveDevice = state.devices.firstWhere(
           (d) =>
-              d['imei']?.toString() == widget.selectedVehicle?.id?.toString(),
+              d['imei']?.toString() == widget.selectedVehicle?.id,
           orElse: () => {},
         );
 
@@ -1103,118 +1450,229 @@ class _FullScreenMapState extends State<FullScreenMap> with TickerProviderStateM
   }
 
   Widget _buildBottomInfoCards() {
-    return Row(
-      children: [
-        // Fuel Card
-        Expanded(
-          child: Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: Theme.of(context).cardColor,
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: Theme.of(context).dividerColor.withOpacity(0.5)),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.02),
-                  blurRadius: 10,
-                  offset: const Offset(0, 4),
+    return BlocBuilder<AppCubit, AppState>(
+      builder: (context, state) {
+        final liveDevice = state.devices.firstWhere(
+          (d) =>
+              d['imei']?.toString() == widget.selectedVehicle?.id ||
+              d['imei']?.toString() == widget.selectedVehicle?.imei?.toString(),
+          orElse: () => {},
+        );
+
+        // Parse range/distance remaining
+        final rangeValue = liveDevice['range'] ??
+            liveDevice['kms_left'] ??
+            liveDevice['fuel_range'] ??
+            liveDevice['distance_remaining'] ??
+            liveDevice['remaining_distance'];
+
+        final String rangeText = rangeValue != null
+            ? "$rangeValue kms more to go"
+            : "-- kms more to go";
+
+        // Parse fuel percentage for bars
+        final fuelVal = liveDevice['fuel'] ??
+            liveDevice['fuelLevel'] ??
+            liveDevice['fuel_level'] ??
+            liveDevice['fuel_percentage'];
+
+        double? fuelPercentage;
+        if (fuelVal != null) {
+          final parsed = double.tryParse(fuelVal.toString());
+          if (parsed != null) {
+            if (parsed <= 1.0) {
+              fuelPercentage = parsed * 100;
+            } else {
+              fuelPercentage = parsed;
+            }
+          }
+        }
+        final int fuelBars = fuelPercentage != null
+            ? (fuelPercentage / 20).round().clamp(0, 5)
+            : 3; // Default to 3 bars if not available
+
+        // Parse battery/voltage details
+        final batteryVal = liveDevice['battery'] ??
+            liveDevice['batteryLevel'] ??
+            liveDevice['battery_level'] ??
+            liveDevice['bat'];
+
+        final voltageVal = liveDevice['voltage'] ??
+            liveDevice['volts'] ??
+            liveDevice['battery_voltage'] ??
+            liveDevice['v_bat'] ??
+            liveDevice['power'];
+
+        String batteryText = "--";
+        Color batteryColor = Colors.green;
+        IconData batteryIcon = Icons.battery_charging_full;
+
+        if (batteryVal != null || voltageVal != null) {
+          if (voltageVal != null) {
+            final voltDouble = double.tryParse(voltageVal.toString().replaceAll(RegExp(r'[^0-9.]'), ''));
+            if (voltDouble != null) {
+              final String status = voltDouble < 11.5 ? "Low" : "Normal";
+              batteryText = "$status (${voltDouble.toStringAsFixed(1)}V)";
+              batteryColor = voltDouble < 11.5 ? Colors.red : Colors.green;
+              batteryIcon = voltDouble < 11.5 ? Icons.battery_alert : Icons.battery_charging_full;
+            } else {
+              batteryText = "Normal (${voltageVal.toString()})";
+            }
+          } else if (batteryVal != null) {
+            final batDouble = double.tryParse(batteryVal.toString().replaceAll(RegExp(r'[^0-9.]'), ''));
+            if (batDouble != null) {
+              final String status = batDouble < 20 ? "Low" : "Normal";
+              final displayVal = batDouble <= 1.0 ? (batDouble * 100).round() : batDouble.round();
+              batteryText = "$status ($displayVal%)";
+              batteryColor = displayVal < 20 ? Colors.red : Colors.green;
+              batteryIcon = displayVal < 20 ? Icons.battery_alert : Icons.battery_charging_full;
+            } else {
+              batteryText = "Normal (${batteryVal.toString()})";
+            }
+          }
+        }
+
+        return Row(
+          children: [
+            // Fuel Card
+            Expanded(
+              child: Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).cardColor,
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(
+                    color: Theme.of(context).dividerColor.withOpacity(0.5),
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.02),
+                      blurRadius: 10,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
                 ),
-              ],
-            ),
-            child: Column(
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                child: Column(
                   children: [
-                    Icon(Icons.local_gas_station, size: 18, color: Colors.grey[600]),
-                    const SizedBox(width: 8),
-                    const Text("E", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.grey)),
-                    const SizedBox(width: 4),
                     Row(
-                      children: List.generate(
-                        5,
-                        (i) => Container(
-                          width: 8,
-                          height: 12,
-                          margin: const EdgeInsets.symmetric(horizontal: 1),
-                          decoration: BoxDecoration(
-                            color: i < 3 ? const Color(0xFF3498DB) : Colors.grey[300],
-                            borderRadius: BorderRadius.circular(1),
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.local_gas_station,
+                          size: 18,
+                          color: Colors.grey[600],
+                        ),
+                        const SizedBox(width: 8),
+                        const Text(
+                          "E",
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.grey,
                           ),
                         ),
-                      ),
+                        const SizedBox(width: 4),
+                        Row(
+                          children: List.generate(
+                            5,
+                            (i) => Container(
+                              width: 8,
+                              height: 12,
+                              margin: const EdgeInsets.symmetric(horizontal: 1),
+                              decoration: BoxDecoration(
+                                color: i < fuelBars
+                                    ? const Color(0xFF3498DB)
+                                    : Colors.grey[300],
+                                borderRadius: BorderRadius.circular(1),
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 4),
+                        const Text(
+                          "F",
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.grey,
+                          ),
+                        ),
+                      ],
                     ),
-                    const SizedBox(width: 4),
-                    const Text("F", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.grey)),
-                  ],
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  "260.6 kms more to go", // TODO: Add to localization (kmsMoreToGo key missing)
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Theme.of(context).colorScheme.onSurface.withOpacity(0.4),
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-        const SizedBox(width: 12),
-        // Battery Card
-        Expanded(
-          child: Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: Theme.of(context).cardColor,
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: Theme.of(context).dividerColor.withOpacity(0.5)),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.02),
-                  blurRadius: 10,
-                  offset: const Offset(0, 4),
-                ),
-              ],
-            ),
-            child: Column(
-              children: [
-                const Text(
-                  "Vehicle Battery", // TODO: Add to localization (vehicleBattery key missing)
-                  style: TextStyle(
-                    fontSize: 13,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(4),
-                      decoration: BoxDecoration(
-                        color: Colors.green.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                      child: const Icon(Icons.battery_charging_full, size: 14, color: Colors.green),
-                    ),
-                    const SizedBox(width: 6),
-                    const Text(
-                      "Normal (12.2V)",
+                    const SizedBox(height: 8),
+                    Text(
+                      rangeText,
                       style: TextStyle(
                         fontSize: 12,
-                        color: Colors.green,
-                        fontWeight: FontWeight.bold,
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.onSurface.withOpacity(0.4),
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
                   ],
                 ),
-              ],
+              ),
             ),
-          ),
-        ),
-      ],
+            const SizedBox(width: 12),
+            // Battery Card
+            Expanded(
+              child: Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).cardColor,
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(
+                    color: Theme.of(context).dividerColor.withOpacity(0.5),
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.02),
+                      blurRadius: 10,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  children: [
+                    const Text(
+                      "Vehicle Battery",
+                      style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 8),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(4),
+                          decoration: BoxDecoration(
+                            color: batteryColor.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          child: Icon(
+                            batteryIcon,
+                            size: 14,
+                            color: batteryColor,
+                          ),
+                        ),
+                        const SizedBox(width: 6),
+                        Text(
+                          batteryText,
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: batteryColor,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 
