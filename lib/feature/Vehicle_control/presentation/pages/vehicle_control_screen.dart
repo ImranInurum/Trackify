@@ -5,7 +5,6 @@ import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:trackify/app/app_navigation.dart';
 import 'package:trackify/core/constants/app_images.dart';
-import 'package:trackify/core/widgets/coming_soon_page.dart';
 import 'package:trackify/l10n/app_localizations.dart';
 import '../../../document_folder/presentation/pages/document_screen.dart';
 import '../../../upgrade_to_plus/presentation/pages/upgrade_to_plus.dart';
@@ -486,7 +485,6 @@ class VehicleControlView extends StatelessWidget {
                           padding: const EdgeInsets.symmetric(horizontal: 24),
                           child: InkWell(
                             onTap: () {
-                              Navigator.push(context,MaterialPageRoute(builder: (context) => ComingSoonPage(),) );
                             },
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
