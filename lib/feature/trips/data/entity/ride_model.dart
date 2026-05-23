@@ -191,13 +191,16 @@ class Ride {
     // 3. Remove consecutive identical points to simplify drawing and avoid straight-line artifacts
     if (polylinePoints.length > 1) {
       final filtered = <LatLng>[polylinePoints.first];
+      final filteredPoints = <RidePoint>[ridePoints.first];
       for (int i = 1; i < polylinePoints.length; i++) {
         if (polylinePoints[i].latitude != polylinePoints[i - 1].latitude ||
             polylinePoints[i].longitude != polylinePoints[i - 1].longitude) {
           filtered.add(polylinePoints[i]);
+          filteredPoints.add(ridePoints[i]);
         }
       }
       polylinePoints = filtered;
+      ridePoints = filteredPoints;
     }
 
     // Determine start and end locations from polyline points if available

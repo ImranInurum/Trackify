@@ -51,6 +51,22 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
   CameraPosition? _lastCameraPosition;
   bool _isGliding = false;
   late Color _primaryColor;
+  bool _wasPlayingBeforeDrag = false;
+  bool _isDraggingSlider = false;
+  bool _isDirectionMode = false;
+
+  double _getSpeedMultiplier(int speed) {
+    switch (speed) {
+      case 2:
+        return 3.0; // Play at 3x speed for 2x label
+      case 3:
+        return 6.0; // Play at 6x speed for 3x label
+      case 4:
+        return 10.0; // Play at 10x speed for 4x label
+      default:
+        return 1.0;
+    }
+  }
 
   @override
   void didChangeDependencies() {
@@ -137,105 +153,153 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
     }
   }
 
-  void _animateCameraToVehicle(RideHistoryDetailsState state) async {
-    if (_isGliding) return; // Ignore regular updates during dynamic cinematic glides
-    if (state.currentVehiclePosition != null && state.isPlaying) {
+  void _animateCameraToVehicle(RideHistoryDetailsState state, {bool force = false}) async {
+    if (_isGliding) {
+      return; // Ignore regular updates during dynamic cinematic glides
+    }
+    if (state.currentVehiclePosition != null) {
       final controller = await _controller.future;
-      
-      // Fetch the actual current position or default to target
-      final currentPos = _lastCameraPosition ?? CameraPosition(
-        target: state.currentVehiclePosition!,
-        zoom: 17.5,
-        tilt: 45.0,
-        bearing: state.currentHeading,
-      );
-
-      final currentTarget = currentPos.target;
-      final currentZoom = currentPos.zoom;
-      final currentTilt = currentPos.tilt;
-      final currentBearing = currentPos.bearing;
 
       final targetTarget = state.currentVehiclePosition!;
       final targetZoom = 17.5;
       final targetTilt = 45.0;
-      final double targetBearing = 0.0; // Lock bearing strictly to 0.0 (North direction)
-
-      // Premium Drone-style physics damping factors:
-      // Optimized for 20 FPS updates to keep tracking snappy yet incredibly smooth
-      const double posFactor = 0.15;     // Base follow factor
-      const double zoomFactor = 0.10;    // Gradual altitude adjustment
-      const double tiltFactor = 0.10;    // Smooth perspective changes
-      const double bearingFactor = 0.08; // Immersive camera swivel around turns
+      final double targetBearing =
+          _isDirectionMode ? state.currentHeading : 0.0;
 
       // Dynamic navigation view offset: Keep marker slightly below center (approx 65% down)
       // by placing the camera target slightly North of the vehicle for constant North stability.
       final double offsetDist = 0.00015 * math.pow(2.0, 17.5 - targetZoom);
 
-      final LatLng adjustedTarget = LatLng(
-        targetTarget.latitude + offsetDist,
-        targetTarget.longitude,
-      );
-
-      // Calculate distance difference in degrees to prevent the marker from drifting off-screen
-      final double latDiff = (adjustedTarget.latitude - currentTarget.latitude).abs();
-      final double lngDiff = (adjustedTarget.longitude - currentTarget.longitude).abs();
-      final double distanceDiff = latDiff + lngDiff;
-
-      // Dynamic catch-up acceleration: Automatically increases camera speed
-      // if the vehicle starts moving fast or drifts towards the screen edge!
-      double dynamicPosFactor = posFactor;
-      if (distanceDiff > 0.002) {
-        dynamicPosFactor = 1.0; // Snap instantly if too far (prevents off-screen drifting)
-      } else if (distanceDiff > 0.0006) {
-        // Gradual speed boost to catch up smoothly
-        dynamicPosFactor = posFactor + (1.0 - posFactor) * ((distanceDiff - 0.0006) / 0.0014);
+      final LatLng adjustedTarget;
+      if (_isDirectionMode) {
+        final double bearingRad = state.currentHeading * math.pi / 180.0;
+        adjustedTarget = LatLng(
+          targetTarget.latitude + offsetDist * math.cos(bearingRad),
+          targetTarget.longitude + offsetDist * math.sin(bearingRad),
+        );
+      } else {
+        adjustedTarget = LatLng(
+          targetTarget.latitude + offsetDist,
+          targetTarget.longitude,
+        );
       }
 
-      // Coordinate linear interpolation (smooth glide-follow using dynamicPosFactor)
-      final double lat = currentTarget.latitude + (adjustedTarget.latitude - currentTarget.latitude) * dynamicPosFactor;
-      final double lng = currentTarget.longitude + (adjustedTarget.longitude - currentTarget.longitude) * dynamicPosFactor;
-      
-      // Zoom & Tilt linear interpolation
-      final double zoom = currentZoom + (targetZoom - currentZoom) * zoomFactor;
-      final double tilt = currentTilt + (targetTilt - currentTilt) * tiltFactor;
+      if (force) {
+        final targetPos = CameraPosition(
+          target: adjustedTarget,
+          zoom: targetZoom,
+          tilt: targetTilt,
+          bearing: targetBearing,
+        );
+        _lastCameraPosition = targetPos;
+        controller.animateCamera(CameraUpdate.newCameraPosition(targetPos));
+        return;
+      }
 
-      // Bearing circular interpolation (shortest angle wrap-around to prevent spin stutters)
-      double diffBearing = targetBearing - currentBearing;
-      if (diffBearing > 180) diffBearing -= 360;
-      if (diffBearing < -180) diffBearing += 360;
-      final double bearing = currentBearing + diffBearing * bearingFactor;
+      if (state.isPlaying || _isDraggingSlider) {
+        // Fetch the actual current position or default to target
+        final currentPos =
+            _lastCameraPosition ??
+            CameraPosition(
+              target: state.currentVehiclePosition!,
+              zoom: 17.5,
+              tilt: 45.0,
+              bearing: state.currentHeading,
+            );
 
-      final nextPos = CameraPosition(
-        target: LatLng(lat, lng),
-        zoom: zoom,
-        tilt: tilt,
-        bearing: bearing,
-      );
+        final currentTarget = currentPos.target;
+        final currentZoom = currentPos.zoom;
+        final currentTilt = currentPos.tilt;
+        final currentBearing = currentPos.bearing;
 
-      // Save instantly so the next tick interpolates starting from this new frame
-      _lastCameraPosition = nextPos;
+        // Premium Drone-style physics damping factors:
+        // Optimized for 20 FPS updates to keep tracking snappy yet incredibly smooth
+        const double posFactor = 0.15; // Base follow factor
+        const double zoomFactor = 0.10; // Gradual altitude adjustment
+        const double tiltFactor = 0.10; // Smooth perspective changes
+        const double bearingFactor = 0.08; // Immersive camera swivel around turns
 
-      controller.moveCamera(
-        CameraUpdate.newCameraPosition(nextPos),
-      );
+        // Calculate distance difference in degrees to prevent the marker from drifting off-screen
+        final double latDiff = (adjustedTarget.latitude - currentTarget.latitude)
+            .abs();
+        final double lngDiff =
+            (adjustedTarget.longitude - currentTarget.longitude).abs();
+        final double distanceDiff = latDiff + lngDiff;
+
+        // Dynamic catch-up acceleration: Automatically increases camera speed
+        // if the vehicle starts moving fast or drifts towards the screen edge!
+        double dynamicPosFactor = posFactor;
+        if (distanceDiff > 0.002) {
+          dynamicPosFactor =
+              1.0; // Snap instantly if too far (prevents off-screen drifting)
+        } else if (distanceDiff > 0.0006) {
+          // Gradual speed boost to catch up smoothly
+          dynamicPosFactor =
+              posFactor + (1.0 - posFactor) * ((distanceDiff - 0.0006) / 0.0014);
+        }
+
+        // Coordinate linear interpolation (smooth glide-follow using dynamicPosFactor)
+        final double lat =
+            currentTarget.latitude +
+            (adjustedTarget.latitude - currentTarget.latitude) * dynamicPosFactor;
+        final double lng =
+            currentTarget.longitude +
+            (adjustedTarget.longitude - currentTarget.longitude) *
+                dynamicPosFactor;
+
+        // Zoom & Tilt linear interpolation
+        final double zoom = currentZoom + (targetZoom - currentZoom) * zoomFactor;
+        final double tilt = currentTilt + (targetTilt - currentTilt) * tiltFactor;
+
+        // Bearing circular interpolation (shortest angle wrap-around to prevent spin stutters)
+        double diffBearing = targetBearing - currentBearing;
+        if (diffBearing > 180) diffBearing -= 360;
+        if (diffBearing < -180) diffBearing += 360;
+        final double bearing = currentBearing + diffBearing * bearingFactor;
+
+        final nextPos = CameraPosition(
+          target: LatLng(lat, lng),
+          zoom: zoom,
+          tilt: tilt,
+          bearing: bearing,
+        );
+
+        // Save instantly so the next tick interpolates starting from this new frame
+        _lastCameraPosition = nextPos;
+
+        controller.moveCamera(CameraUpdate.newCameraPosition(nextPos));
+      }
     }
   }
 
-  double _getBoundsZoomLevel(LatLngBounds bounds, double mapWidth, double mapHeight) {
+  double _getBoundsZoomLevel(
+    LatLngBounds bounds,
+    double mapWidth,
+    double mapHeight,
+  ) {
     final northeast = bounds.northeast;
     final southwest = bounds.southwest;
 
-    final lngFraction = (southwest.longitude - northeast.longitude).abs() / 360.0;
+    final lngFraction =
+        (southwest.longitude - northeast.longitude).abs() / 360.0;
 
     final double latRadSW = southwest.latitude * math.pi / 180.0;
     final double latRadNE = northeast.latitude * math.pi / 180.0;
-    final double latFractionMercator = (math.log(math.tan(latRadSW / 2 + math.pi / 4)) - 
-        math.log(math.tan(latRadNE / 2 + math.pi / 4))).abs() / (2 * math.pi);
+    final double latFractionMercator =
+        (math.log(math.tan(latRadSW / 2 + math.pi / 4)) -
+                math.log(math.tan(latRadNE / 2 + math.pi / 4)))
+            .abs() /
+        (2 * math.pi);
 
-    final double latZoom = (math.log(mapHeight / 256.0 / latFractionMercator) / math.log(2.0));
-    final double lngZoom = (math.log(mapWidth / 256.0 / lngFraction) / math.log(2.0));
+    final double latZoom =
+        (math.log(mapHeight / 256.0 / latFractionMercator) / math.log(2.0));
+    final double lngZoom =
+        (math.log(mapWidth / 256.0 / lngFraction) / math.log(2.0));
 
-    if (latZoom.isNaN || latZoom.isInfinite || lngZoom.isNaN || lngZoom.isInfinite) {
+    if (latZoom.isNaN ||
+        latZoom.isInfinite ||
+        lngZoom.isNaN ||
+        lngZoom.isInfinite) {
       return 12.0; // safe fallback
     }
 
@@ -253,13 +317,15 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
     _isGliding = true;
     try {
       final controller = await _controller.future;
-      
-      final startPos = _lastCameraPosition ?? const CameraPosition(
-        target: LatLng(20.5937, 78.9629),
-        zoom: 4.2,
-        tilt: 0.0,
-        bearing: 0.0,
-      );
+
+      final startPos =
+          _lastCameraPosition ??
+          const CameraPosition(
+            target: LatLng(20.5937, 78.9629),
+            zoom: 4.2,
+            tilt: 0.0,
+            bearing: 0.0,
+          );
 
       final startTarget = startPos.target;
       final startZoom = startPos.zoom;
@@ -277,25 +343,30 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
       for (int i = 0; i <= totalSteps; i++) {
         if (!mounted) return;
         final double t = i / totalSteps;
-        
+
         // Eased curves:
         // 1. Pan (LatLng): Snaps/glides to center on the target location within the first 25% of the flight duration
         final double panProgress = math.min(1.0, t / 0.25);
-        final double panT = (1 - math.pow(1 - panProgress, 3)).toDouble(); // Ease-out cubic
-        
+        final double panT = (1 - math.pow(1 - panProgress, 3))
+            .toDouble(); // Ease-out cubic
+
         // 2. Zoom & Tilt: Gradual ease-in-out to peak smoothly after centering is fully complete
-        final double zoomT = (t < 0.5 
-            ? 4 * t * t * t 
-            : 1 - math.pow(-2 * t + 2, 3) / 2).toDouble(); // Ease-in-out cubic
+        final double zoomT =
+            (t < 0.5 ? 4 * t * t * t : 1 - math.pow(-2 * t + 2, 3) / 2)
+                .toDouble(); // Ease-in-out cubic
 
         // Coordinate linear interpolation using panT (centers instantly)
-        final double lat = startTarget.latitude + (endTarget.latitude - startTarget.latitude) * panT;
-        final double lng = startTarget.longitude + (endTarget.longitude - startTarget.longitude) * panT;
-        
+        final double lat =
+            startTarget.latitude +
+            (endTarget.latitude - startTarget.latitude) * panT;
+        final double lng =
+            startTarget.longitude +
+            (endTarget.longitude - startTarget.longitude) * panT;
+
         // Zoom & Tilt interpolation using zoomT (zooms smoothly)
         final double zoom = startZoom + (endZoom - startZoom) * zoomT;
         final double tilt = startTilt + (endTilt - startTilt) * zoomT;
-        
+
         // Bearing circular interpolation (shortest angle) using zoomT
         double diffBearing = endBearing - startBearing;
         if (diffBearing > 180) diffBearing -= 360;
@@ -310,9 +381,7 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
         );
         _lastCameraPosition = nextGlidePos;
 
-        controller.moveCamera(
-          CameraUpdate.newCameraPosition(nextGlidePos),
-        );
+        controller.moveCamera(CameraUpdate.newCameraPosition(nextGlidePos));
 
         await Future.delayed(Duration(milliseconds: delayPerStep));
       }
@@ -336,7 +405,7 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
 
       // Playback duration matches the actual trip duration (totalWeight) in real-time at 1x speed!
       final double baseSeconds = math.max(5.0, cubit.state.totalWeight);
-      final targetSeconds = baseSeconds / cubit.state.playbackSpeed;
+      final targetSeconds = baseSeconds / _getSpeedMultiplier(cubit.state.playbackSpeed);
       _playController.duration = Duration(
         milliseconds: (targetSeconds * 1000).toInt(),
       );
@@ -344,18 +413,30 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
       cubit.updatePlaybackStatus(true);
       _updateVehicleIcon();
 
-      // Cinematic drone glide zoom & tilt onto the vehicle (locked North direction)
+      // Cinematic drone glide zoom & tilt onto the vehicle
       if (cubit.state.currentVehiclePosition != null) {
-        final double offsetDist = 0.00015; // Shift target North so vehicle lands in bottom half
-        final LatLng targetCoords = LatLng(
-          cubit.state.currentVehiclePosition!.latitude + offsetDist,
-          cubit.state.currentVehiclePosition!.longitude,
-        );
+        final double offsetDist = 0.00015;
+        final LatLng targetCoords;
+        final double targetBearingVal;
+        if (_isDirectionMode) {
+          targetBearingVal = cubit.state.currentHeading;
+          final double bearingRad = targetBearingVal * math.pi / 180.0;
+          targetCoords = LatLng(
+            cubit.state.currentVehiclePosition!.latitude + offsetDist * math.cos(bearingRad),
+            cubit.state.currentVehiclePosition!.longitude + offsetDist * math.sin(bearingRad),
+          );
+        } else {
+          targetBearingVal = 0.0;
+          targetCoords = LatLng(
+            cubit.state.currentVehiclePosition!.latitude + offsetDist,
+            cubit.state.currentVehiclePosition!.longitude,
+          );
+        }
         await _runCinematicGlide(
           targetLatLng: targetCoords,
           targetZoom: 17.5,
           targetTilt: 45.0,
-          targetBearing: 0.0, // Always point North
+          targetBearing: targetBearingVal,
           duration: const Duration(milliseconds: 1800),
         );
       }
@@ -384,6 +465,39 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
     context.read<RideHistoryDetailsCubit>().updateProgress(value);
   }
 
+  void _onSliderChangeStart(double value) {
+    final cubit = context.read<RideHistoryDetailsCubit>();
+    _wasPlayingBeforeDrag = cubit.state.isPlaying;
+    _isDraggingSlider = true;
+    if (_wasPlayingBeforeDrag) {
+      _playController.stop();
+      cubit.updatePlaybackStatus(false);
+    }
+  }
+
+  void _onSliderChangeEnd(double value) {
+    _isDraggingSlider = false;
+    final cubit = context.read<RideHistoryDetailsCubit>();
+    if (_wasPlayingBeforeDrag) {
+      if (value >= 1.0) {
+        _playController.value = 1.0;
+        cubit.updatePlaybackStatus(false);
+        _updateVehicleIcon();
+      } else {
+        final double baseSeconds = math.max(5.0, cubit.state.totalWeight);
+        final targetSeconds = baseSeconds / _getSpeedMultiplier(cubit.state.playbackSpeed);
+        _playController.duration = Duration(
+          milliseconds: (targetSeconds * 1000).toInt(),
+        );
+        cubit.updatePlaybackStatus(true);
+        _playController.forward(from: value);
+      }
+    } else {
+      cubit.updateProgress(value);
+      _animateCameraToVehicle(cubit.state, force: true);
+    }
+  }
+
   void _updatePlaybackSpeed(int speed) {
     final cubit = context.read<RideHistoryDetailsCubit>();
     cubit.updatePlaybackSpeed(speed);
@@ -391,7 +505,7 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
     if (cubit.state.isPlaying) {
       final currentProgress = _playController.value;
       final double baseSeconds = math.max(5.0, cubit.state.totalWeight);
-      final targetSeconds = baseSeconds / speed;
+      final targetSeconds = baseSeconds / _getSpeedMultiplier(speed);
       _playController.duration = Duration(
         milliseconds: (targetSeconds * 1000).toInt(),
       );
@@ -488,7 +602,9 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
     final cubit = context.read<RideHistoryDetailsCubit>();
     final validPoints = cubit.state.validRidePoints;
     if (validPoints.isEmpty) return;
-    final size = MediaQuery.sizeOf(context); // Get size synchronously BEFORE async gap!
+    final size = MediaQuery.sizeOf(
+      context,
+    ); // Get size synchronously BEFORE async gap!
 
     double minLat = validPoints[0].location.latitude,
         maxLat = validPoints[0].location.latitude;
@@ -508,14 +624,20 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
       northeast: LatLng(maxLat, maxLng),
     );
 
-    final double targetZoom = _getBoundsZoomLevel(bounds, size.width, size.height);
+    final double targetZoom = _getBoundsZoomLevel(
+      bounds,
+      size.width,
+      size.height,
+    );
 
     await _runCinematicGlide(
       targetLatLng: center,
       targetZoom: targetZoom,
       targetTilt: 0.0,
       targetBearing: 0.0,
-      duration: const Duration(milliseconds: 2200), // Highly elegant 2.2s drone flight on load
+      duration: const Duration(
+        milliseconds: 2200,
+      ), // Highly elegant 2.2s drone flight on load
     );
   }
 
@@ -523,14 +645,17 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final double fuelRate = widget.ride.avgSpeed > 0
-        ? (2.1 * (1.0 + 0.005 * (widget.ride.avgSpeed - 35.0).abs())).clamp(1.5, 3.5)
+        ? (2.1 * (1.0 + 0.005 * (widget.ride.avgSpeed - 35.0).abs())).clamp(
+            1.5,
+            3.5,
+          )
         : 2.1;
     return BlocListener<RideHistoryDetailsCubit, RideHistoryDetailsState>(
       listenWhen: (previous, current) {
         return previous.isDataProcessing != current.isDataProcessing ||
-               previous.isPlaying != current.isPlaying ||
-               previous.currentVehiclePosition != current.currentVehiclePosition ||
-               previous.validRidePoints.length != current.validRidePoints.length;
+            previous.isPlaying != current.isPlaying ||
+            previous.currentVehiclePosition != current.currentVehiclePosition ||
+            previous.validRidePoints.length != current.validRidePoints.length;
       },
       listener: (context, state) {
         if (!state.isDataProcessing &&
@@ -548,14 +673,16 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
             // High-performance isolated Google Map view using RepaintBoundary and builder filtering
             BlocBuilder<RideHistoryDetailsCubit, RideHistoryDetailsState>(
               buildWhen: (previous, current) {
-                return previous.currentVehiclePosition != current.currentVehiclePosition ||
-                       previous.currentHeading != current.currentHeading ||
-                       previous.isPlaybackStarted != current.isPlaybackStarted ||
-                       previous.darkMapStyle != current.darkMapStyle ||
-                       previous.startIcon != current.startIcon ||
-                       previous.endIcon != current.endIcon ||
-                       previous.vehicleIcon != current.vehicleIcon ||
-                       previous.validRidePoints.length != current.validRidePoints.length;
+                return previous.currentVehiclePosition !=
+                        current.currentVehiclePosition ||
+                    previous.currentHeading != current.currentHeading ||
+                    previous.isPlaybackStarted != current.isPlaybackStarted ||
+                    previous.darkMapStyle != current.darkMapStyle ||
+                    previous.startIcon != current.startIcon ||
+                    previous.endIcon != current.endIcon ||
+                    previous.vehicleIcon != current.vehicleIcon ||
+                    previous.validRidePoints.length !=
+                        current.validRidePoints.length;
               },
               builder: (context, mapState) {
                 return RepaintBoundary(
@@ -594,7 +721,8 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
                           icon: mapState.startIcon!,
                           anchor: const Offset(0.5, 0.5),
                         ),
-                      if (mapState.endIcon != null && mapState.validRidePoints.isNotEmpty)
+                      if (mapState.endIcon != null &&
+                          mapState.validRidePoints.isNotEmpty)
                         Marker(
                           markerId: const MarkerId('end'),
                           position: mapState.validRidePoints.last.location,
@@ -616,7 +744,12 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
                     },
                     onMapCreated: _onMapCreated,
                     onCameraMove: (position) {
-                      if (_isGliding || (mounted && context.read<RideHistoryDetailsCubit>().state.isPlaying)) {
+                      if (_isGliding ||
+                          (mounted &&
+                              context
+                                  .read<RideHistoryDetailsCubit>()
+                                  .state
+                                  .isPlaying)) {
                         return; // Ignore laggy async native updates during active programmatic tracking/glides
                       }
                       _lastCameraPosition = position;
@@ -675,12 +808,15 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
             // Top Floating Live Stats Card (Granular BlocBuilder to isolate text updates)
             BlocBuilder<RideHistoryDetailsCubit, RideHistoryDetailsState>(
               buildWhen: (previous, current) {
-                return previous.currentSpeedDisplay != current.currentSpeedDisplay ||
-                       previous.currentTimeDisplay != current.currentTimeDisplay ||
-                       previous.currentDistanceDisplay != current.currentDistanceDisplay ||
-                       previous.currentAvgSpeedDisplay != current.currentAvgSpeedDisplay ||
-                       previous.isPlaying != current.isPlaying ||
-                       previous.playProgress != current.playProgress;
+                return previous.currentSpeedDisplay !=
+                        current.currentSpeedDisplay ||
+                    previous.currentTimeDisplay != current.currentTimeDisplay ||
+                    previous.currentDistanceDisplay !=
+                        current.currentDistanceDisplay ||
+                    previous.currentAvgSpeedDisplay !=
+                        current.currentAvgSpeedDisplay ||
+                    previous.isPlaying != current.isPlaying ||
+                    previous.playProgress != current.playProgress;
               },
               builder: (context, statsState) {
                 if (!statsState.isPlaying && statsState.playProgress == 0.0) {
@@ -693,10 +829,14 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
                         vertical: 8,
                       ),
                       decoration: BoxDecoration(
-                        color: Theme.of(context).cardColor.withValues(alpha: 0.85),
+                        color: Theme.of(
+                          context,
+                        ).cardColor.withValues(alpha: 0.85),
                         borderRadius: BorderRadius.circular(30),
                         border: Border.all(
-                          color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.1),
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.onSurface.withValues(alpha: 0.1),
                         ),
                       ),
                       child: Row(
@@ -708,13 +848,17 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
                                 width: 24,
                                 height: 24,
                                 decoration: BoxDecoration(
-                                  color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.2),
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.primary.withValues(alpha: 0.2),
                                   shape: BoxShape.circle,
                                 ),
                                 child: Center(
                                   child: Icon(
                                     Icons.two_wheeler,
-                                    color: Theme.of(context).colorScheme.primary,
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.primary,
                                     size: 14,
                                   ),
                                 ),
@@ -746,14 +890,20 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
                                 l10n.kmh,
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
-                                  color: Theme.of(context).colorScheme.onSurface,
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onSurface,
                                   fontSize: 7,
                                 ),
                               ),
                               Text(
-                                statsState.currentSpeedDisplay.toStringAsFixed(1),
+                                statsState.currentSpeedDisplay.toStringAsFixed(
+                                  1,
+                                ),
                                 style: TextStyle(
-                                  color: Theme.of(context).colorScheme.onSurface,
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onSurface,
                                   fontSize: 16,
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -764,7 +914,9 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
                           Container(
                             width: 1,
                             height: 30,
-                            color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.2),
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSurface.withValues(alpha: 0.2),
                           ),
                           const SizedBox(width: 12),
                           Column(
@@ -782,14 +934,19 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
                                 l10n.hrMin,
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
-                                  color: Theme.of(context).colorScheme.onSurface,
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onSurface,
                                   fontSize: 7,
                                 ),
                               ),
                               Text(
-                                statsState.currentTimeDisplay ?? widget.ride.startTime,
+                                statsState.currentTimeDisplay ??
+                                    widget.ride.startTime,
                                 style: TextStyle(
-                                  color: Theme.of(context).colorScheme.onSurface,
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onSurface,
                                   fontSize: 16,
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -811,10 +968,14 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
                         vertical: 12,
                       ),
                       decoration: BoxDecoration(
-                        color: Theme.of(context).cardColor.withValues(alpha: 0.85),
+                        color: Theme.of(
+                          context,
+                        ).cardColor.withValues(alpha: 0.85),
                         borderRadius: BorderRadius.circular(16),
                         border: Border.all(
-                          color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.1),
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.onSurface.withValues(alpha: 0.1),
                         ),
                       ),
                       child: Row(
@@ -828,18 +989,23 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
                           Container(
                             width: 1,
                             height: 30,
-                            color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.2),
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSurface.withValues(alpha: 0.2),
                           ),
                           Expanded(
                             child: _buildLiveStatColumn(
                               l10n.timeLabel,
-                              statsState.currentTimeDisplay ?? widget.ride.startTime,
+                              statsState.currentTimeDisplay ??
+                                  widget.ride.startTime,
                             ),
                           ),
                           Container(
                             width: 1,
                             height: 30,
-                            color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.2),
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSurface.withValues(alpha: 0.2),
                           ),
                           Expanded(
                             child: _buildLiveStatColumn(
@@ -850,7 +1016,9 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
                           Container(
                             width: 1,
                             height: 30,
-                            color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.2),
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSurface.withValues(alpha: 0.2),
                           ),
                           Expanded(
                             child: _buildLiveStatColumn(
@@ -872,9 +1040,24 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
               bottom: 240,
               child: Column(
                 children: [
-                  _buildMapFloatingBtn(Icons.layers_outlined),
+                  _buildMapFloatingBtn(
+                    Icons.layers_outlined,
+                    onTap: () {},
+                  ),
                   const SizedBox(height: 12),
-                  _buildMapFloatingBtn(Icons.my_location),
+                  _buildMapFloatingBtn(
+                    _isDirectionMode ? Icons.navigation : Icons.my_location,
+                    isActive: _isDirectionMode,
+                    onTap: () {
+                      setState(() {
+                        _isDirectionMode = !_isDirectionMode;
+                      });
+                      final cubit = context.read<RideHistoryDetailsCubit>();
+                      if (cubit.state.currentVehiclePosition != null) {
+                        _animateCameraToVehicle(cubit.state);
+                      }
+                    },
+                  ),
                 ],
               ),
             ),
@@ -902,18 +1085,24 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       // Isolated Bottom Controls (Play/Pause, Speed controls)
-                      BlocBuilder<RideHistoryDetailsCubit, RideHistoryDetailsState>(
+                      BlocBuilder<
+                        RideHistoryDetailsCubit,
+                        RideHistoryDetailsState
+                      >(
                         buildWhen: (previous, current) {
                           return previous.isPlaying != current.isPlaying ||
-                                 previous.isPlaybackStarted != current.isPlaybackStarted ||
-                                 previous.playbackSpeed != current.playbackSpeed;
+                              previous.isPlaybackStarted !=
+                                  current.isPlaybackStarted ||
+                              previous.playbackSpeed != current.playbackSpeed;
                         },
                         builder: (context, controlState) {
                           return Transform.translate(
                             offset: const Offset(0, -24),
                             child: Container(
                               height: 60,
-                              padding: const EdgeInsets.symmetric(horizontal: 16),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                              ),
                               child: Stack(
                                 alignment: Alignment.center,
                                 children: [
@@ -924,18 +1113,24 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
                                       width: 56,
                                       height: 56,
                                       decoration: BoxDecoration(
-                                        color: Theme.of(context).colorScheme.primary,
+                                        color: Theme.of(
+                                          context,
+                                        ).colorScheme.primary,
                                         shape: BoxShape.circle,
                                         boxShadow: [
                                           BoxShadow(
-                                            color: Colors.black.withValues(alpha: 0.4),
+                                            color: Colors.black.withValues(
+                                              alpha: 0.4,
+                                            ),
                                             blurRadius: 8,
                                             offset: const Offset(0, 4),
                                           ),
                                         ],
                                       ),
                                       child: Icon(
-                                        controlState.isPlaying ? Icons.pause : Icons.play_arrow,
+                                        controlState.isPlaying
+                                            ? Icons.pause
+                                            : Icons.play_arrow,
                                         color: Colors.white,
                                         size: 32,
                                       ),
@@ -955,15 +1150,22 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
                                               width: 38,
                                               height: 38,
                                               decoration: BoxDecoration(
-                                                color: Theme.of(context).cardColor.withValues(alpha: 0.9),
+                                                color: Theme.of(context)
+                                                    .cardColor
+                                                    .withValues(alpha: 0.9),
                                                 shape: BoxShape.circle,
                                                 border: Border.all(
-                                                  color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.15),
+                                                  color: Theme.of(context)
+                                                      .colorScheme
+                                                      .onSurface
+                                                      .withValues(alpha: 0.15),
                                                 ),
                                               ),
                                               child: Icon(
                                                 Icons.close,
-                                                color: Theme.of(context).colorScheme.onSurface,
+                                                color: Theme.of(
+                                                  context,
+                                                ).colorScheme.onSurface,
                                                 size: 18,
                                               ),
                                             ),
@@ -973,32 +1175,56 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
                                         Container(
                                           padding: const EdgeInsets.all(2),
                                           decoration: BoxDecoration(
-                                            color: Theme.of(context).cardColor.withValues(alpha: 0.95),
-                                            borderRadius: BorderRadius.circular(20),
+                                            color: Theme.of(
+                                              context,
+                                            ).cardColor.withValues(alpha: 0.95),
+                                            borderRadius: BorderRadius.circular(
+                                              20,
+                                            ),
                                             border: Border.all(
-                                              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.1),
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .onSurface
+                                                  .withValues(alpha: 0.1),
                                             ),
                                           ),
                                           child: Row(
                                             mainAxisSize: MainAxisSize.min,
                                             children: [1, 2, 3, 4].map((speed) {
-                                              final isSelected = controlState.playbackSpeed == speed;
+                                              final isSelected =
+                                                  controlState.playbackSpeed ==
+                                                  speed;
                                               return GestureDetector(
-                                                onTap: () => _updatePlaybackSpeed(speed),
+                                                onTap: () =>
+                                                    _updatePlaybackSpeed(speed),
                                                 child: Container(
-                                                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                                  padding:
+                                                      const EdgeInsets.symmetric(
+                                                        horizontal: 8,
+                                                        vertical: 4,
+                                                      ),
                                                   decoration: BoxDecoration(
                                                     color: isSelected
-                                                        ? Theme.of(context).colorScheme.primary
+                                                        ? Theme.of(
+                                                            context,
+                                                          ).colorScheme.primary
                                                         : Colors.transparent,
-                                                    borderRadius: BorderRadius.circular(16),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                          16,
+                                                        ),
                                                   ),
                                                   child: Text(
                                                     "${speed}x",
                                                     style: TextStyle(
-                                                      color: isSelected ? Colors.white : Theme.of(context).colorScheme.onSurface,
+                                                      color: isSelected
+                                                          ? Colors.white
+                                                          : Theme.of(context)
+                                                                .colorScheme
+                                                                .onSurface,
                                                       fontSize: 10,
-                                                      fontWeight: FontWeight.bold,
+                                                      fontWeight:
+                                                          FontWeight.bold,
                                                     ),
                                                   ),
                                                 ),
@@ -1101,9 +1327,16 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
                             Expanded(
                               child: SliderTheme(
                                 data: SliderThemeData(
-                                  activeTrackColor: Theme.of(context).colorScheme.primary,
-                                  inactiveTrackColor: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.2),
-                                  thumbColor: Theme.of(context).colorScheme.primary,
+                                  activeTrackColor: Theme.of(
+                                    context,
+                                  ).colorScheme.primary,
+                                  inactiveTrackColor: Theme.of(context)
+                                      .colorScheme
+                                      .onSurface
+                                      .withValues(alpha: 0.2),
+                                  thumbColor: Theme.of(
+                                    context,
+                                  ).colorScheme.primary,
                                   trackHeight: 4.0,
                                   thumbShape: const RoundSliderThumbShape(
                                     enabledThumbRadius: 6.0,
@@ -1115,6 +1348,8 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
                                     return Slider(
                                       value: _playController.value,
                                       onChanged: _onSliderChanged,
+                                      onChangeStart: _onSliderChangeStart,
+                                      onChangeEnd: _onSliderChangeEnd,
                                     );
                                   },
                                 ),
@@ -1170,22 +1405,44 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
     );
   }
 
-  Widget _buildMapFloatingBtn(IconData icon) {
-    return Container(
-      width: 44,
-      height: 44,
-      decoration: BoxDecoration(
-        color: Theme.of(context).cardColor.withValues(alpha: 0.9),
-        shape: BoxShape.circle,
-        border: Border.all(
-          color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.1),
+  Widget _buildMapFloatingBtn(
+    IconData icon, {
+    required VoidCallback onTap,
+    bool isActive = false,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 44,
+        height: 44,
+        decoration: BoxDecoration(
+          color: Theme.of(context).cardColor.withValues(alpha: 0.9),
+          shape: BoxShape.circle,
+          border: Border.all(
+            color: isActive
+                ? Theme.of(context).colorScheme.primary
+                : Theme.of(context)
+                    .colorScheme
+                    .onSurface
+                    .withValues(alpha: 0.1),
+            width: isActive ? 2 : 1,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.15),
+              blurRadius: 6,
+              offset: const Offset(0, 3),
+            ),
+          ],
         ),
-      ),
-      child: Center(
-        child: Icon(
-          icon,
-          color: Theme.of(context).colorScheme.onSurface,
-          size: 22,
+        child: Center(
+          child: Icon(
+            icon,
+            color: isActive
+                ? Theme.of(context).colorScheme.primary
+                : Theme.of(context).colorScheme.onSurface,
+            size: 22,
+          ),
         ),
       ),
     );
