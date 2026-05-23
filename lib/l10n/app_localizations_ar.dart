@@ -613,6 +613,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get myIssues => 'مشكلاتي';
 
   @override
+  String get mySuggestions => 'اقتراحاتي';
+
+  @override
   String get whatsApp => 'واتساب';
 
   @override
@@ -1045,7 +1048,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get saveDetails => 'حفظ التفاصيل';
 
   @override
-  String get selectVehicle => 'اختر مركبة';
+  String get selectVehicle => 'اختر المركبة';
 
   @override
   String get liveTab => 'مباشر';
@@ -2433,4 +2436,57 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get switchBetweenLightAndDarkThemes =>
       'التبديل بين السمات الفاتحة والداكنة';
+
+  @override
+  String get iHaveAnIssueWith => 'لدي مشكلة مع';
+
+  @override
+  String get iWantToProvideSuggestion => 'أريد تقديم اقتراح لـ';
+
+  @override
+  String get selectType => 'اختر النوع';
+
+  @override
+  String get whatIsSuggestionSubject => 'ما هو موضوع اقتراحك؟';
+
+  @override
+  String get giveShortDescription => 'أعط وصفًا قصيرًا';
+
+  @override
+  String get giveSuggestionFeedback =>
+      'أدخل اقتراحك/ملاحظاتك (200 حرف كحد أقصى)';
+
+  @override
+  String get giveSuggestionFeedbackTitle => 'أعط اقتراحًا/ملاحظات';
+
+  @override
+  String get send => 'إرسال';
+
+  @override
+  String get bookCallSlotTitle => 'حجز موعد مكالمة';
+
+  @override
+  String get bookCallSlotHeading => 'احجز موعد مكالمة لحل مشكلتك';
+
+  @override
+  String get importantPoint => 'نقطة مهمة';
+
+  @override
+  String get callSlotDescription =>
+      'يجب أن تكون بجانب مركبتك أثناء حل المشكلة. يرجى إبقاء نفسك متفرغًا :)';
+
+  @override
+  String get selectDay => 'اختر اليوم';
+
+  @override
+  String get selectTimeSlot => 'اختر الفترة الزمنية';
+
+  @override
+  String get bookNow => 'احجز الآن';
+
+  @override
+  String get slotUnavailable => 'الفترة غير متاحة';
+
+  @override
+  String get slotAvailable => 'الفترة متاحة';
 }

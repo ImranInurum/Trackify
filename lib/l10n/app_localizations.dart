@@ -1243,7 +1243,7 @@ abstract class AppLocalizations {
   /// No description provided for @whatIsYourIssueRelatedTo.
   ///
   /// In en, this message translates to:
-  /// **'What is your issue related to ?'**
+  /// **'What is your issue related to?'**
   String get whatIsYourIssueRelatedTo;
 
   /// No description provided for @shortDescriptionHint.
@@ -1263,6 +1263,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'My Issues'**
   String get myIssues;
+
+  /// No description provided for @mySuggestions.
+  ///
+  /// In en, this message translates to:
+  /// **'My Suggestions'**
+  String get mySuggestions;
 
   /// No description provided for @whatsApp.
   ///
@@ -4737,6 +4743,108 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Switch between light and dark themes'**
   String get switchBetweenLightAndDarkThemes;
+
+  /// No description provided for @iHaveAnIssueWith.
+  ///
+  /// In en, this message translates to:
+  /// **'I have an issue with'**
+  String get iHaveAnIssueWith;
+
+  /// No description provided for @iWantToProvideSuggestion.
+  ///
+  /// In en, this message translates to:
+  /// **'I want to provide a suggestion for'**
+  String get iWantToProvideSuggestion;
+
+  /// No description provided for @selectType.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Type'**
+  String get selectType;
+
+  /// No description provided for @whatIsSuggestionSubject.
+  ///
+  /// In en, this message translates to:
+  /// **'What is the subject of your suggestion?'**
+  String get whatIsSuggestionSubject;
+
+  /// No description provided for @giveShortDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Give short description'**
+  String get giveShortDescription;
+
+  /// No description provided for @giveSuggestionFeedback.
+  ///
+  /// In en, this message translates to:
+  /// **'Give your suggestion/feedback (max 200 characters)'**
+  String get giveSuggestionFeedback;
+
+  /// No description provided for @giveSuggestionFeedbackTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Give a suggestion/feedback'**
+  String get giveSuggestionFeedbackTitle;
+
+  /// No description provided for @send.
+  ///
+  /// In en, this message translates to:
+  /// **'Send'**
+  String get send;
+
+  /// No description provided for @bookCallSlotTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Book Call Slot'**
+  String get bookCallSlotTitle;
+
+  /// No description provided for @bookCallSlotHeading.
+  ///
+  /// In en, this message translates to:
+  /// **'Book Call Slot for Solving Your Issue'**
+  String get bookCallSlotHeading;
+
+  /// No description provided for @importantPoint.
+  ///
+  /// In en, this message translates to:
+  /// **'Important Point'**
+  String get importantPoint;
+
+  /// No description provided for @callSlotDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'You need to be next to your vehicle during the issue resolution. Please keep yourself free :)'**
+  String get callSlotDescription;
+
+  /// No description provided for @selectDay.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Day'**
+  String get selectDay;
+
+  /// No description provided for @selectTimeSlot.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Time Slot'**
+  String get selectTimeSlot;
+
+  /// No description provided for @bookNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Book now'**
+  String get bookNow;
+
+  /// No description provided for @slotUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Slot Unavailable'**
+  String get slotUnavailable;
+
+  /// No description provided for @slotAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Slot Available'**
+  String get slotAvailable;
 }
 
 class _AppLocalizationsDelegate

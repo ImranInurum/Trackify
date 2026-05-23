@@ -7,6 +7,8 @@ import 'package:trackify/feature/document_folder/presentation/cubit/document_cub
 import 'package:trackify/feature/help_and_support/data/repository_impl/help_support_repository_impl.dart';
 import 'package:trackify/feature/help_and_support/domain/use_case/help_support_use_case.dart';
 import 'package:trackify/feature/help_and_support/presentation/cubit/help_support_cubit.dart';
+import 'package:trackify/feature/help_and_support/data/data source/report_issue_data_source.dart';
+import 'package:trackify/feature/help_and_support/domain/repository/help_support_repository.dart';
 import 'package:trackify/feature/map/data/repository/map_repository_impl.dart';
 import 'package:trackify/feature/map/domain/usecase/map_case.dart';
 import 'package:trackify/feature/map/presentation/cubit/map_cubit.dart';
@@ -131,6 +133,8 @@ import 'feature/get_more_out/data/data source/geo_fence_local_data.dart';
 import 'package:trackify/feature/statistics/data/data_source/statistics_remote_data_source.dart';
 import 'package:trackify/feature/statistics/data/repository/statistics_repository_impl.dart';
 import 'package:trackify/feature/statistics/presentation/cubit/statistics_cubit.dart';
+import 'feature/help_and_support/data/data source/suggestion_data_source.dart';
+import 'feature/help_and_support/presentation/cubit/suggestion_cubit.dart';
 import 'firebase_options.dart';
 
 final GlobalKey<NavigatorState> rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -194,9 +198,18 @@ List<BlocProvider> _buildBlocProviders() {
     BlocProvider<MyGarageCubit>(
       create: (_) => MyGarageCubit(MyGarageUseCase(MyGarageRepoImpl())),
     ),
-    BlocProvider<HelpSupportCubit>(
-      create: (_) =>
-          HelpSupportCubit(HelpSupportUseCase(HelpSupportRepositoryImpl())),
+    BlocProvider<ReportIssueCubit>(
+      create: (_) => ReportIssueCubit(
+        ReportIssueRepository(
+          ReportIssueRemoteDataSource(),
+        ),
+      ),
+    ),
+
+    BlocProvider<SuggestionCubit>(
+      create: (_) => SuggestionCubit(
+        SuggestionRemoteDataSource(),
+      ),
     ),
     BlocProvider<DeviceInstallationCubit>(
       create: (_) => DeviceInstallationCubit(

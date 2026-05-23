@@ -1,4 +1,4 @@
-{
+﻿{
     "selectLanguage": "तुमची भाषा निवडा",
     "letsGetStarted": "सुरुवात करूया",
     "email": "ईमेल",
@@ -990,6 +990,30 @@
 
            "darkMode": "डार्क मोड",
             "lightTheme": "लाइट थीम",
-            "switchBetweenLightAndDarkThemes": "लाइट आणि डार्क थीममध्ये बदला"
+            "switchBetweenLightAndDarkThemes": "लाइट आणि डार्क थीममध्ये बदला",
+
+            "iHaveAnIssueWith": "मला यासंबंधी समस्या आहे",
+              "iWantToProvideSuggestion": "मी यासाठी सूचना द्यायची आहे",
+              "selectVehicle": "वाहन निवडा",
+              "selectType": "प्रकार निवडा",
+              "whatIsYourIssueRelatedTo": "तुमची समस्या कशाशी संबंधित आहे?",
+              "whatIsSuggestionSubject": "तुमच्या सूचनेचा विषय काय आहे?",
+              "giveShortDescription": "थोडक्यात वर्णन द्या",
+              "giveSuggestionFeedback": "तुमची सूचना/अभिप्राय द्या (जास्तीत जास्त 200 अक्षरे)",
+              "giveSuggestionFeedbackTitle": "सूचना/अभिप्राय द्या",
+              "send": "पाठवा",
+              "mySuggestions": "माझ्या सूचना",
+
+                "bookCallSlotTitle": "कॉल स्लॉट बुक करा",
+                "bookCallSlotHeading": "आपली समस्या सोडवण्यासाठी कॉल स्लॉट बुक करा",
+                "importantPoint": "महत्त्वाचा मुद्दा",
+                "callSlotDescription": "समस्या सोडवताना तुम्ही तुमच्या वाहनाजवळ असणे आवश्यक आहे. कृपया स्वतःला मोकळे ठेवा :)",
+                "selectDay": "दिवस निवडा",
+                "selectTimeSlot": "वेळ स्लॉट निवडा",
+                "bookNow": "आता बुक करा",
+                "slotUnavailable": "स्लॉट उपलब्ध नाही",
+                "slotAvailable": "स्लॉट उपलब्ध आहे"
+
+
 
 }

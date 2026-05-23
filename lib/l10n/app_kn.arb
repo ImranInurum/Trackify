@@ -1,4 +1,4 @@
-{
+﻿{
     "selectLanguage": "ನಿಮ್ಮ ಭಾಷೆಯನ್ನು ಆಯ್ಕೆ ಮಾಡಿ",
     "letsGetStarted": "ಪ್ರಾರಂಭಿಸೋಣ",
     "email": "ಇಮೇಲ್",
@@ -991,5 +991,27 @@
 
           "darkMode": "ಡಾರ್ಕ್ ಮೋಡ್",
             "lightTheme": "ಲೈಟ್ ಥೀಮ್",
-            "switchBetweenLightAndDarkThemes": "ಲೈಟ್ ಮತ್ತು ಡಾರ್ಕ್ ಥೀಮ್‌ಗಳ ನಡುವೆ ಬದಲಾಯಿಸಿ"
+            "switchBetweenLightAndDarkThemes": "ಲೈಟ್ ಮತ್ತು ಡಾರ್ಕ್ ಥೀಮ್‌ಗಳ ನಡುವೆ ಬದಲಾಯಿಸಿ",
+
+            "iHaveAnIssueWith": "ನನಗೆ ಇದರೊಂದಿಗೆ ಸಮಸ್ಯೆ ಇದೆ",
+              "iWantToProvideSuggestion": "ನಾನು ಇದರ ಬಗ್ಗೆ ಸಲಹೆ ನೀಡಲು ಬಯಸುತ್ತೇನೆ",
+              "selectVehicle": "ವಾಹನ ಆಯ್ಕೆಮಾಡಿ",
+              "selectType": "ಪ್ರಕಾರ ಆಯ್ಕೆಮಾಡಿ",
+              "whatIsYourIssueRelatedTo": "ನಿಮ್ಮ ಸಮಸ್ಯೆ ಯಾವುದಕ್ಕೆ ಸಂಬಂಧಿಸಿದೆ?",
+              "whatIsSuggestionSubject": "ನಿಮ್ಮ ಸಲಹೆಯ ವಿಷಯ ಏನು?",
+              "giveShortDescription": "ಸಣ್ಣ ವಿವರಣೆ ನೀಡಿ",
+              "giveSuggestionFeedback": "ನಿಮ್ಮ ಸಲಹೆ/ಪ್ರತಿಕ್ರಿಯೆ ನೀಡಿ (ಗರಿಷ್ಠ 200 ಅಕ್ಷರಗಳು)",
+              "giveSuggestionFeedbackTitle": "ಸಲಹೆ/ಪ್ರತಿಕ್ರಿಯೆ ನೀಡಿ",
+              "send": "ಕಳುಹಿಸಿ",
+              "mySuggestions": "ನನ್ನ ಸಲಹೆಗಳು",
+
+               "bookCallSlotTitle": "ಕಾಲ್ ಸ್ಲಾಟ್ ಬುಕ್ ಮಾಡಿ",
+                "bookCallSlotHeading": "ನಿಮ್ಮ ಸಮಸ್ಯೆಯನ್ನು ಪರಿಹರಿಸಲು ಕಾಲ್ ಸ್ಲಾಟ್ ಬುಕ್ ಮಾಡಿ",
+                "importantPoint": "ಮುಖ್ಯ ಅಂಶ",
+                "callSlotDescription": "ಸಮಸ್ಯೆ ಪರಿಹಾರದ ಸಮಯದಲ್ಲಿ ನೀವು ನಿಮ್ಮ ವಾಹನದ ಬಳಿ ಇರಬೇಕು. ದಯವಿಟ್ಟು ನಿಮ್ಮನ್ನು ಖಾಲಿ ಇಟ್ಟುಕೊಳ್ಳಿ :)",
+                "selectDay": "ದಿನವನ್ನು ಆಯ್ಕೆಮಾಡಿ",
+                "selectTimeSlot": "ಸಮಯ ಸ್ಲಾಟ್ ಆಯ್ಕೆಮಾಡಿ",
+                "bookNow": "ಈಗ ಬುಕ್ ಮಾಡಿ",
+                "slotUnavailable": "ಸ್ಲಾಟ್ ಲಭ್ಯವಿಲ್ಲ",
+                "slotAvailable": "ಸ್ಲಾಟ್ ಲಭ್ಯವಿದೆ"
 }

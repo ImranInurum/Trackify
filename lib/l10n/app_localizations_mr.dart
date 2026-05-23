@@ -614,6 +614,9 @@ class AppLocalizationsMr extends AppLocalizations {
   String get myIssues => 'माझ्या समस्या';
 
   @override
+  String get mySuggestions => 'माझ्या सूचना';
+
+  @override
   String get whatsApp => 'WhatsApp';
 
   @override
@@ -2443,4 +2446,58 @@ class AppLocalizationsMr extends AppLocalizations {
 
   @override
   String get switchBetweenLightAndDarkThemes => 'लाइट आणि डार्क थीममध्ये बदला';
+
+  @override
+  String get iHaveAnIssueWith => 'मला यासंबंधी समस्या आहे';
+
+  @override
+  String get iWantToProvideSuggestion => 'मी यासाठी सूचना द्यायची आहे';
+
+  @override
+  String get selectType => 'प्रकार निवडा';
+
+  @override
+  String get whatIsSuggestionSubject => 'तुमच्या सूचनेचा विषय काय आहे?';
+
+  @override
+  String get giveShortDescription => 'थोडक्यात वर्णन द्या';
+
+  @override
+  String get giveSuggestionFeedback =>
+      'तुमची सूचना/अभिप्राय द्या (जास्तीत जास्त 200 अक्षरे)';
+
+  @override
+  String get giveSuggestionFeedbackTitle => 'सूचना/अभिप्राय द्या';
+
+  @override
+  String get send => 'पाठवा';
+
+  @override
+  String get bookCallSlotTitle => 'कॉल स्लॉट बुक करा';
+
+  @override
+  String get bookCallSlotHeading =>
+      'आपली समस्या सोडवण्यासाठी कॉल स्लॉट बुक करा';
+
+  @override
+  String get importantPoint => 'महत्त्वाचा मुद्दा';
+
+  @override
+  String get callSlotDescription =>
+      'समस्या सोडवताना तुम्ही तुमच्या वाहनाजवळ असणे आवश्यक आहे. कृपया स्वतःला मोकळे ठेवा :)';
+
+  @override
+  String get selectDay => 'दिवस निवडा';
+
+  @override
+  String get selectTimeSlot => 'वेळ स्लॉट निवडा';
+
+  @override
+  String get bookNow => 'आता बुक करा';
+
+  @override
+  String get slotUnavailable => 'स्लॉट उपलब्ध नाही';
+
+  @override
+  String get slotAvailable => 'स्लॉट उपलब्ध आहे';
 }
