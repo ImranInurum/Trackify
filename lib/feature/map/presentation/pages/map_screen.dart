@@ -226,6 +226,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
     );
 
     _cameraAnimationController!.addListener(() {
+      if (!mounted) return;
       final t = curvedAnimation.value;
       if (_animStartTarget == null || _animEndTarget == null) return;
 
@@ -247,16 +248,20 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
       _cameraTilt = newTilt;
       _cameraBearing = newBearing;
 
-      _mapController?.moveCamera(
-        CameraUpdate.newCameraPosition(
-          CameraPosition(
-            target: newTarget,
-            zoom: newZoom,
-            tilt: newTilt,
-            bearing: newBearing,
+      try {
+        _mapController?.moveCamera(
+          CameraUpdate.newCameraPosition(
+            CameraPosition(
+              target: newTarget,
+              zoom: newZoom,
+              tilt: newTilt,
+              bearing: newBearing,
+            ),
           ),
-        ),
-      );
+        );
+      } catch (e) {
+        debugPrint("Failed to move camera on disposed/detached map controller: $e");
+      }
     });
 
     _cameraAnimationController!.forward();
