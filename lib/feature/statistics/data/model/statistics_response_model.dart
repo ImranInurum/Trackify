@@ -18,6 +18,14 @@ class StatisticsResponseModel {
           : null,
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'success': success,
+      'message': message,
+      'data': data?.toJson(),
+    };
+  }
 }
 
 class StatisticsData {
@@ -63,6 +71,17 @@ class StatisticsData {
           : null,
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'selectedDate': selectedDate?.toJson(),
+      'vehicle': vehicle?.toJson(),
+      'ridingBehaviour': ridingBehaviour?.toJson(),
+      'journey': journey?.toJson(),
+      'speed': speed?.toJson(),
+      'fuel': fuel?.toJson(),
+    };
+  }
 }
 
 class SelectedDateModel {
@@ -85,6 +104,15 @@ class SelectedDateModel {
       previousDate: json['previousDate']?.toString() ?? '',
       nextDate: json['nextDate']?.toString() ?? '',
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'date': date,
+      'displayText': displayText,
+      'previousDate': previousDate,
+      'nextDate': nextDate,
+    };
   }
 }
 
@@ -114,6 +142,17 @@ class VehicleModel {
       vehicleNumber: json['vehicleNumber']?.toString() ?? '',
       displayName: json['displayName']?.toString() ?? '',
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      '_id': id,
+      'userId': userId,
+      'imei': imei,
+      'vehicleName': vehicleName,
+      'vehicleNumber': vehicleNumber,
+      'displayName': displayName,
+    };
   }
 }
 
@@ -145,6 +184,15 @@ class RidingBehaviourModel {
     if (value is double) return value.toInt();
     if (value is String) return int.tryParse(value) ?? 0;
     return 0;
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'score': score,
+      'scoreText': scoreText,
+      'statusText': statusText,
+      'comparisonText': comparisonText,
+    };
   }
 }
 
@@ -191,6 +239,17 @@ class JourneyModel {
     if (value is String) return double.tryParse(value) ?? 0.0;
     return 0.0;
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'distanceTravelled': distanceTravelled,
+      'distanceTravelledText': distanceTravelledText,
+      'timeDurationMinutes': timeDurationMinutes,
+      'timeDurationText': timeDurationText,
+      'distanceComparisonText': distanceComparisonText,
+      'durationComparisonText': durationComparisonText,
+    };
+  }
 }
 
 class SpeedModel {
@@ -229,6 +288,17 @@ class SpeedModel {
     if (value is String) return double.tryParse(value) ?? 0.0;
     return 0.0;
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'averageSpeed': averageSpeed,
+      'averageSpeedText': averageSpeedText,
+      'topSpeed': topSpeed,
+      'topSpeedText': topSpeedText,
+      'averageSpeedComparisonText': averageSpeedComparisonText,
+      'topSpeedComparisonText': topSpeedComparisonText,
+    };
+  }
 }
 
 class FuelModel {
@@ -266,5 +336,16 @@ class FuelModel {
     if (value is int) return value.toDouble();
     if (value is String) return double.tryParse(value) ?? 0.0;
     return 0.0;
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'fuelConsumed': fuelConsumed,
+      'fuelConsumedText': fuelConsumedText,
+      'fuelCost': fuelCost,
+      'fuelCostText': fuelCostText,
+      'fuelConsumedComparisonText': fuelConsumedComparisonText,
+      'fuelCostComparisonText': fuelCostComparisonText,
+    };
   }
 }

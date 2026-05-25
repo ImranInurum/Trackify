@@ -255,18 +255,4 @@ class _MyGarageScreenState extends State<MyGarageScreen> {
       }
     }
   }
-
-  void _handleRecharge(BuildContext context, dynamic vehicle) {
-    // TODO: Navigate to Payment/Recharge flow
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(const SnackBar(content: Text("Opening Recharge Flow...")));
-  }
-
-  void _handleRenew(BuildContext context, dynamic vehicle) {
-    // TODO: Navigate to Warranty Renewal flow
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text("Opening Warranty Renewal...")),
-    );
-  }
 }
