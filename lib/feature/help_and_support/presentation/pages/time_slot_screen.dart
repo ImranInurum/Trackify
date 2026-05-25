@@ -382,9 +382,9 @@ class _BookCallSlotScreenState
 
                               final int endMinutes = getEndMinutes(slot);
 
-                              final bool isDisabled = isToday &&
+                              final bool isDisabled = !slot.isAvailable || (isToday &&
                                   endMinutes != -1 &&
-                                  currentMinutes >= endMinutes;
+                                  currentMinutes >= endMinutes);
 
                               final bool isSelected = selectedSlotIndex == index;
 
@@ -412,18 +412,34 @@ class _BookCallSlotScreenState
                                           : colorScheme.outline.withOpacity(0.3),
                                     ),
                                   ),
-                                  child: Text(
-                                    slot.label,
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w500,
-                                      color: isDisabled
-                                          ? colorScheme.onSurfaceVariant
-                                          : (isSelected
-                                          ? colorScheme.onPrimary
-                                          : colorScheme.onSurface),
-                                    ),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        slot.label,
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w500,
+                                          color: isDisabled
+                                              ? colorScheme.onSurfaceVariant
+                                              : (isSelected
+                                              ? colorScheme.onPrimary
+                                              : colorScheme.onSurface),
+                                        ),
+                                      ),
+                                      if (!slot.isAvailable) ...[
+                                        const SizedBox(height: 2),
+                                        Text(
+                                          "Booked",
+                                          style: TextStyle(
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.red.shade400,
+                                          ),
+                                        ),
+                                      ],
+                                    ],
                                   ),
                                 ),
                               );
