@@ -1087,7 +1087,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
     } else if (label == l10n.helpAndSupport.replaceAll(' ', '\n')) {
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => HelpSuggestionScreen()),
+        MaterialPageRoute(builder: (context) => const HelpSuggestionScreen()),
       );
     } else if (label == l10n.emergency.replaceAll(' ', '\n')) {
       Navigator.push(

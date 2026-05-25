@@ -1,4 +1,4 @@
-{
+﻿{
     "selectLanguage": "உங்கள் மொழியைத் தேர்ந்தெடுக்கவும்",
     "letsGetStarted": "தொடங்குவோம்",
     "email": "மின்னஞ்சல்",
@@ -991,7 +991,29 @@
 
     "darkMode": "டார்க் மோடு",
     "lightTheme": "லைட் தீம்",
-    "switchBetweenLightAndDarkThemes": "லைட் மற்றும் டார்க் தீம்களுக்கு இடையில் மாற்றவும்"
+    "switchBetweenLightAndDarkThemes": "லைட் மற்றும் டார்க் தீம்களுக்கு இடையில் மாற்றவும்",
+
+     "iHaveAnIssueWith": "இந்த விஷயத்தில் எனக்கு பிரச்சனை உள்ளது",
+      "iWantToProvideSuggestion": "இதற்காக நான் ஒரு பரிந்துரை வழங்க விரும்புகிறேன்",
+      "selectVehicle": "வாகனத்தைத் தேர்ந்தெடுக்கவும்",
+      "selectType": "வகையைத் தேர்ந்தெடுக்கவும்",
+      "whatIsYourIssueRelatedTo": "உங்கள் பிரச்சனை எதனைப் பற்றியது?",
+      "whatIsSuggestionSubject": "உங்கள் பரிந்துரையின் பொருள் என்ன?",
+      "giveShortDescription": "சுருக்கமான விளக்கம் அளிக்கவும்",
+      "giveSuggestionFeedback": "உங்கள் பரிந்துரை/கருத்தை வழங்கவும் (அதிகபட்சம் 200 எழுத்துகள்)",
+      "giveSuggestionFeedbackTitle": "பரிந்துரை/கருத்து வழங்கவும்",
+      "send": "அனுப்பு",
+      "mySuggestions": "என் பரிந்துரைகள்",
+
+        "bookCallSlotTitle": "அழைப்பு நேரத்தை பதிவு செய்யவும்",
+        "bookCallSlotHeading": "உங்கள் பிரச்சினையை தீர்க்க அழைப்பு நேரத்தை பதிவு செய்யவும்",
+        "importantPoint": "முக்கிய குறிப்பு",
+        "callSlotDescription": "பிரச்சினை தீர்க்கும் போது நீங்கள் உங்கள் வாகனத்தின் அருகில் இருக்க வேண்டும். தயவுசெய்து உங்களை காலியாக வைத்திருங்கள் :)",
+        "selectDay": "நாளை தேர்ந்தெடுக்கவும்",
+        "selectTimeSlot": "நேர இடைவெளியை தேர்ந்தெடுக்கவும்",
+        "bookNow": "இப்போது பதிவு செய்யவும்",
+        "slotUnavailable": "நேரம் கிடைக்கவில்லை",
+        "slotAvailable": "நேரம் கிடைக்கிறது"
 
 
 

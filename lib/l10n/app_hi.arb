@@ -243,6 +243,7 @@
     "shortDescriptionHint": "हमें एक संक्षिप्त विवरण दें (अधिकतम 200 अक्षर)",
     "selectCallSlot": "कॉल समय चुनें",
     "myIssues": "मेरी समस्याएं",
+    "mySuggestions": "मेरे सुझाव",
     "whatsApp": "WhatsApp",
     "forceMigrate": "फोर्स माइग्रेट",
     "forceMigrateDesc1": "ऐप अपडेट के दौरान छूटी हुई दैनिक राइड्स को ठीक करने के लिए इस विकल्प का उपयोग करें।",
@@ -987,7 +988,30 @@
 
            "darkMode": "डार्क मोड",
             "lightTheme": "लाइट थीम",
-            "switchBetweenLightAndDarkThemes": "लाइट और डार्क थीम के बीच बदलें"
+            "switchBetweenLightAndDarkThemes": "लाइट और डार्क थीम के बीच बदलें",
+
+
+              "iHaveAnIssueWith": "मुझे इस बारे में समस्या है",
+              "iWantToProvideSuggestion": "मैं इसके लिए सुझाव देना चाहता हूँ",
+              "selectVehicle": "वाहन चुनें",
+              "selectType": "प्रकार चुनें",
+              "whatIsYourIssueRelatedTo": "आपकी समस्या किससे संबंधित है?",
+              "whatIsSuggestionSubject": "आपके सुझाव का विषय क्या है?",
+              "giveShortDescription": "संक्षिप्त विवरण दें",
+              "giveSuggestionFeedback": "अपना सुझाव/फीडबैक दें (अधिकतम 200 अक्षर)",
+              "giveSuggestionFeedbackTitle": "सुझाव/फीडबैक दें",
+              "send": "भेजें",
+
+              "bookCallSlotTitle": "कॉल स्लॉट बुक करें",
+                "bookCallSlotHeading": "अपनी समस्या के समाधान के लिए कॉल स्लॉट बुक करें",
+                "importantPoint": "महत्वपूर्ण बिंदु",
+                "callSlotDescription": "समस्या समाधान के दौरान आपको अपने वाहन के पास रहना होगा। कृपया स्वयं को खाली रखें :)",
+                "selectDay": "दिन चुनें",
+                "selectTimeSlot": "समय स्लॉट चुनें",
+                "bookNow": "अभी बुक करें",
+                "slotUnavailable": "स्लॉट उपलब्ध नहीं है",
+                "slotAvailable": "स्लॉट उपलब्ध है"
+
 
 
 }

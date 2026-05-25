@@ -234,6 +234,7 @@
   "shortDescriptionHint": "Give us a short description (max 200 characters)",
   "selectCallSlot": "Select Call Slot",
   "myIssues": "My Issues",
+  "mySuggestions": "My Suggestions",
   "whatsApp": "WhatsApp",
   "forceMigrate": "Force Migrate",
   "forceMigrateDesc1": "Use this option to fix backed up daily rides missed during app update.",
@@ -1040,7 +1041,29 @@
 
         "darkMode": "Dark Mode",
           "lightTheme": "Light Theme",
-          "switchBetweenLightAndDarkThemes": "Switch between light and dark themes"
+          "switchBetweenLightAndDarkThemes": "Switch between light and dark themes",
+
+
+            "iHaveAnIssueWith": "I have an issue with",
+            "iWantToProvideSuggestion": "I want to provide a suggestion for",
+            "selectType": "Select Type",
+            "whatIsYourIssueRelatedTo": "What is your issue related to?",
+            "whatIsSuggestionSubject": "What is the subject of your suggestion?",
+            "giveShortDescription": "Give short description",
+            "giveSuggestionFeedback": "Give your suggestion/feedback (max 200 characters)",
+            "giveSuggestionFeedbackTitle": "Give a suggestion/feedback",
+            "send": "Send",
+
+             "bookCallSlotTitle": "Book Call Slot",
+              "bookCallSlotHeading": "Book Call Slot for Solving Your Issue",
+              "importantPoint": "Important Point",
+              "callSlotDescription": "You need to be next to your vehicle during the issue resolution. Please keep yourself free :)",
+              "selectDay": "Select Day",
+              "selectTimeSlot": "Select Time Slot",
+              "bookNow": "Book now",
+              "slotUnavailable": "Slot Unavailable",
+              "slotAvailable": "Slot Available"
+
 
 
 }
