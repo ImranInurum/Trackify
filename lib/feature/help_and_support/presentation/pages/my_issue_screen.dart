@@ -139,8 +139,9 @@ class _MyIssueScreenState
 
                           Expanded(
                             child: Text(
-                              issue
-                                  .issueRelatedTo,
+                              issue.issueType == 'suggestion'
+                                  ? issue.description
+                                  : issue.issueRelatedTo,
 
                               style:
                               const TextStyle(
@@ -212,96 +213,100 @@ class _MyIssueScreenState
                         ],
                       ),
 
-                      const SizedBox(
-                        height: 12,
-                      ),
-
-                      Text(
-                        issue.description,
-
-                        style:
-                        TextStyle(
-                          color: theme
-                              .colorScheme
-                              .onSurface
-                              .withOpacity(
-                            0.7,
-                          ),
+                      if (issue.issueType != 'suggestion') ...[
+                        const SizedBox(
+                          height: 12,
                         ),
-                      ),
 
-                      const SizedBox(
-                        height: 16,
-                      ),
+                        Text(
+                          issue.description,
 
-                      Container(
-                        padding:
-                        const EdgeInsets
-                            .all(14),
-
-                        decoration:
-                        BoxDecoration(
-                          color: theme
-                              .scaffoldBackgroundColor,
-
-                          borderRadius:
-                          BorderRadius
-                              .circular(
-                            14,
+                          style:
+                          TextStyle(
+                            color: theme
+                                .colorScheme
+                                .onSurface
+                                .withOpacity(
+                              0.7,
+                            ),
                           ),
                         ),
 
-                        child: Column(
-                          children: [
-
-                            Row(
-                              children: [
-
-                                const Icon(
-                                  Icons
-                                      .calendar_today,
-                                  size: 18,
-                                ),
-
-                                const SizedBox(
-                                  width: 10,
-                                ),
-
-                                Text(
-                                    issue.callSlot?.dateText ?? ''
-                                ),
-                              ],
-                            ),
-
-                            const SizedBox(
-                              height: 12,
-                            ),
-
-                            Row(
-                              children: [
-
-                                const Icon(
-                                  Icons
-                                      .access_time,
-                                  size: 18,
-                                ),
-
-                                const SizedBox(
-                                  width: 10,
-                                ),
-
-                                Text(
-                                    issue.callSlot?.displayTime ?? ''
-                                ),
-                              ],
-                            ),
-                          ],
+                        const SizedBox(
+                          height: 16,
                         ),
-                      ),
+                      ],
 
-                      const SizedBox(
-                        height: 14,
-                      ),
+                      if (issue.callSlot != null) ...[
+                        Container(
+                          padding:
+                          const EdgeInsets
+                              .all(14),
+
+                          decoration:
+                          BoxDecoration(
+                            color: theme
+                                .scaffoldBackgroundColor,
+
+                            borderRadius:
+                            BorderRadius
+                                .circular(
+                              14,
+                            ),
+                          ),
+
+                          child: Column(
+                            children: [
+
+                              Row(
+                                children: [
+
+                                  const Icon(
+                                    Icons
+                                        .calendar_today,
+                                    size: 18,
+                                  ),
+
+                                  const SizedBox(
+                                    width: 10,
+                                  ),
+
+                                  Text(
+                                      issue.callSlot?.dateText ?? ''
+                                  ),
+                                ],
+                              ),
+
+                              const SizedBox(
+                                height: 12,
+                              ),
+
+                              Row(
+                                children: [
+
+                                  const Icon(
+                                    Icons
+                                        .access_time,
+                                    size: 18,
+                                  ),
+
+                                  const SizedBox(
+                                    width: 10,
+                                  ),
+
+                                  Text(
+                                      issue.callSlot?.displayTime ?? ''
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+
+                        const SizedBox(
+                          height: 14,
+                        ),
+                      ],
 
                       Text(
                         DateFormat(

@@ -183,7 +183,6 @@ class ApiURL {
   static const String timeSlots = "$baseURL/api/help/call-slots";
   static const String report = "$baseURL/api/help/book-call-slot";
   static const String suggestion = "$baseURL/api/help/suggestions";
-  static const String bookingSlot = "$baseURL/api/help/call-slots";
 
   // NEED TO IMPLEMENT CORRECT API
   // static const String logout = '$baseURL/users/logout';

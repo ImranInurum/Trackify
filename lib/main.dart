@@ -201,14 +201,14 @@ List<BlocProvider> _buildBlocProviders() {
     BlocProvider<ReportIssueCubit>(
       create: (_) => ReportIssueCubit(
         ReportIssueRepository(
-          ReportIssueRemoteDataSource(),
+          ReportIssueRemoteDataSource(NetworkApiService()),
         ),
       ),
     ),
 
     BlocProvider<SuggestionCubit>(
       create: (_) => SuggestionCubit(
-        SuggestionRemoteDataSource(),
+        SuggestionRemoteDataSource(NetworkApiService()),
       ),
     ),
     BlocProvider<DeviceInstallationCubit>(

@@ -1,91 +1,43 @@
-import 'dart:convert';
-
-import 'package:http/http.dart' as http;
 import 'package:trackify/core/config/network/api_host.dart';
+import 'package:trackify/core/config/network/base_api_service.dart';
 
 import '../model/report_issue_model.dart';
 import '../model/suggestion_model.dart';
 
-
 class ReportIssueRemoteDataSource {
+  final BaseApiServices _apiServices;
+
+  ReportIssueRemoteDataSource(this._apiServices);
 
   Future<Map<String, dynamic>> submitIssue({
-
     required ReportIssueRequest request,
     required String token,
-
   }) async {
+    ApiURL.updateAuthToken(token);
+    final response = await _apiServices.getPostApiResponse(
+      ApiURL.report,
+      request.toJson(),
+    );
 
-    try {
-
-      final response = await http.post(
-
-        Uri.parse(
-          ApiURL.report,
-        ),
-
-        headers: {
-
-          "Content-Type":
-          "application/json",
-
-          "Authorization":
-          "Bearer $token",
-        },
-
-        body: jsonEncode(
-          request.toJson(),
-        ),
-      );
-
-      final data =
-      jsonDecode(response.body);
-
-      if (response.statusCode == 200 ||
-          response.statusCode == 201) {
-
-        return data;
-
-      } else {
-
-        throw Exception(
-          data["message"] ??
-              "Something went wrong",
-        );
-      }
-
-    } catch (e) {
-      throw Exception(
-        e.toString(),
-      );
-    }
+    return response.fold(
+      (l) => throw l,
+      (r) => r as Map<String, dynamic>,
+    );
   }
 
   Future<Map<String, dynamic>> submitSuggestion({
     required SuggestionRequest request,
     required String token,
   }) async {
-    try {
-      final response = await http.post(
-        Uri.parse(ApiURL.report),
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": "Bearer $token",
-        },
-        body: jsonEncode(request.toJson()),
-      );
+    ApiURL.updateAuthToken(token);
+    final response = await _apiServices.getPostApiResponse(
+      ApiURL.suggestion,
+      request.toJson(),
+    );
 
-      final data = jsonDecode(response.body);
-
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        return data;
-      } else {
-        throw Exception(
-          data["message"] ?? "Something went wrong",
-        );
-      }
-    } catch (e) {
-      throw Exception(e.toString());
-    }
+    return response.fold(
+      (l) => throw l,
+      (r) => r as Map<String, dynamic>,
+    );
   }
 }

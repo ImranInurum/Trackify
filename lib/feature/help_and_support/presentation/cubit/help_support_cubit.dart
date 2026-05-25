@@ -42,7 +42,7 @@ class ReportIssueCubit
 
       emit(
         ReportIssueSuccess(
-          response["message"],
+          response["message"]?.toString() ?? "Issue submitted successfully",
         ),
       );
 
@@ -66,7 +66,7 @@ class ReportIssueCubit
         token: token,
       );
       emit(ReportIssueSuccess(
-          response["message"] ?? "Suggestion submitted successfully"));
+          response["message"]?.toString() ?? "Suggestion submitted successfully"));
     } catch (e) {
       emit(ReportIssueError(e.toString()));
     }

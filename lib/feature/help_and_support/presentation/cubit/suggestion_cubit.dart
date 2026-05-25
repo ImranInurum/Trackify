@@ -44,7 +44,7 @@ class SuggestionCubit
 
       emit(
         SuggestionSuccess(
-          response["message"],
+          response["message"]?.toString() ?? "Suggestion submitted successfully",
         ),
       );
 

@@ -4,6 +4,8 @@ import 'package:trackify/feature/help_and_support/presentation/cubit/time_slot_s
 
 import '../../data/data source/time_slot_data_source.dart';
 
+import 'package:trackify/core/config/network/network_api_service.dart';
+
 class BookingSlotCubit
     extends Cubit<BookingSlotState> {
 
@@ -14,7 +16,7 @@ class BookingSlotCubit
 
   final BookingRemoteDataSource
   _remoteDataSource =
-  BookingRemoteDataSource();
+  BookingRemoteDataSource(NetworkApiService());
 
   /// GET API
   Future<void> getSlots() async {
@@ -42,48 +44,6 @@ class BookingSlotCubit
 
         BookingSlotError(
           message: e.toString(),
-        ),
-      );
-    }
-  }
-
-  /// POST API
-  Future<void> bookSlot({
-
-    required String token,
-    required String slotId,
-
-  }) async {
-
-    try {
-
-      emit(
-        BookingSlotSubmitLoading(),
-      );
-
-      final response =
-      await _remoteDataSource
-          .bookSlot(
-
-        token: token,
-        slotId: slotId,
-      );
-
-      emit(
-
-        BookingSlotSubmitSuccess(
-          message:
-          response["message"],
-        ),
-      );
-
-    } catch (e) {
-
-      emit(
-
-        BookingSlotSubmitError(
-          message:
-          e.toString(),
         ),
       );
     }

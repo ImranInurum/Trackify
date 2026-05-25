@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:intl/intl.dart';
 
 import '../../../../l10n/app_localizations.dart';
 import '../../data/model/time_slot_model.dart';
@@ -335,23 +334,45 @@ class _BookCallSlotScreenState
                                   slotDate.month == now.month &&
                                   slotDate.day == now.day;
 
-                              int parseTime(String time) {
+                              int getEndMinutes(TimeSlotModel slot) {
                                 try {
-                                  time = time.trim().toUpperCase();
+                                  final String endRaw = slot.endTime.trim().toUpperCase();
+                                  final String labelRaw = slot.label.trim().toUpperCase();
 
-                                  final isPM = time.contains('PM');
-                                  final isAM = time.contains('AM');
+                                  final String secondPartOfLabel = labelRaw.split('-').length == 2
+                                      ? labelRaw.split('-')[1].trim()
+                                      : '';
+                                  bool isPM = endRaw.contains('PM') || secondPartOfLabel.contains('PM');
+                                  bool isAM = endRaw.contains('AM') || secondPartOfLabel.contains('AM');
 
-                                  time = time.replaceAll('AM', '').replaceAll('PM', '').trim();
+                                  String timeOnly = endRaw.replaceAll('AM', '').replaceAll('PM', '').trim();
+                                  if (timeOnly.isEmpty && secondPartOfLabel.isNotEmpty) {
+                                    timeOnly = secondPartOfLabel.replaceAll('AM', '').replaceAll('PM', '').trim();
+                                  }
 
-                                  final parts = time.split(':');
-                                  if (parts.length != 2) return -1;
+                                  final parts = timeOnly.split(':');
+                                  if (parts.isEmpty || parts[0].isEmpty) return -1;
 
                                   int hour = int.parse(parts[0]);
-                                  int minute = int.parse(parts[1]);
+                                  int minute = parts.length > 1 ? int.parse(parts[1]) : 0;
+
+                                  if (!isPM && !isAM) {
+                                    if (hour == 12 || (hour >= 1 && hour <= 8)) {
+                                      isPM = true;
+                                    } else {
+                                      isAM = true;
+                                    }
+                                  }
 
                                   if (isPM && hour != 12) hour += 12;
-                                  if (isAM && hour == 12) hour = 0;
+                                  if (isAM && hour == 12) {
+                                    final String firstPartOfLabel = labelRaw.split('-').isNotEmpty
+                                        ? labelRaw.split('-')[0].trim()
+                                        : '';
+                                    if (!firstPartOfLabel.contains('AM')) {
+                                      hour = 0;
+                                    }
+                                  }
 
                                   return hour * 60 + minute;
                                 } catch (_) {
@@ -359,18 +380,7 @@ class _BookCallSlotScreenState
                                 }
                               }
 
-                              // 🔥 IMPORTANT FIX: extract END TIME from label if API is wrong
-                              String endTimeRaw;
-
-                              if (slot.endTime != null && slot.endTime.toString().isNotEmpty) {
-                                endTimeRaw = slot.endTime;
-                              } else {
-                                // fallback: extract from label "04:00 - 05:00"
-                                final parts = slot.label.split('-');
-                                endTimeRaw = parts.length == 2 ? parts[1].trim() : '';
-                              }
-
-                              final int endMinutes = parseTime(endTimeRaw);
+                              final int endMinutes = getEndMinutes(slot);
 
                               final bool isDisabled = isToday &&
                                   endMinutes != -1 &&

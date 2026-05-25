@@ -238,11 +238,10 @@ class _HelpSuggestionScreenState extends State<HelpSuggestionScreen> {
               ? BlocBuilder<ServiceLogsCubit, ServiceLogsState>(
                   builder: (context, serviceState) {
                     if (serviceState is ServiceLogsLoaded) {
-                      // Workaround to keep internal state synced if changed via selector
                       if (selectedVehicleId == null &&
                           serviceState.selectedVehicle != null) {
-
                         selectedVehicleId = serviceState.selectedVehicle?.id;
+                        selectedVehicleImei = serviceState.selectedVehicle?.imei;
                       }
 
                       return Container(
@@ -412,124 +411,178 @@ class _HelpSuggestionScreenState extends State<HelpSuggestionScreen> {
 
           const SizedBox(height: 20),
 
-          BlocConsumer<ReportIssueCubit, ReportIssueState>(
-            listener: (context, state) {
-              if (state is ReportIssueSuccess) {
-                ScaffoldMessenger.of(
-                  context,
-                ).showSnackBar(SnackBar(content: Text(state.message)));
+          BlocListener<SuggestionCubit, SuggestionState>(
+            listener: (context, suggestionState) {
+              if (suggestionState is SuggestionSuccess) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text(suggestionState.message)),
+                );
+                issueController.clear();
+                descriptionController.clear();
+                setState(() {
+                  selectedSuggestionType = null;
+                });
               }
-
-              if (state is ReportIssueError) {
-                ScaffoldMessenger.of(
-                  context,
-                ).showSnackBar(SnackBar(content: Text(state.error)));
+              if (suggestionState is SuggestionError) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text(suggestionState.error)),
+                );
               }
             },
+            child: BlocConsumer<ReportIssueCubit, ReportIssueState>(
+              listener: (context, state) {
+                if (state is ReportIssueSuccess) {
+                  ScaffoldMessenger.of(
+                    context,
+                  ).showSnackBar(SnackBar(content: Text(state.message)));
+                  setState(() {
+                    selectedCallSlotId = null;
+                  });
+                  issueController.clear();
+                  descriptionController.clear();
+                }
 
-            builder: (context, state) {
-              return Align(
-                alignment: Alignment.centerRight,
+                if (state is ReportIssueError) {
+                  ScaffoldMessenger.of(
+                    context,
+                  ).showSnackBar(SnackBar(content: Text(state.error)));
+                }
+              },
 
-                child: TextButton(
-                  onPressed: state is ReportIssueLoading
-                      ? null
-                      : () async {
+              builder: (context, state) {
+                final isSuggestionLoading = context.watch<SuggestionCubit>().state is SuggestionLoading;
+                final isLoading = state is ReportIssueLoading || isSuggestionLoading;
+                return Align(
+                  alignment: Alignment.centerRight,
 
-                          final token = AppPreference.instance.getSync(
-                            key: AppPreference.KEY_TOKEN,
-                          );
+                  child: TextButton(
+                    onPressed: isLoading
+                        ? null
+                        : () async {
 
-                          if (isReportIssue) {
-                            /// SELECT SLOT FIRST
-                            if (selectedCallSlotId == null) {
+                            final token = AppPreference.instance.getSync(
+                              key: AppPreference.KEY_TOKEN,
+                            );
+
+                            if (isReportIssue) {
+                              if (selectedVehicleId == null ||
+                                  selectedVehicleId!.isEmpty) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text(l10n.selectVehicle)),
+                                );
+                                return;
+                              }
+                              if (issueController.text.trim().isEmpty) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(l10n.whatIsYourIssueRelatedTo),
+                                  ),
+                                );
+                                return;
+                              }
+                              if (descriptionController.text.trim().isEmpty) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(l10n.giveShortDescription),
+                                  ),
+                                );
+                                return;
+                              }
+
                               final result = await Navigator.push(
                                 context,
-
                                 MaterialPageRoute(
                                   builder: (_) => BlocProvider(
                                     create: (_) =>
                                         BookingSlotCubit()..getSlots(),
-
                                     child: const BookCallSlotScreen(),
                                   ),
                                 ),
                               );
 
                               if (result != null) {
-                                setState(() {
-                                  selectedCallSlotId = result;
-                                });
+                                context.read<ReportIssueCubit>().submitIssue(
+                                  token: token,
+                                  request: ReportIssueRequest(
+                                    userId: AppPreference.instance.getSync(
+                                      key: AppPreference.KEY_USER_ID,
+                                    ) ?? "",
+                                    imei: selectedVehicleImei ?? "",
+                                    issueType: "report_issue",
+                                    issueRelatedTo: issueController.text,
+                                    description: descriptionController.text,
+                                    callSlotId: result,
+                                  ),
+                                );
+                              }
+                            } else {
+                              if (selectedSuggestionType == null ||
+                                  selectedSuggestionType!.isEmpty) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text(l10n.selectType)),
+                                );
+                                return;
+                              }
+                              if (issueController.text.trim().isEmpty) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(l10n.whatIsSuggestionSubject),
+                                  ),
+                                );
+                                return;
+                              }
+                              if (descriptionController.text.trim().isEmpty) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(l10n.giveSuggestionFeedback),
+                                  ),
+                                );
+                                return;
                               }
 
-                              return;
-                            }
+                              print("BUTTON CLICKED");
+                              print(selectedSuggestionType);
+                              context.read<SuggestionCubit>().submitSuggestion(
+                                token: token,
+
+                                request: SuggestionRequest(
+                                  userId: AppPreference.instance.getSync(
+                                    key: AppPreference.KEY_USER_ID,
+                                  ),
+                                  suggestionType: selectedSuggestionType ?? "other",
+                                  subject: issueController.text,
+                                  description: descriptionController.text,
 
 
-
-                            /// REPORT ISSUE API
-                            context.read<ReportIssueCubit>().submitIssue(
-                              token: token,
-
-                              request: ReportIssueRequest(
-                                vehicleId: selectedVehicleId ?? "",
-
-                                issueType: "report_issue",
-
-                                issueRelatedTo: issueController.text,
-
-                                description: descriptionController.text,
-
-                                callSlotId: selectedCallSlotId ?? "",
-                              ),
-                            );
-                          } else {
-
-                            print("BUTTON CLICKED");
-                            print(selectedSuggestionType);
-                            context.read<SuggestionCubit>().submitSuggestion(
-                              token: token,
-
-                              request: SuggestionRequest(
-                                userId: AppPreference.instance.getSync(
-                                  key: AppPreference.KEY_USER_ID,
                                 ),
-                                issueType: "suggestion",
-                                suggestionType: selectedSuggestionType ?? "other",
-                                subject: issueController.text,
-                                description: descriptionController.text,
+                              );
+                            }
+                          },
 
+                    child: isLoading
+                        ? const SizedBox(
+                            height: 20,
+                            width: 20,
 
-                              ),
-                            );
-                          }
-                        },
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          )
+                        : Text(
+                            isReportIssue
+                                ? l10n.selectCallSlot
+                                : l10n.send,
 
-                  child: state is ReportIssueLoading
-                      ? const SizedBox(
-                          height: 20,
-                          width: 20,
+                            style: TextStyle(
+                              color: Theme.of(context).colorScheme.primary,
 
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        )
-                      : Text(
-                          isReportIssue
-                              ? (selectedCallSlotId == null
-                                    ? l10n.selectCallSlot
-                                    : l10n.submit)
-                              : l10n.send,
+                              fontWeight: FontWeight.bold,
 
-                          style: TextStyle(
-                            color: Theme.of(context).colorScheme.primary,
-
-                            fontWeight: FontWeight.bold,
-
-                            fontSize: 16,
+                              fontSize: 16,
+                            ),
                           ),
-                        ),
-                ),
-              );
-            },
+                  ),
+                );
+              },
+            ),
           ),
         ],
       ),

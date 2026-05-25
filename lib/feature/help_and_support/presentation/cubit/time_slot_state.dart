@@ -42,39 +42,3 @@ class BookingSlotError
     message,
   ];
 }
-
-/// POST API LOADING
-class BookingSlotSubmitLoading
-    extends BookingSlotState {}
-
-/// POST API SUCCESS
-class BookingSlotSubmitSuccess
-    extends BookingSlotState {
-
-  final String message;
-
-  BookingSlotSubmitSuccess({
-    required this.message,
-  });
-
-  @override
-  List<Object?> get props => [
-    message,
-  ];
-}
-
-/// POST API ERROR
-class BookingSlotSubmitError
-    extends BookingSlotState {
-
-  final String message;
-
-  BookingSlotSubmitError({
-    required this.message,
-  });
-
-  @override
-  List<Object?> get props => [
-    message,
-  ];
-}

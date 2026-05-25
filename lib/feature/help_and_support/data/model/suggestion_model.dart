@@ -34,14 +34,12 @@ class MySuggestionModel {
 
 class SuggestionRequest {
   final String userId;
-  final String issueType;
   final String suggestionType;
   final String subject;
   final String description;
 
   SuggestionRequest({
     required this.userId,
-    required this.issueType,
     required this.suggestionType,
     required this.subject,
     required this.description,
@@ -50,7 +48,6 @@ class SuggestionRequest {
   Map<String, dynamic> toJson() {
     return {
       "userId": userId,
-      "issueType": issueType,
       "suggestionType": suggestionType,
       "subject": subject,
       "description": description,
