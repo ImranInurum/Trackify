@@ -31,7 +31,7 @@ class SafeParkingScreen extends StatelessWidget {
             appBar: AppBar(
               backgroundColor: theme.scaffoldBackgroundColor,
               elevation: 0,
-              centerTitle: true,
+              centerTitle: false,
               title: Text(
                 l10n.safeParking,
                 style: text.titleMedium?.copyWith(
@@ -40,7 +40,7 @@ class SafeParkingScreen extends StatelessWidget {
               ),
               leading: IconButton(
                 icon: Icon(
-                  Icons.arrow_back_ios_new_rounded,
+                  Icons.arrow_back_ios_new,
                   size: 20,
                   color: color.onSurface,
                 ),

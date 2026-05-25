@@ -109,7 +109,7 @@ class _SignInScreenState extends State<SignInScreen> {
           backgroundColor: Colors.transparent,
           elevation: 0,
           leading: IconButton(
-            icon: Icon(Icons.arrow_back_rounded, color: Theme.of(context).colorScheme.onSurface),
+            icon: Icon(Icons.arrow_back_ios_new, color: Theme.of(context).colorScheme.onSurface),
             onPressed: () {
               if (Navigator.of(context).canPop()) {
                 Navigator.of(context).pop();

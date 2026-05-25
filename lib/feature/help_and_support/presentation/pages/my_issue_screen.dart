@@ -48,8 +48,22 @@ class _MyIssueScreenState
 
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: theme.scaffoldBackgroundColor,
+        elevation: 0,
+        centerTitle: false,
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back_ios_new,
+            size: 20,
+            color: theme.colorScheme.onSurface,
+          ),
+          onPressed: () => Navigator.pop(context),
+        ),
         title: Text(
           widget.isSuggestion ? l10n.mySuggestions : l10n.myIssues,
+          style: theme.textTheme.titleMedium?.copyWith(
+            fontWeight: FontWeight.bold,
+          ),
         ),
       ),
 

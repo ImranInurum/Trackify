@@ -44,7 +44,7 @@ class _DeviceDataScreenState extends State<DeviceDataScreen> {
           elevation: 0,
           leading: IconButton(
             icon: Icon(
-              Icons.arrow_back_ios_new_rounded,
+              Icons.arrow_back_ios_new,
               size: 20,
               color: color.onSurface,
             ),
@@ -94,13 +94,13 @@ class _DeviceDataScreenState extends State<DeviceDataScreen> {
         ),
         leading: IconButton(
           icon: Icon(
-            Icons.arrow_back_ios_new_rounded,
+            Icons.arrow_back_ios_new,
             size: 20,
             color: color.onSurface,
           ),
           onPressed: () => Navigator.pop(context),
         ),
-        centerTitle: true,
+        centerTitle: false,
       ),
 
       body: ListView(

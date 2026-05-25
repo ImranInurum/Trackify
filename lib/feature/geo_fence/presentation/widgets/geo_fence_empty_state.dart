@@ -37,7 +37,7 @@ class GeoFenceEmptyState extends StatelessWidget {
             fontSize: 18,
           ),
         ),
-        centerTitle: true,
+        centerTitle: false,
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 40.0),

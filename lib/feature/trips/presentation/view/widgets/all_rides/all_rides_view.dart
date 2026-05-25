@@ -5,6 +5,8 @@ import 'package:trackify/l10n/app_localizations.dart';
 import '../../../cubit/ride_history_cubit.dart';
 import '../../../cubit/ride_history_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hive/hive.dart';
+import 'package:trackify/core/services/connectivity_service.dart';
 
 import 'package:trackify/feature/trips/presentation/view/ride_history_details/ride_history_details_screen.dart';
 
@@ -165,27 +167,47 @@ class _AllRidesState extends State<AllRides> {
                       endLoc.contains(_searchQuery);
                 }).toList();
 
-                return filteredRides.isEmpty
-                    ? const AllRidesEmptyState()
-                    : ListView.builder(
-                        padding: const EdgeInsets.all(16),
-                        itemCount: filteredRides.length,
-                        itemBuilder: (context, index) {
-                          final ride = filteredRides[index];
-                          return RideCard(
-                            ride: ride,
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      RideHistoryDetailsScreen(ride: ride),
-                                ),
-                              );
-                            },
-                          );
-                        },
-                      );
+                return RefreshIndicator(
+                  onRefresh: () async {
+                    final isConnected = await ConnectivityService().checkConnectivity();
+                    if (isConnected) {
+                      try {
+                        final box = Hive.box('map_cache');
+                        await box.clear();
+                      } catch (e) {
+                        debugPrint('Error clearing map cache: $e');
+                      }
+                    }
+                    await context.read<RideHistoryCubit>().getRideHistoryData();
+                  },
+                  child: filteredRides.isEmpty
+                      ? const SingleChildScrollView(
+                          physics: AlwaysScrollableScrollPhysics(),
+                          child: SizedBox(
+                            height: 400,
+                            child: AllRidesEmptyState(),
+                          ),
+                        )
+                      : ListView.builder(
+                          padding: const EdgeInsets.all(16),
+                          itemCount: filteredRides.length,
+                          itemBuilder: (context, index) {
+                            final ride = filteredRides[index];
+                            return RideCard(
+                              ride: ride,
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        RideHistoryDetailsScreen(ride: ride),
+                                  ),
+                                );
+                              },
+                            );
+                          },
+                        ),
+                );
               }
 
               return const SizedBox();

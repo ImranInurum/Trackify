@@ -95,11 +95,11 @@ class _DeviceInstallationScreenState extends State<DeviceInstallationScreen>
       child: Scaffold(
         backgroundColor: theme.scaffoldBackgroundColor,
         appBar: AppBar(
-          backgroundColor: theme.appBarTheme.backgroundColor,
+          backgroundColor: theme.scaffoldBackgroundColor,
           elevation: 0,
           centerTitle: false,
           leading: IconButton(
-            icon: Icon(Icons.arrow_back, color: theme.colorScheme.onSurface),
+            icon: Icon(Icons.arrow_back_ios_new, color: theme.colorScheme.onSurface),
             onPressed: () => Navigator.pop(context),
           ),
           title: Text(

@@ -1,5 +1,9 @@
+import 'dart:convert';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hive/hive.dart';
 import 'package:trackify/core/utils/shared_preferences.dart';
+import '../../../../core/config/network/exceptions.dart';
+import '../../domain/entities/vehicle_control_entity.dart';
 import '../../domain/repositories/vehicle_control_repository.dart';
 import '../state/vehicle_control_state.dart';
 
@@ -9,12 +13,52 @@ class VehicleControlCubit extends Cubit<VehicleControlState> {
   VehicleControlCubit(this.repository) : super(VehicleControlInitial());
 
   Future<void> loadVehicleDetails([String? vehicleIMEI]) async {
-    emit(VehicleControlLoading());
     try {
       final actualIMEI = (vehicleIMEI == null || vehicleIMEI.isEmpty)
           ? await AppPreference.instance.get(key: AppPreference.IMEI)
           : vehicleIMEI;
+
+      if (actualIMEI.isEmpty) {
+        emit(VehicleControlLoading());
+        final vehicle = await repository.getVehicleControlDetails(actualIMEI);
+        emit(VehicleControlLoaded(
+          vehicle: vehicle,
+          tempIcon: vehicle.selectedIcon,
+          tempColor: vehicle.selectedColor,
+        ));
+        return;
+      }
+
+      VehicleControlEntity? cachedVehicle;
+      final box = Hive.box('map_cache');
+      final cacheData = box.get('vehicle_control_$actualIMEI');
+      if (cacheData != null) {
+        try {
+          cachedVehicle = VehicleControlEntity.fromJson(jsonDecode(cacheData.toString()));
+        } catch (_) {}
+      }
+
+      final isAlreadyLoaded = (state is VehicleControlLoaded &&
+          (state as VehicleControlLoaded).vehicle.imei == actualIMEI);
+
+      if (!isAlreadyLoaded) {
+        if (cachedVehicle != null) {
+          emit(VehicleControlLoaded(
+            vehicle: cachedVehicle,
+            tempIcon: cachedVehicle.selectedIcon,
+            tempColor: cachedVehicle.selectedColor,
+          ));
+        } else {
+          emit(VehicleControlLoading());
+        }
+      }
+
       final vehicle = await repository.getVehicleControlDetails(actualIMEI);
+
+      // Save to cache
+      await box.put('vehicle_control_$actualIMEI', jsonEncode(vehicle.toJson()));
+      await AppPreference.instance.set(key: "last_vehicle_control_imei", value: actualIMEI);
+
       emit(VehicleControlLoaded(
         vehicle: vehicle,
         tempIcon: vehicle.selectedIcon,
@@ -28,7 +72,19 @@ class VehicleControlCubit extends Cubit<VehicleControlState> {
         actionError: e.message,
       ));
     } catch (e) {
-      emit(VehicleControlError(e.toString()));
+      final isConnectionError = e is NoInternetException ||
+          e.toString().contains("SocketException") ||
+          e.toString().contains("No Internet") ||
+          e.toString().contains("Connection failed");
+
+      if (state is VehicleControlLoaded) {
+        final currentState = state as VehicleControlLoaded;
+        if (!isConnectionError) {
+          emit(currentState.copyWith(actionError: e.toString()));
+        }
+      } else {
+        emit(VehicleControlError(e.toString()));
+      }
     }
   }
 
@@ -134,6 +190,15 @@ class VehicleControlCubit extends Cubit<VehicleControlState> {
     try {
       emit(VehicleControlLoading());
       await repository.deleteVehicle(vehicleIMEI);
+      
+      final box = Hive.box('map_cache');
+      await box.delete('vehicle_control_$vehicleIMEI');
+      
+      final lastViewedIMEI = await AppPreference.instance.get(key: "last_vehicle_control_imei");
+      if (lastViewedIMEI == vehicleIMEI) {
+        await AppPreference.instance.clearByKey(key: "last_vehicle_control_imei");
+      }
+
       emit(const VehicleControlDeleted());
     } catch (e) {
       if (currentState is VehicleControlLoaded) {

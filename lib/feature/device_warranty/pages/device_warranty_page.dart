@@ -72,7 +72,7 @@ class _WarrantyScreenState extends State<WarrantyScreen> {
       appBar: AppBar(
         backgroundColor: theme.scaffoldBackgroundColor,
         elevation: 0,
-        centerTitle: true,
+        centerTitle: false,
         leading: IconButton(
           icon: Icon(
             Icons.arrow_back_ios_new,

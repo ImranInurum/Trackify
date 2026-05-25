@@ -63,6 +63,13 @@ class _CategoryScreenState extends State<CategoryScreen> {
         backgroundColor: colorScheme.surface,
         centerTitle: false,
         elevation: 0,
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back_ios_new,
+            color: colorScheme.onSurface,
+          ),
+          onPressed: () => Navigator.pop(context),
+        ),
         title: Text(
           l10n.tutorialVideos,
           style: TextStyle(

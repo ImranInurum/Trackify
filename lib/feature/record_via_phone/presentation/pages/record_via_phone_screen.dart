@@ -63,6 +63,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final color = theme.colorScheme;
 
     return MultiBlocListener(
       listeners: [
@@ -90,6 +91,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
               if (points.isNotEmpty) {
                 // Animate History map to fit bounds (non-blocking)
                 _pastMapController.future.then((controller) {
+                  if (!mounted) return;
                   final bounds = _getBounds(points);
                   controller.animateCamera(
                     CameraUpdate.newLatLngBounds(bounds, 50),
@@ -99,6 +101,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
                 // Jump live map to the last known position (non-blocking)
                 if (!state.isRecording) {
                   _rideMapController.future.then((controller) {
+                    if (!mounted) return;
                     controller.animateCamera(
                       CameraUpdate.newLatLngZoom(points.last, 15),
                     );
@@ -108,6 +111,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
             } else if (state.isRecording && state.currentRidePoints.isNotEmpty) {
               // Follow the current recording path
               _rideMapController.future.then((controller) {
+                if (!mounted) return;
                 controller.animateCamera(
                   CameraUpdate.newLatLng(state.currentRidePoints.last),
                 );
@@ -123,6 +127,14 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
           appBar: AppBar(
             elevation: 0,
             backgroundColor: Colors.transparent,
+            leading: IconButton(
+              icon: Icon(
+                Icons.arrow_back_ios_new,
+                size: 20,
+                color: color.onSurface,
+              ),
+              onPressed: () => Navigator.pop(context),
+            ),
             title: Text(
               l10n.phoneTracking,
               style: theme.textTheme.headlineSmall?.copyWith(

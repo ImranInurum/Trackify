@@ -1,5 +1,7 @@
+import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hive/hive.dart';
 import 'package:trackify/core/utils/shared_preferences.dart';
 import 'package:trackify/feature/trips/presentation/cubit/ride_history_state.dart';
 import '../../../../core/services/geocoding_service.dart';
@@ -12,22 +14,49 @@ class RideHistoryCubit extends Cubit<RideHistoryState> {
 
   RideHistoryCubit(this._assignDeviceUseCase) : super(RideHistoryInitial());
   final prefs = AppPreference.instance;
+
   Future<void> getRideHistoryData() async {
-    emit(RideHistoryLoading());
-    await Future.delayed(const Duration(seconds: 2));
-    await AppPreference.instance.get(key: AppPreference.KEY_USER_ID);
     final iMEI = await prefs.get(key: AppPreference.IMEI);
+    final box = Hive.box('map_cache');
+    final cacheKey = 'ride_history_$iMEI';
+    final cachedData = box.get(cacheKey);
+
+    List<Ride>? cachedList;
+    if (cachedData != null) {
+      try {
+        final decoded = jsonDecode(cachedData.toString()) as List<dynamic>;
+        cachedList = decoded.map((e) => Ride.fromJson(e as Map<String, dynamic>)).toList();
+      } catch (_) {
+        // Cache parsing failed, ignore
+      }
+    }
+
+    if (cachedList != null && cachedList.isNotEmpty) {
+      emit(RideHistorySuccess(cachedList));
+    } else {
+      emit(RideHistoryLoading());
+    }
+
     final request = {
-      'imei': iMEI ,
+      'imei': iMEI,
     };
     debugPrint('Assigning device with request: $request');
     final result = await _assignDeviceUseCase.getRideHistory(body: request);
     result.fold(
-          (exception) => emit(RideHistoryFailure(exception)),
-          (data) {
-            emit(RideHistorySuccess(data));
-            _geocodeRides(data);
-          },
+      (exception) {
+        if (cachedList == null || cachedList.isEmpty) {
+          emit(RideHistoryFailure(exception));
+        }
+      },
+      (data) {
+        try {
+          box.put(cacheKey, jsonEncode(data.map((e) => e.toJson()).toList()));
+        } catch (_) {
+          // Cache saving failed, ignore
+        }
+        emit(RideHistorySuccess(data));
+        _geocodeRides(data);
+      },
     );
   }
 

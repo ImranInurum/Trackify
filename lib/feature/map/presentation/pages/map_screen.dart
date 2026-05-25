@@ -128,7 +128,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
   Future<void> _loadCustomMarker() async {
     final Uint8List markerIcon = await MapUtils.getBytesFromAsset(
       AppImages.bikeImage,
-      100,
+      80,
     );
     if (mounted) {
       setState(() {

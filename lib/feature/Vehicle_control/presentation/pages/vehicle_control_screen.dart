@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:trackify/app/app_navigation.dart';
@@ -100,8 +101,8 @@ class VehicleControlView extends StatelessWidget {
                   leading: GestureDetector(
                     onTap: () => Navigator.pop(context),
                     child: Icon(
-                      Icons.arrow_back,
-                      color: Colors.black,
+                      Icons.arrow_back_ios_new,
+                      color: colorScheme.onSurface,
                       size: 24,
                     ),
                   ),
@@ -134,10 +135,16 @@ class VehicleControlView extends StatelessWidget {
                                 Image(
                                   image: vehicle.bikeImage != null
                                       ? (vehicle.bikeImage!.startsWith('http')
-                                          ? NetworkImage(vehicle.bikeImage!)
+                                          ? CachedNetworkImageProvider(vehicle.bikeImage!)
                                           : FileImage(File(vehicle.bikeImage!)) as ImageProvider)
                                       : AssetImage(AppImages.bikeInfoImage),
                                   fit: BoxFit.cover,
+                                  errorBuilder: (context, error, stackTrace) {
+                                    return Image.asset(
+                                      AppImages.bikeInfoImage,
+                                      fit: BoxFit.cover,
+                                    );
+                                  },
                                 ),
                                 Container(
                                   decoration: BoxDecoration(

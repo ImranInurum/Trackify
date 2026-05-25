@@ -31,6 +31,16 @@ class DiscoverModel extends DiscoverEntity {
   }
 
 
+  Map<String, dynamic> toMap() {
+    return {
+      'title': title,
+      'description': subtitle,
+      'exploredText': exploredText,
+      'bannerImage': image,
+      '_id': id,
+    };
+  }
+
   static List<DiscoverModel> fromList(List data,) {
     return data
         .map(

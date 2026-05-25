@@ -62,7 +62,7 @@ class _GeoFenceScreenState extends State<GeoFenceScreen> {
                 backgroundColor: colorScheme.surface,
                 elevation: 0,
                 leading: IconButton(
-                  icon: Icon(Icons.arrow_back, color: colorScheme.onSurface),
+                  icon: Icon(Icons.arrow_back_ios_new, color: colorScheme.onSurface),
                   onPressed: () => Navigator.pop(context),
                 ),
                 title: Text(

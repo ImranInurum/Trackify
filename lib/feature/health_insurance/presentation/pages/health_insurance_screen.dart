@@ -47,7 +47,7 @@ class _HealthInsuranceScreenState extends State<HealthInsuranceScreen> {
           onPressed: () {
             Navigator.pop(context);
           },
-          icon: Icon(Icons.arrow_back, color: colorScheme.onSurface),
+          icon: Icon(Icons.arrow_back_ios_new, color: colorScheme.onSurface),
         ),
         title: Text(
           l10n.healthInsurance,

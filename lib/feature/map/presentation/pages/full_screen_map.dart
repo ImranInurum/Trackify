@@ -90,7 +90,7 @@ class _FullScreenMapState extends State<FullScreenMap>
   Future<void> _loadCustomMarker() async {
     final Uint8List markerIcon = await MapUtils.getBytesFromAsset(
       AppImages.bikeImage,
-      140,
+      110,
     );
     if (mounted) {
       setState(() {
@@ -826,7 +826,7 @@ class _FullScreenMapState extends State<FullScreenMap>
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _buildRoundButton(
-            Icons.arrow_back,
+            Icons.arrow_back_ios_new,
             onTap: () => Navigator.pop(context),
           ),
           Column(

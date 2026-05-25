@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'ride_history_response_model.dart';
 
@@ -8,6 +7,26 @@ class RidePoint {
   final String? time;
 
   RidePoint({required this.location, required this.speed, this.time});
+
+  Map<String, dynamic> toJson() {
+    return {
+      'lat': location.latitude,
+      'lng': location.longitude,
+      'speed': speed,
+      'time': time,
+    };
+  }
+
+  factory RidePoint.fromJson(Map<String, dynamic> json) {
+    return RidePoint(
+      location: LatLng(
+        (json['lat'] as num?)?.toDouble() ?? 0.0,
+        (json['lng'] as num?)?.toDouble() ?? 0.0,
+      ),
+      speed: (json['speed'] as num?)?.toDouble() ?? 0.0,
+      time: json['time'] as String?,
+    );
+  }
 }
 
 class Ride {
@@ -40,6 +59,51 @@ class Ride {
     required this.polylinePoints,
     required this.points,
   });
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'date': date,
+      'startTime': startTime,
+      'endTime': endTime,
+      'distance': distance,
+      'startLocation': startLocation,
+      'endLocation': endLocation,
+      'duration': duration,
+      'topSpeed': topSpeed,
+      'avgSpeed': avgSpeed,
+      'mapImageUrl': mapImageUrl,
+      'polylinePoints': polylinePoints.map((p) => {'lat': p.latitude, 'lng': p.longitude}).toList(),
+      'points': points.map((p) => p.toJson()).toList(),
+    };
+  }
+
+  factory Ride.fromJson(Map<String, dynamic> json) {
+    return Ride(
+      id: json['id'] ?? '',
+      date: json['date'] ?? '',
+      startTime: json['startTime'] ?? '',
+      endTime: json['endTime'] ?? '',
+      distance: (json['distance'] as num?)?.toDouble() ?? 0.0,
+      startLocation: json['startLocation'] ?? '',
+      endLocation: json['endLocation'] ?? '',
+      duration: json['duration'] ?? '',
+      topSpeed: (json['topSpeed'] as num?)?.toDouble() ?? 0.0,
+      avgSpeed: (json['avgSpeed'] as num?)?.toDouble() ?? 0.0,
+      mapImageUrl: json['mapImageUrl'] ?? '',
+      polylinePoints: (json['polylinePoints'] as List<dynamic>?)
+              ?.map((e) => LatLng(
+                    (e['lat'] as num).toDouble(),
+                    (e['lng'] as num).toDouble(),
+                  ))
+              .toList() ??
+          [],
+      points: (json['points'] as List<dynamic>?)
+              ?.map((e) => RidePoint.fromJson(e as Map<String, dynamic>))
+              .toList() ??
+          [],
+    );
+  }
 
   Ride copyWith({
     String? id,

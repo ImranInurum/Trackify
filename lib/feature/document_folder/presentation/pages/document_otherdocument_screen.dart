@@ -404,7 +404,7 @@ class _DocumentOtherdocumentScreenState extends State<DocumentOtherdocumentScree
                   GestureDetector(
                     onTap: () => Navigator.pop(context),
                     child:
-                    Icon(Icons.arrow_back, color: colorScheme.onSurface),
+                    Icon(Icons.arrow_back_ios_new, color: colorScheme.onSurface),
                   ),
                   const SizedBox(width: 90),
                   Text(

@@ -397,6 +397,13 @@ class _TutorialScreenState
 
         elevation: 0,
         centerTitle: false,
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back_ios_new,
+            color: colorScheme.onSurface,
+          ),
+          onPressed: () => Navigator.pop(context),
+        ),
 
         title: Text(
           widget.title,

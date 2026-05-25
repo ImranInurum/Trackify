@@ -236,8 +236,9 @@ class _AddFuelScreenState extends State<AddFuelScreen> with TickerProviderStateM
                       onPressed: () {
                         Navigator.pop(context);
                       },
-                      icon: const Icon(
-                        Icons.arrow_back,
+                      icon: Icon(
+                        Icons.arrow_back_ios_new,
+                        color: colorScheme.onSurface,
                       ),
                     ),
 

@@ -247,8 +247,8 @@ class _DocumentFolderScreenState extends State<DocumentFolderScreen> {
                   GestureDetector(
                     onTap: () => Navigator.pop(context),
                     child: Icon(
-                      Icons.arrow_back,
-                      color: colorScheme.onSurfaceVariant,
+                      Icons.arrow_back_ios_new,
+                      color: colorScheme.onSurface,
                     ),
                   ),
                   const SizedBox(height: 12),

@@ -2,6 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:trackify/feature/add_vehicle_and_device/add_vehicle/domain/use_case/add_vehicle_use_case.dart';
 import 'package:trackify/feature/document_folder/presentation/cubit/document_cubit.dart';
 import 'package:trackify/feature/help_and_support/data/repository_impl/help_support_repository_impl.dart';
@@ -153,6 +154,8 @@ Future<void> main() async {
 Future<void> _setUp() async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await AppPreference.instance.init();
+  await Hive.initFlutter();
+  await Hive.openBox('map_cache');
   await NotificationService.initialize();
 
   debugPrint('Trackify bootstrap completed');

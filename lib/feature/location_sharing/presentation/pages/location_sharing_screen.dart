@@ -35,8 +35,8 @@ class _LocationSharingScreenState extends State<LocationSharingScreen> {
           elevation: 0,
           leading: IconButton(
             icon: Icon(
-              Icons.arrow_back_ios_new_rounded,
-              color: theme.appBarTheme.foregroundColor,
+              Icons.arrow_back_ios_new,
+              color: theme.colorScheme.onSurface,
               size: 20,
             ),
             onPressed: () => Navigator.of(context).pop(),

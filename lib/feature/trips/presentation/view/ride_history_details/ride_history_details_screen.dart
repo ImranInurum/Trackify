@@ -789,7 +789,7 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
                   children: [
                     IconButton(
                       icon: Icon(
-                        Icons.arrow_back,
+                        Icons.arrow_back_ios_new,
                         color: Theme.of(context).colorScheme.onSurface,
                       ),
                       onPressed: () => Navigator.pop(context),
