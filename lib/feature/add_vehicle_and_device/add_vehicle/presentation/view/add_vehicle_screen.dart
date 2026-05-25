@@ -283,7 +283,7 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back_rounded, color: theme.appBarTheme.foregroundColor),
+          icon: Icon(Icons.arrow_back_ios_new, color: theme.appBarTheme.foregroundColor),
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: Text(

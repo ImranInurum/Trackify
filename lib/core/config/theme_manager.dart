@@ -84,7 +84,7 @@ class ThemeManager {
       ),
 
       appBarTheme: AppBarTheme(
-        centerTitle: true,
+        centerTitle: false,
         elevation: 0,
         backgroundColor: config.appBar.background,
         foregroundColor: config.appBar.textColor,
@@ -170,7 +170,7 @@ class ThemeManager {
     ),
 
     appBarTheme: const AppBarTheme(
-      centerTitle: true,
+      centerTitle: false,
       elevation: 0,
       backgroundColor: Colors.white,
       foregroundColor: AppColors.textPrimaryLight,
@@ -228,7 +228,7 @@ class ThemeManager {
       onError: Colors.white,
     ),
     appBarTheme: const AppBarTheme(
-      centerTitle: true,
+      centerTitle: false,
       elevation: 0,
       backgroundColor: AppColors.backgroundDark,
       foregroundColor: AppColors.textPrimaryDark,

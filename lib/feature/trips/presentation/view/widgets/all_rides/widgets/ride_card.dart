@@ -52,6 +52,7 @@ class RideCard extends StatelessWidget {
                         points: ride.polylinePoints,
                         startLabel: ride.startLocation,
                         endLabel: ride.endLocation,
+                        rideId: ride.id,
                       ),
                     ),
                     Positioned(

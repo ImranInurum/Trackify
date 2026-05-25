@@ -96,7 +96,7 @@ class _NotificationTimelineViewState extends State<NotificationTimelineView> {
         elevation: 0,
         centerTitle: false,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: primaryTextColor),
+          icon: Icon(Icons.arrow_back_ios_new, color: theme.colorScheme.onSurface),
           onPressed: () => Navigator.pop(context),
         ),
         titleSpacing: 0,

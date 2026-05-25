@@ -439,7 +439,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             elevation: 0,
             surfaceTintColor: Colors.transparent,
             leading: IconButton(
-              icon: Icon(Icons.arrow_back, color: onSurface),
+              icon: Icon(Icons.arrow_back_ios_new, color: onSurface),
               onPressed: () => Navigator.pop(context),
             ),
             title: Text(

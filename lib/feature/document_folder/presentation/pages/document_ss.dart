@@ -378,7 +378,7 @@ class _DocumentSubScreenState extends State<DocumentSubScreen> {
                       children: [
                         GestureDetector(
                           onTap: () => Navigator.pop(context),
-                          child: Icon(Icons.arrow_back, color: colorScheme.onSurface),
+                          child: Icon(Icons.arrow_back_ios_new, color: colorScheme.onSurface),
                         ),
                         Expanded(
                           child: Center(

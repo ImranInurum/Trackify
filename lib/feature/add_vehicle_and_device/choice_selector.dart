@@ -53,7 +53,7 @@ class _ChoiceSelectorState extends State<ChoiceSelector> {
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Theme.of(context).colorScheme.onSurface),
+          icon: Icon(Icons.arrow_back_ios_new, color: Theme.of(context).colorScheme.onSurface),
           onPressed: () {
             if (Navigator.of(context).canPop()) {
               Navigator.of(context).pop();

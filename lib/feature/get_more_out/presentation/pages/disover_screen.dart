@@ -47,7 +47,7 @@ class _DiscoverFeaturesScreenState
             Navigator.pop(context);
           },
           icon: Icon(
-            Icons.arrow_back_ios,
+            Icons.arrow_back_ios_new,
             color: colorScheme.onSurface,
             size: 18,
           ),

@@ -45,12 +45,12 @@ class _OverSpeedAlertScreenState extends State<OverSpeedAlertScreen> {
             Navigator.pop(context);
           },
           icon: Icon(
-            Icons.arrow_back_ios_new_rounded,
+            Icons.arrow_back_ios_new,
             size: 20,
             color: theme.colorScheme.onSurface,
           ),
         ),
-        centerTitle: true,
+        centerTitle: false,
       ),
       body: BlocBuilder<OverspeedAlertCubit, OverspeedAlertState>(
         builder: (context, state) {

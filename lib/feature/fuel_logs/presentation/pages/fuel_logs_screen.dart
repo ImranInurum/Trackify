@@ -122,6 +122,14 @@ class _FuelLogsScreenState extends State<FuelLogsScreen>
           if (state is! ServiceLogsLoaded && state is! ServiceLogsSubmitting) {
             return Scaffold(
               backgroundColor: theme.scaffoldBackgroundColor,
+              appBar: AppBar(
+                backgroundColor: theme.scaffoldBackgroundColor,
+                elevation: 0,
+                leading: IconButton(
+                  icon: Icon(Icons.arrow_back_ios_new, color: theme.colorScheme.onSurface),
+                  onPressed: () => Navigator.pop(context),
+                ),
+              ),
               body: Center(
                 child: CircularProgressIndicator(color: theme.primaryColor),
               ),
@@ -136,7 +144,7 @@ class _FuelLogsScreenState extends State<FuelLogsScreen>
             body: Column(
               children: [
                 VehicleSelectionAppBar(
-                  isMinimal: true,
+                  isMinimal: false,
                   title: l10n.fuelLogs,
                   selectedVehicle: currentState.selectedVehicle,
                   vehicles: currentState.vehicles,

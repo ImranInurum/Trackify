@@ -105,7 +105,7 @@ class _AddOverspeedAlertScreenState extends State<AddOverspeedAlertScreen> {
         backgroundColor: theme.scaffoldBackgroundColor,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios_new_rounded,
+          icon: Icon(Icons.arrow_back_ios_new,
               color: theme.colorScheme.onSurface, size: 20),
           onPressed: () => Navigator.pop(context),
         ),
@@ -114,7 +114,7 @@ class _AddOverspeedAlertScreenState extends State<AddOverspeedAlertScreen> {
           style: theme.textTheme.titleMedium
               ?.copyWith(fontWeight: FontWeight.bold),
         ),
-        centerTitle: true,
+        centerTitle: false,
       ),
       body: BlocConsumer<OverspeedAlertCubit, OverspeedAlertState>(
         listener: (context, state) {

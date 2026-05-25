@@ -55,7 +55,7 @@ class _GeofancyScreenState extends State<GeofancyScreen> {
         leading: IconButton(
           onPressed: () => Navigator.pop(context),
           icon: Icon(
-            Icons.arrow_back_ios,
+            Icons.arrow_back_ios_new,
             color: colorScheme.onSurface,
             size: 18,
           ),

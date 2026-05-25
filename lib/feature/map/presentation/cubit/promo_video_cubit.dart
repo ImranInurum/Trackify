@@ -1,4 +1,6 @@
+import 'dart:convert';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hive/hive.dart';
 import 'package:trackify/feature/map/data/entity/promo_video_model.dart';
 import 'package:trackify/feature/map/domain/repository/promo_video_repository.dart';
 import 'package:trackify/feature/map/presentation/cubit/promo_video_state.dart';
@@ -12,14 +14,43 @@ class PromoVideoCubit extends Cubit<PromoVideoState> {
   int _displayedCount = 5;
 
   Future<void> fetchPromoVideos() async {
-    emit(PromoVideoLoading());
+    final box = Hive.box('map_cache');
+    final cachedData = box.get('promo_videos_data');
+
+    List<PromoVideoModel> cachedList = [];
+    if (cachedData != null) {
+      try {
+        final decoded = jsonDecode(cachedData.toString()) as List<dynamic>;
+        cachedList = decoded.map((e) => PromoVideoModel.fromJson(e as Map<String, dynamic>)).toList();
+      } catch (_) {
+        // Cache parsing failed, ignore
+      }
+    }
+
+    if (cachedList.isNotEmpty) {
+      _allVideos = cachedList;
+      _displayedCount = 5;
+      _emitLoadedState();
+    } else {
+      emit(PromoVideoLoading());
+    }
+
     final result = await _repository.getPromoVideos();
     
     result.fold(
-      (exception) => emit(PromoVideoError(exception.message)),
+      (exception) {
+        if (cachedList.isEmpty) {
+          emit(PromoVideoError(exception.message));
+        }
+      },
       (videos) {
         _allVideos = videos;
         _displayedCount = 5;
+        try {
+          box.put('promo_videos_data', jsonEncode(videos.map((e) => e.toJson()).toList()));
+        } catch (_) {
+          // Cache saving failed, ignore
+        }
         _emitLoadedState();
       },
     );

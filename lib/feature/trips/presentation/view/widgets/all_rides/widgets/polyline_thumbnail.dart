@@ -3,6 +3,8 @@ import 'package:flutter/services.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'dart:async';
 import 'dart:ui' as ui;
+import 'package:hive/hive.dart';
+import 'package:trackify/core/services/connectivity_service.dart';
 
 class PolylineThumbnail extends StatefulWidget {
   final List<LatLng> points;
@@ -10,6 +12,7 @@ class PolylineThumbnail extends StatefulWidget {
   final double strokeWidth;
   final String startLabel;
   final String endLabel;
+  final String? rideId;
 
   const PolylineThumbnail({
     super.key,
@@ -18,6 +21,7 @@ class PolylineThumbnail extends StatefulWidget {
     this.strokeWidth = 3.0,
     this.startLabel = 'Start',
     this.endLabel = 'End',
+    this.rideId,
   });
 
   @override
@@ -26,20 +30,70 @@ class PolylineThumbnail extends StatefulWidget {
 
 class _PolylineThumbnailState extends State<PolylineThumbnail> {
   final Completer<GoogleMapController> _controller = Completer();
+  Uint8List? _cachedBytes;
   String? _darkMapStyle;
   BitmapDescriptor? _startIcon;
   BitmapDescriptor? _endIcon;
 
+  static String? _globalDarkMapStyle;
+
   @override
   void initState() {
     super.initState();
+    _loadCachedSnapshot();
     _loadMapStyle();
     _createMarkers();
   }
 
+  @override
+  void didUpdateWidget(covariant PolylineThumbnail oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    final oldSignature = "${oldWidget.points.length}_${oldWidget.points.isEmpty ? '' : oldWidget.points.first.latitude}_${oldWidget.points.isEmpty ? '' : oldWidget.points.last.latitude}";
+    final newSignature = "${widget.points.length}_${widget.points.isEmpty ? '' : widget.points.first.latitude}_${widget.points.isEmpty ? '' : widget.points.last.latitude}";
+    
+    if (widget.rideId != oldWidget.rideId || oldSignature != newSignature) {
+      setState(() {
+        _loadCachedSnapshot();
+      });
+      _createMarkers();
+    }
+  }
+
+  void _loadCachedSnapshot() {
+    if (widget.rideId != null) {
+      try {
+        final box = Hive.box('map_cache');
+        final signature = "${widget.points.length}_${widget.points.isEmpty ? '' : widget.points.first.latitude}_${widget.points.isEmpty ? '' : widget.points.last.latitude}";
+        final cachedSignature = box.get('map_thumbnail_v2_sig_${widget.rideId}');
+        if (cachedSignature == signature) {
+          final data = box.get('map_thumbnail_v2_${widget.rideId}');
+          if (data is Uint8List) {
+            _cachedBytes = data;
+            return;
+          }
+        }
+        _cachedBytes = null;
+      } catch (e) {
+        debugPrint('Error loading cached map snapshot: $e');
+        _cachedBytes = null;
+      }
+    } else {
+      _cachedBytes = null;
+    }
+  }
+
   Future<void> _loadMapStyle() async {
+    if (_globalDarkMapStyle != null) {
+      if (mounted) {
+        setState(() {
+          _darkMapStyle = _globalDarkMapStyle;
+        });
+      }
+      return;
+    }
     try {
       final style = await rootBundle.loadString('assets/map_styles/dark_map.json');
+      _globalDarkMapStyle = style;
       if (mounted) {
         setState(() {
           _darkMapStyle = style;
@@ -106,6 +160,15 @@ class _PolylineThumbnailState extends State<PolylineThumbnail> {
 
   @override
   Widget build(BuildContext context) {
+    if (_cachedBytes != null) {
+      return Image.memory(
+        _cachedBytes!,
+        fit: BoxFit.cover,
+        width: double.infinity,
+        height: double.infinity,
+      );
+    }
+
     // Filter out invalid (0,0) GPS points
     final validPoints = widget.points
         .where((p) => p.latitude != 0.0 || p.longitude != 0.0)
@@ -212,20 +275,50 @@ class _PolylineThumbnailState extends State<PolylineThumbnail> {
                     anchor: const Offset(0.5, 1.0), // Bottom tip of the pin
                   ),
               },
-              onMapCreated: (GoogleMapController controller) {
+              onMapCreated: (GoogleMapController controller) async {
                 if (!_controller.isCompleted) {
                   _controller.complete(controller);
                 }
+                // If map style is not loaded yet, wait for it
+                if (_darkMapStyle == null) {
+                  await _loadMapStyle();
+                }
                 // Set the style again on controller to be absolutely safe
-                if (_darkMapStyle != null) {
-                  controller.setMapStyle(_darkMapStyle);
+                if (_darkMapStyle != null && mounted) {
+                  await controller.setMapStyle(_darkMapStyle);
                 }
                 // Delay slightly to allow layout to complete
-                Future.delayed(const Duration(milliseconds: 100), () {
-                  if (mounted) {
-                    controller.moveCamera(CameraUpdate.newLatLngBounds(bounds, 20.0));
-                  }
-                });
+                await Future.delayed(const Duration(milliseconds: 150));
+                if (mounted) {
+                  await controller.moveCamera(CameraUpdate.newLatLngBounds(bounds, 20.0));
+                }
+                
+                // Take a snapshot after a delay to allow markers/polylines/tiles to render
+                if (widget.rideId != null) {
+                  Future.delayed(const Duration(milliseconds: 3000), () async {
+                    if (mounted) {
+                      try {
+                        final isConnected = await ConnectivityService().checkConnectivity();
+                        if (!isConnected) {
+                          debugPrint('Device is offline, skipping caching of blank map thumbnail.');
+                          return;
+                        }
+                        final bytes = await controller.takeSnapshot();
+                        if (bytes != null && mounted) {
+                          final box = Hive.box('map_cache');
+                          final signature = "${widget.points.length}_${widget.points.isEmpty ? '' : widget.points.first.latitude}_${widget.points.isEmpty ? '' : widget.points.last.latitude}";
+                          await box.put('map_thumbnail_v2_${widget.rideId}', bytes);
+                          await box.put('map_thumbnail_v2_sig_${widget.rideId}', signature);
+                          setState(() {
+                            _cachedBytes = bytes;
+                          });
+                        }
+                      } catch (e) {
+                        debugPrint('Error taking map snapshot: $e');
+                      }
+                    }
+                  });
+                }
               },
             ),
           ),

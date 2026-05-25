@@ -39,24 +39,27 @@ class _CheckoutScreenState extends State<CheckoutScreen>
 
 
     return Container(
-      margin: EdgeInsets.only(bottom: size.height * 0.022),
+      margin: EdgeInsets.only(bottom: size.height * 0.012),
       decoration: BoxDecoration(
         color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(16),
       ),
       child: TextField(
-        style: TextStyle(color: colorScheme.onSurface),
+        style: TextStyle(
+          color: colorScheme.onSurface,
+          fontSize: 15,
+        ),
         decoration: InputDecoration(
           suffixIcon: suffix,
           hintText: hint,
           hintStyle: TextStyle(
             color: colorScheme.onSurfaceVariant,
-            fontSize: 18,
+            fontSize: 15,
           ),
           border: InputBorder.none,
           contentPadding: EdgeInsets.symmetric(
             horizontal: size.width * 0.05,
-            vertical: size.height * 0.027,
+            vertical: size.height * 0.016,
           ),
         ),
       ),
@@ -79,21 +82,22 @@ class _CheckoutScreenState extends State<CheckoutScreen>
           l10n.checkout,
           style: TextStyle(
             color: colorScheme.onSurface,
+            fontSize: 18,
             fontWeight: FontWeight.w600,
           ),
         ),
         centerTitle: false,
         leading: IconButton(
           onPressed: () => Navigator.pop(context),
-          icon: Icon(Icons.arrow_back, color: colorScheme.onSurface),
+          icon: Icon(Icons.arrow_back_ios_new, color: colorScheme.onSurface),
         ),
       ),
       body: Column(
         children: [
           /// TAB BAR
           Container(
-            height: size.height * 0.087,
-            margin: EdgeInsets.only(bottom: size.height * 0.03),
+            height: size.height * 0.065,
+            margin: EdgeInsets.only(bottom: size.height * 0.02),
             child: TabBar(
               controller: _tabController,
               indicatorColor: Colors.transparent,
@@ -121,7 +125,7 @@ class _CheckoutScreenState extends State<CheckoutScreen>
                           l10n.address,
                           style: TextStyle(
                             color: colorScheme.onPrimary,
-                            fontSize: 18,
+                            fontSize: 15,
                             fontWeight: FontWeight.w500,
                           ),
                         ),
@@ -138,7 +142,7 @@ class _CheckoutScreenState extends State<CheckoutScreen>
                       l10n.summary,
                       style: TextStyle(
                         color: colorScheme.onSurfaceVariant,
-                        fontSize: 18,
+                        fontSize: 15,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
@@ -158,12 +162,12 @@ class _CheckoutScreenState extends State<CheckoutScreen>
                     l10n.pleaseEnterDetails,
                     style: TextStyle(
                       color: colorScheme.primary,
-                      fontSize: 22,
+                      fontSize: 18,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
 
-                  SizedBox(height: size.height * 0.035),
+                  SizedBox(height: size.height * 0.018),
 
                   customField(context, l10n.fullName),
                   customField(context, l10n.mobileNumber),
@@ -182,7 +186,7 @@ class _CheckoutScreenState extends State<CheckoutScreen>
 
                   customField(context, l10n.pinCode),
 
-                  SizedBox(height: size.height * 0.015),
+                  SizedBox(height: size.height * 0.01),
 
                   /// ADDRESS TYPE
                   Row(
@@ -195,7 +199,7 @@ class _CheckoutScreenState extends State<CheckoutScreen>
                             });
                           },
                           child: Container(
-                            height: size.height * 0.07,
+                            height: size.height * 0.055,
                             decoration: BoxDecoration(
                               color: isHomeSelected
                                   ? colorScheme.primary
@@ -213,7 +217,7 @@ class _CheckoutScreenState extends State<CheckoutScreen>
                                   color: isHomeSelected
                                       ? colorScheme.onPrimary
                                       : colorScheme.primary,
-                                  fontSize: 18,
+                                  fontSize: 15,
                                   fontWeight: FontWeight.w500,
                                 ),
                               ),
@@ -230,7 +234,7 @@ class _CheckoutScreenState extends State<CheckoutScreen>
                             });
                           },
                           child: Container(
-                            height: size.height * 0.07,
+                            height: size.height * 0.055,
                             decoration: BoxDecoration(
                               color: !isHomeSelected
                                   ? colorScheme.primary
@@ -248,7 +252,7 @@ class _CheckoutScreenState extends State<CheckoutScreen>
                                   color: !isHomeSelected
                                       ? colorScheme.onPrimary
                                       : colorScheme.primary,
-                                  fontSize: 18,
+                                  fontSize: 15,
                                   fontWeight: FontWeight.w500,
                                 ),
                               ),
@@ -259,11 +263,11 @@ class _CheckoutScreenState extends State<CheckoutScreen>
                     ],
                   ),
 
-                  SizedBox(height: size.height * 0.045),
+                  SizedBox(height: size.height * 0.025),
 
                   SizedBox(
                     width: double.infinity,
-                    height: size.height * 0.072,
+                    height: size.height * 0.055,
                     child: ElevatedButton(
                       onPressed: () {},
                       style: ElevatedButton.styleFrom(
@@ -276,14 +280,14 @@ class _CheckoutScreenState extends State<CheckoutScreen>
                       child:  Text(
                         l10n.proceed,
                         style: TextStyle(
-                          fontSize: 22,
+                          fontSize: 18,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                     ),
                   ),
 
-                  SizedBox(height: size.height * 0.037),
+                  SizedBox(height: size.height * 0.02),
                 ],
               ),
             ),

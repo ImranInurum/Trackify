@@ -284,7 +284,7 @@ class _AddGeoFenceScreenState extends State<AddGeoFenceScreen> {
                       children: [
                         IconButton(
                           icon: Icon(
-                            Icons.arrow_back,
+                            Icons.arrow_back_ios_new,
                             color: colorScheme.onSurface,
                           ),
                           onPressed: () => Navigator.pop(context),

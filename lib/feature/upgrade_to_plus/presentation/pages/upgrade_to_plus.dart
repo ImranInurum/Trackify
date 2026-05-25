@@ -143,8 +143,10 @@ class _UpgradeToPlusScreenState extends State<UpgradeToPlusScreen> {
                             elevation: 0,
                             pinned: true,
                             leading: IconButton(
-                              icon: const Icon(Icons.arrow_back),
-                              color: Theme.of(context).colorScheme.primary,
+                              icon: Icon(
+                                Icons.arrow_back_ios_new,
+                                color: Theme.of(context).colorScheme.onSurface,
+                              ),
                               onPressed: () => Navigator.pop(context),
                             ),
                             centerTitle: false,

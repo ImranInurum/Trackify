@@ -17,7 +17,10 @@ class FuelStationScreen extends StatelessWidget {
         appBar: AppBar(
           title: Text(l10n.fuelStations),
           leading: IconButton(
-            icon: const Icon(Icons.arrow_back),
+            icon: Icon(
+              Icons.arrow_back_ios_new,
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
             onPressed: () => Navigator.pop(context),
           ),
         ),

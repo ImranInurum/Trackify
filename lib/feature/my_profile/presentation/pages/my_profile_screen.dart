@@ -86,7 +86,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
       appBar: AppBar(
         leading: IconButton(
           icon: Icon(
-            Icons.arrow_back,
+            Icons.arrow_back_ios_new,
             color: Theme.of(context).colorScheme.onSurface,
           ),
           onPressed: () => Navigator.pop(context),

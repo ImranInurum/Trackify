@@ -68,7 +68,7 @@ class _HelpSuggestionScreenState extends State<HelpSuggestionScreen> {
         surfaceTintColor: Colors.transparent,
         leading: IconButton(
           icon: Icon(
-            Icons.arrow_back,
+            Icons.arrow_back_ios_new,
             color: Theme.of(context).colorScheme.onSurface,
           ),
           onPressed: () => Navigator.of(context).pop(),
@@ -82,40 +82,46 @@ class _HelpSuggestionScreenState extends State<HelpSuggestionScreen> {
           ),
         ),
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildIssueCard(l10n),
-              const SizedBox(height: 16),
-              _buildMenuRow(
-                isReportIssue ? l10n.myIssues : l10n.mySuggestions,
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => BlocProvider(
-                        create: (_) {
-                          return HelpCubit(HelpRepositoryImpl());
-                        },
-                        child: MyIssueScreen(isSuggestion: !isReportIssue),
+      body: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: () {
+          FocusScope.of(context).unfocus();
+        },
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildIssueCard(l10n),
+                const SizedBox(height: 16),
+                _buildMenuRow(
+                  isReportIssue ? l10n.myIssues : l10n.mySuggestions,
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => BlocProvider(
+                          create: (_) {
+                            return HelpCubit(HelpRepositoryImpl());
+                          },
+                          child: MyIssueScreen(isSuggestion: !isReportIssue),
+                        ),
                       ),
-                    ),
-                  );
-                },
-              ),
-              const SizedBox(height: 12),
-              _buildWhatsAppButton(l10n),
-              const SizedBox(height: 24),
-              _buildForceMigrateSection(l10n),
-              const SizedBox(height: 24),
-              _buildBottomMenu(l10n),
-              const SizedBox(height: 48),
-              _buildVersionInfo(),
-              const SizedBox(height: 20),
-            ],
+                    );
+                  },
+                ),
+                const SizedBox(height: 12),
+                _buildWhatsAppButton(l10n),
+                const SizedBox(height: 24),
+                _buildForceMigrateSection(l10n),
+                const SizedBox(height: 24),
+                _buildBottomMenu(l10n),
+                const SizedBox(height: 48),
+                _buildVersionInfo(),
+                const SizedBox(height: 20),
+              ],
+            ),
           ),
         ),
       ),

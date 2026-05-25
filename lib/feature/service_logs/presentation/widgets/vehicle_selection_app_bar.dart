@@ -53,7 +53,7 @@ class VehicleSelectionAppBar extends StatelessWidget {
                   if (showBackButton)
                     IconButton(
                       icon: Icon(
-                        Icons.arrow_back,
+                        Icons.arrow_back_ios_new,
                         color: theme.colorScheme.onSurface,
                       ),
                       onPressed: onBack,

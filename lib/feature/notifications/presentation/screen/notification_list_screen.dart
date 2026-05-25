@@ -22,8 +22,8 @@ class NotificationListScreen extends StatelessWidget {
           backgroundColor: theme.appBarTheme.backgroundColor,
           elevation: 0,
           leading: IconButton(
-            icon: Icon(Icons.arrow_back_ios_new_rounded, 
-              color: theme.appBarTheme.foregroundColor, size: 20),
+            icon: Icon(Icons.arrow_back_ios_new, 
+              color: theme.colorScheme.onSurface, size: 20),
             onPressed: () => Navigator.of(context).pop(),
           ),
           title: Text(
@@ -34,7 +34,7 @@ class NotificationListScreen extends StatelessWidget {
               fontSize: 18,
             ),
           ),
-          centerTitle: true,
+          centerTitle: false,
         ),
         body: BlocBuilder<NotificationCubit, NotificationState>(
           builder: (context, state) {

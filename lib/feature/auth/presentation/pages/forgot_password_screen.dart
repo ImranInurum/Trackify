@@ -64,7 +64,13 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
         appBar: AppBar(
           backgroundColor: Colors.transparent,
           elevation: 0,
-          leading: BackButton(color: Theme.of(context).colorScheme.onSurface),
+          leading: IconButton(
+            icon: Icon(
+              Icons.arrow_back_ios_new,
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
+            onPressed: () => Navigator.maybePop(context),
+          ),
         ),
         body: _body(),
       ),

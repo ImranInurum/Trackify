@@ -32,6 +32,13 @@ class _ProductScreenState extends State<ProductScreen> {
       backgroundColor: colorScheme.surface,
       appBar: AppBar(
         backgroundColor: colorScheme.surface,
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back_ios_new,
+            color: colorScheme.onSurface,
+          ),
+          onPressed: () => Navigator.pop(context),
+        ),
         title:  Text(l10n.product),
         iconTheme: IconThemeData(color: colorScheme.onSurface),
         titleTextStyle: TextStyle(
@@ -250,7 +257,7 @@ class _ProductScreenState extends State<ProductScreen> {
                       /// BUY BUTTON
                       SizedBox(
                         width: double.infinity,
-                        height: size.height * 0.065,
+                        height: size.height * 0.05,
                         child: ElevatedButton(
                           onPressed: () {
                             Navigator.push(
@@ -271,7 +278,7 @@ class _ProductScreenState extends State<ProductScreen> {
                           child: const Text(
                             "Buy now",
                             style: TextStyle(
-                              fontSize: 20,
+                              fontSize: 16,
                               fontWeight: FontWeight.bold,
                             ),
                           ),

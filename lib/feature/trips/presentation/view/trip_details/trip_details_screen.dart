@@ -408,7 +408,7 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       _CircularButton(
-                        icon: Icons.arrow_back,
+                        icon: Icons.arrow_back_ios_new,
                         onPressed: () => Navigator.pop(context),
                         backgroundColor: isDark
                             ? Colors.black.withValues(alpha: 0.6)
@@ -838,6 +838,7 @@ class _MapCard extends StatelessWidget {
                   startLabel: firstRide.startLocation,
                   endLabel: lastRide.endLocation,
                   color: goldColor,
+                  rideId: 'trip_${firstRide.id}_${lastRide.id}',
                 ),
                 // Unmerge Button
                 Positioned(

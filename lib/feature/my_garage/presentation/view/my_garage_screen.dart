@@ -59,7 +59,7 @@ class _MyGarageScreenState extends State<MyGarageScreen> {
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         leading: IconButton(
           icon: Icon(
-            Icons.arrow_back,
+            Icons.arrow_back_ios_new,
             color: Theme.of(context).colorScheme.onSurface,
             size: 24,
           ),

@@ -31,4 +31,42 @@ class VehicleControlEntity {
     this.vehicleMaker = '',
     this.vehicleModel = '',
   }) : imei = imei ?? id;
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'imei': imei,
+      'vehicleName': vehicleName,
+      'vehicleNumber': vehicleNumber,
+      'fuelType': fuelType,
+      'tankCapacity': tankCapacity,
+      'vehicleMileage': vehicleMileage,
+      'bikeImage': bikeImage,
+      'selectedIcon': selectedIcon,
+      'selectedColor': selectedColor,
+      'vehicleLock': vehicleLock,
+      'vehicleType': vehicleType,
+      'vehicleMaker': vehicleMaker,
+      'vehicleModel': vehicleModel,
+    };
+  }
+
+  factory VehicleControlEntity.fromJson(Map<String, dynamic> json) {
+    return VehicleControlEntity(
+      id: json['id'] ?? '',
+      imei: json['imei'] ?? '',
+      vehicleName: json['vehicleName'] ?? '',
+      vehicleNumber: json['vehicleNumber'] ?? '',
+      fuelType: json['fuelType'] ?? '',
+      tankCapacity: json['tankCapacity'] ?? '',
+      vehicleMileage: json['vehicleMileage'] ?? '',
+      bikeImage: json['bikeImage'],
+      selectedIcon: json['selectedIcon'] ?? 'Bike',
+      selectedColor: json['selectedColor'] ?? 'White',
+      vehicleLock: json['vehicleLock'] ?? false,
+      vehicleType: json['vehicleType'] ?? '',
+      vehicleMaker: json['vehicleMaker'] ?? '',
+      vehicleModel: json['vehicleModel'] ?? '',
+    );
+  }
 }

@@ -87,7 +87,7 @@ class _CreateTripScreenState extends State<CreateTripScreen> {
           elevation: 0,
           centerTitle: false, // Align title to the left
           leading: IconButton(
-            icon: Icon(Icons.arrow_back, color: theme.colorScheme.onSurface),
+            icon: Icon(Icons.arrow_back_ios_new, color: theme.colorScheme.onSurface),
             onPressed: () => Navigator.pop(context),
           ),
           title: Text(
@@ -433,6 +433,7 @@ class _SelectionGroupCardState extends State<_SelectionGroupCard> {
               points: ride.polylinePoints,
               startLabel: ride.startLocation,
               endLabel: ride.endLocation,
+              rideId: ride.id,
             ),
           ),
         ],
