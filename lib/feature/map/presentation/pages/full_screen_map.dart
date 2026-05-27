@@ -241,7 +241,8 @@ class _FullScreenMapState extends State<FullScreenMap>
         position: vehiclePos,
         icon: _customMarker ?? BitmapDescriptor.defaultMarker,
         anchor: const Offset(0.5, 0.5),
-        rotation: bearing,
+        flat: true,
+        rotation: bearing % 360,
       ),
     };
 
@@ -1188,8 +1189,7 @@ class _FullScreenMapState extends State<FullScreenMap>
     return BlocBuilder<AppCubit, AppState>(
       builder: (context, state) {
         final liveDevice = state.devices.firstWhere(
-          (d) =>
-              d['imei']?.toString() == widget.selectedVehicle?.id,
+          (d) => d['imei']?.toString() == widget.selectedVehicle?.id,
           orElse: () => {},
         );
 
@@ -1347,8 +1347,7 @@ class _FullScreenMapState extends State<FullScreenMap>
       builder: (context, state) {
         // Find current device in the live devices list to get live speed/odometer
         final liveDevice = state.devices.firstWhere(
-          (d) =>
-              d['imei']?.toString() == widget.selectedVehicle?.id,
+          (d) => d['imei']?.toString() == widget.selectedVehicle?.id,
           orElse: () => {},
         );
 
@@ -1460,7 +1459,8 @@ class _FullScreenMapState extends State<FullScreenMap>
         );
 
         // Parse range/distance remaining
-        final rangeValue = liveDevice['range'] ??
+        final rangeValue =
+            liveDevice['range'] ??
             liveDevice['kms_left'] ??
             liveDevice['fuel_range'] ??
             liveDevice['distance_remaining'] ??
@@ -1471,7 +1471,8 @@ class _FullScreenMapState extends State<FullScreenMap>
             : "-- kms more to go";
 
         // Parse fuel percentage for bars
-        final fuelVal = liveDevice['fuel'] ??
+        final fuelVal =
+            liveDevice['fuel'] ??
             liveDevice['fuelLevel'] ??
             liveDevice['fuel_level'] ??
             liveDevice['fuel_percentage'];
@@ -1492,12 +1493,14 @@ class _FullScreenMapState extends State<FullScreenMap>
             : 3; // Default to 3 bars if not available
 
         // Parse battery/voltage details
-        final batteryVal = liveDevice['battery'] ??
+        final batteryVal =
+            liveDevice['battery'] ??
             liveDevice['batteryLevel'] ??
             liveDevice['battery_level'] ??
             liveDevice['bat'];
 
-        final voltageVal = liveDevice['voltage'] ??
+        final voltageVal =
+            liveDevice['voltage'] ??
             liveDevice['volts'] ??
             liveDevice['battery_voltage'] ??
             liveDevice['v_bat'] ??
@@ -1509,23 +1512,33 @@ class _FullScreenMapState extends State<FullScreenMap>
 
         if (batteryVal != null || voltageVal != null) {
           if (voltageVal != null) {
-            final voltDouble = double.tryParse(voltageVal.toString().replaceAll(RegExp(r'[^0-9.]'), ''));
+            final voltDouble = double.tryParse(
+              voltageVal.toString().replaceAll(RegExp(r'[^0-9.]'), ''),
+            );
             if (voltDouble != null) {
               final String status = voltDouble < 11.5 ? "Low" : "Normal";
               batteryText = "$status (${voltDouble.toStringAsFixed(1)}V)";
               batteryColor = voltDouble < 11.5 ? Colors.red : Colors.green;
-              batteryIcon = voltDouble < 11.5 ? Icons.battery_alert : Icons.battery_charging_full;
+              batteryIcon = voltDouble < 11.5
+                  ? Icons.battery_alert
+                  : Icons.battery_charging_full;
             } else {
               batteryText = "Normal (${voltageVal.toString()})";
             }
           } else if (batteryVal != null) {
-            final batDouble = double.tryParse(batteryVal.toString().replaceAll(RegExp(r'[^0-9.]'), ''));
+            final batDouble = double.tryParse(
+              batteryVal.toString().replaceAll(RegExp(r'[^0-9.]'), ''),
+            );
             if (batDouble != null) {
               final String status = batDouble < 20 ? "Low" : "Normal";
-              final displayVal = batDouble <= 1.0 ? (batDouble * 100).round() : batDouble.round();
+              final displayVal = batDouble <= 1.0
+                  ? (batDouble * 100).round()
+                  : batDouble.round();
               batteryText = "$status ($displayVal%)";
               batteryColor = displayVal < 20 ? Colors.red : Colors.green;
-              batteryIcon = displayVal < 20 ? Icons.battery_alert : Icons.battery_charging_full;
+              batteryIcon = displayVal < 20
+                  ? Icons.battery_alert
+                  : Icons.battery_charging_full;
             } else {
               batteryText = "Normal (${batteryVal.toString()})";
             }
@@ -1637,7 +1650,10 @@ class _FullScreenMapState extends State<FullScreenMap>
                   children: [
                     const Text(
                       "Vehicle Battery",
-                      style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     const SizedBox(height: 8),
                     Row(

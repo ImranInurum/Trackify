@@ -514,11 +514,12 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                         markers: {
                           Marker(
                             markerId: const MarkerId('current_location'),
-                            position: bestPos,
+                            position: appState.livePosition ?? bestPos,
                             icon:
                                 _customMarker ?? BitmapDescriptor.defaultMarker,
                             anchor: const Offset(0.5, 0.5),
-                            rotation: appState.liveBearing,
+                            flat: true,
+                            rotation: appState.liveBearing % 360,
                           ),
                         },
                         onMapCreated: (GoogleMapController controller) async {

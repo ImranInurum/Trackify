@@ -290,13 +290,38 @@ class AppCubit extends Cubit<AppState> with WidgetsBindingObserver {
 
       if (lat != null && lng != null) {
         // Extract bearing/heading (common keys: course, bearing, angle, dir)
-        final bearing = double.tryParse(
+        double bearing = double.tryParse(
               (deviceData['course'] ?? 
                deviceData['bearing'] ?? 
                deviceData['angle'] ?? 
                deviceData['dir'] ?? 
                '0').toString()
             ) ?? 0.0;
+
+        // Calculate actual movement bearing for accurate camera/marker rotation
+        if (state.livePosition != null) {
+          final double distance = Geolocator.distanceBetween(
+            state.livePosition!.latitude,
+            state.livePosition!.longitude,
+            lat,
+            lng,
+          );
+
+          // Only update bearing if the vehicle has moved at least 2 meters to avoid jitter
+          if (distance > 2.0) {
+            final double calculatedBearing = Geolocator.bearingBetween(
+              state.livePosition!.latitude,
+              state.livePosition!.longitude,
+              lat,
+              lng,
+            );
+            // bearingBetween returns -180 to +180, normalize it to 0-360
+            bearing = (calculatedBearing + 360) % 360;
+          } else {
+            // Keep the previous bearing if not moved enough
+            bearing = state.liveBearing;
+          }
+        }
 
         print("[AppCubit] 📍 Updating Live Position: $lat, $lng | Bearing: $bearing");
         emit(
@@ -311,6 +336,7 @@ class AppCubit extends Cubit<AppState> with WidgetsBindingObserver {
       }
     }
   }
+
 
   void changeTheme(ThemeMode themeMode) {
     emit(state.copyWith(themeMode: themeMode));
