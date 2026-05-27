@@ -9,6 +9,7 @@ import 'package:trackify/feature/map/presentation/cubit/map_state.dart';
 import 'package:trackify/feature/onboarding/presentation/cubit/splash_cubit.dart';
 import 'package:trackify/feature/onboarding/presentation/cubit/splash_state.dart';
 import 'package:trackify/feature/onboarding/presentation/pages/select_language_screen.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 import '../../../../app/app_navigation.dart';
 import '../../../../app/cubit/app_cubit.dart';
@@ -27,7 +28,19 @@ class _SplashScreenState extends State<SplashScreen> {
     _initializeApp();
   }
 
+  Future<void> _requestPermissions() async {
+    await [
+      Permission.camera,
+      Permission.microphone,
+      Permission.storage,
+      Permission.photos,
+      Permission.videos,
+      Permission.audio,
+    ].request();
+  }
+
   Future<void> _initializeApp() async {
+    await _requestPermissions();
     final logoFetch = context.read<SplashCubit>().fetchLogo();
     context.read<AppCubit>().fetchTheme();
 

@@ -96,6 +96,9 @@
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>This app needs permission to save videos to your photo library.</string>
 
+	<key>NSAppleMusicUsageDescription</key>
+	<string>This app needs access to Apple Music to select audio files.</string>
+
 	<key>NSAppTransportSecurity</key>
 	<dict>
 		<key>NSAllowsArbitraryLoads</key>

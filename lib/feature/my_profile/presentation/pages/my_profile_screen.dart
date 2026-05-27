@@ -136,15 +136,15 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
         child: BlocBuilder<AppCubit, AppState>(
           builder: (context, state) {
             final user = state.userData;
-            final userName = user?.name ?? "Kk";
-            final userEmail = user?.email ?? "sonukushwah221@gmail.com";
-            final userMobile = user?.mobileNumber ?? "+918602945222";
-            final userCountry = user?.country ?? "India";
-            final userState = user?.state ?? "Madhya Pradesh";
-            final userCity = user?.city ?? "Indore district";
+            final userName = user?.name ?? "";
+            final userEmail = user?.email ?? "";
+            final userMobile = user?.mobileNumber ?? "";
+            final userCountry = user?.country ?? "";
+            final userState = user?.state ?? "";
+            final userCity = user?.city ?? "";
             final userInitials = userName.isNotEmpty
                 ? userName[0].toUpperCase()
-                : "K";
+                : "";
             final profileImageUrl = _getProfileImageUrl(user?.userProfile);
 
             return SingleChildScrollView(
