@@ -8,6 +8,7 @@ import 'package:trackify/feature/trips/presentation/view/ride_history_details/ri
 import 'package:trackify/feature/trips/presentation/view/widgets/trips/widgets/trip_card.dart';
 import 'package:trackify/feature/trips/presentation/view/widgets/all_rides/widgets/ride_card.dart';
 import 'package:trackify/l10n/app_localizations.dart';
+import 'package:trackify/core/utils/distance_utils.dart';
 
 class TripSearchScreen extends StatefulWidget {
   final bool isTripSearch;
@@ -141,8 +142,8 @@ class _TripSearchScreenState extends State<TripSearchScreen> {
           iconColor: Colors.orange,
           title: l10n.topSpeedClocked,
           dateRange: "${topSpeedRide.date} - ${topSpeedRide.date}",
-          mainStat: "${l10n.topSpeedLabel} - ${topSpeedRide.topSpeed.toStringAsFixed(1)} ${l10n.kmh}",
-          subStat: "${l10n.avgSpeedLabel} - ${topSpeedRide.avgSpeed.toStringAsFixed(1)} ${l10n.kmh}",
+          mainStat: "${l10n.topSpeedLabel} - ${topSpeedRide.topSpeed.toStringAsFixed(1)} ${context.displayKmh}",
+          subStat: "${l10n.avgSpeedLabel} - ${topSpeedRide.avgSpeed.toStringAsFixed(1)} ${context.displayKmh}",
           ride: topSpeedRide,
         ),
         _buildExtraCard(
@@ -151,7 +152,7 @@ class _TripSearchScreenState extends State<TripSearchScreen> {
           iconColor: Colors.redAccent,
           title: l10n.maxDistanceCovered,
           dateRange: "${maxDistRide.date} - ${maxDistRide.date}",
-          mainStat: "${l10n.distanceLabel} - ${maxDistRide.distance.toStringAsFixed(1)} ${l10n.kms}",
+          mainStat: "${l10n.distanceLabel} - ${maxDistRide.distance.toStringAsFixed(1)} ${context.displayKms}",
           subStat: "${l10n.durationLabel} - ${maxDistRide.duration}",
           ride: maxDistRide,
         ),
@@ -161,8 +162,8 @@ class _TripSearchScreenState extends State<TripSearchScreen> {
           iconColor: Colors.pinkAccent,
           title: l10n.bestAverageSpeed,
           dateRange: "${bestAvgSpeedRide.date} - ${bestAvgSpeedRide.date}",
-          mainStat: "${l10n.avgSpeedLabel} - ${bestAvgSpeedRide.avgSpeed.toStringAsFixed(1)} ${l10n.kmh}",
-          subStat: "${l10n.distanceLabel} - ${bestAvgSpeedRide.distance.toStringAsFixed(1)} ${l10n.kms}",
+          mainStat: "${l10n.avgSpeedLabel} - ${bestAvgSpeedRide.avgSpeed.toStringAsFixed(1)} ${context.displayKmh}",
+          subStat: "${l10n.distanceLabel} - ${bestAvgSpeedRide.distance.toStringAsFixed(1)} ${context.displayKms}",
           ride: bestAvgSpeedRide,
         ),
       ],

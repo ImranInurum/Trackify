@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../l10n/app_localizations.dart';
+import 'package:trackify/core/utils/distance_utils.dart';
 
 class JourneyCard extends StatelessWidget {
   final Color cardColor;
@@ -62,7 +63,7 @@ class JourneyCard extends StatelessWidget {
                     icon: Icons.location_on_outlined,
                     label: AppLocalizations.of(context)!.distanceTravelled,
                     value: "42.9",
-                    unit: "km",
+                    unit: context.displayKm,
                     color: const Color(0xFF4D7B7B),
                   ),
                 ),

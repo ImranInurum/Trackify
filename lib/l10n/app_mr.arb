@@ -1,4 +1,4 @@
-﻿{
+{
     "selectLanguage": "तुमची भाषा निवडा",
     "letsGetStarted": "सुरुवात करूया",
     "email": "ईमेल",
@@ -1012,8 +1012,7 @@
                 "selectTimeSlot": "वेळ स्लॉट निवडा",
                 "bookNow": "आता बुक करा",
                 "slotUnavailable": "स्लॉट उपलब्ध नाही",
-                "slotAvailable": "स्लॉट उपलब्ध आहे"
-
-
-
+                "slotAvailable": "स्लॉट उपलब्ध आहे",
+                "distanceUnitSelection": "अंतर एकक",
+                "miles": "मैल"
 }

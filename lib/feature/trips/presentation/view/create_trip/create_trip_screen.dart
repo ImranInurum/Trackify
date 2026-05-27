@@ -12,6 +12,7 @@ import 'package:trackify/feature/trips/presentation/view/trip_details/trip_detai
 import 'package:trackify/feature/trips/presentation/view/widgets/all_rides/widgets/polyline_thumbnail.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:trackify/l10n/app_localizations.dart';
+import 'package:trackify/core/utils/distance_utils.dart';
 
 class CreateTripScreen extends StatefulWidget {
   final String? initialTitle;
@@ -328,9 +329,9 @@ class _SelectionGroupCardState extends State<_SelectionGroupCard> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  _buildStatItem("${totalDist.toStringAsFixed(1)}${l10n.kms}", l10n.distanceLabel),
+                  _buildStatItem("${totalDist.toStringAsFixed(1)}${context.displayKms}", l10n.distanceLabel),
                   _buildStatItem("${totalMinutes}${l10n.minLabel} ${widget.rides.isNotEmpty ? '00${l10n.secLabel}' : ''}", l10n.rideDurationLabel),
-                  _buildStatItem("${avgSpeed.toStringAsFixed(1)}${l10n.kmh}", l10n.averageSpeed),
+                  _buildStatItem("${avgSpeed.toStringAsFixed(1)}${context.displayKmh}", l10n.averageSpeed),
                 ],
               ),
               const SizedBox(height: 20),
@@ -407,7 +408,7 @@ class _SelectionGroupCardState extends State<_SelectionGroupCard> {
                     ),
                     const SizedBox(width: 4),
                     Text(
-                      l10n.kms,
+                      context.displayKms,
                       style: TextStyle(
                         color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                         fontSize: 14,
@@ -420,7 +421,7 @@ class _SelectionGroupCardState extends State<_SelectionGroupCard> {
                   children: [
                     _buildSmallStat("${ride.duration}", l10n.rideDurationLabel),
                     const SizedBox(width: 24),
-                    _buildSmallStat("${ride.avgSpeed.toStringAsFixed(1)} ${l10n.kmh}", l10n.averageSpeed),
+                    _buildSmallStat("${ride.avgSpeed.toStringAsFixed(1)} ${context.displayKmh}", l10n.averageSpeed),
                   ],
                 ),
               ],

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:trackify/feature/trips/data/entity/ride_model.dart';
 import 'package:trackify/feature/trips/presentation/view/widgets/all_rides/widgets/polyline_thumbnail.dart';
 import 'package:trackify/l10n/app_localizations.dart';
+import 'package:trackify/core/utils/distance_utils.dart';
 
 
 class TripCard extends StatelessWidget {
@@ -73,7 +74,7 @@ class TripCard extends StatelessWidget {
                       Icon(Icons.location_on_outlined, color: theme.colorScheme.onSurface.withValues(alpha: 0.5), size: 16),
                       const SizedBox(width: 4),
                       Text(
-                        "${totalDist.toStringAsFixed(1)} ${l10n.kms}",
+                        "${totalDist.toStringAsFixed(1)} ${context.displayKms}",
                         style: TextStyle(
                           color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                           fontSize: 14,

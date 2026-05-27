@@ -2489,4 +2489,10 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get slotAvailable => 'الفترة متاحة';
+
+  @override
+  String get distanceUnitSelection => 'وحدة المسافة';
+
+  @override
+  String get miles => 'ميل';
 }

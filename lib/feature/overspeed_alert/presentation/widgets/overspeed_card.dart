@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:trackify/core/common/models/vehicle_list_model.dart';
 import 'package:trackify/l10n/app_localizations.dart';
 import 'package:trackify/feature/overspeed_alert/data/model/overspeed_alert_model.dart';
+import 'package:trackify/core/utils/distance_utils.dart';
 
 class OverspeedCard extends StatelessWidget {
   final OverspeedAlertModel overspeedAlert;
@@ -71,7 +72,7 @@ class OverspeedCard extends StatelessWidget {
               _statChip(
                 context,
                 icon: Icons.speed_outlined,
-                text: '${overspeedAlert.speedLimit} ${l10n.kmHr}',
+                text: '${overspeedAlert.speedLimit} ${context.displayKmHr}',
               ),
 
               _statChip(

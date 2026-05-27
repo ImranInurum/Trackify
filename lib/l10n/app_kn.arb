@@ -1,4 +1,4 @@
-﻿{
+{
     "selectLanguage": "ನಿಮ್ಮ ಭಾಷೆಯನ್ನು ಆಯ್ಕೆ ಮಾಡಿ",
     "letsGetStarted": "ಪ್ರಾರಂಭಿಸೋಣ",
     "email": "ಇಮೇಲ್",
@@ -1013,5 +1013,7 @@
                 "selectTimeSlot": "ಸಮಯ ಸ್ಲಾಟ್ ಆಯ್ಕೆಮಾಡಿ",
                 "bookNow": "ಈಗ ಬುಕ್ ಮಾಡಿ",
                 "slotUnavailable": "ಸ್ಲಾಟ್ ಲಭ್ಯವಿಲ್ಲ",
-                "slotAvailable": "ಸ್ಲಾಟ್ ಲಭ್ಯವಿದೆ"
+                "slotAvailable": "ಸ್ಲಾಟ್ ಲಭ್ಯವಿದೆ",
+                "distanceUnitSelection": "ದೂರ ಘಟಕ",
+                "miles": "ಮೈಲಿಗಳು"
 }

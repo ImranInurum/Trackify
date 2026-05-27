@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:trackify/feature/trips/data/entity/ride_model.dart';
 import 'package:trackify/feature/trips/presentation/view/widgets/all_rides/widgets/polyline_thumbnail.dart';
 import 'package:trackify/l10n/app_localizations.dart';
+import 'package:trackify/core/utils/distance_utils.dart';
 
 
 
@@ -70,7 +71,7 @@ class RideCard extends StatelessWidget {
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Text(
-                          "${ride.distance} ${l10n.km}",
+                          "${ride.distance} ${context.displayKm}",
                           style: TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.bold,
@@ -125,13 +126,13 @@ class RideCard extends StatelessWidget {
                       _buildStat(
                         context,
                         Icons.speed,
-                        "${ride.avgSpeed} ${l10n.kmh}",
+                        "${ride.avgSpeed} ${context.displayKmh}",
                         l10n.averageSpeed,
                       ),
                       _buildStat(
                         context,
                         Icons.bolt,
-                        "${ride.topSpeed} ${l10n.kmh}",
+                        "${ride.topSpeed} ${context.displayKmh}",
                         l10n.topSpeed,
                       ),
                     ],

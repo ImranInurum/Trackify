@@ -10,6 +10,7 @@ import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 
 import 'package:trackify/l10n/app_localizations.dart';
+import 'package:trackify/core/utils/distance_utils.dart';
 
 class TripDetailsScreen extends StatefulWidget {
   final String tripName;
@@ -467,7 +468,7 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> {
               cardBg: cardBg,
               stats: [
                 _StatItem(
-                  value: "${totalDist.toStringAsFixed(1)}${l10n.kms}",
+                  value: "${totalDist.toStringAsFixed(1)}${context.displayKms}",
                   label: l10n.distance,
                 ),
                 _StatItem(
@@ -475,11 +476,11 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> {
                   label: l10n.rideDurationLabel,
                 ),
                 _StatItem(
-                  value: "${avgSpeed.toStringAsFixed(1)}${l10n.kmh}",
+                  value: "${avgSpeed.toStringAsFixed(1)}${context.displayKmh}",
                   label: l10n.avgSpeedLabel,
                 ),
                 _StatItem(
-                  value: "${topSpeed.toStringAsFixed(1)}${l10n.kmh}",
+                  value: "${topSpeed.toStringAsFixed(1)}${context.displayKmh}",
                   label: l10n.topSpeedLabel,
                 ),
               ],
@@ -882,7 +883,7 @@ class _MapCard extends StatelessWidget {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Text(
-                          "${totalDist.toStringAsFixed(1)} ${l10n.kms}",
+                          "${totalDist.toStringAsFixed(1)} ${context.displayKms}",
                           style: TextStyle(
                             color: theme.colorScheme.onSurface,
                             fontSize: 18,

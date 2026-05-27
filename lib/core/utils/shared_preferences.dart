@@ -55,9 +55,7 @@ class AppPreference {
   static String KEY_DYNAMIC_THEME = "KEY_DYNAMIC_THEME";
   static String KEY_FCM_TOKEN = "KEY_FCM_TOKEN";
   static String IMEI = "IMEI";
-
-
-
+  static String KEY_DISTANCE_UNIT = "KEY_DISTANCE_UNIT";
   // --- Basic Getters/Setters ---
   Future<String> get({required String key}) async => _prefs.getString(key) ?? "";
 

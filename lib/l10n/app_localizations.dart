@@ -4845,6 +4845,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Slot Available'**
   String get slotAvailable;
+
+  /// No description provided for @distanceUnitSelection.
+  ///
+  /// In en, this message translates to:
+  /// **'Distance Unit'**
+  String get distanceUnitSelection;
+
+  /// No description provided for @miles.
+  ///
+  /// In en, this message translates to:
+  /// **'Miles'**
+  String get miles;
 }
 
 class _AppLocalizationsDelegate

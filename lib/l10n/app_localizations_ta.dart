@@ -2513,4 +2513,10 @@ class AppLocalizationsTa extends AppLocalizations {
 
   @override
   String get slotAvailable => 'நேரம் கிடைக்கிறது';
+
+  @override
+  String get distanceUnitSelection => 'தூர அலகு';
+
+  @override
+  String get miles => 'மைல்';
 }

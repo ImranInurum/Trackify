@@ -50,6 +50,7 @@ import '../cubit/map_cubit.dart';
 import '../cubit/map_state.dart';
 import '../../../../l10n/app_localizations.dart';
 import 'package:trackify/core/common/models/vehicle_list_model.dart';
+import 'package:trackify/core/utils/distance_utils.dart';
 
 class MapScreen extends StatefulWidget {
   const MapScreen({super.key});
@@ -514,11 +515,12 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                         markers: {
                           Marker(
                             markerId: const MarkerId('current_location'),
-                            position: bestPos,
+                            position: appState.livePosition ?? bestPos,
                             icon:
                                 _customMarker ?? BitmapDescriptor.defaultMarker,
                             anchor: const Offset(0.5, 0.5),
-                            rotation: appState.liveBearing,
+                            flat: true,
+                            rotation: appState.liveBearing % 360,
                           ),
                         },
                         onMapCreated: (GoogleMapController controller) async {
@@ -589,11 +591,11 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
     final l10n = AppLocalizations.of(context)!;
     return BlocBuilder<MapCubit, MapState>(
       builder: (context, state) {
-        String distance = "0.0 ${l10n.km}";
+        String distance = "0.0 ${context.displayKm}";
         String speed =
-            "${_selectedDevice?.currentLocation?.speed ?? 0} ${l10n.kmh}";
+            "${_selectedDevice?.currentLocation?.speed ?? 0} ${context.displayKmh}";
         String duration = "0${l10n.minutesShort} 0${l10n.secondsShort}";
-        String topSpeed = "0 ${l10n.kmh}";
+        String topSpeed = "0 ${context.displayKmh}";
 
         return Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,

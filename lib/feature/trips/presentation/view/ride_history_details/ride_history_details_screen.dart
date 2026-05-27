@@ -9,6 +9,7 @@ import 'package:trackify/feature/trips/data/entity/ride_model.dart';
 import 'package:trackify/feature/trips/presentation/cubit/ride_history_details_cubit.dart';
 import 'package:trackify/feature/trips/presentation/cubit/ride_history_details_state.dart';
 import 'package:trackify/l10n/app_localizations.dart';
+import 'package:trackify/core/utils/distance_utils.dart';
 
 class RideHistoryDetailsScreen extends StatefulWidget {
   final Ride ride;
@@ -891,7 +892,7 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
                                 ),
                               ),
                               Text(
-                                l10n.kmh,
+                                context.displayKmh,
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
                                   color: Theme.of(
@@ -987,7 +988,7 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
                           Expanded(
                             child: _buildLiveStatColumn(
                               l10n.speed,
-                              "${statsState.currentSpeedDisplay.toStringAsFixed(1)} ${l10n.kmh}",
+                              "${statsState.currentSpeedDisplay.toStringAsFixed(1)} ${context.displayKmh}",
                             ),
                           ),
                           Container(
@@ -1014,7 +1015,7 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
                           Expanded(
                             child: _buildLiveStatColumn(
                               l10n.distanceLabel,
-                              "${statsState.currentDistanceDisplay.toStringAsFixed(2)} ${l10n.km}",
+                              "${statsState.currentDistanceDisplay.toStringAsFixed(2)} ${context.displayKm}",
                             ),
                           ),
                           Container(
@@ -1027,7 +1028,7 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
                           Expanded(
                             child: _buildLiveStatColumn(
                               l10n.averageSpeed,
-                              "${statsState.currentAvgSpeedDisplay.toStringAsFixed(1)} ${l10n.kmh}",
+                              "${statsState.currentAvgSpeedDisplay.toStringAsFixed(1)} ${context.displayKmh}",
                             ),
                           ),
                         ],
@@ -1268,7 +1269,7 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
                                 Expanded(
                                   child: _buildPanelStat(
                                     Icons.route_outlined,
-                                    "${widget.ride.distance.toStringAsFixed(1)} ${l10n.km}",
+                                    "${widget.ride.distance.toStringAsFixed(1)} ${context.displayKm}",
                                   ),
                                 ),
                                 Expanded(
@@ -1291,7 +1292,7 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
                                 Expanded(
                                   child: _buildPanelStat(
                                     Icons.speed,
-                                    "${widget.ride.avgSpeed.toStringAsFixed(1)} ${l10n.kmh} ${l10n.averageSpeed.split(' ')[0]}",
+                                    "${widget.ride.avgSpeed.toStringAsFixed(1)} ${context.displayKmh} ${l10n.averageSpeed.split(' ')[0]}",
                                   ),
                                 ),
                                 Expanded(
@@ -1304,7 +1305,7 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
                                 Expanded(
                                   child: _buildPanelStat(
                                     Icons.water_drop_outlined,
-                                    "${l10n.currencySymbol} ${fuelRate.toStringAsFixed(1)}/${l10n.km}",
+                                    "${l10n.currencySymbol} ${fuelRate.toStringAsFixed(1)}/${context.displayKm}",
                                   ),
                                 ),
                               ],

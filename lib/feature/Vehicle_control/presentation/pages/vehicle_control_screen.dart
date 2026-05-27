@@ -19,6 +19,7 @@ import '../widgets/journey_card.dart';
 import '../widgets/documents_card.dart';
 import 'notification_controls_screen.dart';
 import 'edit_vehicle_screen.dart';
+import 'package:trackify/core/utils/distance_utils.dart';
 
 class VehicleControlScreen extends StatelessWidget {
   final bool isFromGarage;
@@ -276,7 +277,7 @@ class VehicleControlView extends StatelessWidget {
                             Expanded(
                               child: MetricCard(
                                 value: vehicle.vehicleMileage,
-                                unit: l10n.kmL,
+                                unit: context.displayKmL,
                                 label: l10n.vehicleMileage,
                                 cardColor: cardColor,
                                 onEdit: () => _showMileageDialog(
@@ -934,7 +935,7 @@ class VehicleControlView extends StatelessWidget {
                     suffixIcon: Padding(
                       padding: const EdgeInsets.only(right: 16, top: 12),
                       child: Text(
-                        l10n.kmL,
+                        context.displayKmL,
                         style: TextStyle(
                           color: theme.colorScheme.onSurface.withOpacity(0.5),
                         ),
@@ -945,7 +946,7 @@ class VehicleControlView extends StatelessWidget {
               ),
               const SizedBox(height: 12),
               Text(
-                "${l10n.lastUpdatedLabel}$currentVal ${l10n.kmL}",
+                "${l10n.lastUpdatedLabel}$currentVal ${context.displayKmL}",
                 style: TextStyle(
                   color: theme.colorScheme.onSurface.withOpacity(0.4),
                   fontSize: 12,
