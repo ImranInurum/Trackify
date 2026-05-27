@@ -22,6 +22,7 @@ class AppState extends Equatable {
   final bool isLabelsEnabled;
   final LatLng? livePosition;
   final double liveBearing;
+  final String distanceUnit;
 
   const AppState({
     this.themeMode = ThemeMode.light,
@@ -38,6 +39,7 @@ class AppState extends Equatable {
     this.isLabelsEnabled = true,
     this.livePosition,
     this.liveBearing = 0.0,
+    this.distanceUnit = 'km',
   });
 
   AppState copyWith({
@@ -55,6 +57,7 @@ class AppState extends Equatable {
     bool? isLabelsEnabled,
     LatLng? livePosition,
     double? liveBearing,
+    String? distanceUnit,
   }) {
     return AppState(
       themeMode: themeMode ?? this.themeMode,
@@ -71,6 +74,7 @@ class AppState extends Equatable {
       isLabelsEnabled: isLabelsEnabled ?? this.isLabelsEnabled,
       livePosition: livePosition ?? this.livePosition,
       liveBearing: liveBearing ?? this.liveBearing,
+      distanceUnit: distanceUnit ?? this.distanceUnit,
     );
   }
 
@@ -90,5 +94,6 @@ class AppState extends Equatable {
     isLabelsEnabled,
     livePosition,
     liveBearing,
+    distanceUnit,
   ];
 }

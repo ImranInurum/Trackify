@@ -1,4 +1,4 @@
-﻿{
+{
     "selectLanguage": "اختر لغتك",
     "letsGetStarted": "دعنا نبدأ",
     "email": "البريد الإلكتروني",
@@ -1012,6 +1012,7 @@
                 "selectTimeSlot": "اختر الفترة الزمنية",
                 "bookNow": "احجز الآن",
                 "slotUnavailable": "الفترة غير متاحة",
-                "slotAvailable": "الفترة متاحة"
-
+                "slotAvailable": "الفترة متاحة",
+                "distanceUnitSelection": "وحدة المسافة",
+                "miles": "ميل"
 }

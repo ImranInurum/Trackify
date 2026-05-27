@@ -2500,4 +2500,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get slotAvailable => 'Slot Available';
+
+  @override
+  String get distanceUnitSelection => 'Distance Unit';
+
+  @override
+  String get miles => 'Miles';
 }

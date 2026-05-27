@@ -1,4 +1,4 @@
-﻿{
+{
     "selectLanguage": "உங்கள் மொழியைத் தேர்ந்தெடுக்கவும்",
     "letsGetStarted": "தொடங்குவோம்",
     "email": "மின்னஞ்சல்",
@@ -1013,10 +1013,7 @@
         "selectTimeSlot": "நேர இடைவெளியை தேர்ந்தெடுக்கவும்",
         "bookNow": "இப்போது பதிவு செய்யவும்",
         "slotUnavailable": "நேரம் கிடைக்கவில்லை",
-        "slotAvailable": "நேரம் கிடைக்கிறது"
-
-
-
-
-
+        "slotAvailable": "நேரம் கிடைக்கிறது",
+        "distanceUnitSelection": "தூர அலகு",
+        "miles": "மைல்"
 }

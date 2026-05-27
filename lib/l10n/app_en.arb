@@ -1062,8 +1062,7 @@
               "selectTimeSlot": "Select Time Slot",
               "bookNow": "Book now",
               "slotUnavailable": "Slot Unavailable",
-              "slotAvailable": "Slot Available"
-
-
-
+              "slotAvailable": "Slot Available",
+              "distanceUnitSelection": "Distance Unit",
+              "miles": "Miles"
 }

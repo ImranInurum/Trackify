@@ -2500,4 +2500,10 @@ class AppLocalizationsMr extends AppLocalizations {
 
   @override
   String get slotAvailable => 'स्लॉट उपलब्ध आहे';
+
+  @override
+  String get distanceUnitSelection => 'अंतर एकक';
+
+  @override
+  String get miles => 'मैल';
 }

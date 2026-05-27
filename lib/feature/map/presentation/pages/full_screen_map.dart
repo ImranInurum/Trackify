@@ -13,6 +13,7 @@ import 'package:trackify/core/utils/map_utils.dart';
 import 'package:trackify/core/widgets/bouncing_widget.dart';
 import 'package:trackify/feature/map/data/entity/user_vehicles.dart';
 import '../../../../l10n/app_localizations.dart';
+import 'package:trackify/core/utils/distance_utils.dart';
 
 class FullScreenMap extends StatefulWidget {
   final Vehicles? selectedVehicle;
@@ -1266,7 +1267,7 @@ class _FullScreenMapState extends State<FullScreenMap>
                         ),
                         const SizedBox(width: 2),
                         Text(
-                          AppLocalizations.of(context)!.kmh,
+                          context.displayKmh,
                           style: TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.bold,
@@ -1374,7 +1375,7 @@ class _FullScreenMapState extends State<FullScreenMap>
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 _buildGridItem(
-                  "$odometer ${AppLocalizations.of(context)!.km}",
+                  "$odometer ${context.displayKm}",
                   AppLocalizations.of(context)!.distanceLabel,
                 ),
                 _buildGridItem(
@@ -1382,7 +1383,7 @@ class _FullScreenMapState extends State<FullScreenMap>
                   AppLocalizations.of(context)!.durationLabel,
                 ),
                 _buildGridItem(
-                  "$liveSpeed ${AppLocalizations.of(context)!.kmh}",
+                  "$liveSpeed ${context.displayKmh}",
                   AppLocalizations.of(context)!.averageSpeed,
                 ),
                 _buildGridItem(

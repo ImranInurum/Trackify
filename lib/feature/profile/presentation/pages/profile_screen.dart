@@ -24,7 +24,7 @@ import '../../../upgrade_to_plus/presentation/pages/upgrade_to_plus.dart';
 import '../../../notifications/presentation/screen/notification_timeline.dart';
 import 'package:trackify/core/common/models/vehicle_list_model.dart';
 import '../../../Vehicle_control/data/repositories/vehicle_control_repository_impl.dart';
-
+import 'package:trackify/core/utils/distance_utils.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -91,7 +91,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
         });
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text("Vehicle ${targetLockState ? 'Locked' : 'Unlocked'} successfully!"),
+            content: Text(
+              "Vehicle ${targetLockState ? 'Locked' : 'Unlocked'} successfully!",
+            ),
             backgroundColor: Colors.green,
           ),
         );
@@ -118,7 +120,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
         builder: (context, appState) {
           final user = appState.userData;
           final userName = user?.name ?? "Guest";
-          final userInitials = userName.isNotEmpty ? userName[0].toUpperCase() : "G";
+          final userInitials = userName.isNotEmpty
+              ? userName[0].toUpperCase()
+              : "G";
           final userMobile =
               "+918602945222"; // Static for now as per design, but could be user.mobile if exists
 
@@ -132,7 +136,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   onTap: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (_) => const MyProfileScreen()),
+                      MaterialPageRoute(
+                        builder: (_) => const MyProfileScreen(),
+                      ),
                     );
                   },
                   child: Padding(
@@ -164,7 +170,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               Text(
                                 userName,
                                 style: TextStyle(
-                                  color: Theme.of(context).colorScheme.onSurface,
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onSurface,
                                   fontSize: 18,
                                   fontWeight: FontWeight.w600,
                                 ),
@@ -172,19 +180,29 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               const SizedBox(height: 4),
                               Text(
                                 userName,
-                                style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6)),
+                                style: TextStyle(
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onSurface.withOpacity(0.6),
+                                ),
                               ),
                               const SizedBox(height: 2),
                               Text(
                                 userMobile,
-                                style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6)),
+                                style: TextStyle(
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onSurface.withOpacity(0.6),
+                                ),
                               ),
                             ],
                           ),
                         ),
                         Icon(
                           Icons.chevron_right,
-                          color: Theme.of(context).colorScheme.onSurface.withOpacity(0.3),
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.onSurface.withOpacity(0.3),
                         ),
                       ],
                     ),
@@ -209,14 +227,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(30),
                       gradient: const LinearGradient(
-                        colors: [Color(0xFFD6B57B), Color(0xFFE7D0B7), Color(0xFFD6B57B)],
+                        colors: [
+                          Color(0xFFD6B57B),
+                          Color(0xFFE7D0B7),
+                          Color(0xFFD6B57B),
+                        ],
                       ),
                     ),
                     child: Center(
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Image.asset(AppImages.kingIcon, height: 20, width: 20),
+                          Image.asset(
+                            AppImages.kingIcon,
+                            height: 20,
+                            width: 20,
+                          ),
                           Text(
                             " ${l10n.upgradeToPlus}",
                             style: TextStyle(
@@ -232,8 +258,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                 const SizedBox(height: 16),
 
-
-
                 InkWell(
                   onTap: () {
                     Navigator.push(
@@ -243,73 +267,81 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                     );
                   },
-                    child: Container(
-                      margin: const EdgeInsets.symmetric(horizontal: 16),
-                      padding: const EdgeInsets.all(14),
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).cardColor,
-                        borderRadius: BorderRadius.circular(16),
-                        border: Border.all(color: Theme.of(context).dividerColor),
-                      ),
-                      child: Row(
-                        children: [
-                          Stack(
-                            alignment: Alignment.center,
+                  child: Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 16),
+                    padding: const EdgeInsets.all(14),
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).cardColor,
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(color: Theme.of(context).dividerColor),
+                    ),
+                    child: Row(
+                      children: [
+                        Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            SizedBox(
+                              height: 48,
+                              width: 48,
+                              child: CircularProgressIndicator(
+                                value: 0.63,
+                                strokeWidth: 4,
+                                backgroundColor: Theme.of(context).dividerColor,
+                                color: Theme.of(context).colorScheme.primary,
+                              ),
+                            ),
+                            Text(
+                              "63%",
+                              style: TextStyle(
+                                color: Theme.of(context).colorScheme.onSurface,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 12,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              SizedBox(
-                                height: 48,
-                                width: 48,
-                                child: CircularProgressIndicator(
-                                  value: 0.63,
-                                  strokeWidth: 4,
-                                  backgroundColor: Theme.of(context).dividerColor,
+                              Text(
+                                l10n.getMoreOutOfTrackify,
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w600,
                                   color: Theme.of(context).colorScheme.primary,
                                 ),
                               ),
+                              const SizedBox(height: 4),
                               Text(
-                                "63%",
+                                l10n.featuresExploredCount(10, 16),
                                 style: TextStyle(
-                                  color: Theme.of(context).colorScheme.onSurface,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 12,
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onSurface.withOpacity(0.6),
                                 ),
                               ),
                             ],
                           ),
-                          const SizedBox(width: 12),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  l10n.getMoreOutOfTrackify,
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.w600,
-                                    color: Theme.of(context).colorScheme.primary,
-                                  ),
-                                ),
-                                const SizedBox(height: 4),
-                                  Text(
-                                    l10n.featuresExploredCount(10, 16),
-                                    style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6)),
-                                  ),
-                              ],
-                            ),
-                          ),
-                          Icon(
-                            Icons.chevron_right,
-                            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.3),
-                          ),
-                        ],
-                      ),
+                        ),
+                        Icon(
+                          Icons.chevron_right,
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.onSurface.withOpacity(0.3),
+                        ),
+                      ],
                     ),
                   ),
-
+                ),
 
                 const SizedBox(height: 16),
 
                 Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
+                  margin: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 0,
+                  ),
                   decoration: BoxDecoration(
                     color: Theme.of(context).colorScheme.surface,
                     borderRadius: BorderRadius.circular(20),
@@ -327,10 +359,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       BlocBuilder<ProfileCubit, ProfileState>(
                         builder: (context, state) {
                           if (state is VehiclesLoading) {
-                            return const Center(child: CircularProgressIndicator());
+                            return const Center(
+                              child: CircularProgressIndicator(),
+                            );
                           }
-                          if (state is VehiclesLoaded && state.vehicles.isNotEmpty) {
-                            final selectedImei = AppPreference.instance.getSync(key: AppPreference.IMEI);
+                          if (state is VehiclesLoaded &&
+                              state.vehicles.isNotEmpty) {
+                            final selectedImei = AppPreference.instance.getSync(
+                              key: AppPreference.IMEI,
+                            );
                             final vehicle = state.vehicles.firstWhere(
                               (v) => v.imei == selectedImei,
                               orElse: () => state.vehicles.first,
@@ -340,7 +377,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               _fetchLockStatus(vehicle.imei!);
                             }
 
-                            final isLocked = _vehicleLockStates[vehicle.imei] ?? false;
+                            final isLocked =
+                                _vehicleLockStates[vehicle.imei] ?? false;
 
                             return VehicleCard(
                               context: context,
@@ -348,7 +386,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               hasDevice: true,
                               isLocked: isLocked,
                               onVehicleControl: () async {
-                                if (vehicle.imei != null && vehicle.imei!.isNotEmpty) {
+                                if (vehicle.imei != null &&
+                                    vehicle.imei!.isNotEmpty) {
                                   await AppPreference.instance.set(
                                     key: AppPreference.IMEI,
                                     value: vehicle.imei!,
@@ -358,26 +397,28 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (context) => const VehicleControlScreen(),
+                                      builder: (context) =>
+                                          const VehicleControlScreen(),
                                     ),
                                   );
                                 }
                               },
-                              onLock: () => _handleVehicleLock(context, vehicle),
+                              onLock: () =>
+                                  _handleVehicleLock(context, vehicle),
                               onRecharge: () {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => DeviceDataScreen(
-
-                                    ),
+                                    builder: (context) => DeviceDataScreen(),
                                   ),
                                 );
                               },
                               onRenew: () {
                                 Navigator.push(
                                   context,
-                                  MaterialPageRoute(builder: (context) => WarrantyScreen()),
+                                  MaterialPageRoute(
+                                    builder: (context) => WarrantyScreen(),
+                                  ),
                                 );
                               },
                             );
@@ -392,14 +433,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => const NotificationTimelineScreen(),
+                              builder: (context) =>
+                                  const NotificationTimelineScreen(),
                             ),
                           );
                         },
                         child: Container(
                           padding: const EdgeInsets.symmetric(vertical: 14),
                           decoration: BoxDecoration(
-                            color: Theme.of(context).colorScheme.primaryContainer,
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.primaryContainer,
                             borderRadius: const BorderRadius.only(
                               topLeft: Radius.circular(6),
                               topRight: Radius.circular(6),
@@ -439,7 +483,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   decoration: BoxDecoration(
                     color: Theme.of(context).cardColor,
                     borderRadius: BorderRadius.circular(18),
-                    boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 6)],
+                    boxShadow: const [
+                      BoxShadow(color: Colors.black12, blurRadius: 6),
+                    ],
                   ),
                   child: Column(
                     children: [
@@ -450,7 +496,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         onTap: () {
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (_) => const MyGarageScreen()),
+                            MaterialPageRoute(
+                              builder: (_) => const MyGarageScreen(),
+                            ),
                           );
                         },
                       ),
@@ -461,7 +509,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         onTap: () {
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (_) => const SettingsScreen()),
+                            MaterialPageRoute(
+                              builder: (_) => const SettingsScreen(),
+                            ),
                           );
                         },
                       ),
@@ -487,9 +537,88 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         onTap: () {
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (_) => const ChoiceSelector()),
+                            MaterialPageRoute(
+                              builder: (_) => const ChoiceSelector(),
+                            ),
                           );
                         },
+                      ),
+                    ],
+                  ),
+                ),
+
+                const SizedBox(height: 16),
+
+                /// 🔹 DISTANCE UNIT SELECTION
+                Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 16),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 8,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).cardColor,
+                    borderRadius: BorderRadius.circular(18),
+                    boxShadow: const [
+                      BoxShadow(color: Colors.black12, blurRadius: 6),
+                    ],
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 8),
+                        child: Text(
+                          AppLocalizations.of(context)!.distanceUnitSelection,
+                          style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 15,
+                            color: Theme.of(context).colorScheme.onSurface,
+                          ),
+                        ),
+                      ),
+                      Divider(height: 1, color: Theme.of(context).dividerColor),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: RadioListTile<String>(
+                              title: Text(l10n.km),
+                              value: 'km',
+                              groupValue: appState.distanceUnit,
+                              contentPadding: EdgeInsets.zero,
+                              dense: true,
+                              activeColor: Theme.of(
+                                context,
+                              ).colorScheme.primary,
+                              onChanged: (value) {
+                                if (value != null) {
+                                  context.read<AppCubit>().changeDistanceUnit(
+                                    value,
+                                  );
+                                }
+                              },
+                            ),
+                          ),
+                          Expanded(
+                            child: RadioListTile<String>(
+                              title: Text(AppLocalizations.of(context)!.miles),
+                              value: 'mi',
+                              groupValue: appState.distanceUnit,
+                              contentPadding: EdgeInsets.zero,
+                              dense: true,
+                              activeColor: Theme.of(
+                                context,
+                              ).colorScheme.primary,
+                              onChanged: (value) {
+                                if (value != null) {
+                                  context.read<AppCubit>().changeDistanceUnit(
+                                    value,
+                                  );
+                                }
+                              },
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
@@ -527,29 +656,33 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                        Text(
-                          title,
-                          style: TextStyle(
-                            fontWeight: FontWeight.w600,
-                            fontSize: 15,
-                            color: Theme.of(context).colorScheme.onSurface,
-                          ),
+                      Text(
+                        title,
+                        style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 15,
+                          color: Theme.of(context).colorScheme.onSurface,
                         ),
-                        const SizedBox(height: 2),
-                        Text(
-                          sub,
-                          style: TextStyle(
-                            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
-                            fontSize: 13,
-                          ),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        sub,
+                        style: TextStyle(
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.onSurface.withOpacity(0.6),
+                          fontSize: 13,
                         ),
+                      ),
                     ],
                   ),
                 ),
                 Icon(
                   Icons.chevron_right,
                   size: 18,
-                  color: Theme.of(context).colorScheme.onSurface.withOpacity(0.3),
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.onSurface.withOpacity(0.3),
                 ),
               ],
             ),
@@ -578,7 +711,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
         icon: Icon(Icons.logout, color: Theme.of(context).colorScheme.error),
         label: Text(
           l10n.logout,
-          style: TextStyle(color: Theme.of(context).colorScheme.error, fontWeight: FontWeight.bold),
+          style: TextStyle(
+            color: Theme.of(context).colorScheme.error,
+            fontWeight: FontWeight.bold,
+          ),
         ),
       ),
     );

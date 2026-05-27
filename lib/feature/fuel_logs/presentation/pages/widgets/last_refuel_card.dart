@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:trackify/l10n/app_localizations.dart';
 
 import '../../cubit/fuel_logs_state.dart';
+import 'package:trackify/core/utils/distance_utils.dart';
 
 class LastRefuelCard extends StatelessWidget {
   final FuelLogsLoaded state;
@@ -99,7 +100,7 @@ class LastRefuelCard extends StatelessWidget {
                 child: _buildStatItem(
                   context,
                   l10n.distanceTravelled,
-                  "${state.distanceTravelled == 'null' ? '0' : state.distanceTravelled} ${l10n.km}",
+                  "${state.distanceTravelled == 'null' ? '0' : state.distanceTravelled} ${context.displayKm}",
                   Icons.route_outlined,
                 ),
               ),
@@ -265,7 +266,7 @@ class LastRefuelCard extends StatelessWidget {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Text(
-                          l10n.kmL,
+                          context.displayKmL,
                           style: TextStyle(color: theme.hintColor, fontSize: 14),
                         ),
                       ],

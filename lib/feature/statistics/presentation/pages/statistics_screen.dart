@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:trackify/core/common/models/vehicle_list_model.dart';
 import 'package:trackify/core/constants/app_images.dart';
 import 'package:trackify/l10n/app_localizations.dart';
+import 'package:trackify/core/utils/distance_utils.dart';
 import 'package:trackify/feature/service_logs/presentation/widgets/vehicle_selection_app_bar.dart';
 import '../cubit/statistics_cubit.dart';
 import '../cubit/statistics_state.dart';
@@ -601,7 +602,7 @@ class _JourneyCard extends StatelessWidget {
       metrics: [
         _MetricItem(
           label: l10n.distanceTravelled,
-          value: data?.distanceTravelledText ?? '0.0 km',
+          value: (data?.distanceTravelledText ?? '0.0 km').replaceAll('km', context.displayKm),
           comparisonText: data?.distanceComparisonText ?? '',
           iconPath: AppImages.distanceTravelledIcon,
           color: const Color(0xFFB9F3E4),
@@ -631,14 +632,14 @@ class _SpeedCard extends StatelessWidget {
       metrics: [
         _MetricItem(
           label: l10n.averageSpeed,
-          value: data?.averageSpeedText ?? '0.0 km/hr',
+          value: (data?.averageSpeedText ?? '0.0 km/hr').replaceAll('km/hr', context.displayKmHr).replaceAll('km', context.displayKm),
           comparisonText: data?.averageSpeedComparisonText ?? '',
           iconPath: AppImages.averageSpeedIcon,
           color: const Color(0xFFFDE8E0),
         ),
         _MetricItem(
           label: l10n.topSpeed,
-          value: data?.topSpeedText ?? '0.0 km/hr',
+          value: (data?.topSpeedText ?? '0.0 km/hr').replaceAll('km/hr', context.displayKmHr).replaceAll('km', context.displayKm),
           comparisonText: data?.topSpeedComparisonText ?? '',
           iconPath: AppImages.topSpeedIcon,
           color: const Color(0xFFFFF7D1),

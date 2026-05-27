@@ -201,6 +201,11 @@ class AppCubit extends Cubit<AppState> with WidgetsBindingObserver {
         emit(state.copyWith(locale: const Locale('en')));
       }
     }
+
+    final distanceUnit = await prefs.get(key: AppPreference.KEY_DISTANCE_UNIT);
+    if (distanceUnit.isNotEmpty) {
+      emit(state.copyWith(distanceUnit: distanceUnit));
+    }
   }
 
   Future<void> updateUserSession(User user) async {
@@ -341,6 +346,14 @@ class AppCubit extends Cubit<AppState> with WidgetsBindingObserver {
   void changeTheme(ThemeMode themeMode) {
     emit(state.copyWith(themeMode: themeMode));
     // Optional: Save to local storage
+  }
+
+  void changeDistanceUnit(String unit) async {
+    emit(state.copyWith(distanceUnit: unit));
+    await AppPreference.instance.set(
+      key: AppPreference.KEY_DISTANCE_UNIT,
+      value: unit,
+    );
   }
 
   /// Change app locale/language

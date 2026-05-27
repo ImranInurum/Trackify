@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:trackify/l10n/app_localizations.dart';
+import 'package:trackify/core/utils/distance_utils.dart';
 
 class RefuelLogListItem extends StatelessWidget {
   final String date;
@@ -135,7 +136,7 @@ class RefuelLogListItem extends StatelessWidget {
                           color: theme.hintColor),
                       const SizedBox(width: 8),
                       Text(
-                        "$odometer ${l10n.kms}",
+                        "$odometer ${context.displayKms}",
                         style: TextStyle(
                           color: theme.textTheme.bodyLarge?.color,
                           fontWeight: FontWeight.bold,
@@ -193,13 +194,13 @@ class RefuelLogListItem extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 _buildMiniDetail(
-                    context, Icons.route_outlined, "$distance ${l10n.kms}"),
+                    context, Icons.route_outlined, "$distance ${context.displayKms}"),
                 _buildSeparator(context),
                 _buildMiniDetail(context, Icons.local_gas_station_outlined,
                     "$liters ${l10n.litersShort}"),
                 _buildSeparator(context),
                 _buildMiniDetail(
-                    context, Icons.bolt_outlined, "$mileage ${l10n.kmL}"),
+                    context, Icons.bolt_outlined, "$mileage ${context.displayKmL}"),
               ],
             ),
           ),

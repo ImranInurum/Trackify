@@ -2508,4 +2508,10 @@ class AppLocalizationsKn extends AppLocalizations {
 
   @override
   String get slotAvailable => 'ಸ್ಲಾಟ್ ಲಭ್ಯವಿದೆ';
+
+  @override
+  String get distanceUnitSelection => 'ದೂರ ಘಟಕ';
+
+  @override
+  String get miles => 'ಮೈಲಿಗಳು';
 }

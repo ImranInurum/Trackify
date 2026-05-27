@@ -2504,4 +2504,10 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get slotAvailable => 'स्लॉट उपलब्ध है';
+
+  @override
+  String get distanceUnitSelection => 'दूरी इकाई';
+
+  @override
+  String get miles => 'मील';
 }
