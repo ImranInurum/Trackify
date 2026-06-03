@@ -50,6 +50,8 @@ class Vehicle {
   final String? imei;
   final String? createdAt;
   final String? updatedAt;
+  final CurrentLocation? currentLocation;
+  final String? lastRideTime;
 
   Vehicle({
     this.id,
@@ -62,6 +64,8 @@ class Vehicle {
     this.imei,
     this.createdAt,
     this.updatedAt,
+    this.currentLocation,
+    this.lastRideTime,
   });
 
   factory Vehicle.fromJson(Map<String, dynamic> json) {
@@ -76,6 +80,10 @@ class Vehicle {
       imei: json['imei'],
       createdAt: json['createdAt'],
       updatedAt: json['updatedAt'],
+      currentLocation: json['currentLocation'] != null
+          ? CurrentLocation.fromJson(json['currentLocation'])
+          : null,
+      lastRideTime: json['lastRideTime'],
     );
   }
 
@@ -90,6 +98,8 @@ class Vehicle {
     String? imei,
     String? createdAt,
     String? updatedAt,
+    CurrentLocation? currentLocation,
+    String? lastRideTime,
   }) => Vehicle(
     id: id ?? this.id,
     userId: userId ?? this.userId,
@@ -101,6 +111,8 @@ class Vehicle {
     imei: imei ?? this.imei,
     createdAt: createdAt ?? this.createdAt,
     updatedAt: updatedAt ?? this.updatedAt,
+    currentLocation: currentLocation ?? this.currentLocation,
+    lastRideTime: lastRideTime ?? this.lastRideTime,
   );
 
   Map<String, dynamic> toJson() {
@@ -115,6 +127,37 @@ class Vehicle {
       'imei': imei,
       'createdAt': createdAt,
       'updatedAt': updatedAt,
+      'currentLocation': currentLocation?.toJson(),
+      'lastRideTime': lastRideTime,
+    };
+  }
+}
+
+class CurrentLocation {
+  final double? lat;
+  final double? lng;
+  final double? speed;
+  final String? time;
+
+  CurrentLocation({this.lat, this.lng, this.speed, this.time});
+
+  factory CurrentLocation.fromJson(Map<String, dynamic> json) {
+    return CurrentLocation(
+      lat: json['lat'] != null ? double.tryParse(json['lat'].toString()) : null,
+      lng: json['lng'] != null ? double.tryParse(json['lng'].toString()) : null,
+      speed: json['speed'] != null
+          ? double.tryParse(json['speed'].toString())
+          : null,
+      time: json['time'],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'lat': lat,
+      'lng': lng,
+      'speed': speed,
+      'time': time,
     };
   }
 }

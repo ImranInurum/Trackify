@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 import 'package:trackify/core/constants/app_images.dart';
 import 'package:trackify/core/theme/app_colors.dart';
 import 'package:trackify/feature/map/data/entity/user_vehicles.dart';
+import 'package:trackify/feature/trips/presentation/cubit/ride_history_cubit.dart';
+import 'package:trackify/feature/trips/presentation/cubit/ride_history_state.dart';
 import '../../l10n/app_localizations.dart';
 
 class DraggableAppBar extends StatefulWidget {
@@ -16,6 +20,7 @@ class DraggableAppBar extends StatefulWidget {
 
   /// Shown in expanded mode in the header row
   final Widget? expandedTrailing;
+  final Map<String, bool>? vehicleStatuses;
 
   const DraggableAppBar({
     super.key,
@@ -26,6 +31,7 @@ class DraggableAppBar extends StatefulWidget {
     this.selectedDevice,
     this.collapsedTrailing,
     this.expandedTrailing,
+    this.vehicleStatuses,
   });
 
   @override
@@ -392,6 +398,9 @@ class _DraggableAppBarState extends State<DraggableAppBar>
     required bool isHeaderRow,
     required bool isHighlighted,
   }) {
+    final isActive = widget.vehicleStatuses?[device.id] ?? (device.id == _selectedDevice?.id);
+    final isSelected = device.id == _selectedDevice?.id;
+
     return InkWell(
       onTap: isHeaderRow
           ? null
@@ -408,8 +417,8 @@ class _DraggableAppBarState extends State<DraggableAppBar>
           children: [
             // Image
             Image.asset(AppImages.bikeImage, height: 60, width: 60, fit: BoxFit.contain),
-            const SizedBox(width: 6),
-
+            const SizedBox(width: 8),
+ 
             // Content
             Expanded(
               child: Column(
@@ -423,7 +432,78 @@ class _DraggableAppBarState extends State<DraggableAppBar>
                       color: Theme.of(context).colorScheme.onSurface,
                     ),
                   ),
-                  // const SizedBox(height: 2),
+                  const SizedBox(height: 6),
+                  BlocBuilder<RideHistoryCubit, RideHistoryState>(
+                    builder: (context, state) {
+                      String timeValue = "--";
+                      bool displayIsActive = isActive;
+
+                      if (isSelected &&
+                          state is RideHistorySuccess &&
+                          state.rides.isNotEmpty) {
+                        final lastRide = state.rides.last;
+                        if (lastRide.points.isNotEmpty) {
+                          final lastPoint = lastRide.points.last;
+                          final timeStr = lastPoint.time;
+                          if (timeStr != null) {
+                            try {
+                              final dateTime = DateTime.parse(timeStr).toLocal();
+                              timeValue = DateFormat('h:mm a').format(dateTime);
+
+                              // Update active status based on the Previous Ride API time
+                              final now = DateTime.now();
+                              // Use 10 minutes threshold consistent with MapScreen
+                              displayIsActive =
+                                  now.difference(dateTime).inMinutes < 10;
+                            } catch (e) {
+                              debugPrint("Error parsing time: $e");
+                            }
+                          }
+                        } else if (lastRide.endTime.isNotEmpty) {
+                          // Fallback to endTime if points are empty but endTime exists
+                          timeValue = lastRide.endTime;
+                          try {
+                            // Try to parse endTime if it's an ISO string to update status
+                            final dateTime = DateTime.parse(lastRide.endTime).toLocal();
+                             displayIsActive =
+                                  DateTime.now().difference(dateTime).inMinutes < 10;
+                          } catch (_) {}
+                        }
+                      }
+
+                      return Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                        decoration: BoxDecoration(
+                          color: (displayIsActive ? Colors.green : Colors.red).withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                            color: (displayIsActive ? Colors.green : Colors.red).withOpacity(0.3),
+                            width: 1,
+                          ),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.circle,
+                              color: displayIsActive ? Colors.green : Colors.red,
+                              size: 7,
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              "${displayIsActive ? "Active" : "Inactive"} • $timeValue",
+                              style: TextStyle(
+                                fontSize: 11,
+                                color: displayIsActive ? Colors.green : Colors.red,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+                  const SizedBox(height: 4),
                   Row(
                     children: [
                       Text(

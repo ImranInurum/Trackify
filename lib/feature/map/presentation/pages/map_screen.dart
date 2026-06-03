@@ -1284,9 +1284,23 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
   }
 
   Widget _buildDraggableAppBar(List<Vehicles> vehicles) {
+    final Map<String, bool> vehicleStatuses = {};
+    for (final v in vehicles) {
+      final timeStr = v.currentLocation?.time;
+      final time = timeStr != null ? DateTime.tryParse(timeStr) : null;
+      final isRecent =
+          time != null && DateTime.now().difference(time).inMinutes < 10;
+      final isActive = time != null && isRecent;
+      vehicleStatuses[v.id] = isActive;
+      debugPrint(
+        "MapScreen status calculation for ${v.vehicleNumber}: ${isActive ? "Active" : "Inactive"}",
+      );
+    }
+
     return DraggableAppBar(
       vehicles: vehicles,
       selectedDevice: _selectedDevice,
+      vehicleStatuses: vehicleStatuses,
       collapsedTrailing: IconButton(
         onPressed: () => Navigator.push(
           context,

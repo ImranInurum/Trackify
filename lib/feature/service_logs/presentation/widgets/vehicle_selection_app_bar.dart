@@ -174,7 +174,7 @@ class _VehicleSelectorSheet extends StatelessWidget {
                       : theme.cardColor,
                 ),
                 child: Padding(
-                  padding: const EdgeInsets.all(8.0),
+                  padding: const EdgeInsets.symmetric(vertical: 4.0),
                   child: ListTile(
                     leading: Image.asset(
                       'assets/icons/bike2.png',

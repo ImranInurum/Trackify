@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:image_picker/image_picker.dart';
-import '../../../../core/common/usecase/get_user_vehicles_usecase.dart';
+import 'package:trackify/core/common/models/vehicle_list_model.dart';
+import 'package:trackify/core/common/usecase/get_user_vehicles_usecase.dart';
 import '../../domain/usecase/get_service_logs_usecase.dart';
 import '../../domain/usecase/save_service_log_usecase.dart';
 import 'service_logs_state.dart';
@@ -10,7 +10,6 @@ class ServiceLogsCubit extends Cubit<ServiceLogsState> {
   final GetUserVehiclesUsecase _getUserVehiclesUsecase;
   final GetServiceLogsUsecase _getServiceLogsUsecase;
   final SaveServiceLogUsecase _saveServiceLogUsecase;
-  final ImagePicker _imagePicker = ImagePicker();
 
   ServiceLogsCubit(
     this._getUserVehiclesUsecase,
@@ -67,13 +66,11 @@ class ServiceLogsCubit extends Cubit<ServiceLogsState> {
     }
   }
 
-  void selectVehicle(String vehicleId) {
+  Future<void> selectVehicle(String vehicleId) async {
     if (state is ServiceLogsLoaded) {
       final currentState = state as ServiceLogsLoaded;
-      final selected = currentState.vehicles.firstWhere(
-        (v) => v.id == vehicleId,
-      );
-      emit(currentState.copyWith(selectedVehicle: selected, logs: []));
+      final selected = currentState.vehicles.firstWhere((v) => v.id == vehicleId);
+      emit(currentState.copyWith(selectedVehicle: selected));
       fetchServiceLogs(imei: selected.imei);
     }
   }
@@ -88,17 +85,9 @@ class ServiceLogsCubit extends Cubit<ServiceLogsState> {
   }) async {
     if (state is ServiceLogsLoaded) {
       final currentState = state as ServiceLogsLoaded;
+      final vehicle = currentState.selectedVehicle;
 
-      if (currentState.selectedVehicle == null) {
-        emit(
-          ServiceLogsError(
-            "Please select a vehicle",
-            vehicles: currentState.vehicles,
-            selectedVehicle: currentState.selectedVehicle,
-          ),
-        );
-        return;
-      }
+      if (vehicle == null) return;
 
       emit(
         ServiceLogsSubmitting(
@@ -108,13 +97,11 @@ class ServiceLogsCubit extends Cubit<ServiceLogsState> {
         ),
       );
 
-      final amountDouble = double.tryParse(amount) ?? 0.0;
-
       final result = await _saveServiceLogUsecase(
-        vehicleId: currentState.selectedVehicle?.id ?? '',
-        imei: currentState.selectedVehicle?.imei ?? '',
+        vehicleId: vehicle.id ?? "",
+        imei: vehicle.imei ?? "",
         serviceDate: date,
-        amount: amountDouble,
+        amount: double.tryParse(amount) ?? 0.0,
         images: images,
         centerName: centerName,
         contact: contact,
@@ -138,8 +125,7 @@ class ServiceLogsCubit extends Cubit<ServiceLogsState> {
               logs: currentState.logs,
             ),
           );
-          // Refresh logs after success
-          fetchServiceLogs(imei: currentState.selectedVehicle?.imei);
+          fetchServiceLogs(imei: vehicle.imei);
         },
       );
     }
