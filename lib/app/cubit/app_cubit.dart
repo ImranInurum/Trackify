@@ -35,15 +35,35 @@ class AppCubit extends Cubit<AppState> with WidgetsBindingObserver {
   }) : _connectivityService = connectivityService,
        _locationService = locationService,
        _socketService = socketService,
-       super(const AppState()) {
-    print("AppCubit constructed");
+       super(AppState(themeMode: _getInitialThemeMode())) {
+    debugPrint("AppCubit: [CONSTRUCTOR] Initialized with ThemeMode: ${state.themeMode}");
     WidgetsBinding.instance.addObserver(this);
+  }
+
+  static ThemeMode _getInitialThemeMode() {
+    final savedTheme = AppPreference.instance.getSync(key: AppPreference.KEY_THEME_MODE);
+    debugPrint("AppCubit: [STARTUP] Raw saved value from SharedPreferences: '$savedTheme'");
+    
+    if (savedTheme == "dark") {
+      debugPrint("AppCubit: [STARTUP] Result: ThemeMode.dark");
+      return ThemeMode.dark;
+    } else if (savedTheme == "light") {
+      debugPrint("AppCubit: [STARTUP] Result: ThemeMode.light");
+      return ThemeMode.light;
+    } else if (savedTheme == "system") {
+      debugPrint("AppCubit: [STARTUP] Result: ThemeMode.system");
+      return ThemeMode.system;
+    }
+    
+    debugPrint("AppCubit: [STARTUP] No valid theme found, defaulting to ThemeMode.light");
+    return ThemeMode.light;
   }
 
   Future<void> initialize() async {
     print("initialize App Cubit");
     try {
-      await AppPreference.instance.init();
+      // await AppPreference.instance.init(); // Redundant, already done in main.dart
+      // await loadSavedThemeMode(); // Redundant, handled in constructor
       await loadThemeFromCache();
       _initializeConnectivity();
       await _initializeLocation();
@@ -64,6 +84,27 @@ class AppCubit extends Cubit<AppState> with WidgetsBindingObserver {
       } catch (e) {
         print('Error parsing cached theme: $e');
       }
+    }
+  }
+
+  Future<void> loadSavedThemeMode() async {
+    final prefs = AppPreference.instance;
+    final savedTheme = await prefs.get(key: AppPreference.KEY_THEME_MODE);
+    debugPrint("AppCubit: loadSavedThemeMode - Saved theme value: $savedTheme");
+    if (savedTheme.isNotEmpty) {
+      try {
+        final themeMode = ThemeMode.values.firstWhere(
+          (e) => e.name == savedTheme,
+          orElse: () => ThemeMode.light,
+        );
+        debugPrint("AppCubit: ThemeMode emitted by AppCubit: $themeMode");
+        emit(state.copyWith(themeMode: themeMode));
+      } catch (e) {
+        debugPrint('AppCubit: Error loading saved theme mode: $e');
+        emit(state.copyWith(themeMode: ThemeMode.light));
+      }
+    } else {
+      emit(state.copyWith(themeMode: ThemeMode.light));
     }
   }
 
@@ -342,10 +383,15 @@ class AppCubit extends Cubit<AppState> with WidgetsBindingObserver {
     }
   }
 
+//--------------------------------------------------------------------
+  Future<void> changeTheme(ThemeMode themeMode) async {
+    debugPrint("AppCubit: [UI] Saving ThemeMode: ${themeMode.name}");
+    await AppPreference.instance.set(
+      key: AppPreference.KEY_THEME_MODE,
+      value: themeMode.name,
+    );
 
-  void changeTheme(ThemeMode themeMode) {
     emit(state.copyWith(themeMode: themeMode));
-    // Optional: Save to local storage
   }
 
   void changeDistanceUnit(String unit) async {
