@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:trackify/app/cubit/app_cubit.dart';
 import 'package:trackify/core/constants/app_images.dart';
 import 'package:trackify/core/theme/app_colors.dart';
 import 'package:trackify/feature/map/data/entity/user_vehicles.dart';
@@ -18,9 +19,7 @@ class DraggableAppBar extends StatefulWidget {
   /// Shown in collapsed mode on the selected device row
   final Widget? collapsedTrailing;
 
-  /// Shown in expanded mode in the header row
   final Widget? expandedTrailing;
-  final Map<String, bool>? vehicleStatuses;
 
   const DraggableAppBar({
     super.key,
@@ -31,7 +30,6 @@ class DraggableAppBar extends StatefulWidget {
     this.selectedDevice,
     this.collapsedTrailing,
     this.expandedTrailing,
-    this.vehicleStatuses,
   });
 
   @override
@@ -398,22 +396,94 @@ class _DraggableAppBarState extends State<DraggableAppBar>
     required bool isHeaderRow,
     required bool isHighlighted,
   }) {
-    final isActive = widget.vehicleStatuses?[device.id] ?? (device.id == _selectedDevice?.id);
     final isSelected = device.id == _selectedDevice?.id;
 
-    return InkWell(
-      onTap: isHeaderRow
-          ? null
-          : () {
-              widget.onDeviceTap?.call(device);
-              _collapse();
-            },
-      child: Container(
-        padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
-        color: isHighlighted
-            ? Theme.of(context).colorScheme.primary.withOpacity(0.08)
-            : Colors.transparent,
-        child: Row(
+    // Fetch live data from AppCubit
+    final liveDevices = context.watch<AppCubit>().state.devices;
+    final liveData = liveDevices.firstWhere(
+      (d) =>
+          d['imei'] == device.imei ||
+          d['_id'] == device.id ||
+          d['id'] == device.id,
+      orElse: () => <String, dynamic>{},
+    );
+
+    DateTime? time;
+    double speed = 0.0;
+
+    if (liveData.isNotEmpty) {
+      final timeStr = (liveData['updatedAt'] ?? liveData['createdAt'] ?? liveData['time'])?.toString();
+      if (timeStr != null) {
+        time = DateTime.tryParse(timeStr)?.toLocal();
+      }
+      speed = double.tryParse((liveData['sp'] ?? liveData['speed'])?.toString() ?? '0') ?? 0.0;
+    } else {
+      final timeStr = device.currentLocation?.time;
+      if (timeStr != null) {
+        time = DateTime.tryParse(timeStr)?.toLocal();
+      }
+      speed = device.currentLocation?.speed ?? 0.0;
+    }
+
+    String statusLabel = 'Offline';
+    String timeValue = '--';
+    Color statusColor = Colors.grey;
+
+    if (time != null) {
+      timeValue = DateFormat('h:mm a').format(time);
+      final diffMinutes = DateTime.now().difference(time).inMinutes;
+      final hasLiveData = liveData.isNotEmpty;
+
+      // Calculate how long the vehicle has been stopped (speed <= 5)
+      int stoppedMinutes = 0;
+      if (liveData.containsKey('stoppedAt')) {
+        final stoppedAtStr = liveData['stoppedAt']?.toString();
+        if (stoppedAtStr != null) {
+          final stoppedAt = DateTime.tryParse(stoppedAtStr);
+          if (stoppedAt != null) {
+            stoppedMinutes = DateTime.now().difference(stoppedAt).inMinutes;
+          }
+        }
+      } else if (!hasLiveData && speed <= 5) {
+        // Fallback if there's no live data but speed is 0 from API
+        stoppedMinutes = diffMinutes;
+      }
+
+      if (diffMinutes > 24 * 60 && !hasLiveData) {
+        statusLabel = 'Offline';
+        statusColor = Colors.grey;
+      } else if (diffMinutes > 60 || (speed <= 5 && stoppedMinutes > 60)) {
+        statusLabel = 'Parking';
+        statusColor = Colors.blue;
+      } else if (speed <= 5 && stoppedMinutes >= 10) {
+        statusLabel = 'Idle';
+        statusColor = Colors.red;
+      } else {
+        if (speed <= 5) {
+          // It's going to become Idle soon. Show a countdown/debug text.
+          int left = 10 - stoppedMinutes;
+          statusLabel = 'Moving ($left m left)';
+        } else {
+          statusLabel = 'Moving';
+        }
+        statusColor = Colors.green;
+      }
+    }
+
+    return Material(
+      color: isHighlighted
+          ? Theme.of(context).colorScheme.primary.withOpacity(0.08)
+          : Colors.transparent,
+      child: InkWell(
+        onTap: isHeaderRow
+            ? null
+            : () {
+                widget.onDeviceTap?.call(device);
+                _collapse();
+              },
+        child: Container(
+          padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+          child: Row(
           children: [
             // Image
             Image.asset(AppImages.bikeImage, height: 60, width: 60, fit: BoxFit.contain),
@@ -433,77 +503,6 @@ class _DraggableAppBarState extends State<DraggableAppBar>
                     ),
                   ),
                   const SizedBox(height: 6),
-                  BlocBuilder<RideHistoryCubit, RideHistoryState>(
-                    builder: (context, state) {
-                      String timeValue = "--";
-                      bool displayIsActive = isActive;
-
-                      if (isSelected &&
-                          state is RideHistorySuccess &&
-                          state.rides.isNotEmpty) {
-                        final lastRide = state.rides.last;
-                        if (lastRide.points.isNotEmpty) {
-                          final lastPoint = lastRide.points.last;
-                          final timeStr = lastPoint.time;
-                          if (timeStr != null) {
-                            try {
-                              final dateTime = DateTime.parse(timeStr).toLocal();
-                              timeValue = DateFormat('h:mm a').format(dateTime);
-
-                              // Update active status based on the Previous Ride API time
-                              final now = DateTime.now();
-                              // Use 10 minutes threshold consistent with MapScreen
-                              displayIsActive =
-                                  now.difference(dateTime).inMinutes < 10;
-                            } catch (e) {
-                              debugPrint("Error parsing time: $e");
-                            }
-                          }
-                        } else if (lastRide.endTime.isNotEmpty) {
-                          // Fallback to endTime if points are empty but endTime exists
-                          timeValue = lastRide.endTime;
-                          try {
-                            // Try to parse endTime if it's an ISO string to update status
-                            final dateTime = DateTime.parse(lastRide.endTime).toLocal();
-                             displayIsActive =
-                                  DateTime.now().difference(dateTime).inMinutes < 10;
-                          } catch (_) {}
-                        }
-                      }
-
-                      return Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                        decoration: BoxDecoration(
-                          color: (displayIsActive ? Colors.green : Colors.red).withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(
-                            color: (displayIsActive ? Colors.green : Colors.red).withOpacity(0.3),
-                            width: 1,
-                          ),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(
-                              Icons.circle,
-                              color: displayIsActive ? Colors.green : Colors.red,
-                              size: 7,
-                            ),
-                            const SizedBox(width: 4),
-                            Text(
-                              "${displayIsActive ? "Active" : "Inactive"} • $timeValue",
-                              style: TextStyle(
-                                fontSize: 11,
-                                color: displayIsActive ? Colors.green : Colors.red,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ],
-                        ),
-                      );
-                    },
-                  ),
-                  const SizedBox(height: 4),
                   Row(
                     children: [
                       Text(
@@ -517,6 +516,38 @@ class _DraggableAppBarState extends State<DraggableAppBar>
                       const SizedBox(width: 8),
                       // Tag
                       _buildTag(device),
+                      const SizedBox(width: 8),
+                      // Status Container
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                        decoration: BoxDecoration(
+                          color: statusColor.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                            color: statusColor.withOpacity(0.3),
+                            width: 1,
+                          ),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.circle,
+                              color: statusColor,
+                              size: 7,
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              statusLabel,
+                              style: TextStyle(
+                                fontSize: 11,
+                                color: statusColor,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                     ],
                   ),
                 ],
@@ -557,7 +588,7 @@ class _DraggableAppBarState extends State<DraggableAppBar>
           ],
         ),
       ),
-    );
+    ));
   }
 
   Widget _buildTag(Vehicles device) {
