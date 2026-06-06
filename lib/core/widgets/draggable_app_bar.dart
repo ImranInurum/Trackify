@@ -61,7 +61,10 @@ class _DraggableAppBarState extends State<DraggableAppBar>
       duration: const Duration(milliseconds: 260),
     );
 
-    _expandFactor = CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic);
+    _expandFactor = CurvedAnimation(
+      parent: _controller,
+      curve: Curves.easeOutCubic,
+    );
 
     _overlayOpacity = Tween<double>(
       begin: 0,
@@ -146,7 +149,8 @@ class _DraggableAppBarState extends State<DraggableAppBar>
                   child: Container(
                     width: double.infinity,
                     decoration: ShapeDecoration(
-                      color: widget.backgroundColor ?? Theme.of(context).cardColor,
+                      color:
+                          widget.backgroundColor ?? Theme.of(context).cardColor,
                       shape: RoundedRectangleBorder(
                         borderRadius: const BorderRadius.only(
                           bottomLeft: Radius.circular(26),
@@ -197,17 +201,23 @@ class _DraggableAppBarState extends State<DraggableAppBar>
                                             ),
                                             child: Row(
                                               children: [
-                                                 Expanded(
+                                                Expanded(
                                                   child: Text(
-                                                    AppLocalizations.of(context)!.myGarage,
+                                                    AppLocalizations.of(
+                                                      context,
+                                                    )!.myGarage,
                                                     style: TextStyle(
                                                       fontSize: 16,
-                                                      fontWeight: FontWeight.w600,
-                                                      color: Theme.of(context).colorScheme.onSurface,
+                                                      fontWeight:
+                                                          FontWeight.w600,
+                                                      color: Theme.of(
+                                                        context,
+                                                      ).colorScheme.onSurface,
                                                     ),
                                                   ),
                                                 ),
-                                                if (widget.expandedTrailing != null)
+                                                if (widget.expandedTrailing !=
+                                                    null)
                                                   widget.expandedTrailing!,
                                               ],
                                             ),
@@ -237,10 +247,12 @@ class _DraggableAppBarState extends State<DraggableAppBar>
                                                   padding: EdgeInsets.zero,
                                                   itemCount: _vehicles.length,
                                                   itemBuilder: (context, index) {
-                                                    final device = _vehicles[index];
+                                                    final device =
+                                                        _vehicles[index];
 
                                                     if (device.vehicleNumber ==
-                                                        selected?.vehicleNumber) {
+                                                        selected
+                                                            ?.vehicleNumber) {
                                                       return const SizedBox.shrink(); // skip selected as it's at the top
                                                     }
 
@@ -255,25 +267,39 @@ class _DraggableAppBarState extends State<DraggableAppBar>
                                               if (widget.onAddVehicle != null)
                                                 InkWell(
                                                   onTap: widget.onAddVehicle,
-                                                  child:  Padding(
-                                                    padding: EdgeInsets.symmetric(
-                                                      horizontal: 18,
-                                                      vertical: 16,
-                                                    ),
+                                                  child: Padding(
+                                                    padding:
+                                                        EdgeInsets.symmetric(
+                                                          horizontal: 18,
+                                                          vertical: 16,
+                                                        ),
                                                     child: Row(
                                                       children: [
                                                         Icon(
-                                                          Icons.add_box_outlined,
-                                                          color: Theme.of(context).colorScheme.primary,
+                                                          Icons
+                                                              .add_box_outlined,
+                                                          color: Theme.of(
+                                                            context,
+                                                          ).colorScheme.primary,
                                                           size: 20,
                                                         ),
-                                                        const SizedBox(width: 8),
+                                                        const SizedBox(
+                                                          width: 8,
+                                                        ),
                                                         Text(
-                                                          AppLocalizations.of(context)!.addVehicle,
+                                                          AppLocalizations.of(
+                                                            context,
+                                                          )!.addVehicle,
                                                           style: TextStyle(
-                                                            color: Theme.of(context).colorScheme.primary,
+                                                            color:
+                                                                Theme.of(
+                                                                      context,
+                                                                    )
+                                                                    .colorScheme
+                                                                    .primary,
                                                             fontSize: 14,
-                                                            fontWeight: FontWeight.w600,
+                                                            fontWeight:
+                                                                FontWeight.w600,
                                                           ),
                                                         ),
                                                       ],
@@ -287,8 +313,10 @@ class _DraggableAppBarState extends State<DraggableAppBar>
 
                                       GestureDetector(
                                         onTap: _toggle,
-                                        onVerticalDragUpdate: _handleVerticalDragUpdate,
-                                        onVerticalDragEnd: _handleVerticalDragEnd,
+                                        onVerticalDragUpdate:
+                                            _handleVerticalDragUpdate,
+                                        onVerticalDragEnd:
+                                            _handleVerticalDragEnd,
                                         behavior: HitTestBehavior.opaque,
                                         child: Container(
                                           width: double.infinity,
@@ -300,19 +328,24 @@ class _DraggableAppBarState extends State<DraggableAppBar>
                                           decoration: BoxDecoration(
                                             border: Border(
                                               bottom: BorderSide(
-                                                color: Theme.of(context).dividerColor,
+                                                color: Theme.of(
+                                                  context,
+                                                ).dividerColor,
                                                 width: 0.25,
                                               ),
                                             ),
                                           ),
                                           child: AnimatedSwitcher(
-                                            duration: const Duration(milliseconds: 180),
-                                            transitionBuilder: (child, animation) {
-                                              return FadeTransition(
-                                                opacity: animation,
-                                                child: child,
-                                              );
-                                            },
+                                            duration: const Duration(
+                                              milliseconds: 180,
+                                            ),
+                                            transitionBuilder:
+                                                (child, animation) {
+                                                  return FadeTransition(
+                                                    opacity: animation,
+                                                    child: child,
+                                                  );
+                                                },
                                             child: _isExpanded
                                                 ? Image.asset(
                                                     AppImages.arrowUpIcon,
@@ -329,10 +362,14 @@ class _DraggableAppBarState extends State<DraggableAppBar>
                                                     width: 55,
                                                     height: 2.5,
                                                     decoration: BoxDecoration(
-                                                      color: Theme.of(context).colorScheme.onSurface.withOpacity(0.2),
-                                                      borderRadius: BorderRadius.circular(
-                                                        24,
-                                                      ),
+                                                      color: Theme.of(context)
+                                                          .colorScheme
+                                                          .onSurface
+                                                          .withOpacity(0.2),
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                            24,
+                                                          ),
                                                     ),
                                                   ),
                                           ),
@@ -370,8 +407,14 @@ class _DraggableAppBarState extends State<DraggableAppBar>
                                     begin: Alignment.bottomCenter,
                                     end: Alignment.topCenter,
                                     colors: [
-                                      Theme.of(context).colorScheme.primaryContainer.withOpacity(0.75),
-                                      Theme.of(context).colorScheme.primaryContainer.withOpacity(0.05),
+                                      Theme.of(context)
+                                          .colorScheme
+                                          .primaryContainer
+                                          .withOpacity(0.75),
+                                      Theme.of(context)
+                                          .colorScheme
+                                          .primaryContainer
+                                          .withOpacity(0.05),
                                     ],
                                   ),
                                 ),
@@ -412,11 +455,17 @@ class _DraggableAppBarState extends State<DraggableAppBar>
     double speed = 0.0;
 
     if (liveData.isNotEmpty) {
-      final timeStr = (liveData['updatedAt'] ?? liveData['createdAt'] ?? liveData['time'])?.toString();
+      final timeStr =
+          (liveData['updatedAt'] ?? liveData['createdAt'] ?? liveData['time'])
+              ?.toString();
       if (timeStr != null) {
         time = DateTime.tryParse(timeStr)?.toLocal();
       }
-      speed = double.tryParse((liveData['sp'] ?? liveData['speed'])?.toString() ?? '0') ?? 0.0;
+      speed =
+          double.tryParse(
+            (liveData['sp'] ?? liveData['speed'])?.toString() ?? '0',
+          ) ??
+          0.0;
     } else {
       final timeStr = device.currentLocation?.time;
       if (timeStr != null) {
@@ -459,13 +508,7 @@ class _DraggableAppBarState extends State<DraggableAppBar>
         statusLabel = 'Idle';
         statusColor = Colors.red;
       } else {
-        if (speed <= 5) {
-          // It's going to become Idle soon. Show a countdown/debug text.
-          int left = 10 - stoppedMinutes;
-          statusLabel = 'Moving ($left m left)';
-        } else {
-          statusLabel = 'Moving';
-        }
+        statusLabel = 'Moving';
         statusColor = Colors.green;
       }
     }
@@ -484,111 +527,118 @@ class _DraggableAppBarState extends State<DraggableAppBar>
         child: Container(
           padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
           child: Row(
-          children: [
-            // Image
-            Image.asset(AppImages.bikeImage, height: 60, width: 60, fit: BoxFit.contain),
-            const SizedBox(width: 8),
- 
-            // Content
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    "${device.vehicleMaker} ${device.vehicleModel}",
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w700,
-                      color: Theme.of(context).colorScheme.onSurface,
-                    ),
-                  ),
-                  const SizedBox(height: 6),
-                  Row(
-                    children: [
-                      Text(
-                        device.vehicleNumber ?? '---',
-                        style: TextStyle(
-                          fontSize: 13,
-                          color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
-                          fontWeight: FontWeight.w500,
-                        ),
+            children: [
+              // Image
+              Image.asset(
+                AppImages.bikeImage,
+                height: 60,
+                width: 60,
+                fit: BoxFit.contain,
+              ),
+              const SizedBox(width: 8),
+
+              // Content
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "${device.vehicleMaker} ${device.vehicleModel}",
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w700,
+                        color: Theme.of(context).colorScheme.onSurface,
                       ),
-                      const SizedBox(width: 8),
-                      // Tag
-                      _buildTag(device),
-                      const SizedBox(width: 8),
-                      // Status Container
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                        decoration: BoxDecoration(
-                          color: statusColor.withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(
-                            color: statusColor.withOpacity(0.3),
-                            width: 1,
+                    ),
+                    const SizedBox(height: 6),
+                    Row(
+                      children: [
+                        Text(
+                          device.vehicleNumber ?? '---',
+                          style: TextStyle(
+                            fontSize: 13,
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSurface.withOpacity(0.5),
+                            fontWeight: FontWeight.w500,
                           ),
                         ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(
-                              Icons.circle,
-                              color: statusColor,
-                              size: 7,
+                        const SizedBox(width: 8),
+                        // Tag
+                        _buildTag(device),
+                        const SizedBox(width: 8),
+                        // Status Container
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 2,
+                          ),
+                          decoration: BoxDecoration(
+                            color: statusColor.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(
+                              color: statusColor.withOpacity(0.3),
+                              width: 1,
                             ),
-                            const SizedBox(width: 4),
-                            Text(
-                              statusLabel,
-                              style: TextStyle(
-                                fontSize: 11,
-                                color: statusColor,
-                                fontWeight: FontWeight.bold,
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(Icons.circle, color: statusColor, size: 7),
+                              const SizedBox(width: 4),
+                              Text(
+                                statusLabel,
+                                style: TextStyle(
+                                  fontSize: 11,
+                                  color: statusColor,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-
-            // Right Side info / icon
-            if (!_isExpanded && isHeaderRow)
-              widget.collapsedTrailing ??
-                  Icon(
-                    Icons.notifications_none_outlined,
-                    color: Theme.of(context).colorScheme.onSurface,
-                  )
-            else if (_isExpanded && isHeaderRow)
-              Text(
-                AppLocalizations.of(context)!.expiresInDays('321'),
-                style: const TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w700,
-                  color: Colors.green,
-                ),
-              )
-            else if (_isExpanded && !isHeaderRow)
-              Row(
-                children: [
-                  const Icon(Icons.shield, color: Colors.orange, size: 14),
-                  const SizedBox(width: 4),
-                  Text(
-                    AppLocalizations.of(context)!.buyTrackifyDevice,
-                    style: const TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.orange,
+                      ],
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-          ],
+
+              // Right Side info / icon
+              if (!_isExpanded && isHeaderRow)
+                widget.collapsedTrailing ??
+                    Icon(
+                      Icons.notifications_none_outlined,
+                      color: Theme.of(context).colorScheme.onSurface,
+                    )
+              else if (_isExpanded && isHeaderRow)
+                Text(
+                  AppLocalizations.of(context)!.expiresInDays('321'),
+                  style: const TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w700,
+                    color: Colors.green,
+                  ),
+                )
+              else if (_isExpanded && !isHeaderRow)
+                Row(
+                  children: [
+                    const Icon(Icons.shield, color: Colors.orange, size: 14),
+                    const SizedBox(width: 4),
+                    Text(
+                      AppLocalizations.of(context)!.buyTrackifyDevice,
+                      style: const TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.orange,
+                      ),
+                    ),
+                  ],
+                ),
+            ],
+          ),
         ),
       ),
-    ));
+    );
   }
 
   Widget _buildTag(Vehicles device) {

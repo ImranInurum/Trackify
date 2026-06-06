@@ -181,8 +181,26 @@ class _FullScreenMapState extends State<FullScreenMap>
   LatLng? _getBestPosition() {
     final appState = context.read<AppCubit>().state;
     final currentPos = appState.currentLocation;
-    LatLng? bestPos = appState.livePosition;
+    LatLng? bestPos;
 
+    // 1. Get live position specific to THIS device from socket data
+    final liveData = appState.devices.firstWhere(
+      (d) =>
+          d['imei'] == widget.selectedVehicle?.imei ||
+          d['_id'] == widget.selectedVehicle?.id ||
+          d['id'] == widget.selectedVehicle?.id,
+      orElse: () => <String, dynamic>{},
+    );
+
+    if (liveData.isNotEmpty) {
+      final lat = double.tryParse(liveData['lt']?.toString() ?? '');
+      final lng = double.tryParse(liveData['lg']?.toString() ?? '');
+      if (lat != null && lng != null) {
+        bestPos = LatLng(lat, lng);
+      }
+    }
+
+    // 2. Fallback to API static location
     if (bestPos == null &&
         widget.selectedVehicle?.currentLocation != null &&
         widget.selectedVehicle!.currentLocation!.lat != null &&
@@ -193,6 +211,7 @@ class _FullScreenMapState extends State<FullScreenMap>
       );
     }
 
+    // 3. Fallback to phone current location
     if (bestPos == null && currentPos != null) {
       bestPos = LatLng(currentPos.latitude, currentPos.longitude);
     }
@@ -684,14 +703,48 @@ class _FullScreenMapState extends State<FullScreenMap>
   @override
   Widget build(BuildContext context) {
     return BlocListener<AppCubit, AppState>(
-      listenWhen: (previous, current) =>
-          previous.livePosition != current.livePosition ||
-          previous.liveBearing != current.liveBearing,
+      listenWhen: (previous, current) {
+        // Find previous position for this specific device
+        final prevData = previous.devices.firstWhere(
+          (d) =>
+              d['imei'] == widget.selectedVehicle?.imei ||
+              d['_id'] == widget.selectedVehicle?.id ||
+              d['id'] == widget.selectedVehicle?.id,
+          orElse: () => <String, dynamic>{},
+        );
+        
+        // Find current position for this specific device
+        final currData = current.devices.firstWhere(
+          (d) =>
+              d['imei'] == widget.selectedVehicle?.imei ||
+              d['_id'] == widget.selectedVehicle?.id ||
+              d['id'] == widget.selectedVehicle?.id,
+          orElse: () => <String, dynamic>{},
+        );
+
+        return prevData['lt'] != currData['lt'] ||
+               prevData['lg'] != currData['lg'] ||
+               prevData['course'] != currData['course'] ||
+               prevData['bearing'] != currData['bearing'];
+      },
       listener: (context, state) {
-        if (_isAutoFollowing &&
-            state.livePosition != null &&
-            _mapController != null) {
+        final target = _getBestPosition();
+        if (_isAutoFollowing && target != null && _mapController != null) {
           if (_isInitialFocusDone) {
+            
+            // Extract bearing for this specific device
+            final currData = state.devices.firstWhere(
+              (d) =>
+                  d['imei'] == widget.selectedVehicle?.imei ||
+                  d['_id'] == widget.selectedVehicle?.id ||
+                  d['id'] == widget.selectedVehicle?.id,
+              orElse: () => <String, dynamic>{},
+            );
+            
+            double bearing = double.tryParse(
+              (currData['course'] ?? currData['bearing'] ?? currData['angle'] ?? currData['dir'] ?? '0').toString()
+            ) ?? 0.0;
+
             if (_showCurrentLocation && state.currentLocation != null) {
               // Both markers mode: fit vehicle + phone location
               final phonePos = LatLng(
@@ -699,17 +752,17 @@ class _FullScreenMapState extends State<FullScreenMap>
                 state.currentLocation!.longitude,
               );
               _fitBothMarkersOnMap(
-                state.livePosition!,
+                target,
                 phonePos,
-                state.liveBearing,
+                bearing,
               );
             } else {
               // Vehicle only mode: focus on vehicle with rotation
               _animateCameraTo(
-                target: state.livePosition!,
+                target: target,
                 zoom: 15.0,
                 tilt: 0.0,
-                bearing: state.liveBearing,
+                bearing: bearing,
                 duration: const Duration(milliseconds: 1500),
                 curve: Curves.easeOutCubic,
               );
@@ -756,8 +809,24 @@ class _FullScreenMapState extends State<FullScreenMap>
         // Final fallback to phone location
         bestPos ??= LatLng(currentPos.latitude, currentPos.longitude);
 
+        // 1. Get live position specific to THIS device from socket data
+        final liveData = appState.devices.firstWhere(
+          (d) =>
+              d['imei'] == widget.selectedVehicle?.imei ||
+              d['_id'] == widget.selectedVehicle?.id ||
+              d['id'] == widget.selectedVehicle?.id,
+          orElse: () => <String, dynamic>{},
+        );
+
+        double bearing = 0.0;
+        if (liveData.isNotEmpty) {
+           bearing = double.tryParse(
+              (liveData['course'] ?? liveData['bearing'] ?? liveData['angle'] ?? liveData['dir'] ?? '0').toString()
+           ) ?? 0.0;
+        }
+
         // Start with a 120-degree rotation offset for a cinematic entrance
-        double startBearing = _normalizeBearing(appState.liveBearing - 120.0);
+        double startBearing = _normalizeBearing(bearing - 120.0);
 
         return GoogleMap(
           key: ValueKey(widget.selectedVehicle?.id),
@@ -794,7 +863,7 @@ class _FullScreenMapState extends State<FullScreenMap>
               });
             }
           },
-          markers: _buildMarkers(bestPos, currentPos, appState.liveBearing),
+          markers: _buildMarkers(bestPos, currentPos, bearing),
           onMapCreated: (controller) async {
             _mapController = controller;
 

@@ -36,14 +36,20 @@ class AppCubit extends Cubit<AppState> with WidgetsBindingObserver {
        _locationService = locationService,
        _socketService = socketService,
        super(AppState(themeMode: _getInitialThemeMode())) {
-    debugPrint("AppCubit: [CONSTRUCTOR] Initialized with ThemeMode: ${state.themeMode}");
+    debugPrint(
+      "AppCubit: [CONSTRUCTOR] Initialized with ThemeMode: ${state.themeMode}",
+    );
     WidgetsBinding.instance.addObserver(this);
   }
 
   static ThemeMode _getInitialThemeMode() {
-    final savedTheme = AppPreference.instance.getSync(key: AppPreference.KEY_THEME_MODE);
-    debugPrint("AppCubit: [STARTUP] Raw saved value from SharedPreferences: '$savedTheme'");
-    
+    final savedTheme = AppPreference.instance.getSync(
+      key: AppPreference.KEY_THEME_MODE,
+    );
+    debugPrint(
+      "AppCubit: [STARTUP] Raw saved value from SharedPreferences: '$savedTheme'",
+    );
+
     if (savedTheme == "dark") {
       debugPrint("AppCubit: [STARTUP] Result: ThemeMode.dark");
       return ThemeMode.dark;
@@ -54,8 +60,10 @@ class AppCubit extends Cubit<AppState> with WidgetsBindingObserver {
       debugPrint("AppCubit: [STARTUP] Result: ThemeMode.system");
       return ThemeMode.system;
     }
-    
-    debugPrint("AppCubit: [STARTUP] No valid theme found, defaulting to ThemeMode.light");
+
+    debugPrint(
+      "AppCubit: [STARTUP] No valid theme found, defaulting to ThemeMode.light",
+    );
     return ThemeMode.light;
   }
 
@@ -165,7 +173,7 @@ class AppCubit extends Cubit<AppState> with WidgetsBindingObserver {
 
   Future<void> _handleAppResumed() async {
     print("Syncing data on app resume...");
-    
+
     // 1. Check connectivity
     final isConnected = await _connectivityService.checkConnectivity();
     emit(state.copyWith(isConnected: isConnected));
@@ -288,7 +296,7 @@ class AppCubit extends Cubit<AppState> with WidgetsBindingObserver {
 
   void _reconnectSocket() async {
     if (state.isSocketConnected && _socketService.isConnected) return;
-    
+
     print('Attempting to reconnect socket...');
     try {
       final imei = await AppPreference.instance.get(key: AppPreference.IMEI);
@@ -325,21 +333,35 @@ class AppCubit extends Cubit<AppState> with WidgetsBindingObserver {
       if (index != -1) {
         // Update existing device
         final existingDevice = currentDevices[index];
-        final oldSpeed = double.tryParse((existingDevice['sp'] ?? existingDevice['speed'])?.toString() ?? '0') ?? 0.0;
-        final newSpeed = double.tryParse((deviceData['sp'] ?? deviceData['speed'])?.toString() ?? '0') ?? 0.0;
-        
+        final oldSpeed =
+            double.tryParse(
+              (existingDevice['sp'] ?? existingDevice['speed'])?.toString() ??
+                  '0',
+            ) ??
+            0.0;
+        final newSpeed =
+            double.tryParse(
+              (deviceData['sp'] ?? deviceData['speed'])?.toString() ?? '0',
+            ) ??
+            0.0;
+
         // Track when the vehicle stopped moving
         if (newSpeed <= 5) {
           if (oldSpeed > 5 || !existingDevice.containsKey('stoppedAt')) {
             // First time it dropped below 5 in memory
             // Check if we have a persisted value from a previous session
-            String persistedStoppedAt = AppPreference.instance.getSync(key: 'stoppedAt_$deviceId');
+            String persistedStoppedAt = AppPreference.instance.getSync(
+              key: 'stoppedAt_$deviceId',
+            );
             if (persistedStoppedAt.isNotEmpty) {
-               deviceData['stoppedAt'] = persistedStoppedAt;
+              deviceData['stoppedAt'] = persistedStoppedAt;
             } else {
-               final nowStr = DateTime.now().toIso8601String();
-               deviceData['stoppedAt'] = nowStr;
-               AppPreference.instance.set(key: 'stoppedAt_$deviceId', value: nowStr);
+              final nowStr = DateTime.now().toIso8601String();
+              deviceData['stoppedAt'] = nowStr;
+              AppPreference.instance.set(
+                key: 'stoppedAt_$deviceId',
+                value: nowStr,
+              );
             }
           } else {
             deviceData['stoppedAt'] = existingDevice['stoppedAt'];
@@ -352,16 +374,25 @@ class AppCubit extends Cubit<AppState> with WidgetsBindingObserver {
         currentDevices[index] = deviceData;
       } else {
         // Add new device
-        final newSpeed = double.tryParse((deviceData['sp'] ?? deviceData['speed'])?.toString() ?? '0') ?? 0.0;
+        final newSpeed =
+            double.tryParse(
+              (deviceData['sp'] ?? deviceData['speed'])?.toString() ?? '0',
+            ) ??
+            0.0;
         if (newSpeed <= 5) {
           // Check if we have a persisted value from a previous session
-          String persistedStoppedAt = AppPreference.instance.getSync(key: 'stoppedAt_$deviceId');
+          String persistedStoppedAt = AppPreference.instance.getSync(
+            key: 'stoppedAt_$deviceId',
+          );
           if (persistedStoppedAt.isNotEmpty) {
-             deviceData['stoppedAt'] = persistedStoppedAt;
+            deviceData['stoppedAt'] = persistedStoppedAt;
           } else {
-             final nowStr = DateTime.now().toIso8601String();
-             deviceData['stoppedAt'] = nowStr;
-             AppPreference.instance.set(key: 'stoppedAt_$deviceId', value: nowStr);
+            final nowStr = DateTime.now().toIso8601String();
+            deviceData['stoppedAt'] = nowStr;
+            AppPreference.instance.set(
+              key: 'stoppedAt_$deviceId',
+              value: nowStr,
+            );
           }
         } else {
           AppPreference.instance.clearByKey(key: 'stoppedAt_$deviceId');
@@ -375,13 +406,16 @@ class AppCubit extends Cubit<AppState> with WidgetsBindingObserver {
 
       if (lat != null && lng != null) {
         // Extract bearing/heading (common keys: course, bearing, angle, dir)
-        double bearing = double.tryParse(
-              (deviceData['course'] ?? 
-               deviceData['bearing'] ?? 
-               deviceData['angle'] ?? 
-               deviceData['dir'] ?? 
-               '0').toString()
-            ) ?? 0.0;
+        double bearing =
+            double.tryParse(
+              (deviceData['course'] ??
+                      deviceData['bearing'] ??
+                      deviceData['angle'] ??
+                      deviceData['dir'] ??
+                      '0')
+                  .toString(),
+            ) ??
+            0.0;
 
         // Calculate actual movement bearing for accurate camera/marker rotation
         if (state.livePosition != null) {
@@ -408,7 +442,9 @@ class AppCubit extends Cubit<AppState> with WidgetsBindingObserver {
           }
         }
 
-        print("[AppCubit] 📍 Updating Live Position: $lat, $lng | Bearing: $bearing");
+        print(
+          "[AppCubit] 📍 Updating Live Position: $lat, $lng | Bearing: $bearing",
+        );
         emit(
           state.copyWith(
             devices: currentDevices,
@@ -422,7 +458,7 @@ class AppCubit extends Cubit<AppState> with WidgetsBindingObserver {
     }
   }
 
-//--------------------------------------------------------------------
+  //--------------------------------------------------------------------
   Future<void> changeTheme(ThemeMode themeMode) async {
     debugPrint("AppCubit: [UI] Saving ThemeMode: ${themeMode.name}");
     await AppPreference.instance.set(

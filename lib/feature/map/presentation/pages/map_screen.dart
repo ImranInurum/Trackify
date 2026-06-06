@@ -477,7 +477,32 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
               return const Center(child: CircularProgressIndicator());
             }
             LatLng? bestPos;
-            if (_selectedDevice?.currentLocation != null &&
+            double bearing = 0.0;
+
+            // 1. Get live position specific to THIS device from socket data
+            final liveData = appState.devices.firstWhere(
+              (d) =>
+                  d['imei'] == _selectedDevice?.imei ||
+                  d['_id'] == _selectedDevice?.id ||
+                  d['id'] == _selectedDevice?.id,
+              orElse: () => <String, dynamic>{},
+            );
+
+            if (liveData.isNotEmpty) {
+              final lat = double.tryParse(liveData['lt']?.toString() ?? '');
+              final lng = double.tryParse(liveData['lg']?.toString() ?? '');
+              if (lat != null && lng != null) {
+                bestPos = LatLng(lat, lng);
+              }
+              // Extract bearing
+              bearing = double.tryParse(
+                (liveData['course'] ?? liveData['bearing'] ?? liveData['angle'] ?? liveData['dir'] ?? '0').toString()
+              ) ?? 0.0;
+            }
+
+            // 2. Fallback to API static location
+            if (bestPos == null &&
+                _selectedDevice?.currentLocation != null &&
                 _selectedDevice!.currentLocation!.lat != null &&
                 _selectedDevice!.currentLocation!.lng != null) {
               bestPos = LatLng(
@@ -485,8 +510,22 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                 _selectedDevice!.currentLocation!.lng!,
               );
             }
-            print("live data on map ${appState.livePosition}");
+
+            // 3. Fallback to phone current location
             bestPos ??= LatLng(currentPos.latitude, currentPos.longitude);
+
+            // Animate map if controller exists
+            if (_mapController != null) {
+              _mapController!.animateCamera(
+                CameraUpdate.newCameraPosition(
+                  CameraPosition(
+                    target: bestPos,
+                    zoom: 15,
+                    bearing: _normalizeBearing(bearing - 120.0),
+                  ),
+                ),
+              );
+            }
 
             return Column(
               children: [
@@ -497,9 +536,9 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                       child: GoogleMap(
                         key: ValueKey(_selectedDevice?.id),
                         initialCameraPosition: CameraPosition(
-                          target: appState.livePosition ?? bestPos,
-                          zoom: 11,
-                          bearing: _normalizeBearing(appState.liveBearing - 120.0),
+                          target: bestPos,
+                          zoom: 15,
+                          bearing: _normalizeBearing(bearing - 120.0),
                         ),
                         myLocationEnabled: false,
                         zoomControlsEnabled: false,
@@ -515,12 +554,12 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                         markers: {
                           Marker(
                             markerId: const MarkerId('current_location'),
-                            position: appState.livePosition ?? bestPos,
+                            position: bestPos,
                             icon:
                                 _customMarker ?? BitmapDescriptor.defaultMarker,
                             anchor: const Offset(0.5, 0.5),
                             flat: true,
-                            rotation: appState.liveBearing % 360,
+                            rotation: bearing % 360,
                           ),
                         },
                         onMapCreated: (GoogleMapController controller) async {
