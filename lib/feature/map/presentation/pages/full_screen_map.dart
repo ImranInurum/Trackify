@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -1268,6 +1269,36 @@ class _FullScreenMapState extends State<FullScreenMap>
             widget.selectedVehicle?.currentLocation?.speed?.toString() ??
             "0";
 
+        // Use time from socket data or fallback to API's currentLocation time
+        final stoppedAtStr = liveDevice['time']?.toString() ??
+                             liveDevice['deviceTime']?.toString() ??
+                             liveDevice['dt']?.toString() ??
+                             widget.selectedVehicle?.currentLocation?.time ?? 
+                             widget.selectedVehicle?.updatedAt?.toIso8601String();
+                             
+        String parkedSince = "";
+        final speedVal = double.tryParse(liveSpeed) ?? 0.0;
+        
+        if (speedVal <= 5 && stoppedAtStr != null && stoppedAtStr.isNotEmpty) {
+          try {
+            final stoppedAt = DateTime.parse(stoppedAtStr).toLocal();
+            final now = DateTime.now();
+            final isToday = stoppedAt.year == now.year &&
+                stoppedAt.month == now.month &&
+                stoppedAt.day == now.day;
+                
+            final timeFormat = DateFormat('hh:mm a');
+            if (isToday) {
+              parkedSince = '${timeFormat.format(stoppedAt)}, Today';
+            } else {
+              final dateFormat = DateFormat('MMM dd');
+              parkedSince = '${timeFormat.format(stoppedAt)}, ${dateFormat.format(stoppedAt)}';
+            }
+          } catch (e) {
+            parkedSince = "";
+          }
+        }
+
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.end,
@@ -1373,14 +1404,15 @@ class _FullScreenMapState extends State<FullScreenMap>
             ),
             const SizedBox(height: 8),
             // Parked Since Status
-            Text(
-              AppLocalizations.of(context)!.parkedSinceTime("11:17 AM, Today"),
-              style: TextStyle(
-                fontSize: 14,
-                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
-                fontWeight: FontWeight.w500,
+            if (parkedSince.isNotEmpty)
+              Text(
+                AppLocalizations.of(context)!.parkedSinceTime(parkedSince),
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
+                  fontWeight: FontWeight.w500,
+                ),
               ),
-            ),
           ],
         );
       },
