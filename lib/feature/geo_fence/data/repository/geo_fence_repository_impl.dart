@@ -28,7 +28,7 @@ class GeoFenceRepositoryImpl implements GeoFenceRepository {
   }
 
   @override
-  Future<void> deleteGeoFence(String imei) {
-    return remoteDataSource.deleteGeoFence(imei);
+  Future<void> deleteGeoFence(String imei, String fenceId) {
+    return remoteDataSource.deleteGeoFence(imei, fenceId);
   }
 }

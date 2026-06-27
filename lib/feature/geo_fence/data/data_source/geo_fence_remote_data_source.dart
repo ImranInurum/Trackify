@@ -37,9 +37,9 @@ class GeoFenceRemoteDataSource {
     );
   }
 
-  Future<void> deleteGeoFence(String imei) async {
+  Future<void> deleteGeoFence(String imei, String fenceId) async {
     final response = await _apiServices.getDeleteApiResponse(
-      ApiURL.deleteGeoFence(imei),
+      ApiURL.deleteGeoFence(imei, fenceId),
       {},
     );
 

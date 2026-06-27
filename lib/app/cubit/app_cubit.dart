@@ -281,7 +281,7 @@ class AppCubit extends Cubit<AppState> with WidgetsBindingObserver {
       _socketSubscription = _socketService.deviceDataStream.listen(
         (deviceData) {
           print("DATAAA : ${deviceData}");
-          _handleDeviceData(deviceData);
+          handleDeviceData(deviceData);
         },
         onError: (error) {
           print('Socket error: $error');
@@ -310,7 +310,7 @@ class AppCubit extends Cubit<AppState> with WidgetsBindingObserver {
     }
   }
 
-  void _handleDeviceData(Map<String, dynamic> deviceData) {
+  void handleDeviceData(Map<String, dynamic> deviceData) {
     // Update devices list with new data
     final currentDevices = List<Map<String, dynamic>>.from(state.devices);
 
@@ -331,8 +331,9 @@ class AppCubit extends Cubit<AppState> with WidgetsBindingObserver {
       );
 
       if (index != -1) {
-        // Update existing device
-        currentDevices[index] = deviceData;
+        // Update existing device (Merge to preserve properties like todayDistance)
+        final existingDevice = currentDevices[index];
+        currentDevices[index] = Map<String, dynamic>.from(existingDevice)..addAll(deviceData);
       } else {
         // Add new device
         currentDevices.add(deviceData);

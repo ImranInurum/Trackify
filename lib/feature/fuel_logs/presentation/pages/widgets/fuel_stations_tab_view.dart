@@ -57,17 +57,17 @@ class _FuelStationsTabViewState extends State<FuelStationsTabView> {
             children: [
               // 1. Map View
               GoogleMap(
-                initialCameraPosition: CameraPosition(
-                  target: state.userLocation,
-                  zoom: 14,
+                  initialCameraPosition: CameraPosition(
+                    target: state.userLocation,
+                    zoom: 14,
+                  ),
+                  onMapCreated: (controller) => _mapController = controller,
+                  markers: state.markers,
+                  myLocationEnabled: true,
+                  myLocationButtonEnabled: false,
+                  zoomControlsEnabled: false,
+                  mapToolbarEnabled: false,
                 ),
-                onMapCreated: (controller) => _mapController = controller,
-                markers: state.markers,
-                myLocationEnabled: true,
-                myLocationButtonEnabled: false,
-                zoomControlsEnabled: false,
-                mapToolbarEnabled: false,
-              ),
 
               // 2. Map Controls (Floating)
               Positioned(

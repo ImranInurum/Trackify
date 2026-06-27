@@ -656,33 +656,33 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
             LatLng(currentPos!.latitude, currentPos.longitude);
 
         return GoogleMap(
-          initialCameraPosition: CameraPosition(target: target, zoom: 15),
-          myLocationEnabled: true,
-          zoomControlsEnabled: false,
-          mapType: MapType.normal,
-          polylines: polylines,
-          markers: markers,
-          onMapCreated: (GoogleMapController googleMapController) async {
-            if (!controller.isCompleted) {
-              controller.complete(googleMapController);
-            }
-
-            // Apply theme-aware style
-            final style = (themeMode == ThemeMode.dark)
-                ? _darkMapStyle
-                : _lightMapStyle;
-
-            if (style != null) {
-              googleMapController.setMapStyle(style);
-            } else {
-              // Fallback to system brightness
-              final brightness = MediaQuery.of(context).platformBrightness;
-              googleMapController.setMapStyle(
-                brightness == Brightness.dark ? _darkMapStyle : _lightMapStyle,
-              );
-            }
-          },
-        );
+            initialCameraPosition: CameraPosition(target: target, zoom: 15),
+            myLocationEnabled: true,
+            zoomControlsEnabled: false,
+            mapType: MapType.normal,
+            polylines: polylines,
+            markers: markers,
+            onMapCreated: (GoogleMapController googleMapController) async {
+              if (!controller.isCompleted) {
+                controller.complete(googleMapController);
+              }
+  
+              // Apply theme-aware style
+              final style = (themeMode == ThemeMode.dark)
+                  ? _darkMapStyle
+                  : _lightMapStyle;
+  
+              if (style != null) {
+                googleMapController.setMapStyle(style);
+              } else {
+                // Fallback to system brightness
+                final brightness = MediaQuery.of(context).platformBrightness;
+                googleMapController.setMapStyle(
+                  brightness == Brightness.dark ? _darkMapStyle : _lightMapStyle,
+                );
+              }
+            },
+          );
       },
     );
   }

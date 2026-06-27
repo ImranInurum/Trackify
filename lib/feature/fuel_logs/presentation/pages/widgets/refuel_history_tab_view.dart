@@ -772,6 +772,10 @@ class _RefuelHistoryTabViewState
 
             showDetails:
             index == 0,
+
+            onDelete: () {
+              _confirmDelete(context, l10n, log.id);
+            },
           );
 
         },
@@ -801,5 +805,34 @@ class _RefuelHistoryTabViewState
 
     return months[
     month - 1];
+  }
+
+  void _confirmDelete(
+    BuildContext context,
+    AppLocalizations l10n,
+    String refuelId,
+  ) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(l10n.delete),
+        content: const Text('Are you sure you want to delete this refuel log?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(ctx);
+              context.read<RefuelHistoryCubit>().deleteRefuelLog(refuelId).then((_) {
+                 context.read<FuelLogsCubit>().reloadFuelLogs();
+              });
+            },
+            child: Text(l10n.delete, style: const TextStyle(color: Colors.red)),
+          ),
+        ],
+      ),
+    );
   }
 }

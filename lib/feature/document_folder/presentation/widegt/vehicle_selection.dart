@@ -151,12 +151,10 @@ class _VehicleSelectorSheet extends StatelessWidget {
               final vehicle = vehicles[index];
               final isSelected = vehicle.id == selectedVehicle?.id;
 
-              return Container(
-                decoration: BoxDecoration(
-                  color: isSelected
-                      ? theme.scaffoldBackgroundColor.withOpacity(1)
-                      : theme.cardColor,
-                ),
+              return Material(
+                color: isSelected
+                    ? theme.scaffoldBackgroundColor.withOpacity(1)
+                    : theme.cardColor,
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: ListTile(

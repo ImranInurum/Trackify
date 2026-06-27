@@ -37,6 +37,7 @@ class FuelStationsCubit extends Cubit<FuelStationsState> {
         );
       }).toSet();
 
+      if (isClosed) return;
       emit(
         FuelStationsLoaded(
           stations: stations,
@@ -45,6 +46,7 @@ class FuelStationsCubit extends Cubit<FuelStationsState> {
         ),
       );
     } catch (e) {
+      if (isClosed) return;
       emit(FuelStationsError(e.toString()));
     }
   }

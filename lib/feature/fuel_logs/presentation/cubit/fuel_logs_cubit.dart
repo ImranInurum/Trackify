@@ -166,4 +166,43 @@ class FuelLogsCubit extends Cubit<FuelLogsState> {
       await loadFuelLogs(_currentImei);
     }
   }
+
+  Future<void> updateOdometer(String odometerReading) async {
+    if (_currentImei.isEmpty) return;
+    try {
+      final response = await http.post(
+        Uri.parse(ApiURL.updateOdometer),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          "imei": _currentImei,
+          "currentOdometer": int.tryParse(odometerReading) ?? 0,
+        }),
+      );
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        await reloadFuelLogs();
+      } else {
+        throw Exception("Failed to update odometer");
+      }
+    } catch (e) {
+      print("Odometer update error: $e");
+      rethrow;
+    }
+  }
+
+  Future<void> updateTankCapacity(String capacity) async {
+    if (_currentImei.isEmpty) return;
+    try {
+      var request = http.MultipartRequest('PUT', Uri.parse(ApiURL.updateVehicleControl(_currentImei)));
+      request.fields['tankCapacity'] = capacity;
+      final response = await request.send();
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        await reloadFuelLogs();
+      } else {
+        throw Exception("Failed to update tank capacity");
+      }
+    } catch (e) {
+      print("Tank capacity update error: $e");
+      rethrow;
+    }
+  }
 }
