@@ -12,6 +12,13 @@ class VehicleControlCubit extends Cubit<VehicleControlState> {
 
   VehicleControlCubit(this.repository) : super(VehicleControlInitial());
 
+  @override
+  void emit(VehicleControlState state) {
+    if (!isClosed) {
+      super.emit(state);
+    }
+  }
+
   Future<void> loadVehicleDetails([String? vehicleIMEI]) async {
     try {
       final actualIMEI = (vehicleIMEI == null || vehicleIMEI.isEmpty)
@@ -143,10 +150,30 @@ class VehicleControlCubit extends Cubit<VehicleControlState> {
     }
   }
 
-  Future<void> updateVehicleDetails(String vehicleIMEI, String name, String number, String fuelType) async {
+  Future<void> updateVehicleDetails({
+    required String vehicleIMEI,
+    required String vehicleName,
+    required String vehicleNumber,
+    required String fuelType,
+    required String vehicleType,
+    required String vehicleMaker,
+    required String vehicleModel,
+    required String brandId,
+    required String modelId,
+  }) async {
     final currentState = state;
     try {
-      await repository.updateVehicleDetails(vehicleIMEI, name, number, fuelType);
+      await repository.updateVehicleDetails(
+        vehicleIMEI: vehicleIMEI,
+        vehicleName: vehicleName,
+        vehicleNumber: vehicleNumber,
+        fuelType: fuelType,
+        vehicleType: vehicleType,
+        vehicleMaker: vehicleMaker,
+        vehicleModel: vehicleModel,
+        brandId: brandId,
+        modelId: modelId,
+      );
       loadVehicleDetails(vehicleIMEI);
     } catch (e) {
       if (currentState is VehicleControlLoaded) {
@@ -185,11 +212,11 @@ class VehicleControlCubit extends Cubit<VehicleControlState> {
     }
   }
 
-  Future<void> deleteVehicle(String vehicleIMEI) async {
+  Future<void> deleteVehicle(String vehicleId, String vehicleIMEI) async {
     final currentState = state;
     try {
       emit(VehicleControlLoading());
-      await repository.deleteVehicle(vehicleIMEI);
+      await repository.deleteVehicle(vehicleId);
       
       final box = Hive.box('map_cache');
       await box.delete('vehicle_control_$vehicleIMEI');

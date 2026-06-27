@@ -15,7 +15,9 @@ class AddVehicleCubit extends Cubit<AddVehicleState> {
     final result = await _addVehicleUseCase.getVehicleConfig();
 
     result.fold(
-      (failure) => emit(state.copyWith(isLoadingConfig: false, errorMessage: failure.message)),
+      (failure) => emit(
+        state.copyWith(isLoadingConfig: false, errorMessage: failure.message),
+      ),
       (success) {
         final List<dynamic> data = success['data'] ?? [];
         final configs = data.map((e) => VehicleConfig.fromJson(e)).toList();
@@ -29,7 +31,7 @@ class AddVehicleCubit extends Cubit<AddVehicleState> {
     );
   }
 
-  void selectVehicleType(VehicleConfig config) {
+  void selectVehicleType(VehicleConfig config, {bool autoSelectFuel = true}) {
     emit(
       state.copyWith(
         selectedConfig: config,
@@ -41,29 +43,35 @@ class AddVehicleCubit extends Cubit<AddVehicleState> {
     );
 
     // Auto-select first fuel type
-    if (config.supportedFuelTypes.isNotEmpty) {
+    if (autoSelectFuel && config.supportedFuelTypes.isNotEmpty) {
       selectFuelType(config.supportedFuelTypes.first);
     }
   }
 
-  Future<void> selectFuelType(String fuelType) async {
+  void selectFuelType(String fuelType) {
     emit(
       state.copyWith(
         selectedFuelType: fuelType,
-        isLoadingMakers: true,
         clearMaker: true,
         clearModel: true,
         clearError: true,
+        isLoadingMakers: true,
       ),
     );
 
+    _getMakers(fuelType);
+  }
+
+  Future<void> _getMakers(String fuelType) async {
     final result = await _addVehicleUseCase.getVehicleMakers(
       vehicleType: state.selectedConfig?.type ?? '',
       fuelType: fuelType,
     );
 
     result.fold(
-      (failure) => emit(state.copyWith(isLoadingMakers: false, errorMessage: failure.message)),
+      (failure) => emit(
+        state.copyWith(isLoadingMakers: false, errorMessage: failure.message),
+      ),
       (success) {
         final List<dynamic> data = success['data'] ?? [];
         final makers = data.map((e) => VehicleMaker.fromJson(e)).toList();
@@ -89,7 +97,9 @@ class AddVehicleCubit extends Cubit<AddVehicleState> {
     );
 
     result.fold(
-      (failure) => emit(state.copyWith(isLoadingModels: false, errorMessage: failure.message)),
+      (failure) => emit(
+        state.copyWith(isLoadingModels: false, errorMessage: failure.message),
+      ),
       (success) {
         final List<dynamic> data = success['data'] ?? [];
         final models = data.map((e) => VehicleModelInfo.fromJson(e)).toList();
@@ -129,8 +139,11 @@ class AddVehicleCubit extends Cubit<AddVehicleState> {
     final result = await _addVehicleUseCase.addVehicle(request: request);
 
     result.fold(
-      (failure) => emit(state.copyWith(isSubmitting: false, errorMessage: failure.message)),
-      (success) => emit(state.copyWith(isSubmitting: false, successResponse: success)),
+      (failure) => emit(
+        state.copyWith(isSubmitting: false, errorMessage: failure.message),
+      ),
+      (success) =>
+          emit(state.copyWith(isSubmitting: false, successResponse: success)),
     );
   }
 

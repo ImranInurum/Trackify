@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:trackify/core/common/models/vehicle_list_model.dart';
 import 'package:trackify/feature/service_logs/presentation/widgets/vehicle_selection_app_bar.dart';
 import 'package:trackify/l10n/app_localizations.dart';
+import 'package:trackify/feature/service_logs/presentation/cubit/service_logs_cubit.dart';
+import 'package:trackify/feature/service_logs/presentation/cubit/service_logs_state.dart';
 
 class NotificationControlsScreen extends StatefulWidget {
   const NotificationControlsScreen({super.key});
@@ -11,14 +14,6 @@ class NotificationControlsScreen extends StatefulWidget {
 }
 
 class _NotificationControlsScreenState extends State<NotificationControlsScreen> {
-  // Mock data for demonstration
-  final List<Vehicle> _vehicles = [
-    Vehicle(id: "1", vehicleMaker: "Honda", vehicleModel: "SP 125", vehicleNumber: "MP09QV8269"),
-    Vehicle(id: "2", vehicleMaker: "Bajaj", vehicleModel: "Pulsar 150", vehicleNumber: "MP09QV1234"),
-  ];
-  
-  late Vehicle _selectedVehicle;
-  
   bool _ignitionNotification = true;
   bool _motionNotification = true;
   bool _powerSupplyNotification = true;
@@ -26,7 +21,7 @@ class _NotificationControlsScreenState extends State<NotificationControlsScreen>
   @override
   void initState() {
     super.initState();
-    _selectedVehicle = _vehicles.first;
+    context.read<ServiceLogsCubit>().loadVehicles();
   }
 
   @override
@@ -36,62 +31,88 @@ class _NotificationControlsScreenState extends State<NotificationControlsScreen>
     
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
-      body: Column(
-        children: [
-          /// 🔹 SHARED VEHICLE SELECTION APP BAR
-          VehicleSelectionAppBar(
-            title: l10n.notificationControlsTitle,
-            selectedVehicle: _selectedVehicle,
-            vehicles: _vehicles,
-            onBack: () => Navigator.pop(context),
-            onVehicleSelected: (vehicle) {
-              setState(() {
-                _selectedVehicle = vehicle;
-              });
-            },
-          ),
-
-          Expanded(
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  const SizedBox(height: 8),
-
-                  /// 🔹 NOTIFICATION SECTIONS
-                  _buildNotificationSection(
-                    context,
-                    title: l10n.ignitionOnOffTitle,
-                    subtitle: l10n.ignitionOnOffDesc,
-                    value: _ignitionNotification,
-                    onChanged: (val) => setState(() => _ignitionNotification = val!),
+      body: BlocBuilder<ServiceLogsCubit, ServiceLogsState>(
+        builder: (context, state) {
+          if (state is! ServiceLogsLoaded && state is! ServiceLogsSubmitting) {
+            return Column(
+              children: [
+                AppBar(
+                  backgroundColor: Colors.transparent,
+                  elevation: 0,
+                  leading: IconButton(
+                    icon: Icon(Icons.arrow_back_ios_new, color: theme.colorScheme.onSurface),
+                    onPressed: () => Navigator.pop(context),
                   ),
-                  
-                  _buildDivider(theme),
-
-                  _buildNotificationSection(
-                    context,
-                    title: l10n.motionWithIgnitionOffTitle,
-                    subtitle: l10n.motionWithIgnitionOffDesc,
-                    value: _motionNotification,
-                    onChanged: (val) => setState(() => _motionNotification = val!),
+                ),
+                const Expanded(
+                  child: Center(
+                    child: CircularProgressIndicator(),
                   ),
+                ),
+              ],
+            );
+          }
 
-                  _buildDivider(theme),
+          final currentState = state is ServiceLogsLoaded
+              ? state
+              : (context.read<ServiceLogsCubit>().state as ServiceLogsLoaded);
 
-                  _buildNotificationSection(
-                    context,
-                    title: l10n.powerSupplyOffTitle,
-                    subtitle: l10n.powerSupplyOffDesc,
-                    value: _powerSupplyNotification,
-                    onChanged: (val) => setState(() => _powerSupplyNotification = val!),
-                  ),
-                  
-                  const SizedBox(height: 40),
-                ],
+          return Column(
+            children: [
+              /// 🔹 SHARED VEHICLE SELECTION APP BAR
+              VehicleSelectionAppBar(
+                title: l10n.notificationControlsTitle,
+                selectedVehicle: currentState.selectedVehicle,
+                vehicles: currentState.vehicles,
+                onBack: () => Navigator.pop(context),
+                onVehicleSelected: (vehicle) {
+                  context.read<ServiceLogsCubit>().selectVehicle(vehicle.id ?? "");
+                },
               ),
-            ),
-          ),
-        ],
+
+              Expanded(
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      const SizedBox(height: 8),
+
+                      /// 🔹 NOTIFICATION SECTIONS
+                      _buildNotificationSection(
+                        context,
+                        title: l10n.ignitionOnOffTitle,
+                        subtitle: l10n.ignitionOnOffDesc,
+                        value: _ignitionNotification,
+                        onChanged: (val) => setState(() => _ignitionNotification = val!),
+                      ),
+                      
+                      _buildDivider(theme),
+
+                      _buildNotificationSection(
+                        context,
+                        title: l10n.motionWithIgnitionOffTitle,
+                        subtitle: l10n.motionWithIgnitionOffDesc,
+                        value: _motionNotification,
+                        onChanged: (val) => setState(() => _motionNotification = val!),
+                      ),
+
+                      _buildDivider(theme),
+
+                      _buildNotificationSection(
+                        context,
+                        title: l10n.powerSupplyOffTitle,
+                        subtitle: l10n.powerSupplyOffDesc,
+                        value: _powerSupplyNotification,
+                        onChanged: (val) => setState(() => _powerSupplyNotification = val!),
+                      ),
+                      
+                      const SizedBox(height: 40),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          );
+        },
       ),
     );
   }

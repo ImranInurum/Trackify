@@ -9,15 +9,16 @@ import '../feature/statistics/presentation/pages/statistics_screen.dart';
 import '../feature/trips/presentation/view/trip_screen.dart';
 
 class AppNavigation extends StatefulWidget {
-  static final GlobalKey<_AppNavigationState> navigationKey = GlobalKey<_AppNavigationState>();
+  static _AppNavigationState? currentState;
   static final ValueNotifier<int> currentTabNotifier = ValueNotifier<int>(0);
-  AppNavigation() : super(key: navigationKey);
+  
+  const AppNavigation({super.key});
 
   @override
   State<AppNavigation> createState() => _AppNavigationState();
 
   static void setIndex(int index) {
-    navigationKey.currentState?._onTabTap(index);
+    currentState?._onTabTap(index);
   }
 }
 
@@ -29,10 +30,19 @@ class _AppNavigationState extends State<AppNavigation> {
   @override
   void initState() {
     super.initState();
+    AppNavigation.currentState = this;
     _navigatorKeys = List.generate(
       4,
       (index) => GlobalKey<NavigatorState>(),
     );
+  }
+
+  @override
+  void dispose() {
+    if (AppNavigation.currentState == this) {
+      AppNavigation.currentState = null;
+    }
+    super.dispose();
   }
 
   final List<String> _icons = [

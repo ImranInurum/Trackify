@@ -45,8 +45,8 @@ class ApiURL {
       "$baseURL/api/vehicle-control/lock-unlock/$imei";
   static String getVehicleControl(String imei) =>
       "$baseURL/api/vehicle-control/$imei";
-  static String deleteVehicle(String imei) =>
-      "$baseURL/api/vehicle-control/delete/$imei";
+  static String deleteVehicle(String id) =>
+      "$baseURL/api/vehicle/vehicle/$id";
 
   static String getVehiclesByUserId(String userId) =>
       "$baseURL/api/vehicle/get-vehicles?userId=$userId";
