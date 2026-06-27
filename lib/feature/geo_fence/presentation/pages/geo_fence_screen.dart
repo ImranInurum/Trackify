@@ -171,7 +171,7 @@ class _GeoFenceScreenState extends State<GeoFenceScreen> {
                             if (value == 'edit') {
                               _navigateToAddScreen(initialFence: fence);
                             } else if (value == 'delete') {
-                              _showDeleteConfirmation(context, fence.imei);
+                              _showDeleteConfirmation(context, fence.imei, fence.id);
                             }
                           },
                           itemBuilder: (context) => [
@@ -231,7 +231,7 @@ class _GeoFenceScreenState extends State<GeoFenceScreen> {
     );
   }
 
-  void _showDeleteConfirmation(BuildContext context, String imei) {
+  void _showDeleteConfirmation(BuildContext context, String imei, String fenceId) {
     final colorScheme = Theme.of(context).colorScheme;
     final l10n = AppLocalizations.of(context)!;
 
@@ -262,7 +262,7 @@ class _GeoFenceScreenState extends State<GeoFenceScreen> {
           TextButton(
             onPressed: () {
               Navigator.pop(dialogContext);
-              context.read<GeoFenceCubit>().deleteGeoFence(imei);
+              context.read<GeoFenceCubit>().deleteGeoFence(imei, fenceId);
             },
             child: Text(
               l10n.delete,

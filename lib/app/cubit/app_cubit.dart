@@ -281,7 +281,7 @@ class AppCubit extends Cubit<AppState> with WidgetsBindingObserver {
       _socketSubscription = _socketService.deviceDataStream.listen(
         (deviceData) {
           print("DATAAA : ${deviceData}");
-          _handleDeviceData(deviceData);
+          handleDeviceData(deviceData);
         },
         onError: (error) {
           print('Socket error: $error');
@@ -310,7 +310,7 @@ class AppCubit extends Cubit<AppState> with WidgetsBindingObserver {
     }
   }
 
-  void _handleDeviceData(Map<String, dynamic> deviceData) {
+  void handleDeviceData(Map<String, dynamic> deviceData) {
     // Update devices list with new data
     final currentDevices = List<Map<String, dynamic>>.from(state.devices);
 
@@ -331,72 +331,11 @@ class AppCubit extends Cubit<AppState> with WidgetsBindingObserver {
       );
 
       if (index != -1) {
-        // Update existing device
+        // Update existing device (Merge to preserve properties like todayDistance)
         final existingDevice = currentDevices[index];
-        final oldSpeed =
-            double.tryParse(
-              (existingDevice['sp'] ?? existingDevice['speed'])?.toString() ??
-                  '0',
-            ) ??
-            0.0;
-        final newSpeed =
-            double.tryParse(
-              (deviceData['sp'] ?? deviceData['speed'])?.toString() ?? '0',
-            ) ??
-            0.0;
-
-        // Track when the vehicle stopped moving
-        if (newSpeed <= 5) {
-          if (oldSpeed > 5 || !existingDevice.containsKey('stoppedAt')) {
-            // First time it dropped below 5 in memory
-            // Check if we have a persisted value from a previous session
-            String persistedStoppedAt = AppPreference.instance.getSync(
-              key: 'stoppedAt_$deviceId',
-            );
-            if (persistedStoppedAt.isNotEmpty) {
-              deviceData['stoppedAt'] = persistedStoppedAt;
-            } else {
-              final nowStr = DateTime.now().toIso8601String();
-              deviceData['stoppedAt'] = nowStr;
-              AppPreference.instance.set(
-                key: 'stoppedAt_$deviceId',
-                value: nowStr,
-              );
-            }
-          } else {
-            deviceData['stoppedAt'] = existingDevice['stoppedAt'];
-          }
-        } else {
-          deviceData.remove('stoppedAt');
-          AppPreference.instance.clearByKey(key: 'stoppedAt_$deviceId');
-        }
-
-        currentDevices[index] = deviceData;
+        currentDevices[index] = Map<String, dynamic>.from(existingDevice)..addAll(deviceData);
       } else {
         // Add new device
-        final newSpeed =
-            double.tryParse(
-              (deviceData['sp'] ?? deviceData['speed'])?.toString() ?? '0',
-            ) ??
-            0.0;
-        if (newSpeed <= 5) {
-          // Check if we have a persisted value from a previous session
-          String persistedStoppedAt = AppPreference.instance.getSync(
-            key: 'stoppedAt_$deviceId',
-          );
-          if (persistedStoppedAt.isNotEmpty) {
-            deviceData['stoppedAt'] = persistedStoppedAt;
-          } else {
-            final nowStr = DateTime.now().toIso8601String();
-            deviceData['stoppedAt'] = nowStr;
-            AppPreference.instance.set(
-              key: 'stoppedAt_$deviceId',
-              value: nowStr,
-            );
-          }
-        } else {
-          AppPreference.instance.clearByKey(key: 'stoppedAt_$deviceId');
-        }
         currentDevices.add(deviceData);
       }
 

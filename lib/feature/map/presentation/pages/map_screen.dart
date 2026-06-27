@@ -1,8 +1,10 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:trackify/app/cubit/app_cubit.dart';
 import 'package:trackify/app/cubit/app_state.dart';
@@ -11,6 +13,7 @@ import 'package:trackify/core/theme/app_colors.dart';
 import 'package:trackify/core/utils/map_utils.dart';
 import 'package:trackify/core/widgets/bouncing_widget.dart';
 import 'package:trackify/core/widgets/draggable_app_bar.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:trackify/feature/add_vehicle_and_device/choice_selector.dart';
 import 'package:trackify/feature/app_updates/presentiation/pages/update_screen.dart';
 import 'package:trackify/feature/device_warranty/pages/device_warranty_page.dart';
@@ -37,6 +40,7 @@ import '../../../location_sharing/presentation/pages/location_sharing_screen.dar
 import 'package:trackify/feature/service_logs/presentation/screens/service_logs_screen.dart';
 import '../../../notifications/presentation/screen/notification_list_screen.dart';
 import 'package:trackify/feature/trips/presentation/cubit/ride_history_cubit.dart';
+import 'package:trackify/feature/trips/data/entity/ride_model.dart';
 import 'package:trackify/feature/trips/presentation/cubit/ride_history_state.dart';
 
 import 'package:trackify/feature/map/data/repository/promo_video_repository_impl.dart';
@@ -89,11 +93,30 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
   double _animStartBearing = 0.0;
   double _animEndBearing = 0.0;
 
+  // Animated marker state
+  LatLng? _animatedMarkerPos;
+  double _animatedMarkerBearing = 0.0;
+  AnimationController? _markerAnimController;
+  LatLng? _animStartMarkerTarget;
+  LatLng? _animEndMarkerTarget;
+  double _animStartMarkerBearing = 0.0;
+  double _animEndMarkerBearing = 0.0;
+  
+  int _lastDataReceivedMs = 0;
+  int _lastCameraUpdateMs = 0;
+  int _lastMarkerRebuildMs = 0;
+  final ValueNotifier<int> _mapRebuildNotifier = ValueNotifier<int>(0);
+
   bool _isInitialFocusDone = false;
+
+  Timer? _rideHistoryUpdateTimer;
 
   @override
   void dispose() {
+    _rideHistoryUpdateTimer?.cancel();
     _cameraAnimationController?.dispose();
+    _markerAnimController?.dispose();
+    _mapRebuildNotifier.dispose();
     _scrollController.dispose();
     super.dispose();
   }
@@ -101,6 +124,76 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
+
+    _markerAnimController = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 1),
+    )..repeat(); // Runs continuously to compute physics
+
+    _markerAnimController!.addListener(() {
+      if (_animStartMarkerTarget != null && _animEndMarkerTarget != null) {
+          final now = DateTime.now().millisecondsSinceEpoch;
+          final elapsed = now - _lastDataReceivedMs;
+
+          if (elapsed > 15000) {
+            // Stop moving if no data received for 15 seconds
+          } else {
+            // Linear constant interpolation for steady movement
+            double t = elapsed / 10000.0; // Assume 10 seconds between updates
+            if (t > 1.0) t = 1.0; // Prevent overshooting
+            
+            final double lat = _animStartMarkerTarget!.latitude + (_animEndMarkerTarget!.latitude - _animStartMarkerTarget!.latitude) * t;
+            final double lng = _animStartMarkerTarget!.longitude + (_animEndMarkerTarget!.longitude - _animStartMarkerTarget!.longitude) * t;
+            _animatedMarkerPos = LatLng(lat, lng);
+            
+            double diffBearing = _animEndMarkerBearing - _animStartMarkerBearing;
+            if (diffBearing > 180) diffBearing -= 360;
+            if (diffBearing < -180) diffBearing += 360;
+            
+            _animatedMarkerBearing = _animStartMarkerBearing + diffBearing * t;
+          }
+          
+          if (now - _lastMarkerRebuildMs >= 50) {
+            _lastMarkerRebuildMs = now;
+            _mapRebuildNotifier.value++;
+          }
+          
+          if (_isInitialFocusDone && mounted && _mapController != null) {
+            if (now - _lastCameraUpdateMs >= 50) {
+              _lastCameraUpdateMs = now;
+              
+              final currentTarget = _cameraTarget ?? _animatedMarkerPos!;
+              
+              final double latDiff = (_animatedMarkerPos!.latitude - currentTarget.latitude).abs();
+              final double lngDiff = (_animatedMarkerPos!.longitude - currentTarget.longitude).abs();
+              final double distanceDiff = latDiff + lngDiff;
+              
+              double dynamicPosFactor = 0.15;
+              if (distanceDiff > 0.002) {
+                dynamicPosFactor = 1.0;
+              } else if (distanceDiff > 0.0006) {
+                dynamicPosFactor = 0.15 + (1.0 - 0.15) * ((distanceDiff - 0.0006) / 0.0014);
+              }
+
+              final double camLat = currentTarget.latitude + (_animatedMarkerPos!.latitude - currentTarget.latitude) * dynamicPosFactor;
+              final double camLng = currentTarget.longitude + (_animatedMarkerPos!.longitude - currentTarget.longitude) * dynamicPosFactor;
+              
+              final nextPos = CameraPosition(
+                target: LatLng(camLat, camLng),
+                zoom: _cameraZoom,
+                tilt: _cameraTilt,
+                bearing: 0.0,
+              );
+              
+              _cameraTarget = nextPos.target;
+              try {
+                _mapController!.moveCamera(CameraUpdate.newCameraPosition(nextPos));
+              } catch (e) {}
+            }
+          }
+      }
+    });
+
     _loadMapStyles();
     _loadCustomMarker();
     _scrollController.addListener(_scrollListener);
@@ -135,6 +228,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
       setState(() {
         _customMarker = BitmapDescriptor.fromBytes(markerIcon);
       });
+      _mapRebuildNotifier.value++;
     }
   }
 
@@ -173,7 +267,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
         target: target,
         zoom: 13.0,
         tilt: 0.0,
-        bearing: appState.liveBearing,
+        bearing: 0.0,
         duration: const Duration(milliseconds: 4000), // slow cinematic glide
         curve: Curves.easeInOutCubic,
       );
@@ -268,6 +362,37 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
     _cameraAnimationController!.forward();
   }
 
+  void _manageRideHistoryTimer(AppState state) {
+    if (_selectedDevice == null || !mounted) return;
+    final liveDevice = state.devices.firstWhere(
+      (d) => d['imei']?.toString() == _selectedDevice?.imei || d['_id']?.toString() == _selectedDevice?.id || d['id']?.toString() == _selectedDevice?.id,
+      orElse: () => <String, dynamic>{},
+    );
+    if (liveDevice.isNotEmpty) {
+      String speedStr = liveDevice['sp']?.toString() ?? "0";
+      double speed = double.tryParse(speedStr) ?? 0.0;
+      String status = liveDevice['status']?.toString().toLowerCase() ?? '';
+      
+      bool isMoving = speed > 2.0 || status == 'moving';
+      
+      if (isMoving) {
+        if (_rideHistoryUpdateTimer == null || !_rideHistoryUpdateTimer!.isActive) {
+          context.read<RideHistoryCubit>().getRideHistoryData();
+          _rideHistoryUpdateTimer = Timer.periodic(const Duration(seconds: 20), (_) {
+             if (mounted) context.read<RideHistoryCubit>().getRideHistoryData();
+          });
+        }
+      } else {
+        if (_rideHistoryUpdateTimer != null && _rideHistoryUpdateTimer!.isActive) {
+          _rideHistoryUpdateTimer?.cancel();
+          _rideHistoryUpdateTimer = null;
+          // Fetch one last time to get the final parked stats
+          context.read<RideHistoryCubit>().getRideHistoryData();
+        }
+      }
+    }
+  }
+
   double _normalizeBearing(double bearing) {
     double b = bearing % 360;
     if (b < 0) b += 360;
@@ -317,20 +442,11 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                   prev.mapType != curr.mapType ||
                   prev.isTrafficEnabled != curr.isTrafficEnabled ||
                   prev.livePosition != curr.livePosition ||
-                  prev.liveBearing != curr.liveBearing,
+                  prev.liveBearing != curr.liveBearing ||
+                  prev.devices != curr.devices,
               listener: (context, state) async {
+                _manageRideHistoryTimer(state);
                 if (_mapController != null) {
-                  if (state.livePosition != null && _isInitialFocusDone) {
-                    _animateCameraTo(
-                      target: state.livePosition!,
-                      zoom: 16.0,
-                      tilt: 0.0,
-                      bearing: state.liveBearing,
-                      duration: const Duration(milliseconds: 1500),
-                      curve: Curves.easeOutCubic,
-                    );
-                  }
-
                   String? style;
                   if (state.mapStyle == 'Dark') {
                     style = _darkMapStyle;
@@ -494,11 +610,13 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
               if (lat != null && lng != null) {
                 bestPos = LatLng(lat, lng);
               }
-              // Extract bearing
-              bearing = double.tryParse(
-                (liveData['course'] ?? liveData['bearing'] ?? liveData['angle'] ?? liveData['dir'] ?? '0').toString()
-              ) ?? 0.0;
             }
+
+            double rawCourse = double.tryParse(
+              (liveData['course'] ?? liveData['bearing'] ?? liveData['angle'] ?? liveData['dir'] ?? '-1').toString()
+            ) ?? -1.0;
+
+            bearing = _animatedMarkerPos != null ? _animatedMarkerBearing : (rawCourse >= 0 ? rawCourse : 0.0);
 
             // 2. Fallback to API static location
             if (bestPos == null &&
@@ -510,21 +628,67 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                 _selectedDevice!.currentLocation!.lng!,
               );
             }
+            
+            if (bestPos != null && _animatedMarkerPos != null) {
+              double dist = Geolocator.distanceBetween(
+                _animatedMarkerPos!.latitude,
+                _animatedMarkerPos!.longitude,
+                bestPos.latitude,
+                bestPos.longitude,
+              );
+              
+              double speed = double.tryParse((liveData['sp'] ?? liveData['speed'] ?? '0').toString()) ?? 0.0;
+              
+              if (dist > 1.0) {
+                double calcB = Geolocator.bearingBetween(
+                  _animatedMarkerPos!.latitude,
+                  _animatedMarkerPos!.longitude,
+                  bestPos.latitude,
+                  bestPos.longitude,
+                );
+                bearing = (calcB + 360) % 360;
+              } else if (speed > 2.0 && rawCourse >= 0) {
+                bearing = rawCourse;
+              }
+            }
+
 
             // 3. Fallback to phone current location
             bestPos ??= LatLng(currentPos.latitude, currentPos.longitude);
 
-            // Animate map if controller exists
-            if (_mapController != null) {
-              _mapController!.animateCamera(
-                CameraUpdate.newCameraPosition(
-                  CameraPosition(
-                    target: bestPos,
-                    zoom: 15,
-                    bearing: _normalizeBearing(bearing - 120.0),
-                  ),
-                ),
-              );
+            // Marker Animation Logic
+            if (_animatedMarkerPos == null) {
+               _animatedMarkerPos = bestPos;
+               _animatedMarkerBearing = bearing;
+               
+               // First ping, set camera instantly
+               if (_mapController != null) {
+                 _mapController!.moveCamera(
+                   CameraUpdate.newCameraPosition(
+                     CameraPosition(
+                       target: bestPos,
+                       zoom: 17.5,
+                       bearing: 0.0,
+                     ),
+                   ),
+                 );
+               }
+            } else {
+               if (_animEndMarkerTarget != bestPos) {
+                 _animStartMarkerTarget = _animatedMarkerPos;
+                 _animStartMarkerBearing = _animatedMarkerBearing;
+                 
+                 _animEndMarkerTarget = bestPos;
+                 
+                 _animStartMarkerBearing = _normalizeBearing(_animStartMarkerBearing);
+                 double endB = _normalizeBearing(bearing);
+                 double diff = endB - _animStartMarkerBearing;
+                 if (diff > 180) diff -= 360;
+                 else if (diff < -180) diff += 360;
+                 _animEndMarkerBearing = _animStartMarkerBearing + diff;
+                 
+                 _lastDataReceivedMs = DateTime.now().millisecondsSinceEpoch;
+               }
             }
 
             return Column(
@@ -533,66 +697,74 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                   child: ClipRRect(
                     borderRadius: BorderRadius.all(Radius.circular(5)),
                     child: IgnorePointer(
-                      child: GoogleMap(
-                        key: ValueKey(_selectedDevice?.id),
-                        initialCameraPosition: CameraPosition(
-                          target: bestPos,
-                          zoom: 15,
-                          bearing: _normalizeBearing(bearing - 120.0),
-                        ),
-                        myLocationEnabled: false,
-                        zoomControlsEnabled: false,
-                        myLocationButtonEnabled: false,
-                        scrollGesturesEnabled: false,
-                        zoomGesturesEnabled: false,
-                        tiltGesturesEnabled: false,
-                        rotateGesturesEnabled: false,
-                        mapType: appState.mapType == 'satellite'
-                            ? MapType.satellite
-                            : MapType.normal,
-                        trafficEnabled: appState.isTrafficEnabled,
-                        markers: {
-                          Marker(
-                            markerId: const MarkerId('current_location'),
-                            position: bestPos,
-                            icon:
-                                _customMarker ?? BitmapDescriptor.defaultMarker,
-                            anchor: const Offset(0.5, 0.5),
-                            flat: true,
-                            rotation: bearing % 360,
-                          ),
-                        },
-                        onMapCreated: (GoogleMapController controller) async {
-                          _mapController = controller;
+                      child: ValueListenableBuilder<int>(
+                        valueListenable: _mapRebuildNotifier,
+                        builder: (context, _, child) {
+                          final animPos = _animatedMarkerPos ?? bestPos!;
+                          final animBearing = _animatedMarkerPos != null ? _animatedMarkerBearing : bearing;
 
-                          final appState = context.read<AppCubit>().state;
-                          if (_darkMapStyle == null || _lightMapStyle == null) {
-                            await _loadMapStyles();
-                          }
-
-                          String? style;
-                          if (appState.mapStyle == 'Dark') {
-                            style = _darkMapStyle;
-                          } else if (appState.mapStyle == 'Light') {
-                            style = _lightMapStyle;
-                          } else if (appState.mapStyle == 'Simple') {
-                            style = await MapUtils.loadStyle(
-                              'assets/map_styles/light_map.json',
+                          return GoogleMap(
+                              key: ValueKey(_selectedDevice?.id),
+                              initialCameraPosition: CameraPosition(
+                                target: bestPos!,
+                                zoom: 17.5,
+                                bearing: 0.0,
+                              ),
+                              myLocationEnabled: false,
+                              zoomControlsEnabled: false,
+                              myLocationButtonEnabled: false,
+                              scrollGesturesEnabled: false,
+                              zoomGesturesEnabled: false,
+                              tiltGesturesEnabled: false,
+                              rotateGesturesEnabled: false,
+                              mapType: appState.mapType == 'satellite'
+                                  ? MapType.satellite
+                                  : MapType.normal,
+                              trafficEnabled: appState.isTrafficEnabled,
+                              markers: {
+                                Marker(
+                                  markerId: const MarkerId('current_location'),
+                                  position: animPos,
+                                  icon:
+                                      _customMarker ?? BitmapDescriptor.defaultMarker,
+                                  anchor: const Offset(0.5, 0.5),
+                                  flat: true,
+                                  rotation: animBearing % 360,
+                                ),
+                              },
+                              onMapCreated: (GoogleMapController controller) async {
+                            _mapController = controller;
+  
+                            final appState = context.read<AppCubit>().state;
+                            if (_darkMapStyle == null || _lightMapStyle == null) {
+                              await _loadMapStyles();
+                            }
+  
+                            String? style;
+                            if (appState.mapStyle == 'Dark') {
+                              style = _darkMapStyle;
+                            } else if (appState.mapStyle == 'Light') {
+                              style = _lightMapStyle;
+                            } else if (appState.mapStyle == 'Simple') {
+                              style = await MapUtils.loadStyle(
+                                'assets/map_styles/light_map.json',
+                              );
+                            }
+  
+                            await MapUtils.setStyle(controller, style);
+  
+                            // Initialize camera state fields
+                            _cameraTarget = appState.livePosition ?? bestPos;
+                            _cameraZoom = 11.0;
+                            _cameraTilt = 0.0;
+                            _cameraBearing = _normalizeBearing(appState.liveBearing - 120.0);
+  
+                                WidgetsBinding.instance.addPostFrameCallback((_) {
+                                  _triggerInitialFocusAnimation();
+                                });
+                              },
                             );
-                          }
-
-                          await MapUtils.setStyle(controller, style);
-
-                          // Initialize camera state fields
-                          _cameraTarget = appState.livePosition ?? bestPos;
-                          _cameraZoom = 11.0;
-                          _cameraTilt = 0.0;
-                          _cameraBearing = _normalizeBearing(appState.liveBearing - 120.0);
-
-                          WidgetsBinding.instance.addPostFrameCallback((_) {
-                            _triggerInitialFocusAnimation();
-                          });
-                        },
+                        }
                       ),
                     ),
                   ),
@@ -628,13 +800,67 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
 
   Widget _buildStatsRow() {
     final l10n = AppLocalizations.of(context)!;
-    return BlocBuilder<MapCubit, MapState>(
-      builder: (context, state) {
-        String distance = "0.0 ${context.displayKm}";
-        String speed =
-            "${_selectedDevice?.currentLocation?.speed ?? 0} ${context.displayKmh}";
-        String duration = "0${l10n.minutesShort} 0${l10n.secondsShort}";
-        String topSpeed = "0 ${context.displayKmh}";
+    return BlocBuilder<RideHistoryCubit, RideHistoryState>(
+      builder: (context, rideState) {
+        return BlocBuilder<AppCubit, AppState>(
+          builder: (context, appState) {
+            Ride? lastRide;
+            if (rideState is RideHistorySuccess && rideState.rides.isNotEmpty) {
+              lastRide = rideState.rides.last;
+            }
+
+            final liveDevice = appState.devices.firstWhere(
+              (d) => d['imei']?.toString() == _selectedDevice?.imei || d['_id']?.toString() == _selectedDevice?.id || d['id']?.toString() == _selectedDevice?.id,
+              orElse: () => <String, dynamic>{},
+            );
+            
+            final odometer = liveDevice['odometer']?.toString() ?? "0";
+            dynamic attrs = liveDevice['attributes'];
+            if (attrs is String) {
+              try { attrs = jsonDecode(attrs); } catch (_) {}
+            }
+
+            String speed = "${liveDevice['sp'] ?? _selectedDevice?.currentLocation?.speed ?? 0} ${context.displayKmh}";
+            
+            String todayDistanceStr = "0.0";
+            String durationStr = "0${l10n.minutesShort} 0${l10n.secondsShort}";
+            String topSpeed = "0 ${context.displayKmh}";
+
+            if (lastRide != null) {
+              todayDistanceStr = lastRide.distance.toStringAsFixed(1);
+              durationStr = lastRide.duration;
+              topSpeed = "${lastRide.topSpeed.toStringAsFixed(1)} ${context.displayKmh}";
+            } else {
+              final todayDistanceRaw = liveDevice['todayDistance'] ?? liveDevice['td'] ?? liveDevice['distance'] ?? odometer;
+              if (todayDistanceRaw != null && todayDistanceRaw.toString().isNotEmpty) {
+                 double val = double.tryParse(todayDistanceRaw.toString()) ?? 0.0;
+                 todayDistanceStr = val.toStringAsFixed(1);
+              } else {
+                 todayDistanceStr = odometer;
+              }
+
+              final todayDurationRaw = liveDevice['todayDuration'] ?? liveDevice['dur'] ?? liveDevice['duration'] ?? "0";
+              if (todayDurationRaw != null && todayDurationRaw.toString().isNotEmpty && todayDurationRaw.toString() != "0") {
+                final rawStr = todayDurationRaw.toString();
+                if (rawStr.contains('m') || rawStr.contains('h') || rawStr.contains(':')) {
+                  durationStr = rawStr;
+                } else {
+                  final double? numVal = double.tryParse(rawStr);
+                  if (numVal != null && numVal > 0) {
+                    int totalSeconds = numVal.round();
+                    if (numVal > 100000) { totalSeconds = (numVal / 1000).round(); }
+                    else if (numVal < 1440) { totalSeconds = (numVal * 60).round(); }
+                    final int h = totalSeconds ~/ 3600;
+                    final int m = (totalSeconds % 3600) ~/ 60;
+                    final int s = totalSeconds % 60;
+                    if (h > 0) { durationStr = "${h}h ${m}${l10n.minutesShort}"; }
+                    else { durationStr = "${m}${l10n.minutesShort} ${s}${l10n.secondsShort}"; }
+                  }
+                }
+              }
+            }
+
+            String distance = "$todayDistanceStr ${context.displayKm}";
 
         return Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -643,7 +869,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
               child: Column(
                 children: [
                   _buildStatItem(l10n.distanceLabel, distance),
-                  _buildStatItem(l10n.rideDuration, duration),
+                  _buildStatItem(l10n.rideDuration, durationStr),
                 ],
               ),
             ),
@@ -659,7 +885,9 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
         );
       },
     );
-  }
+  },
+);
+}
 
   Widget _buildStatItem(String label, String value) {
     final l10n = AppLocalizations.of(context)!;

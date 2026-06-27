@@ -70,6 +70,8 @@ class ApiURL {
   static const String deviceDataByDate =
       "$baseURL/api/device/check-deviceList_byDate";
   static const String assignDevices = "$baseURL/api/assign-devices";
+  static String deviceStatus(String imei) =>
+      "$baseURL/api/device/deviceStatus/$imei";
 
   static const String journeyRideHistory = "$baseURL/api/journey/ride-history";
   static const String promoVideos = "$baseURL/api/promo/all";
@@ -92,8 +94,8 @@ class ApiURL {
   static const String updateGeoFence = "$baseURL/api/geoFance/update_geofence";
   static String getGeoFenceData(String imei) =>
       "$baseURL/api/geoFance/geofenceData/$imei";
-  static String deleteGeoFence(String imei) =>
-      "$baseURL/api/geoFance/geofence/$imei";
+  static String deleteGeoFence(String imei, String fenceId) =>
+      "$baseURL/api/geoFance/geofence/$imei/$fenceId";
 
   // -------------------------
   // Documents / Upload
@@ -121,6 +123,8 @@ class ApiURL {
   static String dashboard(String imei) =>
       "$baseURL/api/vehicle-refuel/fuel-log-details/$imei";
   static String refuel(String imei) => "$baseURL/api/vehicle-refuel/$imei";
+  static String deleteRefuel(String imei, String refuelId) => "$baseURL/api/vehicle-refuel/$imei/$refuelId";
+  static const String updateOdometer = "$baseURL/api/vehicle-refuel/update-odometer";
 
   // -------------------------
   // Recharge Plans

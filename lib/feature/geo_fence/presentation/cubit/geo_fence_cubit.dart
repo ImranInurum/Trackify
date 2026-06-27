@@ -128,11 +128,11 @@ class GeoFenceCubit extends Cubit<GeoFenceState> {
     }
   }
 
-  Future<void> deleteGeoFence(String imei) async {
+  Future<void> deleteGeoFence(String imei, String fenceId) async {
     emit(GeoFenceLoading());
 
     try {
-      await _deleteGeoFenceUseCase(imei);
+      await _deleteGeoFenceUseCase(imei, fenceId);
       // Refresh list after deletion
       fetchGeoFences(imei);
     } catch (e) {

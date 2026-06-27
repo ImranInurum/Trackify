@@ -690,8 +690,7 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
                         current.validRidePoints.length;
               },
               builder: (context, mapState) {
-                return RepaintBoundary(
-                  child: GoogleMap(
+                return GoogleMap(
                     initialCameraPosition: const CameraPosition(
                       target: LatLng(20.5937, 78.9629), // Start at India
                       zoom: 4.2,
@@ -759,8 +758,7 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
                       }
                       _lastCameraPosition = position;
                     },
-                  ),
-                );
+                  );
               },
             ),
 

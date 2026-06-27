@@ -52,4 +52,13 @@ class RefuelHistoryCubit extends Cubit<RefuelHistoryState> {
       await loadRefuelHistory(_currentImei);
     }
   }
+
+  Future<void> deleteRefuelLog(String refuelId) async {
+    try {
+      await _dataSource.deleteRefuelLog(_currentImei, refuelId);
+      await reloadHistory();
+    } catch (e) {
+      print("DELETE REFUEL ERROR : $e");
+    }
+  }
 }

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:trackify/l10n/app_localizations.dart';
 import '../../cubit/fuel_logs_state.dart';
+import '../../cubit/fuel_logs_cubit.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:trackify/core/utils/distance_utils.dart';
 
 class OdometerCard extends StatelessWidget {
@@ -52,14 +54,15 @@ class OdometerCard extends StatelessWidget {
           SizedBox(height: mediaQuery.size.height * 0.02),
           GestureDetector(
             onTap: () => _showUpdateOdometerDialog(context, l10n),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: (state.odometerReading.isNotEmpty && state.odometerReading != 'null'
-                  ? state.odometerReading
-                  : "000000")
-                  .split('')
-                  .map((d) => _buildDigitBox(context, d))
-                  .toList(),
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: _getFormattedOdometer(state.odometerReading)
+                    .split('')
+                    .map((d) => _buildDigitBox(context, d))
+                    .toList(),
+              ),
             ),
           ),
           SizedBox(height: mediaQuery.size.height * 0.015),
@@ -123,6 +126,17 @@ class OdometerCard extends StatelessWidget {
     );
   }
 
+  String _getFormattedOdometer(String reading) {
+    if (reading.isEmpty || reading == 'null') return "000000";
+    double? val = double.tryParse(reading);
+    if (val != null) {
+      // If it's a whole number, we can either keep it as is or format to 2 decimal places. 
+      // The user requested 2 digits.
+      return val.toStringAsFixed(2);
+    }
+    return reading;
+  }
+
   Widget _buildDigitBox(BuildContext context, String digit) {
     final theme = Theme.of(context);
     final mediaQuery = MediaQuery.of(context);
@@ -151,6 +165,12 @@ class OdometerCard extends StatelessWidget {
 
   void _showUpdateOdometerDialog(BuildContext context, AppLocalizations l10n) {
     final theme = Theme.of(context);
+    final cubit = context.read<FuelLogsCubit>();
+    final controller = TextEditingController(
+      text: state.odometerReading.isNotEmpty && state.odometerReading != 'null' 
+          ? state.odometerReading 
+          : '',
+    );
     showDialog(
       context: context,
       builder: (context) => Dialog(
@@ -172,6 +192,7 @@ class OdometerCard extends StatelessWidget {
               ),
               const SizedBox(height: 16),
               TextField(
+                controller: controller,
                 keyboardType: TextInputType.number,
                 decoration: InputDecoration(
                   fillColor: theme.inputDecorationTheme.fillColor,
@@ -219,7 +240,12 @@ class OdometerCard extends StatelessWidget {
                   ),
                   const SizedBox(width: 8),
                   TextButton(
-                    onPressed: () => Navigator.pop(context),
+                    onPressed: () {
+                      if (controller.text.isNotEmpty) {
+                        cubit.updateOdometer(controller.text);
+                      }
+                      Navigator.pop(context);
+                    },
                     child: Text(
                       l10n.save,
                       style: TextStyle(
@@ -240,6 +266,10 @@ class OdometerCard extends StatelessWidget {
 
   void _showUpdateTankCapacityDialog(BuildContext context, AppLocalizations l10n) {
     final theme = Theme.of(context);
+    final cubit = context.read<FuelLogsCubit>();
+    final controller = TextEditingController(
+      text: state.tankCapacity != 'null' ? state.tankCapacity : '',
+    );
     showDialog(
       context: context,
       builder: (context) => Dialog(
@@ -272,6 +302,7 @@ class OdometerCard extends StatelessWidget {
               ),
               const SizedBox(height: 16),
               TextField(
+                controller: controller,
                 keyboardType: TextInputType.number,
                 decoration: InputDecoration(
                   fillColor: theme.inputDecorationTheme.fillColor,
@@ -316,7 +347,12 @@ class OdometerCard extends StatelessWidget {
                   ),
                   const SizedBox(width: 8),
                   TextButton(
-                    onPressed: () => Navigator.pop(context),
+                    onPressed: () {
+                      if (controller.text.isNotEmpty) {
+                        cubit.updateTankCapacity(controller.text);
+                      }
+                      Navigator.pop(context);
+                    },
                     child: Text(
                       l10n.save,
                       style: TextStyle(

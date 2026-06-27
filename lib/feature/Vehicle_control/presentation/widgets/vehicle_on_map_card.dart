@@ -16,6 +16,8 @@ class VehicleOnMapCard extends StatefulWidget {
   final VoidCallback onSave;
   final VoidCallback onUpgrade;
   final bool showSaveButton;
+  final EdgeInsetsGeometry? margin;
+  final BorderRadiusGeometry? borderRadius;
 
   const VehicleOnMapCard({
     super.key,
@@ -30,6 +32,8 @@ class VehicleOnMapCard extends StatefulWidget {
     required this.onSave,
     required this.onUpgrade,
     this.showSaveButton = false,
+    this.margin,
+    this.borderRadius,
   });
 
   @override
@@ -70,11 +74,11 @@ class _VehicleOnMapCardState extends State<VehicleOnMapCard>
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16),
+      margin: widget.margin ?? const EdgeInsets.symmetric(horizontal: 16),
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: widget.cardColor,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: widget.borderRadius ?? BorderRadius.circular(20),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

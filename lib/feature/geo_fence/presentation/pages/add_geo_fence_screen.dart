@@ -206,33 +206,33 @@ class _AddGeoFenceScreenState extends State<AddGeoFenceScreen> {
                 }
 
                 return GoogleMap(
-                  onMapCreated: (controller) => _mapController = controller,
-                  initialCameraPosition: CameraPosition(target: pos, zoom: 15),
-                  circles: {
-                    Circle(
-                      circleId: const CircleId('fence'),
-                      center: pos,
-                      radius: rad,
-                      fillColor: Colors.blue.withValues(alpha: 0.3),
-                      strokeColor: Colors.blue,
-                      strokeWidth: 2,
-                    ),
-                  },
-                  markers: {
-                    if (_userLocation != null)
-                      Marker(
-                        markerId: const MarkerId('current_location_marker'),
-                        position: _userLocation!,
-                        icon: BitmapDescriptor.defaultMarkerWithHue(
-                          BitmapDescriptor.hueRed,
-                        ),
+                    onMapCreated: (controller) => _mapController = controller,
+                    initialCameraPosition: CameraPosition(target: pos, zoom: 15),
+                    circles: {
+                      Circle(
+                        circleId: const CircleId('fence'),
+                        center: pos,
+                        radius: rad,
+                        fillColor: Colors.blue.withValues(alpha: 0.3),
+                        strokeColor: Colors.blue,
+                        strokeWidth: 2,
                       ),
-                  },
-                  myLocationEnabled: false,
-                  myLocationButtonEnabled: false,
-                  zoomControlsEnabled: false,
-                  onCameraMove: _onCameraMove,
-                );
+                    },
+                    markers: {
+                      if (_userLocation != null)
+                        Marker(
+                          markerId: const MarkerId('current_location_marker'),
+                          position: _userLocation!,
+                          icon: BitmapDescriptor.defaultMarkerWithHue(
+                            BitmapDescriptor.hueRed,
+                          ),
+                        ),
+                    },
+                    myLocationEnabled: false,
+                    myLocationButtonEnabled: false,
+                    zoomControlsEnabled: false,
+                    onCameraMove: _onCameraMove,
+                  );
               },
             ),
 

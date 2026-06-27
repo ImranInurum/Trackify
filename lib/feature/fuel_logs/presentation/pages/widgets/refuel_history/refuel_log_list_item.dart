@@ -13,6 +13,7 @@ class RefuelLogListItem extends StatelessWidget {
   final String? liters;
   final String? mileage;
   final bool showDetails;
+  final VoidCallback? onDelete;
 
   const RefuelLogListItem({
     super.key,
@@ -26,6 +27,7 @@ class RefuelLogListItem extends StatelessWidget {
     this.liters,
     this.mileage,
     this.showDetails = false,
+    this.onDelete,
   });
 
   @override
@@ -93,7 +95,7 @@ class RefuelLogListItem extends StatelessWidget {
                           if (value == 'edit') {
                             // TODO: Handle edit
                           } else if (value == 'delete') {
-                            // TODO: Handle delete
+                            if (onDelete != null) onDelete!();
                           }
                         },
                         itemBuilder: (context) => [

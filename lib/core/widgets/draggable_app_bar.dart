@@ -1,7 +1,11 @@
+import 'dart:async';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:trackify/app/cubit/app_cubit.dart';
+import 'package:trackify/core/config/network/api_host.dart';
 import 'package:trackify/core/constants/app_images.dart';
 import 'package:trackify/core/theme/app_colors.dart';
 import 'package:trackify/feature/map/data/entity/user_vehicles.dart';
@@ -42,6 +46,10 @@ class _DraggableAppBarState extends State<DraggableAppBar>
   late final Animation<double> _expandFactor;
   late final Animation<double> _overlayOpacity;
 
+  final Map<String, Map<String, dynamic>> _deviceStatusMap = {};
+  final Set<String> _fetchingImeis = {};
+  Timer? _statusTimer;
+
   List<Vehicles> get _vehicles => widget.vehicles ?? [];
 
   Vehicles? get _selectedDevice {
@@ -70,6 +78,56 @@ class _DraggableAppBarState extends State<DraggableAppBar>
       begin: 0,
       end: 0.45,
     ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut));
+
+    _startStatusTimer();
+  }
+
+  void _startStatusTimer() {
+    _fetchStatuses();
+    _statusTimer = Timer.periodic(const Duration(seconds: 20), (timer) {
+      _fetchStatuses();
+    });
+  }
+
+  void _fetchStatuses() {
+    for (final device in _vehicles) {
+      final imei = device.imei ?? '';
+      if (imei.isNotEmpty) {
+        _fetchDeviceStatus(imei);
+      }
+    }
+  }
+
+  Future<void> _fetchDeviceStatus(String imei) async {
+    if (imei.isEmpty || _fetchingImeis.contains(imei)) return;
+    _fetchingImeis.add(imei);
+    try {
+      final response = await http.get(
+        Uri.parse(ApiURL.deviceStatus(imei)),
+        headers: {
+          'Authorization': 'Bearer ${ApiURL.authToken}',
+          'Content-Type': 'application/json',
+        },
+      ).timeout(const Duration(seconds: 10));
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> jsonResponse = jsonDecode(response.body);
+        if (jsonResponse['success'] == true && jsonResponse['data'] != null) {
+          final data = jsonResponse['data'] as Map<String, dynamic>;
+          data['imei'] = imei; // Ensure imei is present for identification
+          if (mounted) {
+            setState(() {
+              _deviceStatusMap[imei] = data;
+            });
+            context.read<AppCubit>().handleDeviceData(data);
+          }
+        }
+      }
+    } catch (e) {
+      debugPrint("Error fetching device status for $imei: $e");
+    } finally {
+      _fetchingImeis.remove(imei);
+    }
   }
 
   void _expand() {
@@ -439,77 +497,26 @@ class _DraggableAppBarState extends State<DraggableAppBar>
     required bool isHeaderRow,
     required bool isHighlighted,
   }) {
-    final isSelected = device.id == _selectedDevice?.id;
-
-    // Fetch live data from AppCubit
-    final liveDevices = context.watch<AppCubit>().state.devices;
-    final liveData = liveDevices.firstWhere(
-      (d) =>
-          d['imei'] == device.imei ||
-          d['_id'] == device.id ||
-          d['id'] == device.id,
-      orElse: () => <String, dynamic>{},
-    );
-
-    DateTime? time;
-    double speed = 0.0;
-
-    if (liveData.isNotEmpty) {
-      final timeStr =
-          (liveData['updatedAt'] ?? liveData['createdAt'] ?? liveData['time'])
-              ?.toString();
-      if (timeStr != null) {
-        time = DateTime.tryParse(timeStr)?.toLocal();
-      }
-      speed =
-          double.tryParse(
-            (liveData['sp'] ?? liveData['speed'])?.toString() ?? '0',
-          ) ??
-          0.0;
-    } else {
-      final timeStr = device.currentLocation?.time;
-      if (timeStr != null) {
-        time = DateTime.tryParse(timeStr)?.toLocal();
-      }
-      speed = device.currentLocation?.speed ?? 0.0;
-    }
-
+    final imei = device.imei ?? '';
     String statusLabel = 'Offline';
-    String timeValue = '--';
     Color statusColor = Colors.grey;
 
-    if (time != null) {
-      timeValue = DateFormat('h:mm a').format(time);
-      final diffMinutes = DateTime.now().difference(time).inMinutes;
-      final hasLiveData = liveData.isNotEmpty;
-
-      // Calculate how long the vehicle has been stopped (speed <= 5)
-      int stoppedMinutes = 0;
-      if (liveData.containsKey('stoppedAt')) {
-        final stoppedAtStr = liveData['stoppedAt']?.toString();
-        if (stoppedAtStr != null) {
-          final stoppedAt = DateTime.tryParse(stoppedAtStr);
-          if (stoppedAt != null) {
-            stoppedMinutes = DateTime.now().difference(stoppedAt).inMinutes;
+    if (imei.isNotEmpty) {
+      if (_deviceStatusMap.containsKey(imei)) {
+        final statusData = _deviceStatusMap[imei];
+        final statusStr = statusData?['status']?.toString();
+        if (statusStr != null) {
+          statusLabel = statusStr;
+          if (statusStr.toLowerCase() == 'moving') {
+            statusColor = Colors.green;
+          } else if (statusStr.toLowerCase() == 'idle') {
+            statusColor = Colors.red;
+          } else if (statusStr.toLowerCase() == 'parking' || statusStr.toLowerCase() == 'parked') {
+            statusColor = Colors.blue;
+          } else {
+            statusColor = Colors.grey;
           }
         }
-      } else if (!hasLiveData && speed <= 5) {
-        // Fallback if there's no live data but speed is 0 from API
-        stoppedMinutes = diffMinutes;
-      }
-
-      if (diffMinutes > 24 * 60 && !hasLiveData) {
-        statusLabel = 'Offline';
-        statusColor = Colors.grey;
-      } else if (diffMinutes > 60 || (speed <= 5 && stoppedMinutes > 60)) {
-        statusLabel = 'Parking';
-        statusColor = Colors.blue;
-      } else if (speed <= 5 && stoppedMinutes >= 10) {
-        statusLabel = 'Idle';
-        statusColor = Colors.red;
-      } else {
-        statusLabel = 'Moving';
-        statusColor = Colors.green;
       }
     }
 
@@ -554,7 +561,7 @@ class _DraggableAppBarState extends State<DraggableAppBar>
                     Row(
                       children: [
                         Text(
-                          device.vehicleNumber ?? '---',
+                          device.vehicleNumber,
                           style: TextStyle(
                             fontSize: 13,
                             color: Theme.of(
@@ -654,6 +661,7 @@ class _DraggableAppBarState extends State<DraggableAppBar>
 
   @override
   void dispose() {
+    _statusTimer?.cancel();
     _controller.dispose();
     super.dispose();
   }

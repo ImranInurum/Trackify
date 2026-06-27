@@ -231,96 +231,96 @@ class _PolylineThumbnailState extends State<PolylineThumbnail> {
       child: Stack(
         children: [
           IgnorePointer( // Block all interactions to behave like a thumbnail
-            child: GoogleMap(
-              initialCameraPosition: CameraPosition(
-                target: center,
-                zoom: 14.0,
-              ),
-              // Disable liteMode so the dark theme correctly applies on Android
-              liteModeEnabled: false,
-              mapType: MapType.normal,
-              style: _darkMapStyle, // Provide the loaded dark style
-              zoomControlsEnabled: false,
-              mapToolbarEnabled: false,
-              myLocationButtonEnabled: false,
-              compassEnabled: false,
-              rotateGesturesEnabled: false,
-              scrollGesturesEnabled: false,
-              tiltGesturesEnabled: false,
-              zoomGesturesEnabled: false,
-              polylines: {
-                Polyline(
-                  polylineId: const PolylineId('route'),
-                  points: validPoints,
-                  color: widget.color ?? Theme.of(context).colorScheme.primary,
-                  width: widget.strokeWidth.toInt(),
-                  startCap: Cap.roundCap,
-                  endCap: Cap.roundCap,
-                  jointType: JointType.round,
+              child: GoogleMap(
+                initialCameraPosition: CameraPosition(
+                  target: center,
+                  zoom: 14.0,
                 ),
-              },
-              markers: {
-                if (_startIcon != null)
-                  Marker(
-                    markerId: const MarkerId('start'),
-                    position: validPoints.first,
-                    icon: _startIcon!,
-                    anchor: const Offset(0.5, 0.5), // Center of circle
+                // Disable liteMode so the dark theme correctly applies on Android
+                liteModeEnabled: false,
+                mapType: MapType.normal,
+                style: _darkMapStyle, // Provide the loaded dark style
+                zoomControlsEnabled: false,
+                mapToolbarEnabled: false,
+                myLocationButtonEnabled: false,
+                compassEnabled: false,
+                rotateGesturesEnabled: false,
+                scrollGesturesEnabled: false,
+                tiltGesturesEnabled: false,
+                zoomGesturesEnabled: false,
+                polylines: {
+                  Polyline(
+                    polylineId: const PolylineId('route'),
+                    points: validPoints,
+                    color: widget.color ?? Theme.of(context).colorScheme.primary,
+                    width: widget.strokeWidth.toInt(),
+                    startCap: Cap.roundCap,
+                    endCap: Cap.roundCap,
+                    jointType: JointType.round,
                   ),
-                if (_endIcon != null)
-                  Marker(
-                    markerId: const MarkerId('end'),
-                    position: validPoints.last,
-                    icon: _endIcon!,
-                    anchor: const Offset(0.5, 1.0), // Bottom tip of the pin
-                  ),
-              },
-              onMapCreated: (GoogleMapController controller) async {
-                if (!_controller.isCompleted) {
-                  _controller.complete(controller);
-                }
-                // If map style is not loaded yet, wait for it
-                if (_darkMapStyle == null) {
-                  await _loadMapStyle();
-                }
-                // Set the style again on controller to be absolutely safe
-                if (_darkMapStyle != null && mounted) {
-                  await controller.setMapStyle(_darkMapStyle);
-                }
-                // Delay slightly to allow layout to complete
-                await Future.delayed(const Duration(milliseconds: 150));
-                if (mounted) {
-                  await controller.moveCamera(CameraUpdate.newLatLngBounds(bounds, 20.0));
-                }
-                
-                // Take a snapshot after a delay to allow markers/polylines/tiles to render
-                if (widget.rideId != null) {
-                  Future.delayed(const Duration(milliseconds: 3000), () async {
-                    if (mounted) {
-                      try {
-                        final isConnected = await ConnectivityService().checkConnectivity();
-                        if (!isConnected) {
-                          debugPrint('Device is offline, skipping caching of blank map thumbnail.');
-                          return;
+                },
+                markers: {
+                  if (_startIcon != null)
+                    Marker(
+                      markerId: const MarkerId('start'),
+                      position: validPoints.first,
+                      icon: _startIcon!,
+                      anchor: const Offset(0.5, 0.5), // Center of circle
+                    ),
+                  if (_endIcon != null)
+                    Marker(
+                      markerId: const MarkerId('end'),
+                      position: validPoints.last,
+                      icon: _endIcon!,
+                      anchor: const Offset(0.5, 1.0), // Bottom tip of the pin
+                    ),
+                },
+                onMapCreated: (GoogleMapController controller) async {
+                  if (!_controller.isCompleted) {
+                    _controller.complete(controller);
+                  }
+                  // If map style is not loaded yet, wait for it
+                  if (_darkMapStyle == null) {
+                    await _loadMapStyle();
+                  }
+                  // Set the style again on controller to be absolutely safe
+                  if (_darkMapStyle != null && mounted) {
+                    await controller.setMapStyle(_darkMapStyle);
+                  }
+                  // Delay slightly to allow layout to complete
+                  await Future.delayed(const Duration(milliseconds: 150));
+                  if (mounted) {
+                    await controller.moveCamera(CameraUpdate.newLatLngBounds(bounds, 20.0));
+                  }
+                  
+                  // Take a snapshot after a delay to allow markers/polylines/tiles to render
+                  if (widget.rideId != null) {
+                    Future.delayed(const Duration(milliseconds: 3000), () async {
+                      if (mounted) {
+                        try {
+                          final isConnected = await ConnectivityService().checkConnectivity();
+                          if (!isConnected) {
+                            debugPrint('Device is offline, skipping caching of blank map thumbnail.');
+                            return;
+                          }
+                          final bytes = await controller.takeSnapshot();
+                          if (bytes != null && mounted) {
+                            final box = Hive.box('map_cache');
+                            final signature = "${widget.points.length}_${widget.points.isEmpty ? '' : widget.points.first.latitude}_${widget.points.isEmpty ? '' : widget.points.last.latitude}";
+                            await box.put('map_thumbnail_v2_${widget.rideId}', bytes);
+                            await box.put('map_thumbnail_v2_sig_${widget.rideId}', signature);
+                            setState(() {
+                              _cachedBytes = bytes;
+                            });
+                          }
+                        } catch (e) {
+                          debugPrint('Error taking map snapshot: $e');
                         }
-                        final bytes = await controller.takeSnapshot();
-                        if (bytes != null && mounted) {
-                          final box = Hive.box('map_cache');
-                          final signature = "${widget.points.length}_${widget.points.isEmpty ? '' : widget.points.first.latitude}_${widget.points.isEmpty ? '' : widget.points.last.latitude}";
-                          await box.put('map_thumbnail_v2_${widget.rideId}', bytes);
-                          await box.put('map_thumbnail_v2_sig_${widget.rideId}', signature);
-                          setState(() {
-                            _cachedBytes = bytes;
-                          });
-                        }
-                      } catch (e) {
-                        debugPrint('Error taking map snapshot: $e');
                       }
-                    }
-                  });
-                }
-              },
-            ),
+                    });
+                  }
+                },
+              ),
           ),
         ],
       ),
