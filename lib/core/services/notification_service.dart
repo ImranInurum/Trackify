@@ -1,7 +1,9 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import '../utils/shared_preferences.dart';
+import 'package:trackify/main.dart';
+import 'package:trackify/feature/notifications/presentation/screen/notification_list_screen.dart';
 
 @pragma('vm:entry-point')
 Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
@@ -46,7 +48,12 @@ class NotificationService {
     );
     const initSettings = InitializationSettings(android: androidInit, iOS: iosInit);
 
-    await _plugin.initialize(initSettings);
+    await _plugin.initialize(
+      initSettings,
+      onDidReceiveNotificationResponse: (NotificationResponse response) {
+        _navigateToNotificationScreen();
+      },
+    );
 
     // Ensure Android channel exists and request notifications permission (Android 13+)
     final androidPlugin = _plugin
@@ -83,6 +90,17 @@ class NotificationService {
         await _plugin.show(DateTime.now().millisecondsSinceEpoch % 100000, title, body, _details());
       }
     });
+
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+      _navigateToNotificationScreen();
+    });
+
+    final initialMessage = await FirebaseMessaging.instance.getInitialMessage();
+    if (initialMessage != null) {
+      Future.delayed(const Duration(milliseconds: 1500), () {
+        _navigateToNotificationScreen();
+      });
+    }
 
     FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
 
@@ -123,5 +141,13 @@ class NotificationService {
 
   static Future<void> cancelAll() async {
     await _plugin.cancelAll();
+  }
+
+  static void _navigateToNotificationScreen() {
+    if (rootNavigatorKey.currentState != null) {
+      rootNavigatorKey.currentState!.push(
+        MaterialPageRoute(builder: (_) => const NotificationListScreen()),
+      );
+    }
   }
 }
