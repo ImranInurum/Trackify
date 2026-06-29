@@ -104,9 +104,11 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
     _playController.addStatusListener((status) async {
       if (status == AnimationStatus.completed) {
         context.read<RideHistoryDetailsCubit>().updatePlaybackStatus(false);
-        final icon = await _createVehicleMarker();
         if (mounted) {
-          context.read<RideHistoryDetailsCubit>().updateVehicleIcon(icon);
+          final icon = await _createVehicleMarker(context);
+          if (mounted) {
+            context.read<RideHistoryDetailsCubit>().updateVehicleIcon(icon);
+          }
         }
       }
     });
@@ -115,9 +117,11 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
   }
 
   Future<void> _updateVehicleIcon() async {
-    final icon = await _createVehicleMarker();
     if (mounted) {
-      context.read<RideHistoryDetailsCubit>().updateVehicleIcon(icon);
+      final icon = await _createVehicleMarker(context);
+      if (mounted) {
+        context.read<RideHistoryDetailsCubit>().updateVehicleIcon(icon);
+      }
     }
   }
 
@@ -125,7 +129,8 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
     try {
       final start = await _createStartMarker();
       final end = await _createEndMarker();
-      final vehicle = await _createVehicleMarker();
+      if (!mounted) return;
+      final vehicle = await _createVehicleMarker(context);
       String? mapStyle;
       try {
         mapStyle = await rootBundle.loadString('assets/map_styles/dark_map.json');
@@ -580,26 +585,35 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
     return BitmapDescriptor.bytes(data!.buffer.asUint8List());
   }
 
-  Future<BitmapDescriptor> _createVehicleMarker() async {
+  Future<BitmapDescriptor> _createVehicleMarker(BuildContext context) async {
     final ui.PictureRecorder pictureRecorder = ui.PictureRecorder();
     final Canvas canvas = Canvas(pictureRecorder);
-    const double size = 60.0; // Standard size always
+    const double size = 50.0; // Reduced size for a smaller marker
     final Paint arrowPaint = Paint()
-      ..color = _primaryColor
+      ..color = Theme.of(context).colorScheme.primary // Use theme's primary color
       ..style = PaintingStyle.fill;
     final Paint borderPaint = Paint()
       ..color = Colors.white
       ..style = PaintingStyle.stroke
-      ..strokeWidth = 4;
+      ..strokeWidth = 2.0 // Reduced border width
+      ..strokeJoin = StrokeJoin.round;
+    
     final Path path = Path();
-    path.moveTo(size / 2, 10);
-    path.lineTo(size - 20, size - 10);
+    // Start at top tip
+    path.moveTo(size / 2, 4); 
+    // Draw to right wing tip
+    path.lineTo(size - 9, size - 11);
+    // Draw to bottom center indentation
     path.lineTo(size / 2, size - 20);
-    path.lineTo(20, size - 10);
+    // Draw to left wing tip
+    path.lineTo(9, size - 11);
     path.close();
+
+    // Add a slightly larger, softer drop shadow
     canvas.drawShadow(path, Colors.black, 4.0, false);
     canvas.drawPath(path, arrowPaint);
     canvas.drawPath(path, borderPaint);
+    
     final img = await pictureRecorder.endRecording().toImage(
       size.toInt(),
       size.toInt(),

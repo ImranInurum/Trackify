@@ -140,10 +140,14 @@ class _MyGarageScreenState extends State<MyGarageScreen> {
                     hasDevice: hasDevice,
                     isLocked: isLocked,
                     onVehicleControl: () async {
-                      if (vehicle.imei != null && vehicle.imei!.isNotEmpty) {
+                      await AppPreference.instance.set(
+                        key: AppPreference.IMEI,
+                        value: vehicle.imei ?? '',
+                      );
+                      if (vehicle.id != null && vehicle.id!.isNotEmpty) {
                         await AppPreference.instance.set(
-                          key: AppPreference.IMEI,
-                          value: vehicle.imei!,
+                          key: AppPreference.KEY_SELECTED_UID,
+                          value: vehicle.id!,
                         );
                       }
                       if (context.mounted) {
@@ -152,6 +156,7 @@ class _MyGarageScreenState extends State<MyGarageScreen> {
                           MaterialPageRoute(
                             builder: (context) => VehicleControlScreen(
                               isFromGarage: hasDevice ? false : true,
+                              passedVehicle: vehicle,
                             ),
                           ),
                         );

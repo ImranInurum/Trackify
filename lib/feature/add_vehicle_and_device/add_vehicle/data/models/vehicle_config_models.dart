@@ -31,7 +31,10 @@ class VehicleMaker {
   VehicleMaker({required this.id, required this.name});
 
   factory VehicleMaker.fromJson(Map<String, dynamic> json) {
-    return VehicleMaker(id: json['_id'] ?? '', name: json['name'] ?? '');
+    return VehicleMaker(
+      id: json['_id']?.toString() ?? json['id']?.toString() ?? '', 
+      name: json['name']?.toString() ?? json['brandName']?.toString() ?? json['makerName']?.toString() ?? '',
+    );
   }
 
   @override
@@ -58,11 +61,11 @@ class VehicleModelInfo {
 
   factory VehicleModelInfo.fromJson(Map<String, dynamic> json) {
     return VehicleModelInfo(
-      id: json['_id'] ?? '',
-      brandId: json['brandId'] ?? '',
-      modelName: json['modelName'] ?? '',
-      vehicleType: json['vehicleType'] ?? '',
-      fuelType: List<String>.from(json['fuelType'] ?? []),
+      id: json['_id']?.toString() ?? json['id']?.toString() ?? '',
+      brandId: json['brandId']?.toString() ?? '',
+      modelName: json['modelName']?.toString() ?? json['name']?.toString() ?? '',
+      vehicleType: json['vehicleType']?.toString() ?? '',
+      fuelType: (json['fuelType'] as List?)?.map((e) => e.toString()).toList() ?? [],
     );
   }
 

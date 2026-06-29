@@ -74,7 +74,7 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
   }) {
     final theme = Theme.of(context);
     final Color active = theme.colorScheme.secondary;
-    final Color inactive = theme.hintColor.withOpacity(0.4);
+    final Color inactive = theme.colorScheme.onSurface.withOpacity(0.5);
 
     return GestureDetector(
       onTap: () => context.read<AddVehicleCubit>().selectVehicleType(config),
@@ -118,7 +118,7 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
   }) {
     final theme = Theme.of(context);
     final Color active = theme.colorScheme.secondary;
-    final Color inactive = theme.hintColor.withOpacity(0.4);
+    final Color inactive = theme.colorScheme.onSurface.withOpacity(0.5);
 
     return GestureDetector(
       onTap: () => context.read<AddVehicleCubit>().selectFuelType(type),
@@ -204,7 +204,7 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
                 isExpanded: true,
                 hint: Text(
                   hint ?? label,
-                  style: TextStyle(color: theme.hintColor, fontSize: 14),
+                  style: TextStyle(color: theme.colorScheme.onSurface.withOpacity(0.5), fontSize: 14),
                 ),
                 icon: Icon(Icons.arrow_drop_down, color: theme.colorScheme.secondary),
                 items: items
@@ -283,13 +283,13 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios_new, color: theme.appBarTheme.foregroundColor),
+          icon: Icon(Icons.arrow_back_ios_new, color: theme.colorScheme.onSurface),
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: Text(
           l10n.addVehicle,
           style: TextStyle(
-            color: theme.appBarTheme.foregroundColor,
+            color: theme.colorScheme.onSurface,
             fontSize: 17,
             fontWeight: FontWeight.w600,
           ),
@@ -318,8 +318,8 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
                 backgroundColor: appColors?.success ?? Colors.green,
               ),
             );
-            Navigator.of(context).pushAndRemoveUntil(
-              MaterialPageRoute(builder: (context) => AppNavigation()),
+            Navigator.of(context, rootNavigator: true).pushAndRemoveUntil(
+              MaterialPageRoute(builder: (context) => const AppNavigation()),
               (route) => false,
             );
           } else if (state.errorMessage != null) {

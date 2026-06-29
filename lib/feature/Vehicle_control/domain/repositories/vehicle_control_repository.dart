@@ -6,10 +6,20 @@ abstract class VehicleControlRepository {
   Future<void> updateVehicleColor(String vehicleIMEI, String color);
   Future<void> updateTankCapacity(String vehicleIMEI, String capacity);
   Future<void> updateMileage(String vehicleIMEI, String mileage);
-  Future<void> updateVehicleDetails(String vehicleIMEI, String name, String number, String fuelType);
+  Future<void> updateVehicleDetails({
+    required String vehicleIMEI,
+    required String vehicleName,
+    required String vehicleNumber,
+    required String fuelType,
+    required String vehicleType,
+    required String vehicleMaker,
+    required String vehicleModel,
+    required String brandId,
+    required String modelId,
+  });
   Future<void> updateVehicleImage(String vehicleIMEI, String imagePath);
   Future<void> updateVehicleLock(String vehicleIMEI, bool lockState);
-  Future<void> deleteVehicle(String vehicleIMEI);
+  Future<void> deleteVehicle(String vehicleId);
 }
 
 class VehicleNotFoundException implements Exception {

@@ -368,8 +368,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             final selectedImei = AppPreference.instance.getSync(
                               key: AppPreference.IMEI,
                             );
+                            final selectedUid = AppPreference.instance.getSync(
+                              key: AppPreference.KEY_SELECTED_UID,
+                            );
                             final vehicle = state.vehicles.firstWhere(
-                              (v) => v.imei == selectedImei,
+                              (v) => (selectedUid.isNotEmpty && v.id == selectedUid) || 
+                                     (selectedImei.isNotEmpty && v.imei == selectedImei),
                               orElse: () => state.vehicles.first,
                             );
 
@@ -386,6 +390,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               hasDevice: true,
                               isLocked: isLocked,
                               onVehicleControl: () async {
+                                if (vehicle.id != null && vehicle.id!.isNotEmpty) {
+                                  await AppPreference.instance.set(
+                                    key: AppPreference.KEY_SELECTED_UID,
+                                    value: vehicle.id!,
+                                  );
+                                }
                                 if (vehicle.imei != null &&
                                     vehicle.imei!.isNotEmpty) {
                                   await AppPreference.instance.set(
@@ -397,8 +407,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (context) =>
-                                          const VehicleControlScreen(),
+                                      builder: (context) => VehicleControlScreen(
+                                          isFromGarage: false,
+                                          passedVehicle: vehicle),
                                     ),
                                   );
                                 }

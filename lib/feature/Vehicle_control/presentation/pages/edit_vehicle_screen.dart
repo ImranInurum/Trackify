@@ -56,13 +56,13 @@ class _EditVehicleViewState extends State<_EditVehicleView> {
     if (_typeSelected) return;
     if (state.configs.isEmpty || state.isLoadingConfig) return;
 
-    final entityType = widget.vehicle.vehicleType.toLowerCase();
-    final entityFuel = widget.vehicle.fuelType.toLowerCase();
+    final entityType = widget.vehicle.vehicleType.trim().toLowerCase();
+    final entityFuel = widget.vehicle.fuelType.trim().toLowerCase();
 
     VehicleConfig? matchConfig;
     try {
       matchConfig = state.configs.firstWhere(
-        (c) => c.type.toLowerCase() == entityType,
+        (c) => c.type.trim().toLowerCase() == entityType || c.id == widget.vehicle.vehicleType,
       );
     } catch (_) {
       if (state.configs.isNotEmpty) matchConfig = state.configs.first;
@@ -70,11 +70,13 @@ class _EditVehicleViewState extends State<_EditVehicleView> {
 
     if (matchConfig != null) {
       _typeSelected = true;
-      // Select type — this auto-selects first fuel internally; override with actual fuel
-      cubit.selectVehicleType(matchConfig);
       Future.microtask(() {
-        if (matchConfig!.supportedFuelTypes.contains(entityFuel)) {
-          cubit.selectFuelType(entityFuel);
+        // Select type but prevent it from auto-selecting the first fuel to avoid race conditions!
+        cubit.selectVehicleType(matchConfig!, autoSelectFuel: false);
+        final supportedFuelsLowerCase = matchConfig.supportedFuelTypes.map((e) => e.trim().toLowerCase()).toList();
+        final fuelIndex = supportedFuelsLowerCase.indexOf(entityFuel);
+        if (fuelIndex != -1) {
+          cubit.selectFuelType(matchConfig.supportedFuelTypes[fuelIndex]);
         } else if (matchConfig.supportedFuelTypes.isNotEmpty) {
           cubit.selectFuelType(matchConfig.supportedFuelTypes.first);
         }
@@ -86,22 +88,50 @@ class _EditVehicleViewState extends State<_EditVehicleView> {
   void _tryPreselectMaker(AddVehicleState state, AddVehicleCubit cubit) {
     if (_makerSelected) return;
     if (!_typeSelected) return;
-    if (state.makers.isEmpty || state.isLoadingMakers) return;
+    
+    final entityFuel = widget.vehicle.fuelType.trim().toLowerCase();
+    if (state.selectedFuelType == null) return;
+    if (entityFuel.isNotEmpty && state.selectedFuelType!.trim().toLowerCase() != entityFuel) {
+      // If the currently selected fuel doesn't match the entity's fuel, wait for it
+      // unless we fell back to the first fuel type because entityFuel was invalid
+      final supportedFuels = state.selectedConfig?.supportedFuelTypes.map((e) => e.trim().toLowerCase()).toList() ?? [];
+      if (supportedFuels.contains(entityFuel)) {
+        return; 
+      }
+    }
 
-    final entityMaker = widget.vehicle.vehicleMaker.toLowerCase();
+    if (state.isLoadingMakers) return;
+
+    final entityMaker = widget.vehicle.vehicleMaker.trim().toLowerCase();
     VehicleMaker? matchMaker;
-    try {
-      matchMaker = state.makers.firstWhere(
-        (m) => m.name.toLowerCase() == entityMaker,
-      );
-    } catch (_) {}
+    if (entityMaker.isNotEmpty || widget.vehicle.vehicleMaker.isNotEmpty) {
+      try {
+        matchMaker = state.makers.firstWhere(
+          (m) {
+            final mName = m.name.trim().toLowerCase();
+            final mId = m.id.trim();
+            final vMakerOrig = widget.vehicle.vehicleMaker.trim();
+
+            if (mName == entityMaker || mId == vMakerOrig) return true;
+            if (entityMaker.isNotEmpty && mName.isNotEmpty && mName.contains(entityMaker)) return true;
+            if (entityMaker.isNotEmpty && mName.isNotEmpty && entityMaker.contains(mName)) return true;
+            return false;
+          }
+        );
+      } catch (_) {}
+    }
 
     if (matchMaker != null) {
       _makerSelected = true;
-      cubit.selectMaker(matchMaker);
+      Future.microtask(() => cubit.selectMaker(matchMaker!));
     } else {
       // Maker not found — mark as done to avoid infinite loop
       _makerSelected = true;
+      if (widget.vehicle.vehicleMaker.isNotEmpty) {
+        // Use a 24-character valid ObjectId to prevent backend CastError
+        final dummyMaker = VehicleMaker(id: '000000000000000000000000', name: widget.vehicle.vehicleMaker);
+        Future.microtask(() => cubit.selectMaker(dummyMaker));
+      }
     }
   }
 
@@ -109,21 +139,63 @@ class _EditVehicleViewState extends State<_EditVehicleView> {
   void _tryPreselectModel(AddVehicleState state, AddVehicleCubit cubit) {
     if (_modelSelected) return;
     if (!_makerSelected) return;
-    if (state.models.isEmpty || state.isLoadingModels) return;
+    
+    final entityMaker = widget.vehicle.vehicleMaker.trim().toLowerCase();
+    if (state.selectedMaker == null) return;
+    
+    bool isCorrectMaker = false;
+    final sMakerName = state.selectedMaker!.name.trim().toLowerCase();
+    final sMakerId = state.selectedMaker!.id.trim();
+    final vMakerOrig = widget.vehicle.vehicleMaker.trim();
 
-    final entityModel = widget.vehicle.vehicleModel.toLowerCase();
+    if (sMakerName == entityMaker || 
+        sMakerId == vMakerOrig ||
+        (entityMaker.isNotEmpty && sMakerName.contains(entityMaker)) ||
+        (entityMaker.isNotEmpty && entityMaker.contains(sMakerName))) {
+      isCorrectMaker = true;
+    }
+    
+    if (!isCorrectMaker) {
+      // User may have manually selected a different maker, skip model preselection
+      return;
+    }
+
+    if (state.isLoadingModels) return;
+
+    final entityModel = widget.vehicle.vehicleModel.trim().toLowerCase();
     VehicleModelInfo? matchModel;
-    try {
-      matchModel = state.models.firstWhere(
-        (m) => m.modelName.toLowerCase() == entityModel,
-      );
-    } catch (_) {}
+    if (entityModel.isNotEmpty || widget.vehicle.vehicleModel.isNotEmpty) {
+      try {
+        matchModel = state.models.firstWhere(
+          (m) {
+            final mName = m.modelName.trim().toLowerCase();
+            final mId = m.id.trim();
+            final vModelOrig = widget.vehicle.vehicleModel.trim();
+
+            if (mName == entityModel || mId == vModelOrig) return true;
+            if (entityModel.isNotEmpty && mName.isNotEmpty && mName.contains(entityModel)) return true;
+            if (entityModel.isNotEmpty && mName.isNotEmpty && entityModel.contains(mName)) return true;
+            return false;
+          }
+        );
+      } catch (_) {}
+    }
 
     if (matchModel != null) {
       _modelSelected = true;
-      cubit.selectModel(matchModel);
+      Future.microtask(() => cubit.selectModel(matchModel!));
     } else {
       _modelSelected = true;
+      if (widget.vehicle.vehicleModel.isNotEmpty) {
+        final dummyModel = VehicleModelInfo(
+          id: '000000000000000000000000',
+          brandId: state.selectedMaker?.id ?? '',
+          modelName: widget.vehicle.vehicleModel,
+          vehicleType: state.selectedConfig?.type ?? '',
+          fuelType: state.selectedFuelType != null ? [state.selectedFuelType!] : [],
+        );
+        Future.microtask(() => cubit.selectModel(dummyModel));
+      }
     }
   }
 
@@ -372,7 +444,7 @@ class _EditVehicleViewState extends State<_EditVehicleView> {
                   hint: state.isLoadingModels
                       ? "Loading..."
                       : (state.models.isEmpty
-                          ? "Select make first"
+                          ? (state.selectedMaker == null ? "Select make first" : "No models available")
                           : l10n.selectModel),
                   onChanged: state.models.isEmpty || state.isLoadingModels
                       ? null
@@ -407,13 +479,24 @@ class _EditVehicleViewState extends State<_EditVehicleView> {
                   child: ElevatedButton(
                     onPressed: () {
                       final fuelType = state.selectedFuelType ?? widget.vehicle.fuelType;
-                      final modelName = state.selectedModel?.modelName ??
-                          widget.vehicle.vehicleModel;
+                      
+                      final makerName = state.selectedMaker?.name ?? widget.vehicle.vehicleMaker;
+                      final modelName = state.selectedModel?.modelName ?? widget.vehicle.vehicleModel;
+                      
+                      final vehicleName = (makerName.isNotEmpty && modelName.isNotEmpty) 
+                          ? '$makerName $modelName' 
+                          : (modelName.isNotEmpty ? modelName : widget.vehicle.vehicleName);
+
                       context.read<VehicleControlCubit>().updateVehicleDetails(
-                            widget.vehicle.id,
-                            modelName,
-                            _numberController.text.trim(),
-                            fuelType,
+                            vehicleIMEI: widget.vehicle.id,
+                            vehicleName: vehicleName,
+                            vehicleNumber: _numberController.text.trim(),
+                            fuelType: fuelType,
+                            vehicleType: state.selectedConfig?.type ?? widget.vehicle.vehicleType,
+                            vehicleMaker: makerName,
+                            vehicleModel: modelName,
+                            brandId: state.selectedMaker?.id ?? '',
+                            modelId: state.selectedModel?.id ?? '',
                           );
                       Navigator.pop(context);
                     },
@@ -458,6 +541,12 @@ class _EditVehicleViewState extends State<_EditVehicleView> {
     required ValueChanged<T?>? onChanged,
     Widget? trailing,
   }) {
+    final uniqueItems = items.toSet().toList();
+    if (value != null && !uniqueItems.contains(value)) {
+      uniqueItems.add(value);
+    }
+    final safeValue = value;
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       decoration: BoxDecoration(
@@ -472,7 +561,7 @@ class _EditVehicleViewState extends State<_EditVehicleView> {
           Expanded(
             child: DropdownButtonHideUnderline(
               child: DropdownButton<T>(
-                value: value,
+                value: safeValue,
                 isExpanded: true,
                 dropdownColor: theme.cardColor,
                 icon: trailing ??
@@ -484,7 +573,7 @@ class _EditVehicleViewState extends State<_EditVehicleView> {
                     fontSize: 14,
                   ),
                 ),
-                items: items.map((item) {
+                items: uniqueItems.map((item) {
                   return DropdownMenuItem<T>(
                     value: item,
                     child: Text(

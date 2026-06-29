@@ -414,24 +414,31 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                 if (state is MapLoaded) {
                   final vehicles = state.vehicleList.vehicles ?? [];
                   if (vehicles.isNotEmpty && _selectedDevice == null) {
-                    prefs.get(key: AppPreference.IMEI).then((savedImei) {
-                      if (mounted) {
-                        final savedVehicle = vehicles.firstWhere(
-                          (v) => v.imei == savedImei,
-                          orElse: () => vehicles.first,
-                        );
-                        setState(() {
-                          _selectedDevice = savedVehicle;
-                        });
-                        prefs.set(
-                          key: AppPreference.IMEI,
-                          value: savedVehicle.imei ?? '',
-                        );
-                        print("selected device is ${savedVehicle.imei}");
-                        // Refresh rides for the initially selected vehicle
-                        context.read<RideHistoryCubit>().getRideHistoryData();
-                      }
+                    final savedUid = prefs.getSync(key: AppPreference.KEY_SELECTED_UID);
+                    final savedImei = prefs.getSync(key: AppPreference.IMEI);
+
+                    final savedVehicle = vehicles.firstWhere(
+                      (v) => (savedUid.isNotEmpty && v.id == savedUid) || 
+                             (savedImei.isNotEmpty && v.imei == savedImei),
+                      orElse: () => vehicles.first,
+                    );
+                    
+                    setState(() {
+                      _selectedDevice = savedVehicle;
                     });
+                    
+                    prefs.set(
+                      key: AppPreference.KEY_SELECTED_UID,
+                      value: savedVehicle.id,
+                    );
+                    prefs.set(
+                      key: AppPreference.IMEI,
+                      value: savedVehicle.imei ?? '',
+                    );
+                    
+                    print("selected device is ${savedVehicle.imei} with id ${savedVehicle.id}");
+                    // Refresh rides for the initially selected vehicle
+                    context.read<RideHistoryCubit>().getRideHistoryData();
                   }
                 }
               },
@@ -459,8 +466,13 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                   } else if (state.mapStyle == 'Satellite') {
                     style = null;
                   }
-
-                  await MapUtils.setStyle(_mapController!, style);
+                  if (mounted && _mapController != null) {
+                    try {
+                      await MapUtils.setStyle(_mapController!, style);
+                    } catch (e) {
+                      debugPrint("Error setting map style: $e");
+                    }
+                  }
                 }
               },
             ),
@@ -1584,6 +1596,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
       ),
       onDeviceTap: (device) async {
         print("device.imei----------------------------------${device.imei}");
+        await prefs.set(key: AppPreference.KEY_SELECTED_UID, value: device.id);
         await prefs.set(key: AppPreference.IMEI, value: device.imei ?? '');
         setState(() => _selectedDevice = device);
         if (mounted) {

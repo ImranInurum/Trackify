@@ -58,11 +58,12 @@ class VehicleControlRepositoryImpl implements VehicleControlRepository {
     String vehicleType = '';
     String vehicleMaker = '';
     String vehicleModel = '';
+    bool fallbackSuccess = false;
 
     if (controlData.containsKey('vehicleDetails') && controlData['vehicleDetails'] != null) {
       final details = Map<String, dynamic>.from(controlData['vehicleDetails']);
-      final maker = details['vehicleMaker'] ?? '';
-      final model = details['vehicleModel'] ?? '';
+      final maker = details['vehicleMaker'] ?? details['brandId'] ?? '';
+      final model = details['vehicleModel'] ?? details['modelId'] ?? '';
       vehicleName = maker.isNotEmpty && model.isNotEmpty ? '$maker $model' : (model.isNotEmpty ? model : vehicleName);
       vehicleNumber = details['vehicleNumber'] ?? vehicleNumber;
       fuelType = details['fuelType'] ?? fuelType;
@@ -86,6 +87,10 @@ class VehicleControlRepositoryImpl implements VehicleControlRepository {
                 vehicleName = match.vehicleModel ?? vehicleName;
                 vehicleNumber = match.vehicleNumber ?? vehicleNumber;
                 fuelType = match.fuelType ?? fuelType;
+                vehicleType = match.vehicleType ?? vehicleType;
+                vehicleMaker = match.vehicleMaker ?? vehicleMaker;
+                vehicleModel = match.vehicleModel ?? vehicleModel;
+                fallbackSuccess = true;
               }
             },
           );
@@ -121,7 +126,7 @@ class VehicleControlRepositoryImpl implements VehicleControlRepository {
       vehicleModel: vehicleModel,
     );
 
-    if (apiFailure != null) {
+    if (apiFailure != null && !fallbackSuccess && controlData.isEmpty) {
       if (apiFailure is NotFoundException ||
           apiFailure?.statusCode == 404 ||
           apiFailure?.message.contains("Vehicle not found") == true) {
@@ -210,13 +215,36 @@ class VehicleControlRepositoryImpl implements VehicleControlRepository {
   }
 
   @override
-  Future<void> updateVehicleDetails(String vehicleIMEI, String name, String number, String fuelType) async {
+  Future<void> updateVehicleDetails({
+    required String vehicleIMEI,
+    required String vehicleName,
+    required String vehicleNumber,
+    required String fuelType,
+    required String vehicleType,
+    required String vehicleMaker,
+    required String vehicleModel,
+    required String brandId,
+    required String modelId,
+  }) async {
+    final Map<String, dynamic> payload = {
+      'vehicleName': vehicleName,
+      'vehicleNumber': vehicleNumber,
+      'fuelType': fuelType,
+      'vehicleType': vehicleType,
+      'vehicleMaker': vehicleMaker,
+      'vehicleModel': vehicleModel,
+    };
+    
+    if (brandId.isNotEmpty) {
+      payload['brandId'] = brandId;
+    }
+    if (modelId.isNotEmpty) {
+      payload['modelId'] = modelId;
+    }
+
     final response = await _apiService.getPutApiResponse(
       ApiURL.updateVehicleDetails(vehicleIMEI),
-      {
-        'vehicleNumber': number,
-        'fuelType': fuelType,
-      },
+      payload,
     );
     response.fold(
       (failure) => throw failure,
@@ -246,9 +274,9 @@ class VehicleControlRepositoryImpl implements VehicleControlRepository {
   }
 
   @override
-  Future<void> deleteVehicle(String vehicleIMEI) async {
+  Future<void> deleteVehicle(String vehicleId) async {
     final response = await _apiService.getDeleteApiResponse(
-      ApiURL.deleteVehicle(vehicleIMEI),
+      ApiURL.deleteVehicle(vehicleId),
       {},
     );
     response.fold(
