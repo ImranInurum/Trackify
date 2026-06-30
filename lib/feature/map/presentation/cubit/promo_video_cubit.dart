@@ -37,6 +37,8 @@ class PromoVideoCubit extends Cubit<PromoVideoState> {
 
     final result = await _repository.getPromoVideos();
     
+    if (isClosed) return;
+
     result.fold(
       (exception) {
         if (cachedList.isEmpty) {

@@ -70,25 +70,27 @@ class RideHistoryDetailsCubit extends Cubit<RideHistoryDetailsState> {
           : "--:--";
     }
 
-    emit(
-      state.copyWith(
-        isDataProcessing: false,
-        validRidePoints: result.mergedPoints,
-        cumulativeWeights: result.cumulativeWeights,
-        totalWeight: result.totalWeight,
-        cumulativeDistances: result.cumulativeDistances,
-        smoothPositions: result.smoothPositions,
-        smoothHeadings: result.smoothHeadings,
-        smoothSpeeds: result.smoothSpeeds,
-        smoothAvgSpeeds: result.smoothAvgSpeeds,
-        smoothTimes: result.smoothTimes,
-        currentVehiclePosition: null,
-        currentHeading: initialHeading,
-        currentSpeedDisplay: initialSpeed,
-        currentAvgSpeedDisplay: initialSpeed,
-        currentTimeDisplay: initialTime,
-      ),
-    );
+    if (!isClosed) {
+      emit(
+        state.copyWith(
+          isDataProcessing: false,
+          validRidePoints: result.mergedPoints,
+          cumulativeWeights: result.cumulativeWeights,
+          totalWeight: result.totalWeight,
+          cumulativeDistances: result.cumulativeDistances,
+          smoothPositions: result.smoothPositions,
+          smoothHeadings: result.smoothHeadings,
+          smoothSpeeds: result.smoothSpeeds,
+          smoothAvgSpeeds: result.smoothAvgSpeeds,
+          smoothTimes: result.smoothTimes,
+          currentVehiclePosition: null,
+          currentHeading: initialHeading,
+          currentSpeedDisplay: initialSpeed,
+          currentAvgSpeedDisplay: initialSpeed,
+          currentTimeDisplay: initialTime,
+        ),
+      );
+    }
   }
 
   void updateVehicleIcon(BitmapDescriptor icon) {
