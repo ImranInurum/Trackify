@@ -158,14 +158,20 @@ class _FullScreenMapState extends State<FullScreenMap>
                     final double camLat = currentTarget.latitude + (_animatedMarkerPos!.latitude - currentTarget.latitude) * dynamicPosFactor;
                     final double camLng = currentTarget.longitude + (_animatedMarkerPos!.longitude - currentTarget.longitude) * dynamicPosFactor;
                     
+                    double diffBearing = _animatedMarkerBearing - _cameraBearing;
+                    if (diffBearing > 180) diffBearing -= 360;
+                    if (diffBearing < -180) diffBearing += 360;
+                    double newCameraBearing = _cameraBearing + diffBearing * 0.15;
+
                     final nextPos = CameraPosition(
                       target: LatLng(camLat, camLng),
                       zoom: _cameraZoom,
                       tilt: _cameraTilt,
-                      bearing: 0.0,
+                      bearing: newCameraBearing,
                     );
                     
                     _cameraTarget = nextPos.target;
+                    _cameraBearing = newCameraBearing;
                     _mapController!.moveCamera(CameraUpdate.newCameraPosition(nextPos));
                   }
                }
@@ -345,6 +351,14 @@ class _FullScreenMapState extends State<FullScreenMap>
     if (target == null) return;
 
     final appState = context.read<AppCubit>().state;
+    final currData = appState.devices.firstWhere(
+      (d) =>
+          d['imei'] == _currentVehicle?.imei ||
+          d['_id'] == _currentVehicle?.id ||
+          d['id'] == _currentVehicle?.id,
+      orElse: () => <String, dynamic>{},
+    );
+    double bearing = double.tryParse((currData['course'] ?? currData['bearing'] ?? currData['angle'] ?? currData['dir'] ?? '0').toString()) ?? 0.0;
 
     // Glide smoothly focusing on the vehicle (drone camera zoom & rotate effect)
     // 600ms delay ensures native layout/tiles/styles are ready before animation starts
@@ -354,7 +368,7 @@ class _FullScreenMapState extends State<FullScreenMap>
         target: target,
         zoom: 18.0,
         tilt: 0.0,
-        bearing: 0.0,
+        bearing: _animatedMarkerPos != null ? _animatedMarkerBearing : bearing,
         duration: const Duration(milliseconds: 4000), // slow cinematic glide
         curve: Curves.easeInOutCubic,
       );
@@ -448,18 +462,28 @@ class _FullScreenMapState extends State<FullScreenMap>
     final vehiclePos = _getBestPosition();
     if (vehiclePos == null) return;
 
+    final currData = appState.devices.firstWhere(
+      (d) =>
+          d['imei'] == _currentVehicle?.imei ||
+          d['_id'] == _currentVehicle?.id ||
+          d['id'] == _currentVehicle?.id,
+      orElse: () => <String, dynamic>{},
+    );
+    double bearing = double.tryParse((currData['course'] ?? currData['bearing'] ?? currData['angle'] ?? currData['dir'] ?? '0').toString()) ?? 0.0;
+    final animBearing = _animatedMarkerPos != null ? _animatedMarkerBearing : bearing;
+
     if (_uiCubit.state.showCurrentLocation && appState.currentLocation != null) {
       final phonePos = LatLng(
         appState.currentLocation!.latitude,
         appState.currentLocation!.longitude,
       );
-      _fitBothMarkersOnMap(vehiclePos, phonePos, appState.liveBearing);
+      _fitBothMarkersOnMap(vehiclePos, phonePos, animBearing);
     } else {
       _animateCameraTo(
         target: _animatedMarkerPos ?? vehiclePos,
         zoom: 18.0,
         tilt: 0.0,
-        bearing: 0.0,
+        bearing: animBearing,
         duration: const Duration(milliseconds: 1200),
         curve: Curves.easeInOutCubic,
       );
@@ -499,7 +523,7 @@ class _FullScreenMapState extends State<FullScreenMap>
       target: midpoint,
       zoom: zoom,
       tilt: 0.0,
-      bearing: 0.0,
+      bearing: bearing,
       duration: const Duration(milliseconds: 1400),
       curve: Curves.easeInOutCubic,
     );
@@ -1439,7 +1463,7 @@ class _FullScreenMapState extends State<FullScreenMap>
       target: vehiclePos,
       zoom: 15.0, // balanced zoom level, not too close
       tilt: 0.0,
-      bearing: 0.0,
+      bearing: _animatedMarkerPos != null ? _animatedMarkerBearing : bearing,
       duration: const Duration(milliseconds: 1000),
       curve: Curves.easeOutCubic,
     );

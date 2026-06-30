@@ -178,14 +178,20 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
               final double camLat = currentTarget.latitude + (_animatedMarkerPos!.latitude - currentTarget.latitude) * dynamicPosFactor;
               final double camLng = currentTarget.longitude + (_animatedMarkerPos!.longitude - currentTarget.longitude) * dynamicPosFactor;
               
+              double diffBearing = _animatedMarkerBearing - _cameraBearing;
+              if (diffBearing > 180) diffBearing -= 360;
+              if (diffBearing < -180) diffBearing += 360;
+              double newCameraBearing = _cameraBearing + diffBearing * 0.15;
+
               final nextPos = CameraPosition(
                 target: LatLng(camLat, camLng),
                 zoom: _cameraZoom,
                 tilt: _cameraTilt,
-                bearing: 0.0,
+                bearing: newCameraBearing,
               );
               
               _cameraTarget = nextPos.target;
+              _cameraBearing = newCameraBearing;
               try {
                 _mapController!.moveCamera(CameraUpdate.newCameraPosition(nextPos));
               } catch (e) {}
@@ -258,6 +264,14 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
     if (target == null) return;
 
     final appState = context.read<AppCubit>().state;
+    final currData = appState.devices.firstWhere(
+      (d) =>
+          d['imei'] == _selectedDevice?.imei ||
+          d['_id'] == _selectedDevice?.id ||
+          d['id'] == _selectedDevice?.id,
+      orElse: () => <String, dynamic>{},
+    );
+    double bearing = double.tryParse((currData['course'] ?? currData['bearing'] ?? currData['angle'] ?? currData['dir'] ?? '0').toString()) ?? 0.0;
 
     // Glide smoothly focusing on the vehicle (drone camera zoom & rotate effect)
     // 600ms delay ensures native layout/tiles/styles are ready before animation starts
@@ -267,7 +281,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
         target: target,
         zoom: 13.0,
         tilt: 0.0,
-        bearing: 0.0,
+        bearing: _animatedMarkerPos != null ? _animatedMarkerBearing : bearing,
         duration: const Duration(milliseconds: 4000), // slow cinematic glide
         curve: Curves.easeInOutCubic,
       );
