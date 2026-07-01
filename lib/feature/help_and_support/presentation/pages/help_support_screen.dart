@@ -298,7 +298,7 @@ class _HelpSuggestionScreenState extends State<HelpSuggestionScreen> {
                   height: 54,
             child: DropdownButtonFormField<String>(
               value: selectedSuggestionType,
-              dropdownColor: Theme.of(context).cardColor,
+              dropdownColor: Theme.of(context).scaffoldBackgroundColor,
               decoration: InputDecoration(
                 contentPadding: const EdgeInsets.symmetric(horizontal: 14),
                 hintText: l10n.selectType,
@@ -354,10 +354,7 @@ class _HelpSuggestionScreenState extends State<HelpSuggestionScreen> {
 
               icon: Icon(
                 Icons.keyboard_arrow_down,
-                color: Theme.of(context)
-                    .colorScheme
-                    .onSurface
-                    .withOpacity(0.7),
+                color: Theme.of(context).colorScheme.primary,
               ),
             ),
                 ),

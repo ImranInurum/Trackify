@@ -514,7 +514,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get swipeToLock => 'SWIPE TO LOCK';
 
   @override
-  String get upgradeToPlus => 'Upgrade to Trackify Plus';
+  String get upgradeToPlus => 'Upgrade to Plus';
 
   @override
   String get getMoreOutOfTrackify => 'Get more out of Trackify';

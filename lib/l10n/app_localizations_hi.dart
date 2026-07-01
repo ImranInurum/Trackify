@@ -515,7 +515,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get swipeToLock => 'लॉक करने के लिए स्वाइप करें';
 
   @override
-  String get upgradeToPlus => 'Trackify Plus में अपग्रेड करें';
+  String get upgradeToPlus => 'Plus में अपग्रेड करें';
 
   @override
   String get getMoreOutOfTrackify => 'Trackify से और अधिक पाएं';

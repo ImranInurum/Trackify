@@ -66,6 +66,8 @@ class AppPreference {
       _prefs.setString(key, value);
 
   Future<bool> getBool({required String key}) async => _prefs.getBool(key) ?? false;
+  
+  bool getBoolSync({required String key}) => _prefs.getBool(key) ?? false;
 
 
 

@@ -720,7 +720,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         onPressed: () {
           final prefs = AppPreference.instance;
           prefs.clearAll();
-          Navigator.of(context).pushAndRemoveUntil(
+          Navigator.of(context, rootNavigator: true).pushAndRemoveUntil(
             MaterialPageRoute(builder: (context) => const SignInScreen()),
             (Route<dynamic> route) => false,
           );

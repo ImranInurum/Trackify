@@ -205,34 +205,77 @@ class _EditVehicleViewState extends State<_EditVehicleView> {
     _tryPreselectModel(state, cubit);
   }
 
+  IconData _getVehicleIcon(String type) {
+    final t = type.toLowerCase();
+    if (t.contains('2') || t.contains('two') || t.contains('bike') || t.contains('scooter') || t.contains('motor')) {
+      return Icons.two_wheeler_rounded;
+    } else if (t.contains('3') || t.contains('rickshaw') || t.contains('rikshaw') || t.contains('auto')) {
+      return Icons.electric_rickshaw_rounded;
+    } else if (t.contains('bus')) {
+      return Icons.directions_bus_rounded;
+    } else if (t.contains('van') || t.contains('tempo') || t.contains('traveller')) {
+      return Icons.airport_shuttle_rounded;
+    } else if (t.contains('truck') || t.contains('lorry') || t.contains('heavy') || t.contains('pickup') || t.contains('lcv') || t.contains('hcv')) {
+      return Icons.local_shipping_rounded;
+    } else if (t.contains('tractor') || t.contains('earth')) {
+      return Icons.agriculture_rounded;
+    } else if (t.contains('boat') || t.contains('ship')) {
+      return Icons.directions_boat_rounded;
+    } else if (t.contains('4') || t.contains('four') || t.contains('car') || t.contains('suv')) {
+      return Icons.directions_car_rounded;
+    } else {
+      return Icons.commute_rounded; // Generic vehicle icon fallback
+    }
+  }
 
-  IconData _getVehicleIcon(String type) => switch (type.toLowerCase()) {
-        '2_wheeler' => Icons.motorcycle_outlined,
-        '4_wheeler' => Icons.directions_car_outlined,
-        'rikshaw' => Icons.electric_rickshaw_outlined,
-        _ => Icons.local_shipping_outlined,
-      };
+  String _getVehicleLabel(String type, AppLocalizations l10n) {
+    final t = type.toLowerCase();
+    if (t.contains('2') ||
+        t.contains('two') ||
+        t.contains('bike') ||
+        t.contains('scooter') ||
+        t.contains('motor')) {
+      return l10n.twoWheeler;
+    } else if (t.contains('4') ||
+        t.contains('four') ||
+        t.contains('car') ||
+        t.contains('suv')) {
+      return l10n.fourWheeler;
+    } else if (t.contains('3') ||
+        t.contains('rickshaw') ||
+        t.contains('rikshaw') ||
+        t.contains('auto')) {
+      return l10n.autoRickshaw;
+    } else {
+      return type
+          .replaceAll('_', ' ')
+          .split(' ')
+          .map((e) => e.isNotEmpty ? e[0].toUpperCase() + e.substring(1) : '')
+          .join(' ')
+          .trim();
+    }
+  }
 
-  String _getVehicleLabel(String type, AppLocalizations l10n) =>
-      switch (type.toLowerCase()) {
-        '2_wheeler' => l10n.twoWheeler,
-        '4_wheeler' => l10n.fourWheeler,
-        'rikshaw' => l10n.autoRickshaw,
-        _ => type
-            .replaceAll('_', ' ')
-            .split(' ')
-            .map((e) => e[0].toUpperCase() + e.substring(1))
-            .join(' '),
-      };
-
-  IconData _getFuelIcon(String fuel) => switch (fuel.toLowerCase()) {
-        'petrol' => Icons.water_drop_rounded,
-        'electric' => Icons.bolt_rounded,
-        'diesel' => Icons.local_gas_station_rounded,
-        'cng' => Icons.eco_rounded,
-        _ => Icons.opacity_rounded,
-      };
-
+  IconData _getFuelIcon(String fuel) {
+    final f = fuel.toLowerCase();
+    if (f.contains('petrol') || f.contains('gasoline')) {
+      return Icons.water_drop_rounded;
+    } else if (f.contains('electric') ||
+        f.contains('ev') ||
+        f.contains('battery')) {
+      return Icons.bolt_rounded;
+    } else if (f.contains('diesel')) {
+      return Icons.local_gas_station_rounded;
+    } else if (f.contains('cng') || f.contains('gas') || f.contains('lpg')) {
+      return Icons.eco_rounded;
+    } else if (f.contains('flex')) {
+      return Icons.local_gas_station_rounded;
+    } else if (f.contains('hybrid')) {
+      return Icons.compare_arrows_rounded;
+    } else {
+      return Icons.opacity_rounded;
+    }
+  }
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -285,52 +328,61 @@ class _EditVehicleViewState extends State<_EditVehicleView> {
                 // ── Vehicle Type ──────────────────────────────────
                 _sectionTitle(l10n.vehicleType, theme),
                 const SizedBox(height: 16),
-                Wrap(
-                  spacing: 20,
-                  runSpacing: 16,
-                  children: state.configs.map((config) {
-                    final isSelected = state.selectedConfig?.id == config.id;
-                    return GestureDetector(
-                      onTap: () => context.read<AddVehicleCubit>().selectVehicleType(config),
-                      child: Column(
-                        children: [
-                          Container(
-                            width: 60,
-                            height: 60,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              border: Border.all(
-                                color: isSelected
-                                    ? primaryColor
-                                    : theme.colorScheme.onSurface.withValues(alpha: 0.1),
-                                width: isSelected ? 1.5 : 1,
-                              ),
-                            ),
-                            child: Center(
-                              child: Icon(
-                                _getVehicleIcon(config.type),
-                                color: isSelected
-                                    ? primaryColor
-                                    : theme.colorScheme.onSurface.withValues(alpha: 0.3),
-                                size: 24,
-                              ),
+                SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: state.configs.map((config) {
+                      final isSelected = state.selectedConfig?.id == config.id;
+                      final Color active = theme.colorScheme.secondary;
+                      final Color inactive = theme.colorScheme.onSurface.withOpacity(0.5);
+                      return Padding(
+                        padding: const EdgeInsets.only(right: 4),
+                        child: GestureDetector(
+                          onTap: () => context.read<AddVehicleCubit>().selectVehicleType(config),
+                          child: SizedBox(
+                            width: 75,
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Container(
+                                  width: 50,
+                                  height: 50,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    border: Border.all(
+                                      color: isSelected ? active : inactive,
+                                      width: isSelected ? 2 : 1.5,
+                                    ),
+                                    color: isSelected
+                                        ? active.withValues(alpha: 0.06)
+                                        : Colors.transparent,
+                                  ),
+                                  child: Center(
+                                    child: Icon(
+                                      _getVehicleIcon(config.type),
+                                      color: isSelected ? active : inactive,
+                                      size: 22,
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(height: 6),
+                                Text(
+                                  _getVehicleLabel(config.type, l10n),
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontSize: 11,
+                                    color: isSelected ? active : inactive,
+                                    fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
-                          const SizedBox(height: 8),
-                          Text(
-                            _getVehicleLabel(config.type, l10n),
-                            style: TextStyle(
-                              fontSize: 10,
-                              color: isSelected
-                                  ? primaryColor
-                                  : theme.colorScheme.onSurface.withValues(alpha: 0.4),
-                              fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                            ),
-                          ),
-                        ],
-                      ),
-                    );
-                  }).toList(),
+                        ),
+                      );
+                    }).toList(),
+                  ),
                 ),
 
                 const SizedBox(height: 32),
@@ -339,52 +391,61 @@ class _EditVehicleViewState extends State<_EditVehicleView> {
                 _sectionTitle(l10n.fuelType, theme),
                 const SizedBox(height: 16),
                 state.selectedConfig != null
-                    ? Wrap(
-                        spacing: 20,
-                        runSpacing: 16,
-                        children: state.selectedConfig!.supportedFuelTypes.map((fuel) {
-                          final isSelected = state.selectedFuelType == fuel;
-                          return GestureDetector(
-                            onTap: () => context.read<AddVehicleCubit>().selectFuelType(fuel),
-                            child: Column(
-                              children: [
-                                Container(
-                                  width: 60,
-                                  height: 60,
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    border: Border.all(
-                                      color: isSelected
-                                          ? primaryColor
-                                          : theme.colorScheme.onSurface.withValues(alpha: 0.1),
-                                      width: isSelected ? 1.5 : 1,
-                                    ),
-                                  ),
-                                  child: Center(
-                                    child: Icon(
-                                      _getFuelIcon(fuel),
-                                      color: isSelected
-                                          ? primaryColor
-                                          : theme.colorScheme.onSurface.withValues(alpha: 0.3),
-                                      size: 24,
-                                    ),
+                    ? SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: state.selectedConfig!.supportedFuelTypes.map((fuel) {
+                            final isSelected = state.selectedFuelType == fuel;
+                            final Color active = theme.colorScheme.secondary;
+                            final Color inactive = theme.colorScheme.onSurface.withOpacity(0.5);
+                            return Padding(
+                              padding: const EdgeInsets.only(right: 4),
+                              child: GestureDetector(
+                                onTap: () => context.read<AddVehicleCubit>().selectFuelType(fuel),
+                                child: SizedBox(
+                                  width: 75,
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Container(
+                                        width: 50,
+                                        height: 50,
+                                        decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          border: Border.all(
+                                            color: isSelected ? active : inactive,
+                                            width: isSelected ? 2 : 1.5,
+                                          ),
+                                          color: isSelected
+                                              ? active.withValues(alpha: 0.06)
+                                              : Colors.transparent,
+                                        ),
+                                        child: Center(
+                                          child: Icon(
+                                            _getFuelIcon(fuel),
+                                            color: isSelected ? active : inactive,
+                                            size: 22,
+                                          ),
+                                        ),
+                                      ),
+                                      const SizedBox(height: 6),
+                                      Text(
+                                        fuel.isNotEmpty ? fuel[0].toUpperCase() + fuel.substring(1) : fuel,
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                          fontSize: 11,
+                                          color: isSelected ? active : inactive,
+                                          fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
-                                const SizedBox(height: 8),
-                                Text(
-                                  fuel[0].toUpperCase() + fuel.substring(1),
-                                  style: TextStyle(
-                                    fontSize: 10,
-                                    color: isSelected
-                                        ? primaryColor
-                                        : theme.colorScheme.onSurface.withValues(alpha: 0.4),
-                                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          );
-                        }).toList(),
+                              ),
+                            );
+                          }).toList(),
+                        ),
                       )
                     : Text(
                         "Select vehicle type to see fuel options",
@@ -548,48 +609,57 @@ class _EditVehicleViewState extends State<_EditVehicleView> {
     final safeValue = value;
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
+      height: 48,
+      alignment: Alignment.center,
+      padding: const EdgeInsets.symmetric(horizontal: 14),
       decoration: BoxDecoration(
-        color: isDark
-            ? theme.colorScheme.onSurface.withValues(alpha: 0.05)
-            : theme.cardColor,
+        color: Colors.transparent,
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: theme.colorScheme.onSurface.withValues(alpha: 0.1)),
+        border: Border.all(
+          color: theme.colorScheme.onSurface.withOpacity(0.12),
+        ),
       ),
-      child: Row(
-        children: [
-          Expanded(
-            child: DropdownButtonHideUnderline(
-              child: DropdownButton<T>(
-                value: safeValue,
-                isExpanded: true,
-                dropdownColor: theme.cardColor,
-                icon: trailing ??
-                    Icon(Icons.arrow_drop_down, color: theme.colorScheme.primary),
-                hint: Text(
-                  hint,
-                  style: TextStyle(
-                    color: theme.colorScheme.onSurface.withValues(alpha: 0.4),
-                    fontSize: 14,
-                  ),
-                ),
-                items: uniqueItems.map((item) {
-                  return DropdownMenuItem<T>(
-                    value: item,
-                    child: Text(
-                      labelBuilder(item),
-                      style: TextStyle(
-                        fontSize: 15,
-                        color: theme.colorScheme.onSurface,
-                      ),
-                    ),
-                  );
-                }).toList(),
-                onChanged: onChanged,
+      child: Theme(
+        data: theme.copyWith(
+          splashColor: Colors.transparent,
+          highlightColor: Colors.transparent,
+          hoverColor: Colors.transparent,
+        ),
+        child: DropdownButtonHideUnderline(
+          child: DropdownButton<T>(
+            value: safeValue,
+            isExpanded: true,
+            isDense: true,
+            focusColor: Colors.transparent,
+            borderRadius: BorderRadius.circular(12),
+            elevation: 4,
+            dropdownColor: theme.scaffoldBackgroundColor,
+            icon: trailing ??
+                Icon(Icons.arrow_drop_down, color: theme.colorScheme.primary),
+            hint: Text(
+              hint,
+              style: TextStyle(
+                color: theme.colorScheme.onSurface.withOpacity(0.5),
+                fontSize: 14,
               ),
             ),
+            items: uniqueItems.map((item) {
+              final isSelected = item == safeValue;
+              return DropdownMenuItem<T>(
+                value: item,
+                child: Text(
+                  labelBuilder(item),
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: theme.colorScheme.onSurface,
+                    fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
+                  ),
+                ),
+              );
+            }).toList(),
+            onChanged: onChanged,
           ),
-        ],
+        ),
       ),
     );
   }

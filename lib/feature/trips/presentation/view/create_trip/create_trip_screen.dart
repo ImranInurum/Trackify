@@ -160,6 +160,15 @@ class _CreateTripScreenState extends State<CreateTripScreen> {
                           },
                         );
                       }
+                      if (rideState is RideHistoryFailure) {
+                        return Center(
+                          child: Text(
+                            l10n.noDataAvailable,
+                            style: const TextStyle(color: Colors.grey),
+                          ),
+                        );
+                      }
+                      
                       return const SizedBox();
                     },
                   ),
@@ -168,22 +177,32 @@ class _CreateTripScreenState extends State<CreateTripScreen> {
             ),
 
             if (_showTooltip)
-              Positioned.fill(
-                child: GestureDetector(
-                  onTap: _markTooltipAsSeen,
-                  child: Container(
-                    color: Colors.black.withValues(alpha: 0.35),
-                  ),
-                ),
-              ),
-            if (_showTooltip)
-              Positioned(
-                top: MediaQuery.of(context).padding.top + kToolbarHeight + 70,
-                right: 50,
-                child: _SelectionTooltip(
-                  onSkip: _markTooltipAsSeen,
-                  goldColor: goldColor,
-                ),
+              BlocBuilder<RideHistoryCubit, RideHistoryState>(
+                builder: (context, rideState) {
+                  if (rideState is RideHistorySuccess && rideState.rides.isNotEmpty) {
+                    return Stack(
+                      children: [
+                        Positioned.fill(
+                          child: GestureDetector(
+                            onTap: _markTooltipAsSeen,
+                            child: Container(
+                              color: Colors.black.withValues(alpha: 0.35),
+                            ),
+                          ),
+                        ),
+                        Positioned(
+                          top: MediaQuery.of(context).padding.top + kToolbarHeight + 70,
+                          right: 50,
+                          child: _SelectionTooltip(
+                            onSkip: _markTooltipAsSeen,
+                            goldColor: goldColor,
+                          ),
+                        ),
+                      ],
+                    );
+                  }
+                  return const SizedBox.shrink();
+                },
               ),
           ],
         ),

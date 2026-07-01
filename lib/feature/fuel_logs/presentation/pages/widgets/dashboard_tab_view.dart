@@ -56,6 +56,25 @@ class DashboardTabView extends StatelessWidget {
             ),
           );
         }
+        
+        if (state is FuelLogsLoading) {
+          return const Center(
+            child: CircularProgressIndicator(color: Color(0xFFE5B14B)),
+          );
+        }
+
+        if (state is FuelLogsError) {
+          return Center(
+            child: Text(
+              l10n.noDataAvailable,
+              style: TextStyle(
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
+                fontSize: 16,
+              ),
+            ),
+          );
+        }
+        
         return const SizedBox.shrink();
       },
     );

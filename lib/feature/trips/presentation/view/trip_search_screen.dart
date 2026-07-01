@@ -90,14 +90,35 @@ class _TripSearchScreenState extends State<TripSearchScreen> {
           Expanded(
             child: BlocBuilder<RideHistoryCubit, RideHistoryState>(
               builder: (context, state) {
+                if (state is RideHistoryLoading) {
+                  return const Center(
+                    child: CircularProgressIndicator(color: Color(0xFFE5B14B)),
+                  );
+                }
                 if (state is RideHistorySuccess) {
+                  if (state.rides.isEmpty) {
+                    return Center(
+                      child: Text(
+                        l10n.noDataAvailable,
+                        style: TextStyle(color: theme.colorScheme.onSurface.withValues(alpha: 0.5)),
+                      ),
+                    );
+                  }
                   if (_query.isEmpty) {
                     return _buildExtraordinarySection(context, state.rides);
                   } else {
                     return _buildSearchResults(context, state.rides);
                   }
                 }
-                return const Center(child: CircularProgressIndicator());
+                if (state is RideHistoryFailure) {
+                  return Center(
+                    child: Text(
+                      l10n.noDataAvailable,
+                      style: TextStyle(color: theme.colorScheme.onSurface.withValues(alpha: 0.5)),
+                    ),
+                  );
+                }
+                return const SizedBox.shrink();
               },
             ),
           ),

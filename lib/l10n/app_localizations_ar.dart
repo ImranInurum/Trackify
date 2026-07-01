@@ -515,7 +515,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get swipeToLock => 'اسحب للقفل';
 
   @override
-  String get upgradeToPlus => 'ترقية إلى Trackify Plus';
+  String get upgradeToPlus => 'ترقية إلى Plus';
 
   @override
   String get getMoreOutOfTrackify => 'احصل على المزيد من Trackify';
@@ -1643,7 +1643,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get otherBenefits => 'مزايا أخرى';
 
   @override
-  String get trackifyPlusReviews => 'تقييمات TRACKIFY PLUS';
+  String get trackifyPlusReviews => 'تقييمات Plus';
 
   @override
   String get offerings => 'العروض';

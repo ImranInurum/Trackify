@@ -108,6 +108,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
   final ValueNotifier<int> _mapRebuildNotifier = ValueNotifier<int>(0);
 
   bool _isInitialFocusDone = false;
+  bool _hidePromoBanner = false;
 
   Timer? _rideHistoryUpdateTimer;
 
@@ -124,6 +125,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
+    _hidePromoBanner = AppPreference.instance.getBoolSync(key: 'hide_promo_banner');
 
     _markerAnimController = AnimationController(
       vsync: this,
@@ -518,7 +520,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                             children: [
                               SizedBox(height: topSpacing),
                               _buildMapSection(),
-                              _buildPromoBanner(),
+                              if (!_hidePromoBanner) _buildPromoBanner(),
                               _buildExploreMore(_selectedDevice),
                               _buildRecentRidesSection(), // Actual RideCard here
                               _buildVideosSection(), // Vertical videos
@@ -1023,10 +1025,21 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                 ],
               ),
             ),
-            Icon(
-              Icons.close,
-              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.4),
-              size: 18,
+            GestureDetector(
+              onTap: () {
+                AppPreference.instance.setBool(key: 'hide_promo_banner', value: true);
+                setState(() {
+                  _hidePromoBanner = true;
+                });
+              },
+              child: Padding(
+                padding: const EdgeInsets.all(4.0),
+                child: Icon(
+                  Icons.close,
+                  color: Theme.of(context).colorScheme.onSurface.withOpacity(0.4),
+                  size: 20,
+                ),
+              ),
             ),
           ],
         ),
@@ -1039,82 +1052,82 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
     final options = [
       {
         "icon": Icons.qr_code_scanner,
-        "label": l10n.reachMeSticker.replaceAll(' ', '\n'),
+        "label": l10n.reachMeSticker,
         "badge": l10n.exploreNow,
       },
       {
         "icon": Icons.phone_android_rounded,
-        "label": l10n.recordViaPhone.replaceAll(' ', '\n'),
+        "label": l10n.recordViaPhone,
         "badge": null,
       },
       {
         "icon": Icons.handyman_outlined,
-        "label": l10n.serviceLogs.replaceAll(' ', '\n'),
+        "label": l10n.serviceLogs,
         "badge": null,
       },
       {
         "icon": Icons.share_outlined,
-        "label": l10n.locationSharing.replaceAll(' ', '\n'),
+        "label": l10n.locationSharing,
         "badge": "Coming Soon",
       },
       {
         "icon": Icons.local_parking_rounded,
-        "label": l10n.safeParking.replaceAll(' ', '\n'),
+        "label": l10n.safeParking,
         "badge": "Coming Soon",
       },
       {
         "icon": Icons.campaign_outlined,
-        "label": l10n.appUpdates.replaceAll(' ', '\n'),
+        "label": l10n.appUpdates,
         "badge": null,
       },
       {
         "icon": Icons.local_gas_station_outlined,
-        "label": l10n.fuelLogs.replaceAll(' ', '\n'),
+        "label": l10n.fuelLogs,
         "badge": null,
       },
       {
         "icon": Icons.location_on_outlined,
-        "label": l10n.geoFenceAlert.replaceAll(' ', '\n'),
+        "label": l10n.geoFenceAlert,
         "badge": null,
       },
       {
         "icon": Icons.speed_outlined,
-        "label": l10n.overspeedAlert.replaceAll(' ', '\n'),
+        "label": l10n.overspeedAlert,
         "badge": null,
       },
       {
         "icon": Icons.folder_open_outlined,
-        "label": l10n.documentFolder.replaceAll(' ', '\n'),
+        "label": l10n.documentFolder,
         "badge": null,
       },
       {
         "icon": Icons.list_alt_rounded,
-        "label": l10n.deviceDataPlanLabel.replaceAll(' ', '\n'),
+        "label": l10n.deviceDataPlanLabel,
         "badge": null,
       },
       {
         "icon": Icons.gpp_good_outlined,
-        "label": l10n.deviceWarrantyLabel.replaceAll(' ', '\n'),
+        "label": l10n.deviceWarrantyLabel,
         "badge": null,
       },
       {
         "icon": Icons.chat_outlined,
-        "label": l10n.helpAndSupport.replaceAll(' ', '\n'),
+        "label": l10n.helpAndSupport.replaceFirst(' & ', ' &\n'),
         "badge": null,
       },
       {
         "icon": Icons.sos_outlined,
-        "label": l10n.emergency.replaceAll(' ', '\n'),
+        "label": l10n.emergency,
         "badge": "Coming Soon",
       },
       {
         "icon": Icons.play_arrow_outlined,
-        "label": l10n.videoTutorials.replaceAll(' ', '\n'),
+        "label": l10n.videoTutorials,
         "badge": null,
       },
       {
         "icon": null,
-        "label": l10n.upgradeToPlus.replaceAll(' ', '\n'),
+        "label": l10n.upgradeToPlus.replaceFirst(' to ', ' to\n'),
         "badge": null,
         "isPlus": true,
       },
@@ -1161,9 +1174,9 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                 padding: EdgeInsets.zero,
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 4,
-                  mainAxisSpacing: 16,
+                  mainAxisSpacing: 12,
                   crossAxisSpacing: 8,
-                  childAspectRatio: 0.85,
+                  childAspectRatio: 0.8,
                 ),
                 itemCount: displayItems.length,
                 itemBuilder: (context, index) {
@@ -1255,20 +1268,28 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
 
   Widget _buildPlusBadge(AppLocalizations l10n) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 6, top: 4),
-      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+      width: 50,
+      height: 50,
+      alignment: Alignment.center,
       decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [Color(0xFFD4AF37), Color(0xFFE1D2B0), Color(0xFFE2C275)],
-        ),
-        borderRadius: BorderRadius.circular(4),
+        color: Theme.of(context).colorScheme.primary.withOpacity(0.08),
+        borderRadius: BorderRadius.circular(16),
       ),
-      child: Text(
-        l10n.plusLabel,
-        style: const TextStyle(
-          fontWeight: FontWeight.bold,
-          fontSize: 11,
-          color: Colors.black87,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+        decoration: BoxDecoration(
+          gradient: const LinearGradient(
+            colors: [Color(0xFFD4AF37), Color(0xFFE1D2B0), Color(0xFFE2C275)],
+          ),
+          borderRadius: BorderRadius.circular(4),
+        ),
+        child: Text(
+          l10n.plusLabel,
+          style: const TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 11,
+            color: Colors.black87,
+          ),
         ),
       ),
     );
@@ -1278,10 +1299,19 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
     return Stack(
       clipBehavior: Clip.none,
       children: [
-        Icon(
-          option["icon"] as IconData,
-          size: 26,
-          color: Theme.of(context).colorScheme.onSurface,
+        Container(
+          width: 50,
+          height: 50,
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.primary.withOpacity(0.08),
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: Icon(
+            option["icon"] as IconData,
+            size: 26,
+            color: Theme.of(context).colorScheme.primary,
+          ),
         ),
         if (option["badge"] != null)
           Positioned(
@@ -1315,7 +1345,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
     AppLocalizations l10n,
   ) {
     final label = option["label"];
-    if (label == l10n.recordViaPhone.replaceAll(' ', '\n')) {
+    if (label == l10n.recordViaPhone) {
       if (selectedDevice?.imei == null) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -1332,22 +1362,22 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
           ),
         );
       }
-    } else if (label == l10n.reachMeSticker.replaceAll(' ', '\n')) {
+    } else if (label == l10n.reachMeSticker) {
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => ReachMeStickerScreen()),
       );
-    } else if (label == l10n.locationSharing.replaceAll(' ', '\n')) {
+    } else if (label == l10n.locationSharing) {
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => LocationSharingScreen()),
       );
-    } else if (label == l10n.serviceLogs.replaceAll(' ', '\n')) {
+    } else if (label == l10n.serviceLogs) {
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => const ServiceLogsScreen()),
       );
-    } else if (label == l10n.overspeedAlert.replaceAll(' ', '\n')) {
+    } else if (label == l10n.overspeedAlert) {
       final vehicle = selectedDevice != null
           ? Vehicle(
               id: selectedDevice.id,
@@ -1364,47 +1394,47 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
           builder: (context) => OverSpeedAlertScreen(vehicle: vehicle),
         ),
       );
-    } else if (label == l10n.fuelLogs.replaceAll(' ', '\n')) {
+    } else if (label == l10n.fuelLogs) {
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => FuelLogsScreen()),
       );
-    } else if (label == l10n.deviceWarrantyLabel.replaceAll(' ', '\n')) {
+    } else if (label == l10n.deviceWarrantyLabel) {
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => WarrantyScreen()),
       );
-    } else if (label == l10n.appUpdates.replaceAll(' ', '\n')) {
+    } else if (label == l10n.appUpdates) {
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => UpdateScreen()),
       );
-    } else if (label == l10n.helpAndSupport.replaceAll(' ', '\n')) {
+    } else if (label == l10n.helpAndSupport.replaceFirst(' & ', ' &\n')) {
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => const HelpSuggestionScreen()),
       );
-    } else if (label == l10n.emergency.replaceAll(' ', '\n')) {
+    } else if (label == l10n.emergency) {
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => EmergencyAlertScreen()),
       );
-    } else if (label == l10n.safeParking.replaceAll(' ', '\n')) {
+    } else if (label == l10n.safeParking) {
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => const SafeParkingScreen()),
       );
-    } else if (label == l10n.documentFolder.replaceAll(' ', '\n')) {
+    } else if (label == l10n.documentFolder) {
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => const DocumentFolderScreen()),
       );
-    } else if (label == l10n.videoTutorials.replaceAll(' ', '\n')) {
+    } else if (label == l10n.videoTutorials) {
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => const CategoryScreen()),
       );
-    } else if (label == l10n.deviceDataPlanLabel.replaceAll(' ', '\n')) {
+    } else if (label == l10n.deviceDataPlanLabel) {
       if (selectedDevice?.imei == null) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -1418,7 +1448,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
           MaterialPageRoute(builder: (context) => DeviceDataScreen()),
         );
       }
-    } else if (label == l10n.geoFenceAlert.replaceAll(' ', '\n')) {
+    } else if (label == l10n.geoFenceAlert) {
       final vName = selectedDevice != null
           ? "${selectedDevice.vehicleMaker} ${selectedDevice.vehicleNumber}"
           : null;
@@ -1429,7 +1459,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
               GeoFenceScreen(vehicleName: vName, imei: selectedDevice?.imei),
         ),
       );
-    } else if (label == l10n.upgradeToPlus.replaceAll(' ', '\n')) {
+    } else if (label == l10n.upgradeToPlus.replaceFirst(' to ', ' to\n')) {
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => const UpgradeToPlusScreen()),

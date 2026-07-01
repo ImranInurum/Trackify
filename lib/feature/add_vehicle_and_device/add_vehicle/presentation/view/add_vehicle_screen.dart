@@ -42,26 +42,22 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
   // ─── Logo (same SplashCubit pattern as all auth screens) ───────────────────
   Widget _buildLogo(SplashState state, ColorScheme colorScheme) {
     return Center(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 20.0),
-        child:
-            (state is SplashLoaded &&
-                state.logo.path != null &&
-                state.logo.path!.isNotEmpty)
-            ? CachedNetworkImage(
-                imageUrl: state.logo.path!,
-                height: 220,
-                fit: BoxFit.contain,
-                placeholder: (context, url) =>
-                    Center(child: CircularProgressIndicator(color: colorScheme.primary)),
-                errorWidget: (context, url, error) => Icon(
-                  Icons.track_changes_rounded,
-                  size: 88,
-                  color: colorScheme.primary,
-                ),
-              )
-            : Icon(Icons.track_changes_rounded, size: 88, color: colorScheme.primary),
-      ),
+      child: (state is SplashLoaded &&
+              state.logo.path != null &&
+              state.logo.path!.isNotEmpty)
+          ? CachedNetworkImage(
+              imageUrl: state.logo.path!,
+              height: 100, // Reduced from 220 to minimize top/bottom empty space in the image container
+              fit: BoxFit.contain,
+              placeholder: (context, url) =>
+                  Center(child: CircularProgressIndicator(color: colorScheme.primary)),
+              errorWidget: (context, url, error) => Icon(
+                Icons.track_changes_rounded,
+                size: 88,
+                color: colorScheme.primary,
+              ),
+            )
+          : Icon(Icons.track_changes_rounded, size: 88, color: colorScheme.primary),
     );
   }
 
@@ -78,33 +74,36 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
 
     return GestureDetector(
       onTap: () => context.read<AddVehicleCubit>().selectVehicleType(config),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            width: 64,
-            height: 64,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              border: Border.all(
-                color: selected ? active : inactive,
-                width: selected ? 2 : 1.5,
+      child: SizedBox(
+        width: 75,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 50,
+              height: 50,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: selected ? active : inactive,
+                  width: selected ? 2 : 1.5,
+                ),
+                color: selected ? active.withValues(alpha: 0.06) : Colors.transparent,
               ),
-              color: selected ? active.withValues(alpha: 0.06) : Colors.transparent,
+              child: Icon(icon, color: selected ? active : inactive, size: 22),
             ),
-            child: Icon(icon, color: selected ? active : inactive, size: 28),
-          ),
-          const SizedBox(height: 6),
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: 11,
-              color: selected ? active : inactive,
-              fontWeight: selected ? FontWeight.w600 : FontWeight.w400,
+            const SizedBox(height: 6),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 11,
+                color: selected ? active : inactive,
+                fontWeight: selected ? FontWeight.w600 : FontWeight.w400,
+              ),
+              textAlign: TextAlign.center,
             ),
-            textAlign: TextAlign.center,
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -122,33 +121,36 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
 
     return GestureDetector(
       onTap: () => context.read<AddVehicleCubit>().selectFuelType(type),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            width: 64,
-            height: 64,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              border: Border.all(
-                color: selected ? active : inactive,
-                width: selected ? 2 : 1.5,
+      child: SizedBox(
+        width: 75,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 50,
+              height: 50,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: selected ? active : inactive,
+                  width: selected ? 2 : 1.5,
+                ),
+                color: selected ? active.withValues(alpha: 0.06) : Colors.transparent,
               ),
-              color: selected ? active.withValues(alpha: 0.06) : Colors.transparent,
+              child: Icon(icon, color: selected ? active : inactive, size: 22),
             ),
-            child: Icon(icon, color: selected ? active : inactive, size: 28),
-          ),
-          const SizedBox(height: 6),
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: 11,
-              color: selected ? active : inactive,
-              fontWeight: selected ? FontWeight.w600 : FontWeight.w400,
+            const SizedBox(height: 6),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 11,
+                color: selected ? active : inactive,
+                fontWeight: selected ? FontWeight.w600 : FontWeight.w400,
+              ),
+              textAlign: TextAlign.center,
             ),
-            textAlign: TextAlign.center,
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -191,31 +193,44 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
           onTap: (onChanged == null || items.isEmpty) && !isLoading ? onDisabledTap : null,
           behavior: HitTestBehavior.opaque,
           child: Container(
+            height: 48,
+            alignment: Alignment.center,
             decoration: BoxDecoration(
-              color: theme.cardColor,
+              color: Colors.transparent,
               borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: theme.dividerColor),
+              border: Border.all(color: theme.colorScheme.onSurface.withOpacity(0.12)),
             ),
             padding: const EdgeInsets.symmetric(horizontal: 14),
-            child: DropdownButtonHideUnderline(
-              child: DropdownButton<T>(
-                dropdownColor: theme.cardColor,
-                value: value,
-                isExpanded: true,
-                hint: Text(
-                  hint ?? label,
-                  style: TextStyle(color: theme.colorScheme.onSurface.withOpacity(0.5), fontSize: 14),
+            child: Theme(
+              data: theme.copyWith(
+                splashColor: Colors.transparent,
+                highlightColor: Colors.transparent,
+                hoverColor: Colors.transparent,
+              ),
+              child: DropdownButtonHideUnderline(
+                child: DropdownButton<T>(
+                  dropdownColor: theme.scaffoldBackgroundColor,
+                  value: value,
+                  isExpanded: true,
+                  isDense: true,
+                  focusColor: Colors.transparent,
+                  borderRadius: BorderRadius.circular(12),
+                  elevation: 4,
+                  hint: Text(
+                    hint ?? label,
+                    style: TextStyle(color: theme.colorScheme.onSurface.withOpacity(0.5), fontSize: 14),
+                  ),
+                  icon: Icon(Icons.arrow_drop_down, color: theme.colorScheme.primary),
+                  items: items
+                      .map(
+                        (e) => DropdownMenuItem(
+                          value: e,
+                          child: Text(itemLabel(e), style: TextStyle(color: theme.colorScheme.onSurface, fontSize: 14)),
+                        ),
+                      )
+                      .toList(),
+                  onChanged: isLoading ? null : onChanged,
                 ),
-                icon: Icon(Icons.arrow_drop_down, color: theme.colorScheme.secondary),
-                items: items
-                    .map(
-                      (e) => DropdownMenuItem(
-                        value: e,
-                        child: Text(itemLabel(e), style: TextStyle(color: theme.colorScheme.onSurface, fontSize: 14)),
-                      ),
-                    )
-                    .toList(),
-                onChanged: isLoading ? null : onChanged,
               ),
             ),
           ),
@@ -237,36 +252,63 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
   );
 
   IconData _getVehicleIcon(String type) {
-    return switch (type.toLowerCase()) {
-      '2_wheeler' => Icons.two_wheeler_rounded,
-      '4_wheeler' => Icons.directions_car_rounded,
-      'rikshaw' => Icons.electric_rickshaw_rounded,
-      _ => Icons.local_shipping_rounded,
-    };
+    final t = type.toLowerCase();
+    if (t.contains('2') || t.contains('two') || t.contains('bike') || t.contains('scooter') || t.contains('motor')) {
+      return Icons.two_wheeler_rounded;
+    } else if (t.contains('3') || t.contains('rickshaw') || t.contains('rikshaw') || t.contains('auto')) {
+      return Icons.electric_rickshaw_rounded;
+    } else if (t.contains('bus')) {
+      return Icons.directions_bus_rounded;
+    } else if (t.contains('van') || t.contains('tempo') || t.contains('traveller')) {
+      return Icons.airport_shuttle_rounded;
+    } else if (t.contains('truck') || t.contains('lorry') || t.contains('heavy') || t.contains('pickup') || t.contains('lcv') || t.contains('hcv')) {
+      return Icons.local_shipping_rounded;
+    } else if (t.contains('tractor') || t.contains('earth')) {
+      return Icons.agriculture_rounded;
+    } else if (t.contains('boat') || t.contains('ship')) {
+      return Icons.directions_boat_rounded;
+    } else if (t.contains('4') || t.contains('four') || t.contains('car') || t.contains('suv')) {
+      return Icons.directions_car_rounded;
+    } else {
+      return Icons.commute_rounded; // Generic vehicle icon fallback
+    }
   }
 
   String _getVehicleLabel(String type, AppLocalizations l10n) {
-    return switch (type.toLowerCase()) {
-      '2_wheeler' => l10n.twoWheeler,
-      '4_wheeler' => l10n.fourWheeler,
-      'rikshaw' => l10n.autoRickshaw,
-      _ =>
-        type
-            .replaceAll('_', ' ')
-            .split(' ')
-            .map((e) => e[0].toUpperCase() + e.substring(1))
-            .join(' '),
-    };
+    final t = type.toLowerCase();
+    if (t.contains('2') || t.contains('two') || t.contains('bike') || t.contains('scooter') || t.contains('motor')) {
+      return l10n.twoWheeler;
+    } else if (t.contains('4') || t.contains('four') || t.contains('car') || t.contains('suv')) {
+      return l10n.fourWheeler;
+    } else if (t.contains('3') || t.contains('rickshaw') || t.contains('rikshaw') || t.contains('auto')) {
+      return l10n.autoRickshaw;
+    } else {
+      return type
+          .replaceAll('_', ' ')
+          .split(' ')
+          .map((e) => e.isNotEmpty ? e[0].toUpperCase() + e.substring(1) : '')
+          .join(' ')
+          .trim();
+    }
   }
 
   IconData _getFuelIcon(String fuel) {
-    return switch (fuel.toLowerCase()) {
-      'petrol' => Icons.water_drop_rounded,
-      'electric' => Icons.bolt_rounded,
-      'diesel' => Icons.local_gas_station_rounded,
-      'cng' => Icons.eco_rounded,
-      _ => Icons.opacity_rounded,
-    };
+    final f = fuel.toLowerCase();
+    if (f.contains('petrol') || f.contains('gasoline')) {
+      return Icons.water_drop_rounded;
+    } else if (f.contains('electric') || f.contains('ev') || f.contains('battery')) {
+      return Icons.bolt_rounded;
+    } else if (f.contains('diesel')) {
+      return Icons.local_gas_station_rounded;
+    } else if (f.contains('cng') || f.contains('gas') || f.contains('lpg')) {
+      return Icons.eco_rounded;
+    } else if (f.contains('flex')) {
+      return Icons.local_gas_station_rounded;
+    } else if (f.contains('hybrid')) {
+      return Icons.compare_arrows_rounded;
+    } else {
+      return Icons.opacity_rounded;
+    }
   }
 
   // ─── Build ─────────────────────────────────────────────────────────────────
@@ -370,9 +412,10 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
                             SingleChildScrollView(
                               scrollDirection: Axis.horizontal,
                               child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: state.configs.map((config) {
                                   return Padding(
-                                    padding: const EdgeInsets.only(right: 20),
+                                    padding: const EdgeInsets.only(right: 4),
                                     child: _buildVehicleTypeItem(
                                       config: config,
                                       icon: _getVehicleIcon(config.type),
@@ -393,16 +436,17 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
                                 ? SingleChildScrollView(
                                     scrollDirection: Axis.horizontal,
                                     child: Row(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
                                       children: state.selectedConfig!.supportedFuelTypes
                                           .map((fuel) {
                                             return Padding(
-                                              padding: const EdgeInsets.only(right: 24),
+                                              padding: const EdgeInsets.only(right: 4),
                                               child: _buildFuelTypeItem(
                                                 type: fuel,
                                                 icon: _getFuelIcon(fuel),
-                                                label:
-                                                    fuel[0].toUpperCase() +
-                                                    fuel.substring(1),
+                                                label: fuel.isNotEmpty
+                                                    ? fuel[0].toUpperCase() + fuel.substring(1)
+                                                    : fuel,
                                                 selected: state.selectedFuelType == fuel,
                                               ),
                                             );

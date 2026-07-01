@@ -37,6 +37,7 @@ class CustomFormField extends StatefulWidget {
   final bool? enableInteractiveSelection;
   final bool? hasClearIcon;
   final TextCapitalization textCapitalization;
+  final Color? textColor;
 
   const CustomFormField({
     super.key,
@@ -73,6 +74,7 @@ class CustomFormField extends StatefulWidget {
     this.enableInteractiveSelection,
     this.hasClearIcon,
     this.textCapitalization = TextCapitalization.none,
+    this.textColor,
   });
 
   @override
@@ -169,7 +171,8 @@ class _CustomFormFieldState extends State<CustomFormField> {
             enabled: !(widget.disabled ?? false),
             style: TextStyle(
               fontSize: 16,
-              color: Theme.of(context).colorScheme.onSurface,
+              color: widget.textColor ?? Theme.of(context).colorScheme.onSurface,
+              fontWeight: widget.textColor != null ? FontWeight.w600 : FontWeight.w400,
             ),
             onFieldSubmitted: widget.onFieldSubmitted,
             focusNode: node,

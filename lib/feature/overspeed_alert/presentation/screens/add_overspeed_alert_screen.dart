@@ -274,7 +274,7 @@ class _AddOverspeedAlertScreenState extends State<AddOverspeedAlertScreen> {
           child: DropdownButtonFormField<int>(
             value: value,
             icon: Icon(Icons.arrow_drop_down,
-                color: theme.colorScheme.onSurface.withOpacity(0.6)),
+                color: theme.colorScheme.primary),
             isExpanded: true,
             decoration: InputDecoration(
               isDense: true,
@@ -284,7 +284,7 @@ class _AddOverspeedAlertScreenState extends State<AddOverspeedAlertScreen> {
               focusedBorder: UnderlineInputBorder(
                   borderSide: BorderSide(color: theme.colorScheme.primary)),
             ),
-            dropdownColor: theme.cardColor,
+            dropdownColor: theme.scaffoldBackgroundColor,
             items: items
                 .map((d) => DropdownMenuItem<int>(
                       value: d,

@@ -64,15 +64,6 @@ class _ManualEntryDialogState extends State<ManualEntryDialog> {
                 children: [
                   _buildTextField(
                     context,
-                    controller: _uidController,
-                    hintText: l10n.enterUID,
-                    keyboardType: TextInputType.text,
-                    validator: (v) =>
-                        v == null || v.isEmpty ? l10n.uidRequired : null,
-                  ),
-                  const SizedBox(height: 12),
-                  _buildTextField(
-                    context,
                     controller: _imeiController,
                     hintText: l10n.enterIMEINumber,
                     keyboardType: TextInputType.number,

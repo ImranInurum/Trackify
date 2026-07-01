@@ -1081,7 +1081,7 @@ abstract class AppLocalizations {
   /// No description provided for @upgradeToPlus.
   ///
   /// In en, this message translates to:
-  /// **'Upgrade to Trackify Plus'**
+  /// **'Upgrade to Plus'**
   String get upgradeToPlus;
 
   /// No description provided for @getMoreOutOfTrackify.

@@ -858,10 +858,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           isExpanded: true,
           icon: Icon(
             Icons.keyboard_arrow_down,
-            color: onSurface.withValues(alpha: 0.6),
+            color: Theme.of(context).colorScheme.primary,
             size: 22,
           ),
-          dropdownColor: Theme.of(context).cardColor,
+          dropdownColor: Theme.of(context).scaffoldBackgroundColor,
           hint: Text(
             hint,
             style: TextStyle(

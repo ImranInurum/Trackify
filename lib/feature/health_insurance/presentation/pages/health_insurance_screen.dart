@@ -106,7 +106,7 @@ class _HealthInsuranceScreenState extends State<HealthInsuranceScreen> {
                       ),
                       child: DropdownButtonHideUnderline(
                         child: DropdownButton<String>(
-                          dropdownColor: colorScheme.surface,
+                          dropdownColor: Theme.of(context).scaffoldBackgroundColor,
                           isExpanded: true,
                           value: state.selectedBloodGroup,
                           hint: Text(
@@ -163,7 +163,7 @@ class _HealthInsuranceScreenState extends State<HealthInsuranceScreen> {
                       ),
                       child: DropdownButtonHideUnderline(
                         child: DropdownButton<String>(
-                          dropdownColor: colorScheme.surface,
+                          dropdownColor: Theme.of(context).scaffoldBackgroundColor,
                           isExpanded: true,
                           value: state.selectedInsurance,
                           hint: Text(
