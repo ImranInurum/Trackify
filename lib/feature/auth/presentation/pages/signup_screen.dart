@@ -1,11 +1,7 @@
-import 'dart:io';
-
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:trackify/feature/auth/presentation/pages/signin_screen.dart';
 import 'package:trackify/feature/onboarding/presentation/cubit/splash_cubit.dart';
 import 'package:trackify/feature/onboarding/presentation/cubit/splash_state.dart';
@@ -30,86 +26,51 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-  final _mobileController = TextEditingController();
-  final _countryController = TextEditingController();
-  final _stateController = TextEditingController();
-  final _cityController = TextEditingController();
-
-  File? _userProfile;
-  final ValueNotifier<String?> selectedRoleNotifier = ValueNotifier<String?>(null);
-  String? _selectedRole;
-
-  final List<String> roles = ["admin", "customer"];
+  final _confirmPasswordController = TextEditingController();
 
   @override
   void dispose() {
     _nameController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
-    _mobileController.dispose();
-    _countryController.dispose();
-    _stateController.dispose();
-    _cityController.dispose();
+    _confirmPasswordController.dispose();
     super.dispose();
   }
 
-  Future<void> _pickProfileImage() async {
-    final picker = ImagePicker();
-    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
-    if (pickedFile != null) {
-      setState(() {
-        _userProfile = File(pickedFile.path);
-      });
-    }
-  }
+
 
   void _onSignUpPressed(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     if (_formKey.currentState?.validate() ?? false) {
-      if (_selectedRole == null) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(l10n.roleRequired)));
-        return;
-      }
-
       final body = <String, dynamic>{
         'name': _nameController.text.trim(),
         'email': _emailController.text.trim(),
         'password': _passwordController.text.trim(),
-        'role': _selectedRole!,
-        'mobile_number': _mobileController.text.trim(),
-        'country': _countryController.text.trim(),
-        'state': _stateController.text.trim(),
-        'city': _cityController.text.trim(),
+        'confirm_password': _confirmPasswordController.text.trim(),
+        'role': 'customer',
       };
 
-      if (_userProfile != null) {
-        body['userProfileBytes'] = _userProfile!.readAsBytesSync();
-        body['userProfileName'] = _userProfile!.path.split('/').last;
-      }
-
-      context.read<AuthCubit>().registerUser(body); // assuming registerUser exists
+      context.read<AuthCubit>().registerUser(body);
     }
   }
 
   Widget _buildLogo(SplashState state) {
     if (state is SplashLoaded && state.logo.path != null && state.logo.path!.isNotEmpty) {
       return Container(
-        padding: const EdgeInsets.all(12),
+        padding: EdgeInsets.zero,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.05),
-              blurRadius: 20,
-              spreadRadius: 2,
+              blurRadius: 10,
+              spreadRadius: 1,
             ),
           ],
         ),
         child: CachedNetworkImage(
           imageUrl: state.logo.path!,
-          height: 220,
+          height: 140, // Reduced from 220
           fit: BoxFit.contain,
           placeholder: (context, url) => Center(
             child: CircularProgressIndicator(
@@ -118,7 +79,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
           ),
           errorWidget: (context, url, error) => Icon(
             Icons.track_changes_rounded,
-            size: 88,
+            size: 60, // Reduced from 88
             color: Theme.of(context).colorScheme.primary,
           ),
         ),
@@ -126,7 +87,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
     }
     return Icon(
       Icons.track_changes_rounded,
-      size: 88,
+      size: 60, // Reduced from 88
       color: Theme.of(context).colorScheme.primary,
     );
   }
@@ -181,47 +142,16 @@ class _SignUpScreenState extends State<SignUpScreen> {
             builder: (context, splashState) {
               final theme = Theme.of(context);
               final textTheme = theme.textTheme;
-              return Center(
-                child: SingleChildScrollView(
-                  padding: const EdgeInsets.symmetric(horizontal: 24.0),
+              return SingleChildScrollView(
+                  padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
                   child: Form(
                     key: _formKey,
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        const SizedBox(height: 10),
                         _buildLogo(splashState),
-                        const SizedBox(height: 20),
-                        Center(
-                          child: GestureDetector(
-                            onTap: _pickProfileImage,
-                            child: CircleAvatar(
-                              radius: 50,
-                              backgroundColor: Theme.of(context).cardColor,
-                              backgroundImage: _userProfile != null
-                                  ? FileImage(_userProfile!)
-                                  : null,
-                              child: _userProfile == null
-                                  ? Icon(
-                                      Icons.camera_alt,
-                                      size: 40,
-                                      color: Theme.of(context).colorScheme.onSurface.withOpacity(0.4),
-                                    )
-                                  : null,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        Center(
-                          child: Text(
-                            l10n.selectProfileImage,
-                            style: textTheme.bodySmall?.copyWith(
-                              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 30),
+                        const SizedBox(height: 10),
                         _buildFieldLabel(l10n.name, textTheme),
                         const SizedBox(height: 8),
                         CustomFormField(
@@ -261,138 +191,22 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           ),
                         ),
                         const SizedBox(height: 20),
-                        _buildFieldLabel(l10n.mobileNumber, textTheme),
+                        _buildFieldLabel("Confirm Password", textTheme),
                         const SizedBox(height: 8),
                         CustomFormField(
                           header: '',
-                          hint: l10n.mobileNumberHint,
-                          value: _mobileController,
-                          keyboardType: TextInputType.phone,
-                          maxLength: 10,
-                          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                          validator: (value) => Validators.validatePhone(
-                            value,
-                            l10n.mobileNumberRequired,
-                            l10n.invalidMobileNumber,
-                          ),
-                        ),
-                        const SizedBox(height: 20),
-                        _buildFieldLabel(l10n.country, textTheme),
-                        const SizedBox(height: 8),
-                        CustomFormField(
-                          header: '',
-                          hint: l10n.countryHint,
-                          value: _countryController,
-                          keyboardType: TextInputType.text,
-                          validator: (value) =>
-                              Validators.validateRequired(value, l10n.countryRequired),
-                        ),
-                        const SizedBox(height: 20),
-                        _buildFieldLabel(l10n.state, textTheme),
-                        const SizedBox(height: 8),
-                        CustomFormField(
-                          header: '',
-                          hint: l10n.stateHint,
-                          value: _stateController,
-                          keyboardType: TextInputType.text,
-                          validator: (value) =>
-                              Validators.validateRequired(value, l10n.stateRequired),
-                        ),
-                        const SizedBox(height: 20),
-                        _buildFieldLabel(l10n.city, textTheme),
-                        const SizedBox(height: 8),
-                        CustomFormField(
-                          header: '',
-                          hint: l10n.cityHint,
-                          value: _cityController,
-                          keyboardType: TextInputType.text,
-                          validator: (value) =>
-                              Validators.validateRequired(value, l10n.cityRequired),
-                        ),
-                        const SizedBox(height: 20),
-                        _buildFieldLabel(l10n.role, textTheme),
-                        const SizedBox(height: 8),
-                        Container(
-                          decoration: BoxDecoration(
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.05),
-                                blurRadius: 8,
-                                offset: const Offset(0, 4),
-                              ),
-                            ],
-                          ),
-                          child: DropdownButtonFormField2<String>(
-                            isExpanded: true,
-                            autovalidateMode: AutovalidateMode.onUserInteraction,
-                            valueListenable: selectedRoleNotifier,
-                            decoration: InputDecoration(
-                              hintText: l10n.selectRoleHint,
-                              filled: true,
-                              fillColor: theme.inputDecorationTheme.fillColor ?? theme.cardColor,
-                              contentPadding: const EdgeInsets.symmetric(
-                                horizontal: 0,
-                                vertical: 14,
-                              ),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                borderSide: BorderSide(color: Theme.of(context).dividerColor),
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                borderSide: BorderSide(color: Theme.of(context).dividerColor),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                borderSide: BorderSide(
-                                  color: Theme.of(context).colorScheme.primary,
-                                  width: 1.5,
-                                ),
-                              ),
-                            ),
-                            iconStyleData: IconStyleData(
-                              icon: Icon(
-                                Icons.keyboard_arrow_down_rounded,
-                                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
-                                size: 24,
-                              ),
-                            ),
-                            dropdownStyleData: DropdownStyleData(
-                              decoration: BoxDecoration(
-                                color: Theme.of(context).cardColor,
-                                borderRadius: BorderRadius.circular(12),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withOpacity(0.08),
-                                    blurRadius: 12,
-                                    offset: const Offset(0, 6),
-                                  ),
-                                ],
-                              ),
-                              offset: const Offset(0, 6),
-                            ),
-                            menuItemStyleData: const MenuItemStyleData(
-                              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                            ),
-                            items: roles.map((role) {
-                              return DropdownItem<String>(
-                                value: role, // if error, change this to: id: role
-                                child: Text(
-                                  role == 'admin' ? l10n.roleAdmin : l10n.roleCustomer,
-                                  style: TextStyle(
-                                    fontSize: 15,
-                                    color: Theme.of(context).colorScheme.onSurface,
-                                  ),
-                                ),
-                              );
-                            }).toList(),
-                            onChanged: (value) {
-                              selectedRoleNotifier.value = value;
-                              _selectedRole = selectedRoleNotifier.value;
-                            },
-                            validator: (value) =>
-                                Validators.validateRequired(value, l10n.roleRequired),
-                          ),
+                          hint: "Confirm your password",
+                          value: _confirmPasswordController,
+                          isPassword: true,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return "Please confirm your password";
+                            }
+                            if (value != _passwordController.text) {
+                              return "Passwords do not match";
+                            }
+                            return null;
+                          },
                         ),
                         const SizedBox(height: 32),
                         CommonButton(
@@ -429,7 +243,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       ],
                     ),
                   ),
-                ),
               );
             },
           );

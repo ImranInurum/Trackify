@@ -67,7 +67,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   ];
 
   String? _findMatchingCountry(String? country) {
-    if (country == null || country.trim().isEmpty) return 'India';
+    if (country == null || country.trim().isEmpty) return null;
     for (var c in _countries) {
       if (c['value']!.toLowerCase() == country.trim().toLowerCase() ||
           c['label']!.toLowerCase() == country.trim().toLowerCase()) {
@@ -78,7 +78,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   }
 
   String? _findMatchingState(String? state) {
-    if (state == null || state.trim().isEmpty) return 'Madhya Pradesh';
+    if (state == null || state.trim().isEmpty) return null;
     for (var s in _states) {
       if (s['value']!.toLowerCase() == state.trim().toLowerCase() ||
           s['label']!.toLowerCase() == state.trim().toLowerCase()) {
@@ -89,7 +89,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   }
 
   String? _findMatchingCity(String? city) {
-    if (city == null || city.trim().isEmpty) return 'Indore district';
+    if (city == null || city.trim().isEmpty) return null;
     for (var c in _cities) {
       if (c['value']!.toLowerCase() == city.trim().toLowerCase() ||
           c['label']!.toLowerCase() == city.trim().toLowerCase()) {
@@ -117,10 +117,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         }
         _mobile = (user.mobileNumber != null && user.mobileNumber!.trim().isNotEmpty)
             ? user.mobileNumber!
-            : '+918602945222';
+            : '';
         _email = (user.email != null && user.email!.trim().isNotEmpty)
             ? user.email!
-            : 'sonukushwah221@gmail.com';
+            : '';
         _selectedCountry = _findMatchingCountry(user.country);
         _selectedState = _findMatchingState(user.state);
         _selectedCity = _findMatchingCity(user.city);
@@ -134,12 +134,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           }
         }
       } else {
-        _firstNameCtrl.text = 'Kk';
-        _mobile = '+918602945222';
-        _email = 'sonukushwah221@gmail.com';
-        _selectedCountry = 'India';
-        _selectedState = 'Madhya Pradesh';
-        _selectedCity = 'Indore district';
+        _firstNameCtrl.text = '';
+        _mobile = '';
+        _email = '';
+        _selectedCountry = null;
+        _selectedState = null;
+        _selectedCity = null;
       }
       setState(() {});
     });
@@ -858,10 +858,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           isExpanded: true,
           icon: Icon(
             Icons.keyboard_arrow_down,
-            color: onSurface.withValues(alpha: 0.6),
+            color: Theme.of(context).colorScheme.primary,
             size: 22,
           ),
-          dropdownColor: Theme.of(context).cardColor,
+          dropdownColor: Theme.of(context).scaffoldBackgroundColor,
           hint: Text(
             hint,
             style: TextStyle(

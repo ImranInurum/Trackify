@@ -24,7 +24,7 @@ class LockCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16),
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
         color: cardColor,
         borderRadius: BorderRadius.circular(20),
@@ -37,25 +37,25 @@ class LockCard extends StatelessWidget {
               Icon(
                 isLocked ? Icons.lock : Icons.lock_open_outlined,
                 color: isLocked ? Colors.redAccent : secondaryTextColor,
-                size: 24,
+                size: 20,
               ),
               const SizedBox(width: 12),
               Text(
                 AppLocalizations.of(context)!.lockUnlockVehicle,
                 style: TextStyle(
-                  fontSize: 18,
+                  fontSize: 16,
                   fontWeight: FontWeight.w700,
                   color: primaryTextColor,
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 16),
           InteractiveSwipeButton(
             onSwipe: onLock,
             isLocked: isLocked,
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 16),
           Center(
             child: GestureDetector(
               onTap: onInfoTap,

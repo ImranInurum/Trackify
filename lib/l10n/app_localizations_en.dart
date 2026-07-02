@@ -514,7 +514,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get swipeToLock => 'SWIPE TO LOCK';
 
   @override
-  String get upgradeToPlus => 'Upgrade to Trackify Plus';
+  String get upgradeToPlus => 'Upgrade to Plus';
 
   @override
   String get getMoreOutOfTrackify => 'Get more out of Trackify';
@@ -2506,4 +2506,15 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get miles => 'Miles';
+
+  @override
+  String get locationSharedWithMe => 'Location shared with me';
+
+  @override
+  String get noOneSharedLocationTitle =>
+      'No one has shared their vehicle\'s location with you right now';
+
+  @override
+  String get noOneSharedLocationSub =>
+      'You\'ll find the names of individuals who have shared their location with you right here.';
 }

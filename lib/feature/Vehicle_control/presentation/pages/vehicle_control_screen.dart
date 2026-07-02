@@ -321,7 +321,7 @@ class VehicleControlView extends StatelessWidget {
                           ),
                         ),
 
-                        const SizedBox(height: 20),
+                        const SizedBox(height: 12),
 
                         /// 🔹 LOCK & UNLOCK VEHICLE CARD
                         LockCard(
@@ -340,7 +340,7 @@ class VehicleControlView extends StatelessWidget {
                           onInfoTap: () => _showSleepModeDialog(context),
                         ),
 
-                        const SizedBox(height: 20),
+                        const SizedBox(height: 12),
 
                         /// 🔹 VEHICLE ON MAP CARD
                         VehicleOnMapCard(
@@ -379,7 +379,7 @@ class VehicleControlView extends StatelessWidget {
                               state.tempColor != vehicle.selectedColor,
                         ),
 
-                        const SizedBox(height: 20),
+                        const SizedBox(height: 12),
 
                         /// 🔹 JOURNEY CARD
                         JourneyCard(
@@ -395,7 +395,7 @@ class VehicleControlView extends StatelessWidget {
                           },
                         ),
 
-                        const SizedBox(height: 20),
+                        const SizedBox(height: 12),
 
                         /// 🔹 DOCUMENTS CARD
                         DocumentsCard(
@@ -414,7 +414,7 @@ class VehicleControlView extends StatelessWidget {
                           },
                         ),
 
-                        if (isFromGarage == false) const SizedBox(height: 20),
+                        if (isFromGarage == false) const SizedBox(height: 12),
 
                         Divider(
                           height: 1,
@@ -435,15 +435,15 @@ class VehicleControlView extends StatelessWidget {
                             },
                             child: Padding(
                               padding: const EdgeInsets.symmetric(
-                                horizontal: 24,
-                                vertical: 20,
+                                horizontal: 16,
+                                vertical: 12,
                               ),
                               child: Row(
                                 children: [
                                   Icon(
                                     Icons.settings_outlined,
                                     color: secondaryTextColor,
-                                    size: 28,
+                                    size: 24,
                                   ),
                                   const SizedBox(width: 16),
                                   Expanded(
@@ -454,7 +454,7 @@ class VehicleControlView extends StatelessWidget {
                                         Text(
                                           l10n.notificationControls,
                                           style: TextStyle(
-                                            fontSize: 18,
+                                            fontSize: 16,
                                             fontWeight: FontWeight.w700,
                                             color: primaryTextColor,
                                           ),
@@ -484,7 +484,7 @@ class VehicleControlView extends StatelessWidget {
                           height: 1,
                           color: theme.colorScheme.onSurface.withOpacity(0.15),
                         ),
-                        const SizedBox(height: 32),
+                        const SizedBox(height: 20),
 
                         /// 🔹 UNMAP SECTION
                         if (isFromGarage == false)
@@ -496,27 +496,27 @@ class VehicleControlView extends StatelessWidget {
                                 Text(
                                   l10n.unmapTrackify,
                                   style: TextStyle(
-                                    fontSize: 18,
+                                    fontSize: 16,
                                     fontWeight: FontWeight.w700,
                                     color: primaryTextColor,
                                   ),
                                 ),
-                                const SizedBox(height: 20),
+                                const SizedBox(height: 12),
                                 Text(
                                   l10n.unmapStep1,
                                   style: TextStyle(
                                     fontSize: 14,
                                     color: secondaryTextColor,
-                                    height: 1.6,
+                                    height: 1.4,
                                   ),
                                 ),
-                                const SizedBox(height: 12),
+                                const SizedBox(height: 8),
                                 Text(
                                   l10n.unmapStep2,
                                   style: TextStyle(
                                     fontSize: 14,
                                     color: secondaryTextColor,
-                                    height: 1.6,
+                                    height: 1.4,
                                   ),
                                 ),
                               ],
@@ -524,7 +524,7 @@ class VehicleControlView extends StatelessWidget {
                           ),
 
                         if (isFromGarage) ...[
-                          const SizedBox(height: 32),
+                          const SizedBox(height: 20),
                           Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 24),
                             child: InkWell(
@@ -567,14 +567,14 @@ class VehicleControlView extends StatelessWidget {
                               ),
                             ),
                           ),
-                          const SizedBox(height: 24),
+                          const SizedBox(height: 16),
                           Divider(
                             height: 1,
                             color: theme.colorScheme.onSurface.withOpacity(
                               0.15,
                             ),
                           ),
-                          const SizedBox(height: 24),
+                          const SizedBox(height: 16),
                           Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 24),
                             child: Column(
@@ -597,7 +597,7 @@ class VehicleControlView extends StatelessWidget {
                                     height: 1.4,
                                   ),
                                 ),
-                                const SizedBox(height: 20),
+                                const SizedBox(height: 12),
                                 SizedBox(
                                   width: double.infinity,
                                   child: ElevatedButton(

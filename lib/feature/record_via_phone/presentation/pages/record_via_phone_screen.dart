@@ -13,8 +13,8 @@ import 'package:trackify/feature/record_via_phone/presentation/cubit/record_via_
 import 'package:trackify/l10n/app_localizations_ar.dart';
 
 import '../../../../l10n/app_localizations.dart';
-
-class RecordViaPhoneScreen extends StatefulWidget {
+import 'package:geolocator/geolocator.dart';
+import 'package:trackify/feature/record_via_phone/data/model/device_data_by_date_response.dart';class RecordViaPhoneScreen extends StatefulWidget {
   final String imei;
   const RecordViaPhoneScreen({super.key, required this.imei});
 
@@ -467,58 +467,172 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
   }
 
   // --- Statistics View ---
+  Map<String, dynamic> _calculateStats(RecordViaPhoneState state) {
+    if (state is! MapDataByDateLoaded || state.data.isEmpty) {
+      return {
+        'distance': 0.0,
+        'drivingTime': const Duration(),
+        'topSpeed': 0.0,
+        'avgSpeed': 0.0,
+        'totalRides': 0,
+        'fuel': 0.0,
+        'safetyScore': 100,
+      };
+    }
+
+    final data = state.data;
+    double totalDistance = 0.0;
+    double topSpeed = 0.0;
+    double sumSpeed = 0.0;
+    int movingPointsCount = 0;
+    int rides = 0;
+    Duration drivingTime = const Duration();
+    int safetyDeduction = 0;
+
+    DataByDate? prevPoint;
+    DateTime? prevTime;
+
+    final sortedData = List<DataByDate>.from(data);
+    sortedData.sort((a, b) {
+      final aDate = '${a.dt} ${a.tm}';
+      final bDate = '${b.dt} ${b.tm}';
+      return aDate.compareTo(bDate);
+    });
+
+    for (var point in sortedData) {
+      final lat = double.tryParse(point.lt ?? '');
+      final lng = double.tryParse(point.lg ?? '');
+      final speed = point.sp ?? 0.0;
+
+      DateTime? currTime;
+      if (point.dt != null && point.tm != null) {
+        currTime = DateTime.tryParse('${point.dt} ${point.tm}');
+      }
+
+      if (speed > topSpeed) topSpeed = speed;
+
+      if (speed > 80) safetyDeduction += 1;
+
+      if (speed > 5.0) {
+        sumSpeed += speed;
+        movingPointsCount++;
+      }
+
+      if (lat != null && lng != null && prevPoint != null) {
+        final prevLat = double.tryParse(prevPoint.lt ?? '');
+        final prevLng = double.tryParse(prevPoint.lg ?? '');
+
+        if (prevLat != null && prevLng != null) {
+          final dist = Geolocator.distanceBetween(prevLat, prevLng, lat, lng);
+          if (dist > 5.0 && dist < 50000) {
+             totalDistance += (dist / 1000); 
+          }
+        }
+      }
+
+      if (currTime != null && prevTime != null) {
+        final diff = currTime.difference(prevTime);
+        if (diff.inMinutes < 60) {
+           if (speed > 5.0) {
+             drivingTime += diff;
+           }
+        } else {
+           rides++;
+        }
+      }
+
+      prevPoint = point;
+      prevTime = currTime;
+    }
+
+    if (rides == 0 && sortedData.isNotEmpty) rides = 1;
+
+    double avgSpeed = movingPointsCount > 0 ? sumSpeed / movingPointsCount : 0.0;
+    double fuel = totalDistance * 0.08;
+    int safetyScore = (100 - (safetyDeduction * 0.5)).round().clamp(0, 100);
+
+    return {
+      'distance': totalDistance,
+      'drivingTime': drivingTime,
+      'topSpeed': topSpeed,
+      'avgSpeed': avgSpeed,
+      'totalRides': rides,
+      'fuel': fuel,
+      'safetyScore': safetyScore,
+    };
+  }
+
   Widget _buildStatisticsView() {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(20),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _buildSummaryCard(),
-          const SizedBox(height: 25),
-          Text(
-            l10n.quickStats,
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: Theme.of(context).colorScheme.onSurface,
-            ),
-          ),
-          const SizedBox(height: 15),
-          GridView.count(
-            crossAxisCount: 2,
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            mainAxisSpacing: 15,
-            crossAxisSpacing: 15,
-            childAspectRatio: 1.2,
+    return BlocBuilder<RecordViaPhoneCubit, RecordViaPhoneState>(
+      builder: (context, state) {
+        final stats = _calculateStats(state);
+
+        return SingleChildScrollView(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildStatCard(
-                l10n.totalRides,
-                "24",
-                Icons.directions_car,
-                Colors.blue,
+              _buildSummaryCard(stats),
+              const SizedBox(height: 25),
+              Text(
+                l10n.quickStats,
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
               ),
-              _buildStatCard(
-                l10n.averageSpeed,
-                "42 km/h",
-                Icons.speed,
-                Colors.orange,
-              ),
-              _buildStatCard(l10n.topSpeed, "85 km/h", Icons.bolt, Colors.purple),
-              _buildStatCard(
-                l10n.totalFuel,
-                "12.5 L",
-                Icons.local_gas_station,
-                Colors.green,
+              const SizedBox(height: 15),
+              GridView.count(
+                crossAxisCount: 2,
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                mainAxisSpacing: 15,
+                crossAxisSpacing: 15,
+                childAspectRatio: 1.2,
+                children: [
+                  _buildStatCard(
+                    l10n.totalRides,
+                    "${stats['totalRides']}",
+                    Icons.directions_car,
+                    Colors.blue,
+                  ),
+                  _buildStatCard(
+                    l10n.averageSpeed,
+                    "${(stats['avgSpeed'] as double).toStringAsFixed(0)} km/h",
+                    Icons.speed,
+                    Colors.orange,
+                  ),
+                  _buildStatCard(
+                    l10n.topSpeed, 
+                    "${(stats['topSpeed'] as double).toStringAsFixed(0)} km/h", 
+                    Icons.bolt, 
+                    Colors.purple,
+                  ),
+                  _buildStatCard(
+                    l10n.totalFuel,
+                    "${(stats['fuel'] as double).toStringAsFixed(1)} L",
+                    Icons.local_gas_station,
+                    Colors.green,
+                  ),
+                ],
               ),
             ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 
-  Widget _buildSummaryCard() {
+  Widget _buildSummaryCard(Map<String, dynamic> stats) {
+    String formattedTime = "";
+    final dur = stats['drivingTime'] as Duration;
+    if (dur.inHours > 0) {
+      formattedTime += "${dur.inHours}h ";
+    }
+    formattedTime += "${dur.inMinutes.remainder(60)}m";
+    if (dur.inMinutes == 0 && dur.inHours == 0) formattedTime = "0m";
+
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(24),
@@ -545,12 +659,12 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
         children: [
            Text(
             l10n.overallDistance,
-            style: TextStyle(color: Colors.white70, fontSize: 16),
+            style: const TextStyle(color: Colors.white70, fontSize: 16),
           ),
           const SizedBox(height: 8),
-          const Text(
-            "1,248.50 km",
-            style: TextStyle(
+          Text(
+            "${(stats['distance'] as double).toStringAsFixed(2)} km",
+            style: const TextStyle(
               color: Colors.white,
               fontSize: 32,
               fontWeight: FontWeight.bold,
@@ -559,9 +673,9 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
           const SizedBox(height: 20),
           Row(
             children: [
-              _buildSimpleInfo("128h", l10n.drivingTime),
+              _buildSimpleInfo(formattedTime, l10n.drivingTime),
               const SizedBox(width: 30),
-              _buildSimpleInfo("92%", l10n.safetyScore),
+              _buildSimpleInfo("${stats['safetyScore']}%", l10n.safetyScore),
             ],
           ),
         ],

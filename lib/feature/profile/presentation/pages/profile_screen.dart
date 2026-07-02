@@ -123,8 +123,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           final userInitials = userName.isNotEmpty
               ? userName[0].toUpperCase()
               : "G";
-          final userMobile =
-              "+918602945222"; // Static for now as per design, but could be user.mobile if exists
+          final userMobile = user?.mobileNumber ?? "";
 
           return SingleChildScrollView(
             child: Column(
@@ -337,157 +336,94 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                 const SizedBox(height: 16),
 
-                Container(
-                  margin: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 0,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.surface,
-                    borderRadius: BorderRadius.circular(20),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
-                        blurRadius: 0.5,
-                        offset: const Offset(0, 0.5),
-                      ),
-                    ],
-                  ),
-                  child: Column(
-                    children: [
-                      /// 🔹 VEHICLE SECTION (Dynamic)
-                      BlocBuilder<ProfileCubit, ProfileState>(
-                        builder: (context, state) {
-                          if (state is VehiclesLoading) {
-                            return const Center(
-                              child: CircularProgressIndicator(),
-                            );
-                          }
-                          if (state is VehiclesLoaded &&
-                              state.vehicles.isNotEmpty) {
-                            final selectedImei = AppPreference.instance.getSync(
-                              key: AppPreference.IMEI,
-                            );
-                            final selectedUid = AppPreference.instance.getSync(
-                              key: AppPreference.KEY_SELECTED_UID,
-                            );
-                            final vehicle = state.vehicles.firstWhere(
-                              (v) =>
-                                  (selectedUid.isNotEmpty &&
-                                      v.id == selectedUid) ||
-                                  (selectedImei.isNotEmpty &&
-                                      v.imei == selectedImei),
-                              orElse: () => state.vehicles.first,
-                            );
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: BlocBuilder<ProfileCubit, ProfileState>(
+                    builder: (context, state) {
+                      if (state is VehiclesLoading) {
+                        return const Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      }
+                      if (state is VehiclesLoaded &&
+                          state.vehicles.isNotEmpty) {
+                        final selectedImei = AppPreference.instance.getSync(
+                          key: AppPreference.IMEI,
+                        );
+                        final selectedUid = AppPreference.instance.getSync(
+                          key: AppPreference.KEY_SELECTED_UID,
+                        );
+                        final vehicle = state.vehicles.firstWhere(
+                          (v) =>
+                              (selectedUid.isNotEmpty &&
+                                  v.id == selectedUid) ||
+                              (selectedImei.isNotEmpty &&
+                                  v.imei == selectedImei),
+                          orElse: () => state.vehicles.first,
+                        );
 
-                            if (vehicle.imei != null) {
-                              _fetchLockStatus(vehicle.imei!);
+                        if (vehicle.imei != null) {
+                          _fetchLockStatus(vehicle.imei!);
+                        }
+
+                        final isLocked =
+                            _vehicleLockStates[vehicle.imei] ?? false;
+
+                        return VehicleCard(
+                          context: context,
+                          vehicle: vehicle,
+                          hasDevice: true,
+                          isLocked: isLocked,
+                          onVehicleControl: () async {
+                            if (vehicle.id != null &&
+                                vehicle.id!.isNotEmpty) {
+                              await AppPreference.instance.set(
+                                key: AppPreference.KEY_SELECTED_UID,
+                                value: vehicle.id!,
+                              );
                             }
-
-                            final isLocked =
-                                _vehicleLockStates[vehicle.imei] ?? false;
-
-                            return VehicleCard(
-                              context: context,
-                              vehicle: vehicle,
-                              hasDevice: true,
-                              isLocked: isLocked,
-                              onVehicleControl: () async {
-                                if (vehicle.id != null &&
-                                    vehicle.id!.isNotEmpty) {
-                                  await AppPreference.instance.set(
-                                    key: AppPreference.KEY_SELECTED_UID,
-                                    value: vehicle.id!,
-                                  );
-                                }
-                                if (vehicle.imei != null &&
-                                    vehicle.imei!.isNotEmpty) {
-                                  await AppPreference.instance.set(
-                                    key: AppPreference.IMEI,
-                                    value: vehicle.imei!,
-                                  );
-                                }
-                                if (context.mounted) {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) =>
-                                          VehicleControlScreen(
-                                            isFromGarage: false,
-                                            passedVehicle: vehicle,
-                                          ),
-                                    ),
-                                  );
-                                }
-                              },
-                              onLock: () =>
-                                  _handleVehicleLock(context, vehicle),
-                              onRecharge: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => DeviceDataScreen(),
-                                  ),
-                                );
-                              },
-                              onRenew: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => WarrantyScreen(),
-                                  ),
-                                );
-                              },
-                            );
-                          }
-                          return const SizedBox.shrink();
-                        },
-                      ),
-
-                      /// 🔹 NOTIFICATIONS
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) =>
-                                  const NotificationTimelineScreen(),
-                            ),
-                          );
-                        },
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(vertical: 14),
-                          decoration: BoxDecoration(
-                            color: Theme.of(
-                              context,
-                            ).colorScheme.primaryContainer,
-                            borderRadius: const BorderRadius.only(
-                              topLeft: Radius.circular(6),
-                              topRight: Radius.circular(6),
-                              bottomLeft: Radius.circular(20),
-                              bottomRight: Radius.circular(20),
-                            ),
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(
-                                Icons.notifications_none_rounded,
-                                color: Theme.of(context).colorScheme.primary,
-                              ),
-                              const SizedBox(width: 4),
-                              Text(
-                                l10n.notifications,
-                                style: TextStyle(
-                                  color: Theme.of(context).colorScheme.primary,
-                                  fontWeight: FontWeight.bold,
+                            if (vehicle.imei != null &&
+                                vehicle.imei!.isNotEmpty) {
+                              await AppPreference.instance.set(
+                                key: AppPreference.IMEI,
+                                value: vehicle.imei!,
+                              );
+                            }
+                            if (context.mounted) {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      VehicleControlScreen(
+                                        isFromGarage: false,
+                                        passedVehicle: vehicle,
+                                      ),
                                 ),
+                              );
+                            }
+                          },
+                          onLock: () =>
+                              _handleVehicleLock(context, vehicle),
+                          onRecharge: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => DeviceDataScreen(),
                               ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
+                            );
+                          },
+                          onRenew: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => WarrantyScreen(),
+                              ),
+                            );
+                          },
+                        );
+                      }
+                      return const SizedBox.shrink();
+                    },
                   ),
                 ),
 
@@ -720,7 +656,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         onPressed: () {
           final prefs = AppPreference.instance;
           prefs.clearAll();
-          Navigator.of(context).pushAndRemoveUntil(
+          Navigator.of(context, rootNavigator: true).pushAndRemoveUntil(
             MaterialPageRoute(builder: (context) => const SignInScreen()),
             (Route<dynamic> route) => false,
           );

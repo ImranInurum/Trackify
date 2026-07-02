@@ -67,7 +67,7 @@ class _SignInScreenState extends State<SignInScreen> {
   Widget _buildLogo(SplashState state, ColorScheme colorScheme) {
     return Center(
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 20.0),
+        padding: const EdgeInsets.only(top: 10.0, bottom: 20.0),
         child:
             (state is SplashLoaded &&
                 state.logo.path != null &&
@@ -166,9 +166,8 @@ class _SignInScreenState extends State<SignInScreen> {
             return BlocBuilder<SplashCubit, SplashState>(
               builder: (context, splashState) {
                 return SafeArea(
-                  child: Center(
-                    child: SingleChildScrollView(
-                      padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
                       child: Form(
                         key: _formKey,
                         child: Column(
@@ -176,7 +175,7 @@ class _SignInScreenState extends State<SignInScreen> {
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
                             _buildLogo(splashState, colorScheme),
-                            const SizedBox(height: 60),
+                            const SizedBox(height: 20),
                             Align(
                               alignment: Alignment.centerLeft,
                               child: Text(
@@ -307,7 +306,6 @@ class _SignInScreenState extends State<SignInScreen> {
                         ),
                       ),
                     ),
-                  ),
                 );
               },
             );

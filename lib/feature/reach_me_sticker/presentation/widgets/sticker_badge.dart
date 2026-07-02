@@ -26,7 +26,7 @@ class StickerBadge extends StatelessWidget {
           const SizedBox(width: 12),
           Text(
             text,
-            style: Theme.of(context).textTheme.titleLarge?.copyWith(
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(
               color: Theme.of(context).colorScheme.primary,
               fontWeight: FontWeight.bold,
               fontStyle: FontStyle.italic,

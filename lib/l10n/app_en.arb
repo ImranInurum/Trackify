@@ -203,7 +203,7 @@
   "buyTrackifyDevice": "Buy Trackify Device",
   "lite4G": "Lite 4G",
   "swipeToLock": "SWIPE TO LOCK",
-  "upgradeToPlus": "Upgrade to Trackify Plus",
+  "upgradeToPlus": "Upgrade to Plus",
   "getMoreOutOfTrackify": "Get more out of Trackify",
   "featuresExploredCount": "You've explored {count} of {total} features - keep going!",
   "manageVehiclesDesc": "Manage all your Vehicles here",
@@ -1064,5 +1064,8 @@
               "slotUnavailable": "Slot Unavailable",
               "slotAvailable": "Slot Available",
               "distanceUnitSelection": "Distance Unit",
-              "miles": "Miles"
+              "miles": "Miles",
+              "locationSharedWithMe": "Location shared with me",
+              "noOneSharedLocationTitle": "No one has shared their vehicle's location with you right now",
+              "noOneSharedLocationSub": "You'll find the names of individuals who have shared their location with you right here."
 }

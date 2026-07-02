@@ -46,12 +46,12 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
       final fileBytes = await pickedFile.readAsBytes();
       final fileName = pickedFile.name;
 
-      final userName = user?.name ?? "Kk";
-      final userEmail = user?.email ?? "sonukushwah221@gmail.com";
-      final userMobile = user?.mobileNumber ?? "+918602945222";
-      final userCountry = user?.country ?? "India";
-      final userState = user?.state ?? "Madhya Pradesh";
-      final userCity = user?.city ?? "Indore district";
+      final userName = user?.name ?? "";
+      final userEmail = user?.email ?? "";
+      final userMobile = user?.mobileNumber ?? "";
+      final userCountry = user?.country ?? "";
+      final userState = user?.state ?? "";
+      final userCity = user?.city ?? "";
 
       final request = UpdateProfileRequest(
         name: user?.name ?? userName,
@@ -148,7 +148,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
             final profileImageUrl = _getProfileImageUrl(user?.userProfile);
 
             return SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
               child: Column(
                 children: [
                   /// 🔹 PROFILE HEADER
@@ -271,7 +271,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 24),
+                  const SizedBox(height: 16),
 
                   /// 🔹 PROFILE COMPLETENESS CARD
                   _buildCard(
@@ -288,7 +288,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                             fontSize: 13,
                           ),
                         ),
-                        const SizedBox(height: 12),
+                        const SizedBox(height: 7),
                         Row(
                           children: [
                             Expanded(
@@ -335,7 +335,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                             ),
                           ],
                         ),
-                        const SizedBox(height: 12),
+                        const SizedBox(height: 7),
                         Text(
                           l10n.lastUpdatedOn("23 Feb 2026"),
                           style: TextStyle(
@@ -345,8 +345,9 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                             fontSize: 12,
                           ),
                         ),
-                        const SizedBox(height: 16),
+                        const SizedBox(height: 7),
                         Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Container(
                               padding: const EdgeInsets.all(8),
@@ -363,53 +364,72 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                               ),
                             ),
                             const SizedBox(width: 12),
-                            Text(
-                              l10n.addProfilePicture,
-                              style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.normal,
-                                color: Theme.of(context).colorScheme.onSurface,
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    l10n.addProfilePicture,
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.normal,
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.onSurface,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 10),
+                                  SizedBox(
+                                    height:
+                                        36, // Smaller height for a compact button
+                                    child: ElevatedButton(
+                                      onPressed: _isUploading
+                                          ? null
+                                          : () => _pickAndUploadImage(user),
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: Theme.of(
+                                          context,
+                                        ).colorScheme.primary,
+                                        foregroundColor: Theme.of(
+                                          context,
+                                        ).colorScheme.onPrimary,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(
+                                            8,
+                                          ),
+                                        ),
+                                        elevation: 0,
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 16,
+                                        ),
+                                      ),
+                                      child: _isUploading
+                                          ? const SizedBox(
+                                              height: 16,
+                                              width: 16,
+                                              child: CircularProgressIndicator(
+                                                strokeWidth: 2,
+                                                color: Colors.white,
+                                              ),
+                                            )
+                                          : Text(
+                                              l10n.addProfilePicture,
+                                              style: const TextStyle(
+                                                fontSize: 12,
+                                              ),
+                                            ),
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
                           ],
-                        ),
-                        const SizedBox(height: 12),
-                        SizedBox(
-                          width: double.infinity,
-                          child: ElevatedButton(
-                            onPressed: _isUploading
-                                ? null
-                                : () => _pickAndUploadImage(user),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Theme.of(
-                                context,
-                              ).colorScheme.primary,
-                              foregroundColor: Theme.of(
-                                context,
-                              ).colorScheme.onPrimary,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              elevation: 0,
-                              padding: const EdgeInsets.symmetric(vertical: 12),
-                            ),
-                            child: _isUploading
-                                ? const SizedBox(
-                                    height: 20,
-                                    width: 20,
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 2,
-                                      color: Colors.white,
-                                    ),
-                                  )
-                                : Text(l10n.addProfilePicture),
-                          ),
                         ),
                       ],
                     ),
                   ),
 
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 12),
 
                   /// 🔹 PERSONAL DETAILS CARD
                   _buildCard(
@@ -455,7 +475,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                             ),
                           ],
                         ),
-                        const SizedBox(height: 20),
+                        const SizedBox(height: 12),
                         _detailRow(l10n.userNameLabel, userName, context),
                         _detailRow(l10n.emailAddressLabel, userEmail, context),
                         _detailRow(l10n.mobileNumberLabel, userMobile, context),
@@ -466,7 +486,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                     ),
                   ),
 
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 12),
 
                   /// 🔹 MEDICAL INSURANCE CARD
                   _buildCard(
@@ -482,7 +502,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                             color: Theme.of(context).colorScheme.onSurface,
                           ),
                         ),
-                        const SizedBox(height: 24),
+                        const SizedBox(height: 16),
                         Center(
                           child: Column(
                             children: [
@@ -517,7 +537,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                                   ),
                                 ),
                               ),
-                              const SizedBox(height: 12),
+                              const SizedBox(height: 8),
                               Text(
                                 l10n.addMedicalInsuranceInfo,
                                 style: TextStyle(
@@ -533,7 +553,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                     ),
                   ),
 
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 12),
 
                   /// 🔹 VEHICLE INSURANCE CARD (Informational)
                   _buildCard(
@@ -549,7 +569,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                             color: Theme.of(context).colorScheme.onSurface,
                           ),
                         ),
-                        const SizedBox(height: 8),
+                        const SizedBox(height: 4),
                         Text(
                           l10n.editViewVehicleInsuranceDesc,
                           style: TextStyle(
@@ -572,7 +592,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                     ),
                   ),
 
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 12),
 
                   /// 🔹 EMERGENCY CONTACTS CARD (Informational)
                   _buildCard(
@@ -588,7 +608,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                             color: Theme.of(context).colorScheme.onSurface,
                           ),
                         ),
-                        const SizedBox(height: 8),
+                        const SizedBox(height: 4),
                         Text(
                           l10n.addEditEmergencyContactDesc,
                           style: TextStyle(
@@ -623,7 +643,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
   Widget _buildCard({required Widget child, required BuildContext context}) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(12),
@@ -642,7 +662,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
 
   Widget _detailRow(String label, String value, BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 14),
+      padding: const EdgeInsets.only(bottom: 10),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

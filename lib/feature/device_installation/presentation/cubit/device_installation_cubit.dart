@@ -23,7 +23,7 @@ class DeviceInstallationCubit extends Cubit<DeviceInstallationState> {
       userId: userId,
       vehicleId: vehicleId,
       imei: imei,
-      uid: uid
+      uid: (uid != null && uid.isNotEmpty) ? uid : userId,
     );
     final result = await _assignDeviceUseCase.assignDevice(request: request);
 

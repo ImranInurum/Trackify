@@ -172,7 +172,7 @@ class SettingsScreen extends StatelessWidget {
               onTap: () {
                 final prefs = AppPreference.instance;
                 prefs.clearAll();
-                Navigator.of(context).pushAndRemoveUntil(
+                Navigator.of(context, rootNavigator: true).pushAndRemoveUntil(
                   MaterialPageRoute(builder: (context) => const SignInScreen()),
                   (Route<dynamic> route) => false,
                 );

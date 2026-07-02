@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:trackify/feature/device_installation/presentation/pages/device_installation_screen.dart';
+import 'package:trackify/feature/notifications/presentation/screen/notification_timeline.dart';
 
 import '../../../core/constants/app_images.dart';
 import '../../../l10n/app_localizations.dart';
@@ -33,9 +34,9 @@ class VehicleCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     return Container(
-      margin: const EdgeInsets.only(bottom: 10),
+      margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
-        color: Theme.of(context).cardColor,
+        color: Theme.of(context).colorScheme.onSurface.withOpacity(0.05),
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
@@ -47,7 +48,21 @@ class VehicleCard extends StatelessWidget {
       ),
       child: Column(
         children: [
-          const SizedBox(height: 16),
+          Container(
+            decoration: BoxDecoration(
+              color: Theme.of(context).cardColor,
+              borderRadius: BorderRadius.circular(20),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.05),
+                  blurRadius: 4,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: Column(
+              children: [
+                const SizedBox(height: 12),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
             child: InkWell(
@@ -126,13 +141,13 @@ class VehicleCard extends StatelessWidget {
               ),
             ),
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 16),
           if (hasDevice) ...[
             InteractiveSwipeButton(
               onSwipe: onLock,
               isLocked: isLocked,
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 8),
             _buildActionRow(
               l10n,
               l10n.dataPlan,
@@ -156,8 +171,47 @@ class VehicleCard extends StatelessWidget {
                 MaterialPageRoute(builder: (_) => DeviceInstallationScreen( vehicleId:  vehicle.id,)),
               );
             }),
+            const SizedBox(height: 12), // Added spacing for 'else' case
           ],
-          const SizedBox(height: 16),
+          if (hasDevice) const SizedBox(height: 12),
+        ],
+      ),
+    ),
+    InkWell(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const NotificationTimelineScreen()),
+        );
+      },
+      borderRadius: const BorderRadius.vertical(bottom: Radius.circular(20)),
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.symmetric(vertical: 11),
+        decoration: const BoxDecoration(
+          borderRadius: BorderRadius.vertical(bottom: Radius.circular(20)),
+        ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.notifications_none_outlined,
+                    color: Theme.of(context).colorScheme.primary,
+                    size: 20,
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    "Notifications",
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
         ],
       ),
     );
@@ -171,7 +225,7 @@ class VehicleCard extends StatelessWidget {
     VoidCallback onTap,
   ) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [

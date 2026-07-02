@@ -2514,4 +2514,15 @@ class AppLocalizationsKn extends AppLocalizations {
 
   @override
   String get miles => 'ಮೈಲಿಗಳು';
+
+  @override
+  String get locationSharedWithMe => 'ನನ್ನೊಂದಿಗೆ ಹಂಚಿಕೊಳ್ಳಲಾಗಿದೆ';
+
+  @override
+  String get noOneSharedLocationTitle =>
+      'ಇನ್ನೂ ಯಾರು ತಮ್ಮ ವಾಹನದ ಸ್ಥಳವನ್ನು ನಿಮ್ಮೊಂದಿಗೆ ಹಂಚಿಕೊಂಡಿಲ್ಲ.';
+
+  @override
+  String get noOneSharedLocationSub =>
+      'ಜನರು ತಮ್ಮ ಲೈವ್ ಟ್ರಿಪ್ ಅನ್ನು ನಿಮ್ಮೊಂದಿಗೆ ಹಂಚಿಕೊಂಡಾಗ, ಅವರ ಹೆಸರುಗಳನ್ನು ನೀವು ಇಲ್ಲಿ ನೋಡುತ್ತೀರಿ.';
 }

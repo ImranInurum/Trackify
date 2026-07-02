@@ -29,8 +29,8 @@ class ColorOption extends StatelessWidget {
             clipBehavior: Clip.none,
             children: [
               Container(
-                width: 52,
-                height: 52,
+                width: 44,
+                height: 44,
                 padding: const EdgeInsets.all(4), // Space between border and color
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
@@ -55,16 +55,16 @@ class ColorOption extends StatelessWidget {
                   child: Icon(
                     Icons.lock,
                     color: Color(0xFFFBB03B),
-                    size: 16,
+                    size: 14,
                   ),
                 ),
             ],
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 6),
           Text(
             label,
             style: TextStyle(
-              fontSize: 12,
+              fontSize: 11,
               color: isSelected 
                   ? theme.colorScheme.onSurface 
                   : theme.colorScheme.onSurface.withOpacity(0.4),

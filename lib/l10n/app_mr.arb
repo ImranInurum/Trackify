@@ -212,7 +212,7 @@
     "buyTrackifyDevice": "Trackify डिव्हाइस खरेदी करा",
     "lite4G": "लाईट ४जी",
     "swipeToLock": "लॉक करण्यासाठी स्वाइप करा",
-    "upgradeToPlus": "Trackify Plus वर अपग्रेड करा",
+    "upgradeToPlus": "Plus वर अपग्रेड करा",
     "getMoreOutOfTrackify": "Trackify मधून अधिक मिळवा",
     "featuresExploredCount": "तुम्ही {total} पैकी {count} वैशिष्ट्ये एक्सप्लोर केली आहेत",
     "manageVehiclesDesc": "येथे तुमची सर्व वाहने व्यवस्थापित करा",
@@ -1014,5 +1014,8 @@
                 "slotUnavailable": "स्लॉट उपलब्ध नाही",
                 "slotAvailable": "स्लॉट उपलब्ध आहे",
                 "distanceUnitSelection": "अंतर एकक",
-                "miles": "मैल"
+                "miles": "मैल",
+                "locationSharedWithMe": "माझ्यासोबत शेअर केलेले",
+                "noOneSharedLocationTitle": "अद्याप कोणीही त्यांच्या वाहनाची लोकेशन तुमच्यासोबत शेअर केलेली नाही.",
+                "noOneSharedLocationSub": "जेव्हा लोक त्यांची लाईव्ह ट्रिप तुमच्यासोबत शेअर करतील, तेव्हा तुम्हाला त्यांची नावे येथे दिसतील."
 }

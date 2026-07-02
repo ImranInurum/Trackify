@@ -515,7 +515,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get swipeToLock => 'اسحب للقفل';
 
   @override
-  String get upgradeToPlus => 'ترقية إلى Trackify Plus';
+  String get upgradeToPlus => 'ترقية إلى Plus';
 
   @override
   String get getMoreOutOfTrackify => 'احصل على المزيد من Trackify';
@@ -1643,7 +1643,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get otherBenefits => 'مزايا أخرى';
 
   @override
-  String get trackifyPlusReviews => 'تقييمات TRACKIFY PLUS';
+  String get trackifyPlusReviews => 'تقييمات Plus';
 
   @override
   String get offerings => 'العروض';
@@ -2495,4 +2495,15 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get miles => 'ميل';
+
+  @override
+  String get locationSharedWithMe => 'الموقع تمت مشاركته معي';
+
+  @override
+  String get noOneSharedLocationTitle =>
+      'لم يقم أحد بمشاركة موقع مركبته معك في الوقت الحالي';
+
+  @override
+  String get noOneSharedLocationSub =>
+      'ستجد هنا أسماء الأشخاص الذين شاركوا موقعهم معك.';
 }

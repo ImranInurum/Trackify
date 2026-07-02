@@ -2519,4 +2519,15 @@ class AppLocalizationsTa extends AppLocalizations {
 
   @override
   String get miles => 'மைல்';
+
+  @override
+  String get locationSharedWithMe => 'என்னிடம் பகிரப்பட்ட இருப்பிடம்';
+
+  @override
+  String get noOneSharedLocationTitle =>
+      'தற்போது யாரும் தங்கள் வாகனத்தின் இருப்பிடத்தை உங்களுடன் பகிரவில்லை';
+
+  @override
+  String get noOneSharedLocationSub =>
+      'உங்களுடன் இருப்பிடத்தைப் பகிர்ந்தவர்களின் பெயர்களை இங்கே காணலாம்.';
 }

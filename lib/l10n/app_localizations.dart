@@ -1081,7 +1081,7 @@ abstract class AppLocalizations {
   /// No description provided for @upgradeToPlus.
   ///
   /// In en, this message translates to:
-  /// **'Upgrade to Trackify Plus'**
+  /// **'Upgrade to Plus'**
   String get upgradeToPlus;
 
   /// No description provided for @getMoreOutOfTrackify.
@@ -4857,6 +4857,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Miles'**
   String get miles;
+
+  /// No description provided for @locationSharedWithMe.
+  ///
+  /// In en, this message translates to:
+  /// **'Location shared with me'**
+  String get locationSharedWithMe;
+
+  /// No description provided for @noOneSharedLocationTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No one has shared their vehicle\'s location with you right now'**
+  String get noOneSharedLocationTitle;
+
+  /// No description provided for @noOneSharedLocationSub.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'ll find the names of individuals who have shared their location with you right here.'**
+  String get noOneSharedLocationSub;
 }
 
 class _AppLocalizationsDelegate

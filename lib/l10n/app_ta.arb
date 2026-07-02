@@ -1015,5 +1015,8 @@
         "slotUnavailable": "நேரம் கிடைக்கவில்லை",
         "slotAvailable": "நேரம் கிடைக்கிறது",
         "distanceUnitSelection": "தூர அலகு",
-        "miles": "மைல்"
+        "miles": "மைல்",
+        "locationSharedWithMe": "என்னிடம் பகிரப்பட்ட இருப்பிடம்",
+        "noOneSharedLocationTitle": "தற்போது யாரும் தங்கள் வாகனத்தின் இருப்பிடத்தை உங்களுடன் பகிரவில்லை",
+        "noOneSharedLocationSub": "உங்களுடன் இருப்பிடத்தைப் பகிர்ந்தவர்களின் பெயர்களை இங்கே காணலாம்."
 }

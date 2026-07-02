@@ -30,8 +30,8 @@ class IconOption extends StatelessWidget {
             clipBehavior: Clip.none,
             children: [
               Container(
-                width: 65,
-                height: 65,
+                width: 56,
+                height: 56,
                 padding: const EdgeInsets.all(4), // Padding inside border
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
@@ -45,7 +45,7 @@ class IconOption extends StatelessWidget {
                   child: Icon(
                     icon,
                     color: isSelected ? theme.colorScheme.onSurface : theme.colorScheme.onSurface.withOpacity(0.2),
-                    size: 32,
+                    size: 26,
                   ),
                 ),
               ),
@@ -56,16 +56,16 @@ class IconOption extends StatelessWidget {
                   child: Icon(
                     Icons.lock,
                     color: Color(0xFFFBB03B),
-                    size: 16,
+                    size: 14,
                   ),
                 ),
             ],
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 6),
           Text(
             label,
             style: TextStyle(
-              fontSize: 13,
+              fontSize: 12,
               color: isSelected ? theme.colorScheme.onSurface : theme.colorScheme.onSurface.withOpacity(0.4),
               fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
             ),

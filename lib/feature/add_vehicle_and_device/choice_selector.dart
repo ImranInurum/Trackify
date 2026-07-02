@@ -10,6 +10,8 @@ import '../../core/theme/app_colors.dart';
 import '../onboarding/presentation/cubit/splash_cubit.dart';
 import '../onboarding/presentation/cubit/splash_state.dart';
 import 'add_vehicle/presentation/view/add_vehicle_screen.dart';
+import '../device_installation/presentation/pages/device_installation_screen.dart';
+import '../reach_me_sticker/presentation/screens/scan_qr_screen.dart';
 
 class ChoiceSelector extends StatefulWidget {
   const ChoiceSelector({super.key});
@@ -29,7 +31,7 @@ class _ChoiceSelectorState extends State<ChoiceSelector> {
                 state.logo.path!.isNotEmpty)
             ? CachedNetworkImage(
                 imageUrl: state.logo.path!,
-                height: 160,
+                height: 100,
                 fit: BoxFit.contain,
                 placeholder: (context, url) =>
                     Center(child: CircularProgressIndicator(color: colorScheme.primary)),
@@ -75,7 +77,7 @@ class _ChoiceSelectorState extends State<ChoiceSelector> {
                         return _buildLogo(splashState, Theme.of(context).colorScheme);
                       },
                     ),
-                    const SizedBox(height: 50),
+                    const SizedBox(height: 10),
 
                     // Cards
                     _buildChoiceCard(
@@ -86,7 +88,11 @@ class _ChoiceSelectorState extends State<ChoiceSelector> {
                       imageWidth: 90,
                       imageHeight: 90,
                       onTap: () {
-                        // TODO: Navigate to device install
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => const DeviceInstallationScreen(),
+                          ),
+                        );
                       },
                     ),
 
@@ -98,7 +104,11 @@ class _ChoiceSelectorState extends State<ChoiceSelector> {
                       imageWidth: 70,
                       imageHeight: 70,
                       onTap: () {
-                        // TODO: Navigate to sticker activation
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => const ScanQrScreen(),
+                          ),
+                        );
                       },
                     ),
 
@@ -130,7 +140,7 @@ class _ChoiceSelectorState extends State<ChoiceSelector> {
                 onPressed: () {
                   final prefs = AppPreference.instance;
                   prefs.clearAll();
-                  Navigator.of(context).pushAndRemoveUntil(
+                  Navigator.of(context, rootNavigator: true).pushAndRemoveUntil(
                     MaterialPageRoute(builder: (context) => const SignInScreen()),
                     (Route<dynamic> route) => false,
                   );
@@ -176,8 +186,8 @@ class _ChoiceSelectorState extends State<ChoiceSelector> {
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              Theme.of(context).cardColor,
-              Theme.of(context).cardColor.withOpacity(0.9),
+              Theme.of(context).colorScheme.surface,
+              Theme.of(context).colorScheme.primary.withOpacity(0.15),
             ],
           ),
           boxShadow: [
@@ -191,16 +201,14 @@ class _ChoiceSelectorState extends State<ChoiceSelector> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Icon(
-                Icons.arrow_forward,
-                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.4),
-                size: 20,
-              ),
+            const SizedBox(height: 8), // Replaced padding with slight spacing from top
+            Icon(
+              Icons.arrow_forward,
+              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.4),
+              size: 20,
             ),
             Padding(
-              padding: const EdgeInsets.only(left: 12.0, right: 12.0, bottom: 32.0),
+              padding: const EdgeInsets.only(left: 12.0, bottom: 20.0), // Removed right padding, reduced bottom
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [

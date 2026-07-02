@@ -210,6 +210,21 @@ class _AllRidesState extends State<AllRides> {
                 );
               }
 
+              if (state is RideHistoryFailure) {
+                return RefreshIndicator(
+                  onRefresh: () async {
+                    await context.read<RideHistoryCubit>().getRideHistoryData();
+                  },
+                  child: const SingleChildScrollView(
+                    physics: AlwaysScrollableScrollPhysics(),
+                    child: SizedBox(
+                      height: 400,
+                      child: AllRidesEmptyState(),
+                    ),
+                  ),
+                );
+              }
+
               return const SizedBox();
             },
           ),

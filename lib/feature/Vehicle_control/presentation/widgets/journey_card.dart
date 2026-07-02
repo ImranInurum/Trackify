@@ -22,7 +22,7 @@ class JourneyCard extends StatelessWidget {
       onTap: onTap,
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 16),
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         decoration: BoxDecoration(
           color: cardColor,
           borderRadius: BorderRadius.circular(20),
@@ -37,7 +37,7 @@ class JourneyCard extends StatelessWidget {
                     Text(
                       AppLocalizations.of(context)!.journeyWithTrackify,
                       style: TextStyle(
-                        fontSize: 18,
+                        fontSize: 16,
                         fontWeight: FontWeight.w700,
                         color: primaryTextColor,
                       ),
@@ -46,7 +46,7 @@ class JourneyCard extends StatelessWidget {
                     Text(
                       AppLocalizations.of(context)!.lifetime,
                       style: TextStyle(
-                        fontSize: 14,
+                        fontSize: 12,
                         color: secondaryTextColor,
                       ),
                     ),
@@ -55,7 +55,7 @@ class JourneyCard extends StatelessWidget {
                 Icon(Icons.arrow_forward, color: secondaryTextColor, size: 20),
               ],
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: 16),
             Row(
               children: [
                 Expanded(
@@ -101,19 +101,19 @@ class JourneyCard extends StatelessWidget {
       children: [
         Row(
           children: [
-            Icon(icon, color: color, size: 18),
+            Icon(icon, color: color, size: 16),
             const SizedBox(width: 8),
             Text(
               label,
               style: TextStyle(
-                fontSize: 13,
+                fontSize: 12,
                 color: secondaryTextColor,
                 fontWeight: FontWeight.w500,
               ),
             ),
           ],
         ),
-        const SizedBox(height: 12),
+        const SizedBox(height: 8),
         Row(
           crossAxisAlignment: CrossAxisAlignment.baseline,
           textBaseline: TextBaseline.alphabetic,
@@ -121,7 +121,7 @@ class JourneyCard extends StatelessWidget {
             Text(
               value,
               style: TextStyle(
-                fontSize: 28,
+                fontSize: 22,
                 fontWeight: FontWeight.w900,
                 color: primaryTextColor,
               ),

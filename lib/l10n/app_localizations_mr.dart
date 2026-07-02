@@ -516,7 +516,7 @@ class AppLocalizationsMr extends AppLocalizations {
   String get swipeToLock => 'लॉक करण्यासाठी स्वाइप करा';
 
   @override
-  String get upgradeToPlus => 'Trackify Plus वर अपग्रेड करा';
+  String get upgradeToPlus => 'Plus वर अपग्रेड करा';
 
   @override
   String get getMoreOutOfTrackify => 'Trackify मधून अधिक मिळवा';
@@ -2506,4 +2506,15 @@ class AppLocalizationsMr extends AppLocalizations {
 
   @override
   String get miles => 'मैल';
+
+  @override
+  String get locationSharedWithMe => 'माझ्यासोबत शेअर केलेले';
+
+  @override
+  String get noOneSharedLocationTitle =>
+      'अद्याप कोणीही त्यांच्या वाहनाची लोकेशन तुमच्यासोबत शेअर केलेली नाही.';
+
+  @override
+  String get noOneSharedLocationSub =>
+      'जेव्हा लोक त्यांची लाईव्ह ट्रिप तुमच्यासोबत शेअर करतील, तेव्हा तुम्हाला त्यांची नावे येथे दिसतील.';
 }

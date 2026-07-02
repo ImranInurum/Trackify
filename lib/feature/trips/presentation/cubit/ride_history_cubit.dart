@@ -17,6 +17,11 @@ class RideHistoryCubit extends Cubit<RideHistoryState> {
 
   Future<void> getRideHistoryData() async {
     final iMEI = await prefs.get(key: AppPreference.IMEI);
+    if (iMEI == null || iMEI.isEmpty) {
+      emit(RideHistorySuccess(const []));
+      return;
+    }
+
     final box = Hive.box('map_cache');
     final cacheKey = 'ride_history_$iMEI';
     final cachedData = box.get(cacheKey);
@@ -40,7 +45,7 @@ class RideHistoryCubit extends Cubit<RideHistoryState> {
     final request = {
       'imei': iMEI,
     };
-    debugPrint('Assigning device with request: $request');
+    debugPrint('Fetching ride history with request: $request');
     final result = await _assignDeviceUseCase.getRideHistory(body: request);
     result.fold(
       (exception) {

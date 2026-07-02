@@ -144,8 +144,24 @@ class StatisticsCubit extends Cubit<StatisticsState> {
       );
     }
 
+    if (vehicle.imei == null || vehicle.imei!.isEmpty) {
+      emit(
+        StatisticsLoaded(
+          statistics: const StatisticsResponseModel(
+            success: true,
+            message: 'No IMEI provided',
+            data: null,
+          ),
+          userVehicles: userVehicles,
+          selectedVehicle: vehicle,
+          selectedDate: date,
+        ),
+      );
+      return;
+    }
+
     final request = StatisticsRequestModel(
-      imei: vehicle.imei ?? '',
+      imei: vehicle.imei!,
       date: formattedDate,
     );
 
