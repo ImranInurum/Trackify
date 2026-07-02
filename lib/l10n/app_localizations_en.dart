@@ -2506,4 +2506,15 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get miles => 'Miles';
+
+  @override
+  String get locationSharedWithMe => 'Location shared with me';
+
+  @override
+  String get noOneSharedLocationTitle =>
+      'No one has shared their vehicle\'s location with you right now';
+
+  @override
+  String get noOneSharedLocationSub =>
+      'You\'ll find the names of individuals who have shared their location with you right here.';
 }

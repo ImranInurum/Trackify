@@ -89,16 +89,16 @@ class _HealthInsuranceScreenState extends State<HealthInsuranceScreen> {
                       child: Text(
                         l10n.bloodGroup,
                         style: TextStyle(
-                          fontSize: 15,
+                          fontSize: 12,
                           fontWeight: FontWeightManager.regular,
                           color: colorScheme.onSurface.withOpacity(0.7),
                         ),
                       ),
                     ),
-                    const SizedBox(height: 14),
+                    const SizedBox(height: 6),
 
                     Container(
-                      height: 62,
+                      height: 50,
                       padding: const EdgeInsets.symmetric(horizontal: 16),
                       decoration: BoxDecoration(
                         border: Border.all(color: colorScheme.onSurfaceVariant),
@@ -114,12 +114,12 @@ class _HealthInsuranceScreenState extends State<HealthInsuranceScreen> {
                             style: TextStyle(
                               color: colorScheme.onSurfaceVariant,
                               fontWeight: FontWeightManager.medium,
-                              fontSize: 18,
+                              fontSize: 14,
                             ),
                           ),
                           icon: Icon(
                             Icons.arrow_drop_down,
-                            color: colorScheme.onSurface,
+                            color: colorScheme.primary,
                             size: 35,
                           ),
                           items: (state.data?.bloodGroup ?? []).map((e) {
@@ -140,22 +140,22 @@ class _HealthInsuranceScreenState extends State<HealthInsuranceScreen> {
                       ),
                     ),
 
-                    const SizedBox(height: 14),
+                    const SizedBox(height: 16),
                     Align(
                       alignment: Alignment.centerLeft,
                       child: Text(
                         l10n.healthInsurance,
                         style: TextStyle(
-                          fontSize: 15,
+                          fontSize: 12,
                           fontWeight: FontWeightManager.medium,
                           color: colorScheme.onSurface.withOpacity(0.7),
                         ),
                       ),
                     ),
-                    const SizedBox(height: 14),
+                    const SizedBox(height: 6),
 
                     Container(
-                      height: 62,
+                      height: 50,
                       padding: const EdgeInsets.symmetric(horizontal: 16),
                       decoration: BoxDecoration(
                         border: Border.all(color: colorScheme.onSurfaceVariant),
@@ -171,12 +171,12 @@ class _HealthInsuranceScreenState extends State<HealthInsuranceScreen> {
                             style: TextStyle(
                               color: colorScheme.onSurfaceVariant,
                               fontWeight: FontWeightManager.medium,
-                              fontSize: 18,
+                              fontSize: 14,
                             ),
                           ),
                           icon: Icon(
                             Icons.arrow_drop_down,
-                            color: colorScheme.onSurface,
+                            color: colorScheme.primary,
                             size: 35,
                           ),
                           items: (state.data?.insuranceList ?? []).map((e) {
@@ -201,7 +201,7 @@ class _HealthInsuranceScreenState extends State<HealthInsuranceScreen> {
                       ),
                     ),
 
-                    const SizedBox(height: 40),
+                    const SizedBox(height: 24),
 
                     /// CARD NUMBER
                     TextField(
@@ -210,7 +210,10 @@ class _HealthInsuranceScreenState extends State<HealthInsuranceScreen> {
                       decoration: InputDecoration(
                         filled: false,
                         labelText: l10n.healthInsuranceCardNumber,
-                        labelStyle: TextStyle(color: colorScheme.onSurfaceVariant),
+                        labelStyle: TextStyle(
+                          color: colorScheme.onSurfaceVariant,
+                          fontSize: 14,
+                        ),
                         enabledBorder: UnderlineInputBorder(
                           borderSide: BorderSide(color: colorScheme.outline),
                         ),
@@ -223,7 +226,7 @@ class _HealthInsuranceScreenState extends State<HealthInsuranceScreen> {
                       ),
                     ),
 
-                    const SizedBox(height: 30),
+                    const SizedBox(height: 20),
 
                     /// POLICY NUMBER
                     TextField(
@@ -232,7 +235,10 @@ class _HealthInsuranceScreenState extends State<HealthInsuranceScreen> {
                       decoration: InputDecoration(
                         filled: false,
                         labelText: l10n.policyNumber,
-                        labelStyle: TextStyle(color: colorScheme.onSurfaceVariant),
+                        labelStyle: TextStyle(
+                          color: colorScheme.onSurfaceVariant,
+                          fontSize: 14,
+                        ),
                         enabledBorder: UnderlineInputBorder(
                           borderSide: BorderSide(color: colorScheme.outline),
                         ),

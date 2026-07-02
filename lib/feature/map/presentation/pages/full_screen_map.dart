@@ -28,6 +28,7 @@ import '../cubit/full_screen_map_ui_cubit.dart';
 import 'package:trackify/feature/trips/presentation/cubit/ride_history_cubit.dart';
 import 'package:trackify/feature/trips/presentation/cubit/ride_history_state.dart';
 import 'package:trackify/feature/trips/data/entity/ride_model.dart';
+import 'package:trackify/feature/map/presentation/pages/shared_with_me_screen.dart';
 class FullScreenMap extends StatefulWidget {
   final Vehicles? selectedVehicle;
   const FullScreenMap({super.key, this.selectedVehicle});
@@ -1116,55 +1117,71 @@ class _FullScreenMapState extends State<FullScreenMap>
             Icons.arrow_back_ios_new,
             onTap: () => Navigator.pop(context),
           ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              _buildRoundButton(
-                Icons.more_vert,
-                onTap: () => _uiCubit.toggleSharedWithMe(),
-              ),
-              if (_uiCubit.state.showSharedWithMe)
-                TweenAnimationBuilder<double>(
-                  tween: Tween(begin: 0.0, end: 1.0),
-                  duration: const Duration(milliseconds: 200),
-                  builder: (context, value, child) {
-                    return Opacity(
-                      opacity: value,
-                      child: Transform.translate(
-                        offset: Offset(0, 10 * value - 10),
-                        child: child,
-                      ),
-                    );
-                  },
-                  child: Container(
-                    margin: const EdgeInsets.only(top: 8),
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 10,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).cardColor.withOpacity(0.95),
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: Theme.of(context).dividerColor),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.3),
-                          blurRadius: 10,
-                          spreadRadius: 1,
-                        ),
-                      ],
-                    ),
-                    child: Text(
-                      AppLocalizations.of(context)!.sharedWithMe,
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.onSurface,
-                        fontSize: 13,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
+          BlocBuilder<FullScreenMapUiCubit, FullScreenMapUiState>(
+            bloc: _uiCubit,
+            builder: (context, uiState) {
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  _buildRoundButton(
+                    Icons.more_vert,
+                    onTap: () => _uiCubit.toggleSharedWithMe(),
                   ),
-                ),
-            ],
+                  if (uiState.showSharedWithMe)
+                    TweenAnimationBuilder<double>(
+                      tween: Tween(begin: 0.0, end: 1.0),
+                      duration: const Duration(milliseconds: 200),
+                      builder: (context, value, child) {
+                        return Opacity(
+                          opacity: value,
+                          child: Transform.translate(
+                            offset: Offset(0, 10 * value - 10),
+                            child: child,
+                          ),
+                        );
+                      },
+                      child: GestureDetector(
+                        onTap: () {
+                          _uiCubit.toggleSharedWithMe(); // Close the menu
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const SharedWithMeScreen(),
+                            ),
+                          );
+                        },
+                        child: Container(
+                          margin: const EdgeInsets.only(top: 8),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 10,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Theme.of(context).cardColor.withOpacity(0.95),
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(color: Theme.of(context).dividerColor),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.3),
+                                blurRadius: 10,
+                                spreadRadius: 1,
+                              ),
+                            ],
+                          ),
+                          child: Text(
+                            AppLocalizations.of(context)!.sharedWithMe,
+                            style: TextStyle(
+                              color: Theme.of(context).colorScheme.onSurface,
+                              fontSize: 13,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                ],
+              );
+            },
           ),
         ],
       ),

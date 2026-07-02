@@ -1012,5 +1012,8 @@
                 "slotUnavailable": "स्लॉट उपलब्ध नहीं है",
                 "slotAvailable": "स्लॉट उपलब्ध है",
                 "distanceUnitSelection": "दूरी इकाई",
-                "miles": "मील"
+                "miles": "मील",
+                "locationSharedWithMe": "मेरे साथ शेयर की गई लोकेशन",
+                "noOneSharedLocationTitle": "अभी किसी ने भी अपने वाहन की लोकेशन आपके साथ शेयर नहीं की है।",
+                "noOneSharedLocationSub": "जब लोग आपके साथ अपनी लाइव ट्रिप शेयर करेंगे, तब आपको यहाँ उनके नाम दिखाई देंगे।"
 }

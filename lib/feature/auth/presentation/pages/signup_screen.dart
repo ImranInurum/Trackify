@@ -27,9 +27,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
-  final _mobileController = TextEditingController();
-  final _stateController = TextEditingController();
-  final _cityController = TextEditingController();
 
   @override
   void dispose() {
@@ -37,9 +34,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
     _emailController.dispose();
     _passwordController.dispose();
     _confirmPasswordController.dispose();
-    _mobileController.dispose();
-    _stateController.dispose();
-    _cityController.dispose();
     super.dispose();
   }
 
@@ -52,10 +46,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
         'name': _nameController.text.trim(),
         'email': _emailController.text.trim(),
         'password': _passwordController.text.trim(),
-        'password_confirmation': _confirmPasswordController.text.trim(),
-        'mobile_number': _mobileController.text.trim(),
-        'state': _stateController.text.trim(),
-        'city': _cityController.text.trim(),
+        'confirm_password': _confirmPasswordController.text.trim(),
         'role': 'customer',
       };
 
@@ -151,9 +142,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
             builder: (context, splashState) {
               final theme = Theme.of(context);
               final textTheme = theme.textTheme;
-              return Center(
-                child: SingleChildScrollView(
-                  padding: const EdgeInsets.symmetric(horizontal: 24.0),
+              return SingleChildScrollView(
+                  padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
                   child: Form(
                     key: _formKey,
                     child: Column(
@@ -186,6 +176,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             l10n.invalidEmail,
                           ),
                         ),
+                        const SizedBox(height: 20),
                         _buildFieldLabel(l10n.password, textTheme),
                         const SizedBox(height: 8),
                         CustomFormField(
@@ -216,45 +207,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             }
                             return null;
                           },
-                        ),
-                        const SizedBox(height: 20),
-                        _buildFieldLabel(l10n.mobileNumber, textTheme),
-                        const SizedBox(height: 8),
-                        CustomFormField(
-                          header: '',
-                          hint: l10n.mobileNumberHint,
-                          value: _mobileController,
-                          keyboardType: TextInputType.phone,
-                          maxLength: 10,
-                          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                          validator: (value) => Validators.validatePhone(
-                            value,
-                            l10n.mobileNumberRequired,
-                            l10n.invalidMobileNumber,
-                          ),
-                        ),
-
-                        const SizedBox(height: 20),
-                        _buildFieldLabel(l10n.state, textTheme),
-                        const SizedBox(height: 8),
-                        CustomFormField(
-                          header: '',
-                          hint: l10n.stateHint,
-                          value: _stateController,
-                          keyboardType: TextInputType.text,
-                          validator: (value) =>
-                              Validators.validateRequired(value, l10n.stateRequired),
-                        ),
-                        const SizedBox(height: 20),
-                        _buildFieldLabel(l10n.city, textTheme),
-                        const SizedBox(height: 8),
-                        CustomFormField(
-                          header: '',
-                          hint: l10n.cityHint,
-                          value: _cityController,
-                          keyboardType: TextInputType.text,
-                          validator: (value) =>
-                              Validators.validateRequired(value, l10n.cityRequired),
                         ),
                         const SizedBox(height: 32),
                         CommonButton(
@@ -291,7 +243,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       ],
                     ),
                   ),
-                ),
               );
             },
           );

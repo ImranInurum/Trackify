@@ -2495,4 +2495,15 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get miles => 'ميل';
+
+  @override
+  String get locationSharedWithMe => 'الموقع تمت مشاركته معي';
+
+  @override
+  String get noOneSharedLocationTitle =>
+      'لم يقم أحد بمشاركة موقع مركبته معك في الوقت الحالي';
+
+  @override
+  String get noOneSharedLocationSub =>
+      'ستجد هنا أسماء الأشخاص الذين شاركوا موقعهم معك.';
 }

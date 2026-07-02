@@ -25,6 +25,7 @@ class FeatureCard extends StatelessWidget {
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
                 color: Theme.of(context).textTheme.bodyLarge?.color,
                 fontWeight: FontWeight.w500,
+                fontSize: 10,
               ),
             ),
           ],

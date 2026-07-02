@@ -75,7 +75,7 @@ class _VehicleOnMapCardState extends State<VehicleOnMapCard>
   Widget build(BuildContext context) {
     return Container(
       margin: widget.margin ?? const EdgeInsets.symmetric(horizontal: 16),
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
         color: widget.cardColor,
         borderRadius: widget.borderRadius ?? BorderRadius.circular(20),
@@ -89,7 +89,7 @@ class _VehicleOnMapCardState extends State<VehicleOnMapCard>
               Text(
                 AppLocalizations.of(context)!.yourVehicleOnMap,
                 style: TextStyle(
-                  fontSize: 18,
+                  fontSize: 16,
                   fontWeight: FontWeight.w700,
                   color: widget.primaryTextColor,
                 ),
@@ -138,16 +138,16 @@ class _VehicleOnMapCardState extends State<VehicleOnMapCard>
               ),
             ],
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 12),
           Text(
             AppLocalizations.of(context)!.selectIcon,
             style: TextStyle(
-              fontSize: 15,
+              fontSize: 13,
               color: widget.secondaryTextColor,
               fontWeight: FontWeight.w500,
             ),
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 12),
           Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
@@ -175,16 +175,16 @@ class _VehicleOnMapCardState extends State<VehicleOnMapCard>
               ),
             ],
           ),
-          const SizedBox(height: 30),
+          const SizedBox(height: 16),
           Text(
             AppLocalizations.of(context)!.selectColor,
             style: TextStyle(
-              fontSize: 15,
+              fontSize: 13,
               color: widget.secondaryTextColor,
               fontWeight: FontWeight.w500,
             ),
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 12),
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             child: Row(
@@ -230,7 +230,7 @@ class _VehicleOnMapCardState extends State<VehicleOnMapCard>
             ),
           ),
           if (widget.showSaveButton) ...[
-            const SizedBox(height: 30),
+            const SizedBox(height: 16),
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
@@ -238,7 +238,7 @@ class _VehicleOnMapCardState extends State<VehicleOnMapCard>
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFFFBB03B),
                   foregroundColor: Colors.black,
-                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  padding: const EdgeInsets.symmetric(vertical: 8),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -246,7 +246,7 @@ class _VehicleOnMapCardState extends State<VehicleOnMapCard>
                 ),
                 child: Text(
                   AppLocalizations.of(context)!.saveChanges,
-                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
                 ),
               ),
             ),

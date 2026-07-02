@@ -1064,5 +1064,8 @@
               "slotUnavailable": "Slot Unavailable",
               "slotAvailable": "Slot Available",
               "distanceUnitSelection": "Distance Unit",
-              "miles": "Miles"
+              "miles": "Miles",
+              "locationSharedWithMe": "Location shared with me",
+              "noOneSharedLocationTitle": "No one has shared their vehicle's location with you right now",
+              "noOneSharedLocationSub": "You'll find the names of individuals who have shared their location with you right here."
 }

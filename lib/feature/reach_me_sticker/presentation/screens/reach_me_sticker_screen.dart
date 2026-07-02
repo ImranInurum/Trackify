@@ -4,6 +4,7 @@ import '../widgets/sticker_badge.dart';
 import '../widgets/feature_card.dart';
 import '../widgets/feature_list_item.dart';
 import '../widgets/sticker_action_buttons.dart';
+import 'scan_qr_screen.dart';
 
 class ReachMeStickerScreen extends StatefulWidget {
   const ReachMeStickerScreen({super.key});
@@ -43,24 +44,24 @@ class _ReachMeStickerScreenState extends State<ReachMeStickerScreen> {
             Text(
               l10n.stickerSubtitle,
               textAlign: TextAlign.center,
-              style: theme.textTheme.bodyLarge?.copyWith(
+              style: theme.textTheme.bodySmall?.copyWith(
                 color: theme.textTheme.bodySmall?.color,
                 fontWeight: FontWeight.w500,
               ),
             ),
 
-            const SizedBox(height: 24),
+            const SizedBox(height: 16),
 
             // Banner Image
             ClipRRect(
               borderRadius: BorderRadius.circular(16),
               child: Image.asset(
                 'assets/images/scanner_image.png',
-                width: double.infinity,
-                fit: BoxFit.cover,
+                height: 220,
+                fit: BoxFit.contain,
                 errorBuilder: (context, error, stackTrace) {
                   return Container(
-                    height: 200,
+                    height: 220,
                     color: theme.cardColor,
                     child: const Icon(Icons.image_not_supported, size: 50),
                   );
@@ -68,32 +69,39 @@ class _ReachMeStickerScreenState extends State<ReachMeStickerScreen> {
               ),
             ),
 
-            const SizedBox(height: 24),
+            const SizedBox(height: 16),
 
             // Action Buttons
             StickerActionButtons(
               activateLabel: l10n.activateContactSticker,
               buyLabel: l10n.buyNewContactSticker,
               onActivate: () {
-                // TODO: Implement activation
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => const ScanQrScreen(),
+                  ),
+                );
               },
               onBuy: () {
-                // TODO: Implement buy
+                // TODO: Add buy link/logic here when available
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Buy feature coming soon...')),
+                );
               },
             ),
 
-            const SizedBox(height: 40),
+            const SizedBox(height: 24),
 
             // Beyond Parking Problems Section
             Text(
               l10n.beyondParkingProblems,
               style: theme.textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.bold,
-                fontSize: 18,
+                fontSize: 14,
               ),
             ),
 
-            const SizedBox(height: 25),
+            const SizedBox(height: 16),
 
             Row(
               children: [
@@ -101,12 +109,12 @@ class _ReachMeStickerScreenState extends State<ReachMeStickerScreen> {
                   icon: Icons.not_interested_rounded,
                   label: l10n.noParkings,
                 ),
-                const SizedBox(width: 12),
+                const SizedBox(width: 8),
                 FeatureCard(
                   icon: Icons.medical_services_outlined,
                   label: l10n.emergencies,
                 ),
-                const SizedBox(width: 12),
+                const SizedBox(width: 8),
                 FeatureCard(
                   icon: Icons.car_repair_outlined,
                   label: l10n.vehicleTowing,
@@ -114,11 +122,11 @@ class _ReachMeStickerScreenState extends State<ReachMeStickerScreen> {
               ],
             ),
 
-            const SizedBox(height: 40),
+            const SizedBox(height: 24),
 
             // Info Section
             Container(
-              padding: const EdgeInsets.all(20),
+              padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
                 color: theme.cardColor.withOpacity(0.5),
                 borderRadius: BorderRadius.circular(20),
@@ -134,10 +142,10 @@ class _ReachMeStickerScreenState extends State<ReachMeStickerScreen> {
                     textAlign: TextAlign.center,
                     style: theme.textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.bold,
-                      fontSize: 23,
+                      fontSize: 16,
                     ),
                   ),
-                  const SizedBox(height: 22),
+                  const SizedBox(height: 16),
 
                   FeatureListItem(
                     icon: Icons.verified_user_rounded,
@@ -168,17 +176,28 @@ class _ReachMeStickerScreenState extends State<ReachMeStickerScreen> {
               ),
             ),
 
-            const SizedBox(height: 40),
+            const SizedBox(height: 24),
 
             // Repeat Buttons at bottom
             StickerActionButtons(
               activateLabel: l10n.activateContactSticker,
               buyLabel: l10n.buyNewContactSticker,
-              onActivate: () {},
-              onBuy: () {},
+              onActivate: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => const ScanQrScreen(),
+                  ),
+                );
+              },
+              onBuy: () {
+                // TODO: Add buy link/logic here when available
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Buy feature coming soon...')),
+                );
+              },
             ),
 
-            const SizedBox(height: 40),
+            const SizedBox(height: 24),
           ],
         ),
       ),

@@ -20,7 +20,7 @@ class StickerActionButtons extends StatelessWidget {
       children: [
         SizedBox(
           width: double.infinity,
-          height: 54,
+          height: 48,
           child: ElevatedButton(
             onPressed: onActivate,
             style: ElevatedButton.styleFrom(
@@ -33,14 +33,14 @@ class StickerActionButtons extends StatelessWidget {
             ),
             child: Text(
               activateLabel,
-              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
             ),
           ),
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: 12),
         SizedBox(
           width: double.infinity,
-          height: 54,
+          height: 48,
           child: OutlinedButton(
             onPressed: onBuy,
             style: OutlinedButton.styleFrom(
@@ -56,7 +56,7 @@ class StickerActionButtons extends StatelessWidget {
               buyLabel,
               style: TextStyle(
                 color: Theme.of(context).colorScheme.primary,
-                fontSize: 16,
+                fontSize: 14,
                 fontWeight: FontWeight.bold,
               ),
             ),

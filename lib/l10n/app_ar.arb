@@ -1014,5 +1014,8 @@
                 "slotUnavailable": "الفترة غير متاحة",
                 "slotAvailable": "الفترة متاحة",
                 "distanceUnitSelection": "وحدة المسافة",
-                "miles": "ميل"
+                "miles": "ميل",
+                "locationSharedWithMe": "الموقع تمت مشاركته معي",
+                "noOneSharedLocationTitle": "لم يقم أحد بمشاركة موقع مركبته معك في الوقت الحالي",
+                "noOneSharedLocationSub": "ستجد هنا أسماء الأشخاص الذين شاركوا موقعهم معك."
 }

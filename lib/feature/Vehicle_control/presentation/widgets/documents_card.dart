@@ -30,7 +30,7 @@ class DocumentsCard extends StatelessWidget {
 
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       margin: const EdgeInsets.symmetric(horizontal: 16),
       decoration: BoxDecoration(
         color: Theme.of(context).cardColor,
@@ -53,11 +53,11 @@ class DocumentsCard extends StatelessWidget {
                     subtitle: l10n.personalDocumentsSubtitle,
                   ),
                 ),
-                Icon(Icons.arrow_forward, color: colorScheme.onSurfaceVariant, size: 24),
+                Icon(Icons.arrow_forward, color: colorScheme.onSurfaceVariant, size: 20),
               ],
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 12),
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             child: Row(
@@ -142,8 +142,8 @@ class DocumentsCard extends StatelessWidget {
       child: Column(
         children: [
           Container(
-            width: screenWidth * 0.30,
-            height: screenWidth * 0.30,
+            width: screenWidth * 0.25,
+            height: screenWidth * 0.25,
             decoration: BoxDecoration(
               color: Theme.of(context).cardColor,
               borderRadius: BorderRadius.circular(12),
@@ -152,7 +152,7 @@ class DocumentsCard extends StatelessWidget {
             child: customContent ??
                 Center(
                   child: Icon(Icons.note_add_outlined,
-                      color: colorScheme.onSurfaceVariant.withOpacity(0.5), size: 32),
+                      color: colorScheme.onSurfaceVariant.withOpacity(0.5), size: 24),
                 ),
           ),
           const SizedBox(height: 8),
