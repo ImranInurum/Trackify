@@ -186,7 +186,7 @@
   "alreadyHaveAccount": "Already have an account?",
   "dataPlan": "Data Plan",
   "warranty": "Warranty",
-  "expiresInDays": "Expires in {days} days",
+  "expiresInDays": "{days} days left",
   "@expiresInDays": {
     "placeholders": {
       "days": {

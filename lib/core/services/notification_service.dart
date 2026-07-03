@@ -55,17 +55,27 @@ class NotificationService {
       },
     );
 
-    // Ensure Android channel exists and request notifications permission (Android 13+)
+    // Ensure Android channels exist and request notifications permission (Android 13+)
     final androidPlugin = _plugin
         .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>();
-    await androidPlugin?.createNotificationChannel(
-      const AndroidNotificationChannel(
-        _androidChannelId,
-        _androidChannelName,
-        description: _androidChannelDesc,
-        importance: Importance.max,
-      ),
-    );
+    
+    // Create multiple channels for specific alerts
+    final channels = [
+      const AndroidNotificationChannel(_androidChannelId, _androidChannelName, description: _androidChannelDesc, importance: Importance.max),
+      const AndroidNotificationChannel('vibration_alerts', 'Vibration alerts', description: 'Notifications for Vibration Alerts', importance: Importance.max),
+      const AndroidNotificationChannel('motion_alerts', 'Motion alerts', description: 'Notifications for Motion Detected Alerts', importance: Importance.max),
+      const AndroidNotificationChannel('ignition_alerts', 'Ignition alerts', description: 'Notifications for Ignition Alerts', importance: Importance.max),
+      const AndroidNotificationChannel('fall_alerts', 'Fall alerts', description: 'Notifications for Fall Alerts', importance: Importance.max),
+      const AndroidNotificationChannel('battery_alerts', 'Battery alerts', description: 'Notifications for Battery Alerts', importance: Importance.max),
+      const AndroidNotificationChannel('geofence_alerts', 'Geofence alerts', description: 'Notifications for Geofence Alerts', importance: Importance.max),
+      const AndroidNotificationChannel('speed_alerts', 'Speed alerts', description: 'Notifications for Speed Alerts', importance: Importance.max),
+      const AndroidNotificationChannel('other_alerts', 'Other alerts', description: 'General Notifications', importance: Importance.max),
+      const AndroidNotificationChannel('custom_notifications', 'Custom notifications', description: 'Custom App Notifications', importance: Importance.max),
+    ];
+
+    for (var channel in channels) {
+      await androidPlugin?.createNotificationChannel(channel);
+    }
     await androidPlugin?.requestNotificationsPermission();
 
     // FCM setup: permissions, foreground presentation, listeners

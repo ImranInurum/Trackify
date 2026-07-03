@@ -18,6 +18,7 @@ class HealthInsuranceModel extends HealthInsuranceEntity {
   HealthInsuranceModel({
     required super.bloodGroup,
     required super.insuranceList,
+    super.savedData,
   });
 
   factory HealthInsuranceModel.fromMap(Map<String, dynamic> map) {

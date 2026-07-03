@@ -3,6 +3,7 @@ import 'package:geocoding/geocoding.dart';
 import '../../domain/entity/geo_fence_entity.dart';
 import '../../domain/usecase/add_geo_fence_usecase.dart';
 import '../../domain/usecase/delete_geo_fence_usecase.dart';
+import '../../domain/usecase/edit_geo_fence_usecase.dart';
 import '../../domain/usecase/get_geo_fence_usecase.dart';
 
 import 'geo_fence_state.dart';
@@ -10,11 +11,13 @@ import 'geo_fence_state.dart';
 class GeoFenceCubit extends Cubit<GeoFenceState> {
   final GetGeoFenceUseCase _getGeoFenceUseCase;
   final AddGeoFenceUseCase _addGeoFenceUseCase;
+  final EditGeoFenceUseCase _editGeoFenceUseCase;
   final DeleteGeoFenceUseCase _deleteGeoFenceUseCase;
 
   GeoFenceCubit(
     this._getGeoFenceUseCase,
     this._addGeoFenceUseCase,
+    this._editGeoFenceUseCase,
     this._deleteGeoFenceUseCase,
   ) : super(GeoFenceInitial());
 
@@ -120,6 +123,19 @@ class GeoFenceCubit extends Cubit<GeoFenceState> {
 
     try {
       await _addGeoFenceUseCase(geoFence);
+      emit(GeoFenceSuccess());
+      // Refresh list after success
+      fetchGeoFences(geoFence.imei);
+    } catch (e) {
+      emit(GeoFenceError(e.toString()));
+    }
+  }
+
+  Future<void> editGeoFence(GeoFenceEntity geoFence) async {
+    emit(GeoFenceSubmitting());
+
+    try {
+      await _editGeoFenceUseCase(geoFence);
       emit(GeoFenceSuccess());
       // Refresh list after success
       fetchGeoFences(geoFence.imei);

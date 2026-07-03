@@ -28,6 +28,20 @@ class GeoFenceRepositoryImpl implements GeoFenceRepository {
   }
 
   @override
+  Future<void> editGeoFence(GeoFenceEntity geoFence) {
+    return remoteDataSource.editGeoFence(GeoFenceModel(
+      id: geoFence.id,
+      imei: geoFence.imei,
+      name: geoFence.name,
+      type: geoFence.type,
+      latitude: geoFence.latitude,
+      longitude: geoFence.longitude,
+      radius: geoFence.radius,
+      vehicleName: geoFence.vehicleName,
+    ));
+  }
+
+  @override
   Future<void> deleteGeoFence(String imei, String fenceId) {
     return remoteDataSource.deleteGeoFence(imei, fenceId);
   }

@@ -482,7 +482,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String expiresInDays(String days) {
-    return 'Expires in $days days';
+    return '$days days left';
   }
 
   @override

@@ -36,4 +36,23 @@ class HealthInsuranceRemoteDataSource {
       return SaveHealthInsuranceResponseModel.fromJson(data);
     });
   }
+
+  /// Fetches the saved health insurance details for a user.
+  Future<SaveHealthInsuranceResponseModel?> getSavedHealthInsurance(String userId) async {
+    try {
+      final response = await _apiServices.getGetApiResponse(
+        ApiURL.getHealthInsurance(userId),
+      );
+      return response.fold((l) => null, (r) {
+        final Map<String, dynamic> responseData = r as Map<String, dynamic>? ?? {};
+        final Map<String, dynamic>? data = responseData['data'] as Map<String, dynamic>?;
+        if (data != null && data.isNotEmpty) {
+           return SaveHealthInsuranceResponseModel.fromJson(data);
+        }
+        return null;
+      });
+    } catch (e) {
+      return null;
+    }
+  }
 }

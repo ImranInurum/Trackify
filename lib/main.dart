@@ -118,6 +118,7 @@ import 'package:trackify/feature/geo_fence/data/data_source/geo_fence_remote_dat
 import 'package:trackify/feature/geo_fence/data/repository/geo_fence_repository_impl.dart';
 import 'package:trackify/feature/geo_fence/domain/usecase/get_geo_fence_usecase.dart';
 import 'package:trackify/feature/geo_fence/domain/usecase/add_geo_fence_usecase.dart';
+import 'package:trackify/feature/geo_fence/domain/usecase/edit_geo_fence_usecase.dart';
 import 'package:trackify/feature/geo_fence/domain/usecase/delete_geo_fence_usecase.dart';
 import 'package:trackify/core/common/usecase/get_user_vehicles_usecase.dart';
 import 'package:trackify/core/config/network/network_api_service.dart';
@@ -319,6 +320,7 @@ List<BlocProvider> _buildBlocProviders() {
         return GeoFenceCubit(
           GetGeoFenceUseCase(repository),
           AddGeoFenceUseCase(repository),
+          EditGeoFenceUseCase(repository),
           DeleteGeoFenceUseCase(repository),
         );
       },

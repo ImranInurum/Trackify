@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:trackify/feature/app_updates/presentiation/pages/update_screen.dart';
 import 'package:trackify/core/config/font_manager.dart';
 import 'package:trackify/core/utils/shared_preferences.dart';
 import 'package:trackify/feature/help_and_support/presentation/pages/my_issue_screen.dart';
@@ -79,7 +80,7 @@ class _HelpSuggestionScreenState extends State<HelpSuggestionScreen> {
           l10n.helpAndSuggestion,
           style: TextStyle(
             color: Theme.of(context).colorScheme.onSurface,
-            fontSize: 18,
+            fontSize: 17,
             fontWeight: FontWeight.w500,
           ),
         ),
@@ -113,11 +114,11 @@ class _HelpSuggestionScreenState extends State<HelpSuggestionScreen> {
                     );
                   },
                 ),
-                const SizedBox(height: 12),
-                _buildWhatsAppButton(l10n),
                 const SizedBox(height: 24),
-                _buildForceMigrateSection(l10n),
-                const SizedBox(height: 24),
+                // _buildWhatsAppButton(l10n),
+                // const SizedBox(height: 24),
+                // _buildForceMigrateSection(l10n),
+                // const SizedBox(height: 24),
                 _buildBottomMenu(l10n),
                 const SizedBox(height: 48),
                 _buildVersionInfo(),
@@ -223,7 +224,7 @@ class _HelpSuggestionScreenState extends State<HelpSuggestionScreen> {
             isReportIssue
                 ? l10n.reportAnIssue
                 : l10n.suggestion, // Or another key if available
-            style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+            style: const TextStyle(fontSize: 21, fontWeight: FontWeight.bold),
           ),
 
           const SizedBox(height: 18),
@@ -234,7 +235,7 @@ class _HelpSuggestionScreenState extends State<HelpSuggestionScreen> {
                 ? l10n.iHaveAnIssueWith
                 : l10n.iWantToProvideSuggestion,
             style: TextStyle(
-              fontSize: 14,
+              fontSize: 13,
               color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
             ),
           ),
@@ -305,7 +306,7 @@ class _HelpSuggestionScreenState extends State<HelpSuggestionScreen> {
                 contentPadding: const EdgeInsets.symmetric(horizontal: 14),
                 hintText: l10n.selectType,
                 hintStyle: TextStyle(
-                  fontSize: 15,
+                  fontSize: 14,
                   color: Theme.of(context)
                       .colorScheme
                       .onSurface
@@ -329,7 +330,7 @@ class _HelpSuggestionScreenState extends State<HelpSuggestionScreen> {
                 ),
               ),
               style: TextStyle(
-                fontSize: 15,
+                fontSize: 14,
                 color: Theme.of(context).colorScheme.onSurface,
               ),
 
@@ -373,7 +374,7 @@ class _HelpSuggestionScreenState extends State<HelpSuggestionScreen> {
                   : l10n.whatIsSuggestionSubject,
               hintStyle: TextStyle(
                 color: Theme.of(context).colorScheme.onSurface.withOpacity(0.4),
-                fontSize: 16,
+                fontSize: 15,
               ),
               enabledBorder: UnderlineInputBorder(
                 borderSide: BorderSide(color: Theme.of(context).dividerColor),
@@ -401,7 +402,7 @@ class _HelpSuggestionScreenState extends State<HelpSuggestionScreen> {
                   : l10n.giveSuggestionFeedback,
               hintStyle: TextStyle(
                 color: Theme.of(context).colorScheme.onSurface.withOpacity(0.4),
-                fontSize: 16,
+                fontSize: 15,
               ),
               enabledBorder: UnderlineInputBorder(
                 borderSide: BorderSide(color: Theme.of(context).dividerColor),
@@ -421,7 +422,7 @@ class _HelpSuggestionScreenState extends State<HelpSuggestionScreen> {
               padding: const EdgeInsets.only(bottom: 16),
               child: Text(
                 l10n.allFieldsMandatory,
-                style: const TextStyle(color: Colors.red, fontSize: 13),
+                style: const TextStyle(color: Colors.red, fontSize: 12),
               ),
             ),
 
@@ -561,7 +562,7 @@ class _HelpSuggestionScreenState extends State<HelpSuggestionScreen> {
 
                               fontWeight: FontWeight.bold,
 
-                              fontSize: 16,
+                              fontSize: 15,
                             ),
                           ),
                   ),
@@ -590,7 +591,7 @@ class _HelpSuggestionScreenState extends State<HelpSuggestionScreen> {
             Text(
               title,
               style: TextStyle(
-                fontSize: 16,
+                fontSize: 15,
                 fontWeight: FontWeight.w500,
                 color: Theme.of(context).colorScheme.onSurface,
               ),
@@ -627,7 +628,7 @@ class _HelpSuggestionScreenState extends State<HelpSuggestionScreen> {
           Text(
             l10n.whatsApp,
             style: TextStyle(
-              fontSize: 16,
+              fontSize: 15,
               color: Theme.of(context).colorScheme.onSurface,
             ),
           ),
@@ -642,14 +643,14 @@ class _HelpSuggestionScreenState extends State<HelpSuggestionScreen> {
       children: [
         Text(
           l10n.forceMigrate,
-          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          style: const TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 12),
         Text(
           l10n.forceMigrateDesc1,
           style: TextStyle(
             color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
-            fontSize: 14,
+            fontSize: 13,
             height: 1.4,
           ),
         ),
@@ -658,7 +659,7 @@ class _HelpSuggestionScreenState extends State<HelpSuggestionScreen> {
           l10n.forceMigrateDesc2,
           style: TextStyle(
             color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
-            fontSize: 14,
+            fontSize: 13,
             height: 1.4,
           ),
         ),
@@ -679,7 +680,7 @@ class _HelpSuggestionScreenState extends State<HelpSuggestionScreen> {
               style: TextStyle(
                 color: Theme.of(context).colorScheme.onPrimary,
                 fontWeight: FontWeight.bold,
-                fontSize: 16,
+                fontSize: 15,
               ),
             ),
           ),
@@ -694,23 +695,30 @@ class _HelpSuggestionScreenState extends State<HelpSuggestionScreen> {
         _buildSimplifiedMenuRow(l10n.faq),
         _buildSimplifiedMenuRow(l10n.termsConditions),
         _buildSimplifiedMenuRow(l10n.privacyPolicy),
-        _buildSimplifiedMenuRow(l10n.changeLog),
+        _buildSimplifiedMenuRow(l10n.changeLog, onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => const UpdateScreen(),
+            ),
+          );
+        }),
       ],
     );
   }
 
-  Widget _buildSimplifiedMenuRow(String title) {
+  Widget _buildSimplifiedMenuRow(String title, {VoidCallback? onTap}) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 14),
       child: InkWell(
-        onTap: () {},
+        onTap: onTap ?? () {},
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
               title,
               style: TextStyle(
-                fontSize: 16,
+                fontSize: 15,
                 color: Theme.of(context).colorScheme.onSurface,
               ),
             ),
@@ -732,7 +740,7 @@ class _HelpSuggestionScreenState extends State<HelpSuggestionScreen> {
         "B3000507.V19.7.1.J406",
         style: TextStyle(
           color: Theme.of(context).colorScheme.onSurface.withOpacity(0.4),
-          fontSize: 12,
+          fontSize: 11,
         ),
       ),
     );

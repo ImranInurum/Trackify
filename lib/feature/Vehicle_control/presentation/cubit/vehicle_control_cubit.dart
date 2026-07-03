@@ -6,6 +6,10 @@ import '../../../../core/config/network/exceptions.dart';
 import '../../domain/entities/vehicle_control_entity.dart';
 import '../../domain/repositories/vehicle_control_repository.dart';
 import '../state/vehicle_control_state.dart';
+import 'package:trackify/main.dart';
+import 'package:trackify/feature/map/presentation/cubit/map_cubit.dart';
+import 'package:trackify/feature/my_garage/presentation/cubit/my_garage_cubit.dart';
+import 'package:trackify/feature/profile/presentation/cubit/profile_cubit.dart';
 
 class VehicleControlCubit extends Cubit<VehicleControlState> {
   final VehicleControlRepository repository;
@@ -16,6 +20,19 @@ class VehicleControlCubit extends Cubit<VehicleControlState> {
   void emit(VehicleControlState state) {
     if (!isClosed) {
       super.emit(state);
+    }
+  }
+
+  void _refreshGlobalVehicleLists() {
+    final context = rootNavigatorKey.currentContext;
+    if (context != null) {
+      try {
+        context.read<MapCubit>().fetchVehicles();
+        context.read<MyGarageCubit>().fetchVehicles();
+        context.read<ProfileCubit>().fetchVehicles();
+      } catch (e) {
+        // Handle gracefully if any cubit is not available
+      }
     }
   }
 
@@ -116,6 +133,7 @@ class VehicleControlCubit extends Cubit<VehicleControlState> {
         await repository.updateVehicleIcon(vehicleIMEI, currentState.tempIcon);
         await repository.updateVehicleColor(vehicleIMEI, currentState.tempColor);
         loadVehicleDetails(vehicleIMEI);
+        _refreshGlobalVehicleLists();
       } catch (e) {
         emit(currentState.copyWith(actionError: e.toString()));
       }
@@ -127,6 +145,7 @@ class VehicleControlCubit extends Cubit<VehicleControlState> {
     try {
       await repository.updateTankCapacity(vehicleIMEI, capacity);
       loadVehicleDetails(vehicleIMEI);
+      _refreshGlobalVehicleLists();
     } catch (e) {
       if (currentState is VehicleControlLoaded) {
         emit(currentState.copyWith(actionError: e.toString()));
@@ -141,6 +160,7 @@ class VehicleControlCubit extends Cubit<VehicleControlState> {
     try {
       await repository.updateMileage(vehicleIMEI, mileage);
       loadVehicleDetails(vehicleIMEI);
+      _refreshGlobalVehicleLists();
     } catch (e) {
       if (currentState is VehicleControlLoaded) {
         emit(currentState.copyWith(actionError: e.toString()));
@@ -175,6 +195,7 @@ class VehicleControlCubit extends Cubit<VehicleControlState> {
         modelId: modelId,
       );
       loadVehicleDetails(vehicleIMEI);
+      _refreshGlobalVehicleLists();
     } catch (e) {
       if (currentState is VehicleControlLoaded) {
         emit(currentState.copyWith(actionError: e.toString()));
@@ -189,6 +210,7 @@ class VehicleControlCubit extends Cubit<VehicleControlState> {
     try {
       await repository.updateVehicleImage(vehicleIMEI, imagePath);
       loadVehicleDetails(vehicleIMEI);
+      _refreshGlobalVehicleLists();
     } catch (e) {
       if (currentState is VehicleControlLoaded) {
         emit(currentState.copyWith(actionError: e.toString()));
@@ -203,6 +225,7 @@ class VehicleControlCubit extends Cubit<VehicleControlState> {
     try {
       await repository.updateVehicleLock(vehicleIMEI, lockState);
       loadVehicleDetails(vehicleIMEI);
+      _refreshGlobalVehicleLists();
     } catch (e) {
       if (currentState is VehicleControlLoaded) {
         emit(currentState.copyWith(actionError: e.toString()));
@@ -227,6 +250,7 @@ class VehicleControlCubit extends Cubit<VehicleControlState> {
       }
 
       emit(const VehicleControlDeleted());
+      _refreshGlobalVehicleLists();
     } catch (e) {
       if (currentState is VehicleControlLoaded) {
         emit(currentState.copyWith(actionError: e.toString()));

@@ -55,6 +55,8 @@ import '../cubit/map_state.dart';
 import '../../../../l10n/app_localizations.dart';
 import 'package:trackify/core/common/models/vehicle_list_model.dart';
 import 'package:trackify/core/utils/distance_utils.dart';
+import 'package:trackify/feature/geo_fence/presentation/cubit/geo_fence_cubit.dart';
+import 'package:trackify/feature/geo_fence/presentation/cubit/geo_fence_state.dart';
 
 class MapScreen extends StatefulWidget {
   const MapScreen({super.key});
@@ -208,8 +210,30 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
         context.read<MapCubit>().fetchVehicles();
+        final primaryColor = Theme.of(context).colorScheme.primary;
+        _loadGeoFenceIcons(primaryColor);
       }
     });
+  }
+
+  BitmapDescriptor? _homeIcon;
+  BitmapDescriptor? _officeIcon;
+  BitmapDescriptor? _familyIcon;
+  BitmapDescriptor? _parkingIcon;
+  BitmapDescriptor? _othersIcon;
+
+  GeoFenceState? _lastGeoState;
+  Set<Circle> _cachedGeoCircles = {};
+  Set<Marker> _cachedGeoMarkers = {};
+
+  Future<void> _loadGeoFenceIcons(Color primaryColor) async {
+    _homeIcon = await MapUtils.createGeoFenceMarkerIcon(Icons.home_outlined, primaryColor);
+    _officeIcon = await MapUtils.createGeoFenceMarkerIcon(Icons.apartment_outlined, primaryColor);
+    _familyIcon = await MapUtils.createGeoFenceMarkerIcon(Icons.person_outline, primaryColor);
+    _parkingIcon = await MapUtils.createGeoFenceMarkerIcon(Icons.local_parking_outlined, primaryColor);
+    _othersIcon = await MapUtils.createGeoFenceMarkerIcon(Icons.location_on_outlined, primaryColor);
+    _cachedGeoMarkers.clear(); // invalidate cache to apply new icons
+    if (mounted) _mapRebuildNotifier.value++;
   }
 
   void _scrollListener() {
@@ -281,7 +305,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
       if (!mounted) return;
       _animateCameraTo(
         target: target,
-        zoom: 13.0,
+        zoom: 16.0,
         tilt: 0.0,
         bearing: _animatedMarkerPos != null ? _animatedMarkerBearing : bearing,
         duration: const Duration(milliseconds: 4000), // slow cinematic glide
@@ -429,32 +453,51 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
               listener: (context, state) {
                 if (state is MapLoaded) {
                   final vehicles = state.vehicleList.vehicles ?? [];
-                  if (vehicles.isNotEmpty && _selectedDevice == null) {
-                    final savedUid = prefs.getSync(key: AppPreference.KEY_SELECTED_UID);
-                    final savedImei = prefs.getSync(key: AppPreference.IMEI);
+                  if (vehicles.isNotEmpty) {
+                    if (_selectedDevice == null) {
+                      final savedUid = prefs.getSync(key: AppPreference.KEY_SELECTED_UID);
+                      final savedImei = prefs.getSync(key: AppPreference.IMEI);
 
-                    final savedVehicle = vehicles.firstWhere(
-                      (v) => (savedUid.isNotEmpty && v.id == savedUid) || 
-                             (savedImei.isNotEmpty && v.imei == savedImei),
-                      orElse: () => vehicles.first,
-                    );
-                    
-                    setState(() {
-                      _selectedDevice = savedVehicle;
-                    });
-                    
-                    prefs.set(
-                      key: AppPreference.KEY_SELECTED_UID,
-                      value: savedVehicle.id,
-                    );
-                    prefs.set(
-                      key: AppPreference.IMEI,
-                      value: savedVehicle.imei ?? '',
-                    );
-                    
-                    print("selected device is ${savedVehicle.imei} with id ${savedVehicle.id}");
-                    // Refresh rides for the initially selected vehicle
-                    context.read<RideHistoryCubit>().getRideHistoryData();
+                      final savedVehicle = vehicles.firstWhere(
+                        (v) => (savedUid.isNotEmpty && v.id == savedUid) || 
+                               (savedImei.isNotEmpty && v.imei == savedImei),
+                        orElse: () => vehicles.first,
+                      );
+                      
+                      setState(() {
+                        _selectedDevice = savedVehicle;
+                      });
+                      
+                      prefs.set(
+                        key: AppPreference.KEY_SELECTED_UID,
+                        value: savedVehicle.id,
+                      );
+                      prefs.set(
+                        key: AppPreference.IMEI,
+                        value: savedVehicle.imei ?? '',
+                      );
+                      
+                      print("selected device is ${savedVehicle.imei} with id ${savedVehicle.id}");
+                      // Refresh rides for the initially selected vehicle
+                      context.read<RideHistoryCubit>().getRideHistoryData();
+                      if (savedVehicle.imei != null) {
+                         context.read<GeoFenceCubit>().fetchGeoFences(savedVehicle.imei!);
+                      }
+                    } else {
+                      // Update existing selected device if it was changed
+                      final updatedDevice = vehicles.firstWhere(
+                        (v) => v.id == _selectedDevice!.id || v.imei == _selectedDevice!.imei,
+                        orElse: () => _selectedDevice!,
+                      );
+                      if (updatedDevice != _selectedDevice) {
+                        setState(() {
+                          _selectedDevice = updatedDevice;
+                        });
+                        if (updatedDevice.imei != null) {
+                           context.read<GeoFenceCubit>().fetchGeoFences(updatedDevice.imei!);
+                        }
+                      }
+                    }
                   }
                 }
               },
@@ -600,7 +643,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
         );
       },
       child: Container(
-        height: 300,
+        height: 400,
         margin: const EdgeInsets.all(16),
         padding: EdgeInsets.all(6.0),
         decoration: BoxDecoration(
@@ -725,93 +768,131 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                   child: ClipRRect(
                     borderRadius: BorderRadius.all(Radius.circular(5)),
                     child: IgnorePointer(
-                      child: ValueListenableBuilder<int>(
-                        valueListenable: _mapRebuildNotifier,
-                        builder: (context, _, child) {
-                          final animPos = _animatedMarkerPos ?? bestPos!;
-                          final animBearing = _animatedMarkerPos != null ? _animatedMarkerBearing : bearing;
+                        child: ValueListenableBuilder<int>(
+                          valueListenable: _mapRebuildNotifier,
+                          builder: (context, _, child) {
+                            final animPos = _animatedMarkerPos ?? bestPos!;
+                            final animBearing = _animatedMarkerPos != null ? _animatedMarkerBearing : bearing;
 
-                          return GoogleMap(
-                              key: ValueKey(_selectedDevice?.id),
-                              initialCameraPosition: CameraPosition(
-                                target: bestPos!,
-                                zoom: 17.5,
-                                bearing: 0.0,
-                              ),
-                              myLocationEnabled: false,
-                              zoomControlsEnabled: false,
-                              myLocationButtonEnabled: false,
-                              scrollGesturesEnabled: false,
-                              zoomGesturesEnabled: false,
-                              tiltGesturesEnabled: false,
-                              rotateGesturesEnabled: false,
-                              mapType: appState.mapType == 'satellite'
-                                  ? MapType.satellite
-                                  : MapType.normal,
-                              trafficEnabled: appState.isTrafficEnabled,
-                              markers: {
-                                Marker(
-                                  markerId: const MarkerId('current_location'),
-                                  position: animPos,
-                                  icon:
-                                      _customMarker ?? BitmapDescriptor.defaultMarker,
-                                  anchor: const Offset(0.5, 0.5),
-                                  flat: true,
-                                  rotation: animBearing % 360,
-                                ),
-                              },
-                              onMapCreated: (GoogleMapController controller) async {
-                            _mapController = controller;
-  
-                            final appState = context.read<AppCubit>().state;
-                            if (_darkMapStyle == null || _lightMapStyle == null) {
-                              await _loadMapStyles();
-                            }
-  
-                            String? style;
-                            if (appState.mapStyle == 'Dark') {
-                              style = _darkMapStyle;
-                            } else if (appState.mapStyle == 'Light') {
-                              style = _lightMapStyle;
-                            } else if (appState.mapStyle == 'Simple') {
-                              style = await MapUtils.loadStyle(
-                                'assets/map_styles/light_map.json',
-                              );
-                            }
-  
-                            await MapUtils.setStyle(controller, style);
-  
-                            // Initialize camera state fields
-                            _cameraTarget = appState.livePosition ?? bestPos;
-                            _cameraZoom = 11.0;
-                            _cameraTilt = 0.0;
-                            _cameraBearing = _normalizeBearing(appState.liveBearing - 120.0);
-  
-                                WidgetsBinding.instance.addPostFrameCallback((_) {
-                                  _triggerInitialFocusAnimation();
-                                });
+                            return BlocBuilder<GeoFenceCubit, GeoFenceState>(
+                              builder: (context, geoState) {
+                                Set<Circle> circles = {};
+                                Set<Marker> markers = {
+                                  Marker(
+                                    markerId: const MarkerId('current_location'),
+                                    position: animPos,
+                                    icon: _customMarker ?? BitmapDescriptor.defaultMarker,
+                                    anchor: const Offset(0.5, 0.5),
+                                    flat: true,
+                                    rotation: animBearing % 360,
+                                  ),
+                                };
+
+                                if (_lastGeoState != geoState || _cachedGeoCircles.isEmpty || _cachedGeoMarkers.isEmpty) {
+                                  _lastGeoState = geoState;
+                                  _cachedGeoCircles.clear();
+                                  _cachedGeoMarkers.clear();
+
+                                  if (geoState is GeoFenceLoaded) {
+                                    for (var fence in geoState.geoFences) {
+                                      if (!fence.isActive) continue;
+                                      
+                                      _cachedGeoCircles.add(
+                                        Circle(
+                                          circleId: CircleId('geo_circle_${fence.id}_${fence.latitude}'),
+                                          center: LatLng(fence.latitude, fence.longitude),
+                                          radius: fence.radius > 10 ? fence.radius : 500.0,
+                                          fillColor: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3),
+                                          strokeColor: Theme.of(context).colorScheme.primary,
+                                          strokeWidth: 2,
+                                        ),
+                                      );
+                                      
+                                      BitmapDescriptor markerIcon = _othersIcon ?? BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueCyan);
+                                      final typeStr = '${fence.type} ${fence.name}'.toLowerCase();
+                                      
+                                      if (typeStr.contains('home') || typeStr.contains('घर') || typeStr.contains('ಮನೆ') || typeStr.contains('வீடு') || typeStr.contains('منزل')) {
+                                        markerIcon = _homeIcon ?? markerIcon;
+                                      } else if (typeStr.contains('office') || typeStr.contains('कार्यालय') || typeStr.contains('ಕಚೇರಿ') || typeStr.contains('அலுவலகம்') || typeStr.contains('مكتب')) {
+                                        markerIcon = _officeIcon ?? markerIcon;
+                                      } else if (typeStr.contains('family') || typeStr.contains('परिवार') || typeStr.contains('कुटुंब') || typeStr.contains('ಕುಟುಂಬ') || typeStr.contains('குடும்பம்') || typeStr.contains('عائلة')) {
+                                        markerIcon = _familyIcon ?? markerIcon;
+                                      } else if (typeStr.contains('parking') || typeStr.contains('पार्किंग') || typeStr.contains('ಪಾರ್ಕಿಂಗ್') || typeStr.contains('பார்க்கிங்') || typeStr.contains('موقف')) {
+                                        markerIcon = _parkingIcon ?? markerIcon;
+                                      }
+
+                                      _cachedGeoMarkers.add(
+                                        Marker(
+                                          markerId: MarkerId('geo_${fence.id}'),
+                                          position: LatLng(fence.latitude, fence.longitude),
+                                          icon: markerIcon,
+                                          infoWindow: InfoWindow(title: fence.name),
+                                        ),
+                                      );
+                                    }
+                                  }
+                                }
+
+                                circles.addAll(_cachedGeoCircles);
+                                markers.addAll(_cachedGeoMarkers);
+
+                                return GoogleMap(
+                                    key: ValueKey(_selectedDevice?.id),
+                                    initialCameraPosition: CameraPosition(
+                                      target: bestPos!,
+                                      zoom: 17.5,
+                                      bearing: 0.0,
+                                    ),
+                                    myLocationEnabled: false,
+                                    zoomControlsEnabled: false,
+                                    myLocationButtonEnabled: false,
+                                    scrollGesturesEnabled: false,
+                                    zoomGesturesEnabled: false,
+                                    tiltGesturesEnabled: false,
+                                    rotateGesturesEnabled: false,
+                                    mapType: appState.mapType == 'satellite'
+                                        ? MapType.satellite
+                                        : MapType.normal,
+                                    trafficEnabled: appState.isTrafficEnabled,
+                                    markers: markers,
+                                    circles: circles,
+                                    onMapCreated: (GoogleMapController controller) async {
+                                  _mapController = controller;
+
+                                  final appState = context.read<AppCubit>().state;
+                                  if (_darkMapStyle == null || _lightMapStyle == null) {
+                                    await _loadMapStyles();
+                                  }
+
+                                  String? style;
+                                  if (appState.mapStyle == 'Dark') {
+                                    style = _darkMapStyle;
+                                  } else if (appState.mapStyle == 'Light') {
+                                    style = _lightMapStyle;
+                                  } else if (appState.mapStyle == 'Simple') {
+                                    style = await MapUtils.loadStyle(
+                                      'assets/map_styles/light_map.json',
+                                    );
+                                  }
+
+                                  await MapUtils.setStyle(controller, style);
+
+                                  // Initialize camera state fields
+                                  _cameraTarget = appState.livePosition ?? bestPos;
+                                  _cameraZoom = 15.0;
+                                  _cameraTilt = 0.0;
+                                  _cameraBearing = _normalizeBearing(appState.liveBearing - 120.0);
+
+                                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                                        _triggerInitialFocusAnimation();
+                                      });
+                                    },
+                                  );
                               },
                             );
-                        }
-                      ),
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 8.0,
-                    vertical: 8.0,
-                  ),
-                  child: Row(
-                    children: [
-                      Text(
-                        l10n.todayText,
-                        style: getBoldStyle(
-                          color: AppColors.paletteGreen,
-                          fontSize: 10,
+                          }
                         ),
-                      ),
-                    ],
+                    ),
                   ),
                 ),
                 Padding(
@@ -853,11 +934,13 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
             String todayDistanceStr = "0.0";
             String durationStr = "0${l10n.minutesShort} 0${l10n.secondsShort}";
             String topSpeed = "0 ${context.displayKmh}";
+            String startTimeStr = "";
 
             if (lastRide != null) {
               todayDistanceStr = lastRide.distance.toStringAsFixed(1);
               durationStr = lastRide.duration;
               topSpeed = "${lastRide.topSpeed.toStringAsFixed(1)} ${context.displayKmh}";
+              startTimeStr = lastRide.startTime;
             } else {
               final todayDistanceRaw = liveDevice['todayDistance'] ?? liveDevice['td'] ?? liveDevice['distance'] ?? odometer;
               if (todayDistanceRaw != null && todayDistanceRaw.toString().isNotEmpty) {
@@ -886,28 +969,62 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                   }
                 }
               }
+              
+              String formatFallbackTime(String? isoString) {
+                if (isoString == null) return "";
+                try {
+                  final date = DateTime.parse(isoString).toLocal();
+                  return "${date.hour > 12 ? date.hour - 12 : (date.hour == 0 ? 12 : date.hour)}:${date.minute.toString().padLeft(2, '0')} ${date.hour >= 12 ? 'PM' : 'AM'}";
+                } catch (e) {
+                  return "";
+                }
+              }
+              startTimeStr = formatFallbackTime(liveDevice['lastUpdate']?.toString() ?? liveDevice['deviceTime']?.toString());
             }
 
             String distance = "$todayDistanceStr ${context.displayKm}";
+            
+            String headerText = l10n.todayText;
+            if (startTimeStr.isNotEmpty && startTimeStr != "--:--") {
+              headerText += " | $startTimeStr";
+            }
 
-        return Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        return Column(
           children: [
-            Expanded(
-              child: Column(
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8.0),
+              child: Row(
                 children: [
-                  _buildStatItem(l10n.distanceLabel, distance),
-                  _buildStatItem(l10n.rideDuration, durationStr),
+                  Text(
+                    headerText,
+                    style: getBoldStyle(
+                      color: AppColors.paletteGreen,
+                      fontSize: 10,
+                    ),
+                  ),
                 ],
               ),
             ),
-            Expanded(
-              child: Column(
-                children: [
-                  _buildStatItem(l10n.speedLabel, speed),
-                  _buildStatItem(l10n.topSpeed, topSpeed),
-                ],
-              ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: Column(
+                    children: [
+                      _buildStatItem(l10n.distanceLabel, distance),
+                      _buildStatItem(l10n.rideDuration, durationStr),
+                    ],
+                  ),
+                ),
+                Expanded(
+                  child: Column(
+                    children: [
+                      _buildStatItem(l10n.speedLabel, speed),
+                      _buildStatItem(l10n.topSpeed, topSpeed),
+                    ],
+                  ),
+                ),
+              ],
             ),
           ],
         );

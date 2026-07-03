@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:app_settings/app_settings.dart';
 import 'package:trackify/feature/settings/presentation/pages/notification_sounds_screen.dart';
 import 'package:trackify/feature/settings/presentation/widgets/setting_list_tile.dart';
 import 'package:trackify/l10n/app_localizations.dart';
@@ -56,7 +57,7 @@ class NotificationSettings extends StatelessWidget{
             showArrow: true,
             showIcon: true,
             onTap: () {
-              debugPrint('Tapped on Nrotification Sounds');
+              debugPrint('Tapped on Notification Sounds');
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => const NotificationSoundsScreen()),

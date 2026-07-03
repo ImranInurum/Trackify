@@ -37,6 +37,18 @@ class GeoFenceRemoteDataSource {
     );
   }
 
+  Future<void> editGeoFence(GeoFenceModel model) async {
+    final response = await _apiServices.getPutApiResponse(
+      ApiURL.editGeoFenceById(model.id),
+      model.toJson(),
+    );
+
+    return response.fold(
+      (l) => throw l,
+      (r) => null,
+    );
+  }
+
   Future<void> deleteGeoFence(String imei, String fenceId) async {
     final response = await _apiServices.getDeleteApiResponse(
       ApiURL.deleteGeoFence(imei, fenceId),

@@ -29,6 +29,8 @@ import 'package:trackify/feature/trips/presentation/cubit/ride_history_cubit.dar
 import 'package:trackify/feature/trips/presentation/cubit/ride_history_state.dart';
 import 'package:trackify/feature/trips/data/entity/ride_model.dart';
 import 'package:trackify/feature/map/presentation/pages/shared_with_me_screen.dart';
+import 'package:trackify/feature/geo_fence/presentation/cubit/geo_fence_cubit.dart';
+import 'package:trackify/feature/geo_fence/presentation/cubit/geo_fence_state.dart';
 
 class FullScreenMap extends StatefulWidget {
   final Vehicles? selectedVehicle;
@@ -97,6 +99,9 @@ class _FullScreenMapState extends State<FullScreenMap>
     super.initState();
     _uiCubit = FullScreenMapUiCubit();
     _currentVehicle = widget.selectedVehicle;
+    if (_currentVehicle?.imei != null) {
+      context.read<GeoFenceCubit>().fetchGeoFences(_currentVehicle!.imei!);
+    }
 
     _markerAnimController = AnimationController(
       vsync: this,
@@ -216,8 +221,40 @@ class _FullScreenMapState extends State<FullScreenMap>
         final letter = name.isNotEmpty ? name[0].toUpperCase() : 'M';
         final primaryColor = Theme.of(context).colorScheme.primary;
         _createUserLocationMarker(letter, primaryColor);
+        _loadGeoFenceIcons(primaryColor);
       }
     });
+  }
+
+  BitmapDescriptor? _homeIcon;
+  BitmapDescriptor? _officeIcon;
+  BitmapDescriptor? _familyIcon;
+  BitmapDescriptor? _parkingIcon;
+  BitmapDescriptor? _othersIcon;
+
+  Future<void> _loadGeoFenceIcons(Color primaryColor) async {
+    _homeIcon = await MapUtils.createGeoFenceMarkerIcon(
+      Icons.home_outlined,
+      primaryColor,
+    );
+    _officeIcon = await MapUtils.createGeoFenceMarkerIcon(
+      Icons.apartment_outlined,
+      primaryColor,
+    );
+    _familyIcon = await MapUtils.createGeoFenceMarkerIcon(
+      Icons.person_outline,
+      primaryColor,
+    );
+    _parkingIcon = await MapUtils.createGeoFenceMarkerIcon(
+      Icons.local_parking_outlined,
+      primaryColor,
+    );
+    _othersIcon = await MapUtils.createGeoFenceMarkerIcon(
+      Icons.location_on_outlined,
+      primaryColor,
+    );
+    _cachedGeoMarkers.clear(); // invalidate cache to apply new icons
+    if (mounted) _mapRebuildNotifier.value++;
   }
 
   @override
@@ -460,11 +497,15 @@ class _FullScreenMapState extends State<FullScreenMap>
     _applyCameraForCurrentMode();
   }
 
+  GeoFenceState? _lastGeoStateMarkers;
+  Set<Marker> _cachedGeoMarkers = {};
+
   /// Builds the markers set — called from build so it always reads latest _showCurrentLocation.
   Set<Marker> _buildMarkers(
     LatLng vehiclePos,
     dynamic currentPos,
     double bearing,
+    GeoFenceState geoState,
   ) {
     final markers = <Marker>{
       Marker(
@@ -491,7 +532,89 @@ class _FullScreenMapState extends State<FullScreenMap>
       );
     }
 
+    if (_lastGeoStateMarkers == geoState && _cachedGeoMarkers.isNotEmpty) {
+      markers.addAll(_cachedGeoMarkers);
+    } else {
+      _lastGeoStateMarkers = geoState;
+      _cachedGeoMarkers.clear();
+      if (geoState is GeoFenceLoaded) {
+        for (var fence in geoState.geoFences) {
+          if (!fence.isActive) continue;
+
+          BitmapDescriptor markerIcon =
+              _othersIcon ??
+              BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueCyan);
+          final typeStr = '${fence.type} ${fence.name}'.toLowerCase();
+
+          if (typeStr.contains('home') ||
+              typeStr.contains('घर') ||
+              typeStr.contains('ಮನೆ') ||
+              typeStr.contains('வீடு') ||
+              typeStr.contains('منزل')) {
+            markerIcon = _homeIcon ?? markerIcon;
+          } else if (typeStr.contains('office') ||
+              typeStr.contains('कार्यालय') ||
+              typeStr.contains('ಕಚೇರಿ') ||
+              typeStr.contains('அலுவலகம்') ||
+              typeStr.contains('مكتب')) {
+            markerIcon = _officeIcon ?? markerIcon;
+          } else if (typeStr.contains('family') ||
+              typeStr.contains('परिवार') ||
+              typeStr.contains('कुटुंब') ||
+              typeStr.contains('ಕುಟುಂಬ') ||
+              typeStr.contains('குடும்பம்') ||
+              typeStr.contains('عائلة')) {
+            markerIcon = _familyIcon ?? markerIcon;
+          } else if (typeStr.contains('parking') ||
+              typeStr.contains('पार्किंग') ||
+              typeStr.contains('ಪಾರ್ಕಿಂಗ್') ||
+              typeStr.contains('பார்க்கிங்') ||
+              typeStr.contains('موقف')) {
+            markerIcon = _parkingIcon ?? markerIcon;
+          }
+
+          _cachedGeoMarkers.add(
+            Marker(
+              markerId: MarkerId('geo_${fence.id}'),
+              position: LatLng(fence.latitude, fence.longitude),
+              icon: markerIcon,
+              infoWindow: InfoWindow(title: fence.name),
+            ),
+          );
+        }
+      }
+      markers.addAll(_cachedGeoMarkers);
+    }
+
     return markers;
+  }
+
+  GeoFenceState? _lastGeoStateCircles;
+  Set<Circle> _cachedGeoCircles = {};
+
+  Set<Circle> _buildCircles(GeoFenceState geoState) {
+    if (_lastGeoStateCircles == geoState && _cachedGeoCircles.isNotEmpty) {
+      return _cachedGeoCircles;
+    }
+    _lastGeoStateCircles = geoState;
+    final circles = <Circle>{};
+    if (geoState is GeoFenceLoaded) {
+      for (var fence in geoState.geoFences) {
+        if (!fence.isActive) continue;
+        circles.add(
+          Circle(
+            circleId: CircleId('geo_circle_${fence.id}_${fence.latitude}'),
+            center: LatLng(fence.latitude, fence.longitude),
+            radius: fence.radius > 10 ? fence.radius : 500.0,
+            fillColor: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3),
+            strokeColor: Theme.of(context).colorScheme.primary,
+            strokeWidth: 2,
+          ),
+        );
+      }
+    }
+    _cachedGeoCircles = circles;
+    return circles;
   }
 
   /// Applies the correct camera position based on _showCurrentLocation mode.
@@ -1115,61 +1238,71 @@ class _FullScreenMapState extends State<FullScreenMap>
                 ? _animatedMarkerBearing
                 : bearing;
 
-            return Listener(
-              onPointerMove: (_) {
-                if (_uiCubit.state.isAutoFollowing) {
-                  _uiCubit.setAutoFollowing(false);
-                }
+            return BlocBuilder<GeoFenceCubit, GeoFenceState>(
+              builder: (context, geoState) {
+                return Listener(
+                  onPointerMove: (_) {
+                    if (_uiCubit.state.isAutoFollowing) {
+                      _uiCubit.setAutoFollowing(false);
+                    }
+                  },
+                  child: GoogleMap(
+                    initialCameraPosition: CameraPosition(
+                      target: bestPos!,
+                      zoom: 16.0,
+                      bearing: 0.0,
+                    ),
+                    myLocationEnabled: false,
+                    zoomControlsEnabled: false,
+                    myLocationButtonEnabled: false,
+                    mapToolbarEnabled: false,
+                    mapType: appState.mapType == 'satellite'
+                        ? MapType.satellite
+                        : MapType.normal,
+                    trafficEnabled: appState.isTrafficEnabled,
+                    padding: EdgeInsets.only(
+                      bottom: MediaQuery.of(context).size.height * 0.16,
+                    ),
+                    onCameraMove: (position) {
+                      if (_uiCubit.state.isAutoFollowing) return;
+                      if (_cameraAnimationController != null &&
+                          _cameraAnimationController!.isAnimating)
+                        return;
+
+                      _cameraTarget = position.target;
+                      _cameraZoom = position.zoom;
+                      _cameraTilt = position.tilt;
+                      _cameraBearing = position.bearing;
+                    },
+                    onCameraMoveStarted: () {},
+                    markers: _buildMarkers(
+                      animPos,
+                      currentPos,
+                      animBearing,
+                      geoState,
+                    ),
+                    circles: _buildCircles(geoState),
+                    onMapCreated: (controller) async {
+                      _mapController = controller;
+
+                      if (_darkMapStyle == null || _lightMapStyle == null) {
+                        await _loadMapStyles();
+                      }
+                      _updateMapStyle(controller);
+
+                      // Initialize camera state fields
+                      _cameraTarget = bestPos;
+                      _cameraZoom = 16.0;
+                      _cameraTilt = 0.0;
+                      _cameraBearing = 0.0;
+
+                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                        _triggerInitialFocusAnimation();
+                      });
+                    },
+                  ),
+                );
               },
-              child: GoogleMap(
-                initialCameraPosition: CameraPosition(
-                  target: bestPos!,
-                  zoom: 16.0,
-                  bearing: 0.0,
-                ),
-                myLocationEnabled: false,
-                zoomControlsEnabled: false,
-                myLocationButtonEnabled: false,
-                mapToolbarEnabled: false,
-                mapType: appState.mapType == 'satellite'
-                    ? MapType.satellite
-                    : MapType.normal,
-                trafficEnabled: appState.isTrafficEnabled,
-                padding: EdgeInsets.only(
-                  bottom: MediaQuery.of(context).size.height * 0.16,
-                ),
-                onCameraMove: (position) {
-                  if (_uiCubit.state.isAutoFollowing) return;
-                  if (_cameraAnimationController != null &&
-                      _cameraAnimationController!.isAnimating)
-                    return;
-
-                  _cameraTarget = position.target;
-                  _cameraZoom = position.zoom;
-                  _cameraTilt = position.tilt;
-                  _cameraBearing = position.bearing;
-                },
-                onCameraMoveStarted: () {},
-                markers: _buildMarkers(animPos, currentPos, animBearing),
-                onMapCreated: (controller) async {
-                  _mapController = controller;
-
-                  if (_darkMapStyle == null || _lightMapStyle == null) {
-                    await _loadMapStyles();
-                  }
-                  _updateMapStyle(controller);
-
-                  // Initialize camera state fields
-                  _cameraTarget = bestPos;
-                  _cameraZoom = 16.0;
-                  _cameraTilt = 0.0;
-                  _cameraBearing = 0.0;
-
-                  WidgetsBinding.instance.addPostFrameCallback((_) {
-                    _triggerInitialFocusAnimation();
-                  });
-                },
-              ),
             );
           },
         );
@@ -1685,7 +1818,7 @@ class _FullScreenMapState extends State<FullScreenMap>
         final double maxExtent = (310.0 / screenHeight).clamp(0.15, 0.85);
 
         final double maxPixels = maxExtent * screenHeight;
- 
+
         return DraggableScrollableSheet(
           initialChildSize: initialExtent,
           minChildSize: initialExtent,

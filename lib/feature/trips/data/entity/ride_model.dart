@@ -212,8 +212,10 @@ class Ride {
     String formatTime(String? isoString) {
       if (isoString == null) return "--:--";
       try {
-        final date = DateTime.parse(isoString);
-        return "${date.hour}:${date.minute.toString().padLeft(2, '0')}";
+        final date = DateTime.parse(isoString).toLocal();
+        final int hour = date.hour > 12 ? date.hour - 12 : (date.hour == 0 ? 12 : date.hour);
+        final String amPm = date.hour >= 12 ? 'PM' : 'AM';
+        return "$hour:${date.minute.toString().padLeft(2, '0')} $amPm";
       } catch (e) {
         return isoString;
       }
@@ -289,7 +291,7 @@ class Ride {
       distance: summary?.totalDistanceKm ?? 0.0,
       startLocation: startLoc,
       endLocation: endLoc,
-      duration: "${summary?.durationMinutes ?? 0}m",
+      duration: summary?.duration ?? "${summary?.durationMinutes ?? 0}",
       topSpeed: summary?.topSpeed ?? 0.0,
       avgSpeed: summary?.avgSpeed ?? 0.0,
       mapImageUrl: "",

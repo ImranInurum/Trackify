@@ -1021,7 +1021,7 @@ abstract class AppLocalizations {
   /// No description provided for @expiresInDays.
   ///
   /// In en, this message translates to:
-  /// **'Expires in {days} days'**
+  /// **'{days} days left'**
   String expiresInDays(String days);
 
   /// No description provided for @rechargeNow.

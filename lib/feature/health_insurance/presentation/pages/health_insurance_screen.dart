@@ -58,32 +58,48 @@ class _HealthInsuranceScreenState extends State<HealthInsuranceScreen> {
           ),
         ),
       ),
-      body: state.isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : BlocListener<HealthInsuranceCubit, HealthInsuranceState>(
-              listener: (context, state) {
-                if (state.saveSuccess) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(l10n.healthInsuranceSavedSuccess),
-                      backgroundColor: Colors.green,
-                    ),
-                  );
-                  Navigator.pop(context);
-                } else if (state.saveError != null) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(state.saveError!),
-                      backgroundColor: Colors.red,
-                    ),
-                  );
-                }
-              },
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
+      body: BlocConsumer<HealthInsuranceCubit, HealthInsuranceState>(
+        listenWhen: (previous, current) {
+           return previous.saveSuccess != current.saveSuccess || 
+                  previous.saveError != current.saveError || 
+                  (previous.isLoading && !current.isLoading && current.data?.savedData != null);
+        },
+        listener: (context, state) {
+          if (state.saveSuccess) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(l10n.healthInsuranceSavedSuccess),
+                backgroundColor: Colors.green,
+              ),
+            );
+            Navigator.pop(context);
+          } else if (state.saveError != null) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(state.saveError!),
+                backgroundColor: Colors.red,
+              ),
+            );
+          }
+          
+          if (state.data?.savedData != null) {
+             if (cardNumberController.text.isEmpty) {
+                cardNumberController.text = state.data!.savedData!.healthInsuranceCardNumber;
+             }
+             if (policyNumberController.text.isEmpty) {
+                policyNumberController.text = state.data!.savedData!.policyNumber;
+             }
+          }
+        },
+        builder: (context, state) {
+          if (state.isLoading) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          return Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
                     Align(
                       alignment: Alignment.centerLeft,
                       child: Text(
@@ -297,8 +313,9 @@ class _HealthInsuranceScreenState extends State<HealthInsuranceScreen> {
                     const SizedBox(height: 17),
                   ],
                 ),
-              ),
-            ),
+              );
+            },
+      ),
     );
   }
 }

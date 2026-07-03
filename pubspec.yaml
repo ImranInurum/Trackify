@@ -59,6 +59,7 @@ dependencies:
   permission_handler: ^12.0.1
   country_state_city: ^0.1.6
   flutter_tts: ^4.2.5
+  app_settings: ^7.0.0
 dev_dependencies:
   flutter_test:
     sdk: flutter
