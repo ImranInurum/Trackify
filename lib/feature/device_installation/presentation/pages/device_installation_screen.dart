@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
-import 'package:text_to_speech/text_to_speech.dart';
+import 'package:flutter_tts/flutter_tts.dart';
 import '../../../../core/theme/app_theme_extension.dart';
 import '../../../../core/widgets/square_flat_button.dart';
 import '../../../../l10n/app_localizations.dart';
@@ -29,7 +29,7 @@ class _DeviceInstallationScreenState extends State<DeviceInstallationScreen>
   bool _hasScanned = false;
   String? _scannedImei;
 
-  late TextToSpeech _tts;
+  late FlutterTts _tts;
   String _ttsLanguage = 'en-US';
 
   @override
@@ -43,7 +43,7 @@ class _DeviceInstallationScreenState extends State<DeviceInstallationScreen>
   }
 
   Future<void> _initTts() async {
-    _tts = TextToSpeech();
+    _tts = FlutterTts();
     // Add a small delay to allow native TTS engine to initialize
     await Future.delayed(const Duration(milliseconds: 1000));
     _speakInstruction();
@@ -52,10 +52,10 @@ class _DeviceInstallationScreenState extends State<DeviceInstallationScreen>
   void _speakInstruction() async {
     try {
       debugPrint("Starting TTS speak in $_ttsLanguage");
-      _tts.setVolume(1.0);
-      _tts.setRate(1.0); // Increased speaking speed
+      await _tts.setVolume(1.0);
+      await _tts.setSpeechRate(0.5); // Adjusted for flutter_tts
       
-      _tts.setLanguage(_ttsLanguage);
+      await _tts.setLanguage(_ttsLanguage);
 
       String textToSpeak = "Please scan the activation code given on the trackify box";
       switch (_ttsLanguage) {
@@ -76,7 +76,7 @@ class _DeviceInstallationScreenState extends State<DeviceInstallationScreen>
           textToSpeak = "Please scan the activation code given on the trackify box";
       }
 
-      _tts.speak(textToSpeak);
+      await _tts.speak(textToSpeak);
     } catch (e) {
       debugPrint("TTS Error: $e");
     }

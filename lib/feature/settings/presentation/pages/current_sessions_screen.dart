@@ -21,6 +21,7 @@ class CurrentSessionsScreen extends StatelessWidget {
           style: TextStyle(
             color: Theme.of(context).colorScheme.onSurface,
             fontWeight: FontWeight.bold,
+            fontSize: 18,
           ),
         ),
         surfaceTintColor: Colors.transparent,
@@ -38,7 +39,7 @@ class CurrentSessionsScreen extends StatelessWidget {
                 l10n.otherDevices,
                 style: TextStyle(
                   color: Theme.of(context).colorScheme.onSurface,
-                  fontSize: 15,
+                  fontSize: 14,
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -105,7 +106,7 @@ class CurrentSessionsScreen extends StatelessWidget {
                         'samsung SM-M346B',
                         style: TextStyle(
                           color: Theme.of(context).colorScheme.onSurface,
-                          fontSize: 17,
+                          fontSize: 16,
                           fontWeight: FontWeight.w600,
                         ),
                         maxLines: 1,
@@ -116,7 +117,7 @@ class CurrentSessionsScreen extends StatelessWidget {
                       '2 months',
                       style: TextStyle(
                         color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
-                        fontSize: 13,
+                        fontSize: 12,
                       ),
                     ),
                   ],
@@ -126,7 +127,7 @@ class CurrentSessionsScreen extends StatelessWidget {
                   l10n.activeOnThisDevice,
                   style: const TextStyle(
                     color: Colors.green,
-                    fontSize: 13,
+                    fontSize: 12,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -135,7 +136,7 @@ class CurrentSessionsScreen extends StatelessWidget {
                   '${l10n.lastUsed} 3 Jul 2026 at 10:37:25 AM.',
                   style: TextStyle(
                     color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
-                    fontSize: 13,
+                    fontSize: 12,
                   ),
                 ),
                 const SizedBox(height: 4),
@@ -143,7 +144,7 @@ class CurrentSessionsScreen extends StatelessWidget {
                   '${l10n.osLabel} Android 16',
                   style: TextStyle(
                     color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
-                    fontSize: 13,
+                    fontSize: 12,
                   ),
                 ),
                 const SizedBox(height: 8),
@@ -155,7 +156,7 @@ class CurrentSessionsScreen extends StatelessWidget {
                       l10n.chromeNotificationDisabled,
                       style: TextStyle(
                         color: Theme.of(context).colorScheme.onSurface.withOpacity(0.8),
-                        fontSize: 14,
+                        fontSize: 13,
                       ),
                     ),
                   ],
@@ -195,7 +196,7 @@ class CurrentSessionsScreen extends StatelessWidget {
                         deviceName,
                         style: TextStyle(
                           color: Theme.of(context).colorScheme.onSurface,
-                          fontSize: 17,
+                          fontSize: 16,
                           fontWeight: FontWeight.w600,
                         ),
                         maxLines: 1,
@@ -206,7 +207,7 @@ class CurrentSessionsScreen extends StatelessWidget {
                       timeAgo,
                       style: TextStyle(
                         color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
-                        fontSize: 13,
+                        fontSize: 12,
                       ),
                     ),
                   ],
@@ -216,7 +217,7 @@ class CurrentSessionsScreen extends StatelessWidget {
                   lastUsed,
                   style: TextStyle(
                     color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
-                    fontSize: 13,
+                    fontSize: 12,
                   ),
                 ),
                 const SizedBox(height: 4),
@@ -224,7 +225,7 @@ class CurrentSessionsScreen extends StatelessWidget {
                   osVersion,
                   style: TextStyle(
                     color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
-                    fontSize: 13,
+                    fontSize: 12,
                   ),
                 ),
                 const SizedBox(height: 8),
@@ -240,7 +241,7 @@ class CurrentSessionsScreen extends StatelessWidget {
                           l10n.chromeNotificationDisabled,
                           style: TextStyle(
                             color: Theme.of(context).colorScheme.onSurface.withOpacity(0.8),
-                            fontSize: 14,
+                            fontSize: 13,
                           ),
                         ),
                       ],

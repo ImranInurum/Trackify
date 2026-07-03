@@ -21,6 +21,7 @@ class DeleteAccountScreen extends StatelessWidget {
           style: TextStyle(
             color: Theme.of(context).colorScheme.onSurface,
             fontWeight: FontWeight.bold,
+            fontSize: 18,
           ),
         ),
         surfaceTintColor: Colors.transparent,
@@ -34,7 +35,7 @@ class DeleteAccountScreen extends StatelessWidget {
               RichText(
                 text: TextSpan(
                   style: TextStyle(
-                    fontSize: 16,
+                    fontSize: 15,
                     color: Theme.of(context).colorScheme.onSurface.withOpacity(0.8),
                   ),
                   children: [
@@ -53,7 +54,7 @@ class DeleteAccountScreen extends StatelessWidget {
               Text(
                 l10n.sorryToSeeYouGo,
                 style: TextStyle(
-                  fontSize: 16,
+                  fontSize: 15,
                   color: Theme.of(context).colorScheme.onSurface.withOpacity(0.8),
                 ),
               ),
@@ -61,7 +62,7 @@ class DeleteAccountScreen extends StatelessWidget {
               Text(
                 l10n.note,
                 style: const TextStyle(
-                  fontSize: 15,
+                  fontSize: 14,
                   fontWeight: FontWeight.w500,
                   color: Colors.redAccent,
                 ),
@@ -80,7 +81,7 @@ class DeleteAccountScreen extends StatelessWidget {
               Text(
                 l10n.deleteAccountExplanationPrompt,
                 style: TextStyle(
-                  fontSize: 15,
+                  fontSize: 14,
                   height: 1.4,
                   color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
                 ),
@@ -93,7 +94,7 @@ class DeleteAccountScreen extends StatelessWidget {
                   hintText: l10n.explanationOptionalHint,
                   hintStyle: TextStyle(
                     color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
-                    fontSize: 15,
+                    fontSize: 14,
                     fontWeight: FontWeight.bold,
                   ),
                   contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
@@ -117,7 +118,7 @@ class DeleteAccountScreen extends StatelessWidget {
                     l10n.deleteAccountTitle,
                     style: const TextStyle(
                       color: Colors.redAccent,
-                      fontSize: 16,
+                      fontSize: 15,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -127,7 +128,7 @@ class DeleteAccountScreen extends StatelessWidget {
               RichText(
                 text: TextSpan(
                   style: TextStyle(
-                    fontSize: 15,
+                    fontSize: 14,
                     height: 1.4,
                     color: Theme.of(context).colorScheme.onSurface.withOpacity(0.8),
                   ),
@@ -164,7 +165,7 @@ class DeleteAccountScreen extends StatelessWidget {
           child: Text(
             text,
             style: TextStyle(
-              fontSize: 15,
+              fontSize: 14,
               height: 1.4,
               color: Theme.of(context).colorScheme.onSurface.withOpacity(0.8),
             ),
@@ -188,7 +189,7 @@ class DeleteAccountScreen extends StatelessWidget {
           content: Text(
             l10n.confirmDeleteAccount,
             style: TextStyle(
-              fontSize: 16,
+              fontSize: 15,
               color: Theme.of(context).colorScheme.onSurface,
             ),
           ),

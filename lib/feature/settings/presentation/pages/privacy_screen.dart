@@ -25,6 +25,7 @@ class PrivacyScreen extends StatelessWidget {
           style: TextStyle(
             color: Theme.of(context).colorScheme.onSurface,
             fontWeight: FontWeight.bold,
+            fontSize: 18,
           ),
         ),
         surfaceTintColor: Colors.transparent,
@@ -92,7 +93,7 @@ class PrivacyScreen extends StatelessWidget {
               title: Text(
                 l10n.changePasswordTitle,
                 style: TextStyle(
-                  fontSize: 18,
+                  fontSize: 17,
                   fontWeight: FontWeight.w600,
                   color: Theme.of(context).colorScheme.onSurface,
                 ),
@@ -107,7 +108,7 @@ class PrivacyScreen extends StatelessWidget {
                       hintText: l10n.oldPassword,
                       hintStyle: TextStyle(
                         color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
-                        fontSize: 15,
+                        fontSize: 14,
                         fontWeight: FontWeight.w400,
                       ),
                       enabledBorder: UnderlineInputBorder(
@@ -128,7 +129,7 @@ class PrivacyScreen extends StatelessWidget {
                       hintText: l10n.newPassword,
                       hintStyle: TextStyle(
                         color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
-                        fontSize: 15,
+                        fontSize: 14,
                         fontWeight: FontWeight.w400,
                       ),
                       enabledBorder: UnderlineInputBorder(
@@ -149,7 +150,7 @@ class PrivacyScreen extends StatelessWidget {
                       hintText: l10n.confirmNewPasswordTitle,
                       hintStyle: TextStyle(
                         color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
-                        fontSize: 15,
+                        fontSize: 14,
                         fontWeight: FontWeight.w400,
                       ),
                       enabledBorder: UnderlineInputBorder(
@@ -190,7 +191,7 @@ class PrivacyScreen extends StatelessWidget {
                         child: Text(
                           l10n.logoutOfAllDevices,
                           style: TextStyle(
-                            fontSize: 15,
+                            fontSize: 14,
                             color: Theme.of(context).colorScheme.onSurface.withOpacity(0.8),
                           ),
                         ),
