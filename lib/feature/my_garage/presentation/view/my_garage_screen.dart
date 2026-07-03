@@ -139,6 +139,7 @@ class _MyGarageScreenState extends State<MyGarageScreen> {
                     vehicle: vehicle,
                     hasDevice: hasDevice,
                     isLocked: isLocked,
+                    showNotificationFooter: false,
                     onVehicleControl: () async {
                       await AppPreference.instance.set(
                         key: AppPreference.IMEI,
@@ -226,6 +227,7 @@ class _MyGarageScreenState extends State<MyGarageScreen> {
   }
 
   void _handleVehicleLock(BuildContext context, Vehicle vehicle) async {
+    final l10n = AppLocalizations.of(context)!;
     if (vehicle.imei == null || vehicle.imei!.isEmpty) return;
 
     final imei = vehicle.imei!;
@@ -243,7 +245,7 @@ class _MyGarageScreenState extends State<MyGarageScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              "Vehicle ${targetLockState ? 'Locked' : 'Unlocked'} successfully!",
+              targetLockState ? l10n.vehicleLockedSuccessfully : l10n.vehicleUnlockedSuccessfully,
             ),
             backgroundColor: Colors.green,
           ),
@@ -253,7 +255,7 @@ class _MyGarageScreenState extends State<MyGarageScreen> {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text("Failed to update lock status: $e"),
+            content: Text("${l10n.failedToUpdateLockStatus}: $e"),
             backgroundColor: Colors.red,
           ),
         );

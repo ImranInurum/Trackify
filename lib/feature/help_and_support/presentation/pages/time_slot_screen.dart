@@ -163,8 +163,8 @@ class _BookCallSlotScreenState
                     final days = data.days;
 
                     if (days.isEmpty) {
-                      return const Center(
-                        child: Text("No Slots Available"),
+                      return Center(
+                        child: Text(l10n.noSlotsAvailable),
                       );
                     }
 

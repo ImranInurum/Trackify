@@ -122,7 +122,7 @@ class _WarrantyScreenState extends State<WarrantyScreen> {
                     ElevatedButton.icon(
                       onPressed: () => context.read<DeviceWarrantyCubit>().load(),
                       icon: const Icon(Icons.refresh_rounded),
-                      label: const Text("Retry"),
+                      label: Text(l10n.retry),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: colorScheme.primary,
                         foregroundColor: colorScheme.onPrimary,

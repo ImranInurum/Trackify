@@ -295,8 +295,8 @@ class OrderSummaryScreen extends StatelessWidget {
                             final imei = AppPreference.instance.getSync(key: AppPreference.IMEI);
                             if (imei.isEmpty) {
                               ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text("Error: IMEI not found"),
+                                SnackBar(
+                                  content: Text(l10n.errorImeiNotFound),
                                   backgroundColor: Colors.red,
                                 ),
                               );

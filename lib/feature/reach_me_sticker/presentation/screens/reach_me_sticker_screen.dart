@@ -85,7 +85,7 @@ class _ReachMeStickerScreenState extends State<ReachMeStickerScreen> {
               onBuy: () {
                 // TODO: Add buy link/logic here when available
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Buy feature coming soon...')),
+                  SnackBar(content: Text(l10n.buyFeatureComingSoon)),
                 );
               },
             ),
@@ -192,7 +192,7 @@ class _ReachMeStickerScreenState extends State<ReachMeStickerScreen> {
               onBuy: () {
                 // TODO: Add buy link/logic here when available
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Buy feature coming soon...')),
+                  SnackBar(content: Text(l10n.buyFeatureComingSoon)),
                 );
               },
             ),

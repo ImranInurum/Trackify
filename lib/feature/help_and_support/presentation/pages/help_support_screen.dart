@@ -40,6 +40,8 @@ class _HelpSuggestionScreenState extends State<HelpSuggestionScreen> {
 
   final TextEditingController descriptionController = TextEditingController();
 
+  bool _showValidationError = false;
+
   @override
   void initState() {
     super.initState();
@@ -332,17 +334,17 @@ class _HelpSuggestionScreenState extends State<HelpSuggestionScreen> {
               ),
 
               items: [
-                const DropdownMenuItem(
+                 DropdownMenuItem(
                   value: "design",
-                  child: Text("Design"),
+                  child: Text(l10n.designOption),
                 ),
-                const DropdownMenuItem(
+                 DropdownMenuItem(
                   value: "functionality",
-                  child: Text("Functionality"),
+                  child: Text(l10n.functionalityOption),
                 ),
-                const DropdownMenuItem(
+                 DropdownMenuItem(
                   value: "other",
-                  child: Text("Other"),
+                  child: Text(l10n.otherOption),
                 ),
               ],
 
@@ -414,6 +416,16 @@ class _HelpSuggestionScreenState extends State<HelpSuggestionScreen> {
 
           const SizedBox(height: 20),
 
+          if (_showValidationError)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 16),
+              child: Text(
+                l10n.allFieldsMandatory,
+                style: const TextStyle(color: Colors.red, fontSize: 13),
+              ),
+            ),
+
+
           BlocListener<SuggestionCubit, SuggestionState>(
             listener: (context, suggestionState) {
               if (suggestionState is SuggestionSuccess) {
@@ -469,28 +481,13 @@ class _HelpSuggestionScreenState extends State<HelpSuggestionScreen> {
 
                             if (isReportIssue) {
                               if (selectedVehicleId == null ||
-                                  selectedVehicleId!.isEmpty) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(content: Text(l10n.selectVehicle)),
-                                );
+                                  selectedVehicleId!.isEmpty ||
+                                  issueController.text.trim().isEmpty ||
+                                  descriptionController.text.trim().isEmpty) {
+                                setState(() => _showValidationError = true);
                                 return;
                               }
-                              if (issueController.text.trim().isEmpty) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text(l10n.whatIsYourIssueRelatedTo),
-                                  ),
-                                );
-                                return;
-                              }
-                              if (descriptionController.text.trim().isEmpty) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text(l10n.giveShortDescription),
-                                  ),
-                                );
-                                return;
-                              }
+                              setState(() => _showValidationError = false);
 
                               final result = await Navigator.push(
                                 context,
@@ -520,28 +517,13 @@ class _HelpSuggestionScreenState extends State<HelpSuggestionScreen> {
                               }
                             } else {
                               if (selectedSuggestionType == null ||
-                                  selectedSuggestionType!.isEmpty) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(content: Text(l10n.selectType)),
-                                );
+                                  selectedSuggestionType!.isEmpty ||
+                                  issueController.text.trim().isEmpty ||
+                                  descriptionController.text.trim().isEmpty) {
+                                setState(() => _showValidationError = true);
                                 return;
                               }
-                              if (issueController.text.trim().isEmpty) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text(l10n.whatIsSuggestionSubject),
-                                  ),
-                                );
-                                return;
-                              }
-                              if (descriptionController.text.trim().isEmpty) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text(l10n.giveSuggestionFeedback),
-                                  ),
-                                );
-                                return;
-                              }
+                              setState(() => _showValidationError = false);
 
                               print("BUTTON CLICKED");
                               print(selectedSuggestionType);

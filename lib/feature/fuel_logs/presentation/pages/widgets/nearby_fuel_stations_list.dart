@@ -41,7 +41,7 @@ class NearbyFuelStationsDashboard extends StatelessWidget {
                 TextButton(
                   onPressed: () =>
                       context.read<FuelStationsCubit>().fetchNearbyStations(),
-                  child: const Text('Retry'),
+                  child: Text(l10n.retry),
                 ),
               ],
             ),

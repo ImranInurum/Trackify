@@ -92,9 +92,11 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
     int lastUpdateMs = 0;
     _playController.addListener(() {
       final now = DateTime.now().millisecondsSinceEpoch;
-      // Throttle BLoC emissions to 20 FPS (approx. every 50ms) to completely eliminate 
+      // Throttle BLoC emissions to 20 FPS (approx. every 50ms) to completely eliminate
       // native thread congestion, ensuring butter-smooth marker movement and zero stutters!
-      if (now - lastUpdateMs >= 50 || _playController.value == 0.0 || _playController.value == 1.0) {
+      if (now - lastUpdateMs >= 50 ||
+          _playController.value == 0.0 ||
+          _playController.value == 1.0) {
         lastUpdateMs = now;
         final cubit = context.read<RideHistoryDetailsCubit>();
         cubit.updateProgress(_playController.value);
@@ -133,7 +135,9 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
       final vehicle = await _createVehicleMarker(context);
       String? mapStyle;
       try {
-        mapStyle = await rootBundle.loadString('assets/map_styles/dark_map.json');
+        mapStyle = await rootBundle.loadString(
+          'assets/map_styles/dark_map.json',
+        );
       } catch (e) {
         debugPrint('Error loading map style: $e');
       }
@@ -159,7 +163,10 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
     }
   }
 
-  void _animateCameraToVehicle(RideHistoryDetailsState state, {bool force = false}) async {
+  void _animateCameraToVehicle(
+    RideHistoryDetailsState state, {
+    bool force = false,
+  }) async {
     if (_isGliding) {
       return; // Ignore regular updates during dynamic cinematic glides
     }
@@ -169,8 +176,9 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
       final targetTarget = state.currentVehiclePosition!;
       final targetZoom = 17.5;
       final targetTilt = 45.0;
-      final double targetBearing =
-          _isDirectionMode ? state.currentHeading : 0.0;
+      final double targetBearing = _isDirectionMode
+          ? state.currentHeading
+          : 0.0;
 
       // Dynamic navigation view offset: Keep marker slightly below center (approx 65% down)
       // by placing the camera target slightly North of the vehicle for constant North stability.
@@ -223,11 +231,12 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
         const double posFactor = 0.15; // Base follow factor
         const double zoomFactor = 0.10; // Gradual altitude adjustment
         const double tiltFactor = 0.10; // Smooth perspective changes
-        const double bearingFactor = 0.08; // Immersive camera swivel around turns
+        const double bearingFactor =
+            0.08; // Immersive camera swivel around turns
 
         // Calculate distance difference in degrees to prevent the marker from drifting off-screen
-        final double latDiff = (adjustedTarget.latitude - currentTarget.latitude)
-            .abs();
+        final double latDiff =
+            (adjustedTarget.latitude - currentTarget.latitude).abs();
         final double lngDiff =
             (adjustedTarget.longitude - currentTarget.longitude).abs();
         final double distanceDiff = latDiff + lngDiff;
@@ -241,21 +250,25 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
         } else if (distanceDiff > 0.0006) {
           // Gradual speed boost to catch up smoothly
           dynamicPosFactor =
-              posFactor + (1.0 - posFactor) * ((distanceDiff - 0.0006) / 0.0014);
+              posFactor +
+              (1.0 - posFactor) * ((distanceDiff - 0.0006) / 0.0014);
         }
 
         // Coordinate linear interpolation (smooth glide-follow using dynamicPosFactor)
         final double lat =
             currentTarget.latitude +
-            (adjustedTarget.latitude - currentTarget.latitude) * dynamicPosFactor;
+            (adjustedTarget.latitude - currentTarget.latitude) *
+                dynamicPosFactor;
         final double lng =
             currentTarget.longitude +
             (adjustedTarget.longitude - currentTarget.longitude) *
                 dynamicPosFactor;
 
         // Zoom & Tilt linear interpolation
-        final double zoom = currentZoom + (targetZoom - currentZoom) * zoomFactor;
-        final double tilt = currentTilt + (targetTilt - currentTilt) * tiltFactor;
+        final double zoom =
+            currentZoom + (targetZoom - currentZoom) * zoomFactor;
+        final double tilt =
+            currentTilt + (targetTilt - currentTilt) * tiltFactor;
 
         // Bearing circular interpolation (shortest angle wrap-around to prevent spin stutters)
         double diffBearing = targetBearing - currentBearing;
@@ -411,7 +424,8 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
 
       // Playback duration matches the actual trip duration (totalWeight) in real-time at 1x speed!
       final double baseSeconds = math.max(5.0, cubit.state.totalWeight);
-      final targetSeconds = baseSeconds / _getSpeedMultiplier(cubit.state.playbackSpeed);
+      final targetSeconds =
+          baseSeconds / _getSpeedMultiplier(cubit.state.playbackSpeed);
       _playController.duration = Duration(
         milliseconds: (targetSeconds * 1000).toInt(),
       );
@@ -428,8 +442,10 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
           targetBearingVal = cubit.state.currentHeading;
           final double bearingRad = targetBearingVal * math.pi / 180.0;
           targetCoords = LatLng(
-            cubit.state.currentVehiclePosition!.latitude + offsetDist * math.cos(bearingRad),
-            cubit.state.currentVehiclePosition!.longitude + offsetDist * math.sin(bearingRad),
+            cubit.state.currentVehiclePosition!.latitude +
+                offsetDist * math.cos(bearingRad),
+            cubit.state.currentVehiclePosition!.longitude +
+                offsetDist * math.sin(bearingRad),
           );
         } else {
           targetBearingVal = 0.0;
@@ -491,7 +507,8 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
         _updateVehicleIcon();
       } else {
         final double baseSeconds = math.max(5.0, cubit.state.totalWeight);
-        final targetSeconds = baseSeconds / _getSpeedMultiplier(cubit.state.playbackSpeed);
+        final targetSeconds =
+            baseSeconds / _getSpeedMultiplier(cubit.state.playbackSpeed);
         _playController.duration = Duration(
           milliseconds: (targetSeconds * 1000).toInt(),
         );
@@ -590,17 +607,20 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
     final Canvas canvas = Canvas(pictureRecorder);
     const double size = 50.0; // Reduced size for a smaller marker
     final Paint arrowPaint = Paint()
-      ..color = Theme.of(context).colorScheme.primary // Use theme's primary color
+      ..color = Theme.of(context)
+          .colorScheme
+          .primary // Use theme's primary color
       ..style = PaintingStyle.fill;
     final Paint borderPaint = Paint()
       ..color = Colors.white
       ..style = PaintingStyle.stroke
-      ..strokeWidth = 2.0 // Reduced border width
+      ..strokeWidth =
+          2.0 // Reduced border width
       ..strokeJoin = StrokeJoin.round;
-    
+
     final Path path = Path();
     // Start at top tip
-    path.moveTo(size / 2, 4); 
+    path.moveTo(size / 2, 4);
     // Draw to right wing tip
     path.lineTo(size - 9, size - 11);
     // Draw to bottom center indentation
@@ -613,7 +633,7 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
     canvas.drawShadow(path, Colors.black, 4.0, false);
     canvas.drawPath(path, arrowPaint);
     canvas.drawPath(path, borderPaint);
-    
+
     final img = await pictureRecorder.endRecording().toImage(
       size.toInt(),
       size.toInt(),
@@ -705,74 +725,74 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
               },
               builder: (context, mapState) {
                 return GoogleMap(
-                    initialCameraPosition: const CameraPosition(
-                      target: LatLng(20.5937, 78.9629), // Start at India
-                      zoom: 4.2,
-                    ),
-                    mapType: MapType.normal,
-                    style: mapState.darkMapStyle,
-                    zoomControlsEnabled: false,
-                    myLocationButtonEnabled: false,
-                    compassEnabled: false,
-                    mapToolbarEnabled: false,
-                    padding: const EdgeInsets.only(bottom: 220),
-                    polylines: {
-                      if (mapState.validRidePoints.isNotEmpty)
-                        Polyline(
-                          polylineId: const PolylineId('route'),
-                          points: mapState.validRidePoints
-                              .map((p) => p.location)
-                              .toList(),
-                          color: Theme.of(context).colorScheme.primary,
-                          width: 5,
-                          startCap: Cap.roundCap,
-                          endCap: Cap.roundCap,
-                          jointType: JointType.round,
-                        ),
-                    },
-                    markers: {
-                      if (mapState.startIcon != null &&
-                          mapState.validRidePoints.isNotEmpty)
-                        Marker(
-                          markerId: const MarkerId('start'),
-                          position: mapState.validRidePoints.first.location,
-                          icon: mapState.startIcon!,
-                          anchor: const Offset(0.5, 0.5),
-                        ),
-                      if (mapState.endIcon != null &&
-                          mapState.validRidePoints.isNotEmpty)
-                        Marker(
-                          markerId: const MarkerId('end'),
-                          position: mapState.validRidePoints.last.location,
-                          icon: mapState.endIcon!,
-                          anchor: const Offset(0.5, 1.0),
-                        ),
-                      if (mapState.vehicleIcon != null &&
-                          mapState.currentVehiclePosition != null &&
-                          mapState.isPlaybackStarted)
-                        Marker(
-                          markerId: const MarkerId('vehicle'),
-                          position: mapState.currentVehiclePosition!,
-                          icon: mapState.vehicleIcon!,
-                          anchor: const Offset(0.5, 0.5),
-                          rotation: mapState.currentHeading,
-                          flat: true,
-                          zIndexInt: 2,
-                        ),
-                    },
-                    onMapCreated: _onMapCreated,
-                    onCameraMove: (position) {
-                      if (_isGliding ||
-                          (mounted &&
-                              context
-                                  .read<RideHistoryDetailsCubit>()
-                                  .state
-                                  .isPlaying)) {
-                        return; // Ignore laggy async native updates during active programmatic tracking/glides
-                      }
-                      _lastCameraPosition = position;
-                    },
-                  );
+                  initialCameraPosition: const CameraPosition(
+                    target: LatLng(20.5937, 78.9629), // Start at India
+                    zoom: 4.2,
+                  ),
+                  mapType: MapType.normal,
+                  style: mapState.darkMapStyle,
+                  zoomControlsEnabled: false,
+                  myLocationButtonEnabled: false,
+                  compassEnabled: false,
+                  mapToolbarEnabled: false,
+                  padding: const EdgeInsets.only(bottom: 220),
+                  polylines: {
+                    if (mapState.validRidePoints.isNotEmpty)
+                      Polyline(
+                        polylineId: const PolylineId('route'),
+                        points: mapState.validRidePoints
+                            .map((p) => p.location)
+                            .toList(),
+                        color: Theme.of(context).colorScheme.primary,
+                        width: 5,
+                        startCap: Cap.roundCap,
+                        endCap: Cap.roundCap,
+                        jointType: JointType.round,
+                      ),
+                  },
+                  markers: {
+                    if (mapState.startIcon != null &&
+                        mapState.validRidePoints.isNotEmpty)
+                      Marker(
+                        markerId: const MarkerId('start'),
+                        position: mapState.validRidePoints.first.location,
+                        icon: mapState.startIcon!,
+                        anchor: const Offset(0.5, 0.5),
+                      ),
+                    if (mapState.endIcon != null &&
+                        mapState.validRidePoints.isNotEmpty)
+                      Marker(
+                        markerId: const MarkerId('end'),
+                        position: mapState.validRidePoints.last.location,
+                        icon: mapState.endIcon!,
+                        anchor: const Offset(0.5, 1.0),
+                      ),
+                    if (mapState.vehicleIcon != null &&
+                        mapState.currentVehiclePosition != null &&
+                        mapState.isPlaybackStarted)
+                      Marker(
+                        markerId: const MarkerId('vehicle'),
+                        position: mapState.currentVehiclePosition!,
+                        icon: mapState.vehicleIcon!,
+                        anchor: const Offset(0.5, 0.5),
+                        rotation: mapState.currentHeading,
+                        flat: true,
+                        zIndexInt: 2,
+                      ),
+                  },
+                  onMapCreated: _onMapCreated,
+                  onCameraMove: (position) {
+                    if (_isGliding ||
+                        (mounted &&
+                            context
+                                .read<RideHistoryDetailsCubit>()
+                                .state
+                                .isPlaying)) {
+                      return; // Ignore laggy async native updates during active programmatic tracking/glides
+                    }
+                    _lastCameraPosition = position;
+                  },
+                );
               },
             ),
 
@@ -1057,10 +1077,7 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
               bottom: 240,
               child: Column(
                 children: [
-                  _buildMapFloatingBtn(
-                    Icons.layers_outlined,
-                    onTap: () {},
-                  ),
+                  _buildMapFloatingBtn(Icons.layers_outlined, onTap: () {}),
                   const SizedBox(height: 12),
                   _buildMapFloatingBtn(
                     _isDirectionMode ? Icons.navigation : Icons.my_location,
@@ -1120,9 +1137,9 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
                               padding: const EdgeInsets.symmetric(
                                 horizontal: 16,
                               ),
-                              child: Stack(
-                                alignment: Alignment.center,
+                              child: Row(
                                 children: [
+                                  const Expanded(child: SizedBox()),
                                   // Play Button strictly in the center
                                   GestureDetector(
                                     onTap: _togglePlayback,
@@ -1155,102 +1172,118 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
                                   ),
 
                                   // Right-side controls (Close & Playback Speed selectors)
-                                  Align(
-                                    alignment: Alignment.centerRight,
-                                    child: Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        if (controlState.isPlaybackStarted) ...[
-                                          GestureDetector(
-                                            onTap: _stopPlayback,
-                                            child: Container(
-                                              width: 38,
-                                              height: 38,
+                                  Expanded(
+                                    child: Align(
+                                      alignment: Alignment.centerRight,
+                                      child: FittedBox(
+                                        fit: BoxFit.scaleDown,
+                                        alignment: Alignment.centerRight,
+                                        child: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            if (controlState
+                                                .isPlaybackStarted) ...[
+                                              GestureDetector(
+                                                onTap: _stopPlayback,
+                                                child: Container(
+                                                  width: 38,
+                                                  height: 38,
+                                                  decoration: BoxDecoration(
+                                                    color: Theme.of(context)
+                                                        .cardColor
+                                                        .withValues(alpha: 0.9),
+                                                    shape: BoxShape.circle,
+                                                    border: Border.all(
+                                                      color: Theme.of(context)
+                                                          .colorScheme
+                                                          .onSurface
+                                                          .withValues(
+                                                            alpha: 0.15,
+                                                          ),
+                                                    ),
+                                                  ),
+                                                  child: Icon(
+                                                    Icons.close,
+                                                    color: Theme.of(
+                                                      context,
+                                                    ).colorScheme.onSurface,
+                                                    size: 18,
+                                                  ),
+                                                ),
+                                              ),
+                                              const SizedBox(width: 10),
+                                            ],
+                                            Container(
+                                              padding: const EdgeInsets.all(2),
                                               decoration: BoxDecoration(
                                                 color: Theme.of(context)
                                                     .cardColor
-                                                    .withValues(alpha: 0.9),
-                                                shape: BoxShape.circle,
+                                                    .withValues(alpha: 0.95),
+                                                borderRadius:
+                                                    BorderRadius.circular(20),
                                                 border: Border.all(
                                                   color: Theme.of(context)
                                                       .colorScheme
                                                       .onSurface
-                                                      .withValues(alpha: 0.15),
+                                                      .withValues(alpha: 0.1),
                                                 ),
                                               ),
-                                              child: Icon(
-                                                Icons.close,
-                                                color: Theme.of(
-                                                  context,
-                                                ).colorScheme.onSurface,
-                                                size: 18,
-                                              ),
-                                            ),
-                                          ),
-                                          const SizedBox(width: 10),
-                                        ],
-                                        Container(
-                                          padding: const EdgeInsets.all(2),
-                                          decoration: BoxDecoration(
-                                            color: Theme.of(
-                                              context,
-                                            ).cardColor.withValues(alpha: 0.95),
-                                            borderRadius: BorderRadius.circular(
-                                              20,
-                                            ),
-                                            border: Border.all(
-                                              color: Theme.of(context)
-                                                  .colorScheme
-                                                  .onSurface
-                                                  .withValues(alpha: 0.1),
-                                            ),
-                                          ),
-                                          child: Row(
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: [1, 2, 3, 4].map((speed) {
-                                              final isSelected =
-                                                  controlState.playbackSpeed ==
-                                                  speed;
-                                              return GestureDetector(
-                                                onTap: () =>
-                                                    _updatePlaybackSpeed(speed),
-                                                child: Container(
-                                                  padding:
-                                                      const EdgeInsets.symmetric(
-                                                        horizontal: 8,
-                                                        vertical: 4,
-                                                      ),
-                                                  decoration: BoxDecoration(
-                                                    color: isSelected
-                                                        ? Theme.of(
-                                                            context,
-                                                          ).colorScheme.primary
-                                                        : Colors.transparent,
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                          16,
+                                              child: Row(
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: [1, 2, 3, 4].map((
+                                                  speed,
+                                                ) {
+                                                  final isSelected =
+                                                      controlState
+                                                          .playbackSpeed ==
+                                                      speed;
+                                                  return GestureDetector(
+                                                    onTap: () =>
+                                                        _updatePlaybackSpeed(
+                                                          speed,
                                                         ),
-                                                  ),
-                                                  child: Text(
-                                                    "${speed}x",
-                                                    style: TextStyle(
-                                                      color: isSelected
-                                                          ? Colors.white
-                                                          : Theme.of(context)
-                                                                .colorScheme
-                                                                .onSurface,
-                                                      fontSize: 10,
-                                                      fontWeight:
-                                                          FontWeight.bold,
+                                                    child: Container(
+                                                      padding:
+                                                          const EdgeInsets.symmetric(
+                                                            horizontal: 8,
+                                                            vertical: 4,
+                                                          ),
+                                                      decoration: BoxDecoration(
+                                                        color: isSelected
+                                                            ? Theme.of(context)
+                                                                  .colorScheme
+                                                                  .primary
+                                                            : Colors
+                                                                  .transparent,
+                                                        borderRadius:
+                                                            BorderRadius.circular(
+                                                              16,
+                                                            ),
+                                                      ),
+                                                      child: Text(
+                                                        "${speed}x",
+                                                        style: TextStyle(
+                                                          color: isSelected
+                                                              ? Colors.white
+                                                              : Theme.of(
+                                                                      context,
+                                                                    )
+                                                                    .colorScheme
+                                                                    .onSurface,
+                                                          fontSize: 10,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                        ),
+                                                      ),
                                                     ),
-                                                  ),
-                                                ),
-                                              );
-                                            }).toList(),
-                                          ),
+                                                  );
+                                                }).toList(),
+                                              ),
+                                            ),
+                                            const SizedBox(width: 8),
+                                          ],
                                         ),
-                                        const SizedBox(width: 8),
-                                      ],
+                                      ),
                                     ),
                                   ),
                                 ],
@@ -1438,10 +1471,9 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
           border: Border.all(
             color: isActive
                 ? Theme.of(context).colorScheme.primary
-                : Theme.of(context)
-                    .colorScheme
-                    .onSurface
-                    .withValues(alpha: 0.1),
+                : Theme.of(
+                    context,
+                  ).colorScheme.onSurface.withValues(alpha: 0.1),
             width: isActive ? 2 : 1,
           ),
           boxShadow: [

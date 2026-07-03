@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:trackify/l10n/app_localizations_ar.dart';
+
 
 import '../../../../l10n/app_localizations.dart';
 import '../cubit/geo_fenc_cubit.dart';
@@ -77,8 +77,8 @@ class _GeofancyScreenState extends State<GeofancyScreen> {
             final slides = state.slides;
 
             if (slides.isEmpty) {
-              return const Center(
-                child: Text("No intro data available"),
+              return Center(
+                child: Text(l10n.noIntroDataAvailable),
               );
             }
 
@@ -231,7 +231,7 @@ class _GeofancyScreenState extends State<GeofancyScreen> {
                           categoryId: widget.categoryId,
                         );
                       },
-                      child: const Text("Retry"),
+                      child: Text(l10n.retry),
                     ),
                   ],
                 ),

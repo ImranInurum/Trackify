@@ -129,7 +129,7 @@ class _DeviceWarrantyConfirmScreenState
                           );
                         },
                         icon: const Icon(Icons.refresh_rounded),
-                        label: const Text("Retry"),
+                        label: Text(l10n.retry),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: colorScheme.primary,
                           foregroundColor: colorScheme.onPrimary,

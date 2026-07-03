@@ -17,6 +17,7 @@ class VehicleCard extends StatelessWidget {
   final VoidCallback onRenew;
   final VoidCallback onVehicleControl;
   final BuildContext context;
+  final bool showNotificationFooter;
 
   const VehicleCard({
     super.key,
@@ -28,6 +29,7 @@ class VehicleCard extends StatelessWidget {
     required this.onRenew,
     required this.onVehicleControl,
     required this.context,
+    this.showNotificationFooter = true,
   });
 
   @override
@@ -177,8 +179,9 @@ class VehicleCard extends StatelessWidget {
         ],
       ),
     ),
-    InkWell(
-      onTap: () {
+    if (showNotificationFooter)
+      InkWell(
+        onTap: () {
         Navigator.push(
           context,
           MaterialPageRoute(builder: (_) => const NotificationTimelineScreen()),

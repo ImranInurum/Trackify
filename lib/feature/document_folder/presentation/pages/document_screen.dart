@@ -77,7 +77,7 @@ class _DocumentFolderScreenState extends State<DocumentFolderScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Upload failed: $e'),
+            content: Text('${AppLocalizations.of(context)!.uploadFailed}: $e'),
             backgroundColor: Colors.red,
           ),
         );

@@ -1068,12 +1068,12 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
       {
         "icon": Icons.share_outlined,
         "label": l10n.locationSharing,
-        "badge": "Coming Soon",
+        "badge": l10n.comingSoonOption,
       },
       {
         "icon": Icons.local_parking_rounded,
         "label": l10n.safeParking,
-        "badge": "Coming Soon",
+        "badge": l10n.comingSoonOption,
       },
       {
         "icon": Icons.campaign_outlined,
@@ -1118,7 +1118,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
       {
         "icon": Icons.sos_outlined,
         "label": l10n.emergency,
-        "badge": "Coming Soon",
+        "badge": l10n.comingSoonOption,
       },
       {
         "icon": Icons.play_arrow_outlined,
@@ -1242,7 +1242,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
     AppLocalizations l10n,
   ) {
     return InkWell(
-      onTap: () => option["badge"] == "Coming Soon"
+      onTap: () => option["badge"] == l10n.comingSoonOption
           ? null
           : _handleExploreTap(option, selectedDevice, l10n),
       child: Column(
@@ -1296,6 +1296,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
   }
 
   Widget _buildIconWithBadge(Map<String, dynamic> option) {
+    final l10n = AppLocalizations.of(context)!;
     return Stack(
       clipBehavior: Clip.none,
       children: [
@@ -1320,7 +1321,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
               decoration: BoxDecoration(
-                color: option["badge"] == "Coming Soon"
+                color: option["badge"] == l10n.comingSoonOption
                     ? Theme.of(context).disabledColor
                     : Theme.of(context).colorScheme.primary,
                 borderRadius: BorderRadius.circular(4),
@@ -1348,8 +1349,8 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
     if (label == l10n.recordViaPhone) {
       if (selectedDevice?.imei == null) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text("No device found"),
+           SnackBar(
+            content: Text(l10n.noDeviceFound),
             backgroundColor: Colors.red,
           ),
         );
@@ -1437,8 +1438,8 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
     } else if (label == l10n.deviceDataPlanLabel) {
       if (selectedDevice?.imei == null) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text("No device found"),
+           SnackBar(
+            content: Text(l10n.noDeviceFound),
             backgroundColor: Colors.red,
           ),
         );
@@ -1478,6 +1479,23 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
           );
         }
         if (state is RideHistoryFailure) {
+          final errorStr = state.exception.toString().toLowerCase();
+          final isNotFound = errorStr.contains('not found') || 
+                             errorStr.contains('no rides') || 
+                             errorStr.contains('no recent rides');
+                             
+          if (isNotFound) {
+            return Padding(
+              padding: const EdgeInsets.all(16),
+              child: Center(
+                child: Text(
+                  l10n.noRecentRidesFound,
+                  style: const TextStyle(color: Colors.grey),
+                ),
+              ),
+            );
+          }
+
           return Padding(
             padding: const EdgeInsets.all(16),
             child: Center(
@@ -1577,7 +1595,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
               }
               if (state is PromoVideoLoaded) {
                 if (state.videos.isEmpty) {
-                  return const Center(child: Text("No videos found"));
+                  return Center(child: Text(l10n.noVideosFound));
                 }
                 return ListView.builder(
                   shrinkWrap: true,

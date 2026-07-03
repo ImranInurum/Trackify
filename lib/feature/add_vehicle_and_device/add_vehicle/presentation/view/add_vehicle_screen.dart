@@ -457,7 +457,7 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
                                 : Padding(
                                     padding: const EdgeInsets.only(bottom: 4),
                                     child: Text(
-                                      "Select vehicle type to see fuel options",
+                                      l10n.selectVehicleTypeForFuel,
                                       style: TextStyle(
                                         color: theme.hintColor.withOpacity(0.7),
                                         fontSize: 12,
@@ -486,7 +486,7 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
                               onDisabledTap: () {
                                 if (state.selectedFuelType == null) {
                                   ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(content: Text("Please select fuel type first")),
+                                    SnackBar(content: Text(l10n.pleaseSelectFuelTypeFirst)),
                                   );
                                 } else if (state.makers.isEmpty) {
                                   ScaffoldMessenger.of(context).showSnackBar(
@@ -515,7 +515,7 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
                               onDisabledTap: () {
                                 if (state.selectedMaker == null) {
                                   ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(content: Text("Please select vehicle make first")),
+                                    SnackBar(content: Text(l10n.pleaseSelectVehicleMakeFirst)),
                                   );
                                 } else if (state.models.isEmpty) {
                                   ScaffoldMessenger.of(context).showSnackBar(

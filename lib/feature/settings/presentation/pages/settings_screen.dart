@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:trackify/feature/settings/presentation/pages/notification_settings.dart';
+import 'package:trackify/feature/settings/presentation/pages/privacy_screen.dart';
 import 'package:trackify/feature/settings/presentation/widgets/setting_list_tile.dart';
 import 'package:trackify/l10n/app_localizations.dart';
 
@@ -153,7 +154,12 @@ class SettingsScreen extends StatelessWidget {
               subtitle: l10n.privacyDesc,
               showArrow: true,
               showIcon: true,
-              onTap: () => debugPrint("Privacy tapped"),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const PrivacyScreen()),
+                );
+              },
             ),
             SettingListTile(
               icon: Icons.play_arrow_outlined,

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
+import 'package:text_to_speech/text_to_speech.dart';
 import '../../../../core/theme/app_theme_extension.dart';
 import '../../../../core/widgets/square_flat_button.dart';
 import '../../../../l10n/app_localizations.dart';
@@ -28,17 +29,83 @@ class _DeviceInstallationScreenState extends State<DeviceInstallationScreen>
   bool _hasScanned = false;
   String? _scannedImei;
 
+  late TextToSpeech _tts;
+  String _ttsLanguage = 'en-US';
+
   @override
   void initState() {
     super.initState();
+    _initTts();
     _scannerLineController = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 2),
     )..repeat(reverse: true);
   }
 
+  Future<void> _initTts() async {
+    _tts = TextToSpeech();
+    // Add a small delay to allow native TTS engine to initialize
+    await Future.delayed(const Duration(milliseconds: 1000));
+    _speakInstruction();
+  }
+
+  void _speakInstruction() async {
+    try {
+      debugPrint("Starting TTS speak in $_ttsLanguage");
+      _tts.setVolume(1.0);
+      _tts.setRate(1.0); // Increased speaking speed
+      
+      _tts.setLanguage(_ttsLanguage);
+
+      String textToSpeak = "Please scan the activation code given on the trackify box";
+      switch (_ttsLanguage) {
+        case 'hi-IN':
+          textToSpeak = "Trackify box par diye gaye activation code ko scan karein";
+          break;
+        case 'mr-IN':
+          textToSpeak = "ट्रॅकीफाय बॉक्सवर दिलेला ॲक्टिव्हेशन कोड स्कॅन करा";
+          break;
+        case 'ta-IN':
+          textToSpeak = "ட்ராக்கிஃபை பாக்ஸில் கொடுக்கப்பட்டுள்ள ஆக்டிவேஷன் கோடை ஸ்கேன் செய்யவும்";
+          break;
+        case 'kn-IN':
+          textToSpeak = "ಟ್ರಾಕಿಫೈ ಬಾಕ್ಸ್‌ನಲ್ಲಿ ನೀಡಲಾದ ಆಕ್ಟಿವೇಶನ್ ಕೋಡ್ ಅನ್ನು ಸ್ಕ್ಯಾನ್ ಮಾಡಿ";
+          break;
+        case 'en-US':
+        default:
+          textToSpeak = "Please scan the activation code given on the trackify box";
+      }
+
+      _tts.speak(textToSpeak);
+    } catch (e) {
+      debugPrint("TTS Error: $e");
+    }
+  }
+
+  PopupMenuItem<String> _buildLanguageMenuItem(
+    String value,
+    String title,
+    ThemeData theme,
+  ) {
+    final isSelected = _ttsLanguage == value;
+    return PopupMenuItem<String>(
+      value: value,
+      padding: EdgeInsets.zero,
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        color: isSelected ? Colors.cyan.withOpacity(0.3) : Colors.transparent,
+        child: Text(
+          title,
+          style: TextStyle(color: theme.colorScheme.onSurface, fontSize: 14),
+        ),
+      ),
+    );
+  }
+
   @override
   void dispose() {
+    _tts.stop();
     _scannerLineController.dispose();
     _cameraController.dispose();
     super.dispose();
@@ -99,19 +166,76 @@ class _DeviceInstallationScreenState extends State<DeviceInstallationScreen>
           elevation: 0,
           centerTitle: false,
           leading: IconButton(
-            icon: Icon(Icons.arrow_back_ios_new, color: theme.colorScheme.onSurface),
+            icon: Icon(
+              Icons.arrow_back_ios_new,
+              color: theme.colorScheme.onSurface,
+              size: 24,
+            ),
             onPressed: () => Navigator.pop(context),
           ),
           title: Text(
             l10n.deviceInstallation,
-            style: theme.textTheme.titleLarge?.copyWith(
-              fontWeight: FontWeight.bold,
+            style: TextStyle(
+              fontSize: 18,
+              color: theme.colorScheme.onSurface,
+              fontWeight: FontWeight.w600,
             ),
           ),
           actions: [
-            IconButton(
-              icon: Icon(Icons.more_vert, color: theme.colorScheme.onSurface),
-              onPressed: () {},
+            Theme(
+              data: Theme.of(context).copyWith(
+                popupMenuTheme: PopupMenuThemeData(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+              ),
+              child: PopupMenuButton<String>(
+                icon: Icon(Icons.more_vert, color: theme.colorScheme.onSurface),
+                offset: const Offset(0, 40),
+                onSelected: (String result) {
+                  if (result == 'switch_vehicle') {
+                    // Logic for switch vehicle
+                  } else {
+                    setState(() {
+                      _ttsLanguage = result;
+                      _speakInstruction();
+                    });
+                  }
+                },
+                itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+                  PopupMenuItem<String>(
+                    enabled: false,
+                    height: 36,
+                    child: Text(
+                      'Select audio language',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: theme.colorScheme.onSurface,
+                        fontSize: 14,
+                      ),
+                    ),
+                  ),
+                  _buildLanguageMenuItem('en-US', 'English', theme),
+                  _buildLanguageMenuItem('hi-IN', 'हिंदी', theme),
+                  _buildLanguageMenuItem('mr-IN', 'मराठी', theme),
+                  _buildLanguageMenuItem('ta-IN', 'தமிழ்', theme),
+                  _buildLanguageMenuItem('kn-IN', 'ಕನ್ನಡ', theme),
+                  // const PopupMenuDivider(),
+                  // PopupMenuItem<String>(
+                  //   value: 'switch_vehicle',
+                  //   height: 48,
+                  //   child: Text(
+                  //     'Switch Vehicle',
+                  //     style: TextStyle(
+                  //       fontWeight: FontWeight.bold,
+                  //       color: theme.colorScheme.onSurface,
+                  //       fontSize: 14,
+                  //     ),
+                  //   ),
+                  // ),
+                ],
+              ),
             ),
           ],
         ),
@@ -203,14 +327,19 @@ class _DeviceInstallationScreenState extends State<DeviceInstallationScreen>
                                                   child: Container(
                                                     height: 3,
                                                     decoration: BoxDecoration(
-                                                      color: theme.colorScheme.secondary,
+                                                      color: theme
+                                                          .colorScheme
+                                                          .secondary,
                                                       borderRadius:
                                                           BorderRadius.circular(
                                                             2,
                                                           ),
                                                       boxShadow: [
                                                         BoxShadow(
-                                                          color: theme.colorScheme.secondary.withOpacity(0.6),
+                                                          color: theme
+                                                              .colorScheme
+                                                              .secondary
+                                                              .withOpacity(0.6),
                                                           blurRadius: 12,
                                                           spreadRadius: 3,
                                                         ),
@@ -226,10 +355,13 @@ class _DeviceInstallationScreenState extends State<DeviceInstallationScreen>
                                     ),
 
                                     // Loading overlay
-                                    BlocBuilder<DeviceInstallationCubit,
-                                        DeviceInstallationState>(
+                                    BlocBuilder<
+                                      DeviceInstallationCubit,
+                                      DeviceInstallationState
+                                    >(
                                       builder: (context, state) {
-                                        if (state is DeviceInstallationLoading) {
+                                        if (state
+                                            is DeviceInstallationLoading) {
                                           return Container(
                                             decoration: BoxDecoration(
                                               color: theme.colorScheme.surface
@@ -248,12 +380,16 @@ class _DeviceInstallationScreenState extends State<DeviceInstallationScreen>
                                                   Text(
                                                     l10n.assigningDevice,
                                                     style: theme
-                                                        .textTheme.bodyMedium
+                                                        .textTheme
+                                                        .bodyMedium
                                                         ?.copyWith(
-                                                      color: theme.colorScheme.onSurface
-                                                          .withValues(
-                                                              alpha: 0.7),
-                                                    ),
+                                                          color: theme
+                                                              .colorScheme
+                                                              .onSurface
+                                                              .withValues(
+                                                                alpha: 0.7,
+                                                              ),
+                                                        ),
                                                   ),
                                                 ],
                                               ),
@@ -308,7 +444,9 @@ class _DeviceInstallationScreenState extends State<DeviceInstallationScreen>
                     Text(
                       l10n.openTrackifyBoxInstruction,
                       style: theme.textTheme.bodyMedium?.copyWith(
-                        color: theme.colorScheme.onSurface.withValues(alpha: 0.54),
+                        color: theme.colorScheme.onSurface.withValues(
+                          alpha: 0.54,
+                        ),
                       ),
                     ),
                     const SizedBox(height: 16),

@@ -64,8 +64,8 @@ class _HealthInsuranceScreenState extends State<HealthInsuranceScreen> {
               listener: (context, state) {
                 if (state.saveSuccess) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Health insurance details saved successfully'),
+                    SnackBar(
+                      content: Text(l10n.healthInsuranceSavedSuccess),
                       backgroundColor: Colors.green,
                     ),
                   );

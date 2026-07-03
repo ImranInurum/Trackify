@@ -25,26 +25,31 @@ class MetricCard extends StatelessWidget {
     return GestureDetector(
       onTap: onEdit,
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 9),
         decoration: BoxDecoration(
           color: cardColor,
           borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: Colors.grey.withOpacity(0.5), width: 0.5),
         ),
         child: Stack(
           children: [
             Align(
               alignment: Alignment.topRight,
               child: Container(
-                padding: const EdgeInsets.all(6),
+                padding: const EdgeInsets.all(4),
                 decoration: BoxDecoration(
                   color: theme.colorScheme.onSurface.withOpacity(0.05),
                   shape: BoxShape.circle,
                 ),
-                child: Icon(Icons.edit, color: theme.colorScheme.onSurface.withOpacity(0.7), size: 14),
+                child: Icon(
+                  Icons.edit,
+                  color: theme.colorScheme.onSurface.withOpacity(0.7),
+                  size: 14,
+                ),
               ),
             ),
             Padding(
-              padding: const EdgeInsets.only(top: 16.0, bottom: 8.0),
+              padding: const EdgeInsets.only(top: 10.0, bottom: 4.0),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -57,7 +62,7 @@ class MetricCard extends StatelessWidget {
                       Text(
                         value,
                         style: TextStyle(
-                          fontSize: 24,
+                          fontSize: 22,
                           fontWeight: FontWeight.w900,
                           color: primaryTextColor,
                         ),
@@ -73,11 +78,11 @@ class MetricCard extends StatelessWidget {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: 4),
                   Text(
                     label,
                     style: TextStyle(
-                      fontSize: 12,
+                      fontSize: 11,
                       color: secondaryTextColor,
                       fontWeight: FontWeight.w500,
                     ),
