@@ -92,8 +92,9 @@ class DeleteAccountScreen extends StatelessWidget {
                 decoration: InputDecoration(
                   hintText: l10n.explanationOptionalHint,
                   hintStyle: TextStyle(
-                    color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
+                    color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
                     fontSize: 15,
+                    fontWeight: FontWeight.bold,
                   ),
                   contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                   enabledBorder: OutlineInputBorder(

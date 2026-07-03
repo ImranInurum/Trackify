@@ -12,6 +12,7 @@ val newBuildDir: Directory =
 rootProject.layout.buildDirectory.value(newBuildDir)
 
 subprojects {
+    apply(from = "${rootProject.projectDir}/fix_namespace.gradle")
     val newSubprojectBuildDir: Directory = newBuildDir.dir(project.name)
     project.layout.buildDirectory.value(newSubprojectBuildDir)
 }
