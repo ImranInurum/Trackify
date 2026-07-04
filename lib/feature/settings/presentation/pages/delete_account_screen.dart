@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:trackify/l10n/app_localizations.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:trackify/app/cubit/app_cubit.dart';
+import 'package:trackify/app/cubit/app_state.dart';
 
 class DeleteAccountScreen extends StatelessWidget {
   const DeleteAccountScreen({super.key});
@@ -32,23 +35,28 @@ class DeleteAccountScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              RichText(
-                text: TextSpan(
-                  style: TextStyle(
-                    fontSize: 15,
-                    color: Theme.of(context).colorScheme.onSurface.withOpacity(0.8),
-                  ),
-                  children: [
-                    TextSpan(text: '${l10n.hi} '),
-                    TextSpan(
-                      text: 'Kk',
+              BlocBuilder<AppCubit, AppState>(
+                builder: (context, appState) {
+                  final userName = appState.userData?.name ?? l10n.guest;
+                  return RichText(
+                    text: TextSpan(
                       style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: Theme.of(context).colorScheme.onSurface,
+                        fontSize: 15,
+                        color: Theme.of(context).colorScheme.onSurface.withOpacity(0.8),
                       ),
+                      children: [
+                        TextSpan(text: '${l10n.hi} '),
+                        TextSpan(
+                          text: userName,
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Theme.of(context).colorScheme.onSurface,
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
+                  );
+                }
               ),
               const SizedBox(height: 8),
               Text(

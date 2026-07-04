@@ -116,9 +116,30 @@ class _NotificationSoundsScreenState extends State<NotificationSoundsScreen> {
                   showIcon: false,
                   isSubtitle: false,
                   onTap: () {
-                    final channelId = alert['androidChannelId'];
-                    if (channelId != null && channelId.isNotEmpty) {
-                      _openChannel(channelId);
+                    final String type = alert['type']?.toString().toLowerCase() ?? '';
+                    String? channelId;
+                    switch (type) {
+                      case 'vibration': channelId = 'vibration_alerts'; break;
+                      case 'motion': channelId = 'motion_alerts'; break;
+                      case 'ignition': channelId = 'ignition_alerts'; break;
+                      case 'fall': channelId = 'fall_alerts'; break;
+                      case 'battery': channelId = 'battery_alerts'; break;
+                      case 'geofence': channelId = 'geofence_alerts'; break;
+                      case 'speed': channelId = 'speed_alerts'; break;
+                      case 'custom': channelId = 'custom_notifications'; break;
+                      case 'other': channelId = 'other_alerts'; break;
+                      default: 
+                        channelId = alert['androidChannelId']?.toString(); 
+                        if (channelId == null || channelId.isEmpty) {
+                          channelId = 'trackify_reminders';
+                        }
+                        break;
+                    }
+
+                    if (channelId != null && channelId.toString().isNotEmpty) {
+                      _openChannel(channelId.toString());
+                    } else {
+                      AppSettings.openAppSettings(type: AppSettingsType.notification);
                     }
                   },
                 );

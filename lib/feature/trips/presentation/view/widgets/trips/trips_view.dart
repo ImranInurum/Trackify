@@ -163,16 +163,16 @@ class _TripsState extends State<Trips> {
                           context: context,
                           isScrollControlled: true,
                           backgroundColor: Colors.transparent,
-                          builder: (context) => SortingBottomSheet(
-                            initialSortBy: 'Date',
-                            initialIsRecentToOldest: true,
-                            onApply: (sortBy, isRecentToOldest) {
-                              context.read<RideHistoryCubit>().sortRides(
-                                sortBy,
-                                isRecentToOldest,
-                              );
-                            },
-                          ),
+                          builder: (context) {
+                            final cubit = context.read<RideHistoryCubit>();
+                            return SortingBottomSheet(
+                              initialSortBy: cubit.currentSortBy,
+                              initialIsRecentToOldest: cubit.currentIsRecentToOldest,
+                              onApply: (sortBy, isRecentToOldest) {
+                                cubit.sortRides(sortBy, isRecentToOldest);
+                              },
+                            );
+                          },
                         );
                       },
                       child: Container(

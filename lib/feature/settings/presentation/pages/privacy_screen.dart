@@ -77,6 +77,11 @@ class PrivacyScreen extends StatelessWidget {
   }
 
   void _showChangePasswordDialog(BuildContext context, AppLocalizations l10n) {
+    final oldPasswordController = TextEditingController();
+    final newPasswordController = TextEditingController();
+    final confirmPasswordController = TextEditingController();
+    String? errorMessage;
+
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -102,6 +107,7 @@ class PrivacyScreen extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   TextField(
+                    controller: oldPasswordController,
                     obscureText: true,
                     style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
                     decoration: InputDecoration(
@@ -123,6 +129,7 @@ class PrivacyScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 20),
                   TextField(
+                    controller: newPasswordController,
                     obscureText: true,
                     style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
                     decoration: InputDecoration(
@@ -144,10 +151,12 @@ class PrivacyScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 20),
                   TextField(
+                    controller: confirmPasswordController,
                     obscureText: true,
                     style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
                     decoration: InputDecoration(
                       hintText: l10n.confirmNewPasswordTitle,
+                      errorText: errorMessage,
                       hintStyle: TextStyle(
                         color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
                         fontSize: 14,
@@ -217,6 +226,15 @@ class PrivacyScreen extends StatelessWidget {
                 ),
                 TextButton(
                   onPressed: () {
+                    if (newPasswordController.text != confirmPasswordController.text) {
+                      setState(() {
+                        errorMessage = l10n.passwordsDoNotMatch;
+                      });
+                      return;
+                    }
+                    setState(() {
+                      errorMessage = null;
+                    });
                     // Save action logic here
                     Navigator.of(context).pop();
                   },

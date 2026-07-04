@@ -121,9 +121,30 @@ class _DeviceDataScreenState extends State<DeviceDataScreen> {
             final expiryText = plan?.expiryDateText.isNotEmpty == true
                 ? plan!.expiryDateText
                 : '--';
-            final daysLeftStr = plan != null
-                ? l10n.expiresInDays(plan.daysLeft.toString())
-                : null;
+            Color? dynamicSubColor;
+            String? daysLeftStr;
+
+            if (plan != null) {
+              if (plan.daysLeft <= 0) {
+                dynamicSubColor = Colors.grey;
+                daysLeftStr = "Expired";
+              } else if (plan.daysLeft <= 15) {
+                dynamicSubColor = Colors.red;
+                daysLeftStr = l10n.expiresInDays(plan.daysLeft.toString());
+              } else if (plan.daysLeft <= 60) {
+                dynamicSubColor = Colors.orange;
+                daysLeftStr = l10n.expiresInDays(plan.daysLeft.toString());
+              } else if (plan.daysLeft <= 150) {
+                dynamicSubColor = Colors.amber; // Yellow
+                daysLeftStr = l10n.expiresInDays(plan.daysLeft.toString());
+              } else if (plan.daysLeft <= 250) {
+                dynamicSubColor = Colors.lightGreen;
+                daysLeftStr = l10n.expiresInDays(plan.daysLeft.toString());
+              } else {
+                dynamicSubColor = Colors.green;
+                daysLeftStr = l10n.expiresInDays(plan.daysLeft.toString());
+              }
+            }
 
             return Container(
               padding: const EdgeInsets.all(16),
@@ -169,7 +190,7 @@ class _DeviceDataScreenState extends State<DeviceDataScreen> {
                         l10n.expiryDate,
                         expiryText,
                         sub: daysLeftStr,
-                        subColor: Colors.green,
+                        subColor: dynamicSubColor,
                       ),
                     ],
                   ),
@@ -350,10 +371,9 @@ class _DeviceDataScreenState extends State<DeviceDataScreen> {
         decoration: BoxDecoration(
           color: AppColors.shadowColor.withOpacity(0.5),
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-            color: isSelected ? color.primary : color.primary,
-            width: 1.2,
-          ),
+          border: isSelected
+              ? Border.all(color: color.primary, width: 1.2)
+              : Border.all(color: Colors.transparent, width: 1.2),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -364,7 +384,9 @@ class _DeviceDataScreenState extends State<DeviceDataScreen> {
                   isSelected
                       ? Icons.radio_button_checked
                       : Icons.radio_button_off,
-                  color: color.primary,
+                  color: isSelected
+                      ? color.primary
+                      : color.onSurface.withOpacity(0.5),
                   size: 18,
                 ),
                 const SizedBox(width: 6),

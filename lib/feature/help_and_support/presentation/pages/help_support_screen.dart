@@ -6,6 +6,7 @@ import 'package:trackify/core/utils/shared_preferences.dart';
 import 'package:trackify/feature/help_and_support/presentation/pages/my_issue_screen.dart';
 import 'package:trackify/feature/help_and_support/presentation/pages/time_slot_screen.dart';
 import 'package:trackify/l10n/app_localizations.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'package:trackify/feature/help_and_support/data/repository_impl/help_repository_impl.dart';
 import 'package:trackify/feature/help_and_support/presentation/cubit/help_cubit.dart';
@@ -692,9 +693,40 @@ class _HelpSuggestionScreenState extends State<HelpSuggestionScreen> {
   Widget _buildBottomMenu(AppLocalizations l10n) {
     return Column(
       children: [
-        _buildSimplifiedMenuRow(l10n.faq),
-        _buildSimplifiedMenuRow(l10n.termsConditions),
-        _buildSimplifiedMenuRow(l10n.privacyPolicy),
+        _buildSimplifiedMenuRow(l10n.faq, onTap: () async {
+          final url = Uri.parse('http://139.59.1.109/faq.html');
+          if (await canLaunchUrl(url)) {
+            await launchUrl(url, mode: LaunchMode.externalApplication);
+          } else {
+            if (mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Could not open FAQ')),
+              );
+            }
+          }
+        }),
+        _buildSimplifiedMenuRow(l10n.termsConditions, onTap: () async {
+          final url = Uri.parse('http://139.59.1.109/terms.html');
+          if (await canLaunchUrl(url)) {
+            await launchUrl(url, mode: LaunchMode.externalApplication);
+          } else {
+            if (mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Could not open Terms & Conditions')),
+              );
+            }
+          }
+        }),
+        _buildSimplifiedMenuRow(l10n.privacyPolicy, onTap: () async {
+          final url = Uri.parse('http://139.59.1.109/privacy_policy.html');
+          if (await canLaunchUrl(url)) {
+            await launchUrl(url, mode: LaunchMode.externalApplication);
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Could not open privacy policy')),
+            );
+          }
+        }),
         _buildSimplifiedMenuRow(l10n.changeLog, onTap: () {
           Navigator.push(
             context,

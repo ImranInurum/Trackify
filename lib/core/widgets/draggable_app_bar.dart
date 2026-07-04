@@ -613,14 +613,40 @@ class _DraggableAppBarState extends State<DraggableAppBar>
                       color: Theme.of(context).colorScheme.onSurface,
                     )
               else if (_isExpanded && isHeaderRow)
-                Text(
-                  AppLocalizations.of(context)!.expiresInDays('351'),
-                  style: const TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w700,
-                    color: Colors.green,
-                  ),
-                )
+                (() {
+                  int daysLeft = 60; // Set to 60 as requested
+                  Color textColor;
+                  String text;
+
+                  if (daysLeft <= 0) {
+                    textColor = Colors.grey;
+                    text = "Expired";
+                  } else if (daysLeft <= 15) {
+                    textColor = Colors.red;
+                    text = AppLocalizations.of(context)!.expiresInDays(daysLeft.toString());
+                  } else if (daysLeft <= 60) {
+                    textColor = Colors.orange;
+                    text = AppLocalizations.of(context)!.expiresInDays(daysLeft.toString());
+                  } else if (daysLeft <= 150) {
+                    textColor = Colors.amber; // Yellow
+                    text = AppLocalizations.of(context)!.expiresInDays(daysLeft.toString());
+                  } else if (daysLeft <= 250) {
+                    textColor = Colors.lightGreen;
+                    text = AppLocalizations.of(context)!.expiresInDays(daysLeft.toString());
+                  } else {
+                    textColor = Colors.green;
+                    text = AppLocalizations.of(context)!.expiresInDays(daysLeft.toString());
+                  }
+                  
+                  return Text(
+                    text,
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w700,
+                      color: textColor,
+                    ),
+                  );
+                })()
               else if (_isExpanded && !isHeaderRow)
                 Row(
                   children: [
