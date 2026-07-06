@@ -484,7 +484,7 @@ class AppLocalizationsMr extends AppLocalizations {
 
   @override
   String expiresInDays(String days) {
-    return '$days दिवसात संपेल';
+    return '$days दिवसांत कालबाह्य';
   }
 
   @override
@@ -533,7 +533,7 @@ class AppLocalizationsMr extends AppLocalizations {
   String get settingsDesc => 'भाषा, खाते सेटिंग्ज आणि बरेच काही';
 
   @override
-  String get notifications => 'सूचना';
+  String get notifications => 'अधिसूचना';
 
   @override
   String get noNotifications => 'कोणतीही सूचना सापडली नाही';
@@ -2721,4 +2721,74 @@ class AppLocalizationsMr extends AppLocalizations {
   @override
   String get confirmDeleteAccount =>
       'Are you sure you want to delete your account?';
+
+  @override
+  String get expired => 'कालबाह्य झाले';
+
+  @override
+  String daysLeftText(String days) {
+    return '$days दिवस शिल्लक';
+  }
+
+  @override
+  String get warrantyExpiringTitle => 'वॉरंटी संपत आहे';
+
+  @override
+  String get warrantyExpiredDesc =>
+      'तुमच्या डिव्हाइसची वॉरंटी कालबाह्य झाली आहे. प्रीमियम समर्थन आणि वैशिष्ट्यांचा आनंद घेत राहण्यासाठी कृपया तुमच्या वॉरंटीचे नूतनीकरण करा.';
+
+  @override
+  String warrantyExpiringDesc(String days) {
+    return 'तुमच्या डिव्हाइसची वॉरंटी $days दिवसांत संपेल. सेवा खंडित होऊ नये म्हणून कृपया त्याचे नूतनीकरण करा.';
+  }
+
+  @override
+  String get dismiss => 'डिसमिस';
+
+  @override
+  String get allTime => 'सर्व वेळ';
+
+  @override
+  String get totalServices => 'एकूण सेवा';
+
+  @override
+  String get avgSpending => 'सरासरी खर्च';
+
+  @override
+  String get perService => '/सेवा';
+
+  @override
+  String get avgInterval => 'सरासरी अंतराल';
+
+  @override
+  String get months => 'महिने';
+
+  @override
+  String get deleteAlertTitle => 'अलर्ट हटवा';
+
+  @override
+  String get deleteAlertDesc =>
+      'तुम्हाला खात्री आहे की तुम्ही हा ओव्हरस्पीड अलर्ट हटवू इच्छिता?';
+
+  @override
+  String get deleteServiceLogDesc =>
+      'तुम्हाला खात्री आहे की तुम्ही हा सर्व्हिस लॉग हटवू इच्छिता?';
+
+  @override
+  String get serviceDetails => 'सर्व्हिस तपशील';
+
+  @override
+  String get amountText => 'रक्काम';
+
+  @override
+  String get unknownText => 'अज्ञात';
+
+  @override
+  String get notProvided => 'दिले नाही';
+
+  @override
+  String get contactCopied => 'संपर्क कॉपी केला';
+
+  @override
+  String get noImage => 'चित्र नाही';
 }

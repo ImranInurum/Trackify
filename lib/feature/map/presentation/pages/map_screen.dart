@@ -57,6 +57,9 @@ import 'package:trackify/core/common/models/vehicle_list_model.dart';
 import 'package:trackify/core/utils/distance_utils.dart';
 import 'package:trackify/feature/geo_fence/presentation/cubit/geo_fence_cubit.dart';
 import 'package:trackify/feature/geo_fence/presentation/cubit/geo_fence_state.dart';
+import 'package:trackify/feature/device_warranty/data/repository/device_warranty_repository_impl.dart';
+import 'package:trackify/feature/device_warranty/data/data_source/device_warranty_data_source.dart';
+import 'package:trackify/core/config/network/network_api_service.dart';
 
 class MapScreen extends StatefulWidget {
   const MapScreen({super.key});
@@ -139,6 +142,8 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
           final now = DateTime.now().millisecondsSinceEpoch;
           final elapsed = now - _lastDataReceivedMs;
 
+          bool hasMoved = false;
+
           if (elapsed > 15000) {
             // Stop moving if no data received for 15 seconds
           } else {
@@ -148,21 +153,29 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
             
             final double lat = _animStartMarkerTarget!.latitude + (_animEndMarkerTarget!.latitude - _animStartMarkerTarget!.latitude) * t;
             final double lng = _animStartMarkerTarget!.longitude + (_animEndMarkerTarget!.longitude - _animStartMarkerTarget!.longitude) * t;
-            _animatedMarkerPos = LatLng(lat, lng);
+            
+            if (_animatedMarkerPos?.latitude != lat || _animatedMarkerPos?.longitude != lng) {
+              _animatedMarkerPos = LatLng(lat, lng);
+              hasMoved = true;
+            }
             
             double diffBearing = _animEndMarkerBearing - _animStartMarkerBearing;
             if (diffBearing > 180) diffBearing -= 360;
             if (diffBearing < -180) diffBearing += 360;
             
-            _animatedMarkerBearing = _animStartMarkerBearing + diffBearing * t;
+            final double newBearing = _animStartMarkerBearing + diffBearing * t;
+            if (_animatedMarkerBearing != newBearing) {
+              _animatedMarkerBearing = newBearing;
+              hasMoved = true;
+            }
           }
           
-          if (now - _lastMarkerRebuildMs >= 50) {
+          if (hasMoved && now - _lastMarkerRebuildMs >= 50) {
             _lastMarkerRebuildMs = now;
             _mapRebuildNotifier.value++;
           }
           
-          if (_isInitialFocusDone && mounted && _mapController != null) {
+          if (hasMoved && _isInitialFocusDone && mounted && _mapController != null) {
             if (now - _lastCameraUpdateMs >= 50) {
               _lastCameraUpdateMs = now;
               
@@ -433,6 +446,84 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
     }
   }
 
+  bool _hasShownWarrantyPopup = false;
+
+  Future<void> _checkWarrantyStatus(String imei) async {
+    if (_hasShownWarrantyPopup) return;
+    try {
+      final repository = DeviceWarrantyRepositoryImpl(
+        DeviceWarrantyRemoteDataSourceImpl(NetworkApiService()),
+      );
+      final result = await repository.getDeviceWarrantyStatus(imei);
+      result.fold(
+        (l) {}, // error, ignore
+        (r) {
+          if (!mounted) return;
+          final daysLeft = r.warranty?.daysLeft;
+          if (daysLeft != null && daysLeft <= 2) {
+            _hasShownWarrantyPopup = true;
+            _showWarrantyPopup(daysLeft);
+          }
+        },
+      );
+    } catch (e) {
+      debugPrint("Error checking warranty for popup: $e");
+    }
+  }
+
+  void _showWarrantyPopup(int daysLeft) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        final l10n = AppLocalizations.of(context)!;
+        return AlertDialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          title: Row(
+            children: [
+              const Icon(Icons.warning_amber_rounded, color: Colors.orange, size: 28),
+              const SizedBox(width: 8),
+              Text(
+                l10n.warrantyExpiringTitle,
+                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+              ),
+            ],
+          ),
+          content: Text(
+            daysLeft <= 0
+                ? l10n.warrantyExpiredDesc
+                : l10n.warrantyExpiringDesc(daysLeft.toString()),
+            style: const TextStyle(fontSize: 14),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text(l10n.dismiss, style: const TextStyle(color: Colors.grey)),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => const WarrantyScreen(),
+                  ),
+                );
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Theme.of(context).colorScheme.primary,
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+              ),
+              child: Text(l10n.renewNow),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   double _normalizeBearing(double bearing) {
     double b = bearing % 360;
     if (b < 0) b += 360;
@@ -482,6 +573,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                       context.read<RideHistoryCubit>().getRideHistoryData();
                       if (savedVehicle.imei != null) {
                          context.read<GeoFenceCubit>().fetchGeoFences(savedVehicle.imei!);
+                         _checkWarrantyStatus(savedVehicle.imei!);
                       }
                     } else {
                       // Update existing selected device if it was changed
@@ -929,25 +1021,48 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
               try { attrs = jsonDecode(attrs); } catch (_) {}
             }
 
+            bool isLastRideToday = false;
+            if (lastRide != null) {
+              try {
+                if (lastRide.rawStartTime.isNotEmpty) {
+                  final date = DateTime.parse(lastRide.rawStartTime).toLocal();
+                  final now = DateTime.now();
+                  if (date.year == now.year && date.month == now.month && date.day == now.day) {
+                    isLastRideToday = true;
+                  }
+                } else {
+                  final now = DateTime.now();
+                  final format1 = "${now.day}/${now.month}/${now.year}";
+                  final format2 = "${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}";
+                  if (lastRide.date == format1 || lastRide.date == format2) {
+                    isLastRideToday = true;
+                  }
+                }
+              } catch (_) {}
+            }
+
             String speed = "${liveDevice['sp'] ?? _selectedDevice?.currentLocation?.speed ?? 0} ${context.displayKmh}";
-            
+            if (!isLastRideToday) {
+              speed = "0 ${context.displayKmh}";
+            }
+
             String todayDistanceStr = "0.0";
             String durationStr = "0${l10n.minutesShort} 0${l10n.secondsShort}";
             String topSpeed = "0 ${context.displayKmh}";
             String startTimeStr = "";
 
-            if (lastRide != null) {
-              todayDistanceStr = lastRide.distance.toStringAsFixed(1);
+            if (isLastRideToday && lastRide != null) {
+              todayDistanceStr = lastRide.distance.toStringAsFixed(2);
               durationStr = lastRide.duration;
               topSpeed = "${lastRide.topSpeed.toStringAsFixed(1)} ${context.displayKmh}";
               startTimeStr = lastRide.startTime;
             } else {
-              final todayDistanceRaw = liveDevice['todayDistance'] ?? liveDevice['td'] ?? liveDevice['distance'] ?? odometer;
+              final todayDistanceRaw = liveDevice['todayDistance'] ?? liveDevice['td'];
               if (todayDistanceRaw != null && todayDistanceRaw.toString().isNotEmpty) {
                  double val = double.tryParse(todayDistanceRaw.toString()) ?? 0.0;
-                 todayDistanceStr = val.toStringAsFixed(1);
+                 todayDistanceStr = val.toStringAsFixed(2);
               } else {
-                 todayDistanceStr = odometer;
+                 todayDistanceStr = "0.00";
               }
 
               final todayDurationRaw = liveDevice['todayDuration'] ?? liveDevice['dur'] ?? liveDevice['duration'] ?? "0";
@@ -1777,7 +1892,10 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
         print("device.imei----------------------------------${device.imei}");
         await prefs.set(key: AppPreference.KEY_SELECTED_UID, value: device.id);
         await prefs.set(key: AppPreference.IMEI, value: device.imei ?? '');
-        setState(() => _selectedDevice = device);
+        setState(() {
+          _selectedDevice = device;
+          _hasShownWarrantyPopup = false;
+        });
         if (mounted) {
           context.read<RideHistoryCubit>().getRideHistoryData();
         }
@@ -1796,6 +1914,9 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
         }
 
         context.read<AppCubit>().initializeSocket(imei: device.imei);
+        if (device.imei != null) {
+          _checkWarrantyStatus(device.imei!);
+        }
       },
     );
   }

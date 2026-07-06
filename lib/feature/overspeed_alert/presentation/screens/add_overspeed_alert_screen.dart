@@ -86,12 +86,22 @@ class _AddOverspeedAlertScreenState extends State<AddOverspeedAlertScreen> {
   void _submitForm() {
     if (!_formKey.currentState!.validate()) return;
 
-    context.read<OverspeedAlertCubit>().saveOverspeedAlert(
-          title: _titleController.text.trim(),
-          speedLimit: int.tryParse(_speedController.text) ?? 60,
-          timeDuration: _selectedDuration,
-          selectedVehicles: _selectedVehicles, // passed directly
-        );
+    if (widget.alertToEdit != null && widget.alertToEdit!.id != null) {
+      context.read<OverspeedAlertCubit>().updateOverspeedAlert(
+            id: widget.alertToEdit!.id!,
+            title: _titleController.text.trim(),
+            speedLimit: int.tryParse(_speedController.text) ?? 60,
+            timeDuration: _selectedDuration,
+            selectedVehicles: _selectedVehicles,
+          );
+    } else {
+      context.read<OverspeedAlertCubit>().saveOverspeedAlert(
+            title: _titleController.text.trim(),
+            speedLimit: int.tryParse(_speedController.text) ?? 60,
+            timeDuration: _selectedDuration,
+            selectedVehicles: _selectedVehicles, // passed directly
+          );
+    }
   }
 
   @override

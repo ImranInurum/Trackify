@@ -65,9 +65,11 @@ import 'package:trackify/feature/order_summary/domain/usecase/purchase_data_plan
 import 'package:trackify/feature/order_summary/presentation/cubit/order_summary_cubit.dart';
 
 import 'package:trackify/feature/device_warranty/presentation/cubit/device_warranty_cubit.dart';
+import 'package:trackify/feature/device_warranty/presentation/cubit/device_warranty_status_cubit.dart';
 import 'package:trackify/feature/device_warranty/presentation/cubit/warranty_payment_summary_cubit.dart';
 import 'package:trackify/feature/device_warranty/presentation/cubit/extend_warranty_cubit.dart';
 import 'package:trackify/feature/device_warranty/domain/usecase/get_device_warranty_usecase.dart';
+import 'package:trackify/feature/device_warranty/domain/usecases/get_device_warranty_status.dart';
 import 'package:trackify/feature/device_warranty/domain/usecase/get_warranty_payment_summary_usecase.dart';
 import 'package:trackify/feature/device_warranty/domain/usecase/extend_warranty_usecase.dart';
 import 'package:trackify/feature/device_warranty/data/repository/device_warranty_repository_impl.dart';
@@ -126,6 +128,8 @@ import 'package:trackify/feature/overspeed_alert/data/data_source/overspeed_aler
 import 'package:trackify/feature/overspeed_alert/data/repository/overspeed_alert_repository_impl.dart';
 import 'package:trackify/feature/overspeed_alert/domain/usecase/create_overspeed_alert_usecase.dart';
 import 'package:trackify/feature/overspeed_alert/domain/usecase/get_overspeed_alerts_usecase.dart';
+import 'package:trackify/feature/overspeed_alert/domain/usecase/update_overspeed_alert_usecase.dart';
+import 'package:trackify/feature/overspeed_alert/domain/usecase/delete_overspeed_alert_usecase.dart';
 
 import 'package:trackify/feature/video_tutorial/data/datasource/tutorial_remote_data.dart';
 import 'package:trackify/feature/video_tutorial/presentation/cubit/tutorial_cubit.dart';
@@ -249,6 +253,8 @@ List<BlocProvider> _buildBlocProviders() {
           getUserVehiclesUsecase: GetUserVehiclesUsecase(CommonRepositoryImpl()),
           createOverspeedAlertUsecase: CreateOverspeedAlertUsecase(repository),
           getOverspeedAlertsUsecase: GetOverspeedAlertsUsecase(repository),
+          updateOverspeedAlertUsecase: UpdateOverspeedAlertUsecase(repository),
+          deleteOverspeedAlertUsecase: DeleteOverspeedAlertUsecase(repository),
         );
       },
     ),
@@ -270,6 +276,16 @@ List<BlocProvider> _buildBlocProviders() {
         );
         return DeviceWarrantyCubit(
           GetDeviceWarrantyUseCase(repository),
+        );
+      },
+    ),
+    BlocProvider<DeviceWarrantyStatusCubit>(
+      create: (_) {
+        final repository = DeviceWarrantyRepositoryImpl(
+          DeviceWarrantyRemoteDataSourceImpl(NetworkApiService()),
+        );
+        return DeviceWarrantyStatusCubit(
+          GetDeviceWarrantyStatus(repository),
         );
       },
     ),

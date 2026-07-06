@@ -112,9 +112,47 @@ class _OverSpeedAlertScreenState extends State<OverSpeedAlertScreen> {
                               overspeedAlert: item,
                               vehicle: selectedVehicle,
                               onDelete: () {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(content: Text(l10n.deleteFunctionalityComingSoon)),
-                                );
+                                if (item.id != null) {
+                                  showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return AlertDialog(
+                                        backgroundColor: theme.cardColor,
+                                        title: Text(
+                                          l10n.deleteAlertTitle,
+                                          style: theme.textTheme.titleMedium?.copyWith(
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        content: Text(
+                                          l10n.deleteAlertDesc,
+                                          style: theme.textTheme.bodyMedium,
+                                        ),
+                                        actions: [
+                                          TextButton(
+                                            onPressed: () => Navigator.pop(context),
+                                            child: Text(
+                                              l10n.cancel,
+                                              style: theme.textTheme.bodyMedium?.copyWith(
+                                                color: theme.colorScheme.onSurface.withOpacity(0.6),
+                                              ),
+                                            ),
+                                        ),
+                                          ElevatedButton(
+                                            style: ElevatedButton.styleFrom(
+                                              backgroundColor: Colors.redAccent,
+                                            ),
+                                            onPressed: () {
+                                              Navigator.pop(context);
+                                              context.read<OverspeedAlertCubit>().deleteOverspeedAlert(item.id!);
+                                            },
+                                            child: Text(l10n.delete, style: const TextStyle(color: Colors.white)),
+                                          ),
+                                        ],
+                                      );
+                                    },
+                                  );
+                                }
                               },
                             ),
                           );

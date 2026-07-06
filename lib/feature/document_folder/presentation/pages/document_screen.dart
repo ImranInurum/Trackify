@@ -944,48 +944,51 @@ class _VehicleSelectorSheet extends StatelessWidget {
                         width: isSelected ? 1.5 : 1,
                       ),
                     ),
-                    child: ListTile(
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-                      leading: Container(
-                        padding: const EdgeInsets.all(6),
-                        decoration: BoxDecoration(
-                          color: colorScheme.surface,
-                          shape: BoxShape.circle,
+                    child: Material(
+                      type: MaterialType.transparency,
+                      child: ListTile(
+                        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                        leading: Container(
+                          padding: const EdgeInsets.all(6),
+                          decoration: BoxDecoration(
+                            color: colorScheme.surface,
+                            shape: BoxShape.circle,
+                          ),
+                          child: Image.asset(
+                            'assets/icons/bike2.png',
+                            width: 40,
+                            height: 40,
+                          ),
                         ),
-                        child: Image.asset(
-                          'assets/icons/bike2.png',
-                          width: 40,
-                          height: 40,
+                        title: Text(
+                          '${vehicle.vehicleMaker ?? ''} ${vehicle.vehicleModel ?? ''}'.trim(),
+                          style: TextStyle(
+                            color: isSelected
+                                ? colorScheme.primary
+                                : colorScheme.onSurface,
+                            fontWeight: isSelected
+                                ? FontWeight.w600
+                                : FontWeight.w500,
+                          ),
                         ),
+                        subtitle: vehicle.vehicleNumber != null
+                            ? Text(
+                                vehicle.vehicleNumber!,
+                                style: TextStyle(
+                                  color: colorScheme.onSurfaceVariant,
+                                  fontSize: 12,
+                                ),
+                              )
+                            : null,
+                        trailing: isSelected
+                            ? Icon(
+                                Icons.check_circle,
+                                color: colorScheme.primary,
+                                size: 22,
+                              )
+                            : null,
+                        onTap: () => onSelected(vehicle),
                       ),
-                      title: Text(
-                        '${vehicle.vehicleMaker ?? ''} ${vehicle.vehicleModel ?? ''}'.trim(),
-                        style: TextStyle(
-                          color: isSelected
-                              ? colorScheme.primary
-                              : colorScheme.onSurface,
-                          fontWeight: isSelected
-                              ? FontWeight.w600
-                              : FontWeight.w500,
-                        ),
-                      ),
-                      subtitle: vehicle.vehicleNumber != null
-                          ? Text(
-                              vehicle.vehicleNumber!,
-                              style: TextStyle(
-                                color: colorScheme.onSurfaceVariant,
-                                fontSize: 12,
-                              ),
-                            )
-                          : null,
-                      trailing: isSelected
-                          ? Icon(
-                              Icons.check_circle,
-                              color: colorScheme.primary,
-                              size: 22,
-                            )
-                          : null,
-                      onTap: () => onSelected(vehicle),
                     ),
                   );
                 },

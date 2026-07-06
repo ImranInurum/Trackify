@@ -165,9 +165,10 @@ class AppCubit extends Cubit<AppState> with WidgetsBindingObserver {
     if (state == AppLifecycleState.resumed) {
       // App came to foreground - sync everything
       _handleAppResumed();
-    } else if (state == AppLifecycleState.paused) {
-      // Optional: Handle cleanup or background mode if needed
-      print("App moved to background");
+    } else if (state == AppLifecycleState.paused || state == AppLifecycleState.inactive || state == AppLifecycleState.hidden) {
+      // Handle cleanup and prevent socket reconnect crashes in background
+      print("App moved to background, disconnecting socket to save battery and prevent crashes");
+      _socketService.disconnect();
     }
   }
 

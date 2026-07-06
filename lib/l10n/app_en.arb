@@ -186,7 +186,7 @@
   "alreadyHaveAccount": "Already have an account?",
   "dataPlan": "Data Plan",
   "warranty": "Warranty",
-  "expiresInDays": "{days} days left",
+  "expiresInDays": "Expires in {days} days",
   "@expiresInDays": {
     "placeholders": {
       "days": {
@@ -480,7 +480,7 @@
   "superComboPlan": "Super Combo Plan",
   "month12Validity": "12-Month Validity",
   "month6Validity": "6-Month Validity",
-  "saveAmount": "Save ₹{amount} with this plan",
+  "saveAmount": "Save ?{amount} with this plan",
   "@saveAmount": {
     "placeholders": {
       "amount": {}
@@ -590,18 +590,18 @@
   "fuelStationNearVehicle": "Fuel Station Near Vehicle",
   "warranty_title": "Device Warranty",
   "warranty_benefitsTitle": "Benefits you do not want to miss",
-  "warranty_extend": "Extend warranty of your Trackify Lite by 1 year @ ₹1/day",
+  "warranty_extend": "Extend warranty of your Trackify Lite by 1 year @ ?1/day",
   "warranty_vehicle": "Vehicle",
   "warranty_expiry": "Warranty expiry date",
-  "warranty_button": "Extend warranty now @ ₹365 ",
-  "warranty_button_old": "₹730",
+  "warranty_button": "Extend warranty now @ ?365 ",
+  "warranty_button_old": "?730",
   "benefit1_highlight": "Guaranteed replacement",
   "benefit1_normal": " in case of failure",
-  "benefit2_highlight": "Save upto ₹1200",
+  "benefit2_highlight": "Save upto ?1200",
   "benefit2_normal": " on device repair",
   "benefit3_highlight": "Instant support",
   "benefit3_normal": " for device related issues",
-  "benefit4_highlight": "Free extended subscription upto ₹2000",
+  "benefit4_highlight": "Free extended subscription upto ?2000",
   "benefit4_normal": " for faulty period",
   "initiatingEmergencyAlert": "Initiating Emergency Alert to Trackify users",
   "pleaseUseResponsibly": "Please use responsibly",
@@ -648,7 +648,7 @@
   "offerings": "Offerings",
   "plus": "Plus",
   "regular": "Regular",
-  "upgradeNowAtJust": "Upgrade Now at Just ₹{price}",
+  "upgradeNowAtJust": "Upgrade Now at Just ?{price}",
   "@upgradeNowAtJust": {
     "placeholders": {
       "price": {
@@ -921,13 +921,13 @@
   "orderSummary": "Order Summary",
   "selectedPlan": "Selected Plan",
   "validity": "Validity",
-  "greatSaving": "Great! Saving ₹{amount} with this plan",
+  "greatSaving": "Great! Saving ?{amount} with this plan",
   "billSummary": "Bill Summary",
   "planPrice": "Plan Price",
   "discount": "Discount",
   "total": "Total",
   "gstTaxes": "GST (govt. taxes)",
-  "payAmount": "Pay ₹{amount}",
+  "payAmount": "Pay ?{amount}",
   "liveRecord": "Live Record",
   "history": "History",
   "stats": "Stats",
@@ -1047,5 +1047,41 @@
   "deleteWarningPart1": "Your device will be unmapped, subscription will be ",
   "terminated": "terminated",
   "deleteWarningPart2": " and your all data will be lost from the server after 30 days of account deletion.",
-  "confirmDeleteAccount": "Are you sure you want to delete your account?"
+  "confirmDeleteAccount": "Are you sure you want to delete your account?",
+  "expired": "Expired",
+  "daysLeftText": "{days} days left",
+  "@daysLeftText": {
+    "placeholders": {
+      "days": {
+        "type": "String"
+      }
+    }
+  },
+  "warrantyExpiringTitle": "Warranty Expiring",
+  "warrantyExpiredDesc": "Your device warranty has expired. Please renew your warranty to continue enjoying premium support and features.",
+  "warrantyExpiringDesc": "Your device warranty will expire in {days} day(s). Please renew it to avoid service interruption.",
+  "@warrantyExpiringDesc": {
+    "placeholders": {
+      "days": {
+        "type": "String"
+      }
+    }
+  },
+  "dismiss": "Dismiss",
+  "allTime": "All Time",
+  "totalServices": "Total Services",
+  "avgSpending": "Avg Spending",
+  "perService": "/Service",
+  "avgInterval": "Avg Interval",
+  "months": "Months",
+  "deleteAlertTitle": "Delete Alert",
+  "deleteAlertDesc": "Are you sure you want to delete this overspeed alert?",
+  "deleteServiceLogDesc": "Are you sure you want to delete this service log?",
+  "serviceDetails": "Service Details",
+  "amountText": "Amount",
+  "serviceCenterContact": "Service Center Contact",
+  "unknownText": "Unknown",
+  "notProvided": "Not provided",
+  "contactCopied": "Contact copied to clipboard",
+  "noImage": "No Image"
 }

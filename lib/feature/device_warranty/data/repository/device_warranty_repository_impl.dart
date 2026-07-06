@@ -8,6 +8,7 @@ import '../../domain/repository/device_warranty_repository.dart';
 import '../data_source/device_warranty_data_source.dart';
 import '../model/warranty_payment_summary_model.dart';
 import '../model/extend_warranty_model.dart';
+import '../model/warranty_status_model.dart';
 
 class DeviceWarrantyRepositoryImpl implements DeviceWarrantyRepository {
   final DeviceWarrantyRemoteDataSource remoteDataSource;
@@ -46,6 +47,18 @@ class DeviceWarrantyRepositoryImpl implements DeviceWarrantyRepository {
   ) async {
     try {
       final model = await remoteDataSource.extendWarranty(request);
+      return Right(model);
+    } on AppException catch (e) {
+      return Left(e);
+    } catch (e) {
+      return Left(FetchDataException(e.toString()));
+    }
+  }
+
+  @override
+  ResultFuture<WarrantyStatusModel> getDeviceWarrantyStatus(String imei) async {
+    try {
+      final model = await remoteDataSource.getDeviceWarrantyStatus(imei);
       return Right(model);
     } on AppException catch (e) {
       return Left(e);

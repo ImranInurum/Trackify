@@ -47,4 +47,41 @@ class OverspeedAlertRepositoryImpl implements OverspeedAlertRepository {
       return Left(FetchDataException(e.toString()));
     }
   }
+
+  @override
+  ResultFuture<String> updateOverspeedAlert({
+    required String id,
+    required String alertTitle,
+    required int speedLimit,
+    required int duration,
+    required String imei,
+  }) async {
+    try {
+      final data = {
+        "alert_title": alertTitle,
+        "speed_limit": speedLimit,
+        "duration": duration,
+        "imei": imei,
+      };
+      
+      final response = await _remoteDataSource.updateOverspeedAlert(id, data);
+      return Right((response['message'] as String?) ?? 'Updated successfully');
+    } on AppException catch (e) {
+      return Left(e);
+    } catch (e) {
+      return Left(FetchDataException(e.toString()));
+    }
+  }
+
+  @override
+  ResultFuture<String> deleteOverspeedAlert(String id) async {
+    try {
+      final response = await _remoteDataSource.deleteOverspeedAlert(id);
+      return Right((response['message'] as String?) ?? 'Deleted successfully');
+    } on AppException catch (e) {
+      return Left(e);
+    } catch (e) {
+      return Left(FetchDataException(e.toString()));
+    }
+  }
 }

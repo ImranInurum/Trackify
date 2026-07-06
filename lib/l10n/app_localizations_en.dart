@@ -482,7 +482,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String expiresInDays(String days) {
-    return '$days days left';
+    return 'Expires in $days days';
   }
 
   @override
@@ -1215,7 +1215,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String saveAmount(Object amount) {
-    return 'Save ₹$amount with this plan';
+    return 'Save ?$amount with this plan';
   }
 
   @override
@@ -1503,7 +1503,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get warranty_extend =>
-      'Extend warranty of your Trackify Lite by 1 year @ ₹1/day';
+      'Extend warranty of your Trackify Lite by 1 year @ ?1/day';
 
   @override
   String get warranty_vehicle => 'Vehicle';
@@ -1512,10 +1512,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get warranty_expiry => 'Warranty expiry date';
 
   @override
-  String get warranty_button => 'Extend warranty now @ ₹365 ';
+  String get warranty_button => 'Extend warranty now @ ?365 ';
 
   @override
-  String get warranty_button_old => '₹730';
+  String get warranty_button_old => '?730';
 
   @override
   String get benefit1_highlight => 'Guaranteed replacement';
@@ -1524,7 +1524,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get benefit1_normal => ' in case of failure';
 
   @override
-  String get benefit2_highlight => 'Save upto ₹1200';
+  String get benefit2_highlight => 'Save upto ?1200';
 
   @override
   String get benefit2_normal => ' on device repair';
@@ -1536,7 +1536,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get benefit3_normal => ' for device related issues';
 
   @override
-  String get benefit4_highlight => 'Free extended subscription upto ₹2000';
+  String get benefit4_highlight => 'Free extended subscription upto ?2000';
 
   @override
   String get benefit4_normal => ' for faulty period';
@@ -1665,7 +1665,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String upgradeNowAtJust(String price) {
-    return 'Upgrade Now at Just ₹$price';
+    return 'Upgrade Now at Just ?$price';
   }
 
   @override
@@ -2344,7 +2344,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String greatSaving(Object amount) {
-    return 'Great! Saving ₹$amount with this plan';
+    return 'Great! Saving ?$amount with this plan';
   }
 
   @override
@@ -2364,7 +2364,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String payAmount(Object amount) {
-    return 'Pay ₹$amount';
+    return 'Pay ?$amount';
   }
 
   @override
@@ -2721,4 +2721,74 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get confirmDeleteAccount =>
       'Are you sure you want to delete your account?';
+
+  @override
+  String get expired => 'Expired';
+
+  @override
+  String daysLeftText(String days) {
+    return '$days days left';
+  }
+
+  @override
+  String get warrantyExpiringTitle => 'Warranty Expiring';
+
+  @override
+  String get warrantyExpiredDesc =>
+      'Your device warranty has expired. Please renew your warranty to continue enjoying premium support and features.';
+
+  @override
+  String warrantyExpiringDesc(String days) {
+    return 'Your device warranty will expire in $days day(s). Please renew it to avoid service interruption.';
+  }
+
+  @override
+  String get dismiss => 'Dismiss';
+
+  @override
+  String get allTime => 'All Time';
+
+  @override
+  String get totalServices => 'Total Services';
+
+  @override
+  String get avgSpending => 'Avg Spending';
+
+  @override
+  String get perService => '/Service';
+
+  @override
+  String get avgInterval => 'Avg Interval';
+
+  @override
+  String get months => 'Months';
+
+  @override
+  String get deleteAlertTitle => 'Delete Alert';
+
+  @override
+  String get deleteAlertDesc =>
+      'Are you sure you want to delete this overspeed alert?';
+
+  @override
+  String get deleteServiceLogDesc =>
+      'Are you sure you want to delete this service log?';
+
+  @override
+  String get serviceDetails => 'Service Details';
+
+  @override
+  String get amountText => 'Amount';
+
+  @override
+  String get unknownText => 'Unknown';
+
+  @override
+  String get notProvided => 'Not provided';
+
+  @override
+  String get contactCopied => 'Contact copied to clipboard';
+
+  @override
+  String get noImage => 'No Image';
 }

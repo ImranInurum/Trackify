@@ -22,6 +22,8 @@ class RecordViaPhoneCubit extends Cubit<RecordViaPhoneState> {
         rideDuration: Duration.zero,
         rideDistance: 0.0,
         currentSpeed: 0.0,
+        data: state.data,
+        polylines: state.polylines,
       ),
     );
 
@@ -35,6 +37,8 @@ class RecordViaPhoneCubit extends Cubit<RecordViaPhoneState> {
             rideDuration: state.rideDuration + const Duration(seconds: 1),
             rideDistance: state.rideDistance,
             currentSpeed: state.currentSpeed,
+            data: state.data,
+            polylines: state.polylines,
           ),
         );
       }
@@ -50,6 +54,8 @@ class RecordViaPhoneCubit extends Cubit<RecordViaPhoneState> {
         rideDuration: state.rideDuration,
         rideDistance: state.rideDistance,
         currentSpeed: 0.0,
+        data: state.data,
+        polylines: state.polylines,
       ),
     );
     // Here you could also save the ride to a database or API
@@ -82,6 +88,8 @@ class RecordViaPhoneCubit extends Cubit<RecordViaPhoneState> {
         rideDistance:
             state.rideDistance + (addedDistance / 1000), // Convert to km
         currentSpeed: position.speed * 3.6, // m/s to km/h
+        data: state.data,
+        polylines: state.polylines,
       ),
     );
   }
@@ -100,6 +108,8 @@ class RecordViaPhoneCubit extends Cubit<RecordViaPhoneState> {
         rideDuration: state.rideDuration,
         rideDistance: state.rideDistance,
         currentSpeed: state.currentSpeed,
+        data: state.data,
+        polylines: state.polylines,
       ),
     );
 
@@ -115,6 +125,8 @@ class RecordViaPhoneCubit extends Cubit<RecordViaPhoneState> {
             rideDuration: state.rideDuration,
             rideDistance: state.rideDistance,
             currentSpeed: state.currentSpeed,
+            data: state.data,
+            polylines: state.polylines,
           ),
         );
         LoadingScreenOL().hide();

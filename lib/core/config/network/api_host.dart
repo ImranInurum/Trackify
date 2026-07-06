@@ -118,6 +118,10 @@ class ApiURL {
       "$baseURL/api/overspeed/create-alert";
   static String getOverspeedAlerts(String imei) =>
       "$baseURL/api/overspeed/get-overspeed/$imei";
+  static String updateOverspeedAlert(String alertId) =>
+      "$baseURL/api/overspeed/update-alert/$alertId";
+  static String deleteOverspeedAlert(String alertId) =>
+      "$baseURL/api/overspeed/delete-alert/$alertId";
 
   // -------------------------
   // Add Fuel
@@ -144,6 +148,9 @@ class ApiURL {
   // -------------------------
   static String getDeviceWarranty(String imei) =>
       "$baseURL/api/warranty/device-warranty/$imei";
+      
+  static String getDeviceWarrantyStatus(String imei) =>
+      "$baseURL/api/warranty-status/$imei";
 
   static String getWarrantyPaymentSummary(String imei, String planId) =>
       "$baseURL/api/warranty/warranty-payment-summary/$imei/$planId";

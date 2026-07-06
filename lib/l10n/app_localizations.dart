@@ -1021,7 +1021,7 @@ abstract class AppLocalizations {
   /// No description provided for @expiresInDays.
   ///
   /// In en, this message translates to:
-  /// **'{days} days left'**
+  /// **'Expires in {days} days'**
   String expiresInDays(String days);
 
   /// No description provided for @rechargeNow.
@@ -2389,7 +2389,7 @@ abstract class AppLocalizations {
   /// No description provided for @saveAmount.
   ///
   /// In en, this message translates to:
-  /// **'Save ₹{amount} with this plan'**
+  /// **'Save ?{amount} with this plan'**
   String saveAmount(Object amount);
 
   /// No description provided for @superComboPopularity.
@@ -2935,7 +2935,7 @@ abstract class AppLocalizations {
   /// No description provided for @warranty_extend.
   ///
   /// In en, this message translates to:
-  /// **'Extend warranty of your Trackify Lite by 1 year @ ₹1/day'**
+  /// **'Extend warranty of your Trackify Lite by 1 year @ ?1/day'**
   String get warranty_extend;
 
   /// No description provided for @warranty_vehicle.
@@ -2953,13 +2953,13 @@ abstract class AppLocalizations {
   /// No description provided for @warranty_button.
   ///
   /// In en, this message translates to:
-  /// **'Extend warranty now @ ₹365 '**
+  /// **'Extend warranty now @ ?365 '**
   String get warranty_button;
 
   /// No description provided for @warranty_button_old.
   ///
   /// In en, this message translates to:
-  /// **'₹730'**
+  /// **'?730'**
   String get warranty_button_old;
 
   /// No description provided for @benefit1_highlight.
@@ -2977,7 +2977,7 @@ abstract class AppLocalizations {
   /// No description provided for @benefit2_highlight.
   ///
   /// In en, this message translates to:
-  /// **'Save upto ₹1200'**
+  /// **'Save upto ?1200'**
   String get benefit2_highlight;
 
   /// No description provided for @benefit2_normal.
@@ -3001,7 +3001,7 @@ abstract class AppLocalizations {
   /// No description provided for @benefit4_highlight.
   ///
   /// In en, this message translates to:
-  /// **'Free extended subscription upto ₹2000'**
+  /// **'Free extended subscription upto ?2000'**
   String get benefit4_highlight;
 
   /// No description provided for @benefit4_normal.
@@ -3241,7 +3241,7 @@ abstract class AppLocalizations {
   /// No description provided for @upgradeNowAtJust.
   ///
   /// In en, this message translates to:
-  /// **'Upgrade Now at Just ₹{price}'**
+  /// **'Upgrade Now at Just ?{price}'**
   String upgradeNowAtJust(String price);
 
   /// No description provided for @viewMoreReviews.
@@ -4549,7 +4549,7 @@ abstract class AppLocalizations {
   /// No description provided for @greatSaving.
   ///
   /// In en, this message translates to:
-  /// **'Great! Saving ₹{amount} with this plan'**
+  /// **'Great! Saving ?{amount} with this plan'**
   String greatSaving(Object amount);
 
   /// No description provided for @billSummary.
@@ -4585,7 +4585,7 @@ abstract class AppLocalizations {
   /// No description provided for @payAmount.
   ///
   /// In en, this message translates to:
-  /// **'Pay ₹{amount}'**
+  /// **'Pay ?{amount}'**
   String payAmount(Object amount);
 
   /// No description provided for @liveRecord.
@@ -5247,6 +5247,132 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Are you sure you want to delete your account?'**
   String get confirmDeleteAccount;
+
+  /// No description provided for @expired.
+  ///
+  /// In en, this message translates to:
+  /// **'Expired'**
+  String get expired;
+
+  /// No description provided for @daysLeftText.
+  ///
+  /// In en, this message translates to:
+  /// **'{days} days left'**
+  String daysLeftText(String days);
+
+  /// No description provided for @warrantyExpiringTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Warranty Expiring'**
+  String get warrantyExpiringTitle;
+
+  /// No description provided for @warrantyExpiredDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Your device warranty has expired. Please renew your warranty to continue enjoying premium support and features.'**
+  String get warrantyExpiredDesc;
+
+  /// No description provided for @warrantyExpiringDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Your device warranty will expire in {days} day(s). Please renew it to avoid service interruption.'**
+  String warrantyExpiringDesc(String days);
+
+  /// No description provided for @dismiss.
+  ///
+  /// In en, this message translates to:
+  /// **'Dismiss'**
+  String get dismiss;
+
+  /// No description provided for @allTime.
+  ///
+  /// In en, this message translates to:
+  /// **'All Time'**
+  String get allTime;
+
+  /// No description provided for @totalServices.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Services'**
+  String get totalServices;
+
+  /// No description provided for @avgSpending.
+  ///
+  /// In en, this message translates to:
+  /// **'Avg Spending'**
+  String get avgSpending;
+
+  /// No description provided for @perService.
+  ///
+  /// In en, this message translates to:
+  /// **'/Service'**
+  String get perService;
+
+  /// No description provided for @avgInterval.
+  ///
+  /// In en, this message translates to:
+  /// **'Avg Interval'**
+  String get avgInterval;
+
+  /// No description provided for @months.
+  ///
+  /// In en, this message translates to:
+  /// **'Months'**
+  String get months;
+
+  /// No description provided for @deleteAlertTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Alert'**
+  String get deleteAlertTitle;
+
+  /// No description provided for @deleteAlertDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete this overspeed alert?'**
+  String get deleteAlertDesc;
+
+  /// No description provided for @deleteServiceLogDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete this service log?'**
+  String get deleteServiceLogDesc;
+
+  /// No description provided for @serviceDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Service Details'**
+  String get serviceDetails;
+
+  /// No description provided for @amountText.
+  ///
+  /// In en, this message translates to:
+  /// **'Amount'**
+  String get amountText;
+
+  /// No description provided for @unknownText.
+  ///
+  /// In en, this message translates to:
+  /// **'Unknown'**
+  String get unknownText;
+
+  /// No description provided for @notProvided.
+  ///
+  /// In en, this message translates to:
+  /// **'Not provided'**
+  String get notProvided;
+
+  /// No description provided for @contactCopied.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact copied to clipboard'**
+  String get contactCopied;
+
+  /// No description provided for @noImage.
+  ///
+  /// In en, this message translates to:
+  /// **'No Image'**
+  String get noImage;
 }
 
 class _AppLocalizationsDelegate

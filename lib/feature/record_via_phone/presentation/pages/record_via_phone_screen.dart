@@ -84,9 +84,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
               (curr.isRecording &&
                   curr.currentRidePoints.length != prev.currentRidePoints.length),
           listener: (context, state) {
-            if (state is MapDataByDateLoaded &&
-                state.polylines != null &&
-                state.polylines!.isNotEmpty) {
+            if (state.polylines != null && state.polylines!.isNotEmpty) {
               final points = state.polylines!.first.points;
               if (points.isNotEmpty) {
                 // Animate History map to fit bounds (non-blocking)
@@ -162,9 +160,9 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
           body: TabBarView(
             physics: const NeverScrollableScrollPhysics(),
             children: [
-              _buildLiveRecordView(),
-              _buildHistoryView(),
-              _buildStatisticsView(),
+              _KeepAliveWrapper(child: _buildLiveRecordView()),
+              _KeepAliveWrapper(child: _buildHistoryView()),
+              _KeepAliveWrapper(child: _buildStatisticsView()),
             ],
           ),
         ),
@@ -179,9 +177,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
         Set<Marker> markers = {};
         LatLng? lastPos;
 
-        if (state is MapDataByDateLoaded &&
-            state.polylines != null &&
-            state.polylines!.isNotEmpty) {
+        if (state.polylines != null && state.polylines!.isNotEmpty) {
           final points = state.polylines!.first.points;
           if (points.isNotEmpty) {
             lastPos = points.last;
@@ -347,9 +343,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
             Set<Polyline> polylines = {};
             Set<Marker> markers = {};
 
-            if (state is MapDataByDateLoaded &&
-                state.polylines != null &&
-                state.polylines!.isNotEmpty) {
+            if (state.polylines != null && state.polylines!.isNotEmpty) {
               final originalPolyline = state.polylines!.first;
               final points = originalPolyline.points;
 
@@ -468,7 +462,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
 
   // --- Statistics View ---
   Map<String, dynamic> _calculateStats(RecordViaPhoneState state) {
-    if (state is! MapDataByDateLoaded || state.data.isEmpty) {
+    if (state.data.isEmpty) {
       return {
         'distance': 0.0,
         'drivingTime': const Duration(),
@@ -494,9 +488,14 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
 
     final sortedData = List<DataByDate>.from(data);
     sortedData.sort((a, b) {
-      final aDate = '${a.dt} ${a.tm}';
-      final bDate = '${b.dt} ${b.tm}';
-      return aDate.compareTo(bDate);
+      final aDt = a.dt ?? '';
+      final bDt = b.dt ?? '';
+      final dtCompare = aDt.compareTo(bDt);
+      if (dtCompare != 0) return dtCompare;
+      
+      final aTm = a.tm ?? '';
+      final bTm = b.tm ?? '';
+      return aTm.compareTo(bTm);
     });
 
     for (var point in sortedData) {
@@ -825,5 +824,25 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
     String twoDigitMinutes = twoDigits(duration.inMinutes.remainder(60));
     String twoDigitSeconds = twoDigits(duration.inSeconds.remainder(60));
     return "${twoDigits(duration.inHours)}:$twoDigitMinutes:$twoDigitSeconds";
+  }
+}
+
+class _KeepAliveWrapper extends StatefulWidget {
+  final Widget child;
+  const _KeepAliveWrapper({required this.child});
+
+  @override
+  State<_KeepAliveWrapper> createState() => _KeepAliveWrapperState();
+}
+
+class _KeepAliveWrapperState extends State<_KeepAliveWrapper>
+    with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
+
+  @override
+  Widget build(BuildContext context) {
+    super.build(context);
+    return widget.child;
   }
 }

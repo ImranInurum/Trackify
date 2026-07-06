@@ -435,30 +435,23 @@ class _RefuelHistoryTabViewState extends State<RefuelHistoryTabView> {
             "${log.dateTime.minute.toString().padLeft(2, '0')} "
             "${log.dateTime.hour >= 12 ? 'PM' : 'AM'}";
 
-        return RefuelLogListItem(
-          date: dateStr,
-
-          time: timeStr,
-
-          odometer: log.odometer,
-
-          location: log.location,
-
-          amount: log.amount,
-
-          rate: log.rate,
-
-          distance: log.distanceSinceLast,
-
-          liters: log.liters,
-
-          mileage: log.mileage,
-
-          showDetails: index == 0,
-
-          onDelete: () {
-            _confirmDelete(context, l10n, log.id);
-          },
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 14.0),
+          child: RefuelLogListItem(
+            date: dateStr,
+            time: timeStr,
+            odometer: log.odometer,
+            location: log.location,
+            amount: log.amount,
+            rate: log.rate,
+            distance: log.distanceSinceLast,
+            liters: log.liters,
+            mileage: log.mileage,
+            showDetails: index == 0,
+            onDelete: () {
+              _confirmDelete(context, l10n, log.id);
+            },
+          ),
         );
       }).toList(),
     );

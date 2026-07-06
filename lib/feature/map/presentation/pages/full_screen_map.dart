@@ -117,6 +117,8 @@ class _FullScreenMapState extends State<FullScreenMap>
         final now = DateTime.now().millisecondsSinceEpoch;
         final elapsed = now - _lastDataReceivedMs;
 
+        bool hasMoved = false;
+
         if (elapsed > 15000) {
           // Stop moving if no data received for 15 seconds
         } else {
@@ -134,22 +136,30 @@ class _FullScreenMapState extends State<FullScreenMap>
               (_animEndMarkerTarget!.longitude -
                       _animStartMarkerTarget!.longitude) *
                   t;
-          _animatedMarkerPos = LatLng(lat, lng);
+          
+          if (_animatedMarkerPos?.latitude != lat || _animatedMarkerPos?.longitude != lng) {
+            _animatedMarkerPos = LatLng(lat, lng);
+            hasMoved = true;
+          }
 
           double diffBearing = _animEndMarkerBearing - _animStartMarkerBearing;
           if (diffBearing > 180) diffBearing -= 360;
           if (diffBearing < -180) diffBearing += 360;
 
-          _animatedMarkerBearing = _animStartMarkerBearing + diffBearing * t;
+          final double newBearing = _animStartMarkerBearing + diffBearing * t;
+          if (_animatedMarkerBearing != newBearing) {
+            _animatedMarkerBearing = newBearing;
+            hasMoved = true;
+          }
         }
 
-        if (now - _lastMarkerRebuildMs >= 50) {
+        if (hasMoved && now - _lastMarkerRebuildMs >= 50) {
           _lastMarkerRebuildMs = now;
           _mapRebuildNotifier.value++;
         }
 
         // Drone-style camera tracking (throttled to 20fps for performance)
-        if (_uiCubit.state.isAutoFollowing &&
+        if (hasMoved && _uiCubit.state.isAutoFollowing &&
             mounted &&
             _mapController != null) {
           final appState = context.read<AppCubit>().state;
@@ -1891,20 +1901,51 @@ class _FullScreenMapState extends State<FullScreenMap>
   }
 
   Widget _buildVehicleHeader() {
-    return BlocBuilder<AppCubit, AppState>(
-      builder: (context, state) {
-        final liveDevice = state.devices.firstWhere(
-          (d) =>
-              d['imei']?.toString() == _currentVehicle?.imei ||
-              d['_id']?.toString() == _currentVehicle?.id ||
-              d['id']?.toString() == _currentVehicle?.id,
-          orElse: () => <String, dynamic>{},
-        );
+    return BlocBuilder<RideHistoryCubit, RideHistoryState>(
+      builder: (context, rideState) {
+        return BlocBuilder<AppCubit, AppState>(
+          builder: (context, state) {
+            Ride? lastRide;
+            if (rideState is RideHistorySuccess && rideState.rides.isNotEmpty) {
+              lastRide = rideState.rides.last;
+            }
 
-        final liveSpeed =
-            liveDevice['sp']?.toString() ??
-            _currentVehicle?.currentLocation?.speed?.toString() ??
-            "0";
+            final liveDevice = state.devices.firstWhere(
+              (d) =>
+                  d['imei']?.toString() == _currentVehicle?.imei ||
+                  d['_id']?.toString() == _currentVehicle?.id ||
+                  d['id']?.toString() == _currentVehicle?.id,
+              orElse: () => <String, dynamic>{},
+            );
+
+            bool isLastRideToday = false;
+            if (lastRide != null) {
+              try {
+                if (lastRide.rawStartTime.isNotEmpty) {
+                  final date = DateTime.parse(lastRide.rawStartTime).toLocal();
+                  final now = DateTime.now();
+                  if (date.year == now.year && date.month == now.month && date.day == now.day) {
+                    isLastRideToday = true;
+                  }
+                } else {
+                  final now = DateTime.now();
+                  final format1 = "${now.day}/${now.month}/${now.year}";
+                  final format2 = "${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}";
+                  if (lastRide.date == format1 || lastRide.date == format2) {
+                    isLastRideToday = true;
+                  }
+                }
+              } catch (_) {}
+            }
+
+            String liveSpeed =
+                liveDevice['sp']?.toString() ??
+                _currentVehicle?.currentLocation?.speed?.toString() ??
+                "0";
+                
+            if (!isLastRideToday) {
+              liveSpeed = "0";
+            }
 
         // Use time from socket data or fallback to API's currentLocation time
         final stoppedAtStr =
@@ -2074,6 +2115,8 @@ class _FullScreenMapState extends State<FullScreenMap>
         );
       },
     );
+      },
+    );
   }
 
   Widget _buildHeaderMetric(Map<String, dynamic> liveDevice, String liveSpeed) {
@@ -2215,24 +2258,46 @@ class _FullScreenMapState extends State<FullScreenMap>
                 "0${AppLocalizations.of(context)!.minutesShort} 0${AppLocalizations.of(context)!.secondsShort}";
             String topSpeedStr = "0 ${context.displayKmh}";
 
+            bool isLastRideToday = false;
             if (lastRide != null) {
-              todayDistanceStr = lastRide.distance.toStringAsFixed(1);
+              try {
+                if (lastRide.rawStartTime.isNotEmpty) {
+                  final date = DateTime.parse(lastRide.rawStartTime).toLocal();
+                  final now = DateTime.now();
+                  if (date.year == now.year && date.month == now.month && date.day == now.day) {
+                    isLastRideToday = true;
+                  }
+                } else {
+                  final now = DateTime.now();
+                  final format1 = "${now.day}/${now.month}/${now.year}";
+                  final format2 = "${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}";
+                  if (lastRide.date == format1 || lastRide.date == format2) {
+                    isLastRideToday = true;
+                  }
+                }
+              } catch (_) {}
+            }
+            
+            if (!isLastRideToday) {
+              liveSpeed = "0";
+            }
+
+            if (isLastRideToday && lastRide != null) {
+              todayDistanceStr = lastRide.distance.toStringAsFixed(2);
               durationStr = lastRide.duration;
               topSpeedStr =
                   "${lastRide.topSpeed.toStringAsFixed(1)} ${context.displayKmh}";
             } else {
               final todayDistanceRaw =
                   liveDevice['todayDistance'] ??
-                  liveDevice['td'] ??
-                  liveDevice['distance'] ??
-                  odometer;
+                  liveDevice['td'];
               if (todayDistanceRaw != null &&
                   todayDistanceRaw.toString().isNotEmpty) {
                 double val =
                     double.tryParse(todayDistanceRaw.toString()) ?? 0.0;
-                todayDistanceStr = val.toStringAsFixed(1);
+                todayDistanceStr = val.toStringAsFixed(2);
               } else {
-                todayDistanceStr = odometer;
+                todayDistanceStr = "0.00";
               }
 
               final todayDurationRaw =

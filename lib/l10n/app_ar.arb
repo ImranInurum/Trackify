@@ -195,7 +195,7 @@
   "logout": "تسجيل الخروج",
   "dataPlan": "خطة البيانات",
   "warranty": "الضمان",
-  "expiresInDays": "ينتهي خلال {days} يوماً",
+  "expiresInDays": "تنتهي في {days} أيام",
   "@expiresInDays": {
     "placeholders": {
       "days": {
@@ -1048,5 +1048,41 @@
   "deleteWarningPart1": "Your device will be unmapped, subscription will be ",
   "terminated": "terminated",
   "deleteWarningPart2": " and your all data will be lost from the server after 30 days of account deletion.",
-  "confirmDeleteAccount": "Are you sure you want to delete your account?"
+  "confirmDeleteAccount": "Are you sure you want to delete your account?",
+  "expired": "منتهية الصلاحية",
+  "daysLeftText": "متبقي {days} أيام",
+  "@daysLeftText": {
+    "placeholders": {
+      "days": {
+        "type": "String"
+      }
+    }
+  },
+  "warrantyExpiringTitle": "الضمان يقترب من الانتهاء",
+  "warrantyExpiredDesc": "لقد انتهت صلاحية ضمان جهازك. يرجى تجديد الضمان الخاص بك لمواصلة الاستمتاع بالدعم والميزات المتميزة.",
+  "warrantyExpiringDesc": "سينتهي ضمان جهازك خلال {days} أيام. يرجى تجديده لتجنب انقطاع الخدمة.",
+  "@warrantyExpiringDesc": {
+    "placeholders": {
+      "days": {
+        "type": "String"
+      }
+    }
+  },
+  "dismiss": "تجاهل",
+  "allTime": "كل الوقت",
+  "totalServices": "إجمالي الخدمات",
+  "avgSpending": "متوسط الإنفاق",
+  "perService": "/خدمة",
+  "avgInterval": "متوسط الفاصل الزمني",
+  "months": "أشهر",
+  "deleteAlertTitle": "حذف التنبيه",
+  "deleteAlertDesc": "هل أنت متأكد أنك تريد حذف تنبيه السرعة الزائدة هذا؟",
+  "deleteServiceLogDesc": "هل أنت متأكد أنك تريد حذف سجل الخدمة هذا؟",
+  "serviceDetails": "تفاصيل الخدمة",
+  "amountText": "المبلغ",
+  "serviceCenterContact": "جهة اتصال مركز الخدمة",
+  "unknownText": "غير معروف",
+  "notProvided": "غير متوفر",
+  "contactCopied": "تم نسخ جهة الاتصال",
+  "noImage": "لا توجد صورة"
 }

@@ -567,47 +567,50 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ),
                       ),
                       Divider(height: 1, color: Theme.of(context).dividerColor),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: RadioListTile<String>(
-                              title: Text(l10n.km),
-                              value: 'km',
-                              groupValue: appState.distanceUnit,
-                              contentPadding: EdgeInsets.zero,
-                              dense: true,
-                              activeColor: Theme.of(
-                                context,
-                              ).colorScheme.primary,
-                              onChanged: (value) {
-                                if (value != null) {
-                                  context.read<AppCubit>().changeDistanceUnit(
-                                    value,
-                                  );
-                                }
-                              },
+                      Material(
+                        type: MaterialType.transparency,
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: RadioListTile<String>(
+                                title: Text(l10n.km),
+                                value: 'km',
+                                groupValue: appState.distanceUnit,
+                                contentPadding: EdgeInsets.zero,
+                                dense: true,
+                                activeColor: Theme.of(
+                                  context,
+                                ).colorScheme.primary,
+                                onChanged: (value) {
+                                  if (value != null) {
+                                    context.read<AppCubit>().changeDistanceUnit(
+                                      value,
+                                    );
+                                  }
+                                },
+                              ),
                             ),
-                          ),
-                          Expanded(
-                            child: RadioListTile<String>(
-                              title: Text(AppLocalizations.of(context)!.miles),
-                              value: 'mi',
-                              groupValue: appState.distanceUnit,
-                              contentPadding: EdgeInsets.zero,
-                              dense: true,
-                              activeColor: Theme.of(
-                                context,
-                              ).colorScheme.primary,
-                              onChanged: (value) {
-                                if (value != null) {
-                                  context.read<AppCubit>().changeDistanceUnit(
-                                    value,
-                                  );
-                                }
-                              },
+                            Expanded(
+                              child: RadioListTile<String>(
+                                title: Text(AppLocalizations.of(context)!.miles),
+                                value: 'mi',
+                                groupValue: appState.distanceUnit,
+                                contentPadding: EdgeInsets.zero,
+                                dense: true,
+                                activeColor: Theme.of(
+                                  context,
+                                ).colorScheme.primary,
+                                onChanged: (value) {
+                                  if (value != null) {
+                                    context.read<AppCubit>().changeDistanceUnit(
+                                      value,
+                                    );
+                                  }
+                                },
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ],
                   ),

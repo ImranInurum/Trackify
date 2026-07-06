@@ -483,7 +483,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String expiresInDays(String days) {
-    return 'ينتهي خلال $days يوماً';
+    return 'تنتهي في $days أيام';
   }
 
   @override
@@ -2706,4 +2706,74 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get confirmDeleteAccount =>
       'Are you sure you want to delete your account?';
+
+  @override
+  String get expired => 'منتهية الصلاحية';
+
+  @override
+  String daysLeftText(String days) {
+    return 'متبقي $days أيام';
+  }
+
+  @override
+  String get warrantyExpiringTitle => 'الضمان يقترب من الانتهاء';
+
+  @override
+  String get warrantyExpiredDesc =>
+      'لقد انتهت صلاحية ضمان جهازك. يرجى تجديد الضمان الخاص بك لمواصلة الاستمتاع بالدعم والميزات المتميزة.';
+
+  @override
+  String warrantyExpiringDesc(String days) {
+    return 'سينتهي ضمان جهازك خلال $days أيام. يرجى تجديده لتجنب انقطاع الخدمة.';
+  }
+
+  @override
+  String get dismiss => 'تجاهل';
+
+  @override
+  String get allTime => 'كل الوقت';
+
+  @override
+  String get totalServices => 'إجمالي الخدمات';
+
+  @override
+  String get avgSpending => 'متوسط الإنفاق';
+
+  @override
+  String get perService => '/خدمة';
+
+  @override
+  String get avgInterval => 'متوسط الفاصل الزمني';
+
+  @override
+  String get months => 'أشهر';
+
+  @override
+  String get deleteAlertTitle => 'حذف التنبيه';
+
+  @override
+  String get deleteAlertDesc =>
+      'هل أنت متأكد أنك تريد حذف تنبيه السرعة الزائدة هذا؟';
+
+  @override
+  String get deleteServiceLogDesc =>
+      'هل أنت متأكد أنك تريد حذف سجل الخدمة هذا؟';
+
+  @override
+  String get serviceDetails => 'تفاصيل الخدمة';
+
+  @override
+  String get amountText => 'المبلغ';
+
+  @override
+  String get unknownText => 'غير معروف';
+
+  @override
+  String get notProvided => 'غير متوفر';
+
+  @override
+  String get contactCopied => 'تم نسخ جهة الاتصال';
+
+  @override
+  String get noImage => 'لا توجد صورة';
 }

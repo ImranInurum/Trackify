@@ -195,7 +195,7 @@
   "logout": "लॉगआउट",
   "dataPlan": "डेटा प्लान",
   "warranty": "वारंटी",
-  "expiresInDays": "{days} दिनों में समाप्त हो रहा है",
+  "expiresInDays": "{days} दिनों में समाप्त",
   "@expiresInDays": {
     "placeholders": {
       "days": {
@@ -1048,5 +1048,41 @@
   "deleteWarningPart1": "Your device will be unmapped, subscription will be ",
   "terminated": "terminated",
   "deleteWarningPart2": " and your all data will be lost from the server after 30 days of account deletion.",
-  "confirmDeleteAccount": "Are you sure you want to delete your account?"
+  "confirmDeleteAccount": "Are you sure you want to delete your account?",
+  "expired": "समाप्त हो गया",
+  "daysLeftText": "{days} दिन बचे हैं",
+  "@daysLeftText": {
+    "placeholders": {
+      "days": {
+        "type": "String"
+      }
+    }
+  },
+  "warrantyExpiringTitle": "वारंटी समाप्त हो रही है",
+  "warrantyExpiredDesc": "आपके डिवाइस की वारंटी समाप्त हो गई है। प्रीमियम सहायता और सुविधाओं का आनंद लेना जारी रखने के लिए कृपया अपनी वारंटी का नवीनीकरण करें।",
+  "warrantyExpiringDesc": "आपके डिवाइस की वारंटी {days} दिनों में समाप्त हो जाएगी। सेवा रुकावट से बचने के लिए कृपया इसे नवीनीकृत करें।",
+  "@warrantyExpiringDesc": {
+    "placeholders": {
+      "days": {
+        "type": "String"
+      }
+    }
+  },
+  "dismiss": "खारिज करें",
+  "allTime": "सभी समय",
+  "totalServices": "कुल सर्विस",
+  "avgSpending": "औसत खर्च",
+  "perService": "/सर्विस",
+  "avgInterval": "औसत अंतराल",
+  "months": "महीने",
+  "deleteAlertTitle": "अलर्ट हटाएं",
+  "deleteAlertDesc": "क्या आप वाकई इस ओवरस्पीड अलर्ट को हटाना चाहते हैं?",
+  "deleteServiceLogDesc": "क्या आप वाकई इस सर्विस लॉग को हटाना चाहते हैं?",
+  "serviceDetails": "सर्विस विवरण",
+  "amountText": "राशि",
+  "serviceCenterContact": "सर्विस सेंटर का संपर्क",
+  "unknownText": "अज्ञात",
+  "notProvided": "प्रदान नहीं किया गया",
+  "contactCopied": "संपर्क कॉपी किया गया",
+  "noImage": "कोई चित्र नहीं"
 }

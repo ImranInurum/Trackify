@@ -486,7 +486,7 @@ class AppLocalizationsKn extends AppLocalizations {
 
   @override
   String expiresInDays(String days) {
-    return '$days ದಿನಗಳಲ್ಲಿ ಮುಕ್ತಾಯಗೊಳ್ಳುತ್ತದೆ';
+    return '$days ದಿನಗಳಲ್ಲಿ ಮುಕ್ತಾಯ';
   }
 
   @override
@@ -535,7 +535,7 @@ class AppLocalizationsKn extends AppLocalizations {
   String get settingsDesc => 'ಭಾಷೆ, ಖಾತೆ ಸೆಟ್ಟಿಂಗ್‌ಗಳು ಮತ್ತು ಇನ್ನಷ್ಟು';
 
   @override
-  String get notifications => 'ಅಧಿಸೂಚನೆಗಳು';
+  String get notifications => 'ಸೂಚನೆಗಳು';
 
   @override
   String get noNotifications => 'ಯಾವುದೇ ಅಧಿಸೂಚನೆಗಳು ಕಂಡುಬಂದಿಲ್ಲ';
@@ -1049,7 +1049,7 @@ class AppLocalizationsKn extends AppLocalizations {
   String get serviceCenterName => 'ಸೇವಾ ಕೇಂದ್ರದ ಹೆಸರು';
 
   @override
-  String get serviceCenterContact => 'ಸೇವಾ ಕೇಂದ್ರದ ಸಂಪರ್ಕ';
+  String get serviceCenterContact => 'ಸೇವಾ ಕೇಂದ್ರ ಸಂಪರ್ಕ';
 
   @override
   String get additionalNote => 'ಹೆಚ್ಚುವರಿ ಟಿಪ್ಪಣಿ';
@@ -2735,4 +2735,74 @@ class AppLocalizationsKn extends AppLocalizations {
   @override
   String get confirmDeleteAccount =>
       'Are you sure you want to delete your account?';
+
+  @override
+  String get expired => 'ಮುಕ್ತಾಯವಾಗಿದೆ';
+
+  @override
+  String daysLeftText(String days) {
+    return '$days ದಿನಗಳು ಬಾಕಿ ಉಳಿದಿವೆ';
+  }
+
+  @override
+  String get warrantyExpiringTitle => 'ಖಾತರಿ ಮುಕ್ತಾಯಗೊಳ್ಳುತ್ತಿದೆ';
+
+  @override
+  String get warrantyExpiredDesc =>
+      'ನಿಮ್ಮ ಸಾಧನದ ಖಾತರಿ ಅವಧಿ ಮುಗಿದಿದೆ. ಪ್ರೀಮಿಯಂ ಬೆಂಬಲ ಮತ್ತು ವೈಶಿಷ್ಟ್ಯಗಳನ್ನು ಆನಂದಿಸುವುದನ್ನು ಮುಂದುವರಿಸಲು ದಯವಿಟ್ಟು ನಿಮ್ಮ ಖಾತರಿಯನ್ನು ನವೀಕರಿಸಿ.';
+
+  @override
+  String warrantyExpiringDesc(String days) {
+    return 'ನಿಮ್ಮ ಸಾಧನದ ಖಾತರಿ $days ದಿನಗಳಲ್ಲಿ ಮುಕ್ತಾಯಗೊಳ್ಳುತ್ತದೆ. ಸೇವಾ ಅಡಚಣೆಯನ್ನು ತಪ್ಪಿಸಲು ದಯವಿಟ್ಟು ಅದನ್ನು ನವೀಕರಿಸಿ.';
+  }
+
+  @override
+  String get dismiss => 'ವಜಾಗೊಳಿಸಿ';
+
+  @override
+  String get allTime => 'ಎಲ್ಲಾ ಸಮಯ';
+
+  @override
+  String get totalServices => 'ಒಟ್ಟು ಸೇವೆಗಳು';
+
+  @override
+  String get avgSpending => 'ಸರಾಸರಿ ವೆಚ್ಚ';
+
+  @override
+  String get perService => '/ಸೇವೆ';
+
+  @override
+  String get avgInterval => 'ಸರಾಸರಿ ಅಂತರ';
+
+  @override
+  String get months => 'ತಿಂಗಳುಗಳು';
+
+  @override
+  String get deleteAlertTitle => 'ಎಚ್ಚರಿಕೆ ಅಳಿಸಿ';
+
+  @override
+  String get deleteAlertDesc =>
+      'ಈ ಅತಿಯಾದ ವೇಗದ ಎಚ್ಚರಿಕೆಯನ್ನು ಅಳಿಸಲು ನೀವು ಖಚಿತವಾಗಿರುವಿರಾ?';
+
+  @override
+  String get deleteServiceLogDesc =>
+      'ಈ ಸೇವಾ ಲಾಗ್ ಅನ್ನು ಅಳಿಸಲು ನೀವು ಖಚಿತವಾಗಿರುವಿರಾ?';
+
+  @override
+  String get serviceDetails => 'ಸೇವಾ ವಿವರಗಳು';
+
+  @override
+  String get amountText => 'ಮೊತ್ತ';
+
+  @override
+  String get unknownText => 'ಗೊತ್ತಿಲ್ಲದ';
+
+  @override
+  String get notProvided => 'ಒದಗಿಸಲಾಗಿಲ್ಲ';
+
+  @override
+  String get contactCopied => 'ಸಂಪರ್ಕವನ್ನು ನಕಲಿಸಲಾಗಿದೆ';
+
+  @override
+  String get noImage => 'ಚಿತ್ರವಿಲ್ಲ';
 }

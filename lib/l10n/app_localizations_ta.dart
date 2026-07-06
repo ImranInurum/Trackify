@@ -480,7 +480,7 @@ class AppLocalizationsTa extends AppLocalizations {
 
   @override
   String expiresInDays(String days) {
-    return '$days நாட்களில் முடிவடைகிறது';
+    return '$days நாட்களில் காலாவதியாகும்';
   }
 
   @override
@@ -2738,4 +2738,74 @@ class AppLocalizationsTa extends AppLocalizations {
   @override
   String get confirmDeleteAccount =>
       'Are you sure you want to delete your account?';
+
+  @override
+  String get expired => 'காலாவதியானது';
+
+  @override
+  String daysLeftText(String days) {
+    return '$days நாட்கள் மீதமுள்ளன';
+  }
+
+  @override
+  String get warrantyExpiringTitle => 'உத்தரவாதம் முடிவடைகிறது';
+
+  @override
+  String get warrantyExpiredDesc =>
+      'உங்கள் சாதனத்தின் உத்தரவாதம் காலாவதியாகிவிட்டது. பிரீமியம் ஆதரவு மற்றும் அம்சங்களைத் தொடர்ந்து அனுபவிக்க, உங்கள் உத்தரவாதத்தைப் புதுப்பிக்கவும்.';
+
+  @override
+  String warrantyExpiringDesc(String days) {
+    return 'உங்கள் சாதனத்தின் உத்தரவாதம் $days நாட்களில் முடிவடையும். சேவை தடங்கலைத் தவிர்க்க இதைப் புதுப்பிக்கவும்.';
+  }
+
+  @override
+  String get dismiss => 'நிராகரி';
+
+  @override
+  String get allTime => 'எல்லா நேரமும்';
+
+  @override
+  String get totalServices => 'மொத்த சேவைகள்';
+
+  @override
+  String get avgSpending => 'சராசரி செலவு';
+
+  @override
+  String get perService => '/சேவை';
+
+  @override
+  String get avgInterval => 'சராசரி இடைவெளி';
+
+  @override
+  String get months => 'மாதங்கள்';
+
+  @override
+  String get deleteAlertTitle => 'எச்சரிக்கையை நீக்கு';
+
+  @override
+  String get deleteAlertDesc =>
+      'இந்த அதிக வேக எச்சரிக்கையை உறுதியாக நீக்க விரும்புகிறீர்களா?';
+
+  @override
+  String get deleteServiceLogDesc =>
+      'இந்த சேவை பதிவை உறுதியாக நீக்க விரும்புகிறீர்களா?';
+
+  @override
+  String get serviceDetails => 'சேவை விவரங்கள்';
+
+  @override
+  String get amountText => 'தொகை';
+
+  @override
+  String get unknownText => 'தெரியாத';
+
+  @override
+  String get notProvided => 'வழங்கப்படவில்லை';
+
+  @override
+  String get contactCopied => 'தொடர்பு நகலெடுக்கப்பட்டது';
+
+  @override
+  String get noImage => 'படம் இல்லை';
 }

@@ -107,97 +107,107 @@ class _DeviceDataScreenState extends State<DeviceDataScreen> {
         padding: const EdgeInsets.all(16),
         children: [
           /// TOP CARD — dynamic from current plan API
-          Builder(builder: (_) {
-            final plan = data.currentPlan;
-            final vehicleName = plan != null
-                ? "${plan.vehicleMaker} ${plan.vehicleModel}".trim()
-                : "";
-            final vehicleDisplayName = vehicleName.isNotEmpty
-                ? vehicleName
-                : l10n.vehicleNamePlaceholder;
-            final planText = plan?.currentPlanText.isNotEmpty == true
-                ? plan!.currentPlanText
-                : '--';
-            final expiryText = plan?.expiryDateText.isNotEmpty == true
-                ? plan!.expiryDateText
-                : '--';
-            Color? dynamicSubColor;
-            String? daysLeftStr;
+          Builder(
+            builder: (_) {
+              final plan = data.currentPlan;
+              final vehicleName = plan != null
+                  ? "${plan.vehicleMaker} ${plan.vehicleModel}".trim()
+                  : "";
+              final vehicleDisplayName = vehicleName.isNotEmpty
+                  ? vehicleName
+                  : l10n.vehicleNamePlaceholder;
+              final planText = plan?.currentPlanText.isNotEmpty == true
+                  ? plan!.currentPlanText
+                  : '--';
+              final expiryText = plan?.expiryDateText.isNotEmpty == true
+                  ? plan!.expiryDateText
+                  : '--';
+              Color? dynamicSubColor;
+              String? daysLeftStr;
 
-            if (plan != null) {
-              if (plan.daysLeft <= 0) {
-                dynamicSubColor = Colors.grey;
-                daysLeftStr = "Expired";
-              } else if (plan.daysLeft <= 15) {
-                dynamicSubColor = Colors.red;
-                daysLeftStr = l10n.expiresInDays(plan.daysLeft.toString());
-              } else if (plan.daysLeft <= 60) {
-                dynamicSubColor = Colors.orange;
-                daysLeftStr = l10n.expiresInDays(plan.daysLeft.toString());
-              } else if (plan.daysLeft <= 150) {
-                dynamicSubColor = Colors.amber; // Yellow
-                daysLeftStr = l10n.expiresInDays(plan.daysLeft.toString());
-              } else if (plan.daysLeft <= 250) {
-                dynamicSubColor = Colors.lightGreen;
-                daysLeftStr = l10n.expiresInDays(plan.daysLeft.toString());
-              } else {
-                dynamicSubColor = Colors.green;
-                daysLeftStr = l10n.expiresInDays(plan.daysLeft.toString());
+              if (plan != null) {
+                if (plan.daysLeft <= 0) {
+                  dynamicSubColor = Colors.grey;
+                  daysLeftStr = l10n.expired;
+                } else if (plan.daysLeft <= 15) {
+                  dynamicSubColor = Colors.red;
+                  daysLeftStr = l10n.expiresInDays(plan.daysLeft.toString());
+                } else if (plan.daysLeft <= 60) {
+                  dynamicSubColor = Colors.orange;
+                  daysLeftStr = l10n.expiresInDays(plan.daysLeft.toString());
+                } else if (plan.daysLeft <= 150) {
+                  dynamicSubColor = Colors.amber; // Yellow
+                  daysLeftStr = l10n.expiresInDays(plan.daysLeft.toString());
+                } else if (plan.daysLeft <= 250) {
+                  dynamicSubColor = Colors.lightGreen;
+                  daysLeftStr = l10n.expiresInDays(plan.daysLeft.toString());
+                } else {
+                  dynamicSubColor = Colors.green;
+                  daysLeftStr = l10n.expiresInDays(plan.daysLeft.toString());
+                }
               }
-            }
 
-            return Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: theme.cardColor,
-                borderRadius: BorderRadius.circular(14),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    l10n.vehicle,
-                    style: text.bodySmall?.copyWith(
-                      color: color.onSurface.withOpacity(0.6),
+              return Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: theme.cardColor,
+                  borderRadius: BorderRadius.circular(14),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      l10n.vehicle,
+                      style: text.bodySmall?.copyWith(
+                        color: color.onSurface.withOpacity(0.6),
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 4),
-                  Row(
-                    children: [
-                      Text(
-                        vehicleDisplayName,
-                        style: text.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
+                    const SizedBox(height: 4),
+                    Row(
+                      children: [
+                        Text(
+                          vehicleDisplayName,
+                          style: text.titleMedium?.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
-                      ),
-                      const SizedBox(width: 8),
-                      Text(
-                        l10n.switchLabel,
-                        style: text.bodySmall?.copyWith(
-                          color: color.primary,
-                          fontWeight: FontWeight.w500,
+                        const SizedBox(width: 8),
+                        Text(
+                          l10n.switchLabel,
+                          style: text.bodySmall?.copyWith(
+                            color: color.primary,
+                            fontWeight: FontWeight.w500,
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      _infoColumn(context, l10n.currentPlan, planText),
-                      _infoColumn(
-                        context,
-                        l10n.expiryDate,
-                        expiryText,
-                        sub: daysLeftStr,
-                        subColor: dynamicSubColor,
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            );
-          }),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                          child: _infoColumn(
+                            context,
+                            l10n.currentPlan,
+                            planText,
+                          ),
+                        ),
+                        Expanded(
+                          child: _infoColumn(
+                            context,
+                            l10n.expiryDate,
+                            expiryText,
+                            sub: daysLeftStr,
+                            subColor: dynamicSubColor,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
 
           const SizedBox(height: 20),
 
@@ -390,11 +400,15 @@ class _DeviceDataScreenState extends State<DeviceDataScreen> {
                   size: 18,
                 ),
                 const SizedBox(width: 6),
-                Text(
-                  plan.planName,
-                  style: text.bodyMedium?.copyWith(
-                    color: color.primary,
-                    fontWeight: FontWeight.w600,
+                Expanded(
+                  child: Text(
+                    plan.planName,
+                    style: text.bodyMedium?.copyWith(
+                      color: color.primary,
+                      fontWeight: FontWeight.w600,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
               ],
@@ -404,9 +418,15 @@ class _DeviceDataScreenState extends State<DeviceDataScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  plan.validityText,
-                  style: text.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
+                Expanded(
+                  child: Text(
+                    plan.validityText,
+                    style: text.bodyMedium?.copyWith(
+                      fontWeight: FontWeight.w600,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ),
                 Row(
                   children: [
@@ -522,15 +542,15 @@ class _DeviceDataScreenState extends State<DeviceDataScreen> {
                   if (plan.features.isNotEmpty)
                     Row(
                       children: [
-                         Icon(
-                          Icons.check,
-                          color: theme.primaryColor,
-                          size: 15,
-                        ),
+                        Icon(Icons.check, color: theme.primaryColor, size: 15),
                         const SizedBox(width: 4),
-                        Text(
-                          plan.features[0],
-                          style: text.bodySmall?.copyWith(fontSize: 11),
+                        Expanded(
+                          child: Text(
+                            plan.features[0],
+                            style: text.bodySmall?.copyWith(fontSize: 11),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                          ),
                         ),
                       ],
                     ),
@@ -548,7 +568,9 @@ class _DeviceDataScreenState extends State<DeviceDataScreen> {
                   children: [
                     Text(
                       "${l10n.currencySymbol}${plan.price.toStringAsFixed(0)}",
-                      style: text.titleSmall?.copyWith(fontWeight: FontWeight.bold),
+                      style: text.titleSmall?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     if (plan.originalPrice > 0) ...[
                       const SizedBox(width: 6),
@@ -638,7 +660,14 @@ class _DeviceDataScreenState extends State<DeviceDataScreen> {
         children: [
           const Icon(Icons.check_circle, color: Colors.green, size: 16),
           const SizedBox(width: 8),
-          Text(textValue, style: text.bodySmall),
+          Expanded(
+            child: Text(
+              textValue,
+              style: text.bodySmall,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
         ],
       ),
     );

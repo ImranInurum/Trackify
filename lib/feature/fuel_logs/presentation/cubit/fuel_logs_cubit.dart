@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:http/http.dart' as http;
 import 'package:trackify/core/config/network/api_host.dart';
+import 'package:trackify/feature/Vehicle_control/data/repositories/vehicle_control_repository_impl.dart';
+import 'package:trackify/core/config/network/network_api_service.dart';
 
 import 'fuel_logs_state.dart';
 
@@ -170,19 +172,19 @@ class FuelLogsCubit extends Cubit<FuelLogsState> {
   Future<void> updateOdometer(String odometerReading) async {
     if (_currentImei.isEmpty) return;
     try {
-      final response = await http.post(
-        Uri.parse(ApiURL.updateOdometer),
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({
+      final apiService = NetworkApiService();
+      final response = await apiService.getPostApiResponse(
+        ApiURL.updateOdometer,
+        {
           "imei": _currentImei,
           "currentOdometer": int.tryParse(odometerReading) ?? 0,
-        }),
+        },
       );
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        await reloadFuelLogs();
-      } else {
-        throw Exception("Failed to update odometer");
-      }
+      
+      response.fold(
+        (failure) => throw Exception(failure.message),
+        (success) async => await reloadFuelLogs(),
+      );
     } catch (e) {
       print("Odometer update error: $e");
       rethrow;
@@ -192,16 +194,23 @@ class FuelLogsCubit extends Cubit<FuelLogsState> {
   Future<void> updateTankCapacity(String capacity) async {
     if (_currentImei.isEmpty) return;
     try {
-      var request = http.MultipartRequest('PUT', Uri.parse(ApiURL.updateVehicleControl(_currentImei)));
-      request.fields['tankCapacity'] = capacity;
-      final response = await request.send();
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        await reloadFuelLogs();
-      } else {
-        throw Exception("Failed to update tank capacity");
-      }
+      final repo = VehicleControlRepositoryImpl();
+      await repo.updateTankCapacity(_currentImei, capacity);
+      await reloadFuelLogs();
     } catch (e) {
       print("Tank capacity update error: $e");
+      rethrow;
+    }
+  }
+
+  Future<void> updateMileage(String mileage) async {
+    if (_currentImei.isEmpty) return;
+    try {
+      final repo = VehicleControlRepositoryImpl();
+      await repo.updateMileage(_currentImei, mileage);
+      await reloadFuelLogs();
+    } catch (e) {
+      print("Mileage update error: $e");
       rethrow;
     }
   }

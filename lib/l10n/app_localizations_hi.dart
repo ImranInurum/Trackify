@@ -483,7 +483,7 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String expiresInDays(String days) {
-    return '$days दिनों में समाप्त हो रहा है';
+    return '$days दिनों में समाप्त';
   }
 
   @override
@@ -2725,4 +2725,74 @@ class AppLocalizationsHi extends AppLocalizations {
   @override
   String get confirmDeleteAccount =>
       'Are you sure you want to delete your account?';
+
+  @override
+  String get expired => 'समाप्त हो गया';
+
+  @override
+  String daysLeftText(String days) {
+    return '$days दिन बचे हैं';
+  }
+
+  @override
+  String get warrantyExpiringTitle => 'वारंटी समाप्त हो रही है';
+
+  @override
+  String get warrantyExpiredDesc =>
+      'आपके डिवाइस की वारंटी समाप्त हो गई है। प्रीमियम सहायता और सुविधाओं का आनंद लेना जारी रखने के लिए कृपया अपनी वारंटी का नवीनीकरण करें।';
+
+  @override
+  String warrantyExpiringDesc(String days) {
+    return 'आपके डिवाइस की वारंटी $days दिनों में समाप्त हो जाएगी। सेवा रुकावट से बचने के लिए कृपया इसे नवीनीकृत करें।';
+  }
+
+  @override
+  String get dismiss => 'खारिज करें';
+
+  @override
+  String get allTime => 'सभी समय';
+
+  @override
+  String get totalServices => 'कुल सर्विस';
+
+  @override
+  String get avgSpending => 'औसत खर्च';
+
+  @override
+  String get perService => '/सर्विस';
+
+  @override
+  String get avgInterval => 'औसत अंतराल';
+
+  @override
+  String get months => 'महीने';
+
+  @override
+  String get deleteAlertTitle => 'अलर्ट हटाएं';
+
+  @override
+  String get deleteAlertDesc =>
+      'क्या आप वाकई इस ओवरस्पीड अलर्ट को हटाना चाहते हैं?';
+
+  @override
+  String get deleteServiceLogDesc =>
+      'क्या आप वाकई इस सर्विस लॉग को हटाना चाहते हैं?';
+
+  @override
+  String get serviceDetails => 'सर्विस विवरण';
+
+  @override
+  String get amountText => 'राशि';
+
+  @override
+  String get unknownText => 'अज्ञात';
+
+  @override
+  String get notProvided => 'प्रदान नहीं किया गया';
+
+  @override
+  String get contactCopied => 'संपर्क कॉपी किया गया';
+
+  @override
+  String get noImage => 'कोई चित्र नहीं';
 }
