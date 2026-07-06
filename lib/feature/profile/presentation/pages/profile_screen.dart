@@ -13,6 +13,8 @@ import 'package:trackify/feature/my_profile/presentation/pages/my_profile_screen
 import 'package:trackify/feature/profile/presentation/cubit/profile_cubit.dart';
 import 'package:trackify/feature/profile/presentation/cubit/profile_state.dart';
 import 'package:trackify/feature/settings/presentation/pages/settings_screen.dart';
+import 'package:trackify/core/config/network/api_host.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 import '../../../../core/common/widgets/vehicle_card.dart';
 import '../../../../l10n/app_localizations.dart';
@@ -80,6 +82,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final imei = vehicle.imei!;
     final currentLockState = _vehicleLockStates[imei] ?? false;
     final targetLockState = !currentLockState;
+    
+    final l10n = AppLocalizations.of(context)!;
 
     try {
       final repo = VehicleControlRepositoryImpl();
@@ -92,7 +96,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              "Vehicle ${targetLockState ? 'Locked' : 'Unlocked'} successfully!",
+              targetLockState ? l10n.vehicleLockedSuccessfully : l10n.vehicleUnlockedSuccessfully,
             ),
             backgroundColor: Colors.green,
           ),
@@ -102,7 +106,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text("Failed to update lock status: $e"),
+            content: Text("${l10n.failedToUpdateLockStatus}: $e"),
             backgroundColor: Colors.red,
           ),
         );
@@ -119,11 +123,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
       body: BlocBuilder<AppCubit, AppState>(
         builder: (context, appState) {
           final user = appState.userData;
-          final userName = user?.name ?? "Guest";
+          final userName = user?.name ?? l10n.guest;
           final userInitials = userName.isNotEmpty
               ? userName[0].toUpperCase()
               : "G";
           final userMobile = user?.mobileNumber ?? "";
+          
+          String profileImageUrl = '';
+          if (user?.userProfile != null && user!.userProfile!.isNotEmpty) {
+            String path = user.userProfile!.replaceAll('\\', '/');
+            if (path.startsWith('http://') || path.startsWith('https://')) {
+              profileImageUrl = path;
+            } else {
+              final base = ApiURL.baseURL;
+              profileImageUrl = path.startsWith('/') ? '$base$path' : '$base/$path';
+            }
+          }
 
           return SingleChildScrollView(
             child: Column(
@@ -151,14 +166,36 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             shape: BoxShape.circle,
                             color: Theme.of(context).colorScheme.primary,
                           ),
-                          child: Center(
-                            child: Text(
-                              userInitials,
-                              style: TextStyle(
-                                fontSize: 28,
-                                color: Theme.of(context).colorScheme.onPrimary,
-                              ),
-                            ),
+                          child: ClipOval(
+                            child: profileImageUrl.isNotEmpty
+                                ? CachedNetworkImage(
+                                    imageUrl: profileImageUrl,
+                                    fit: BoxFit.cover,
+                                    placeholder: (context, url) => const Center(
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                    errorWidget: (context, url, error) => Center(
+                                      child: Text(
+                                        userInitials,
+                                        style: TextStyle(
+                                          fontSize: 28,
+                                          color: Theme.of(context).colorScheme.onPrimary,
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                                : Center(
+                                    child: Text(
+                                      userInitials,
+                                      style: TextStyle(
+                                        fontSize: 28,
+                                        color: Theme.of(context).colorScheme.onPrimary,
+                                      ),
+                                    ),
+                                  ),
                           ),
                         ),
                         const SizedBox(width: 14),
@@ -483,8 +520,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                       _menu(
                         l10n.addVehicle,
-                        "Register a new Vehicle or Trackify Device",
-                        // Add translation if available
+                        l10n.registerNewVehicleDesc,
                         Icons.add_box_sharp,
                         isLast: true,
                         onTap: () {

@@ -46,4 +46,58 @@ class MapUtils {
       return null;
     }
   }
+
+  static Future<BitmapDescriptor> createGeoFenceMarkerIcon(IconData iconData, Color color) async {
+    final ui.PictureRecorder pictureRecorder = ui.PictureRecorder();
+    final Canvas canvas = Canvas(pictureRecorder);
+    const double width = 60.0;
+    const double height = 80.0; // Taller to accommodate the pin tip
+    const double radius = width / 2;
+
+    // Draw the pin (teardrop) shape
+    final Path pinPath = Path();
+    pinPath.moveTo(radius, height); // Bottom tip
+    pinPath.quadraticBezierTo(0, height * 0.65, 0, radius); // Left curve
+    pinPath.arcToPoint(
+      const Offset(width, radius),
+      radius: const Radius.circular(radius),
+      clockwise: true,
+    ); // Top semi-circle
+    pinPath.quadraticBezierTo(width, height * 0.65, radius, height); // Right curve
+    pinPath.close();
+
+    final Paint pinPaint = Paint()..color = color;
+    canvas.drawPath(pinPath, pinPaint);
+
+    // Draw a white circle inside the pin
+    final Paint innerCirclePaint = Paint()..color = Colors.white;
+    const double innerRadius = radius * 0.75;
+    canvas.drawCircle(const Offset(radius, radius), innerRadius, innerCirclePaint);
+
+    // Draw the icon inside the white circle
+    TextPainter textPainter = TextPainter(
+      textDirection: TextDirection.ltr,
+    );
+    textPainter.text = TextSpan(
+      text: String.fromCharCode(iconData.codePoint),
+      style: TextStyle(
+        fontSize: innerRadius * 1.4, // Scale icon to fit inside inner circle
+        fontFamily: iconData.fontFamily,
+        package: iconData.fontPackage,
+        color: color, // Use the primary color for the icon
+      ),
+    );
+    textPainter.layout();
+    textPainter.paint(
+      canvas,
+      Offset(
+        radius - textPainter.width / 2,
+        radius - textPainter.height / 2,
+      ),
+    );
+
+    final ui.Image img = await pictureRecorder.endRecording().toImage(width.toInt(), height.toInt());
+    final ByteData? data = await img.toByteData(format: ui.ImageByteFormat.png);
+    return BitmapDescriptor.fromBytes(data!.buffer.asUint8List());
+  }
 }

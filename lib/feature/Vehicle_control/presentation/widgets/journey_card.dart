@@ -7,6 +7,9 @@ class JourneyCard extends StatelessWidget {
   final Color primaryTextColor;
   final Color secondaryTextColor;
   final VoidCallback? onTap;
+  final String distance;
+  final String hours;
+  final String minutes;
 
   const JourneyCard({
     super.key,
@@ -14,6 +17,9 @@ class JourneyCard extends StatelessWidget {
     required this.primaryTextColor,
     required this.secondaryTextColor,
     this.onTap,
+    this.distance = "0.0",
+    this.hours = "0",
+    this.minutes = "0",
   });
 
   @override
@@ -26,6 +32,7 @@ class JourneyCard extends StatelessWidget {
         decoration: BoxDecoration(
           color: cardColor,
           borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: Colors.grey.withOpacity(0.5), width: 0.5),
         ),
         child: Column(
           children: [
@@ -62,7 +69,7 @@ class JourneyCard extends StatelessWidget {
                   child: _buildMetric(
                     icon: Icons.location_on_outlined,
                     label: AppLocalizations.of(context)!.distanceTravelled,
-                    value: "42.9",
+                    value: distance,
                     unit: context.displayKm,
                     color: const Color(0xFF4D7B7B),
                   ),
@@ -76,8 +83,8 @@ class JourneyCard extends StatelessWidget {
                   child: _buildMetric(
                     icon: Icons.access_time,
                     label: AppLocalizations.of(context)!.timeDuration,
-                    value: "19",
-                    unit: "${AppLocalizations.of(context)!.hr} 35 ${AppLocalizations.of(context)!.min}",
+                    value: hours,
+                    unit: "${AppLocalizations.of(context)!.hr} $minutes ${AppLocalizations.of(context)!.min}",
                     color: const Color(0xFF3D7B9E),
                   ),
                 ),

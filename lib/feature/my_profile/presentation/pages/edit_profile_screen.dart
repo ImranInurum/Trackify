@@ -9,6 +9,7 @@ import 'package:trackify/feature/my_profile/presentation/cubit/my_profile_cubit.
 import 'package:trackify/feature/my_profile/presentation/cubit/my_profile_state.dart';
 import 'package:trackify/feature/my_profile/data/models/update_profile_request.dart';
 import 'package:intl/intl.dart';
+import 'package:country_state_city/country_state_city.dart' as csc;
 
 class EditProfileScreen extends StatefulWidget {
   const EditProfileScreen({super.key});
@@ -38,65 +39,85 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   String? _selectedCity;
 
   bool _isSaving = false;
+  bool _isLoadingCountries = false;
+  bool _isLoadingStates = false;
+  bool _isLoadingCities = false;
 
-  // --- Static lists (replace with API data as needed) ---
-  late final List<Map<String, String>> _countries = [
-    {'value': 'India', 'flag': '🇮🇳', 'label': l10n.india},
-    {'value': 'USA', 'flag': '🇺🇸', 'label': l10n.usa},
-    {'value': 'UK', 'flag': '🇬🇧', 'label': l10n.uk},
-    {'value': 'UAE', 'flag': '🇦🇪', 'label': l10n.uae},
-  ];
-
-  late final List<Map<String, String>> _states = [
-    {'value': 'Madhya Pradesh', 'label': l10n.madhyaPradesh},
-    {'value': 'Maharashtra', 'label': l10n.maharashtra},
-    {'value': 'Rajasthan', 'label': l10n.rajasthan},
-    {'value': 'Gujarat', 'label': l10n.gujarat},
-    {'value': 'Karnataka', 'label': l10n.karnataka},
-    {'value': 'Tamil Nadu', 'label': l10n.tamilNadu},
-    {'value': 'Uttar Pradesh', 'label': l10n.uttarPradesh},
-    {'value': 'Delhi', 'label': l10n.delhi},
-  ];
-
-  late final List<Map<String, String>> _cities = [
-    {'value': 'Indore district', 'label': l10n.indoreDistrict},
-    {'value': 'Bhopal', 'label': l10n.bhopal},
-    {'value': 'Gwalior', 'label': l10n.gwalior},
-    {'value': 'Jabalpur', 'label': l10n.jabalpur},
-    {'value': 'Ujjain', 'label': l10n.ujjain},
-  ];
+  // --- Dynamic lists ---
+  List<csc.Country> _countries = [];
+  List<csc.State> _states = [];
+  List<csc.City> _cities = [];
 
   String? _findMatchingCountry(String? country) {
     if (country == null || country.trim().isEmpty) return null;
-    for (var c in _countries) {
-      if (c['value']!.toLowerCase() == country.trim().toLowerCase() ||
-          c['label']!.toLowerCase() == country.trim().toLowerCase()) {
-        return c['value'];
-      }
-    }
     return country.trim();
   }
 
   String? _findMatchingState(String? state) {
     if (state == null || state.trim().isEmpty) return null;
-    for (var s in _states) {
-      if (s['value']!.toLowerCase() == state.trim().toLowerCase() ||
-          s['label']!.toLowerCase() == state.trim().toLowerCase()) {
-        return s['value'];
-      }
-    }
     return state.trim();
   }
 
   String? _findMatchingCity(String? city) {
     if (city == null || city.trim().isEmpty) return null;
-    for (var c in _cities) {
-      if (c['value']!.toLowerCase() == city.trim().toLowerCase() ||
-          c['label']!.toLowerCase() == city.trim().toLowerCase()) {
-        return c['value'];
+    return city.trim();
+  }
+
+  Future<void> _loadCountries() async {
+    setState(() => _isLoadingCountries = true);
+    final countries = await csc.getAllCountries();
+    if (mounted) {
+      setState(() {
+        _countries = countries;
+        _isLoadingCountries = false;
+      });
+      if (_selectedCountry != null) {
+        final country = _countries.where((c) => c.name.toLowerCase() == _selectedCountry!.toLowerCase()).firstOrNull;
+        if (country != null) {
+          _selectedCountry = country.name; // normalize
+          await _loadStates(country.isoCode);
+        }
       }
     }
-    return city.trim();
+  }
+
+  Future<void> _loadStates(String countryIsoCode) async {
+    setState(() => _isLoadingStates = true);
+    final states = await csc.getStatesOfCountry(countryIsoCode);
+    if (mounted) {
+      setState(() {
+        _states = states;
+        _isLoadingStates = false;
+        // reset selected state if not found in new list
+        if (_selectedState != null && !_states.any((s) => s.name.toLowerCase() == _selectedState!.toLowerCase())) {
+          _selectedState = null;
+          _selectedCity = null;
+          _cities = [];
+        }
+      });
+      if (_selectedState != null) {
+        final state = _states.where((s) => s.name.toLowerCase() == _selectedState!.toLowerCase()).firstOrNull;
+        if (state != null) {
+          _selectedState = state.name; // normalize
+          await _loadCities(countryIsoCode, state.isoCode);
+        }
+      }
+    }
+  }
+
+  Future<void> _loadCities(String countryIsoCode, String stateIsoCode) async {
+    setState(() => _isLoadingCities = true);
+    final cities = await csc.getStateCities(countryIsoCode, stateIsoCode);
+    if (mounted) {
+      setState(() {
+        _cities = cities;
+        _isLoadingCities = false;
+        // reset selected city if not found in new list
+        if (_selectedCity != null && !_cities.any((c) => c.name.toLowerCase() == _selectedCity!.toLowerCase())) {
+          _selectedCity = null;
+        }
+      });
+    }
   }
 
   @override
@@ -142,6 +163,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         _selectedCity = null;
       }
       setState(() {});
+      _loadCountries();
     });
   }
 
@@ -161,8 +183,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     final userId = appCubit.state.userData?.id;
     if (userId == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('User session not found. Please log in again.'),
+        SnackBar(
+          content: Text(l10n.userSessionNotFound),
           backgroundColor: Colors.red,
         ),
       );
@@ -541,25 +563,41 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     hint: l10n.selectCountry,
                     items: _countries.map((c) {
                       return DropdownMenuItem<String>(
-                        value: c['value'],
+                        value: c.name,
                         child: Row(
                           children: [
                             Text(
-                              c['flag']!,
+                              c.flag,
                               style: const TextStyle(fontSize: 20),
                             ),
                             const SizedBox(width: 10),
-                            Text(
-                              c['label']!,
-                              style: TextStyle(color: onSurface, fontSize: 15),
+                            Expanded(
+                              child: Text(
+                                c.name,
+                                style: TextStyle(color: onSurface, fontSize: 15),
+                                overflow: TextOverflow.ellipsis,
+                              ),
                             ),
                           ],
                         ),
                       );
                     }).toList(),
-                    onChanged: (v) => setState(() => _selectedCountry = v),
+                    onChanged: (v) {
+                      setState(() {
+                        _selectedCountry = v;
+                        _selectedState = null;
+                        _selectedCity = null;
+                        _states = [];
+                        _cities = [];
+                      });
+                      if (v != null) {
+                        final country = _countries.firstWhere((c) => c.name == v);
+                        _loadStates(country.isoCode);
+                      }
+                    },
                     dividerColor: dividerColor,
                     onSurface: onSurface,
+                    isLoading: _isLoadingCountries,
                   ),
                   const SizedBox(height: 24),
 
@@ -569,16 +607,29 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     hint: l10n.selectState,
                     items: _states.map((s) {
                       return DropdownMenuItem<String>(
-                        value: s['value'],
+                        value: s.name,
                         child: Text(
-                          s['label']!,
+                          s.name,
                           style: TextStyle(color: onSurface, fontSize: 15),
+                          overflow: TextOverflow.ellipsis,
                         ),
                       );
                     }).toList(),
-                    onChanged: (v) => setState(() => _selectedState = v),
+                    onChanged: (v) {
+                      setState(() {
+                        _selectedState = v;
+                        _selectedCity = null;
+                        _cities = [];
+                      });
+                      if (v != null && _selectedCountry != null) {
+                        final country = _countries.firstWhere((c) => c.name == _selectedCountry);
+                        final state = _states.firstWhere((s) => s.name == v);
+                        _loadCities(country.isoCode, state.isoCode);
+                      }
+                    },
                     dividerColor: dividerColor,
                     onSurface: onSurface,
+                    isLoading: _isLoadingStates,
                   ),
                   const SizedBox(height: 24),
 
@@ -588,16 +639,18 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     hint: l10n.selectCity,
                     items: _cities.map((c) {
                       return DropdownMenuItem<String>(
-                        value: c['value'],
+                        value: c.name,
                         child: Text(
-                          c['label']!,
+                          c.name,
                           style: TextStyle(color: onSurface, fontSize: 15),
+                          overflow: TextOverflow.ellipsis,
                         ),
                       );
                     }).toList(),
                     onChanged: (v) => setState(() => _selectedCity = v),
                     dividerColor: dividerColor,
                     onSurface: onSurface,
+                    isLoading: _isLoadingCities,
                   ),
                   const SizedBox(height: 24),
 
@@ -831,6 +884,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     required ValueChanged<T?> onChanged,
     required Color dividerColor,
     required Color onSurface,
+    bool isLoading = false,
   }) {
     // Safety check to prevent dropdown assertion crashes
     final List<DropdownMenuItem<T>> safeItems = List.from(items);
@@ -856,11 +910,20 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         child: DropdownButton<T>(
           value: value,
           isExpanded: true,
-          icon: Icon(
-            Icons.keyboard_arrow_down,
-            color: Theme.of(context).colorScheme.primary,
-            size: 22,
-          ),
+          icon: isLoading
+              ? SizedBox(
+                  width: 22,
+                  height: 22,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+                )
+              : Icon(
+                  Icons.keyboard_arrow_down,
+                  color: Theme.of(context).colorScheme.primary,
+                  size: 22,
+                ),
           dropdownColor: Theme.of(context).scaffoldBackgroundColor,
           hint: Text(
             hint,

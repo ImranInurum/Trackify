@@ -75,7 +75,7 @@ class _OverSpeedAlertScreenState extends State<OverSpeedAlertScreen> {
                   Expanded(
                     child: Center(
                       child: Text(
-                        "No alerts created for this vehicle.",
+                        l10n.noAlertsCreated,
                         style: theme.textTheme.bodyLarge?.copyWith(
                           color: theme.colorScheme.onSurface.withOpacity(0.5),
                         ),
@@ -113,7 +113,7 @@ class _OverSpeedAlertScreenState extends State<OverSpeedAlertScreen> {
                               vehicle: selectedVehicle,
                               onDelete: () {
                                 ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(content: Text('Delete functionality coming soon')),
+                                  SnackBar(content: Text(l10n.deleteFunctionalityComingSoon)),
                                 );
                               },
                             ),

@@ -142,7 +142,7 @@ class VehicleControlRepositoryImpl implements VehicleControlRepository {
   Future<void> updateVehicleIcon(String vehicleIMEI, String icon) async {
     final response = await _apiService.getPostUploadMultiPartApiResponse(
       ApiURL.updateVehicleControl(vehicleIMEI),
-      {"vehicleIcon": icon},
+      {"imei": vehicleIMEI, "vehicleIcon": icon},
       null,
       '',
       '',
@@ -158,7 +158,7 @@ class VehicleControlRepositoryImpl implements VehicleControlRepository {
   Future<void> updateVehicleColor(String vehicleIMEI, String color) async {
     final response = await _apiService.getPostUploadMultiPartApiResponse(
       ApiURL.updateVehicleControl(vehicleIMEI),
-      {"vehicleColor": color},
+      {"imei": vehicleIMEI, "vehicleColor": color},
       null,
       '',
       '',
@@ -174,7 +174,7 @@ class VehicleControlRepositoryImpl implements VehicleControlRepository {
   Future<void> updateTankCapacity(String vehicleIMEI, String capacity) async {
     final response = await _apiService.getPostUploadMultiPartApiResponse(
       ApiURL.updateVehicleControl(vehicleIMEI),
-      {"tankCapacity": capacity},
+      {"imei": vehicleIMEI, "tankCapacity": capacity},
       null,
       '',
       '',
@@ -190,7 +190,7 @@ class VehicleControlRepositoryImpl implements VehicleControlRepository {
   Future<void> updateMileage(String vehicleIMEI, String mileage) async {
     final response = await _apiService.getPostUploadMultiPartApiResponse(
       ApiURL.updateVehicleControl(vehicleIMEI),
-      {"vehicleMileage": mileage},
+      {"imei": vehicleIMEI, "vehicleMileage": mileage},
       null,
       '',
       '',
@@ -204,9 +204,13 @@ class VehicleControlRepositoryImpl implements VehicleControlRepository {
 
   @override
   Future<void> updateVehicleLock(String vehicleIMEI, bool lockState) async {
-    final response = await _apiService.getPutApiResponse(
-      ApiURL.lockUnlockVehicle(vehicleIMEI),
-      {},
+    final response = await _apiService.getPostUploadMultiPartApiResponse(
+      ApiURL.updateVehicleControl(vehicleIMEI),
+      {"imei": vehicleIMEI, "vehicleLock": lockState.toString()},
+      null,
+      '',
+      '',
+      'PUT',
     );
     response.fold(
       (failure) => throw failure,
@@ -261,7 +265,7 @@ class VehicleControlRepositoryImpl implements VehicleControlRepository {
     final bytes = await file.readAsBytes();
     final response = await _apiService.getPostUploadMultiPartApiResponse(
       ApiURL.updateVehicleControl(vehicleIMEI),
-      {},
+      {"imei": vehicleIMEI},
       bytes,
       imagePath.split('/').last,
       'vehicleImage',

@@ -17,6 +17,7 @@ class VehicleCard extends StatelessWidget {
   final VoidCallback onRenew;
   final VoidCallback onVehicleControl;
   final BuildContext context;
+  final bool showNotificationFooter;
 
   const VehicleCard({
     super.key,
@@ -28,6 +29,7 @@ class VehicleCard extends StatelessWidget {
     required this.onRenew,
     required this.onVehicleControl,
     required this.context,
+    this.showNotificationFooter = true,
   });
 
   @override
@@ -148,20 +150,50 @@ class VehicleCard extends StatelessWidget {
               isLocked: isLocked,
             ),
             const SizedBox(height: 8),
-            _buildActionRow(
-              l10n,
-              l10n.dataPlan,
-              l10n.expiresInDays("319"),
-              l10n.rechargeNow,
-              onRecharge,
-            ),
-            _buildActionRow(
-              l10n,
-              l10n.warranty,
-              l10n.expiresInDays("319"),
-              l10n.renewNow,
-              onRenew,
-            ),
+            ...(() {
+              int daysLeft = 60; // Hardcoded to 60 for demonstration
+              Color subtitleColor;
+              String subtitleText;
+
+              if (daysLeft <= 0) {
+                subtitleColor = Colors.grey;
+                subtitleText = "Expired";
+              } else if (daysLeft <= 15) {
+                subtitleColor = Colors.red;
+                subtitleText = l10n.expiresInDays(daysLeft.toString());
+              } else if (daysLeft <= 60) {
+                subtitleColor = Colors.orange;
+                subtitleText = l10n.expiresInDays(daysLeft.toString());
+              } else if (daysLeft <= 150) {
+                subtitleColor = Colors.amber; // Yellow
+                subtitleText = l10n.expiresInDays(daysLeft.toString());
+              } else if (daysLeft <= 250) {
+                subtitleColor = Colors.lightGreen;
+                subtitleText = l10n.expiresInDays(daysLeft.toString());
+              } else {
+                subtitleColor = Colors.green;
+                subtitleText = l10n.expiresInDays(daysLeft.toString());
+              }
+              
+              return [
+                _buildActionRow(
+                  l10n,
+                  l10n.dataPlan,
+                  subtitleText,
+                  l10n.rechargeNow,
+                  onRecharge,
+                  subtitleColor: subtitleColor,
+                ),
+                _buildActionRow(
+                  l10n,
+                  l10n.warranty,
+                  subtitleText,
+                  l10n.renewNow,
+                  onRenew,
+                  subtitleColor: subtitleColor,
+                ),
+              ];
+            })(),
           ] else ...[
             const SecureBanner(),
             const SizedBox(height: 16),
@@ -177,8 +209,9 @@ class VehicleCard extends StatelessWidget {
         ],
       ),
     ),
-    InkWell(
-      onTap: () {
+    if (showNotificationFooter)
+      InkWell(
+        onTap: () {
         Navigator.push(
           context,
           MaterialPageRoute(builder: (_) => const NotificationTimelineScreen()),
@@ -222,8 +255,9 @@ class VehicleCard extends StatelessWidget {
     String title,
     String subtitle,
     String btnText,
-    VoidCallback onTap,
-  ) {
+    VoidCallback onTap, {
+    Color? subtitleColor,
+  }) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
       child: Row(
@@ -241,7 +275,7 @@ class VehicleCard extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 2),
-              Text(subtitle, style: TextStyle(fontSize: 13, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5))),
+              Text(subtitle, style: TextStyle(fontSize: 13, color: subtitleColor ?? Theme.of(context).colorScheme.onSurface.withOpacity(0.5))),
             ],
           ),
           SizedBox(

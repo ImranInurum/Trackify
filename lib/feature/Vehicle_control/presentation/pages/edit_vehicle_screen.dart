@@ -473,7 +473,7 @@ class _EditVehicleViewState extends State<_EditVehicleView> {
                       : (state.makers.isEmpty
                           ? "Select fuel type first"
                           : l10n.selectMake),
-                  onChanged: state.makers.isEmpty || state.isLoadingMakers
+                  onChanged: (state.makers.isEmpty && state.selectedMaker == null) || state.isLoadingMakers
                       ? null
                       : (val) {
                           if (val != null) context.read<AddVehicleCubit>().selectMaker(val);
@@ -507,7 +507,7 @@ class _EditVehicleViewState extends State<_EditVehicleView> {
                       : (state.models.isEmpty
                           ? (state.selectedMaker == null ? "Select make first" : "No models available")
                           : l10n.selectModel),
-                  onChanged: state.models.isEmpty || state.isLoadingModels
+                  onChanged: (state.models.isEmpty && state.selectedModel == null) || state.isLoadingModels
                       ? null
                       : (val) {
                           if (val != null) context.read<AddVehicleCubit>().selectModel(val);

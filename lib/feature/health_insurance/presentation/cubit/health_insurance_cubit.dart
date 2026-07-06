@@ -18,8 +18,27 @@ class HealthInsuranceCubit extends Cubit<HealthInsuranceState> {
   Future<void> getData() async {
     emit(state.copyWith(isLoading: true, error: null));
     try {
-      final response = await useCase();
-      emit(state.copyWith(isLoading: false, data: response));
+      final userId = AppPreference.instance.getSync(key: AppPreference.KEY_USER_ID) ?? '';
+      final response = await useCase(userId);
+      
+      // Auto-select the saved values if they exist
+      String? selectedBloodGroup = state.selectedBloodGroup;
+      String? selectedInsurance = state.selectedInsurance;
+      String? selectedInsuranceId = state.selectedInsuranceId;
+      
+      if (response.savedData != null) {
+         selectedBloodGroup = response.savedData!.bloodGroup;
+         selectedInsurance = response.savedData!.healthInsurance.name;
+         selectedInsuranceId = response.savedData!.healthInsurance.id;
+      }
+      
+      emit(state.copyWith(
+        isLoading: false, 
+        data: response,
+        selectedBloodGroup: selectedBloodGroup,
+        selectedInsurance: selectedInsurance,
+        selectedInsuranceId: selectedInsuranceId,
+      ));
     } catch (e) {
       emit(state.copyWith(isLoading: false, error: e.toString()));
     }

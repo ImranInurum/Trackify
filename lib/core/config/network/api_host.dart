@@ -87,11 +87,14 @@ class ApiURL {
   // -------------------------
   static String notifications(String userId) =>
       "$baseURL/api/notification/$userId";
+  static const String alertTypes = "$baseURL/api/alert-types";
 
   // -------------------------
   // Geo-Fence
   // -------------------------
   static const String updateGeoFence = "$baseURL/api/geoFance/update_geofence";
+  static String editGeoFenceById(String fenceId) =>
+      "$baseURL/api/geoFance/editGeofenceById/$fenceId";
   static String getGeoFenceData(String imei) =>
       "$baseURL/api/geoFance/geofenceData/$imei";
   static String deleteGeoFence(String imei, String fenceId) =>
@@ -154,6 +157,8 @@ class ApiURL {
       "$baseURL/api/health-insurance/health-insurance-options";
   static const String saveHealthInsurance =
       "$baseURL/api/health-insurance/health-insurance";
+  static String getHealthInsurance(String userId) =>
+      "$baseURL/api/health-insurance/health-insurance/$userId";
 
   // -------------------------
   // Video Tutorial

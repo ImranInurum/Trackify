@@ -81,7 +81,7 @@ class _AddServiceLogScreenState extends State<AddServiceLogScreen> {
         listener: (context, state) {
           if (state is ServiceLogsSuccess) {
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text("Service log added successfully")),
+              SnackBar(content: Text(l10n.serviceLogAddedSuccess)),
             );
             Navigator.pop(context);
           }
@@ -311,7 +311,7 @@ class _AddServiceLogScreenState extends State<AddServiceLogScreen> {
           ),
           validator: (value) {
             if (isRequired && (value == null || value.isEmpty)) {
-              return "This field is required";
+              return AppLocalizations.of(context)!.fieldRequired;
             }
             return null;
           },

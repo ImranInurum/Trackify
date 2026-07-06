@@ -15,6 +15,9 @@ class RideHistoryCubit extends Cubit<RideHistoryState> {
   RideHistoryCubit(this._assignDeviceUseCase) : super(RideHistoryInitial());
   final prefs = AppPreference.instance;
 
+  String currentSortBy = 'Date';
+  bool currentIsRecentToOldest = true;
+
   Future<void> getRideHistoryData() async {
     final iMEI = await prefs.get(key: AppPreference.IMEI);
     if (iMEI == null || iMEI.isEmpty) {
@@ -94,6 +97,9 @@ class RideHistoryCubit extends Cubit<RideHistoryState> {
   }
 
   void sortRides(String sortBy, bool isRecentToOldest) {
+    currentSortBy = sortBy;
+    currentIsRecentToOldest = isRecentToOldest;
+    
     if (state is! RideHistorySuccess) return;
     
     final currentRides = List<Ride>.from((state as RideHistorySuccess).rides);
@@ -103,8 +109,9 @@ class RideHistoryCubit extends Cubit<RideHistoryState> {
       
       switch (sortBy) {
         case 'Date':
-          // Assuming date is in a sortable format or using index/id if not
-          comparison = a.startTime.compareTo(b.startTime);
+          final dateA = DateTime.tryParse(a.rawStartTime) ?? _parseFallback(a);
+          final dateB = DateTime.tryParse(b.rawStartTime) ?? _parseFallback(b);
+          comparison = dateA.compareTo(dateB);
           break;
         case 'Distance':
           comparison = a.distance.compareTo(b.distance);
@@ -117,9 +124,38 @@ class RideHistoryCubit extends Cubit<RideHistoryState> {
           break;
       }
       
-      return isRecentToOldest ? -comparison : comparison;
+      return isRecentToOldest ? comparison : -comparison;
     });
     
     emit(RideHistorySuccess(currentRides));
+  }
+
+  DateTime _parseFallback(Ride ride) {
+    try {
+      final dateParts = ride.date.split('/');
+      if (dateParts.length == 3) {
+        final day = int.parse(dateParts[0]);
+        final month = int.parse(dateParts[1]);
+        final year = int.parse(dateParts[2]);
+        
+        int hour = 0;
+        int minute = 0;
+        final timeParts = ride.startTime.split(' ');
+        if (timeParts.length == 2) {
+          final time = timeParts[0].split(':');
+          if (time.length == 2) {
+            hour = int.parse(time[0]);
+            minute = int.parse(time[1]);
+            if (timeParts[1].toUpperCase() == 'PM' && hour != 12) {
+              hour += 12;
+            } else if (timeParts[1].toUpperCase() == 'AM' && hour == 12) {
+              hour = 0;
+            }
+          }
+        }
+        return DateTime(year, month, day, hour, minute);
+      }
+    } catch (_) {}
+    return DateTime.fromMillisecondsSinceEpoch(0);
   }
 }

@@ -141,7 +141,11 @@ class _AddGeoFenceScreenState extends State<AddGeoFenceScreen> {
       isActive: widget.initialFence?.isActive ?? true,
     );
 
-    context.read<GeoFenceCubit>().addGeoFence(newFence);
+    if (widget.initialFence != null) {
+      context.read<GeoFenceCubit>().editGeoFence(newFence);
+    } else {
+      context.read<GeoFenceCubit>().addGeoFence(newFence);
+    }
   }
 
   @override

@@ -63,6 +63,7 @@ class RideSummaryModel {
   final String? endTime;
   final int? durationMinutes;
   final String? durationHours;
+  final String? duration;
   final double? avgSpeed;
   final double? topSpeed;
   final double? totalDistanceKm;
@@ -72,6 +73,7 @@ class RideSummaryModel {
     this.endTime,
     this.durationMinutes,
     this.durationHours,
+    this.duration,
     this.avgSpeed,
     this.topSpeed,
     this.totalDistanceKm,
@@ -83,6 +85,7 @@ class RideSummaryModel {
       endTime: json['endTime'] as String?,
       durationMinutes: json['durationMinutes'] as int?,
       durationHours: json['durationHours']?.toString(),
+      duration: json['duration'] as String?,
       avgSpeed: (json['avgSpeed'] as num?)?.toDouble(),
       topSpeed: (json['topSpeed'] as num?)?.toDouble(),
       totalDistanceKm: (json['totalDistanceKm'] as num?)?.toDouble(),

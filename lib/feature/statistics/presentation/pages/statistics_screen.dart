@@ -107,7 +107,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                   ElevatedButton(
                     onPressed: () =>
                         context.read<StatisticsCubit>().fetchInitialData(),
-                    child: const Text('Retry'),
+                    child: Text(l10n.retry),
                   ),
                 ],
               ),
@@ -198,7 +198,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                                 );
                               }
                             },
-                            child: const Text('Retry'),
+                            child: Text(l10n.retry),
                           ),
                         ],
                       ),
@@ -363,8 +363,8 @@ class _RidingBehaviourCard extends StatelessWidget {
     final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     final score = data?.score ?? 0;
-    final scoreText = data?.scoreText ?? 'N/A';
-    final statusText = data?.statusText ?? 'N/A';
+    final scoreText = data?.scoreText ?? l10n.notAvailable;
+    final statusText = data?.statusText ?? l10n.notAvailable;
     final comparisonText = data?.comparisonText ?? '';
 
     final isZeroScore = data == null ||

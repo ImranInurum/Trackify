@@ -76,8 +76,8 @@ class VehicleControlView extends StatelessWidget {
         listener: (context, state) {
           if (state is VehicleControlDeleted) {
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text("Vehicle removed successfully"),
+              SnackBar(
+                content: Text(AppLocalizations.of(context)!.vehicleRemovedSuccessfully),
                 backgroundColor: Colors.green,
               ),
             );
@@ -111,7 +111,7 @@ class VehicleControlView extends StatelessWidget {
                 slivers: [
                   /// 🔹 TOP IMAGE SECTION
                   SliverAppBar(
-                    expandedHeight: size.height * 0.30,
+                    expandedHeight: size.height * 0.26,
                     pinned: true,
                     backgroundColor: bgColor,
                     elevation: 0,
@@ -141,8 +141,9 @@ class VehicleControlView extends StatelessWidget {
                               vehicle.vehicleName.isNotEmpty
                                   ? vehicle.vehicleName
                                   : (passedVehicle != null
-                                      ? "${passedVehicle!.vehicleMaker ?? ''} ${passedVehicle!.vehicleModel ?? ''}".trim()
-                                      : ""),
+                                        ? "${passedVehicle!.vehicleMaker ?? ''} ${passedVehicle!.vehicleModel ?? ''}"
+                                              .trim()
+                                        : ""),
                               style: theme.textTheme.titleLarge?.copyWith(
                                 color: theme.colorScheme.onSurface,
                                 fontWeight: FontWeight.bold,
@@ -184,7 +185,7 @@ class VehicleControlView extends StatelessWidget {
                                 ),
                               ),
                               Positioned(
-                                bottom: size.height * 0.1,
+                                bottom: size.height * 0.01,
                                 right: 20,
                                 child: GestureDetector(
                                   onTap: () => _showImageSourceDialog(
@@ -224,9 +225,13 @@ class VehicleControlView extends StatelessWidget {
                             Text(
                               vehicle.vehicleName.isNotEmpty
                                   ? vehicle.vehicleName
-                                  : (passedVehicle != null && ("${passedVehicle!.vehicleMaker ?? ''} ${passedVehicle!.vehicleModel ?? ''}".trim()).isNotEmpty
-                                      ? "${passedVehicle!.vehicleMaker ?? ''} ${passedVehicle!.vehicleModel ?? ''}".trim()
-                                      : "Vehicle Details"),
+                                  : (passedVehicle != null &&
+                                            ("${passedVehicle!.vehicleMaker ?? ''} ${passedVehicle!.vehicleModel ?? ''}"
+                                                    .trim())
+                                                .isNotEmpty
+                                        ? "${passedVehicle!.vehicleMaker ?? ''} ${passedVehicle!.vehicleModel ?? ''}"
+                                              .trim()
+                                        : l10n.vehicleDetailsLabel),
                               style: theme.textTheme.headlineSmall?.copyWith(
                                 fontWeight: FontWeight.w900,
                                 color: primaryTextColor,
@@ -240,9 +245,13 @@ class VehicleControlView extends StatelessWidget {
                                 Text(
                                   vehicle.vehicleNumber.isNotEmpty
                                       ? "${vehicle.vehicleNumber} | ${vehicle.fuelType}"
-                                      : (passedVehicle != null && (passedVehicle!.vehicleNumber?.isNotEmpty ?? false)
-                                          ? "${passedVehicle!.vehicleNumber ?? ''} | ${passedVehicle!.fuelType ?? vehicle.fuelType}"
-                                          : "${vehicle.vehicleNumber} | ${vehicle.fuelType}"),
+                                      : (passedVehicle != null &&
+                                                (passedVehicle!
+                                                        .vehicleNumber
+                                                        ?.isNotEmpty ??
+                                                    false)
+                                            ? "${passedVehicle!.vehicleNumber ?? ''} | ${passedVehicle!.fuelType ?? vehicle.fuelType}"
+                                            : "${vehicle.vehicleNumber} | ${vehicle.fuelType}"),
                                   style: theme.textTheme.bodyMedium?.copyWith(
                                     color: secondaryTextColor,
                                     fontWeight: FontWeight.w500,
@@ -283,7 +292,7 @@ class VehicleControlView extends StatelessWidget {
                           ],
                         ),
 
-                        const SizedBox(height: 10),
+                        const SizedBox(height: 15),
 
                         /// 🔹 TANK & MILEAGE CARDS
                         Padding(
@@ -382,10 +391,14 @@ class VehicleControlView extends StatelessWidget {
                         const SizedBox(height: 12),
 
                         /// 🔹 JOURNEY CARD
+                        /// 🔹 JOURNEY CARD
                         JourneyCard(
                           cardColor: cardColor,
                           primaryTextColor: primaryTextColor,
                           secondaryTextColor: secondaryTextColor,
+                          distance: vehicle.vehicleMileage.isNotEmpty ? vehicle.vehicleMileage : "0.0",
+                          hours: "0", // TODO: Update when API provides lifetime hours
+                          minutes: "0", // TODO: Update when API provides lifetime minutes
                           onTap: () {
                             Navigator.popUntil(
                               context,
@@ -542,7 +555,7 @@ class VehicleControlView extends StatelessWidget {
                                       ),
                                       const SizedBox(width: 12),
                                       Text(
-                                        "Emergency Contact/s",
+                                        l10n.emergencyContacts,
                                         style: TextStyle(
                                           fontSize: 16,
                                           fontWeight: FontWeight.w700,
@@ -555,7 +568,7 @@ class VehicleControlView extends StatelessWidget {
                                   Padding(
                                     padding: const EdgeInsets.only(left: 32),
                                     child: Text(
-                                      "..add 1 more",
+                                      l10n.addOneMore,
                                       style: TextStyle(
                                         fontSize: 13,
                                         fontWeight: FontWeight.w600,
@@ -581,7 +594,7 @@ class VehicleControlView extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  "Remove ${vehicle.vehicleName} ${vehicle.vehicleNumber}",
+                                  l10n.removeVehicleNamed(vehicle.vehicleName, vehicle.vehicleNumber),
                                   style: TextStyle(
                                     fontSize: 16,
                                     fontWeight: FontWeight.w700,
@@ -590,7 +603,7 @@ class VehicleControlView extends StatelessWidget {
                                 ),
                                 const SizedBox(height: 8),
                                 Text(
-                                  "Warning: this cannot be undone. All your vehicle history will be deleted permanently.",
+                                  l10n.removeVehicleWarning,
                                   style: TextStyle(
                                     fontSize: 14,
                                     color: secondaryTextColor,
@@ -619,9 +632,9 @@ class VehicleControlView extends StatelessWidget {
                                       ),
                                       elevation: 0,
                                     ),
-                                    child: const Text(
-                                      "Remove Vehicle",
-                                      style: TextStyle(
+                                    child: Text(
+                                      l10n.removeVehicle,
+                                      style: const TextStyle(
                                         fontSize: 16,
                                         fontWeight: FontWeight.w600,
                                       ),
@@ -1098,19 +1111,20 @@ class VehicleControlView extends StatelessWidget {
     final cubit = context.read<VehicleControlCubit>();
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
+    final l10n = AppLocalizations.of(context)!;
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
         backgroundColor: isDark ? const Color(0xFF1E1E1E) : theme.cardColor,
-        title: const Text("Remove Vehicle"),
-        content: const Text(
-          "Are you sure you want to remove this vehicle? This action cannot be undone.",
+        title: Text(l10n.removeVehicle),
+        content: Text(
+          l10n.removeVehicleConfirmDesc,
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
             child: Text(
-              "Cancel",
+              l10n.cancel,
               style: TextStyle(
                 color: theme.colorScheme.onSurface.withOpacity(0.6),
               ),
@@ -1123,7 +1137,7 @@ class VehicleControlView extends StatelessWidget {
               cubit.deleteVehicle(idToDelete, vehicleIMEI);
             },
             child: Text(
-              "Remove",
+              l10n.removeBtn,
               style: TextStyle(
                 color: theme.colorScheme.error,
                 fontWeight: FontWeight.bold,

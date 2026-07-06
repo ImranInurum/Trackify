@@ -119,6 +119,12 @@ class RideCard extends StatelessWidget {
                     children: [
                       _buildStat(
                         context,
+                        Icons.route_outlined,
+                        "${ride.distance} ${context.displayKm}",
+                        l10n.distanceLabel,
+                      ),
+                      _buildStat(
+                        context,
                         Icons.timer_outlined,
                         ride.duration,
                         l10n.durationLabel,
@@ -128,12 +134,6 @@ class RideCard extends StatelessWidget {
                         Icons.speed,
                         "${ride.avgSpeed} ${context.displayKmh}",
                         l10n.averageSpeed,
-                      ),
-                      _buildStat(
-                        context,
-                        Icons.bolt,
-                        "${ride.topSpeed} ${context.displayKmh}",
-                        l10n.topSpeed,
                       ),
                     ],
                   ),

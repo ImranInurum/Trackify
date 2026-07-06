@@ -43,6 +43,7 @@ class Ride {
   final String mapImageUrl;
   final List<LatLng> polylinePoints;
   final List<RidePoint> points;
+  final String rawStartTime;
 
   Ride({
     required this.id,
@@ -58,6 +59,7 @@ class Ride {
     required this.mapImageUrl,
     required this.polylinePoints,
     required this.points,
+    this.rawStartTime = "",
   });
 
   Map<String, dynamic> toJson() {
@@ -75,6 +77,7 @@ class Ride {
       'mapImageUrl': mapImageUrl,
       'polylinePoints': polylinePoints.map((p) => {'lat': p.latitude, 'lng': p.longitude}).toList(),
       'points': points.map((p) => p.toJson()).toList(),
+      'rawStartTime': rawStartTime,
     };
   }
 
@@ -102,6 +105,7 @@ class Ride {
               ?.map((e) => RidePoint.fromJson(e as Map<String, dynamic>))
               .toList() ??
           [],
+      rawStartTime: json['rawStartTime'] ?? '',
     );
   }
 
@@ -119,6 +123,7 @@ class Ride {
     String? mapImageUrl,
     List<LatLng>? polylinePoints,
     List<RidePoint>? points,
+    String? rawStartTime,
   }) {
     return Ride(
       id: id ?? this.id,
@@ -134,6 +139,7 @@ class Ride {
       mapImageUrl: mapImageUrl ?? this.mapImageUrl,
       polylinePoints: polylinePoints ?? this.polylinePoints,
       points: points ?? this.points,
+      rawStartTime: rawStartTime ?? this.rawStartTime,
     );
   }
 
@@ -153,6 +159,7 @@ class Ride {
         mapImageUrl: "",
         polylinePoints: [],
         points: [],
+        rawStartTime: "",
       );
     }
 
@@ -192,6 +199,7 @@ class Ride {
       mapImageUrl: rides.first.mapImageUrl,
       polylinePoints: allPolylinePoints,
       points: allPoints,
+      rawStartTime: rides.first.rawStartTime,
     );
   }
 
@@ -212,8 +220,10 @@ class Ride {
     String formatTime(String? isoString) {
       if (isoString == null) return "--:--";
       try {
-        final date = DateTime.parse(isoString);
-        return "${date.hour}:${date.minute.toString().padLeft(2, '0')}";
+        final date = DateTime.parse(isoString).toLocal();
+        final int hour = date.hour > 12 ? date.hour - 12 : (date.hour == 0 ? 12 : date.hour);
+        final String amPm = date.hour >= 12 ? 'PM' : 'AM';
+        return "$hour:${date.minute.toString().padLeft(2, '0')} $amPm";
       } catch (e) {
         return isoString;
       }
@@ -289,12 +299,13 @@ class Ride {
       distance: summary?.totalDistanceKm ?? 0.0,
       startLocation: startLoc,
       endLocation: endLoc,
-      duration: "${summary?.durationMinutes ?? 0}m",
+      duration: summary?.duration ?? "${summary?.durationMinutes ?? 0}",
       topSpeed: summary?.topSpeed ?? 0.0,
       avgSpeed: summary?.avgSpeed ?? 0.0,
       mapImageUrl: "",
       polylinePoints: polylinePoints,
       points: ridePoints,
+      rawStartTime: summary?.startTime ?? "",
     );
   }
 }

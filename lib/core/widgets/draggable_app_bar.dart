@@ -535,13 +535,7 @@ class _DraggableAppBarState extends State<DraggableAppBar>
           padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
           child: Row(
             children: [
-              // Image
-              Image.asset(
-                AppImages.bikeImage,
-                height: 60,
-                width: 60,
-                fit: BoxFit.contain,
-              ),
+              _buildVehicleImageOrIcon(context, device),
               const SizedBox(width: 8),
 
               // Content
@@ -558,7 +552,10 @@ class _DraggableAppBarState extends State<DraggableAppBar>
                       ),
                     ),
                     const SizedBox(height: 6),
-                    Row(
+                    Wrap(
+                      crossAxisAlignment: WrapCrossAlignment.center,
+                      spacing: 8,
+                      runSpacing: 4,
                       children: [
                         Text(
                           device.vehicleNumber,
@@ -570,10 +567,8 @@ class _DraggableAppBarState extends State<DraggableAppBar>
                             fontWeight: FontWeight.w500,
                           ),
                         ),
-                        const SizedBox(width: 8),
                         // Tag
                         _buildTag(device),
-                        const SizedBox(width: 8),
                         // Status Container
                         Container(
                           padding: const EdgeInsets.symmetric(
@@ -618,14 +613,40 @@ class _DraggableAppBarState extends State<DraggableAppBar>
                       color: Theme.of(context).colorScheme.onSurface,
                     )
               else if (_isExpanded && isHeaderRow)
-                Text(
-                  AppLocalizations.of(context)!.expiresInDays('321'),
-                  style: const TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w700,
-                    color: Colors.green,
-                  ),
-                )
+                (() {
+                  int daysLeft = 60; // Set to 60 as requested
+                  Color textColor;
+                  String text;
+
+                  if (daysLeft <= 0) {
+                    textColor = Colors.grey;
+                    text = "Expired";
+                  } else if (daysLeft <= 15) {
+                    textColor = Colors.red;
+                    text = AppLocalizations.of(context)!.expiresInDays(daysLeft.toString());
+                  } else if (daysLeft <= 60) {
+                    textColor = Colors.orange;
+                    text = AppLocalizations.of(context)!.expiresInDays(daysLeft.toString());
+                  } else if (daysLeft <= 150) {
+                    textColor = Colors.amber; // Yellow
+                    text = AppLocalizations.of(context)!.expiresInDays(daysLeft.toString());
+                  } else if (daysLeft <= 250) {
+                    textColor = Colors.lightGreen;
+                    text = AppLocalizations.of(context)!.expiresInDays(daysLeft.toString());
+                  } else {
+                    textColor = Colors.green;
+                    text = AppLocalizations.of(context)!.expiresInDays(daysLeft.toString());
+                  }
+                  
+                  return Text(
+                    text,
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w700,
+                      color: textColor,
+                    ),
+                  );
+                })()
               else if (_isExpanded && !isHeaderRow)
                 Row(
                   children: [
@@ -634,7 +655,7 @@ class _DraggableAppBarState extends State<DraggableAppBar>
                     Text(
                       AppLocalizations.of(context)!.buyTrackifyDevice,
                       style: const TextStyle(
-                        fontSize: 12,
+                        fontSize: 9,
                         fontWeight: FontWeight.bold,
                         color: Colors.orange,
                       ),
@@ -657,6 +678,30 @@ class _DraggableAppBarState extends State<DraggableAppBar>
         fontWeight: FontWeight.w700,
       ),
     );
+  }
+
+  Widget _buildVehicleImageOrIcon(BuildContext context, Vehicles device) {
+    final type = device.vehicleType.toLowerCase();
+    
+    if (type.contains('car')) {
+      return Icon(Icons.directions_car, size: 40, color: Theme.of(context).colorScheme.primary);
+    } else if (type.contains('truck')) {
+      return Icon(Icons.local_shipping, size: 40, color: Theme.of(context).colorScheme.primary);
+    } else if (type.contains('bus')) {
+      return Icon(Icons.directions_bus, size: 40, color: Theme.of(context).colorScheme.primary);
+    } else if (type.contains('van')) {
+      return Icon(Icons.airport_shuttle, size: 40, color: Theme.of(context).colorScheme.primary);
+    } else if (type.contains('tractor')) {
+      return Icon(Icons.agriculture, size: 40, color: Theme.of(context).colorScheme.primary);
+    } else {
+      // Default to bike image
+      return Image.asset(
+        AppImages.bikeImage,
+        height: 60,
+        width: 60,
+        fit: BoxFit.contain,
+      );
+    }
   }
 
   @override

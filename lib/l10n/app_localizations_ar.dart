@@ -1388,7 +1388,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get kmL => 'كم/لتر';
 
   @override
-  String get serviceLogAddedSuccess => 'تم إضافة سجل الخدمة بنجاح';
+  String get serviceLogAddedSuccess => 'تمت إضافة سجل الخدمة بنجاح';
 
   @override
   String get currencySymbol => '₹';
@@ -2506,4 +2506,204 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get noOneSharedLocationSub =>
       'ستجد هنا أسماء الأشخاص الذين شاركوا موقعهم معك.';
+
+  @override
+  String get vehicleRemovedSuccessfully => 'تمت إزالة المركبة بنجاح';
+
+  @override
+  String get vehicleDetailsLabel => 'تفاصيل المركبة';
+
+  @override
+  String get addOneMore => '..إضافة 1 المزيد';
+
+  @override
+  String removeVehicleNamed(String vehicleName, String vehicleNumber) {
+    return 'إزالة $vehicleName $vehicleNumber';
+  }
+
+  @override
+  String get removeVehicleWarning =>
+      'تحذير: لا يمكن التراجع عن هذا. سيتم حذف جميع سجلات مركبتك بشكل دائم.';
+
+  @override
+  String get removeVehicle => 'إزالة المركبة';
+
+  @override
+  String get removeVehicleConfirmDesc =>
+      'هل أنت متأكد أنك تريد إزالة هذه المركبة؟ لا يمكن التراجع عن هذا الإجراء.';
+
+  @override
+  String get removeBtn => 'إزالة';
+
+  @override
+  String get fieldRequired => 'هذه الخانة مطلوبه';
+
+  @override
+  String get buyFeatureComingSoon => 'ميزة الشراء قريباً...';
+
+  @override
+  String get guest => 'ضيف';
+
+  @override
+  String get vehicleLockedSuccessfully => 'تم قفل المركبة بنجاح!';
+
+  @override
+  String get vehicleUnlockedSuccessfully => 'تم إلغاء قفل المركبة بنجاح!';
+
+  @override
+  String get failedToUpdateLockStatus => 'فشل في تحديث حالة القفل';
+
+  @override
+  String get registerNewVehicleDesc => 'تسجيل مركبة جديدة أو جهاز Trackify';
+
+  @override
+  String get userSessionNotFound =>
+      'لم يتم العثور على جلسة المستخدم. يرجى تسجيل الدخول مرة أخرى.';
+
+  @override
+  String get comingSoonOption => 'قريباً';
+
+  @override
+  String get noDeviceFound => 'لم يتم العثور على جهاز';
+
+  @override
+  String get noVideosFound => 'لم يتم العثور على مقاطع فيديو';
+
+  @override
+  String get designOption => 'التصميم';
+
+  @override
+  String get functionalityOption => 'الوظائف';
+
+  @override
+  String get otherOption => 'أخرى';
+
+  @override
+  String get allFieldsMandatory => 'جميع الحقول إلزامية';
+
+  @override
+  String get selectVehicleTypeForFuel => 'حدد نوع المركبة لرؤية خيارات الوقود';
+
+  @override
+  String get pleaseSelectFuelTypeFirst => 'يرجى تحديد نوع الوقود أولاً';
+
+  @override
+  String get pleaseSelectVehicleMakeFirst => 'يرجى تحديد طراز المركبة أولاً';
+
+  @override
+  String get deleteFunctionalityComingSoon => 'ميزة الحذف قادمة قريبًا';
+
+  @override
+  String get errorImeiNotFound => 'خطأ: لم يتم العثور على IMEI';
+
+  @override
+  String get healthInsuranceSavedSuccess => 'تم حفظ تفاصيل التأمين الصحي بنجاح';
+
+  @override
+  String get noSlotsAvailable => 'لا توجد خانات متاحة';
+
+  @override
+  String get noIntroDataAvailable => 'لا توجد بيانات مقدمة متاحة';
+
+  @override
+  String get retryBtn => 'إعادة المحاولة';
+
+  @override
+  String get areYouSureDeleteRefuelLog =>
+      'هل أنت متأكد أنك تريد حذف سجل التزود بالوقود هذا؟';
+
+  @override
+  String get cancelBtn => 'إلغاء';
+
+  @override
+  String get uploadFailed => 'فشل الرفع';
+
+  @override
+  String get noAlertsCreated => 'لا توجد تنبيهات لهذه المركبة.';
+
+  @override
+  String get changePasswordTitle => 'Change Password';
+
+  @override
+  String get changePasswordSubtitle =>
+      'Change password & logout from all phones';
+
+  @override
+  String get currentSessions => 'Current sessions';
+
+  @override
+  String get manageLoggedInDevices => 'Manage logged-in devices';
+
+  @override
+  String get deleteAccountTitle => 'Delete Account';
+
+  @override
+  String get deleteAccountSubtitle => 'Delete your account permanently';
+
+  @override
+  String get oldPassword => 'Old Password';
+
+  @override
+  String get confirmNewPasswordTitle => 'Confirm New Password';
+
+  @override
+  String get logoutOfAllDevices => 'Logout of all devices';
+
+  @override
+  String get otherDevices => 'Other devices';
+
+  @override
+  String get activeOnThisDevice => 'Active on this device';
+
+  @override
+  String get lastUsed => 'Last used -';
+
+  @override
+  String get osLabel => 'OS -';
+
+  @override
+  String get chromeNotificationDisabled => 'Chrome notification - disabled';
+
+  @override
+  String get logOut => 'Log out';
+
+  @override
+  String get hi => 'Hi';
+
+  @override
+  String get sorryToSeeYouGo => 'We\'re sorry to see you go.';
+
+  @override
+  String get note => 'Note:';
+
+  @override
+  String get deleteAccountNote1 =>
+      'After 30 days, your account will be deleted permanently.';
+
+  @override
+  String get deleteAccountNote2 =>
+      'You can reactivate the account within 30 Days by signing back.';
+
+  @override
+  String get deleteAccountExplanationPrompt =>
+      'We would love to know why you are deleting your account, as we may be able to help with common issues. You can also just continue.';
+
+  @override
+  String get explanationOptionalHint =>
+      'Your explanation is completely optional';
+
+  @override
+  String get deleteWarningPart1 =>
+      'Your device will be unmapped, subscription will be ';
+
+  @override
+  String get terminated => 'terminated';
+
+  @override
+  String get deleteWarningPart2 =>
+      ' and your all data will be lost from the server after 30 days of account deletion.';
+
+  @override
+  String get confirmDeleteAccount =>
+      'Are you sure you want to delete your account?';
 }

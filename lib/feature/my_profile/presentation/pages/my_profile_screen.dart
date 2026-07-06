@@ -26,6 +26,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
 
   String _getProfileImageUrl(String? path) {
     if (path == null || path.isEmpty) return '';
+    path = path.replaceAll('\\', '/');
     if (path.startsWith('http://') || path.startsWith('https://')) {
       return path;
     }

@@ -1021,7 +1021,7 @@ abstract class AppLocalizations {
   /// No description provided for @expiresInDays.
   ///
   /// In en, this message translates to:
-  /// **'Expires in {days} days'**
+  /// **'{days} days left'**
   String expiresInDays(String days);
 
   /// No description provided for @rechargeNow.
@@ -4875,6 +4875,378 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'You\'ll find the names of individuals who have shared their location with you right here.'**
   String get noOneSharedLocationSub;
+
+  /// No description provided for @vehicleRemovedSuccessfully.
+  ///
+  /// In en, this message translates to:
+  /// **'Vehicle removed successfully'**
+  String get vehicleRemovedSuccessfully;
+
+  /// No description provided for @vehicleDetailsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Vehicle Details'**
+  String get vehicleDetailsLabel;
+
+  /// No description provided for @addOneMore.
+  ///
+  /// In en, this message translates to:
+  /// **'..add 1 more'**
+  String get addOneMore;
+
+  /// No description provided for @removeVehicleNamed.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove {vehicleName} {vehicleNumber}'**
+  String removeVehicleNamed(String vehicleName, String vehicleNumber);
+
+  /// No description provided for @removeVehicleWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'Warning: this cannot be undone. All your vehicle history will be deleted permanently.'**
+  String get removeVehicleWarning;
+
+  /// No description provided for @removeVehicle.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove Vehicle'**
+  String get removeVehicle;
+
+  /// No description provided for @removeVehicleConfirmDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to remove this vehicle? This action cannot be undone.'**
+  String get removeVehicleConfirmDesc;
+
+  /// No description provided for @removeBtn.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove'**
+  String get removeBtn;
+
+  /// No description provided for @fieldRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'This field is required'**
+  String get fieldRequired;
+
+  /// No description provided for @buyFeatureComingSoon.
+  ///
+  /// In en, this message translates to:
+  /// **'Buy feature coming soon...'**
+  String get buyFeatureComingSoon;
+
+  /// No description provided for @guest.
+  ///
+  /// In en, this message translates to:
+  /// **'Guest'**
+  String get guest;
+
+  /// No description provided for @vehicleLockedSuccessfully.
+  ///
+  /// In en, this message translates to:
+  /// **'Vehicle Locked successfully!'**
+  String get vehicleLockedSuccessfully;
+
+  /// No description provided for @vehicleUnlockedSuccessfully.
+  ///
+  /// In en, this message translates to:
+  /// **'Vehicle Unlocked successfully!'**
+  String get vehicleUnlockedSuccessfully;
+
+  /// No description provided for @failedToUpdateLockStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to update lock status'**
+  String get failedToUpdateLockStatus;
+
+  /// No description provided for @registerNewVehicleDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Register a new Vehicle or Trackify Device'**
+  String get registerNewVehicleDesc;
+
+  /// No description provided for @userSessionNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'User session not found. Please log in again.'**
+  String get userSessionNotFound;
+
+  /// No description provided for @comingSoonOption.
+  ///
+  /// In en, this message translates to:
+  /// **'Coming Soon'**
+  String get comingSoonOption;
+
+  /// No description provided for @noDeviceFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No device found'**
+  String get noDeviceFound;
+
+  /// No description provided for @noVideosFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No videos found'**
+  String get noVideosFound;
+
+  /// No description provided for @designOption.
+  ///
+  /// In en, this message translates to:
+  /// **'Design'**
+  String get designOption;
+
+  /// No description provided for @functionalityOption.
+  ///
+  /// In en, this message translates to:
+  /// **'Functionality'**
+  String get functionalityOption;
+
+  /// No description provided for @otherOption.
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get otherOption;
+
+  /// No description provided for @allFieldsMandatory.
+  ///
+  /// In en, this message translates to:
+  /// **'ALL fields are mandatory'**
+  String get allFieldsMandatory;
+
+  /// No description provided for @selectVehicleTypeForFuel.
+  ///
+  /// In en, this message translates to:
+  /// **'Select vehicle type to see fuel options'**
+  String get selectVehicleTypeForFuel;
+
+  /// No description provided for @pleaseSelectFuelTypeFirst.
+  ///
+  /// In en, this message translates to:
+  /// **'Please select fuel type first'**
+  String get pleaseSelectFuelTypeFirst;
+
+  /// No description provided for @pleaseSelectVehicleMakeFirst.
+  ///
+  /// In en, this message translates to:
+  /// **'Please select vehicle make first'**
+  String get pleaseSelectVehicleMakeFirst;
+
+  /// No description provided for @deleteFunctionalityComingSoon.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete functionality coming soon'**
+  String get deleteFunctionalityComingSoon;
+
+  /// No description provided for @errorImeiNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'Error: IMEI not found'**
+  String get errorImeiNotFound;
+
+  /// No description provided for @healthInsuranceSavedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Health insurance details saved successfully'**
+  String get healthInsuranceSavedSuccess;
+
+  /// No description provided for @noSlotsAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'No Slots Available'**
+  String get noSlotsAvailable;
+
+  /// No description provided for @noIntroDataAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'No intro data available'**
+  String get noIntroDataAvailable;
+
+  /// No description provided for @retryBtn.
+  ///
+  /// In en, this message translates to:
+  /// **'Retry'**
+  String get retryBtn;
+
+  /// No description provided for @areYouSureDeleteRefuelLog.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete this refuel log?'**
+  String get areYouSureDeleteRefuelLog;
+
+  /// No description provided for @cancelBtn.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get cancelBtn;
+
+  /// No description provided for @uploadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload failed'**
+  String get uploadFailed;
+
+  /// No description provided for @noAlertsCreated.
+  ///
+  /// In en, this message translates to:
+  /// **'No alerts created for this vehicle.'**
+  String get noAlertsCreated;
+
+  /// No description provided for @changePasswordTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Change Password'**
+  String get changePasswordTitle;
+
+  /// No description provided for @changePasswordSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Change password & logout from all phones'**
+  String get changePasswordSubtitle;
+
+  /// No description provided for @currentSessions.
+  ///
+  /// In en, this message translates to:
+  /// **'Current sessions'**
+  String get currentSessions;
+
+  /// No description provided for @manageLoggedInDevices.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage logged-in devices'**
+  String get manageLoggedInDevices;
+
+  /// No description provided for @deleteAccountTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Account'**
+  String get deleteAccountTitle;
+
+  /// No description provided for @deleteAccountSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete your account permanently'**
+  String get deleteAccountSubtitle;
+
+  /// No description provided for @oldPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Old Password'**
+  String get oldPassword;
+
+  /// No description provided for @confirmNewPasswordTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm New Password'**
+  String get confirmNewPasswordTitle;
+
+  /// No description provided for @logoutOfAllDevices.
+  ///
+  /// In en, this message translates to:
+  /// **'Logout of all devices'**
+  String get logoutOfAllDevices;
+
+  /// No description provided for @otherDevices.
+  ///
+  /// In en, this message translates to:
+  /// **'Other devices'**
+  String get otherDevices;
+
+  /// No description provided for @activeOnThisDevice.
+  ///
+  /// In en, this message translates to:
+  /// **'Active on this device'**
+  String get activeOnThisDevice;
+
+  /// No description provided for @lastUsed.
+  ///
+  /// In en, this message translates to:
+  /// **'Last used -'**
+  String get lastUsed;
+
+  /// No description provided for @osLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'OS -'**
+  String get osLabel;
+
+  /// No description provided for @chromeNotificationDisabled.
+  ///
+  /// In en, this message translates to:
+  /// **'Chrome notification - disabled'**
+  String get chromeNotificationDisabled;
+
+  /// No description provided for @logOut.
+  ///
+  /// In en, this message translates to:
+  /// **'Log out'**
+  String get logOut;
+
+  /// No description provided for @hi.
+  ///
+  /// In en, this message translates to:
+  /// **'Hi'**
+  String get hi;
+
+  /// No description provided for @sorryToSeeYouGo.
+  ///
+  /// In en, this message translates to:
+  /// **'We\'re sorry to see you go.'**
+  String get sorryToSeeYouGo;
+
+  /// No description provided for @note.
+  ///
+  /// In en, this message translates to:
+  /// **'Note:'**
+  String get note;
+
+  /// No description provided for @deleteAccountNote1.
+  ///
+  /// In en, this message translates to:
+  /// **'After 30 days, your account will be deleted permanently.'**
+  String get deleteAccountNote1;
+
+  /// No description provided for @deleteAccountNote2.
+  ///
+  /// In en, this message translates to:
+  /// **'You can reactivate the account within 30 Days by signing back.'**
+  String get deleteAccountNote2;
+
+  /// No description provided for @deleteAccountExplanationPrompt.
+  ///
+  /// In en, this message translates to:
+  /// **'We would love to know why you are deleting your account, as we may be able to help with common issues. You can also just continue.'**
+  String get deleteAccountExplanationPrompt;
+
+  /// No description provided for @explanationOptionalHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Your explanation is completely optional'**
+  String get explanationOptionalHint;
+
+  /// No description provided for @deleteWarningPart1.
+  ///
+  /// In en, this message translates to:
+  /// **'Your device will be unmapped, subscription will be '**
+  String get deleteWarningPart1;
+
+  /// No description provided for @terminated.
+  ///
+  /// In en, this message translates to:
+  /// **'terminated'**
+  String get terminated;
+
+  /// No description provided for @deleteWarningPart2.
+  ///
+  /// In en, this message translates to:
+  /// **' and your all data will be lost from the server after 30 days of account deletion.'**
+  String get deleteWarningPart2;
+
+  /// No description provided for @confirmDeleteAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete your account?'**
+  String get confirmDeleteAccount;
 }
 
 class _AppLocalizationsDelegate

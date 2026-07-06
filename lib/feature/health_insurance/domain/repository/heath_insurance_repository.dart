@@ -3,7 +3,7 @@ import 'package:trackify/feature/health_insurance/data/model/save_health_insuran
 import 'package:trackify/feature/health_insurance/domain/entities/save_health_insurance_entity.dart';
 
 abstract class HealthInsuranceRepository {
-  Future<HealthInsuranceEntity> getInsuranceData();
+  Future<HealthInsuranceEntity> getInsuranceData(String userId);
   Future<SaveHealthInsuranceEntity> saveHealthInsurance(
     SaveHealthInsuranceRequest request,
   );

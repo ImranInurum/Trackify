@@ -16,7 +16,7 @@ class HealthInsuranceRepositoryImpl implements HealthInsuranceRepository {
   });
 
   @override
-  Future<HealthInsuranceEntity> getInsuranceData() async {
+  Future<HealthInsuranceEntity> getInsuranceData(String userId) async {
     // Blood groups are static — use local data
     final localData = await localDataSource.getHealthInsuranceData();
     final bloodGroup = List<String>.from(localData['bloodGroup'] ?? []);
@@ -29,10 +29,18 @@ class HealthInsuranceRepositoryImpl implements HealthInsuranceRepository {
       // Fallback to empty if API fails (since local data has no insurance list)
       insuranceOptions = [];
     }
+    
+    SaveHealthInsuranceResponseModel? savedData;
+    try {
+      savedData = await remoteDataSource.getSavedHealthInsurance(userId);
+    } catch (_) {
+      savedData = null;
+    }
 
     return HealthInsuranceModel(
       bloodGroup: bloodGroup,
       insuranceList: insuranceOptions,
+      savedData: savedData,
     );
   }
 
