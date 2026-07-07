@@ -1,3 +1,7 @@
+import 'dart:convert';
+import 'dart:typed_data';
+
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:trackify/l10n/app_localizations.dart';
@@ -308,12 +312,20 @@ class _RefuelHistoryTabViewState extends State<RefuelHistoryTabView> {
 
             const SizedBox(width: 8),
 
-            Icon(
-              Icons.file_download_outlined,
+            GestureDetector(
+              onTap: () {
+                final refuelState = context.read<RefuelHistoryCubit>().state;
+                if (refuelState is RefuelHistoryLoaded) {
+                  _showExcelView(context, l10n, _applyFilters(refuelState.refuelLogs));
+                }
+              },
+              child: Icon(
+                Icons.file_download_outlined,
 
-              size: 20,
+                size: 20,
 
-              color: theme.primaryColor,
+                color: theme.primaryColor,
+              ),
             ),
           ],
         ),
@@ -505,5 +517,161 @@ class _RefuelHistoryTabViewState extends State<RefuelHistoryTabView> {
         ],
       ),
     );
+  }
+
+  void _showExcelView(BuildContext context, AppLocalizations l10n, List<RefuelLog> logs) {
+    bool isDownloading = false;
+    showDialog(
+      context: context,
+      builder: (ctx) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return Dialog(
+              insetPadding: const EdgeInsets.all(16),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          l10n.refuelingHistory,
+                          style: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.close),
+                          onPressed: () => Navigator.pop(ctx),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const Divider(height: 1),
+                  Flexible(
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: SingleChildScrollView(
+                        child: DataTable(
+                          headingRowColor: MaterialStateProperty.all(
+                            Theme.of(context).primaryColor.withOpacity(0.1),
+                          ),
+                          columns: const [
+                            DataColumn(label: Text('Date')),
+                            DataColumn(label: Text('Time')),
+                            DataColumn(label: Text('Odometer')),
+                            DataColumn(label: Text('Location')),
+                            DataColumn(label: Text('Amount')),
+                            DataColumn(label: Text('Rate')),
+                            DataColumn(label: Text('Liters')),
+                            DataColumn(label: Text('Mileage')),
+                          ],
+                          rows: logs.map((log) {
+                            final dateStr =
+                                "${log.dateTime.day} ${_getMonth(log.dateTime.month)} ${log.dateTime.year}";
+                            final timeStr =
+                                "${log.dateTime.hour % 12 == 0 ? 12 : log.dateTime.hour % 12}:${log.dateTime.minute.toString().padLeft(2, '0')} ${log.dateTime.hour >= 12 ? 'PM' : 'AM'}";
+                            return DataRow(cells: [
+                              DataCell(Text(dateStr)),
+                              DataCell(Text(timeStr)),
+                              DataCell(Text(log.odometer)),
+                              DataCell(Text(log.location)),
+                              DataCell(Text(log.amount)),
+                              DataCell(Text(log.rate)),
+                              DataCell(Text(log.liters ?? '-')),
+                              DataCell(Text(log.mileage ?? '-')),
+                            ]);
+                          }).toList(),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const Divider(height: 1),
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton.icon(
+                        onPressed: isDownloading
+                            ? null
+                            : () async {
+                                setState(() => isDownloading = true);
+                                await _downloadCsv(context, logs);
+                                if (ctx.mounted) {
+                                  setState(() => isDownloading = false);
+                                }
+                              },
+                        icon: isDownloading
+                            ? const SizedBox(
+                                width: 20,
+                                height: 20,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                ),
+                              )
+                            : const Icon(Icons.download),
+                        label: Text(isDownloading ? 'Downloading...' : 'Download CSV'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Theme.of(context).primaryColor,
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  Future<void> _downloadCsv(BuildContext context, List<RefuelLog> logs) async {
+    try {
+      StringBuffer sb = StringBuffer();
+      sb.writeln('Date,Time,Odometer,Location,Amount,Rate,Liters,Mileage');
+
+      String escape(String? val) {
+        if (val == null) return '';
+        if (val.contains(',')) return '"$val"';
+        return val;
+      }
+
+      for (var log in logs) {
+        final dateStr =
+            "${log.dateTime.day} ${_getMonth(log.dateTime.month)} ${log.dateTime.year}";
+        final timeStr =
+            "${log.dateTime.hour % 12 == 0 ? 12 : log.dateTime.hour % 12}:${log.dateTime.minute.toString().padLeft(2, '0')} ${log.dateTime.hour >= 12 ? 'PM' : 'AM'}";
+        sb.writeln(
+            '${escape(dateStr)},${escape(timeStr)},${escape(log.odometer)},${escape(log.location)},${escape(log.amount)},${escape(log.rate)},${escape(log.liters)},${escape(log.mileage)}');
+      }
+
+      final Uint8List bytes = Uint8List.fromList(utf8.encode(sb.toString()));
+
+      String? outputFile = await FilePicker.saveFile(
+        dialogTitle: 'Save Refuel History',
+        fileName: 'refuel_history.csv',
+        type: FileType.custom,
+        allowedExtensions: ['csv'],
+        bytes: bytes,
+      );
+
+      if (outputFile != null && context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('File downloaded successfully!')),
+        );
+      }
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error downloading file: $e')),
+        );
+      }
+    }
   }
 }
