@@ -1242,18 +1242,21 @@ class _FullScreenMapState extends State<FullScreenMap>
 
             return BlocBuilder<GeoFenceCubit, GeoFenceState>(
               builder: (context, geoState) {
-                return Listener(
-                  onPointerMove: (_) {
-                    if (_uiCubit.state.isAutoFollowing) {
-                      _uiCubit.setAutoFollowing(false);
-                    }
-                  },
-                  child: GoogleMap(
-                    initialCameraPosition: CameraPosition(
-                      target: bestPos!,
-                      zoom: 16.0,
-                      bearing: 0.0,
-                    ),
+                return BlocBuilder<FullScreenMapUiCubit, FullScreenMapUiState>(
+                  bloc: _uiCubit,
+                  builder: (context, uiState) {
+                    return Listener(
+                      onPointerMove: (_) {
+                        if (_uiCubit.state.isAutoFollowing) {
+                          _uiCubit.setAutoFollowing(false);
+                        }
+                      },
+                      child: GoogleMap(
+                        initialCameraPosition: CameraPosition(
+                          target: bestPos!,
+                          zoom: 16.0,
+                          bearing: 0.0,
+                        ),
                     myLocationEnabled: false,
                     zoomControlsEnabled: false,
                     myLocationButtonEnabled: false,
@@ -1309,6 +1312,8 @@ class _FullScreenMapState extends State<FullScreenMap>
                       });
                     },
                   ),
+                );
+                  },
                 );
               },
             );
