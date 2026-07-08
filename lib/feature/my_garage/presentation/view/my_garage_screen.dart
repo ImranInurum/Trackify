@@ -21,6 +21,7 @@ class MyGarageScreen extends StatefulWidget {
 
 class _MyGarageScreenState extends State<MyGarageScreen> {
   final Map<String, bool> _vehicleLockStates = {};
+  int _vehicleCardRefreshCount = 0;
 
   Future<void> _fetchLockStatus(String imei) async {
     if (imei.isEmpty || _vehicleLockStates.containsKey(imei)) return;
@@ -135,6 +136,7 @@ class _MyGarageScreenState extends State<MyGarageScreen> {
                   final isLocked = _vehicleLockStates[vehicle.imei] ?? false;
 
                   return VehicleCard(
+                    key: ValueKey('${vehicle.id}-$_vehicleCardRefreshCount'),
                     context: context,
                     vehicle: vehicle,
                     hasDevice: hasDevice,
@@ -172,13 +174,18 @@ class _MyGarageScreenState extends State<MyGarageScreen> {
                         ),
                       );
                     },
-                    onRenew: () {
-                      Navigator.push(
+                    onRenew: () async {
+                      final result = await Navigator.push(
                         context,
                         MaterialPageRoute(
                           builder: (context) => WarrantyScreen(),
                         ),
                       );
+                      if (result == true && mounted) {
+                        setState(() {
+                          _vehicleCardRefreshCount++;
+                        });
+                      }
                     },
                   );
                 },

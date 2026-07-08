@@ -37,6 +37,7 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   final Map<String, bool> _vehicleLockStates = {};
+  int _vehicleCardRefreshCount = 0;
 
   Future<void> _fetchLockStatus(String imei) async {
     if (imei.isEmpty || _vehicleLockStates.containsKey(imei)) return;
@@ -407,6 +408,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             _vehicleLockStates[vehicle.imei] ?? false;
 
                         return VehicleCard(
+                          key: ValueKey('${vehicle.id}-$_vehicleCardRefreshCount'),
                           context: context,
                           vehicle: vehicle,
                           hasDevice: true,
@@ -449,13 +451,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               ),
                             );
                           },
-                          onRenew: () {
-                            Navigator.push(
+                          onRenew: () async {
+                            final result = await Navigator.push(
                               context,
                               MaterialPageRoute(
                                 builder: (context) => WarrantyScreen(),
                               ),
                             );
+                            if (result == true && mounted) {
+                              setState(() {
+                                _vehicleCardRefreshCount++;
+                              });
+                            }
                           },
                         );
                       }

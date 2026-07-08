@@ -8,6 +8,7 @@ abstract class RecordViaPhoneState extends Equatable {
   final Duration rideDuration;
   final double rideDistance;
   final double currentSpeed;
+  final double topSpeed;
   final List<DataByDate> data;
   final Set<Polyline>? polylines;
 
@@ -17,6 +18,7 @@ abstract class RecordViaPhoneState extends Equatable {
     this.rideDuration = Duration.zero,
     this.rideDistance = 0.0,
     this.currentSpeed = 0.0,
+    this.topSpeed = 0.0,
     this.data = const [],
     this.polylines,
   });
@@ -28,6 +30,7 @@ abstract class RecordViaPhoneState extends Equatable {
     rideDuration,
     rideDistance,
     currentSpeed,
+    topSpeed,
     data,
     polylines,
   ];
@@ -44,6 +47,7 @@ class MapLoading extends RecordViaPhoneState {
     super.rideDuration,
     super.rideDistance,
     super.currentSpeed,
+    super.topSpeed,
     super.data,
     super.polylines,
   });
@@ -58,6 +62,7 @@ class MapDataByDateLoaded extends RecordViaPhoneState {
     super.rideDuration,
     super.rideDistance,
     super.currentSpeed,
+    super.topSpeed,
   });
 }
 
@@ -71,6 +76,7 @@ class MapError extends RecordViaPhoneState {
     super.rideDuration,
     super.rideDistance,
     super.currentSpeed,
+    super.topSpeed,
     super.data,
     super.polylines,
   });
@@ -86,6 +92,7 @@ class MapRecordingUpdate extends RecordViaPhoneState {
     required super.rideDuration,
     required super.rideDistance,
     required super.currentSpeed,
+    required super.topSpeed,
     super.data,
     super.polylines,
   });

@@ -28,6 +28,7 @@ class DraggableAppBar extends StatefulWidget {
   final Widget? collapsedTrailing;
 
   final Widget? expandedTrailing;
+  final int? refreshKey;
 
   const DraggableAppBar({
     super.key,
@@ -38,6 +39,7 @@ class DraggableAppBar extends StatefulWidget {
     this.selectedDevice,
     this.collapsedTrailing,
     this.expandedTrailing,
+    this.refreshKey,
   });
 
   @override
@@ -97,7 +99,9 @@ class _DraggableAppBarState extends State<DraggableAppBar>
   @override
   void didUpdateWidget(DraggableAppBar oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.vehicles != widget.vehicles || oldWidget.selectedDevice != widget.selectedDevice) {
+    if (oldWidget.vehicles != widget.vehicles ||
+        oldWidget.selectedDevice != widget.selectedDevice ||
+        oldWidget.refreshKey != widget.refreshKey) {
       _fetchStatuses();
     }
   }
@@ -116,13 +120,15 @@ class _DraggableAppBarState extends State<DraggableAppBar>
     if (imei.isEmpty || _fetchingImeis.contains(imei)) return;
     _fetchingImeis.add(imei);
     try {
-      final response = await http.get(
-        Uri.parse(ApiURL.deviceStatus(imei)),
-        headers: {
-          'Authorization': 'Bearer ${ApiURL.authToken}',
-          'Content-Type': 'application/json',
-        },
-      ).timeout(const Duration(seconds: 10));
+      final response = await http
+          .get(
+            Uri.parse(ApiURL.deviceStatus(imei)),
+            headers: {
+              'Authorization': 'Bearer ${ApiURL.authToken}',
+              'Content-Type': 'application/json',
+            },
+          )
+          .timeout(const Duration(seconds: 10));
 
       if (response.statusCode == 200) {
         final Map<String, dynamic> jsonResponse = jsonDecode(response.body);
@@ -547,7 +553,8 @@ class _DraggableAppBarState extends State<DraggableAppBar>
             statusColor = Colors.green;
           } else if (statusStr.toLowerCase() == 'idle') {
             statusColor = Colors.red;
-          } else if (statusStr.toLowerCase() == 'parking' || statusStr.toLowerCase() == 'parked') {
+          } else if (statusStr.toLowerCase() == 'parking' ||
+              statusStr.toLowerCase() == 'parked') {
             statusColor = Colors.blue;
           } else {
             statusColor = Colors.grey;
@@ -680,7 +687,7 @@ class _DraggableAppBarState extends State<DraggableAppBar>
                     }
 
                     int daysLeft = warranty.warranty?.daysLeft ?? 0;
-                    
+
                     Color textColor;
                     String text;
 
@@ -689,21 +696,31 @@ class _DraggableAppBarState extends State<DraggableAppBar>
                       text = AppLocalizations.of(context)!.expired;
                     } else if (daysLeft <= 15) {
                       textColor = Colors.red;
-                      text = AppLocalizations.of(context)!.daysLeftText(daysLeft.toString());
+                      text = AppLocalizations.of(
+                        context,
+                      )!.daysLeftText(daysLeft.toString());
                     } else if (daysLeft <= 60) {
                       textColor = Colors.orange;
-                      text = AppLocalizations.of(context)!.daysLeftText(daysLeft.toString());
+                      text = AppLocalizations.of(
+                        context,
+                      )!.daysLeftText(daysLeft.toString());
                     } else if (daysLeft <= 150) {
                       textColor = Colors.amber; // Yellow
-                      text = AppLocalizations.of(context)!.daysLeftText(daysLeft.toString());
+                      text = AppLocalizations.of(
+                        context,
+                      )!.daysLeftText(daysLeft.toString());
                     } else if (daysLeft <= 250) {
                       textColor = Colors.lightGreen;
-                      text = AppLocalizations.of(context)!.daysLeftText(daysLeft.toString());
+                      text = AppLocalizations.of(
+                        context,
+                      )!.daysLeftText(daysLeft.toString());
                     } else {
                       textColor = Colors.green;
-                      text = AppLocalizations.of(context)!.daysLeftText(daysLeft.toString());
+                      text = AppLocalizations.of(
+                        context,
+                      )!.daysLeftText(daysLeft.toString());
                     }
-                    
+
                     return Text(
                       text,
                       style: TextStyle(
@@ -733,17 +750,37 @@ class _DraggableAppBarState extends State<DraggableAppBar>
 
   Widget _buildVehicleImageOrIcon(BuildContext context, Vehicles device) {
     final type = device.vehicleType.toLowerCase();
-    
+
     if (type.contains('car')) {
-      return Icon(Icons.directions_car, size: 40, color: Theme.of(context).colorScheme.primary);
+      return Icon(
+        Icons.directions_car,
+        size: 40,
+        color: Theme.of(context).colorScheme.primary,
+      );
     } else if (type.contains('truck')) {
-      return Icon(Icons.local_shipping, size: 40, color: Theme.of(context).colorScheme.primary);
+      return Icon(
+        Icons.local_shipping,
+        size: 40,
+        color: Theme.of(context).colorScheme.primary,
+      );
     } else if (type.contains('bus')) {
-      return Icon(Icons.directions_bus, size: 40, color: Theme.of(context).colorScheme.primary);
+      return Icon(
+        Icons.directions_bus,
+        size: 40,
+        color: Theme.of(context).colorScheme.primary,
+      );
     } else if (type.contains('van')) {
-      return Icon(Icons.airport_shuttle, size: 40, color: Theme.of(context).colorScheme.primary);
+      return Icon(
+        Icons.airport_shuttle,
+        size: 40,
+        color: Theme.of(context).colorScheme.primary,
+      );
     } else if (type.contains('tractor')) {
-      return Icon(Icons.agriculture, size: 40, color: Theme.of(context).colorScheme.primary);
+      return Icon(
+        Icons.agriculture,
+        size: 40,
+        color: Theme.of(context).colorScheme.primary,
+      );
     } else {
       // Default to bike image
       return Image.asset(

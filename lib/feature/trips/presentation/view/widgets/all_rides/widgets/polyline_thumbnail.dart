@@ -239,7 +239,7 @@ class _PolylineThumbnailState extends State<PolylineThumbnail> {
                 // Disable liteMode so the dark theme correctly applies on Android
                 liteModeEnabled: false,
                 mapType: MapType.normal,
-                style: _darkMapStyle, // Provide the loaded dark style
+                style: Theme.of(context).brightness == Brightness.dark ? _darkMapStyle : null, // Provide the loaded dark style conditionally
                 zoomControlsEnabled: false,
                 mapToolbarEnabled: false,
                 myLocationButtonEnabled: false,
@@ -284,8 +284,12 @@ class _PolylineThumbnailState extends State<PolylineThumbnail> {
                     await _loadMapStyle();
                   }
                   // Set the style again on controller to be absolutely safe
-                  if (_darkMapStyle != null && mounted) {
-                    await controller.setMapStyle(_darkMapStyle);
+                  if (mounted) {
+                    if (Theme.of(context).brightness == Brightness.dark && _darkMapStyle != null) {
+                      await controller.setMapStyle(_darkMapStyle);
+                    } else {
+                      await controller.setMapStyle(null);
+                    }
                   }
                   // Delay slightly to allow layout to complete
                   await Future.delayed(const Duration(milliseconds: 150));

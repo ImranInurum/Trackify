@@ -9,6 +9,7 @@ import '../../domain/entity/geo_fence_entity.dart';
 import 'dart:math';
 import 'dart:async';
 import 'dart:ui';
+import 'package:flutter/services.dart';
 
 class AddGeoFenceScreen extends StatefulWidget {
   final String? vehicleName;
@@ -30,10 +31,12 @@ class _AddGeoFenceScreenState extends State<AddGeoFenceScreen> {
   GoogleMapController? _mapController;
   Timer? _debounceTimer;
   final FocusNode _searchFocus = FocusNode();
+  String? _darkMapStyle;
 
   @override
   void initState() {
     super.initState();
+    _loadMapStyles();
     if (widget.initialFence != null) {
       _fencePosition = LatLng(widget.initialFence!.latitude, widget.initialFence!.longitude);
       _radius = widget.initialFence!.radius;
@@ -61,6 +64,16 @@ class _AddGeoFenceScreenState extends State<AddGeoFenceScreen> {
           selectedType: _selectedType,
         );
       });
+    }
+  }
+
+  Future<void> _loadMapStyles() async {
+    try {
+      _darkMapStyle = await rootBundle.loadString(
+        'assets/map_styles/dark_map.json',
+      );
+    } catch (e) {
+      debugPrint("Error loading map styles: $e");
     }
   }
 
@@ -210,7 +223,14 @@ class _AddGeoFenceScreenState extends State<AddGeoFenceScreen> {
                 }
 
                 return GoogleMap(
-                    onMapCreated: (controller) => _mapController = controller,
+                    onMapCreated: (controller) {
+                      _mapController = controller;
+                      if (Theme.of(context).brightness == Brightness.dark && _darkMapStyle != null) {
+                        controller.setMapStyle(_darkMapStyle);
+                      } else {
+                        controller.setMapStyle(null);
+                      }
+                    },
                     initialCameraPosition: CameraPosition(target: pos, zoom: 15),
                     circles: {
                       Circle(

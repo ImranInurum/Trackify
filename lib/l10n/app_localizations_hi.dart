@@ -1870,7 +1870,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get updateMileage => 'माइलेज अपडेट करें';
 
   @override
-  String get lastUpdated => 'अंतिम बार अपडेट किया गया: ';
+  String get lastUpdated => 'अंतिम अपडेट: ';
 
   @override
   String get lockUnlockVehicle => 'वाहन लॉक और अनलॉक करें';
@@ -2795,4 +2795,247 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get noImage => 'कोई चित्र नहीं';
+
+  @override
+  String get startTracking => 'ट्रैकिंग शुरू करें';
+
+  @override
+  String get stopTracking => 'ट्रैकिंग रोकें';
+
+  @override
+  String get endRide => 'राइड खत्म करें';
+
+  @override
+  String get maxSpeed => 'अधिकतम गति';
+
+  @override
+  String get tapToResumeTracking => 'ट्रैकिंग फिर से शुरू करने के लिए टैप करें';
+
+  @override
+  String get tapToPauseTracking => 'ट्रैकिंग रोकने के लिए टैप करें';
+
+  @override
+  String get holdToStopTracking => 'ट्रैकिंग बंद करने के लिए दबाकर रखें';
+
+  @override
+  String get exportLabel => 'एक्सपोर्ट';
+
+  @override
+  String get exportRide => 'राइड एक्सपोर्ट करें';
+
+  @override
+  String get shareRoute => 'रूट शेयर करें';
+
+  @override
+  String get rideNameOptional => 'राइड का नाम (वैकल्पिक)';
+
+  @override
+  String get rideNameHint => 'उदा., सुबह की सैर, ऑफ-रोड';
+
+  @override
+  String get formatLabel => 'प्रारूप';
+
+  @override
+  String get gpxLabel => 'GPX';
+
+  @override
+  String get kmlLabel => 'KML';
+
+  @override
+  String get includeAnalytics => 'एनालिटिक्स शामिल करें';
+
+  @override
+  String get includeAnalyticsDesc => 'गति, ऊंचाई, आदि।';
+
+  @override
+  String get exportingRide => 'राइड एक्सपोर्ट हो रही है...';
+
+  @override
+  String get shareRide => 'राइड शेयर करें';
+
+  @override
+  String get selectFormatToShare => 'अपनी राइड शेयर करने के लिए फॉर्मेट चुनें';
+
+  @override
+  String get gpxFile => 'GPX फ़ाइल';
+
+  @override
+  String get gpxDesc =>
+      'मानक जीपीएस प्रारूप। स्ट्रावा, गार्मिन आदि के लिए सर्वश्रेष्ठ।';
+
+  @override
+  String get kmlFile => 'KML फ़ाइल';
+
+  @override
+  String get kmlDesc => 'कीहोल मार्कअप भाषा। गूगल अर्थ के लिए सर्वश्रेष्ठ।';
+
+  @override
+  String get imageScreenshot => 'तस्वीर (स्क्रीनशॉट)';
+
+  @override
+  String get imageScreenshotDesc => 'आपके रूट के साथ एक सुंदर नक्शा।';
+
+  @override
+  String get recordingInProgress => 'रिकॉर्डिंग चल रही है';
+
+  @override
+  String get resumeTracking => 'पुनः आरंभ करें';
+
+  @override
+  String get discardRide => 'राइड हटा दें';
+
+  @override
+  String get discard => 'हटा दें';
+
+  @override
+  String get areYouSureDiscardRide =>
+      'क्या आप वाकई इस राइड को हटाना चाहते हैं?';
+
+  @override
+  String get kmhLabel => 'किमी/घंटा';
+
+  @override
+  String get hrminLabel => 'घंटा:मिनट';
+
+  @override
+  String get kmLabel => 'किमी';
+
+  @override
+  String get exportRideVideoDesc =>
+      'एक्सपोर्ट की गई राइड आपकी गैलरी के Trackify Ride Videos फोल्डर में सेव की जाएगी';
+
+  @override
+  String get chooseNicknameHint => 'इस राइड के लिए एक अनोखा नाम चुनें';
+
+  @override
+  String get myRideOnTrackify => 'Trackify पर मेरी राइड';
+
+  @override
+  String get locationAlwaysAccessWarning =>
+      'ट्रैकिफाई राइड रिकॉर्डिंग फीचर तभी सही से काम करता है जब उसे \'हर समय\' लोकेशन एक्सेस मिले';
+
+  @override
+  String get goToSettingsAndSelectAllowAllTheTime =>
+      'सेटिंग्स में जाएं और \'हर समय अनुमति दें\' चुनें';
+
+  @override
+  String get locationPermissions => 'लोकेशन परमिशन';
+
+  @override
+  String get allowAllTheTime => 'हर समय अनुमति दें';
+
+  @override
+  String get onlyWhileUsingTheApp => 'केवल ऐप का उपयोग करते समय';
+
+  @override
+  String get askEveryTime => 'हर बार पूछें';
+
+  @override
+  String get dontAllow => 'अनुमति न दें';
+
+  @override
+  String get openSettings => 'सेटिंग्स खोलें';
+
+  @override
+  String get selectRideMode => 'राइड मोड चुनें';
+
+  @override
+  String get onlineMode => 'ऑनलाइन मोड';
+
+  @override
+  String get offlineMode => 'ऑफ़लाइन मोड';
+
+  @override
+  String get continueBtn => 'जारी रखें';
+
+  @override
+  String get selectRideLabel => 'अपनी राइड के लिए एक लेबल चुनें';
+
+  @override
+  String get friendsVehicle => 'दोस्त की गाड़ी';
+
+  @override
+  String get train => 'ट्रेन';
+
+  @override
+  String get bus => 'बस';
+
+  @override
+  String get auto => 'ऑटो';
+
+  @override
+  String get cab => 'कैब';
+
+  @override
+  String get cycle => 'साइकिल';
+
+  @override
+  String get walk => 'पैदल';
+
+  @override
+  String get others => 'अन्य';
+
+  @override
+  String get saveBtn => 'सेव करें';
+
+  @override
+  String get startRideRecording => 'राइड रिकॉर्डिंग शुरू करें';
+
+  @override
+  String get stopRideRecording => 'राइड रिकॉर्डिंग बंद करें';
+
+  @override
+  String get saveOnline => 'ऑनलाइन सेव करें';
+
+  @override
+  String get saveOnlineDesc =>
+      'राइड ऑनलाइन सेव होती हैं। आप अपनी पिछली राइड पाने के लिए किसी फोन से लॉग इन कर सकते हैं';
+
+  @override
+  String get saveOffline => 'ऑफ़लाइन सेव करें';
+
+  @override
+  String get saveOfflineDesc => 'राइड सिर्फ इसी फोन पर सेव होती हैं';
+
+  @override
+  String get startRide => 'राइड शुरू करें';
+
+  @override
+  String get goToSettings => 'सेटिंग्स में जाएं';
+
+  @override
+  String get rideOnLabel => 'राइड';
+
+  @override
+  String get imageBtn => 'तस्वीर';
+
+  @override
+  String get videoLinkBtn => 'वीडियो लिंक';
+
+  @override
+  String get avgLabel => 'औसत';
+
+  @override
+  String get meterLabel => 'मी';
+
+  @override
+  String get recordViaPhoneTitle => 'फोन से रिकॉर्ड करें';
+
+  @override
+  String get recordRidesTab => 'रिकॉर्ड राइड्स';
+
+  @override
+  String get pastRidesTab => 'पिछली राइड्स';
+
+  @override
+  String get statisticsTab => 'आँकड़े';
+
+  @override
+  String get yourPhonesLocation => 'आपके फ़ोन की लोकेशन';
+
+  @override
+  String get justNow => 'अभी-अभी';
+
+  @override
+  String get hoursShort => 'घं';
 }

@@ -325,11 +325,15 @@ class _WarrantyScreenState extends State<WarrantyScreen> {
                               ),
                             ),
                             TextSpan(
-                              text: warranty?.daysLeftText.isNotEmpty == true
-                                  ? '(${warranty!.daysLeftText})'
-                                  : '',
+                              text: (warranty?.daysLeft ?? 0) <= 0
+                                  ? '(${l10n.expired})'
+                                  : (warranty?.daysLeftText.isNotEmpty == true
+                                      ? '(${warranty!.daysLeftText})'
+                                      : ''),
                               style: TextStyle(
-                                color: const Color(0xFF81C784),
+                                color: (warranty?.daysLeft ?? 0) <= 0
+                                    ? colorScheme.error
+                                    : const Color(0xFF81C784),
                                 fontSize: 11,
                                 fontWeight: FontWeight.w400,
                               ),

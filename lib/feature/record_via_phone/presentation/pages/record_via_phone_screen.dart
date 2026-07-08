@@ -9,6 +9,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:trackify/app/cubit/app_cubit.dart';
 import 'package:trackify/app/cubit/app_state.dart';
 import 'package:trackify/core/theme/app_colors.dart';
@@ -19,6 +20,9 @@ import 'package:trackify/l10n/app_localizations_ar.dart';
 import '../../../../l10n/app_localizations.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:trackify/feature/record_via_phone/data/model/device_data_by_date_response.dart';
+import 'package:trackify/feature/record_via_phone/presentation/pages/ride_playback_screen.dart';
+
+import 'package:trackify/feature/record_via_phone/presentation/pages/widgets/share_ride_bottom_sheet.dart';
 
 class RecordViaPhoneScreen extends StatefulWidget {
   final String imei;
@@ -85,30 +89,50 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
   Future<void> _initCustomMarker() async {
     final appState = context.read<AppCubit>().state;
     final userName = appState.userData?.name ?? 'U';
-    
+    final Color primaryColor = Theme.of(context).colorScheme.primary;
+
     final int size = 120;
     final ui.PictureRecorder pictureRecorder = ui.PictureRecorder();
     final Canvas canvas = Canvas(pictureRecorder);
+    final double center = size / 2;
 
-    final Paint paint1 = Paint()..color = Colors.white;
-    canvas.drawCircle(Offset(size / 2, size / 2), size / 2.0, paint1);
+    // Outer glow ring
+    final Paint glowPaint = Paint()
+      ..color = Colors.black.withOpacity(0.1)
+      ..style = PaintingStyle.fill;
+    canvas.drawCircle(Offset(center, center), center, glowPaint);
 
-    final Paint paint2 = Paint()..color = Colors.amber;
-    canvas.drawCircle(Offset(size / 2, size / 2), size / 2.15, paint2);
+    // White border
+    final Paint borderPaint = Paint()
+      ..color = Colors.white
+      ..style = PaintingStyle.fill;
+    canvas.drawCircle(Offset(center, center), center - 4, borderPaint);
+
+    // Inner circle with primary theme color
+    final Paint bodyPaint = Paint()
+      ..color = primaryColor
+      ..style = PaintingStyle.fill;
+    canvas.drawCircle(Offset(center, center), center - 8, bodyPaint);
 
     TextPainter painter = TextPainter(textDirection: ui.TextDirection.ltr);
     painter.text = TextSpan(
       text: userName.isNotEmpty ? userName[0].toUpperCase() : 'U',
       style: TextStyle(
-          fontSize: size / 2.0, color: Colors.black, fontWeight: FontWeight.bold),
+        fontSize: size * 0.45,
+        color: Colors.black,
+        fontWeight: FontWeight.bold,
+      ),
     );
     painter.layout();
     painter.paint(
       canvas,
-      Offset(size / 2 - painter.width / 2, size / 2 - painter.height / 2),
+      Offset(center - painter.width / 2, center - painter.height / 2),
     );
 
-    final ui.Image img = await pictureRecorder.endRecording().toImage(size, size);
+    final ui.Image img = await pictureRecorder.endRecording().toImage(
+      size,
+      size,
+    );
     final ByteData? data = await img.toByteData(format: ui.ImageByteFormat.png);
     final icon = BitmapDescriptor.fromBytes(data!.buffer.asUint8List());
 
@@ -128,7 +152,10 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
       final device = appState.devices.firstWhere(
         (d) => d['imei'] == widget.imei,
       );
-      return device['name'] ?? device['deviceName'] ?? device['vehicleNo'] ?? 'Device ${widget.imei}';
+      return device['name'] ??
+          device['deviceName'] ??
+          device['vehicleNo'] ??
+          'Device ${widget.imei}';
     } catch (e) {
       return 'Device ${widget.imei}';
     }
@@ -143,6 +170,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
       _darkMapStyle = await rootBundle.loadString(
         'assets/map_styles/dark_map.json',
       );
+      if (mounted) setState(() {});
     } catch (e) {
       debugPrint("Error loading map styles: $e");
     }
@@ -224,7 +252,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
               onPressed: () => Navigator.pop(context),
             ),
             title: Text(
-              l10n.phoneTracking,
+              AppLocalizations.of(context)!.recordViaPhoneTitle,
               style: theme.textTheme.headlineSmall?.copyWith(
                 fontWeight: FontWeight.bold,
                 color: Theme.of(context).colorScheme.onSurface,
@@ -240,10 +268,10 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
               labelStyle: theme.textTheme.titleSmall?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
-              tabs: const [
-                Tab(text: "Record Rides"),
-                Tab(text: "Past Rides"),
-                Tab(text: "Statistics"),
+              tabs: [
+                Tab(text: AppLocalizations.of(context)!.recordRidesTab),
+                Tab(text: AppLocalizations.of(context)!.pastRidesTab),
+                Tab(text: AppLocalizations.of(context)!.statisticsTab),
               ],
             ),
           ),
@@ -271,16 +299,6 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
           final points = state.polylines!.first.points;
           if (points.isNotEmpty) {
             lastPos = points.last;
-            markers.add(
-              Marker(
-                markerId: const MarkerId("last_api_pos"),
-                position: lastPos,
-                infoWindow: const InfoWindow(title: 'Your location'),
-                icon: _customMarkerIcon ?? BitmapDescriptor.defaultMarkerWithHue(
-                  BitmapDescriptor.hueAzure,
-                ),
-              ),
-            );
           }
         }
 
@@ -314,7 +332,10 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 20,
+                    ),
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
@@ -325,16 +346,73 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
                               heroTag: 'btnShare',
                               mini: true,
                               backgroundColor: Theme.of(context).cardColor,
-                              onPressed: () {},
-                              child: Icon(Icons.share, color: Theme.of(context).iconTheme.color ?? Colors.grey),
+                              onPressed: () {
+                                final cubit = context
+                                    .read<RecordViaPhoneCubit>();
+                                final state = cubit.state;
+
+                                if (state.currentRidePoints.isEmpty) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text(
+                                        'No ride data to share yet.',
+                                      ),
+                                    ),
+                                  );
+                                  return;
+                                }
+
+                                showModalBottomSheet(
+                                  context: context,
+                                  isScrollControlled: true,
+                                  backgroundColor: Colors.transparent,
+                                  builder: (ctx) => ShareRideBottomSheet(
+                                    title: "My Ride on Trackify",
+                                    date: DateTime.now(),
+                                    distance: state.rideDistance,
+                                    duration: state.rideDuration,
+                                    avgSpeed: state.rideDuration.inSeconds > 0
+                                        ? (state.rideDistance /
+                                              (state.rideDuration.inSeconds /
+                                                  3600))
+                                        : 0.0,
+                                    routePoints: state.currentRidePoints,
+                                  ),
+                                );
+                              },
+                              child: Icon(
+                                Icons.share,
+                                color:
+                                    Theme.of(context).iconTheme.color ??
+                                    Colors.grey,
+                              ),
                             ),
                             const SizedBox(height: 8),
                             FloatingActionButton(
                               heroTag: 'btnGmaps',
                               mini: true,
                               backgroundColor: Theme.of(context).cardColor,
-                              onPressed: () {},
-                              child: Icon(Icons.pin_drop, color: Theme.of(context).iconTheme.color ?? Colors.grey),
+                              onPressed: () async {
+                                final appState = context.read<AppCubit>().state;
+                                final pos = appState.currentLocation;
+                                if (pos != null) {
+                                  final webUri = Uri.parse(
+                                    'https://www.google.com/maps/search/?api=1&query=${pos.latitude},${pos.longitude}',
+                                  );
+                                  if (await canLaunchUrl(webUri)) {
+                                    await launchUrl(
+                                      webUri,
+                                      mode: LaunchMode.externalApplication,
+                                    );
+                                  }
+                                }
+                              },
+                              child: Image.asset(
+                                'assets/icons/map_icon.png',
+                                height: 24,
+                                width: 24,
+                                fit: BoxFit.contain,
+                              ),
                             ),
                           ],
                         ),
@@ -353,24 +431,63 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
                               heroTag: 'btnMapType',
                               mini: true,
                               backgroundColor: Theme.of(context).cardColor,
-                              onPressed: () {},
-                              child: Icon(Icons.map_outlined, color: Theme.of(context).iconTheme.color ?? Colors.grey),
+                              onPressed: () {
+                                _rideMapController.future.then((controller) {
+                                  controller.setMapStyle(
+                                    Theme.of(context).brightness ==
+                                            Brightness.dark
+                                        ? _lightMapStyle
+                                        : _darkMapStyle,
+                                  );
+                                });
+                              },
+                              child: Icon(
+                                Icons.map_outlined,
+                                color:
+                                    Theme.of(context).iconTheme.color ??
+                                    Colors.grey,
+                              ),
                             ),
                             const SizedBox(height: 8),
                             FloatingActionButton(
                               heroTag: 'btnLocation',
                               mini: true,
                               backgroundColor: Theme.of(context).cardColor,
-                              onPressed: () {},
-                              child: Icon(Icons.my_location, color: Theme.of(context).iconTheme.color ?? Colors.grey),
+                              onPressed: () {
+                                final appState = context.read<AppCubit>().state;
+                                final pos = appState.currentLocation;
+                                if (pos != null) {
+                                  _rideMapController.future.then((controller) {
+                                    controller.animateCamera(
+                                      CameraUpdate.newLatLngZoom(
+                                        LatLng(pos.latitude, pos.longitude),
+                                        15,
+                                      ),
+                                    );
+                                  });
+                                }
+                              },
+                              child: Icon(
+                                Icons.my_location,
+                                color:
+                                    Theme.of(context).iconTheme.color ??
+                                    Colors.grey,
+                              ),
                             ),
                             const SizedBox(height: 8),
                             FloatingActionButton(
                               heroTag: 'btnFullscreen',
                               mini: true,
                               backgroundColor: Theme.of(context).cardColor,
-                              onPressed: () {},
-                              child: Icon(Icons.fullscreen, color: Theme.of(context).iconTheme.color ?? Colors.grey),
+                              onPressed: () {
+                                // Fullscreen toggle implementation
+                              },
+                              child: Icon(
+                                Icons.fullscreen,
+                                color:
+                                    Theme.of(context).iconTheme.color ??
+                                    Colors.grey,
+                              ),
                             ),
                           ],
                         ),
@@ -390,16 +507,17 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
   Widget _buildBottomSheet(RecordViaPhoneState state) {
     final appState = context.read<AppCubit>().state;
     final userName = appState.userData?.name ?? 'U';
-    
-    String lastUpdatedText = "Last updated: Just now";
+
+    String lastUpdatedText = "${AppLocalizations.of(context)!.lastUpdated} ${AppLocalizations.of(context)!.justNow}";
     final currentLoc = appState.currentLocation;
     if (currentLoc != null) {
-        final timeFormat = DateFormat('h:mm a');
-        final formattedTime = timeFormat.format(currentLoc.timestamp);
-        lastUpdatedText = "Last updated: $formattedTime, Today"; 
+      final timeFormat = DateFormat('h:mm a');
+      final formattedTime = timeFormat.format(currentLoc.timestamp);
+      lastUpdatedText = "${AppLocalizations.of(context)!.lastUpdated} $formattedTime, ${AppLocalizations.of(context)!.today}";
     }
 
-    final bool showStats = state.isRecording || state.rideDuration != Duration.zero;
+    final bool showStats =
+        state.isRecording || state.rideDuration != Duration.zero;
 
     return Container(
       padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
@@ -429,24 +547,24 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
           Row(
             children: [
               Container(
-                width: 48,
-                height: 48,
+                width: 47,
+                height: 47,
                 decoration: BoxDecoration(
-                  color: Colors.amber,
+                  color: Theme.of(context).colorScheme.primary,
                   shape: BoxShape.circle,
                   border: Border.all(color: Colors.white, width: 2),
                   boxShadow: [
                     BoxShadow(
                       color: Colors.black.withOpacity(0.1),
                       blurRadius: 4,
-                    )
-                  ]
+                    ),
+                  ],
                 ),
                 alignment: Alignment.center,
                 child: Text(
                   userName.isNotEmpty ? userName[0].toUpperCase() : 'U',
-                  style: const TextStyle(
-                    color: Colors.black,
+                  style: TextStyle(
+                    color: Colors.black.withOpacity(0.7),
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
                   ),
@@ -458,7 +576,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Your Phone\'s Location',
+                      AppLocalizations.of(context)!.yourPhonesLocation,
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
@@ -471,7 +589,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w500,
-                        color: Theme.of(context).colorScheme.primary, 
+                        color: Theme.of(context).colorScheme.primary,
                       ),
                     ),
                     const SizedBox(height: 2),
@@ -479,7 +597,9 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
                       lastUpdatedText,
                       style: TextStyle(
                         fontSize: 12,
-                        color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.onSurface.withOpacity(0.5),
                       ),
                     ),
                   ],
@@ -500,7 +620,9 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
                                 style: TextStyle(
                                   fontSize: 20,
                                   fontWeight: FontWeight.bold,
-                                  color: Theme.of(context).colorScheme.onSurface,
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onSurface,
                                 ),
                               ),
                               TextSpan(
@@ -508,17 +630,21 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
                                 style: TextStyle(
                                   fontSize: 14,
                                   fontWeight: FontWeight.bold,
-                                  color: Theme.of(context).colorScheme.onSurface,
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onSurface,
                                 ),
                               ),
-                            ]
+                            ],
                           ),
                         ),
                         Text(
-                          'Distance',
+                          AppLocalizations.of(context)!.distanceLabel,
                           style: TextStyle(
                             fontSize: 12,
-                            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSurface.withOpacity(0.5),
                           ),
                         ),
                       ],
@@ -530,24 +656,36 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
                         Container(
                           padding: const EdgeInsets.all(2),
                           decoration: BoxDecoration(
-                            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.05),
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSurface.withOpacity(0.05),
                             borderRadius: BorderRadius.circular(4),
                           ),
-                          child: Icon(Icons.keyboard_arrow_up, size: 16, color: Theme.of(context).colorScheme.onSurface),
+                          child: Icon(
+                            Icons.keyboard_arrow_up,
+                            size: 16,
+                            color: Theme.of(context).colorScheme.onSurface,
+                          ),
                         ),
                         const SizedBox(height: 4),
                         Container(
                           padding: const EdgeInsets.all(2),
                           decoration: BoxDecoration(
-                            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.05),
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSurface.withOpacity(0.05),
                             borderRadius: BorderRadius.circular(4),
                           ),
-                          child: Icon(Icons.keyboard_arrow_down, size: 16, color: Theme.of(context).colorScheme.onSurface),
+                          child: Icon(
+                            Icons.keyboard_arrow_down,
+                            size: 16,
+                            color: Theme.of(context).colorScheme.onSurface,
+                          ),
                         ),
                       ],
-                    )
+                    ),
                   ],
-                )
+                ),
             ],
           ),
           if (showStats) ...[
@@ -557,17 +695,42 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                _buildNewStatItem('Distance', state.rideDistance.toStringAsFixed(2), 'km'),
-                _buildNewStatItem('Duration', _formatDurationNew(state.rideDuration), ''),
-                _buildNewStatItem('Avg Speed', state.currentSpeed.toStringAsFixed(2), 'km/hr'),
-                _buildNewStatItem('Top Speed', (state.currentSpeed * 1.2).toStringAsFixed(2), 'km/hr'),
+                _buildNewStatItem(
+                  AppLocalizations.of(context)!.distanceLabel,
+                  state.rideDistance.toStringAsFixed(2),
+                  AppLocalizations.of(context)!.kmLabel,
+                ),
+                _buildNewStatItem(
+                  AppLocalizations.of(context)!.durationLabel,
+                  _formatDurationNew(state.rideDuration),
+                  '',
+                ),
+                Builder(
+                  builder: (context) {
+                    double avgSpeed = 0.0;
+                    if (state.rideDuration.inSeconds > 0) {
+                      avgSpeed = state.rideDistance / (state.rideDuration.inSeconds / 3600.0);
+                    }
+                    return _buildNewStatItem(
+                      AppLocalizations.of(context)!.avgSpeedLabel,
+                      avgSpeed.toStringAsFixed(2),
+                      AppLocalizations.of(context)!.kmhLabel,
+                    );
+                  },
+                ),
+                _buildNewStatItem(
+                  AppLocalizations.of(context)!.topSpeedLabel,
+                  state.topSpeed.toStringAsFixed(2),
+                  AppLocalizations.of(context)!.kmhLabel,
+                ),
               ],
             ),
-          ]
+          ],
         ],
       ),
     );
   }
+
   Widget _buildNewStatItem(String label, String value, String unit) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -592,7 +755,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
                     color: Theme.of(context).colorScheme.onSurface,
                   ),
                 ),
-            ]
+            ],
           ),
         ),
         const SizedBox(height: 2),
@@ -608,9 +771,9 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
   }
 
   String _formatDurationNew(Duration duration) {
-    String hours = duration.inHours > 0 ? '${duration.inHours}h ' : '';
-    String minutes = '${duration.inMinutes.remainder(60)}m ';
-    String seconds = '${duration.inSeconds.remainder(60)}s';
+    String hours = duration.inHours > 0 ? '${duration.inHours}${AppLocalizations.of(context)!.hoursShort} ' : '';
+    String minutes = '${duration.inMinutes.remainder(60)}${AppLocalizations.of(context)!.minutesShort} ';
+    String seconds = '${duration.inSeconds.remainder(60)}${AppLocalizations.of(context)!.secondsShort}';
     return '$hours$minutes$seconds';
   }
 
@@ -619,7 +782,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
     return GestureDetector(
       onTap: () {
         if (isRecording) {
-          context.read<RecordViaPhoneCubit>().stopRecording();
+          _showStopRecordingDialog(context);
         } else {
           _handleStartRecording();
         }
@@ -627,11 +790,11 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
         decoration: BoxDecoration(
-          color: Colors.grey.withOpacity(0.2),
+          color: Theme.of(context).cardColor,
           borderRadius: BorderRadius.circular(40),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
+              color: Colors.black.withOpacity(0.1),
               blurRadius: 10,
               offset: const Offset(0, 4),
             ),
@@ -649,9 +812,9 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
             ),
             const SizedBox(width: 8),
             Text(
-              isRecording ? "Stop Ride Recording" : "Start Ride Recording",
+              isRecording ? AppLocalizations.of(context)!.stopRideRecording : AppLocalizations.of(context)!.startRideRecording,
               style: TextStyle(
-                color: isRecording ? Colors.red : Theme.of(context).colorScheme.primary,
+                color: Theme.of(context).colorScheme.primary,
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
               ),
@@ -707,6 +870,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
               controller: _pastMapController,
               polylines: polylines,
               markers: markers,
+              showCurrentLocationMarker: false,
             );
           },
         ),
@@ -1080,6 +1244,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
     Set<Polyline> polylines = const {},
     Set<Marker> markers = const {},
     LatLng? initialTarget,
+    bool showCurrentLocationMarker = true,
   }) {
     return BlocBuilder<AppCubit, AppState>(
       builder: (context, appState) {
@@ -1093,31 +1258,54 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
         final target =
             initialTarget ?? LatLng(currentPos!.latitude, currentPos.longitude);
 
+        Set<Marker> allMarkers = Set.from(markers);
+
+        if (showCurrentLocationMarker && currentPos != null) {
+          allMarkers.add(
+            Marker(
+              markerId: const MarkerId("current_device_location"),
+              position: LatLng(currentPos.latitude, currentPos.longitude),
+              infoWindow: const InfoWindow(title: 'Your location'),
+              icon:
+                  _customMarkerIcon ??
+                  BitmapDescriptor.defaultMarkerWithHue(
+                    BitmapDescriptor.hueAzure,
+                  ),
+              zIndex: 99,
+            ),
+          );
+        }
+
+        final style = (themeMode == ThemeMode.dark ||
+                  (themeMode == ThemeMode.system &&
+                      MediaQuery.of(context).platformBrightness ==
+                          Brightness.dark))
+              ? _darkMapStyle
+              : _lightMapStyle;
+              
+        // Force update map style when theme changes
+        controller.future.then((c) {
+          if (style != null) {
+            c.setMapStyle(style);
+          } else {
+            c.setMapStyle(null);
+          }
+        });
+
         return GoogleMap(
           initialCameraPosition: CameraPosition(target: target, zoom: 15),
-          myLocationEnabled: true,
+          myLocationEnabled: !showCurrentLocationMarker,
           zoomControlsEnabled: false,
           mapType: MapType.normal,
           polylines: polylines,
-          markers: markers,
+          markers: allMarkers,
+          style: style,
           onMapCreated: (GoogleMapController googleMapController) async {
             if (!controller.isCompleted) {
               controller.complete(googleMapController);
             }
-
-            // Apply theme-aware style
-            final style = (themeMode == ThemeMode.dark)
-                ? _darkMapStyle
-                : _lightMapStyle;
-
             if (style != null) {
               googleMapController.setMapStyle(style);
-            } else {
-              // Fallback to system brightness
-              final brightness = MediaQuery.of(context).platformBrightness;
-              googleMapController.setMapStyle(
-                brightness == Brightness.dark ? _darkMapStyle : _lightMapStyle,
-              );
             }
           },
         );
@@ -1176,16 +1364,16 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
               children: [
                 const Icon(Icons.warning_rounded, color: Colors.red, size: 48),
                 const SizedBox(height: 16),
-                const Text(
-                  'Trackify ride recording feature only work correctly if it can access your location “all the time”',
+                Text(
+                  AppLocalizations.of(context)!.locationAlwaysAccessWarning,
                   textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                 ),
                 const SizedBox(height: 12),
-                const Text(
-                  'Go to settings and select “Allow all the time”',
+                Text(
+                  AppLocalizations.of(context)!.goToSettingsAndSelectAllowAllTheTime,
                   textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 14, color: Colors.grey),
+                  style: const TextStyle(fontSize: 14, color: Colors.grey),
                 ),
                 const SizedBox(height: 24),
                 Container(
@@ -1208,9 +1396,9 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
                         ),
                       ),
                       const SizedBox(height: 12),
-                      const Text(
-                        'Location Permissions',
-                        style: TextStyle(
+                      Text(
+                        AppLocalizations.of(context)!.locationPermissions,
+                        style: const TextStyle(
                           color: Colors.white,
                           fontSize: 8,
                           fontWeight: FontWeight.bold,
@@ -1227,13 +1415,13 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
                         style: TextStyle(color: Colors.white, fontSize: 8),
                       ),
                       const SizedBox(height: 12),
-                      _buildMockOption('Allow all the time', true),
+                      _buildMockOption(AppLocalizations.of(context)!.allowAllTheTime, true),
                       const SizedBox(height: 6),
-                      _buildMockOption('Only while using the app', false),
+                      _buildMockOption(AppLocalizations.of(context)!.onlyWhileUsingTheApp, false),
                       const SizedBox(height: 6),
-                      _buildMockOption('Ask every time', false),
+                      _buildMockOption(AppLocalizations.of(context)!.askEveryTime, false),
                       const SizedBox(height: 6),
-                      _buildMockOption('Don\'t allow', false),
+                      _buildMockOption(AppLocalizations.of(context)!.dontAllow, false),
                     ],
                   ),
                 ),
@@ -1251,16 +1439,18 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
                     ),
                     onPressed: () async {
                       Navigator.pop(ctx);
-                      
+
                       var whenInUse = await Permission.locationWhenInUse.status;
                       if (!whenInUse.isGranted) {
-                        whenInUse = await Permission.locationWhenInUse.request();
+                        whenInUse = await Permission.locationWhenInUse
+                            .request();
                       }
-                      
+
                       if (whenInUse.isGranted) {
                         // Requesting 'locationAlways' opens the specific Location Permission page on Android 11+
-                        final bgStatus = await Permission.locationAlways.request();
-                        
+                        final bgStatus = await Permission.locationAlways
+                            .request();
+
                         // Fallback: If permanently denied, Android blocks the popup/redirect, so we open App Info
                         if (bgStatus.isPermanentlyDenied) {
                           bool opened = await openAppSettings();
@@ -1272,9 +1462,9 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
                         if (!opened) await Geolocator.openAppSettings();
                       }
                     },
-                    child: const Text(
-                      'Go to Settings',
-                      style: TextStyle(
+                    child: Text(
+                      AppLocalizations.of(context)!.goToSettings,
+                      style: const TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 16,
                       ),
@@ -1324,7 +1514,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
         return StatefulBuilder(
           builder: (context, setState) {
             return Dialog(
-              backgroundColor: const Color(0xFF2C2C2C),
+              backgroundColor: Theme.of(context).cardColor,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(16),
               ),
@@ -1334,10 +1524,10 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      'Select ride mode',
+                    Text(
+                      AppLocalizations.of(context)!.selectRideMode,
                       style: TextStyle(
-                        color: Colors.white,
+                        color: Theme.of(context).colorScheme.onSurface,
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
                       ),
@@ -1352,28 +1542,38 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const Text(
-                                  'Save online',
-                                  style: TextStyle(color: Colors.white, fontSize: 16),
+                                Text(
+                                  AppLocalizations.of(context)!.saveOnline,
+                                  style: TextStyle(
+                                    color: Theme.of(context).colorScheme.onSurface,
+                                    fontSize: 16,
+                                  ),
                                 ),
                                 const SizedBox(height: 4),
                                 Text(
-                                  'Rides are saved online. You can login from any phone to fetch your past rides',
-                                  style: TextStyle(color: Colors.white70, fontSize: 13),
+                                  AppLocalizations.of(context)!.saveOnlineDesc,
+                                  style: TextStyle(
+                                    color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+                                    fontSize: 13,
+                                  ),
                                 ),
                               ],
                             ),
                           ),
                           const SizedBox(width: 16),
                           Icon(
-                            selectedMode == 0 ? Icons.radio_button_checked : Icons.radio_button_unchecked,
-                            color: selectedMode == 0 ? Colors.amber : Colors.grey,
+                            selectedMode == 0
+                                ? Icons.radio_button_checked
+                                : Icons.radio_button_unchecked,
+                            color: selectedMode == 0
+                                ? Theme.of(context).colorScheme.primary
+                                : Colors.grey,
                           ),
                         ],
                       ),
                     ),
                     const SizedBox(height: 16),
-                    Divider(color: Colors.white.withOpacity(0.2)),
+                    Divider(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.2)),
                     const SizedBox(height: 16),
                     GestureDetector(
                       onTap: () => setState(() => selectedMode = 1),
@@ -1384,28 +1584,38 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const Text(
-                                  'Save offline',
-                                  style: TextStyle(color: Colors.white, fontSize: 16),
+                                Text(
+                                  AppLocalizations.of(context)!.saveOffline,
+                                  style: TextStyle(
+                                    color: Theme.of(context).colorScheme.onSurface,
+                                    fontSize: 16,
+                                  ),
                                 ),
                                 const SizedBox(height: 4),
                                 Text(
-                                  'Rides are saved on this phone only',
-                                  style: TextStyle(color: Colors.white70, fontSize: 13),
+                                  AppLocalizations.of(context)!.saveOfflineDesc,
+                                  style: TextStyle(
+                                    color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+                                    fontSize: 13,
+                                  ),
                                 ),
                               ],
                             ),
                           ),
                           const SizedBox(width: 16),
                           Icon(
-                            selectedMode == 1 ? Icons.radio_button_checked : Icons.radio_button_unchecked,
-                            color: selectedMode == 1 ? Colors.amber : Colors.grey,
+                            selectedMode == 1
+                                ? Icons.radio_button_checked
+                                : Icons.radio_button_unchecked,
+                            color: selectedMode == 1
+                                ? Theme.of(context).colorScheme.primary
+                                : Colors.grey,
                           ),
                         ],
                       ),
                     ),
                     const SizedBox(height: 16),
-                    Divider(color: Colors.white.withOpacity(0.2)),
+                    Divider(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.2)),
                     const SizedBox(height: 16),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.end,
@@ -1415,12 +1625,12 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
                           onChanged: (val) {
                             if (val != null) setState(() => askEveryTime = val);
                           },
-                          activeColor: Colors.amber,
-                          checkColor: Colors.black,
+                          activeColor: Theme.of(context).colorScheme.primary,
+                          checkColor: Theme.of(context).colorScheme.onPrimary,
                         ),
-                        const Text(
-                          'Ask every time',
-                          style: TextStyle(color: Colors.white, fontSize: 14),
+                        Text(
+                          AppLocalizations.of(context)!.askEveryTime,
+                          style: TextStyle(color: Theme.of(context).colorScheme.onSurface, fontSize: 14),
                         ),
                       ],
                     ),
@@ -1430,20 +1640,170 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
                       children: [
                         TextButton(
                           onPressed: () => Navigator.pop(ctx),
-                          child: const Text(
-                            'Cancel',
-                            style: TextStyle(color: Colors.white70, fontSize: 16, fontWeight: FontWeight.bold),
+                          child: Text(
+                            AppLocalizations.of(context)!.cancelBtn,
+                            style: TextStyle(
+                              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
                         const SizedBox(width: 16),
                         TextButton(
                           onPressed: () {
                             Navigator.pop(ctx);
-                            screenContext.read<RecordViaPhoneCubit>().startRecording();
+                            screenContext
+                                .read<RecordViaPhoneCubit>()
+                                .startRecording();
                           },
-                          child: const Text(
-                            'Start ride',
-                            style: TextStyle(color: Colors.amber, fontSize: 16, fontWeight: FontWeight.bold),
+                          child: Text(
+                            AppLocalizations.of(context)!.startRide,
+                            style: TextStyle(
+                              color: Theme.of(context).colorScheme.primary,
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  void _showStopRecordingDialog(BuildContext screenContext) {
+    showDialog(
+      context: screenContext,
+      builder: (ctx) {
+        String selectedLabel = AppLocalizations.of(screenContext)!.walk;
+        final labels = [
+          AppLocalizations.of(screenContext)!.friendsVehicle,
+          AppLocalizations.of(screenContext)!.train,
+          AppLocalizations.of(screenContext)!.bus,
+          AppLocalizations.of(screenContext)!.auto,
+          AppLocalizations.of(screenContext)!.cab,
+          AppLocalizations.of(screenContext)!.cycle,
+          AppLocalizations.of(screenContext)!.walk,
+          AppLocalizations.of(screenContext)!.others,
+        ];
+
+        final appState = screenContext.read<AppCubit>().state;
+        final deviceLabels = appState.devices
+            .map(
+              (d) => d['vehicleNo']?.toString() ?? d['name']?.toString() ?? '',
+            )
+            .where((name) => name.isNotEmpty)
+            .toList();
+
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return Dialog(
+              backgroundColor: Theme.of(context).cardColor,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(24.0),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      AppLocalizations.of(context)!.selectRideLabel,
+                      style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7), fontSize: 16),
+                    ),
+                    const SizedBox(height: 24),
+                    Wrap(
+                      spacing: 12,
+                      runSpacing: 12,
+                      children: [...labels, ...deviceLabels].map((label) {
+                        final isSelected = selectedLabel == label;
+                        return GestureDetector(
+                          onTap: () => setState(() => selectedLabel = label),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 8,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.05),
+                              borderRadius: BorderRadius.circular(8),
+                              border: Border.all(
+                                color: isSelected
+                                    ? Theme.of(context).colorScheme.primary
+                                    : Colors.transparent,
+                                width: 1,
+                              ),
+                            ),
+                            child: Text(
+                              label,
+                              style: TextStyle(
+                                color: isSelected
+                                    ? Theme.of(context).colorScheme.primary
+                                    : Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+                                fontSize: 14,
+                              ),
+                            ),
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                    const SizedBox(height: 24),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        TextButton(
+                          onPressed: () {
+                            Navigator.pop(ctx);
+
+                            final cubit = screenContext
+                                .read<RecordViaPhoneCubit>();
+                            final state = cubit.state;
+
+                            Navigator.push(
+                              screenContext,
+                              MaterialPageRoute(
+                                builder: (_) => RidePlaybackScreen(
+                                  points: state.currentRidePoints,
+                                  totalDistance: state.rideDistance,
+                                  totalDuration: state.rideDuration,
+                                  topSpeed: state.currentSpeed > 0
+                                      ? state.currentSpeed
+                                      : (state.rideDuration.inSeconds > 0
+                                            ? (state.rideDistance /
+                                                  (state
+                                                          .rideDuration
+                                                          .inSeconds /
+                                                      3600))
+                                            : 0.0),
+                                  avgSpeed: state.rideDuration.inSeconds > 0
+                                      ? (state.rideDistance /
+                                            (state.rideDuration.inSeconds /
+                                                3600))
+                                      : 0.0,
+                                  startTime: DateTime.now().subtract(
+                                    state.rideDuration,
+                                  ),
+                                ),
+                              ),
+                            );
+
+                            cubit.stopRecording();
+                          },
+                          child: Text(
+                            AppLocalizations.of(context)!.saveBtn,
+                            style: TextStyle(
+                              color: Theme.of(context).colorScheme.primary,
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
                       ],

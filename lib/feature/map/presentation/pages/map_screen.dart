@@ -942,12 +942,18 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                                     zoomGesturesEnabled: false,
                                     tiltGesturesEnabled: false,
                                     rotateGesturesEnabled: false,
+                                    buildingsEnabled: false,
                                     mapType: appState.mapType == 'satellite'
                                         ? MapType.satellite
                                         : MapType.normal,
                                     trafficEnabled: appState.isTrafficEnabled,
                                     markers: markers,
                                     circles: circles,
+                                    style: appState.mapType == 'satellite'
+                                        ? null
+                                        : (Theme.of(context).brightness == Brightness.dark
+                                            ? _darkMapStyle
+                                            : _lightMapStyle),
                                     onMapCreated: (GoogleMapController controller) async {
                                   _mapController = controller;
 
@@ -956,18 +962,14 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                                     await _loadMapStyles();
                                   }
 
-                                  String? style;
-                                  if (appState.mapStyle == 'Dark') {
-                                    style = _darkMapStyle;
-                                  } else if (appState.mapStyle == 'Light') {
-                                    style = _lightMapStyle;
-                                  } else if (appState.mapStyle == 'Simple') {
-                                    style = await MapUtils.loadStyle(
-                                      'assets/map_styles/light_map.json',
-                                    );
-                                  }
+                                  final isDarkTheme = Theme.of(context).brightness == Brightness.dark;
+                                  final style = isDarkTheme ? _darkMapStyle : _lightMapStyle;
 
-                                  await MapUtils.setStyle(controller, style);
+                                  if (style != null) {
+                                    await MapUtils.setStyle(controller, style);
+                                  } else {
+                                    await MapUtils.setStyle(controller, null);
+                                  }
 
                                   // Initialize camera state fields
                                   _cameraTarget = appState.livePosition ?? bestPos;

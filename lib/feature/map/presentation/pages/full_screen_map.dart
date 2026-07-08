@@ -806,16 +806,8 @@ class _FullScreenMapState extends State<FullScreenMap>
       return;
     }
 
-    String? style;
-    if (appConfig.mapStyle == 'Dark') {
-      style = _darkMapStyle;
-    } else if (appConfig.mapStyle == 'Light') {
-      style = _lightMapStyle;
-    } else if (appConfig.mapStyle == 'Simple') {
-      style = await MapUtils.loadStyle('assets/map_styles/light_map.json');
-    }
-
-    await MapUtils.setStyle(controller, style);
+    final isDarkTheme = Theme.of(context).brightness == Brightness.dark;
+    await MapUtils.setStyle(controller, isDarkTheme ? _darkMapStyle : _lightMapStyle);
   }
 
   void _showMapStyleSheet() {
@@ -1266,6 +1258,12 @@ class _FullScreenMapState extends State<FullScreenMap>
                     zoomControlsEnabled: false,
                     myLocationButtonEnabled: false,
                     mapToolbarEnabled: false,
+                    buildingsEnabled: false,
+                    style: appState.mapType == 'satellite'
+                        ? null
+                        : (Theme.of(context).brightness == Brightness.dark
+                            ? _darkMapStyle
+                            : _lightMapStyle),
                     mapType: appState.mapType == 'satellite'
                         ? MapType.satellite
                         : MapType.normal,
