@@ -2069,10 +2069,10 @@ class _FullScreenMapState extends State<FullScreenMap>
               ],
             ),
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 16),
           SizedBox(
             width: double.infinity,
-            height: 52,
+            height: 46,
             child: ElevatedButton.icon(
               onPressed: () {
                 Navigator.push(
