@@ -4,6 +4,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:trackify/feature/add_vehicle_and_device/add_vehicle/data/models/vehicle_config_models.dart';
 
 import '../../../../../app/app_navigation.dart';
+import '../../../../map/presentation/cubit/map_cubit.dart';
+import '../../../../profile/presentation/cubit/profile_cubit.dart';
 import '../../../../../core/theme/app_theme_extension.dart';
 import '../../../../../core/widgets/custom_form_field.dart';
 import '../../../../../l10n/app_localizations.dart';
@@ -11,6 +13,7 @@ import '../../../../onboarding/presentation/cubit/splash_cubit.dart';
 import '../../../../onboarding/presentation/cubit/splash_state.dart';
 import '../cubit/add_vehicle_cubit.dart';
 import '../cubit/add_vehicle_state.dart';
+import '../widgets/vehicle_number_field.dart';
 
 // ─── Screen ──────────────────────────────────────────────────────────────────
 
@@ -342,7 +345,7 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
             previous.selectedConfig?.id != current.selectedConfig?.id ||
             previous.successResponse != current.successResponse ||
             previous.errorMessage != current.errorMessage,
-        listener: (context, state) {
+        listener: (context, state) async {
           // If vehicle type changed, reset the vehicle number controller
           final cubit = context.read<AddVehicleCubit>();
           // Note: We don't want to reset on initial load or if both are null
@@ -360,6 +363,14 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
                 backgroundColor: appColors?.success ?? Colors.green,
               ),
             );
+            
+            await Future.wait([
+              context.read<ProfileCubit>().fetchVehicles(),
+              context.read<MapCubit>().fetchVehicles(),
+            ]);
+            
+            if (!context.mounted) return;
+
             Navigator.of(context, rootNavigator: true).pushAndRemoveUntil(
               MaterialPageRoute(builder: (context) => const AppNavigation()),
               (route) => false,
@@ -527,17 +538,8 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
                             const SizedBox(height: 20),
 
                             // ── Vehicle Number ────────────────────────────────────────
-                            CustomFormField(
-                              header: l10n.vehicleNumber,
-                              hint: l10n.vehicleNumberHint,
-                              value: _vehicleNumberController,
-                              textCapitalization: TextCapitalization.characters,
-                              validator: (val) {
-                                if (val == null || val.trim().isEmpty) {
-                                  return l10n.pleaseEnterVehicleNumber;
-                                }
-                                return null;
-                              },
+                            VehicleNumberField(
+                              controller: _vehicleNumberController,
                             ),
 
                             const SizedBox(height: 32),

@@ -18,6 +18,7 @@ class CustomFormField extends StatefulWidget {
   final void Function()? onTap;
   final bool? isReadOnly;
   final String? prefixText;
+  final Widget? prefixIcon;
   final void Function(String)? onChanged;
   final bool? isFocused;
   final int? maxLength;
@@ -55,6 +56,7 @@ class CustomFormField extends StatefulWidget {
     this.onTap,
     this.isReadOnly = false,
     this.prefixText,
+    this.prefixIcon,
     this.onChanged,
     this.isFocused = false,
     this.maxLines = 1,
@@ -202,6 +204,7 @@ class _CustomFormFieldState extends State<CustomFormField> {
               fillColor: widget.backgroundColor ?? theme.inputDecorationTheme.fillColor ?? theme.cardColor,
               contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               prefixText: widget.prefixText,
+              prefixIcon: widget.prefixIcon,
               suffixIcon: _buildSuffixIcons(),
               counterText: '',
               errorStyle: const TextStyle(height: 0.8),

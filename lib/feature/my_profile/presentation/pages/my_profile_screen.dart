@@ -153,10 +153,10 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
               child: Column(
                 children: [
                   /// 🔹 PROFILE HEADER
-                  Stack(
-                    children: [
-                      Center(
-                        child: Column(
+                  Center(
+                    child: Column(
+                      children: [
+                        Stack(
                           children: [
                             Container(
                               height: 90,
@@ -231,46 +231,46 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                                 ],
                               ),
                             ),
-                            const SizedBox(height: 12),
-                            Text(
-                              userName.toLowerCase().replaceAll(' ', ''),
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                                color: Theme.of(context).colorScheme.onSurface,
+                            Positioned(
+                              top: 0,
+                              right: 0,
+                              child: GestureDetector(
+                                onTap: _isUploading
+                                    ? null
+                                    : () => _pickAndUploadImage(user),
+                                child: Container(
+                                  padding: const EdgeInsets.all(6),
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: Theme.of(context).colorScheme.primary,
+                                    border: Border.all(
+                                      color: Theme.of(
+                                        context,
+                                      ).scaffoldBackgroundColor,
+                                      width: 2,
+                                    ),
+                                  ),
+                                  child: Icon(
+                                    Icons.edit,
+                                    size: 14,
+                                    color: Theme.of(context).colorScheme.onPrimary,
+                                  ),
+                                ),
                               ),
                             ),
                           ],
                         ),
-                      ),
-                      Positioned(
-                        top: 0,
-                        right: 0,
-                        child: GestureDetector(
-                          onTap: _isUploading
-                              ? null
-                              : () => _pickAndUploadImage(user),
-                          child: Container(
-                            padding: const EdgeInsets.all(6),
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: Theme.of(context).colorScheme.primary,
-                              border: Border.all(
-                                color: Theme.of(
-                                  context,
-                                ).scaffoldBackgroundColor,
-                                width: 2,
-                              ),
-                            ),
-                            child: Icon(
-                              Icons.edit,
-                              size: 14,
-                              color: Theme.of(context).colorScheme.onPrimary,
-                            ),
+                        const SizedBox(height: 12),
+                        Text(
+                          userName.toLowerCase().replaceAll(' ', ''),
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Theme.of(context).colorScheme.onSurface,
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                   const SizedBox(height: 16),
 

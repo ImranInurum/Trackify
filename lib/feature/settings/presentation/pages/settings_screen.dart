@@ -11,8 +11,27 @@ import '../../../../core/constants/app_languages.dart';
 import '../../../../core/utils/shared_preferences.dart';
 import '../../../auth/presentation/pages/signin_screen.dart';
 
-class SettingsScreen extends StatelessWidget {
+class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
+
+  @override
+  State<SettingsScreen> createState() => _SettingsScreenState();
+}
+
+class _SettingsScreenState extends State<SettingsScreen> {
+  final TextEditingController _searchController = TextEditingController();
+  String _searchQuery = '';
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  bool _isVisible(String title) {
+    if (_searchQuery.isEmpty) return true;
+    return title.toLowerCase().contains(_searchQuery.toLowerCase());
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -24,12 +43,18 @@ class SettingsScreen extends StatelessWidget {
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios_new, color: Theme.of(context).colorScheme.onSurface),
+          icon: Icon(
+            Icons.arrow_back_ios_new,
+            color: Theme.of(context).colorScheme.onSurface,
+          ),
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: Text(
           l10n.settings,
-          style: TextStyle(color: Theme.of(context).colorScheme.onSurface, fontWeight: FontWeight.bold),
+          style: TextStyle(
+            color: Theme.of(context).colorScheme.onSurface,
+            fontWeight: FontWeight.bold,
+          ),
         ),
         surfaceTintColor: Colors.transparent,
       ),
@@ -54,11 +79,46 @@ class SettingsScreen extends StatelessWidget {
                   ],
                 ),
                 child: TextField(
-                  style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
-                  decoration: InputDecoration(filled: false,
+                  controller: _searchController,
+                  onChanged: (value) {
+                    setState(() {
+                      _searchQuery = value;
+                    });
+                  },
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.onSurface,
+                  ),
+                  decoration: InputDecoration(
+                    filled: false,
                     hintText: l10n.searchForSettings,
-                    hintStyle: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.4), fontSize: 14),
-                    prefixIcon: Icon(Icons.search, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.4)),
+                    hintStyle: TextStyle(
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.onSurface.withOpacity(0.4),
+                      fontSize: 14,
+                    ),
+                    prefixIcon: Icon(
+                      Icons.search,
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.onSurface.withOpacity(0.4),
+                    ),
+                    suffixIcon: _searchQuery.isNotEmpty
+                        ? IconButton(
+                            icon: Icon(
+                              Icons.clear,
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.onSurface.withOpacity(0.4),
+                            ),
+                            onPressed: () {
+                              _searchController.clear();
+                              setState(() {
+                                _searchQuery = '';
+                              });
+                            },
+                          )
+                        : null,
                     border: InputBorder.none,
                     enabledBorder: InputBorder.none,
                     focusedBorder: InputBorder.none,
@@ -70,120 +130,144 @@ class SettingsScreen extends StatelessWidget {
 
             const SizedBox(height: 10),
 
-            SettingListTile(
-              icon: Icons.cloud_upload_outlined,
-              title: l10n.backupAndRestore,
-              subtitle: l10n.backupAndRestoreDesc,
-              showArrow: true,
-              showIcon: true,
-              onTap: () => debugPrint("Backup & Restore tapped"),
-            ),
+            if (_isVisible(l10n.backupAndRestore))
+              SettingListTile(
+                icon: Icons.cloud_upload_outlined,
+                title: l10n.backupAndRestore,
+                subtitle: l10n.backupAndRestoreDesc,
+                showArrow: true,
+                showIcon: true,
+                onTap: () => debugPrint("Backup & Restore tapped"),
+              ),
 
-            SettingListTile(
-              icon: Icons.settings_outlined,
-              title: l10n.appSettings,
-              subtitle: l10n.appSettingsDesc,
-              showArrow: true,
-              showIcon: true,
-              onTap: () => debugPrint("App Settings tapped"),
-            ),
-            SettingListTile(
-              icon: Icons.notifications_none_outlined,
-              title: l10n.notificationSettings,
-              subtitle: l10n.notificationSettingsDesc,
-              showArrow: true,
-              showIcon: true,
-              onTap: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const NotificationSettings()),
+            if (_isVisible(l10n.appSettings))
+              SettingListTile(
+                icon: Icons.settings_outlined,
+                title: l10n.appSettings,
+                subtitle: l10n.appSettingsDesc,
+                showArrow: true,
+                showIcon: true,
+                onTap: () => debugPrint("App Settings tapped"),
+              ),
+
+            if (_isVisible(l10n.notificationSettings))
+              SettingListTile(
+                icon: Icons.notifications_none_outlined,
+                title: l10n.notificationSettings,
+                subtitle: l10n.notificationSettingsDesc,
+                showArrow: true,
+                showIcon: true,
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const NotificationSettings(),
                   ),
-            ),
+                ),
+              ),
+
             BlocBuilder<AppCubit, AppState>(
               builder: (context, state) {
                 final themeMode = state.themeMode;
                 final isDarkMode = themeMode == ThemeMode.dark;
+                final themeTitle = isDarkMode ? l10n.darkMode : l10n.lightTheme;
+                final langTitle = l10n.selectLanguage;
 
                 return Column(
                   children: [
-                    SettingListTile(
-                      icon: isDarkMode ? Icons.dark_mode : Icons.light_mode,
-                      title: isDarkMode
-                          ? l10n.darkMode
-                          :l10n.lightTheme,
-                      subtitle:
-                      l10n.switchBetweenLightAndDarkThemes,
-                      showArrow: false,
-                      showIcon: true,
-                      trailing: Transform.scale(
-                        scale: 0.7,
-                        child: Switch(
-                          value: isDarkMode,
-                          activeThumbColor: Theme.of(context).colorScheme.surface,
-                          activeTrackColor: Theme.of(context).colorScheme.tertiary,
-                          onChanged: (value) {
-                            context.read<AppCubit>().changeTheme(
-                                  value ? ThemeMode.dark : ThemeMode.light,
-                                );
-                          },
+                    if (_isVisible(themeTitle))
+                      SettingListTile(
+                        icon: isDarkMode ? Icons.dark_mode : Icons.light_mode,
+                        title: themeTitle,
+                        subtitle: l10n.switchBetweenLightAndDarkThemes,
+                        showArrow: false,
+                        showIcon: true,
+                        trailing: Transform.scale(
+                          scale: 0.7,
+                          child: Switch(
+                            value: isDarkMode,
+                            activeThumbColor: Theme.of(
+                              context,
+                            ).colorScheme.surface,
+                            activeTrackColor: Theme.of(
+                              context,
+                            ).colorScheme.tertiary,
+                            onChanged: (value) {
+                              context.read<AppCubit>().changeTheme(
+                                value ? ThemeMode.dark : ThemeMode.light,
+                              );
+                            },
+                          ),
                         ),
+                        onTap: () {
+                          context.read<AppCubit>().changeTheme(
+                            isDarkMode ? ThemeMode.light : ThemeMode.dark,
+                          );
+                        },
                       ),
-                      onTap: () {
-                        context.read<AppCubit>().changeTheme(
-                              isDarkMode ? ThemeMode.light : ThemeMode.dark,
-                            );
-                      },
-                    ),
-                    SettingListTile(
-                      icon: Icons.language,
-                      title: l10n.selectLanguage,
-                      subtitle: AppLanguages.languages.firstWhere(
-                            (lang) => lang['locale'] == state.locale,
-                            orElse: () => AppLanguages.languages.first,
-                          )['name'] as String,
-                      showArrow: true,
-                      showIcon: true,
-                      onTap: () => _showLanguagePicker(context),
-                    ),
+                    if (_isVisible(langTitle))
+                      SettingListTile(
+                        icon: Icons.language,
+                        title: langTitle,
+                        subtitle:
+                            AppLanguages.languages.firstWhere(
+                                  (lang) => lang['locale'] == state.locale,
+                                  orElse: () => AppLanguages.languages.first,
+                                )['name']
+                                as String,
+                        showArrow: true,
+                        showIcon: true,
+                        onTap: () => _showLanguagePicker(context),
+                      ),
                   ],
                 );
               },
             ),
-            SettingListTile(
-              icon: Icons.person_outline,
-              title: l10n.privacy,
-              subtitle: l10n.privacyDesc,
-              showArrow: true,
-              showIcon: true,
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const PrivacyScreen()),
-                );
-              },
-            ),
-            SettingListTile(
-              icon: Icons.play_arrow_outlined,
-              title: l10n.rateUsOnPlayStore,
-              subtitle: l10n.rateUsOnPlayStoreDesc,
-              showArrow: false,
-              showIcon: true,
-              onTap: () => debugPrint("Rate us tapped"),
-            ),
-            SettingListTile(
-              icon: Icons.logout_outlined,
-              title: l10n.logout,
-              subtitle: l10n.logoutDesc,
-              showArrow: false,
-              showIcon: true,
-              onTap: () {
-                final prefs = AppPreference.instance;
-                prefs.clearAll();
-                Navigator.of(context, rootNavigator: true).pushAndRemoveUntil(
-                  MaterialPageRoute(builder: (context) => const SignInScreen()),
-                  (Route<dynamic> route) => false,
-                );
-              },
-            ),
+
+            if (_isVisible(l10n.privacy))
+              SettingListTile(
+                icon: Icons.person_outline,
+                title: l10n.privacy,
+                subtitle: l10n.privacyDesc,
+                showArrow: true,
+                showIcon: true,
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const PrivacyScreen(),
+                    ),
+                  );
+                },
+              ),
+
+            if (_isVisible(l10n.rateUsOnPlayStore))
+              SettingListTile(
+                icon: Icons.play_arrow_outlined,
+                title: l10n.rateUsOnPlayStore,
+                subtitle: l10n.rateUsOnPlayStoreDesc,
+                showArrow: false,
+                showIcon: true,
+                onTap: () => debugPrint("Rate us tapped"),
+              ),
+
+            if (_isVisible(l10n.logout))
+              SettingListTile(
+                icon: Icons.logout_outlined,
+                title: l10n.logout,
+                subtitle: l10n.logoutDesc,
+                showArrow: false,
+                showIcon: true,
+                onTap: () {
+                  final prefs = AppPreference.instance;
+                  prefs.clearAll();
+                  Navigator.of(context, rootNavigator: true).pushAndRemoveUntil(
+                    MaterialPageRoute(
+                      builder: (context) => const SignInScreen(),
+                    ),
+                    (Route<dynamic> route) => false,
+                  );
+                },
+              ),
             const SizedBox(height: 40),
           ],
         ),
@@ -221,27 +305,34 @@ class SettingsScreen extends StatelessWidget {
                     return ListTile(
                       leading: Icon(
                         Icons.language,
-                        color: isSelected ? Theme.of(context).colorScheme.primary : null,
+                        color: isSelected
+                            ? Theme.of(context).colorScheme.primary
+                            : null,
                       ),
                       title: Text(
                         lang['name'] as String,
                         style: TextStyle(
-                          color: isSelected ? Theme.of(context).colorScheme.primary : null,
+                          color: isSelected
+                              ? Theme.of(context).colorScheme.primary
+                              : null,
                           fontWeight: isSelected ? FontWeight.bold : null,
                         ),
                       ),
                       trailing: isSelected
-                          ? Icon(Icons.check_circle, color: Theme.of(context).colorScheme.primary)
+                          ? Icon(
+                              Icons.check_circle,
+                              color: Theme.of(context).colorScheme.primary,
+                            )
                           : null,
                       onTap: () {
                         context.read<AppCubit>().changeLocale(
-                              lang['locale'] as Locale,
-                              lang['key'] as String,
-                            );
+                          lang['locale'] as Locale,
+                          lang['key'] as String,
+                        );
                         Navigator.pop(context);
                       },
                     );
-                  }).toList(),
+                  }),
                   const SizedBox(height: 20),
                 ],
               ),

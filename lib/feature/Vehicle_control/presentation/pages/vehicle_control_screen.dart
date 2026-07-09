@@ -274,16 +274,22 @@ class VehicleControlView extends StatelessWidget {
                                     );
                                   },
                                   child: Container(
-                                    padding: const EdgeInsets.all(2),
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 8,
+                                      vertical: 2,
+                                    ),
                                     decoration: BoxDecoration(
                                       color: theme.colorScheme.onSurface
                                           .withOpacity(0.1),
-                                      shape: BoxShape.circle,
+                                      borderRadius: BorderRadius.circular(4),
                                     ),
-                                    child: Icon(
-                                      Icons.edit,
-                                      color: theme.colorScheme.onSurface,
-                                      size: 12,
+                                    child: Text(
+                                      l10n.edit,
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w500,
+                                        color: theme.colorScheme.onSurface,
+                                      ),
                                     ),
                                   ),
                                 ),

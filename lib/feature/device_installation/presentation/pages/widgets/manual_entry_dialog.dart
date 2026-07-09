@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../../l10n/app_localizations.dart';
-import '../../../../../core/utils/shared_preferences.dart';
 import '../../cubit/device_installation_cubit.dart';
 
 class ManualEntryDialog extends StatefulWidget {
@@ -13,29 +12,11 @@ class ManualEntryDialog extends StatefulWidget {
 }
 
 class _ManualEntryDialogState extends State<ManualEntryDialog> {
-  final TextEditingController _uidController = TextEditingController();
   final TextEditingController _imeiController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
   @override
-  void initState() {
-    super.initState();
-    _loadUserId();
-  }
-
-  Future<void> _loadUserId() async {
-    final userId =
-        await AppPreference.instance.get(key: AppPreference.KEY_USER_ID);
-    if (mounted) {
-      setState(() {
-        _uidController.text = userId;
-      });
-    }
-  }
-
-  @override
   void dispose() {
-    _uidController.dispose();
     _imeiController.dispose();
     super.dispose();
   }
@@ -90,20 +71,13 @@ class _ManualEntryDialogState extends State<ManualEntryDialog> {
                       TextButton(
                         onPressed: () {
                           if (_formKey.currentState!.validate()) {
-                            context
-                                .read<DeviceInstallationCubit>()
-                                .assignDevice(
-                                  vehicleId: widget.vehicleId,
-                                  imei: _imeiController.text.trim(),
-                                  uid: _uidController.text.trim(),
-                                );
-                            Navigator.pop(context);
+                            Navigator.pop(context, _imeiController.text.trim());
                           }
                         },
                         child: Text(
                           l10n.continueText,
                           style: TextStyle(
-                            color: colorScheme.secondary,
+                            color: colorScheme.primary,
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
                           ),
@@ -131,6 +105,7 @@ class _ManualEntryDialogState extends State<ManualEntryDialog> {
     return TextFormField(
       controller: controller,
       validator: validator,
+      autovalidateMode: AutovalidateMode.onUserInteraction,
       keyboardType: keyboardType,
       style: theme.textTheme.bodyLarge,
       decoration: InputDecoration(

@@ -152,28 +152,27 @@ class _VehicleOnMapCardState extends State<VehicleOnMapCard>
           Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              IconOption(
-                label: AppLocalizations.of(context)!.bike,
-                icon: Icons.motorcycle,
-                isSelected: widget.selectedIcon == 'Bike',
-                onTap: () => widget.onIconChanged('Bike'),
-              ),
-              const SizedBox(width: 25),
-              IconOption(
-                label: AppLocalizations.of(context)!.scooty,
-                icon: Icons.moped,
-                isLocked: true,
-                isSelected: widget.selectedIcon == 'Scooty',
-                onTap: _triggerShake,
-              ),
-              const SizedBox(width: 25),
-              IconOption(
-                label: AppLocalizations.of(context)!.myVehicle,
-                icon: Icons.directions_car,
-                isLocked: true,
-                isSelected: widget.selectedIcon == 'My Vehicle',
-                onTap: _triggerShake,
-              ),
+              if (widget.selectedIcon == 'Bike' || (widget.selectedIcon != 'Scooty' && widget.selectedIcon != 'My Vehicle'))
+                IconOption(
+                  label: AppLocalizations.of(context)!.bike,
+                  icon: Icons.motorcycle,
+                  isSelected: true,
+                  onTap: () {},
+                ),
+              if (widget.selectedIcon == 'Scooty')
+                IconOption(
+                  label: AppLocalizations.of(context)!.scooty,
+                  icon: Icons.moped,
+                  isSelected: true,
+                  onTap: () {},
+                ),
+              if (widget.selectedIcon == 'My Vehicle' || widget.selectedIcon == 'Car')
+                IconOption(
+                  label: AppLocalizations.of(context)!.myVehicle,
+                  icon: Icons.directions_car,
+                  isSelected: true,
+                  onTap: () {},
+                ),
             ],
           ),
           const SizedBox(height: 16),

@@ -613,35 +613,74 @@ class _DraggableAppBarState extends State<DraggableAppBar>
                         // Tag
                         _buildTag(device),
                         // Status Container
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 8,
-                            vertical: 2,
-                          ),
-                          decoration: BoxDecoration(
-                            color: statusColor.withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(12),
-                            border: Border.all(
-                              color: statusColor.withOpacity(0.3),
-                              width: 1,
+                        if (device.imei == null || device.imei!.isEmpty)
+                          !_isExpanded
+                              ? Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 8,
+                                    vertical: 2,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: Colors.orange.withOpacity(0.1),
+                                    borderRadius: BorderRadius.circular(12),
+                                    border: Border.all(
+                                      color: Colors.orange.withOpacity(0.3),
+                                      width: 1,
+                                    ),
+                                  ),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      const Icon(
+                                        Icons.shield,
+                                        color: Colors.orange,
+                                        size: 10,
+                                      ),
+                                      const SizedBox(width: 4),
+                                      Text(
+                                        AppLocalizations.of(
+                                          context,
+                                        )!.buyTrackifyDevice,
+                                        style: const TextStyle(
+                                          fontSize: 10,
+                                          color: Colors.orange,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                )
+                              : const SizedBox.shrink()
+                        else
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 2,
+                            ),
+                            decoration: BoxDecoration(
+                              color: statusColor.withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(
+                                color: statusColor.withOpacity(0.3),
+                                width: 1,
+                              ),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(Icons.circle, color: statusColor, size: 7),
+                                const SizedBox(width: 4),
+                                Text(
+                                  statusLabel,
+                                  style: TextStyle(
+                                    fontSize: 11,
+                                    color: statusColor,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(Icons.circle, color: statusColor, size: 7),
-                              const SizedBox(width: 4),
-                              Text(
-                                statusLabel,
-                                style: TextStyle(
-                                  fontSize: 11,
-                                  color: statusColor,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
                       ],
                     ),
                   ],

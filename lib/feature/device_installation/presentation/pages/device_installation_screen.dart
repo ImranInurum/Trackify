@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:trackify/feature/add_vehicle_and_device/add_vehicle/data/repository/add_vehicle_repository_impl.dart';
+import 'package:trackify/feature/add_vehicle_and_device/add_vehicle/domain/use_case/add_vehicle_use_case.dart';
+import 'package:trackify/feature/add_vehicle_and_device/add_vehicle/presentation/cubit/add_vehicle_cubit.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import '../../../../core/theme/app_theme_extension.dart';
@@ -8,6 +11,14 @@ import '../../../../l10n/app_localizations.dart';
 import '../cubit/device_installation_cubit.dart';
 import '../cubit/device_installation_state.dart';
 import 'widgets/manual_entry_dialog.dart';
+import 'widgets/add_vehicle_dialog.dart';
+import 'widgets/personal_details_dialog.dart';
+import '../../../../feature/profile/presentation/cubit/profile_cubit.dart';
+import '../../../../feature/profile/presentation/cubit/profile_state.dart';
+import '../../../../app/cubit/app_cubit.dart';
+import '../../../../app/app_navigation.dart';
+import '../../../../feature/map/presentation/cubit/map_cubit.dart';
+import '../../../../core/utils/shared_preferences.dart';
 
 class DeviceInstallationScreen extends StatefulWidget {
   final String? vehicleId;
@@ -24,6 +35,19 @@ class _DeviceInstallationScreenState extends State<DeviceInstallationScreen>
   final MobileScannerController _cameraController = MobileScannerController(
     detectionSpeed: DetectionSpeed.normal,
     facing: CameraFacing.back,
+    formats: const [
+      BarcodeFormat.qrCode,
+      BarcodeFormat.code128,
+      BarcodeFormat.code39,
+      BarcodeFormat.code93,
+      BarcodeFormat.ean13,
+      BarcodeFormat.ean8,
+      BarcodeFormat.itf,
+      BarcodeFormat.upcA,
+      BarcodeFormat.upcE,
+      BarcodeFormat.dataMatrix,
+      BarcodeFormat.pdf417,
+    ],
   );
 
   bool _hasScanned = false;
@@ -144,7 +168,17 @@ class _DeviceInstallationScreenState extends State<DeviceInstallationScreen>
               backgroundColor: appColors?.success ?? Colors.green,
             ),
           );
-          Navigator.pop(context);
+          Future.wait([
+            context.read<ProfileCubit>().fetchVehicles(),
+            context.read<MapCubit>().fetchVehicles(),
+          ]).then((_) {
+            if (context.mounted) {
+              Navigator.of(context, rootNavigator: true).pushAndRemoveUntil(
+                MaterialPageRoute(builder: (context) => const AppNavigation()),
+                (route) => false,
+              );
+            }
+          });
         } else if (state is DeviceInstallationFailure) {
           setState(() {
             _hasScanned = false;
@@ -457,16 +491,7 @@ class _DeviceInstallationScreenState extends State<DeviceInstallationScreen>
                       disabledForegroundColor: Colors.white54,
                       foregroundColor: theme.colorScheme.onSecondary,
                       borderRadius: 8,
-                      onPressed: _scannedImei != null
-                          ? () {
-                              context
-                                  .read<DeviceInstallationCubit>()
-                                  .assignDevice(
-                                    vehicleId: widget.vehicleId ?? '',
-                                    imei: _scannedImei!,
-                                  );
-                            }
-                          : null,
+                      onPressed: _scannedImei != null ? _handleContinue : null,
                     ),
                   ],
                 ),
@@ -478,8 +503,94 @@ class _DeviceInstallationScreenState extends State<DeviceInstallationScreen>
     );
   }
 
-  void _showManualEntryDialog(BuildContext context) {
-    showDialog(
+  Future<void> _handleContinue() async {
+    if (_scannedImei == null) return;
+
+    if (!mounted) return;
+    // Fetch fresh vehicles to ensure we don't use stale cached data from a previous user
+    await context.read<ProfileCubit>().fetchVehicles();
+    
+    if (!mounted) return;
+    final profileState = context.read<ProfileCubit>().state;
+    final appState = context.read<AppCubit>().state;
+    final currentUserId = appState.userData?.id;
+    
+    bool hasVehicle = false;
+    if (profileState is VehiclesLoaded && profileState.vehicles.isNotEmpty) {
+      // Ensure the cached vehicles belong to the current user
+      final firstVehicleUserId = profileState.vehicles.first.userId;
+      if (currentUserId == null || firstVehicleUserId == null || firstVehicleUserId == currentUserId) {
+        hasVehicle = true;
+      }
+    }
+
+    if (!hasVehicle) {
+      final added = await showDialog<bool>(
+        context: context,
+        barrierDismissible: false,
+        builder: (_) => BlocProvider(
+          create: (context) => AddVehicleCubit(
+            AddVehicleUseCase(AddVehicleRepositoryImpl()),
+          )..fetchVehicleConfig(),
+          child: const AddVehicleDialog(),
+        ),
+      );
+      if (added != true) return;
+
+      if (!mounted) return;
+      
+      // Await fetch to ensure state is updated
+      await context.read<ProfileCubit>().fetchVehicles();
+    }
+
+    if (!mounted) return;
+    
+    // Check if personal details are already filled
+    bool hasPersonalDetails = false;
+    final userData = appState.userData;
+    if (userData != null) {
+      if ((userData.lastName?.trim().isNotEmpty ?? false) &&
+          (userData.mobileNumber?.trim().isNotEmpty ?? false) &&
+          (userData.country?.trim().isNotEmpty ?? false) &&
+          (userData.state?.trim().isNotEmpty ?? false) &&
+          (userData.city?.trim().isNotEmpty ?? false)) {
+        hasPersonalDetails = true;
+      }
+    }
+
+    if (!hasPersonalDetails) {
+      final detailsUpdated = await showDialog<bool>(
+        context: context,
+        barrierDismissible: false,
+        builder: (_) => const PersonalDetailsDialog(),
+      );
+      if (detailsUpdated != true) return;
+      if (!mounted) return;
+    }
+
+    if (!mounted) return;
+    String vId = '';
+    final prefsId = await AppPreference.instance.get(key: AppPreference.KEY_SELECTED_UID);
+    if (prefsId.isNotEmpty) {
+      vId = prefsId;
+    } else if (widget.vehicleId != null && widget.vehicleId!.isNotEmpty) {
+      vId = widget.vehicleId!;
+    } else {
+      final state = context.read<ProfileCubit>().state;
+      if (state is VehiclesLoaded && state.vehicles.isNotEmpty) {
+        vId = state.vehicles.first.id ?? '';
+      }
+    }
+
+    if (!mounted) return;
+    context.read<DeviceInstallationCubit>().assignDevice(
+      vehicleId: vId,
+      imei: _scannedImei!,
+    );
+  }
+
+  void _showManualEntryDialog(BuildContext context) async {
+    final imei = await showDialog<String>(
       context: context,
       useRootNavigator: false,
       barrierDismissible: true,
@@ -489,6 +600,16 @@ class _DeviceInstallationScreenState extends State<DeviceInstallationScreen>
         child: ManualEntryDialog(vehicleId: widget.vehicleId ?? ''),
       ),
     );
+
+    if (imei != null && imei.isNotEmpty) {
+      if (!mounted) return;
+      setState(() {
+        _hasScanned = true;
+        _scannedImei = imei;
+      });
+      _cameraController.stop();
+      _handleContinue();
+    }
   }
 }
 

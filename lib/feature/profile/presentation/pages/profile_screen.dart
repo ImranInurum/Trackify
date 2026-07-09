@@ -78,12 +78,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   void _handleVehicleLock(BuildContext context, Vehicle vehicle) async {
-    if (vehicle.imei == null || vehicle.imei!.isEmpty) return;
+    if (vehicle.imei == null || vehicle.imei!.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(AppLocalizations.of(context)!.buyTrackifyDevice),
+          backgroundColor: Colors.orange,
+        ),
+      );
+      return;
+    }
 
     final imei = vehicle.imei!;
     final currentLockState = _vehicleLockStates[imei] ?? false;
     final targetLockState = !currentLockState;
-    
+
     final l10n = AppLocalizations.of(context)!;
 
     try {
@@ -97,7 +105,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              targetLockState ? l10n.vehicleLockedSuccessfully : l10n.vehicleUnlockedSuccessfully,
+              targetLockState
+                  ? l10n.vehicleLockedSuccessfully
+                  : l10n.vehicleUnlockedSuccessfully,
             ),
             backgroundColor: Colors.green,
           ),
@@ -129,7 +139,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ? userName[0].toUpperCase()
               : "G";
           final userMobile = user?.mobileNumber ?? "";
-          
+
           String profileImageUrl = '';
           if (user?.userProfile != null && user!.userProfile!.isNotEmpty) {
             String path = user.userProfile!.replaceAll('\\', '/');
@@ -137,7 +147,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
               profileImageUrl = path;
             } else {
               final base = ApiURL.baseURL;
-              profileImageUrl = path.startsWith('/') ? '$base$path' : '$base/$path';
+              profileImageUrl = path.startsWith('/')
+                  ? '$base$path'
+                  : '$base/$path';
             }
           }
 
@@ -178,22 +190,27 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                         color: Colors.white,
                                       ),
                                     ),
-                                    errorWidget: (context, url, error) => Center(
-                                      child: Text(
-                                        userInitials,
-                                        style: TextStyle(
-                                          fontSize: 28,
-                                          color: Theme.of(context).colorScheme.onPrimary,
+                                    errorWidget: (context, url, error) =>
+                                        Center(
+                                          child: Text(
+                                            userInitials,
+                                            style: TextStyle(
+                                              fontSize: 28,
+                                              color: Theme.of(
+                                                context,
+                                              ).colorScheme.onPrimary,
+                                            ),
+                                          ),
                                         ),
-                                      ),
-                                    ),
                                   )
                                 : Center(
                                     child: Text(
                                       userInitials,
                                       style: TextStyle(
                                         fontSize: 28,
-                                        color: Theme.of(context).colorScheme.onPrimary,
+                                        color: Theme.of(
+                                          context,
+                                        ).colorScheme.onPrimary,
                                       ),
                                     ),
                                   ),
@@ -379,9 +396,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   child: BlocBuilder<ProfileCubit, ProfileState>(
                     builder: (context, state) {
                       if (state is VehiclesLoading) {
-                        return const Center(
-                          child: CircularProgressIndicator(),
-                        );
+                        return const Center(child: CircularProgressIndicator());
                       }
                       if (state is VehiclesLoaded &&
                           state.vehicles.isNotEmpty) {
@@ -393,8 +408,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         );
                         final vehicle = state.vehicles.firstWhere(
                           (v) =>
-                              (selectedUid.isNotEmpty &&
-                                  v.id == selectedUid) ||
+                              (selectedUid.isNotEmpty && v.id == selectedUid) ||
                               (selectedImei.isNotEmpty &&
                                   v.imei == selectedImei),
                           orElse: () => state.vehicles.first,
@@ -408,14 +422,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             _vehicleLockStates[vehicle.imei] ?? false;
 
                         return VehicleCard(
-                          key: ValueKey('${vehicle.id}-$_vehicleCardRefreshCount'),
+                          key: ValueKey(
+                            '${vehicle.id}-$_vehicleCardRefreshCount',
+                          ),
                           context: context,
                           vehicle: vehicle,
                           hasDevice: true,
                           isLocked: isLocked,
                           onVehicleControl: () async {
-                            if (vehicle.id != null &&
-                                vehicle.id!.isNotEmpty) {
+                            if (vehicle.id != null && vehicle.id!.isNotEmpty) {
                               await AppPreference.instance.set(
                                 key: AppPreference.KEY_SELECTED_UID,
                                 value: vehicle.id!,
@@ -432,18 +447,29 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) =>
-                                      VehicleControlScreen(
-                                        isFromGarage: false,
-                                        passedVehicle: vehicle,
-                                      ),
+                                  builder: (context) => VehicleControlScreen(
+                                    isFromGarage: false,
+                                    passedVehicle: vehicle,
+                                  ),
                                 ),
                               );
                             }
                           },
-                          onLock: () =>
-                              _handleVehicleLock(context, vehicle),
+                          onLock: () => _handleVehicleLock(context, vehicle),
                           onRecharge: () {
+                            if (vehicle.imei == null || vehicle.imei!.isEmpty) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                    AppLocalizations.of(
+                                      context,
+                                    )!.buyTrackifyDevice,
+                                  ),
+                                  backgroundColor: Colors.orange,
+                                ),
+                              );
+                              return;
+                            }
                             Navigator.push(
                               context,
                               MaterialPageRoute(
@@ -452,6 +478,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             );
                           },
                           onRenew: () async {
+                            if (vehicle.imei == null || vehicle.imei!.isEmpty) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                    AppLocalizations.of(
+                                      context,
+                                    )!.buyTrackifyDevice,
+                                  ),
+                                  backgroundColor: Colors.orange,
+                                ),
+                              );
+                              return;
+                            }
                             final result = await Navigator.push(
                               context,
                               MaterialPageRoute(
@@ -599,7 +638,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             ),
                             Expanded(
                               child: RadioListTile<String>(
-                                title: Text(AppLocalizations.of(context)!.miles),
+                                title: Text(
+                                  AppLocalizations.of(context)!.miles,
+                                ),
                                 value: 'mi',
                                 groupValue: appState.distanceUnit,
                                 contentPadding: EdgeInsets.zero,
