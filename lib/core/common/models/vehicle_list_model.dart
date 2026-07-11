@@ -44,10 +44,19 @@ class Vehicle {
   final String? userId;
   final String? vehicleType;
   final String? fuelType;
+  final String? brandId;
   final String? vehicleMaker;
+  final String? modelId;
   final String? vehicleNumber;
   final String? vehicleModel;
   final String? imei;
+  final int? status;
+  final String? mileage;
+  final String? tankCapacity;
+  final String? warrantyStartDate;
+  final String? warrantyExpiryDate;
+  final String? warrantyStatus;
+  final String? warrantyType;
   final String? createdAt;
   final String? updatedAt;
   final CurrentLocation? currentLocation;
@@ -58,10 +67,19 @@ class Vehicle {
     this.userId,
     this.vehicleType,
     this.fuelType,
+    this.brandId,
     this.vehicleMaker,
+    this.modelId,
     this.vehicleNumber,
     this.vehicleModel,
     this.imei,
+    this.status,
+    this.mileage,
+    this.tankCapacity,
+    this.warrantyStartDate,
+    this.warrantyExpiryDate,
+    this.warrantyStatus,
+    this.warrantyType,
     this.createdAt,
     this.updatedAt,
     this.currentLocation,
@@ -74,10 +92,19 @@ class Vehicle {
       userId: json['userId'],
       vehicleType: json['vehicleType'],
       fuelType: json['fuelType'],
-      vehicleMaker: json['vehicleMaker'] ?? json['brandId'],
+      brandId: json['brandId'],
+      vehicleMaker: json['vehicleMaker'],
+      modelId: json['modelId'],
       vehicleNumber: json['vehicleNumber'],
-      vehicleModel: json['vehicleModel'] ?? json['modelId'],
+      vehicleModel: json['vehicleModel'],
       imei: json['imei'],
+      status: json['status'] is int ? json['status'] : int.tryParse(json['status']?.toString() ?? ''),
+      mileage: json['mileage']?.toString(),
+      tankCapacity: json['tankCapacity']?.toString(),
+      warrantyStartDate: json['warrantyStartDate'],
+      warrantyExpiryDate: json['warrantyExpiryDate'],
+      warrantyStatus: json['warrantyStatus'],
+      warrantyType: json['warrantyType'],
       createdAt: json['createdAt'],
       updatedAt: json['updatedAt'],
       currentLocation: json['currentLocation'] != null
@@ -92,10 +119,19 @@ class Vehicle {
     String? userId,
     String? vehicleType,
     String? fuelType,
+    String? brandId,
     String? vehicleMaker,
+    String? modelId,
     String? vehicleNumber,
     String? vehicleModel,
     String? imei,
+    int? status,
+    String? mileage,
+    String? tankCapacity,
+    String? warrantyStartDate,
+    String? warrantyExpiryDate,
+    String? warrantyStatus,
+    String? warrantyType,
     String? createdAt,
     String? updatedAt,
     CurrentLocation? currentLocation,
@@ -105,10 +141,19 @@ class Vehicle {
     userId: userId ?? this.userId,
     vehicleType: vehicleType ?? this.vehicleType,
     fuelType: fuelType ?? this.fuelType,
+    brandId: brandId ?? this.brandId,
     vehicleMaker: vehicleMaker ?? this.vehicleMaker,
+    modelId: modelId ?? this.modelId,
     vehicleNumber: vehicleNumber ?? this.vehicleNumber,
     vehicleModel: vehicleModel ?? this.vehicleModel,
     imei: imei ?? this.imei,
+    status: status ?? this.status,
+    mileage: mileage ?? this.mileage,
+    tankCapacity: tankCapacity ?? this.tankCapacity,
+    warrantyStartDate: warrantyStartDate ?? this.warrantyStartDate,
+    warrantyExpiryDate: warrantyExpiryDate ?? this.warrantyExpiryDate,
+    warrantyStatus: warrantyStatus ?? this.warrantyStatus,
+    warrantyType: warrantyType ?? this.warrantyType,
     createdAt: createdAt ?? this.createdAt,
     updatedAt: updatedAt ?? this.updatedAt,
     currentLocation: currentLocation ?? this.currentLocation,
@@ -121,10 +166,19 @@ class Vehicle {
       'userId': userId,
       'vehicleType': vehicleType,
       'fuelType': fuelType,
+      'brandId': brandId,
       'vehicleMaker': vehicleMaker,
+      'modelId': modelId,
       'vehicleNumber': vehicleNumber,
       'vehicleModel': vehicleModel,
       'imei': imei,
+      'status': status,
+      'mileage': mileage,
+      'tankCapacity': tankCapacity,
+      'warrantyStartDate': warrantyStartDate,
+      'warrantyExpiryDate': warrantyExpiryDate,
+      'warrantyStatus': warrantyStatus,
+      'warrantyType': warrantyType,
       'createdAt': createdAt,
       'updatedAt': updatedAt,
       'currentLocation': currentLocation?.toJson(),

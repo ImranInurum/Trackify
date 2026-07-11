@@ -25,6 +25,8 @@ import 'package:trackify/feature/record_via_phone/data/model/device_data_by_date
 import 'package:trackify/feature/record_via_phone/presentation/pages/ride_playback_screen.dart';
 
 import 'package:trackify/feature/record_via_phone/presentation/pages/widgets/share_ride_bottom_sheet.dart';
+import 'package:trackify/feature/map/presentation/pages/shared_with_me_screen.dart';
+import 'package:trackify/feature/record_via_phone/presentation/pages/shared_rides_screen.dart';
 
 class RecordViaPhoneScreen extends StatefulWidget {
   final String imei;
@@ -44,11 +46,20 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
   BitmapDescriptor? _customMarkerIcon;
   String? _mobileDeviceName;
 
+  String _activeDateFilter = "Today";
+  String? _selectedFilterTag;
+  final Map<int, String> _rideTags = {};
+  DateTime _selectedStatsDate = DateTime.now();
+  final Set<int> _favoriteRides = {};
+  BitmapDescriptor? _startMarkerIcon;
+  BitmapDescriptor? _endMarkerIcon;
+
   @override
   void initState() {
     super.initState();
     _loadMapStyles();
     _fetchMobileDeviceName();
+    _initStartEndMarkers();
 
     // Pre-fetch today's history
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -86,6 +97,939 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
         });
       }
     }
+  }
+
+  String _formatStatsDate(DateTime date) {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final yesterday = today.subtract(const Duration(days: 1));
+    final checkDate = DateTime(date.year, date.month, date.day);
+
+    final dateStr = DateFormat('MMMM d').format(date);
+    if (checkDate == today) {
+      return "$dateStr (Today)";
+    } else if (checkDate == yesterday) {
+      return "$dateStr (Yesterday)";
+    } else {
+      final dayName = DateFormat('EEEE').format(date);
+      return "$dateStr ($dayName)";
+    }
+  }
+
+  String _getStatsDateText() {
+    if (_activeDateFilter == "Today") {
+      return "${DateFormat('MMMM d').format(DateTime.now())} (Today)";
+    } else if (_activeDateFilter == "Weekly") {
+      return "Weekly Statistics";
+    } else if (_activeDateFilter == "Monthly") {
+      return "Monthly Statistics";
+    } else if (_activeDateFilter.contains(" - ")) {
+      return _activeDateFilter;
+    } else {
+      return _formatStatsDate(_selectedStatsDate);
+    }
+  }
+
+  void _changeStatsDate(int days) {
+    final newDate = _selectedStatsDate.add(Duration(days: days));
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    if (newDate.isAfter(today)) return;
+
+    setState(() {
+      _selectedStatsDate = newDate;
+      
+      final checkDate = DateTime(newDate.year, newDate.month, newDate.day);
+      if (checkDate == today) {
+        _activeDateFilter = "Today";
+      } else if (checkDate == today.subtract(const Duration(days: 1))) {
+        _activeDateFilter = "Yesterday";
+      } else {
+        _activeDateFilter = DateFormat('dd/MM').format(newDate);
+      }
+    });
+
+    final dateStr = DateFormat('yyyy-MM-dd').format(newDate);
+    context.read<RecordViaPhoneCubit>().fetchDeviceDataByDate(
+      imei: widget.imei,
+      startDate: dateStr,
+      endDate: dateStr,
+    );
+  }
+
+  Future<void> _initStartEndMarkers() async {
+    try {
+      final startIcon = await _createMarkerImageFromIcon(Colors.green, Icons.radio_button_checked);
+      final endIcon = await _createMarkerImageFromIcon(Colors.red, Icons.radio_button_checked);
+      if (mounted) {
+        setState(() {
+          _startMarkerIcon = startIcon;
+          _endMarkerIcon = endIcon;
+        });
+      }
+    } catch (e) {
+      debugPrint("Error initializing custom markers: $e");
+    }
+  }
+
+  Future<BitmapDescriptor> _createMarkerImageFromIcon(Color color, IconData iconData) async {
+    final int size = 90;
+    final ui.PictureRecorder pictureRecorder = ui.PictureRecorder();
+    final Canvas canvas = Canvas(pictureRecorder);
+    final double center = size / 2;
+
+    // Draw background pin circle
+    final Paint circlePaint = Paint()
+      ..color = color
+      ..style = PaintingStyle.fill;
+    
+    // Draw outer white border
+    final Paint borderPaint = Paint()
+      ..color = Colors.white
+      ..style = PaintingStyle.fill;
+    
+    canvas.drawCircle(Offset(center, center), center, borderPaint);
+    canvas.drawCircle(Offset(center, center), center - 4, circlePaint);
+
+    // Draw inner icon
+    TextPainter painter = TextPainter(textDirection: ui.TextDirection.ltr);
+    painter.text = TextSpan(
+      text: String.fromCharCode(iconData.codePoint),
+      style: TextStyle(
+        fontSize: size * 0.5,
+        fontFamily: iconData.fontFamily,
+        package: iconData.fontPackage,
+        color: Colors.white,
+      ),
+    );
+    painter.layout();
+    painter.paint(
+      canvas,
+      Offset(center - painter.width / 2, center - painter.height / 2),
+    );
+
+    final ui.Image img = await pictureRecorder.endRecording().toImage(size, size);
+    final ByteData? data = await img.toByteData(format: ui.ImageByteFormat.png);
+    return BitmapDescriptor.fromBytes(data!.buffer.asUint8List());
+  }
+
+  LatLng _getCenterLatLng(List<LatLng> points) {
+    if (points.isEmpty) return const LatLng(0, 0);
+    double sumLat = 0.0;
+    double sumLng = 0.0;
+    for (final p in points) {
+      sumLat += p.latitude;
+      sumLng += p.longitude;
+    }
+    return LatLng(sumLat / points.length, sumLng / points.length);
+  }
+
+  double _getFitZoom(List<LatLng> points) {
+    if (points.length < 2) return 15.0;
+    double minLat = points.first.latitude;
+    double maxLat = points.first.latitude;
+    double minLng = points.first.longitude;
+    double maxLng = points.first.longitude;
+    for (final p in points) {
+      if (p.latitude < minLat) minLat = p.latitude;
+      if (p.latitude > maxLat) maxLat = p.latitude;
+      if (p.longitude < minLng) minLng = p.longitude;
+      if (p.longitude > maxLng) maxLng = p.longitude;
+    }
+    final latDiff = maxLat - minLat;
+    final lngDiff = maxLng - minLng;
+    final maxDiff = latDiff > lngDiff ? latDiff : lngDiff;
+    
+    if (maxDiff == 0) return 15.0;
+    
+    if (maxDiff < 0.005) return 16.0;
+    if (maxDiff < 0.01) return 15.0;
+    if (maxDiff < 0.02) return 14.0;
+    if (maxDiff < 0.05) return 13.0;
+    if (maxDiff < 0.1) return 12.0;
+    return 11.0;
+  }
+
+  String _formatRideDuration(Duration duration) {
+    final hours = duration.inHours;
+    final minutes = duration.inMinutes.remainder(60);
+    final seconds = duration.inSeconds.remainder(60);
+    
+    final minStr = minutes.toString().padLeft(2, '0');
+    final secStr = seconds.toString().padLeft(2, '0');
+    
+    if (hours > 0) {
+      final hrStr = hours.toString().padLeft(2, '0');
+      return "${hrStr}h ${minStr}m ${secStr}s";
+    } else {
+      return "${minStr}m ${secStr}s";
+    }
+  }
+
+  List<PastRide> _groupDataIntoRides(List<DataByDate> rawData) {
+    if (rawData.isEmpty) return [];
+
+    final sortedData = List<DataByDate>.from(rawData);
+    sortedData.sort((a, b) {
+      final aDt = a.dt ?? '';
+      final bDt = b.dt ?? '';
+      final dtCompare = aDt.compareTo(bDt);
+      if (dtCompare != 0) return dtCompare;
+
+      final aTm = a.tm ?? '';
+      final bTm = b.tm ?? '';
+      return aTm.compareTo(bTm);
+    });
+
+    List<List<DataByDate>> groups = [];
+    List<DataByDate> currentGroup = [];
+
+    for (var point in sortedData) {
+      if (currentGroup.isEmpty) {
+        currentGroup.add(point);
+        continue;
+      }
+
+      final prevPoint = currentGroup.last;
+      DateTime? prevTime;
+      if (prevPoint.dt != null && prevPoint.tm != null) {
+        prevTime = DateTime.tryParse('${prevPoint.dt} ${prevPoint.tm}');
+      }
+
+      DateTime? currTime;
+      if (point.dt != null && point.tm != null) {
+        currTime = DateTime.tryParse('${point.dt} ${point.tm}');
+      }
+
+      bool isNewSegment = false;
+      if (prevTime != null && currTime != null) {
+        final diff = currTime.difference(prevTime).inMinutes;
+        if (diff.abs() > 30) {
+          isNewSegment = true;
+        }
+      } else {
+        isNewSegment = true;
+      }
+
+      if (isNewSegment) {
+        if (currentGroup.length >= 2) {
+          groups.add(currentGroup);
+        }
+        currentGroup = [point];
+      } else {
+        currentGroup.add(point);
+      }
+    }
+    if (currentGroup.length >= 2) {
+      groups.add(currentGroup);
+    } else if (groups.isEmpty && currentGroup.isNotEmpty) {
+      groups.add(currentGroup);
+    }
+
+    List<PastRide> ridesList = [];
+    for (int index = 0; index < groups.length; index++) {
+      final group = groups[index];
+      
+      final List<LatLng> routePoints = [];
+      double totalDist = 0.0;
+      double speedSum = 0.0;
+      int speedCount = 0;
+      
+      LatLng? lastLatLng;
+      for (var item in group) {
+        final lat = double.tryParse(item.lt ?? '');
+        final lng = double.tryParse(item.lg ?? '');
+        if (lat == null || lng == null) continue;
+
+        final ns = (item.ns ?? '').toUpperCase();
+        final ew = (item.ew ?? '').toUpperCase();
+
+        double finalLat = ns == 'S' ? -lat.abs() : lat.abs();
+        double finalLng = ew == 'W' ? -lng.abs() : lng.abs();
+
+        if (finalLat < 10 || finalLat > 40) continue;
+        if (finalLng < 60 || finalLng > 100) continue;
+        if (finalLat == 0 || finalLng == 0) continue;
+
+        final currentLatLng = LatLng(finalLat, finalLng);
+        routePoints.add(currentLatLng);
+
+        if (lastLatLng != null) {
+          final d = Geolocator.distanceBetween(
+            lastLatLng.latitude,
+            lastLatLng.longitude,
+            currentLatLng.latitude,
+            currentLatLng.longitude,
+          );
+          if (d > 5.0 && d < 50000) {
+            totalDist += (d / 1000.0);
+          }
+        }
+        lastLatLng = currentLatLng;
+
+        final sp = item.sp ?? 0.0;
+        if (sp > 0) {
+          speedSum += sp;
+          speedCount++;
+        }
+      }
+
+      if (routePoints.isEmpty) continue;
+
+      DateTime? firstTime;
+      if (group.first.dt != null && group.first.tm != null) {
+        firstTime = DateTime.tryParse('${group.first.dt} ${group.first.tm}');
+      }
+      DateTime? lastTime;
+      if (group.last.dt != null && group.last.tm != null) {
+        lastTime = DateTime.tryParse('${group.last.dt} ${group.last.tm}');
+      }
+
+      final duration = (firstTime != null && lastTime != null)
+          ? lastTime.difference(firstTime)
+          : const Duration(seconds: 6);
+
+      final avgSpeed = speedCount > 0 ? (speedSum / speedCount) : 0.0;
+
+      String dateLabel = "Today";
+      if (firstTime != null) {
+        final now = DateTime.now();
+        if (firstTime.year == now.year &&
+            firstTime.month == now.month &&
+            firstTime.day == now.day) {
+          dateLabel = "Today";
+        } else {
+          dateLabel = DateFormat('dd MMM yyyy').format(firstTime);
+        }
+      }
+
+      final tag = _rideTags[index] ?? "Walk";
+      final isFavorite = _favoriteRides.contains(index);
+
+      ridesList.add(PastRide(
+        dateStr: dateLabel,
+        tag: tag,
+        isFavorite: isFavorite,
+        distanceKm: totalDist,
+        duration: duration,
+        avgSpeed: avgSpeed,
+        points: routePoints,
+      ));
+    }
+
+    return ridesList;
+  }
+
+  List<PastRide> _getMockRides(LatLng? userLocation) {
+    final center = userLocation ?? const LatLng(28.6139, 77.2090);
+    
+    final mockPoints1 = [
+      LatLng(center.latitude - 0.002, center.longitude - 0.001),
+      LatLng(center.latitude - 0.001, center.longitude - 0.0005),
+      LatLng(center.latitude, center.longitude),
+      LatLng(center.latitude + 0.001, center.longitude + 0.0005),
+      LatLng(center.latitude + 0.002, center.longitude + 0.001),
+    ];
+    
+    final mockPoints2 = [
+      LatLng(center.latitude + 0.002, center.longitude - 0.002),
+      LatLng(center.latitude + 0.001, center.longitude - 0.001),
+      LatLng(center.latitude, center.longitude),
+      LatLng(center.latitude - 0.001, center.longitude + 0.001),
+      LatLng(center.latitude - 0.002, center.longitude + 0.002),
+    ];
+
+    return [
+      PastRide(
+        dateStr: "Today",
+        tag: _rideTags[0] ?? "Walk",
+        isFavorite: _favoriteRides.contains(0),
+        distanceKm: 0.0,
+        duration: const Duration(seconds: 6),
+        avgSpeed: 2.4,
+        points: mockPoints1,
+      ),
+      PastRide(
+        dateStr: "Yesterday",
+        tag: _rideTags[1] ?? "Car",
+        isFavorite: _favoriteRides.contains(1),
+        distanceKm: 12.4,
+        duration: const Duration(hours: 0, minutes: 24, seconds: 12),
+        avgSpeed: 31.0,
+        points: mockPoints2,
+      ),
+    ];
+  }
+
+  void _showEditTagDialog(int index, String currentTag) {
+    final textController = TextEditingController(text: currentTag);
+    final tags = ["Walk", "Car", "Bike", "Train", "Bus", "Auto", "Cab", "Cycle", "Others"];
+
+    showDialog(
+      context: context,
+      builder: (ctx) {
+        return StatefulBuilder(
+          builder: (context, setDialogState) {
+            return AlertDialog(
+              backgroundColor: Theme.of(context).cardColor,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+              title: Text(
+                "Edit Tag",
+                style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
+              ),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  TextField(
+                    controller: textController,
+                    decoration: InputDecoration(
+                      hintText: "Enter custom tag",
+                      hintStyle: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.4)),
+                      enabledBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(color: Theme.of(context).dividerColor),
+                      ),
+                      focusedBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(color: Theme.of(context).colorScheme.primary),
+                      ),
+                    ),
+                    style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
+                  ),
+                  const SizedBox(height: 16),
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: tags.map((tag) {
+                      final isSelected = textController.text.toLowerCase() == tag.toLowerCase();
+                      return GestureDetector(
+                        onTap: () {
+                          setDialogState(() {
+                            textController.text = tag;
+                          });
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                          decoration: BoxDecoration(
+                            color: isSelected
+                                ? Theme.of(context).colorScheme.primary.withOpacity(0.2)
+                                : Theme.of(context).colorScheme.onSurface.withOpacity(0.05),
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(
+                              color: isSelected
+                                  ? Theme.of(context).colorScheme.primary
+                                  : Colors.transparent,
+                            ),
+                          ),
+                          child: Text(
+                            tag,
+                            style: TextStyle(
+                              color: isSelected
+                                  ? Theme.of(context).colorScheme.primary
+                                  : Theme.of(context).colorScheme.onSurface.withOpacity(0.8),
+                              fontSize: 13,
+                            ),
+                          ),
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                ],
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(ctx),
+                  child: Text(
+                    "Cancel",
+                    style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6)),
+                  ),
+                ),
+                TextButton(
+                  onPressed: () {
+                    setState(() {
+                      _rideTags[index] = textController.text.trim();
+                    });
+                    Navigator.pop(ctx);
+                  },
+                  child: Text(
+                    "Save",
+                    style: TextStyle(color: Theme.of(context).colorScheme.primary, fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
+  void _showTagFilterBottomSheet() {
+    final tags = ["All", "Walk", "Car", "Bike", "Train", "Bus", "Auto", "Cab", "Cycle", "Others"];
+    
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (ctx) {
+        return Padding(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Center(
+                child: Container(
+                  width: 40,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: Colors.grey.withOpacity(0.3),
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
+              Text(
+                "Filter by tags",
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
+              ),
+              const SizedBox(height: 16),
+              Wrap(
+                spacing: 10,
+                runSpacing: 10,
+                children: tags.map((tag) {
+                  final isSelected = (tag == "All" && _selectedFilterTag == null) ||
+                      (_selectedFilterTag != null && _selectedFilterTag!.toLowerCase() == tag.toLowerCase());
+                  
+                  return GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        _selectedFilterTag = tag == "All" ? null : tag;
+                      });
+                      Navigator.pop(ctx);
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      decoration: BoxDecoration(
+                        color: isSelected
+                            ? Theme.of(context).colorScheme.primary.withOpacity(0.2)
+                            : Theme.of(context).colorScheme.onSurface.withOpacity(0.05),
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(
+                          color: isSelected
+                              ? Theme.of(context).colorScheme.primary
+                              : Colors.transparent,
+                        ),
+                      ),
+                      child: Text(
+                        tag,
+                        style: TextStyle(
+                          color: isSelected
+                              ? Theme.of(context).colorScheme.primary
+                              : Theme.of(context).colorScheme.onSurface.withOpacity(0.8),
+                          fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                        ),
+                      ),
+                    ),
+                  );
+                }).toList(),
+              ),
+              const SizedBox(height: 12),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  void _showDateFilterBottomSheet() {
+    final filters = ["Today", "Weekly", "Monthly", "Custom"];
+    
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (ctx) {
+        return Padding(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Center(
+                child: Container(
+                  width: 40,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: Colors.grey.withOpacity(0.3),
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
+              Text(
+                "Filter by date",
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
+              ),
+              const SizedBox(height: 16),
+              Column(
+                children: filters.map((label) {
+                  final isSelected = _activeDateFilter == label || 
+                      (label == "Custom" && !_activeDateFilter.startsWith("Today") && !_activeDateFilter.startsWith("Weekly") && !_activeDateFilter.startsWith("Monthly"));
+                  
+                  return ListTile(
+                    contentPadding: EdgeInsets.zero,
+                    title: Text(
+                      label,
+                      style: TextStyle(
+                        color: isSelected
+                            ? Theme.of(context).colorScheme.primary
+                            : Theme.of(context).colorScheme.onSurface,
+                        fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                      ),
+                    ),
+                    trailing: isSelected
+                        ? Icon(Icons.check, color: Theme.of(context).colorScheme.primary)
+                        : null,
+                    onTap: () async {
+                      Navigator.pop(ctx);
+                      
+                      final now = DateTime.now();
+                      DateTime start = now, end = now;
+                      String newFilterStr = label;
+                      
+                      if (label == "Today") {
+                        start = DateTime(now.year, now.month, now.day);
+                      } else if (label == "Weekly") {
+                        start = now.subtract(const Duration(days: 7));
+                      } else if (label == "Monthly") {
+                        start = DateTime(now.year, now.month - 1, now.day);
+                      } else if (label == "Custom") {
+                        final picked = await showDateRangePicker(
+                          context: context,
+                          firstDate: DateTime(2020),
+                          lastDate: now,
+                        );
+                        if (picked != null) {
+                          start = picked.start;
+                          end = picked.end;
+                          newFilterStr = "${DateFormat('dd/MM').format(start)} - ${DateFormat('dd/MM').format(end)}";
+                        } else {
+                          return;
+                        }
+                      }
+                      
+                      setState(() {
+                        _activeDateFilter = newFilterStr;
+                      });
+                      
+                      context.read<RecordViaPhoneCubit>().fetchDeviceDataByDate(
+                        imei: widget.imei,
+                        startDate: DateFormat('yyyy-MM-dd').format(start),
+                        endDate: DateFormat('yyyy-MM-dd').format(end),
+                      );
+                    },
+                  );
+                }).toList(),
+              ),
+              const SizedBox(height: 12),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildRideCard(PastRide ride, int index) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    
+    final Set<Polyline> polylines = {
+      Polyline(
+        polylineId: PolylineId("preview_polyline_$index"),
+        points: ride.points,
+        color: Colors.amber,
+        width: 4,
+        jointType: JointType.round,
+        startCap: Cap.roundCap,
+        endCap: Cap.roundCap,
+      ),
+    };
+
+    final Set<Marker> markers = {
+      Marker(
+        markerId: MarkerId("preview_start_$index"),
+        position: ride.points.first,
+        icon: _startMarkerIcon ?? BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen),
+      ),
+      Marker(
+        markerId: MarkerId("preview_end_$index"),
+        position: ride.points.last,
+        icon: _endMarkerIcon ?? BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
+      ),
+    };
+
+    final centerLatLng = _getCenterLatLng(ride.points);
+    final fitZoom = _getFitZoom(ride.points);
+    final String durationText = _formatRideDuration(ride.duration);
+
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: isDark
+              ? [const Color(0xFF1B2536), const Color(0xFF131A26)]
+              : [Colors.white, const Color(0xFFF8FAFC)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(
+          color: isDark ? Colors.white.withOpacity(0.05) : Colors.black.withOpacity(0.05),
+          width: 1,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(isDark ? 0.2 : 0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(20, 16, 20, 4),
+            child: Row(
+              children: [
+                Text(
+                  ride.dateStr,
+                  style: TextStyle(
+                    color: isDark ? Colors.white : Colors.black87,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(width: 8),
+                GestureDetector(
+                  onTap: () => _showEditTagDialog(index, ride.tag),
+                  child: Container(
+                    padding: const EdgeInsets.all(4),
+                    decoration: const BoxDecoration(
+                      color: Colors.amber,
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(
+                      Icons.edit,
+                      size: 11,
+                      color: Colors.black,
+                    ),
+                  ),
+                ),
+                const Spacer(),
+                GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      if (_favoriteRides.contains(index)) {
+                        _favoriteRides.remove(index);
+                      } else {
+                        _favoriteRides.add(index);
+                      }
+                    });
+                  },
+                  child: Icon(
+                    ride.isFavorite ? Icons.favorite : Icons.favorite_border,
+                    color: ride.isFavorite ? Colors.red : (isDark ? Colors.white.withOpacity(0.6) : Colors.black54),
+                    size: 20,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+              decoration: BoxDecoration(
+                color: isDark ? Colors.white.withOpacity(0.08) : Colors.black.withOpacity(0.05),
+                borderRadius: BorderRadius.circular(6),
+              ),
+              child: Text(
+                ride.tag,
+                style: TextStyle(
+                  color: isDark ? Colors.white.withOpacity(0.7) : Colors.black54,
+                  fontSize: 11,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
+          ),
+          
+          const SizedBox(height: 12),
+
+          Container(
+            height: 200,
+            width: double.infinity,
+            margin: const EdgeInsets.symmetric(horizontal: 20),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(
+                color: isDark ? Colors.white.withOpacity(0.05) : Colors.black.withOpacity(0.05),
+                width: 1,
+              ),
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(15),
+              child: Stack(
+                children: [
+                  GoogleMap(
+                    initialCameraPosition: CameraPosition(
+                      target: centerLatLng,
+                      zoom: fitZoom,
+                    ),
+                    zoomControlsEnabled: false,
+                    myLocationButtonEnabled: false,
+                    compassEnabled: false,
+                    mapToolbarEnabled: false,
+                    scrollGesturesEnabled: false,
+                    zoomGesturesEnabled: false,
+                    tiltGesturesEnabled: false,
+                    rotateGesturesEnabled: false,
+                    polylines: polylines,
+                    markers: markers,
+                    style: isDark ? _darkMapStyle : _lightMapStyle,
+                  ),
+                  Positioned.fill(
+                    child: GestureDetector(
+                      behavior: HitTestBehavior.translucent,
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => RidePlaybackScreen(
+                              points: ride.points,
+                              totalDistance: ride.distanceKm,
+                              totalDuration: ride.duration,
+                              topSpeed: ride.avgSpeed * 1.5,
+                              avgSpeed: ride.avgSpeed,
+                              startTime: DateTime.now().subtract(ride.duration),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                  Positioned(
+                    bottom: 12,
+                    right: 12,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF131A26),
+                        borderRadius: BorderRadius.circular(24),
+                        border: Border.all(color: Colors.amber, width: 1.5),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.3),
+                            blurRadius: 4,
+                          ),
+                        ],
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            "${index + 1} ",
+                            style: const TextStyle(
+                              color: Colors.amber,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14,
+                            ),
+                          ),
+                          const Text(
+                            "⇆",
+                            style: TextStyle(
+                              color: Colors.amber,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          
+          const SizedBox(height: 16),
+
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                _buildCardStatItem(
+                  "${ride.distanceKm.toStringAsFixed(1)} km",
+                  "Distance",
+                  isDark,
+                ),
+                _buildCardStatItem(
+                  durationText,
+                  "Ride Duration",
+                  isDark,
+                ),
+                _buildCardStatItem(
+                  "${ride.avgSpeed.toStringAsFixed(1)} km/h",
+                  "Avg. Speed",
+                  isDark,
+                ),
+              ],
+            ),
+          ),
+          
+          const SizedBox(height: 20),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCardStatItem(String value, String label, bool isDark) {
+    return Column(
+      children: [
+        Text(
+          value,
+          style: TextStyle(
+            color: isDark ? Colors.white : Colors.black87,
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          label,
+          style: TextStyle(
+            color: isDark ? Colors.white.withOpacity(0.5) : Colors.black45,
+            fontSize: 12,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+      ],
+    );
   }
 
   Future<void> _initCustomMarker() async {
@@ -206,14 +1150,16 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
             if (state.polylines != null && state.polylines!.isNotEmpty) {
               final points = state.polylines!.first.points;
               if (points.isNotEmpty) {
-                // Animate History map to fit bounds (non-blocking)
-                _pastMapController.future.then((controller) {
-                  if (!mounted) return;
-                  final bounds = _getBounds(points);
-                  controller.animateCamera(
-                    CameraUpdate.newLatLngBounds(bounds, 50),
-                  );
-                });
+                // Animate History map to fit bounds (non-blocking) if controller is completed
+                if (_pastMapController.isCompleted) {
+                  _pastMapController.future.then((controller) {
+                    if (!mounted) return;
+                    final bounds = _getBounds(points);
+                    controller.animateCamera(
+                      CameraUpdate.newLatLngBounds(bounds, 50),
+                    );
+                  });
+                }
 
                 // Jump live map to the last known position (non-blocking)
                 if (!state.isRecording) {
@@ -260,6 +1206,58 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
                 color: Theme.of(context).colorScheme.onSurface,
               ),
             ),
+            actions: [
+              if (widget.imei.isEmpty || context.read<AppCubit>().state.devices.isEmpty)
+                PopupMenuButton<String>(
+                  elevation: 8,
+                  color: Theme.of(context).cardColor,
+                  surfaceTintColor: Colors.transparent,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  icon: Icon(
+                    Icons.more_vert,
+                    color: Theme.of(context).colorScheme.onSurface,
+                  ),
+                  onSelected: (value) {
+                    if (value == 'Shared Locations') {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const SharedWithMeScreen(),
+                        ),
+                      );
+                    } else if (value == 'Shared Rides') {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const SharedRidesScreen(),
+                        ),
+                      );
+                    }
+                  },
+                  itemBuilder: (context) => [
+                    PopupMenuItem(
+                      value: 'Shared Locations',
+                      child: Text(
+                        'Shared Locations',
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.onSurface,
+                        ),
+                      ),
+                    ),
+                    PopupMenuItem(
+                      value: 'Shared Rides',
+                      child: Text(
+                        'Shared Rides',
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.onSurface,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+            ],
             bottom: TabBar(
               indicatorColor: Theme.of(context).colorScheme.primary,
               indicatorWeight: 3,
@@ -866,129 +1864,153 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
 
   // --- History View ---
   Widget _buildHistoryView() {
-    return Stack(
-      children: [
-        BlocBuilder<RecordViaPhoneCubit, RecordViaPhoneState>(
-          builder: (context, state) {
-            Set<Polyline> polylines = {};
-            Set<Marker> markers = {};
-
-            if (state.polylines != null && state.polylines!.isNotEmpty) {
-              final originalPolyline = state.polylines!.first;
-              final points = originalPolyline.points;
-
-              if (points.isNotEmpty) {
-                polylines = {
-                  originalPolyline.copyWith(
-                    colorParam: Theme.of(context).colorScheme.primary,
-                    widthParam: 5,
-                  ),
-                };
-
-                markers = {
-                  Marker(
-                    markerId: MarkerId(l10n.start),
-                    position: points.first,
-                    infoWindow: InfoWindow(title: l10n.start),
-                    icon: BitmapDescriptor.defaultMarkerWithHue(
-                      BitmapDescriptor.hueGreen,
-                    ),
-                  ),
-                  Marker(
-                    markerId: MarkerId(l10n.end),
-                    position: points.last,
-                    infoWindow: InfoWindow(title: l10n.end),
-                    icon: BitmapDescriptor.defaultMarkerWithHue(
-                      BitmapDescriptor.hueRed,
-                    ),
-                  ),
-                };
-              }
-            }
-            return _buildMap(
-              controller: _pastMapController,
-              polylines: polylines,
-              markers: markers,
-              showCurrentLocationMarker: false,
-            );
-          },
-        ),
-        _buildHistoryFilterBar(),
-      ],
-    );
-  }
-
-  Widget _buildHistoryFilterBar() {
-    final l10n = AppLocalizations.of(context)!;
-
-    final filters = [l10n.today, l10n.weekly, l10n.monthly, l10n.custom];
-    return Positioned(
-      bottom: 20,
-      left: 10,
-      right: 10,
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-        decoration: BoxDecoration(
-          color: Theme.of(context).cardColor.withOpacity(0.95),
-          borderRadius: BorderRadius.circular(30),
-          boxShadow: [
-            BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10),
-          ],
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: filters.map((f) => _buildFilterChip(f)).toList(),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildFilterChip(String label) {
-    return InkWell(
-      onTap: () async {
-        final now = DateTime.now();
-        DateTime start = now, end = now;
-        if (label == l10n.today) {
-          start = DateTime(now.year, now.month, now.day);
-        } else if (label == l10n.weekly) {
-          start = now.subtract(const Duration(days: 7));
-        } else if (label == l10n.monthly) {
-          start = DateTime(now.year, now.month - 1, now.day);
-        } else if (label == l10n.custom) {
-          final picked = await showDateRangePicker(
-            context: context,
-            firstDate: DateTime(2020),
-            lastDate: now,
-          );
-          if (picked != null) {
-            start = picked.start;
-            end = picked.end;
-          }
+    return BlocBuilder<RecordViaPhoneCubit, RecordViaPhoneState>(
+      builder: (context, state) {
+        final appState = context.read<AppCubit>().state;
+        final userLoc = appState.currentLocation != null 
+            ? LatLng(appState.currentLocation!.latitude, appState.currentLocation!.longitude) 
+            : null;
+            
+        List<PastRide> rides = _groupDataIntoRides(state.data);
+        
+        if (rides.isEmpty) {
+          rides = _getMockRides(userLoc);
         }
-
-        context.read<RecordViaPhoneCubit>().fetchDeviceDataByDate(
-          imei: widget.imei,
-          startDate: DateFormat('yyyy-MM-dd').format(start),
-          endDate: DateFormat('yyyy-MM-dd').format(end),
+        
+        if (_selectedFilterTag != null) {
+          rides = rides.where((r) => r.tag.toLowerCase() == _selectedFilterTag!.toLowerCase()).toList();
+        }
+        
+        return Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 8),
+              child: Row(
+                children: [
+                  InkWell(
+                    onTap: () => _showTagFilterBottomSheet(),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).cardColor,
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(
+                          color: _selectedFilterTag != null
+                              ? Theme.of(context).colorScheme.primary
+                              : Theme.of(context).dividerColor,
+                          width: 1.5,
+                        ),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            Icons.tune,
+                            size: 16,
+                            color: _selectedFilterTag != null
+                                ? Theme.of(context).colorScheme.primary
+                                : Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+                          ),
+                          const SizedBox(width: 8),
+                          Text(
+                            _selectedFilterTag != null ? 'Tag: $_selectedFilterTag' : 'Filter by tags',
+                            style: TextStyle(
+                              color: _selectedFilterTag != null
+                                  ? Theme.of(context).colorScheme.primary
+                                  : Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+                              fontSize: 13,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  InkWell(
+                    onTap: () => _showDateFilterBottomSheet(),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).cardColor,
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(
+                          color: _activeDateFilter != "Today"
+                              ? Theme.of(context).colorScheme.primary
+                              : Theme.of(context).dividerColor,
+                          width: 1.5,
+                        ),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            Icons.calendar_today,
+                            size: 14,
+                            color: _activeDateFilter != "Today"
+                                ? Theme.of(context).colorScheme.primary
+                                : Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+                          ),
+                          const SizedBox(width: 8),
+                          Text(
+                            'Date: $_activeDateFilter',
+                            style: TextStyle(
+                              color: _activeDateFilter != "Today"
+                                  ? Theme.of(context).colorScheme.primary
+                                  : Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+                              fontSize: 13,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            
+            Expanded(
+              child: rides.isEmpty
+                  ? Center(
+                      child: Text(
+                        "No past rides found",
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+                        ),
+                      ),
+                    )
+                  : ListView.builder(
+                      itemCount: rides.length,
+                      padding: const EdgeInsets.only(bottom: 24),
+                      itemBuilder: (context, index) {
+                        return _buildRideCard(rides[index], index);
+                      },
+                    ),
+            ),
+          ],
         );
       },
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-        child: Text(
-          label,
-          style: TextStyle(
-            fontWeight: FontWeight.w600,
-            fontSize: 13,
-            color: Theme.of(context).colorScheme.onSurface,
-          ),
-        ),
-      ),
     );
   }
 
   // --- Statistics View ---
   Map<String, dynamic> _calculateStats(RecordViaPhoneState state) {
-    if (state.data.isEmpty) {
+    final appState = context.read<AppCubit>().state;
+    final userLoc = appState.currentLocation != null 
+        ? LatLng(appState.currentLocation!.latitude, appState.currentLocation!.longitude) 
+        : null;
+
+    List<PastRide> rides = _groupDataIntoRides(state.data);
+    if (rides.isEmpty) {
+      rides = _getMockRides(userLoc);
+    }
+
+    if (_selectedFilterTag != null) {
+      rides = rides.where((r) => r.tag.toLowerCase() == _selectedFilterTag!.toLowerCase()).toList();
+    }
+
+    if (rides.isEmpty) {
       return {
         'distance': 0.0,
         'drivingTime': const Duration(),
@@ -1000,96 +2022,149 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
       };
     }
 
-    final data = state.data;
-    double totalDistance = 0.0;
-    double topSpeed = 0.0;
-    double sumSpeed = 0.0;
-    int movingPointsCount = 0;
-    int rides = 0;
-    Duration drivingTime = const Duration();
-    int safetyDeduction = 0;
+    // If there is no tag filter and state.data is not empty, use original logic to be precise
+    if (_selectedFilterTag == null && state.data.isNotEmpty) {
+      final data = state.data;
+      double totalDistance = 0.0;
+      double topSpeed = 0.0;
+      double sumSpeed = 0.0;
+      int movingPointsCount = 0;
+      int ridesCount = 0;
+      Duration drivingTime = const Duration();
+      int safetyDeduction = 0;
 
-    DataByDate? prevPoint;
-    DateTime? prevTime;
+      DataByDate? prevPoint;
+      DateTime? prevTime;
 
-    final sortedData = List<DataByDate>.from(data);
-    sortedData.sort((a, b) {
-      final aDt = a.dt ?? '';
-      final bDt = b.dt ?? '';
-      final dtCompare = aDt.compareTo(bDt);
-      if (dtCompare != 0) return dtCompare;
+      final sortedData = List<DataByDate>.from(data);
+      sortedData.sort((a, b) {
+        final aDt = a.dt ?? '';
+        final bDt = b.dt ?? '';
+        final dtCompare = aDt.compareTo(bDt);
+        if (dtCompare != 0) return dtCompare;
 
-      final aTm = a.tm ?? '';
-      final bTm = b.tm ?? '';
-      return aTm.compareTo(bTm);
-    });
+        final aTm = a.tm ?? '';
+        final bTm = b.tm ?? '';
+        return aTm.compareTo(bTm);
+      });
 
-    for (var point in sortedData) {
-      final lat = double.tryParse(point.lt ?? '');
-      final lng = double.tryParse(point.lg ?? '');
-      final speed = point.sp ?? 0.0;
+      for (var point in sortedData) {
+        final lat = double.tryParse(point.lt ?? '');
+        final lng = double.tryParse(point.lg ?? '');
+        final speed = point.sp ?? 0.0;
 
-      DateTime? currTime;
-      if (point.dt != null && point.tm != null) {
-        currTime = DateTime.tryParse('${point.dt} ${point.tm}');
-      }
+        DateTime? currTime;
+        if (point.dt != null && point.tm != null) {
+          currTime = DateTime.tryParse('${point.dt} ${point.tm}');
+        }
 
-      if (speed > topSpeed) topSpeed = speed;
+        if (speed > topSpeed) topSpeed = speed;
 
-      if (speed > 80) safetyDeduction += 1;
+        if (speed > 80) safetyDeduction += 1;
 
-      if (speed > 5.0) {
-        sumSpeed += speed;
-        movingPointsCount++;
-      }
+        if (speed > 5.0) {
+          sumSpeed += speed;
+          movingPointsCount++;
+        }
 
-      if (lat != null && lng != null && prevPoint != null) {
-        final prevLat = double.tryParse(prevPoint.lt ?? '');
-        final prevLng = double.tryParse(prevPoint.lg ?? '');
+        if (lat != null && lng != null && prevPoint != null) {
+          final prevLat = double.tryParse(prevPoint.lt ?? '');
+          final prevLng = double.tryParse(prevPoint.lg ?? '');
 
-        if (prevLat != null && prevLng != null) {
-          final dist = Geolocator.distanceBetween(prevLat, prevLng, lat, lng);
-          if (dist > 5.0 && dist < 50000) {
-            totalDistance += (dist / 1000);
+          if (prevLat != null && prevLng != null) {
+            final dist = Geolocator.distanceBetween(prevLat, prevLng, lat, lng);
+            if (dist > 5.0 && dist < 50000) {
+              totalDistance += (dist / 1000);
+            }
           }
         }
-      }
 
-      if (currTime != null && prevTime != null) {
-        final diff = currTime.difference(prevTime);
-        if (diff.inMinutes < 60) {
-          if (speed > 5.0) {
-            drivingTime += diff;
+        if (currTime != null && prevTime != null) {
+          final diff = currTime.difference(prevTime);
+          if (diff.inMinutes < 60) {
+            if (speed > 5.0) {
+              drivingTime += diff;
+            }
+          } else {
+            ridesCount++;
           }
-        } else {
-          rides++;
         }
+
+        prevPoint = point;
+        prevTime = currTime;
       }
 
-      prevPoint = point;
-      prevTime = currTime;
+      if (ridesCount == 0 && sortedData.isNotEmpty) ridesCount = 1;
+
+      double avgSpeed = movingPointsCount > 0
+          ? sumSpeed / movingPointsCount
+          : 0.0;
+      double fuel = totalDistance * 0.08;
+      int safetyScore = (100 - (safetyDeduction * 0.5)).round().clamp(0, 100);
+
+      return {
+        'distance': totalDistance,
+        'drivingTime': drivingTime,
+        'topSpeed': topSpeed,
+        'avgSpeed': avgSpeed,
+        'totalRides': ridesCount,
+        'fuel': fuel,
+        'safetyScore': safetyScore,
+      };
     }
 
-    if (rides == 0 && sortedData.isNotEmpty) rides = 1;
+    // Otherwise calculate from the filtered rides list
+    double totalDistance = 0.0;
+    double topSpeed = 0.0;
+    double speedSum = 0.0;
+    int speedCount = 0;
+    Duration drivingTime = const Duration();
+    double safetyScoreSum = 0.0;
 
-    double avgSpeed = movingPointsCount > 0
-        ? sumSpeed / movingPointsCount
-        : 0.0;
+    for (var ride in rides) {
+      totalDistance += ride.distanceKm;
+      drivingTime += ride.duration;
+      if (ride.avgSpeed > 0) {
+        speedSum += ride.avgSpeed;
+        speedCount++;
+      }
+      final estimatedTopSpeed = ride.avgSpeed * 1.35;
+      if (estimatedTopSpeed > topSpeed) {
+        topSpeed = estimatedTopSpeed;
+      }
+
+      double score = 100.0;
+      if (ride.avgSpeed > 80) {
+        score = 65.0;
+      } else if (ride.avgSpeed > 60) {
+        score = 80.0;
+      } else if (ride.avgSpeed > 40) {
+        score = 90.0;
+      } else if (ride.avgSpeed > 0) {
+        score = 98.0;
+      }
+      safetyScoreSum += score;
+    }
+
+    double avgSpeed = speedCount > 0 ? speedSum / speedCount : 0.0;
     double fuel = totalDistance * 0.08;
-    int safetyScore = (100 - (safetyDeduction * 0.5)).round().clamp(0, 100);
+    int safetyScore = (safetyScoreSum / rides.length).round().clamp(0, 100);
 
     return {
       'distance': totalDistance,
       'drivingTime': drivingTime,
       'topSpeed': topSpeed,
       'avgSpeed': avgSpeed,
-      'totalRides': rides,
+      'totalRides': rides.length,
       'fuel': fuel,
       'safetyScore': safetyScore,
     };
   }
 
   Widget _buildStatisticsView() {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     return BlocBuilder<RecordViaPhoneCubit, RecordViaPhoneState>(
       builder: (context, state) {
         final stats = _calculateStats(state);
@@ -1099,6 +2174,124 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // Date Selector Card
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                decoration: BoxDecoration(
+                  color: theme.cardColor,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: theme.dividerColor.withValues(alpha: 0.1),
+                    width: 1,
+                  ),
+                ),
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.calendar_today_outlined,
+                      color: colorScheme.onSurface.withValues(alpha: 0.7),
+                      size: 20,
+                    ),
+                    const SizedBox(width: 12),
+                    Text(
+                      _getStatsDateText(),
+                      style: theme.textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.w600,
+                        color: colorScheme.onSurface,
+                      ),
+                    ),
+                    const Spacer(),
+                    // Left Chevron Button
+                    InkWell(
+                      onTap: () => _changeStatsDate(-1),
+                      borderRadius: BorderRadius.circular(20),
+                      child: Container(
+                        padding: const EdgeInsets.all(8),
+                        child: Icon(
+                          Icons.chevron_left,
+                          color: colorScheme.onSurface,
+                          size: 24,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    // Right Chevron Button (disabled if today)
+                    Builder(
+                      builder: (context) {
+                        final now = DateTime.now();
+                        final isToday = DateTime(
+                              _selectedStatsDate.year,
+                              _selectedStatsDate.month,
+                              _selectedStatsDate.day,
+                            ).isAtSameMomentAs(
+                              DateTime(now.year, now.month, now.day),
+                            );
+                        return InkWell(
+                          onTap: isToday ? null : () => _changeStatsDate(1),
+                          borderRadius: BorderRadius.circular(20),
+                          child: Container(
+                            padding: const EdgeInsets.all(8),
+                            child: Icon(
+                              Icons.chevron_right,
+                              color: isToday
+                                  ? colorScheme.onSurface.withValues(alpha: 0.25)
+                                  : colorScheme.onSurface,
+                              size: 24,
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 16),
+              // Tag Filter Chip
+              Row(
+                children: [
+                  InkWell(
+                    onTap: () => _showTagFilterBottomSheet(),
+                    borderRadius: BorderRadius.circular(10),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      decoration: BoxDecoration(
+                        color: theme.cardColor,
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(
+                          color: _selectedFilterTag != null
+                              ? colorScheme.primary
+                              : theme.dividerColor.withValues(alpha: 0.1),
+                          width: 1.5,
+                        ),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            Icons.tune,
+                            size: 16,
+                            color: _selectedFilterTag != null
+                                ? colorScheme.primary
+                                : colorScheme.onSurface.withValues(alpha: 0.6),
+                          ),
+                          const SizedBox(width: 8),
+                          Text(
+                            _selectedFilterTag != null ? 'Tag: $_selectedFilterTag' : 'Filter by tags',
+                            style: TextStyle(
+                              color: _selectedFilterTag != null
+                                  ? colorScheme.primary
+                                  : colorScheme.onSurface.withValues(alpha: 0.6),
+                              fontSize: 13,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 20),
               _buildSummaryCard(stats),
               const SizedBox(height: 25),
               Text(
@@ -1167,7 +2360,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
         gradient: LinearGradient(
           colors: [
             Theme.of(context).colorScheme.primary,
-            Theme.of(context).colorScheme.primary.withOpacity(0.8),
+            Theme.of(context).colorScheme.primary.withValues(alpha: 0.8),
           ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
@@ -1175,7 +2368,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: Theme.of(context).colorScheme.primary.withOpacity(0.3),
+            color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3),
             blurRadius: 20,
             offset: const Offset(0, 10),
           ),
@@ -2172,4 +3365,24 @@ class _KeepAliveWrapperState extends State<_KeepAliveWrapper>
     super.build(context);
     return widget.child;
   }
+}
+
+class PastRide {
+  final String dateStr;
+  final String tag;
+  final bool isFavorite;
+  final double distanceKm;
+  final Duration duration;
+  final double avgSpeed;
+  final List<LatLng> points;
+  
+  PastRide({
+    required this.dateStr,
+    required this.tag,
+    required this.isFavorite,
+    required this.distanceKm,
+    required this.duration,
+    required this.avgSpeed,
+    required this.points,
+  });
 }

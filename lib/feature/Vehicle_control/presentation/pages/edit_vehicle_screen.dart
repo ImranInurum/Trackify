@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../../add_vehicle_and_device/add_vehicle/data/models/vehicle_config_models.dart';
@@ -6,6 +7,7 @@ import '../../../add_vehicle_and_device/add_vehicle/data/repository/add_vehicle_
 import '../../../add_vehicle_and_device/add_vehicle/domain/use_case/add_vehicle_use_case.dart';
 import '../../../add_vehicle_and_device/add_vehicle/presentation/cubit/add_vehicle_cubit.dart';
 import '../../../add_vehicle_and_device/add_vehicle/presentation/cubit/add_vehicle_state.dart';
+import '../../../add_vehicle_and_device/add_vehicle/presentation/widgets/vehicle_number_field.dart';
 import '../../domain/entities/vehicle_control_entity.dart';
 import '../cubit/vehicle_control_cubit.dart';
 
@@ -205,9 +207,22 @@ class _EditVehicleViewState extends State<_EditVehicleView> {
     _tryPreselectModel(state, cubit);
   }
 
+  bool _isValidVehicleNumber(String number) {
+    final normalized = number.replaceAll(' ', '').replaceAll('-', '').toUpperCase();
+    if (normalized.isEmpty) return false;
+    final indianRegex = RegExp(r'^[A-Z]{2}[0-9]{1,2}[A-Z]{1,3}[0-9]{1,4}$');
+    final swissRegex = RegExp(r'^[A-Z]{2}[0-9]{1,6}$');
+    final germanRegex = RegExp(r'^[A-Z]{2,5}[0-9]{1,4}[EH]?$');
+    final italyRegex = RegExp(r'^[A-Z]{2}[0-9]{3}[A-Z]{2}$');
+    return indianRegex.hasMatch(normalized) ||
+        swissRegex.hasMatch(normalized) ||
+        germanRegex.hasMatch(normalized) ||
+        italyRegex.hasMatch(normalized);
+  }
+
   IconData _getVehicleIcon(String type) {
     final t = type.toLowerCase();
-    if (t.contains('2') || t.contains('two') || t.contains('bike') || t.contains('scooter') || t.contains('motor')) {
+    if (t.contains('2') || t.contains('two') || t.contains('bike') || t.contains('scooter') || t.contains('motor') || t.contains('moped')) {
       return Icons.two_wheeler_rounded;
     } else if (t.contains('3') || t.contains('rickshaw') || t.contains('rikshaw') || t.contains('auto')) {
       return Icons.electric_rickshaw_rounded;
@@ -221,39 +236,33 @@ class _EditVehicleViewState extends State<_EditVehicleView> {
       return Icons.agriculture_rounded;
     } else if (t.contains('boat') || t.contains('ship')) {
       return Icons.directions_boat_rounded;
-    } else if (t.contains('4') || t.contains('four') || t.contains('car') || t.contains('suv')) {
+    } else if (t.contains('car') || t.contains('suv') || t.contains('four') || t.contains('4')) {
       return Icons.directions_car_rounded;
+    } else if (t.contains('commercial ev') || t.contains('ev')) {
+      return Icons.electric_car_rounded;
     } else {
       return Icons.commute_rounded; // Generic vehicle icon fallback
     }
   }
 
   String _getVehicleLabel(String type, AppLocalizations l10n) {
-    final t = type.toLowerCase();
-    if (t.contains('2') ||
-        t.contains('two') ||
-        t.contains('bike') ||
-        t.contains('scooter') ||
-        t.contains('motor')) {
-      return l10n.twoWheeler;
-    } else if (t.contains('4') ||
-        t.contains('four') ||
-        t.contains('car') ||
-        t.contains('suv')) {
-      return l10n.fourWheeler;
-    } else if (t.contains('3') ||
-        t.contains('rickshaw') ||
-        t.contains('rikshaw') ||
-        t.contains('auto')) {
+    final t = type.toLowerCase().trim();
+    if (t == 'bike') {
+      return l10n.bike;
+    } else if (t == 'auto rickshaw') {
       return l10n.autoRickshaw;
-    } else {
-      return type
-          .replaceAll('_', ' ')
-          .split(' ')
-          .map((e) => e.isNotEmpty ? e[0].toUpperCase() + e.substring(1) : '')
-          .join(' ')
-          .trim();
     }
+    
+    if (type.isNotEmpty && type[0] == type[0].toUpperCase() && !type.contains('_')) {
+      return type;
+    }
+
+    return type
+        .replaceAll('_', ' ')
+        .split(' ')
+        .map((e) => e.isNotEmpty ? e[0].toUpperCase() + e.substring(1) : '')
+        .join(' ')
+        .trim();
   }
 
   IconData _getFuelIcon(String fuel) {
@@ -539,6 +548,27 @@ class _EditVehicleViewState extends State<_EditVehicleView> {
                   height: 56,
                   child: ElevatedButton(
                     onPressed: () {
+                      final numberStr = _numberController.text.trim();
+                      if (numberStr.isEmpty) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(l10n.pleaseEnterVehicleNumber),
+                            backgroundColor: theme.colorScheme.error,
+                          ),
+                        );
+                        return;
+                      }
+
+                      if (!_isValidVehicleNumber(numberStr)) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: const Text("Please enter a valid vehicle registration number."),
+                            backgroundColor: theme.colorScheme.error,
+                          ),
+                        );
+                        return;
+                      }
+
                       final fuelType = state.selectedFuelType ?? widget.vehicle.fuelType;
                       
                       final makerName = state.selectedMaker?.name ?? widget.vehicle.vehicleMaker;
@@ -551,7 +581,7 @@ class _EditVehicleViewState extends State<_EditVehicleView> {
                       context.read<VehicleControlCubit>().updateVehicleDetails(
                             vehicleIMEI: widget.vehicle.id,
                             vehicleName: vehicleName,
-                            vehicleNumber: _numberController.text.trim(),
+                            vehicleNumber: numberStr,
                             fuelType: fuelType,
                             vehicleType: state.selectedConfig?.type ?? widget.vehicle.vehicleType,
                             vehicleMaker: makerName,
@@ -678,6 +708,10 @@ class _EditVehicleViewState extends State<_EditVehicleView> {
         controller: controller,
         textCapitalization: TextCapitalization.characters,
         style: TextStyle(fontSize: 15, color: theme.colorScheme.onSurface),
+        inputFormatters: [
+          FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z0-9 \-]')),
+          UpperCaseTextFormatter(),
+        ],
         decoration: InputDecoration(
           hintText: hint,
           hintStyle:

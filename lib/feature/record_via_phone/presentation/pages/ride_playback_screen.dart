@@ -55,6 +55,14 @@ class _RidePlaybackScreenState extends State<RidePlaybackScreen> {
     super.initState();
     if (widget.points.isNotEmpty) {
       _currentPosition = widget.points.first;
+      if (widget.points.length > 1) {
+        _currentRotation = Geolocator.bearingBetween(
+          widget.points.first.latitude,
+          widget.points.first.longitude,
+          widget.points[1].latitude,
+          widget.points[1].longitude,
+        );
+      }
     }
     _initCustomMarkers();
     _loadMapStyles();
@@ -224,6 +232,14 @@ class _RidePlaybackScreenState extends State<RidePlaybackScreen> {
     if (index1 >= totalPoints - 1) {
       _currentPosition = widget.points.last;
       _currentSpeed = 0.0;
+      if (totalPoints > 1) {
+        _currentRotation = Geolocator.bearingBetween(
+          widget.points[totalPoints - 2].latitude,
+          widget.points[totalPoints - 2].longitude,
+          widget.points.last.latitude,
+          widget.points.last.longitude,
+        );
+      }
       return;
     }
     
@@ -245,6 +261,15 @@ class _RidePlaybackScreenState extends State<RidePlaybackScreen> {
       _currentRotation = Geolocator.bearingBetween(
         p1.latitude, p1.longitude, p2.latitude, p2.longitude
       );
+    } else {
+      if (index1 < totalPoints - 1) {
+        _currentRotation = Geolocator.bearingBetween(
+          widget.points[index1].latitude,
+          widget.points[index1].longitude,
+          widget.points[index1 + 1].latitude,
+          widget.points[index1 + 1].longitude,
+        );
+      }
     }
 
     // Animate map
@@ -468,6 +493,7 @@ class _RidePlaybackScreenState extends State<RidePlaybackScreen> {
           icon: _currentIcon ?? BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue),
           anchor: const Offset(0.5, 0.5),
           rotation: _currentRotation,
+          flat: true,
         )
       );
     }

@@ -31,10 +31,16 @@ class _VehicleNumberFieldState extends State<VehicleNumberField> {
   bool _isTouched = false;
 
   bool _isValidVehicleNumber(String number) {
-    final normalized = number.replaceAll(' ', '');
+    final normalized = number.replaceAll(' ', '').replaceAll('-', '').toUpperCase();
     if (normalized.isEmpty) return false;
-    final regex = RegExp(r'^[A-Z]{2}[0-9]{1,2}[A-Z]{1,3}[0-9]{1,4}$');
-    return regex.hasMatch(normalized);
+    final indianRegex = RegExp(r'^[A-Z]{2}[0-9]{1,2}[A-Z]{1,3}[0-9]{1,4}$');
+    final swissRegex = RegExp(r'^[A-Z]{2}[0-9]{1,6}$');
+    final germanRegex = RegExp(r'^[A-Z]{2,5}[0-9]{1,4}[EH]?$');
+    final italyRegex = RegExp(r'^[A-Z]{2}[0-9]{3}[A-Z]{2}$');
+    return indianRegex.hasMatch(normalized) ||
+        swissRegex.hasMatch(normalized) ||
+        germanRegex.hasMatch(normalized) ||
+        italyRegex.hasMatch(normalized);
   }
 
   @override
@@ -61,7 +67,7 @@ class _VehicleNumberFieldState extends State<VehicleNumberField> {
           keyboardType: TextInputType.text,
           style: theme.textTheme.bodyLarge,
           inputFormatters: [
-            FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z0-9 ]')),
+            FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z0-9 \-]')),
             UpperCaseTextFormatter(),
           ],
           onChanged: (val) {

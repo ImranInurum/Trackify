@@ -223,7 +223,7 @@ class _AddVehicleDialogState extends State<AddVehicleDialog> {
 
   IconData _getVehicleIcon(String type) {
     final t = type.toLowerCase();
-    if (t.contains('2') || t.contains('two') || t.contains('bike') || t.contains('scooter') || t.contains('motor')) {
+    if (t.contains('2') || t.contains('two') || t.contains('bike') || t.contains('scooter') || t.contains('motor') || t.contains('moped')) {
       return Icons.two_wheeler_rounded;
     } else if (t.contains('3') || t.contains('rickshaw') || t.contains('rikshaw') || t.contains('auto')) {
       return Icons.electric_rickshaw_rounded;
@@ -237,29 +237,33 @@ class _AddVehicleDialogState extends State<AddVehicleDialog> {
       return Icons.agriculture_rounded;
     } else if (t.contains('boat') || t.contains('ship')) {
       return Icons.directions_boat_rounded;
-    } else if (t.contains('4') || t.contains('four') || t.contains('car') || t.contains('suv')) {
+    } else if (t.contains('car') || t.contains('suv') || t.contains('four') || t.contains('4')) {
       return Icons.directions_car_rounded;
+    } else if (t.contains('commercial ev') || t.contains('ev')) {
+      return Icons.electric_car_rounded;
     } else {
       return Icons.commute_rounded; 
     }
   }
 
   String _getVehicleLabel(String type, AppLocalizations l10n) {
-    final t = type.toLowerCase();
-    if (t.contains('2') || t.contains('two') || t.contains('bike') || t.contains('scooter') || t.contains('motor')) {
-      return l10n.twoWheeler;
-    } else if (t.contains('4') || t.contains('four') || t.contains('car') || t.contains('suv')) {
-      return l10n.fourWheeler;
-    } else if (t.contains('3') || t.contains('rickshaw') || t.contains('rikshaw') || t.contains('auto')) {
+    final t = type.toLowerCase().trim();
+    if (t == 'bike') {
+      return l10n.bike;
+    } else if (t == 'auto rickshaw') {
       return l10n.autoRickshaw;
-    } else {
-      return type
-          .replaceAll('_', ' ')
-          .split(' ')
-          .map((e) => e.isNotEmpty ? e[0].toUpperCase() + e.substring(1) : '')
-          .join(' ')
-          .trim();
     }
+    
+    if (type.isNotEmpty && type[0] == type[0].toUpperCase() && !type.contains('_')) {
+      return type;
+    }
+
+    return type
+        .replaceAll('_', ' ')
+        .split(' ')
+        .map((e) => e.isNotEmpty ? e[0].toUpperCase() + e.substring(1) : '')
+        .join(' ')
+        .trim();
   }
 
   IconData _getFuelIcon(String fuel) {

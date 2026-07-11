@@ -1,11 +1,15 @@
 import 'dart:io';
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:country_state_city/country_state_city.dart' as csc;
+import 'package:trackify/core/utils/shared_preferences.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:trackify/app/app_navigation.dart';
 import 'package:trackify/core/constants/app_images.dart';
+import 'package:trackify/feature/Vehicle_control/domain/entities/vehicle_control_entity.dart';
 import 'package:trackify/l10n/app_localizations.dart';
 import '../../../document_folder/presentation/pages/document_screen.dart';
 import '../../../upgrade_to_plus/presentation/pages/upgrade_to_plus.dart';
@@ -57,7 +61,7 @@ class VehicleControlScreen extends StatelessWidget {
   }
 }
 
-class VehicleControlView extends StatelessWidget {
+class VehicleControlView extends StatefulWidget {
   final bool isFromGarage;
   final Vehicle? passedVehicle;
 
@@ -68,13 +72,306 @@ class VehicleControlView extends StatelessWidget {
   });
 
   @override
+  State<VehicleControlView> createState() => _VehicleControlViewState();
+}
+
+class _VehicleControlViewState extends State<VehicleControlView> {
+  String? _lastLoadedVehicleId;
+  List<Map<String, String>> _contacts = [];
+  List<csc.Country> _countries = [];
+  bool _isLoadingCountries = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadCountries();
+  }
+
+  Future<void> _loadCountries() async {
+    try {
+      final countries = await csc.getAllCountries();
+      if (mounted) {
+        setState(() {
+          _countries = countries;
+          _isLoadingCountries = false;
+        });
+      }
+    } catch (e) {
+      debugPrint("Error loading countries: $e");
+      if (mounted) {
+        setState(() {
+          _isLoadingCountries = false;
+        });
+      }
+    }
+  }
+
+  void _ensureContactsLoaded(VehicleControlEntity vehicle) async {
+    final keyId = vehicle.id.isNotEmpty
+        ? vehicle.id
+        : (vehicle.vehicleNumber.isNotEmpty
+              ? vehicle.vehicleNumber
+              : 'default');
+    if (_lastLoadedVehicleId != keyId) {
+      _lastLoadedVehicleId = keyId;
+      final raw = await AppPreference.instance.get(
+        key: "emergency_contacts_$keyId",
+      );
+      if (raw.isNotEmpty) {
+        try {
+          final decoded = jsonDecode(raw) as List;
+          setState(() {
+            _contacts = decoded
+                .map((item) => Map<String, String>.from(item))
+                .toList();
+          });
+        } catch (e) {
+          debugPrint("Error parsing emergency contacts: $e");
+        }
+      } else {
+        setState(() {
+          _contacts = [];
+        });
+      }
+    }
+  }
+
+  Future<void> _saveEmergencyContacts(String keyId) async {
+    final raw = jsonEncode(_contacts);
+    await AppPreference.instance.set(
+      key: "emergency_contacts_$keyId",
+      value: raw,
+    );
+  }
+
+  void _showAddContactDialog(BuildContext context, String keyId) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final l10n = AppLocalizations.of(context)!;
+
+    final nameController = TextEditingController();
+    final phoneController = TextEditingController();
+    final formKey = GlobalKey<FormState>();
+    String selectedPhoneCode = '+91';
+
+    showDialog(
+      context: context,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setStateDialog) => Dialog(
+          backgroundColor: isDark ? const Color(0xFF2C2C2C) : theme.cardColor,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(24),
+            child: Form(
+              key: formKey,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "Add Emergency Contact",
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: theme.colorScheme.onSurface,
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  TextFormField(
+                    controller: nameController,
+                    keyboardType: TextInputType.name,
+                    textCapitalization: TextCapitalization.words,
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                    style: TextStyle(color: theme.colorScheme.onSurface),
+                    decoration: InputDecoration(
+                      labelText: l10n.name,
+                      labelStyle: TextStyle(
+                        color: theme.colorScheme.onSurface.withOpacity(0.6),
+                      ),
+                      enabledBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(
+                          color: theme.colorScheme.onSurface.withOpacity(0.2),
+                        ),
+                      ),
+                      focusedBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(
+                          color: theme.colorScheme.primary,
+                        ),
+                      ),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.trim().isEmpty) {
+                        return l10n.nameRequired;
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 16),
+                  TextFormField(
+                    controller: phoneController,
+                    keyboardType: TextInputType.phone,
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                    style: TextStyle(color: theme.colorScheme.onSurface),
+                    decoration: InputDecoration(
+                      labelText: l10n.mobileNumber,
+                      labelStyle: TextStyle(
+                        color: theme.colorScheme.onSurface.withOpacity(0.6),
+                      ),
+                      enabledBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(
+                          color: theme.colorScheme.onSurface.withOpacity(0.2),
+                        ),
+                      ),
+                      focusedBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(
+                          color: theme.colorScheme.primary,
+                        ),
+                      ),
+                      prefixIcon: Container(
+                        margin: const EdgeInsets.only(right: 8),
+                        padding: const EdgeInsets.only(left: 12, right: 4),
+                        decoration: BoxDecoration(
+                          border: Border(
+                            right: BorderSide(color: theme.dividerColor),
+                          ),
+                        ),
+                        child: SizedBox(
+                          width: 85,
+                          child: DropdownButtonHideUnderline(
+                            child: DropdownButton<String>(
+                              value: selectedPhoneCode,
+                              isDense: true,
+                              isExpanded: true,
+                              icon: const Icon(Icons.arrow_drop_down, size: 20),
+                              menuMaxHeight: 300,
+                              dropdownColor: isDark
+                                  ? const Color(0xFF2C2C2C)
+                                  : theme.cardColor,
+                              items: _countries.isEmpty
+                                  ? [
+                                      const DropdownMenuItem(
+                                        value: '+91',
+                                        child: Text(
+                                          "🇮🇳 +91",
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ),
+                                    ]
+                                  : (() {
+                                      final seenCodes = <String>{};
+                                      final uniqueItems =
+                                          <DropdownMenuItem<String>>[];
+                                      for (final c in _countries) {
+                                        if (c.phoneCode.isEmpty) continue;
+                                        final code = c.phoneCode.startsWith('+')
+                                            ? c.phoneCode
+                                            : '+${c.phoneCode}';
+                                        if (!seenCodes.contains(code)) {
+                                          seenCodes.add(code);
+                                          uniqueItems.add(
+                                            DropdownMenuItem(
+                                              value: code,
+                                              child: Text(
+                                                "${c.flag} $code",
+                                                overflow: TextOverflow.ellipsis,
+                                                style: TextStyle(
+                                                  color: theme
+                                                      .colorScheme
+                                                      .onSurface,
+                                                ),
+                                              ),
+                                            ),
+                                          );
+                                        }
+                                      }
+                                      return uniqueItems;
+                                    })(),
+                              onChanged: (value) {
+                                if (value != null) {
+                                  setStateDialog(() {
+                                    selectedPhoneCode = value;
+                                  });
+                                }
+                              },
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.trim().isEmpty) {
+                        return l10n.mobileNumberRequired;
+                      }
+                      final cleanValue = value.trim();
+                      if (cleanValue.length < 7 || cleanValue.length > 15) {
+                        return l10n.invalidMobileNumber;
+                      }
+                      if (!RegExp(r'^[0-9]+$').hasMatch(cleanValue)) {
+                        return l10n.invalidMobileNumber;
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 32),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(context),
+                        child: Text(
+                          l10n.cancel,
+                          style: TextStyle(
+                            color: theme.colorScheme.onSurface.withOpacity(0.6),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      ElevatedButton(
+                        onPressed: () {
+                          if (formKey.currentState?.validate() ?? false) {
+                            setState(() {
+                              _contacts.add({
+                                'name': nameController.text.trim(),
+                                'phone':
+                                    '$selectedPhoneCode ${phoneController.text.trim()}',
+                              });
+                            });
+                            _saveEmergencyContacts(keyId);
+                            Navigator.pop(context);
+                          }
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: theme.colorScheme.primary,
+                          foregroundColor: theme.colorScheme.onPrimary,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                        child: Text(
+                          l10n.save,
+                          style: const TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
     final l10n = AppLocalizations.of(context)!;
 
-    // Use theme colors
     final colorScheme = theme.colorScheme;
     final bgColor = theme.scaffoldBackgroundColor;
     final cardColor = isDark ? const Color(0xFF1E1E1E) : theme.cardColor;
@@ -120,9 +417,9 @@ class VehicleControlView extends StatelessWidget {
             }
             if (state is VehicleControlLoaded) {
               final vehicle = state.vehicle;
+              _ensureContactsLoaded(vehicle);
               return CustomScrollView(
                 slivers: [
-                  /// 🔹 TOP IMAGE SECTION
                   SliverAppBar(
                     expandedHeight: size.height * 0.26,
                     pinned: true,
@@ -153,8 +450,8 @@ class VehicleControlView extends StatelessWidget {
                             child: Text(
                               vehicle.vehicleName.isNotEmpty
                                   ? vehicle.vehicleName
-                                  : (passedVehicle != null
-                                        ? "${passedVehicle!.vehicleMaker ?? ''} ${passedVehicle!.vehicleModel ?? ''}"
+                                  : (widget.passedVehicle != null
+                                        ? "${widget.passedVehicle!.vehicleMaker ?? ''} ${widget.passedVehicle!.vehicleModel ?? ''}"
                                               .trim()
                                         : ""),
                               style: theme.textTheme.titleLarge?.copyWith(
@@ -232,17 +529,16 @@ class VehicleControlView extends StatelessWidget {
                   SliverToBoxAdapter(
                     child: Column(
                       children: [
-                        /// 🔹 VEHICLE DETAILS
                         Column(
                           children: [
                             Text(
                               vehicle.vehicleName.isNotEmpty
                                   ? vehicle.vehicleName
-                                  : (passedVehicle != null &&
-                                            ("${passedVehicle!.vehicleMaker ?? ''} ${passedVehicle!.vehicleModel ?? ''}"
+                                  : (widget.passedVehicle != null &&
+                                            ("${widget.passedVehicle!.vehicleMaker ?? ''} ${widget.passedVehicle!.vehicleModel ?? ''}"
                                                     .trim())
                                                 .isNotEmpty
-                                        ? "${passedVehicle!.vehicleMaker ?? ''} ${passedVehicle!.vehicleModel ?? ''}"
+                                        ? "${widget.passedVehicle!.vehicleMaker ?? ''} ${widget.passedVehicle!.vehicleModel ?? ''}"
                                               .trim()
                                         : l10n.vehicleDetailsLabel),
                               style: theme.textTheme.headlineSmall?.copyWith(
@@ -258,12 +554,13 @@ class VehicleControlView extends StatelessWidget {
                                 Text(
                                   vehicle.vehicleNumber.isNotEmpty
                                       ? "${vehicle.vehicleNumber} | ${vehicle.fuelType}"
-                                      : (passedVehicle != null &&
-                                                (passedVehicle!
+                                      : (widget.passedVehicle != null &&
+                                                (widget
+                                                        .passedVehicle!
                                                         .vehicleNumber
                                                         ?.isNotEmpty ??
                                                     false)
-                                            ? "${passedVehicle!.vehicleNumber ?? ''} | ${passedVehicle!.fuelType ?? vehicle.fuelType}"
+                                            ? "${widget.passedVehicle!.vehicleNumber ?? ''} | ${widget.passedVehicle!.fuelType ?? vehicle.fuelType}"
                                             : "${vehicle.vehicleNumber} | ${vehicle.fuelType}"),
                                   style: theme.textTheme.bodyMedium?.copyWith(
                                     color: secondaryTextColor,
@@ -313,7 +610,6 @@ class VehicleControlView extends StatelessWidget {
 
                         const SizedBox(height: 15),
 
-                        /// 🔹 TANK & MILEAGE CARDS
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 16),
                           child: Row(
@@ -351,7 +647,6 @@ class VehicleControlView extends StatelessWidget {
 
                         const SizedBox(height: 12),
 
-                        /// 🔹 LOCK & UNLOCK VEHICLE CARD
                         LockCard(
                           cardColor: cardColor,
                           primaryTextColor: primaryTextColor,
@@ -370,7 +665,6 @@ class VehicleControlView extends StatelessWidget {
 
                         const SizedBox(height: 12),
 
-                        /// 🔹 VEHICLE ON MAP CARD
                         VehicleOnMapCard(
                           cardColor: cardColor,
                           primaryTextColor: primaryTextColor,
@@ -409,7 +703,6 @@ class VehicleControlView extends StatelessWidget {
 
                         const SizedBox(height: 12),
 
-                        /// 🔹 JOURNEY CARD
                         BlocBuilder<AppCubit, AppState>(
                           builder: (context, appState) {
                             final matchingDevice = appState.devices.firstWhere(
@@ -423,7 +716,9 @@ class VehicleControlView extends StatelessWidget {
                             if (matchingDevice.isNotEmpty) {
                               final odometerRaw = matchingDevice['odometer'];
                               if (odometerRaw != null) {
-                                final double? val = double.tryParse(odometerRaw.toString());
+                                final double? val = double.tryParse(
+                                  odometerRaw.toString(),
+                                );
                                 if (val != null) {
                                   distanceTravelled = val.toStringAsFixed(1);
                                 } else {
@@ -436,10 +731,8 @@ class VehicleControlView extends StatelessWidget {
                               primaryTextColor: primaryTextColor,
                               secondaryTextColor: secondaryTextColor,
                               distance: distanceTravelled,
-                              hours:
-                                  "0", // TODO: Update when API provides lifetime hours
-                              minutes:
-                                  "0", // TODO: Update when API provides lifetime minutes
+                              hours: "0",
+                              minutes: "0",
                               onTap: () {
                                 Navigator.popUntil(
                                   context,
@@ -453,7 +746,6 @@ class VehicleControlView extends StatelessWidget {
 
                         const SizedBox(height: 12),
 
-                        /// 🔹 DOCUMENTS CARD
                         DocumentsCard(
                           cardColor: cardColor,
                           primaryTextColor: primaryTextColor,
@@ -470,15 +762,15 @@ class VehicleControlView extends StatelessWidget {
                           },
                         ),
 
-                        if (isFromGarage == false) const SizedBox(height: 12),
+                        if (widget.isFromGarage == false)
+                          const SizedBox(height: 12),
 
                         Divider(
                           height: 1,
                           color: theme.colorScheme.onSurface.withOpacity(0.15),
                         ),
 
-                        /// 🔹 NOTIFICATION CONTROLS
-                        if (isFromGarage == false)
+                        if (widget.isFromGarage == false)
                           GestureDetector(
                             onTap: () {
                               Navigator.push(
@@ -542,8 +834,7 @@ class VehicleControlView extends StatelessWidget {
                         ),
                         const SizedBox(height: 20),
 
-                        /// 🔹 UNMAP SECTION
-                        if (isFromGarage == false)
+                        if (widget.isFromGarage == false)
                           Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 24),
                             child: Column(
@@ -579,48 +870,156 @@ class VehicleControlView extends StatelessWidget {
                             ),
                           ),
 
-                        if (isFromGarage) ...[
+                        if (widget.isFromGarage) ...[
                           const SizedBox(height: 20),
                           Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 24),
-                            child: InkWell(
-                              onTap: () {},
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    children: [
-                                      Icon(
-                                        Icons.add_ic_call,
-                                        color: theme.colorScheme.onSurface
-                                            .withOpacity(0.6),
-                                        size: 20,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    Icon(
+                                      Icons.add_ic_call,
+                                      color: theme.colorScheme.onSurface
+                                          .withOpacity(0.6),
+                                      size: 20,
+                                    ),
+                                    const SizedBox(width: 12),
+                                    Text(
+                                      l10n.emergencyContacts,
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w700,
+                                        color: primaryTextColor,
                                       ),
-                                      const SizedBox(width: 12),
-                                      Text(
-                                        l10n.emergencyContacts,
-                                        style: TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w700,
-                                          color: primaryTextColor,
+                                    ),
+                                  ],
+                                ),
+                                if (_contacts.isNotEmpty) ...[
+                                  const SizedBox(height: 12),
+                                  ..._contacts.map((contact) {
+                                    final name = contact['name'] ?? '';
+                                    final phone = contact['phone'] ?? '';
+                                    return Container(
+                                      margin: const EdgeInsets.only(
+                                        left: 32,
+                                        bottom: 8,
+                                      ),
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 12,
+                                        vertical: 8,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: cardColor,
+                                        borderRadius: BorderRadius.circular(12),
+                                        border: Border.all(
+                                          color: theme.colorScheme.onSurface
+                                              .withOpacity(0.08),
                                         ),
                                       ),
-                                    ],
-                                  ),
-                                  const SizedBox(height: 8),
-                                  Padding(
-                                    padding: const EdgeInsets.only(left: 32),
-                                    child: Text(
-                                      l10n.addOneMore,
-                                      style: TextStyle(
-                                        fontSize: 13,
-                                        fontWeight: FontWeight.w600,
-                                        color: theme.colorScheme.primary,
+                                      child: Row(
+                                        children: [
+                                          CircleAvatar(
+                                            radius: 16,
+                                            backgroundColor: theme
+                                                .colorScheme
+                                                .primary
+                                                .withOpacity(0.1),
+                                            child: Text(
+                                              name.isNotEmpty
+                                                  ? name[0].toUpperCase()
+                                                  : '?',
+                                              style: TextStyle(
+                                                color:
+                                                    theme.colorScheme.primary,
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 12,
+                                              ),
+                                            ),
+                                          ),
+                                          const SizedBox(width: 12),
+                                          Expanded(
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  name,
+                                                  style: TextStyle(
+                                                    fontSize: 14,
+                                                    fontWeight: FontWeight.w600,
+                                                    color: primaryTextColor,
+                                                  ),
+                                                ),
+                                                const SizedBox(height: 2),
+                                                Text(
+                                                  phone,
+                                                  style: TextStyle(
+                                                    fontSize: 12,
+                                                    color: secondaryTextColor,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                          IconButton(
+                                            icon: Icon(
+                                              Icons.delete_outline,
+                                              color: theme.colorScheme.error
+                                                  .withOpacity(0.8),
+                                              size: 20,
+                                            ),
+                                            onPressed: () {
+                                              setState(() {
+                                                _contacts.remove(contact);
+                                              });
+                                              final keyId =
+                                                  vehicle.id.isNotEmpty
+                                                  ? vehicle.id
+                                                  : (vehicle
+                                                            .vehicleNumber
+                                                            .isNotEmpty
+                                                        ? vehicle.vehicleNumber
+                                                        : 'default');
+                                              _saveEmergencyContacts(keyId);
+                                            },
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                  }),
+                                ],
+                                const SizedBox(height: 8),
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 32),
+                                  child: InkWell(
+                                    onTap: () {
+                                      final keyId = vehicle.id.isNotEmpty
+                                          ? vehicle.id
+                                          : (vehicle.vehicleNumber.isNotEmpty
+                                                ? vehicle.vehicleNumber
+                                                : 'default');
+                                      _showAddContactDialog(context, keyId);
+                                    },
+                                    borderRadius: BorderRadius.circular(4),
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                        vertical: 4,
+                                        horizontal: 8,
+                                      ),
+                                      child: Text(
+                                        l10n.addOneMore,
+                                        style: TextStyle(
+                                          fontSize: 13,
+                                          fontWeight: FontWeight.w600,
+                                          color: theme.colorScheme.primary,
+                                        ),
                                       ),
                                     ),
                                   ),
-                                ],
-                              ),
+                                ),
+                              ],
                             ),
                           ),
                           const SizedBox(height: 16),
@@ -633,80 +1032,47 @@ class VehicleControlView extends StatelessWidget {
                           const SizedBox(height: 16),
                           Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 24),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  l10n.removeVehicleNamed(
-                                    vehicle.vehicleName,
-                                    vehicle.vehicleNumber,
+                            child: InkWell(
+                              onTap: () => _showDeleteConfirmationDialog(
+                                context,
+                                vehicle.imei,
+                              ),
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    Icons.delete_outline_rounded,
+                                    color: theme.colorScheme.error,
+                                    size: 20,
                                   ),
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w700,
-                                    color: primaryTextColor,
-                                  ),
-                                ),
-                                const SizedBox(height: 8),
-                                Text(
-                                  l10n.removeVehicleWarning,
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    color: secondaryTextColor,
-                                    height: 1.4,
-                                  ),
-                                ),
-                                const SizedBox(height: 12),
-                                SizedBox(
-                                  width: double.infinity,
-                                  child: ElevatedButton(
-                                    onPressed: () {
-                                      _showDeleteConfirmationDialog(
-                                        context,
-                                        vehicle.id,
-                                      );
-                                    },
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: colorScheme.error
-                                          .withOpacity(0.12),
-                                      foregroundColor: colorScheme.error,
-                                      padding: const EdgeInsets.symmetric(
-                                        vertical: 14,
-                                      ),
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(8),
-                                      ),
-                                      elevation: 0,
-                                    ),
-                                    child: Text(
-                                      l10n.removeVehicle,
-                                      style: const TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w600,
-                                      ),
+                                  const SizedBox(width: 12),
+                                  Text(
+                                    l10n.removeVehicle,
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w700,
+                                      color: theme.colorScheme.error,
                                     ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
                           ),
+                          const SizedBox(height: 30),
                         ],
-
-                        const SizedBox(height: 60),
                       ],
                     ),
                   ),
                 ],
               );
             }
-            return const SizedBox.shrink();
+            return const SizedBox();
           },
         ),
       ),
     );
   }
 
-  void _showImageSourceDialog(BuildContext context, String vehicleIMEI) {
+  void _showImageSourceDialog(BuildContext context, String id) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
     final l10n = AppLocalizations.of(context)!;
@@ -717,92 +1083,36 @@ class VehicleControlView extends StatelessWidget {
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
-      builder: (ctx) => Padding(
-        padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 24),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
+      builder: (ctx) => SafeArea(
+        child: Wrap(
           children: [
-            Center(
-              child: Container(
-                width: 40,
-                height: 4,
-                decoration: BoxDecoration(
-                  color: Colors.grey.withOpacity(0.3),
-                  borderRadius: BorderRadius.circular(2),
-                ),
+            ListTile(
+              leading: Icon(Icons.camera_alt, color: theme.colorScheme.primary),
+              title: Text(
+                l10n.camera,
+                style: TextStyle(color: theme.colorScheme.onSurface),
               ),
+              onTap: () {
+                Navigator.pop(ctx);
+                _pickImage(context, ImageSource.camera, id);
+              },
             ),
-            const SizedBox(height: 24),
-            Text(
-              l10n.uploadImage,
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
+            ListTile(
+              leading: Icon(
+                Icons.photo_library,
                 color: theme.colorScheme.primary,
               ),
+              title: Text(
+                l10n.gallery,
+                style: TextStyle(color: theme.colorScheme.onSurface),
+              ),
+              onTap: () {
+                Navigator.pop(ctx);
+                _pickImage(context, ImageSource.gallery, id);
+              },
             ),
-            const SizedBox(height: 32),
-            Row(
-              children: [
-                _buildSourceOption(
-                  context,
-                  icon: Icons.camera_alt_outlined,
-                  label: l10n.camera,
-                  onTap: () {
-                    Navigator.pop(ctx);
-                    _pickImage(context, ImageSource.camera, vehicleIMEI);
-                  },
-                ),
-                const SizedBox(width: 40),
-                _buildSourceOption(
-                  context,
-                  icon: Icons.image_outlined,
-                  label: l10n.gallery,
-                  onTap: () {
-                    Navigator.pop(ctx);
-                    _pickImage(context, ImageSource.gallery, vehicleIMEI);
-                  },
-                ),
-              ],
-            ),
-            const SizedBox(height: 20),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _buildSourceOption(
-    BuildContext context, {
-    required IconData icon,
-    required String label,
-    required VoidCallback onTap,
-  }) {
-    final theme = Theme.of(context);
-    return GestureDetector(
-      onTap: onTap,
-      child: Column(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              border: Border.all(
-                color: theme.colorScheme.onSurface.withOpacity(0.1),
-              ),
-            ),
-            child: Icon(icon, size: 30, color: theme.colorScheme.onSurface),
-          ),
-          const SizedBox(height: 12),
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: 14,
-              color: theme.colorScheme.onSurface.withOpacity(0.7),
-            ),
-          ),
-        ],
       ),
     );
   }
@@ -810,41 +1120,33 @@ class VehicleControlView extends StatelessWidget {
   Future<void> _pickImage(
     BuildContext context,
     ImageSource source,
-    String vehicleIMEI,
+    String id,
   ) async {
-    final l10n = AppLocalizations.of(context)!;
-    final picker = ImagePicker();
-    final pickedFile = await picker.pickImage(source: source);
-
-    if (pickedFile != null) {
-      final croppedFile = await _cropImage(pickedFile.path, l10n);
-      if (croppedFile != null && context.mounted) {
-        context.read<VehicleControlCubit>().updateVehicleImage(
-          vehicleIMEI,
-          croppedFile.path,
+    final cubit = context.read<VehicleControlCubit>();
+    try {
+      final picker = ImagePicker();
+      final pickedFile = await picker.pickImage(source: source);
+      if (pickedFile != null) {
+        final croppedFile = await ImageCropper().cropImage(
+          sourcePath: pickedFile.path,
+          uiSettings: [
+            AndroidUiSettings(
+              toolbarTitle: 'Crop Image',
+              toolbarColor: Colors.black,
+              toolbarWidgetColor: Colors.white,
+              initAspectRatio: CropAspectRatioPreset.original,
+              lockAspectRatio: false,
+            ),
+            IOSUiSettings(title: 'Crop Image'),
+          ],
         );
+        if (croppedFile != null) {
+          cubit.updateVehicleImage(id, croppedFile.path);
+        }
       }
+    } catch (e) {
+      debugPrint("Error picking image: $e");
     }
-  }
-
-  Future<CroppedFile?> _cropImage(String path, AppLocalizations l10n) async {
-    return await ImageCropper().cropImage(
-      sourcePath: path,
-      aspectRatio: const CropAspectRatio(ratioX: 3, ratioY: 2),
-      uiSettings: [
-        AndroidUiSettings(
-          toolbarTitle: l10n.cropVehicleImage,
-          toolbarColor: Colors.black,
-          toolbarWidgetColor: Colors.amber,
-          initAspectRatio: CropAspectRatioPreset.ratio3x2,
-          lockAspectRatio: true,
-        ),
-        IOSUiSettings(
-          title: l10n.cropVehicleImage,
-          aspectRatioLockEnabled: true,
-        ),
-      ],
-    );
   }
 
   void _showTankCapacityDialog(
@@ -852,6 +1154,30 @@ class VehicleControlView extends StatelessWidget {
     String vehicleIMEI,
     String currentVal,
   ) {
+    // ── Device install check ─────────────────────────────────────────────
+    if (vehicleIMEI.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Row(
+            children: [
+              const Icon(Icons.warning_amber_rounded, color: Colors.white),
+              const SizedBox(width: 12),
+              const Expanded(
+                child: Text(
+                  "Please install a Trackify device to update tank capacity.",
+                  style: TextStyle(color: Colors.white),
+                ),
+              ),
+            ],
+          ),
+          backgroundColor: Colors.orange.shade700,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          duration: const Duration(seconds: 3),
+        ),
+      );
+      return;
+    }
     final cubit = context.read<VehicleControlCubit>();
     final controller = TextEditingController(text: currentVal);
     final theme = Theme.of(context);
@@ -861,7 +1187,7 @@ class VehicleControlView extends StatelessWidget {
     showDialog(
       context: context,
       builder: (context) => Dialog(
-        backgroundColor: isDark ? const Color(0xFF1E1E1E) : theme.cardColor,
+        backgroundColor: isDark ? const Color(0xFF2C2C2C) : theme.cardColor,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         child: Padding(
           padding: const EdgeInsets.all(24),
@@ -873,27 +1199,21 @@ class VehicleControlView extends StatelessWidget {
                 children: [
                   Icon(
                     Icons.local_gas_station_outlined,
-                    color: theme.colorScheme.onSurface.withOpacity(0.8),
+                    color: theme.colorScheme.primary,
+                    size: 24,
                   ),
                   const SizedBox(width: 12),
                   Text(
-                    l10n.updateTankCapacity,
-                    style: const TextStyle(
+                    l10n.tankCapacity,
+                    style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
+                      color: theme.colorScheme.onSurface,
                     ),
                   ),
                 ],
               ),
               const SizedBox(height: 12),
-              Text(
-                l10n.tankCapacityDesc,
-                style: TextStyle(
-                  color: theme.colorScheme.onSurface.withOpacity(0.6),
-                  fontSize: 14,
-                ),
-              ),
-              const SizedBox(height: 24),
               Container(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(12),
@@ -918,13 +1238,21 @@ class VehicleControlView extends StatelessWidget {
                     suffixIcon: Padding(
                       padding: const EdgeInsets.only(right: 16, top: 12),
                       child: Text(
-                        l10n.litres,
+                        l10n.litresShort,
                         style: TextStyle(
                           color: theme.colorScheme.onSurface.withOpacity(0.5),
                         ),
                       ),
                     ),
                   ),
+                ),
+              ),
+              const SizedBox(height: 12),
+              Text(
+                "${l10n.lastUpdatedLabel}$currentVal ${l10n.litresShort}",
+                style: TextStyle(
+                  color: theme.colorScheme.onSurface.withOpacity(0.4),
+                  fontSize: 12,
                 ),
               ),
               const SizedBox(height: 32),
@@ -968,6 +1296,30 @@ class VehicleControlView extends StatelessWidget {
     String vehicleIMEI,
     String currentVal,
   ) {
+    // ── Device install check ─────────────────────────────────────────────
+    if (vehicleIMEI.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Row(
+            children: [
+              const Icon(Icons.warning_amber_rounded, color: Colors.white),
+              const SizedBox(width: 12),
+              const Expanded(
+                child: Text(
+                  "Please install a Trackify device to update mileage.",
+                  style: TextStyle(color: Colors.white),
+                ),
+              ),
+            ],
+          ),
+          backgroundColor: Colors.orange.shade700,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          duration: const Duration(seconds: 3),
+        ),
+      );
+      return;
+    }
     final cubit = context.read<VehicleControlCubit>();
     final controller = TextEditingController(text: currentVal);
     final theme = Theme.of(context);
@@ -977,7 +1329,7 @@ class VehicleControlView extends StatelessWidget {
     showDialog(
       context: context,
       builder: (context) => Dialog(
-        backgroundColor: isDark ? const Color(0xFF1E1E1E) : theme.cardColor,
+        backgroundColor: isDark ? const Color(0xFF2C2C2C) : theme.cardColor,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         child: Padding(
           padding: const EdgeInsets.all(24),
@@ -988,28 +1340,22 @@ class VehicleControlView extends StatelessWidget {
               Row(
                 children: [
                   Icon(
-                    Icons.flash_on_outlined,
-                    color: theme.colorScheme.onSurface.withOpacity(0.8),
+                    Icons.speed_outlined,
+                    color: theme.colorScheme.primary,
+                    size: 24,
                   ),
                   const SizedBox(width: 12),
                   Text(
-                    l10n.updateMileage,
-                    style: const TextStyle(
+                    l10n.vehicleMileage,
+                    style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
+                      color: theme.colorScheme.onSurface,
                     ),
                   ),
                 ],
               ),
               const SizedBox(height: 12),
-              Text(
-                l10n.mileageDesc,
-                style: TextStyle(
-                  color: theme.colorScheme.onSurface.withOpacity(0.6),
-                  fontSize: 14,
-                ),
-              ),
-              const SizedBox(height: 24),
               Container(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(12),
@@ -1177,7 +1523,7 @@ class VehicleControlView extends StatelessWidget {
           TextButton(
             onPressed: () {
               Navigator.pop(ctx);
-              final idToDelete = passedVehicle?.id ?? vehicleIMEI;
+              final idToDelete = widget.passedVehicle?.id ?? vehicleIMEI;
               cubit.deleteVehicle(idToDelete, vehicleIMEI);
             },
             child: Text(
