@@ -4,17 +4,23 @@ import 'package:trackify/core/common/models/vehicle_list_model.dart';
 import 'package:trackify/core/common/usecase/get_user_vehicles_usecase.dart';
 import '../../domain/usecase/get_service_logs_usecase.dart';
 import '../../domain/usecase/save_service_log_usecase.dart';
+import '../../domain/usecase/update_service_log_usecase.dart';
+import '../../domain/usecase/delete_service_log_usecase.dart';
 import 'service_logs_state.dart';
 
 class ServiceLogsCubit extends Cubit<ServiceLogsState> {
   final GetUserVehiclesUsecase _getUserVehiclesUsecase;
   final GetServiceLogsUsecase _getServiceLogsUsecase;
   final SaveServiceLogUsecase _saveServiceLogUsecase;
+  final UpdateServiceLogUsecase _updateServiceLogUsecase;
+  final DeleteServiceLogUsecase _deleteServiceLogUsecase;
 
   ServiceLogsCubit(
     this._getUserVehiclesUsecase,
     this._getServiceLogsUsecase,
     this._saveServiceLogUsecase,
+    this._updateServiceLogUsecase,
+    this._deleteServiceLogUsecase,
   ) : super(ServiceLogsInitial());
 
   Future<void> loadVehicles() async {
@@ -126,6 +132,104 @@ class ServiceLogsCubit extends Cubit<ServiceLogsState> {
             ),
           );
           fetchServiceLogs(imei: vehicle.imei);
+        },
+      );
+    }
+  }
+
+  Future<void> updateServiceLog({
+    required String id,
+    String? date,
+    String? amount,
+    File? image,
+    String? centerName,
+    String? note,
+  }) async {
+    if (state is ServiceLogsLoaded) {
+      final currentState = state as ServiceLogsLoaded;
+      final vehicle = currentState.selectedVehicle;
+
+      emit(
+        ServiceLogsSubmitting(
+          vehicles: currentState.vehicles,
+          selectedVehicle: currentState.selectedVehicle,
+          logs: currentState.logs,
+        ),
+      );
+
+      final result = await _updateServiceLogUsecase(
+        id: id,
+        serviceDate: date,
+        amount: amount != null ? double.tryParse(amount) : null,
+        image: image,
+        centerName: centerName,
+        note: note,
+      );
+
+      result.fold(
+        (failure) => emit(
+          ServiceLogsError(
+            failure.message,
+            vehicles: currentState.vehicles,
+            selectedVehicle: currentState.selectedVehicle,
+            logs: currentState.logs,
+          ),
+        ),
+        (success) {
+          emit(
+            ServiceLogsSuccess(
+              vehicles: currentState.vehicles,
+              selectedVehicle: currentState.selectedVehicle,
+              logs: currentState.logs,
+            ),
+          );
+          if (vehicle != null) {
+            fetchServiceLogs(imei: vehicle.imei);
+          } else {
+            loadVehicles(); // Fallback if vehicle is somehow null but we have a success
+          }
+        },
+      );
+    }
+  }
+
+  Future<void> deleteServiceLog(String id) async {
+    if (state is ServiceLogsLoaded) {
+      final currentState = state as ServiceLogsLoaded;
+      final vehicle = currentState.selectedVehicle;
+
+      emit(
+        ServiceLogsSubmitting(
+          vehicles: currentState.vehicles,
+          selectedVehicle: currentState.selectedVehicle,
+          logs: currentState.logs,
+        ),
+      );
+
+      final result = await _deleteServiceLogUsecase(id);
+
+      result.fold(
+        (failure) => emit(
+          ServiceLogsError(
+            failure.message,
+            vehicles: currentState.vehicles,
+            selectedVehicle: currentState.selectedVehicle,
+            logs: currentState.logs,
+          ),
+        ),
+        (success) {
+          emit(
+            ServiceLogsSuccess(
+              vehicles: currentState.vehicles,
+              selectedVehicle: currentState.selectedVehicle,
+              logs: currentState.logs,
+            ),
+          );
+          if (vehicle != null) {
+            fetchServiceLogs(imei: vehicle.imei);
+          } else {
+            loadVehicles();
+          }
         },
       );
     }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:trackify/app/app_navigation.dart';
 import 'package:trackify/feature/device_data/presentation/pages/device_data_screen.dart';
 import 'package:trackify/feature/device_warranty/pages/device_warranty_page.dart';
 import 'package:trackify/feature/my_garage/presentation/cubit/my_garage_cubit.dart';
@@ -89,16 +90,20 @@ class _MyGarageScreenState extends State<MyGarageScreen> {
             final selectedImei = AppPreference.instance.getSync(
               key: AppPreference.IMEI,
             );
+            final selectedUid = AppPreference.instance.getSync(
+              key: AppPreference.KEY_SELECTED_UID,
+            );
             final vehicles = List<Vehicle>.from(state.vehicles);
 
-            if (selectedImei.isNotEmpty) {
-              final selectedIndex = vehicles.indexWhere(
-                (v) => v.imei == selectedImei,
-              );
-              if (selectedIndex > 0) {
-                final selectedVehicle = vehicles.removeAt(selectedIndex);
-                vehicles.insert(0, selectedVehicle);
-              }
+            final selectedIndex = vehicles.indexWhere(
+              (v) =>
+                  (selectedUid.isNotEmpty && v.id == selectedUid) ||
+                  (selectedImei.isNotEmpty && v.imei == selectedImei),
+            );
+
+            if (selectedIndex > 0) {
+              final selectedVehicle = vehicles.removeAt(selectedIndex);
+              vehicles.insert(0, selectedVehicle);
             }
 
             if (vehicles.isEmpty) {
@@ -128,8 +133,10 @@ class _MyGarageScreenState extends State<MyGarageScreen> {
                   final vehicle = vehicles[index];
                   final bool hasDevice =
                       selectedImei.isNotEmpty && vehicle.imei == selectedImei;
+                  final bool isDeviceInstalled =
+                      vehicle.imei != null && vehicle.imei!.isNotEmpty;
 
-                  if (hasDevice && vehicle.imei != null) {
+                  if (isDeviceInstalled && vehicle.imei != null) {
                     _fetchLockStatus(vehicle.imei!);
                   }
 
@@ -140,30 +147,19 @@ class _MyGarageScreenState extends State<MyGarageScreen> {
                     context: context,
                     vehicle: vehicle,
                     hasDevice: hasDevice,
+                    isDeviceInstalled: isDeviceInstalled,
                     isLocked: isLocked,
                     showNotificationFooter: false,
-                    onVehicleControl: () async {
-                      await AppPreference.instance.set(
-                        key: AppPreference.IMEI,
-                        value: vehicle.imei ?? '',
-                      );
-                      if (vehicle.id != null && vehicle.id!.isNotEmpty) {
-                        await AppPreference.instance.set(
-                          key: AppPreference.KEY_SELECTED_UID,
-                          value: vehicle.id!,
-                        );
-                      }
-                      if (context.mounted) {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => VehicleControlScreen(
-                              isFromGarage: hasDevice ? false : true,
-                              passedVehicle: vehicle,
-                            ),
+                    onVehicleControl: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => VehicleControlScreen(
+                            isFromGarage: isDeviceInstalled ? false : true,
+                            passedVehicle: vehicle,
                           ),
-                        );
-                      }
+                        ),
+                      );
                     },
                     onLock: () => _handleVehicleLock(context, vehicle),
                     onRecharge: () {
@@ -252,7 +248,9 @@ class _MyGarageScreenState extends State<MyGarageScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              targetLockState ? l10n.vehicleLockedSuccessfully : l10n.vehicleUnlockedSuccessfully,
+              targetLockState
+                  ? l10n.vehicleLockedSuccessfully
+                  : l10n.vehicleUnlockedSuccessfully,
             ),
             backgroundColor: Colors.green,
           ),

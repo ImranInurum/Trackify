@@ -18,6 +18,7 @@ import 'secure_banner.dart';
 class VehicleCard extends StatefulWidget {
   final Vehicle vehicle;
   final bool hasDevice;
+  final bool isDeviceInstalled;
   final bool isLocked;
   final VoidCallback onLock;
   final VoidCallback onRecharge;
@@ -30,6 +31,7 @@ class VehicleCard extends StatefulWidget {
     super.key,
     required this.vehicle,
     required this.hasDevice,
+    this.isDeviceInstalled = false,
     this.isLocked = false,
     required this.onLock,
     required this.onRecharge,
@@ -47,21 +49,27 @@ class _VehicleCardState extends State<VehicleCard> {
   Future<List<dynamic>>? _combinedFuture;
 
   void _fetchWarrantyAndDataPlan() {
-    if (widget.hasDevice && widget.vehicle.imei != null) {
+    if (widget.isDeviceInstalled && widget.vehicle.imei != null) {
       final warrantyRepo = DeviceWarrantyRepositoryImpl(
         DeviceWarrantyRemoteDataSourceImpl(NetworkApiService()),
       );
       final dataRepo = DeviceDataRepositoryImpl(
         DeviceDataRemoteDataSourceImpl(NetworkApiService()),
       );
-      
+
       final wFuture = warrantyRepo
           .getDeviceWarrantyStatus(widget.vehicle.imei!)
-          .then((result) => result.fold((l) => null as WarrantyStatusModel?, (r) => r));
+          .then(
+            (result) =>
+                result.fold((l) => null as WarrantyStatusModel?, (r) => r),
+          );
       final dFuture = dataRepo
           .getCurrentDataPlan(widget.vehicle.imei!)
-          .then((result) => result.fold((l) => null as CurrentPlanEntity?, (r) => r));
-          
+          .then(
+            (result) =>
+                result.fold((l) => null as CurrentPlanEntity?, (r) => r),
+          );
+
       setState(() {
         _combinedFuture = Future.wait([wFuture, dFuture]);
       });
@@ -82,7 +90,7 @@ class _VehicleCardState extends State<VehicleCard> {
   void didUpdateWidget(VehicleCard oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.vehicle.imei != widget.vehicle.imei ||
-        oldWidget.hasDevice != widget.hasDevice) {
+        oldWidget.isDeviceInstalled != widget.isDeviceInstalled) {
       _fetchWarrantyAndDataPlan();
     }
   }
@@ -194,7 +202,7 @@ class _VehicleCardState extends State<VehicleCard> {
                                     ),
                                   ),
                                   const SizedBox(width: 8),
-                                  if (widget.hasDevice)
+                                  if (widget.isDeviceInstalled)
                                     Text(
                                       l10n.lite4G,
                                       style: TextStyle(
@@ -241,7 +249,7 @@ class _VehicleCardState extends State<VehicleCard> {
                   ),
                 ),
                 const SizedBox(height: 16),
-                if (widget.hasDevice) ...[
+                if (widget.isDeviceInstalled) ...[
                   InteractiveSwipeButton(
                     onSwipe: widget.onLock,
                     isLocked: widget.isLocked,
@@ -280,10 +288,15 @@ class _VehicleCardState extends State<VehicleCard> {
 
                       int? dataDaysLeft = dataPlanData?.daysLeft;
                       int? warrantyDaysLeft = warrantyData?.warranty?.daysLeft;
-                      
-                      bool hasNoDataPlan = dataPlanData == null || dataPlanData.planId.trim().isEmpty;
 
-                      Color getSubtitleColor(int? daysLeft, {bool hasNoPlan = false}) {
+                      bool hasNoDataPlan =
+                          dataPlanData == null ||
+                          dataPlanData.planId.trim().isEmpty;
+
+                      Color getSubtitleColor(
+                        int? daysLeft, {
+                        bool hasNoPlan = false,
+                      }) {
                         if (hasNoPlan || daysLeft == null) return Colors.grey;
                         if (daysLeft <= 0) return Colors.grey;
                         if (daysLeft <= 15) return Colors.red;
@@ -293,7 +306,10 @@ class _VehicleCardState extends State<VehicleCard> {
                         return Colors.green;
                       }
 
-                      String getSubtitleText(int? daysLeft, {bool hasNoPlan = false}) {
+                      String getSubtitleText(
+                        int? daysLeft, {
+                        bool hasNoPlan = false,
+                      }) {
                         if (hasNoPlan || daysLeft == null) return "--";
                         if (daysLeft <= 0) return l10n.expired;
                         return l10n.expiresInDays(daysLeft.toString());
@@ -304,10 +320,16 @@ class _VehicleCardState extends State<VehicleCard> {
                           _buildActionRow(
                             l10n,
                             l10n.dataPlan,
-                            getSubtitleText(dataDaysLeft, hasNoPlan: hasNoDataPlan),
+                            getSubtitleText(
+                              dataDaysLeft,
+                              hasNoPlan: hasNoDataPlan,
+                            ),
                             l10n.rechargeNow,
                             widget.onRecharge,
-                            subtitleColor: getSubtitleColor(dataDaysLeft, hasNoPlan: hasNoDataPlan),
+                            subtitleColor: getSubtitleColor(
+                              dataDaysLeft,
+                              hasNoPlan: hasNoDataPlan,
+                            ),
                           ),
                           _buildActionRow(
                             l10n,
@@ -336,11 +358,11 @@ class _VehicleCardState extends State<VehicleCard> {
                   }),
                   const SizedBox(height: 12), // Added spacing for 'else' case
                 ],
-                if (widget.hasDevice) const SizedBox(height: 12),
+                if (widget.isDeviceInstalled) const SizedBox(height: 12),
               ],
             ),
           ),
-          if (widget.showNotificationFooter)
+          if (widget.showNotificationFooter && widget.isDeviceInstalled)
             InkWell(
               onTap: () {
                 Navigator.push(

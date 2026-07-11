@@ -251,17 +251,31 @@ class _AddServiceLogScreenState extends State<AddServiceLogScreen> {
                                 ? null
                                 : () {
                                     if (_formKey.currentState!.validate()) {
-                                      context
-                                          .read<ServiceLogsCubit>()
-                                          .saveServiceLog(
-                                            date: _dateController.text,
-                                            amount: _amountController.text,
-                                            images: _combinedImages.whereType<File>().toList(),
-                                            centerName:
-                                                _centerNameController.text,
-                                            contact: _contactController.text,
-                                            note: _noteController.text,
-                                          );
+                                      if (widget.editLog != null) {
+                                        context
+                                            .read<ServiceLogsCubit>()
+                                            .updateServiceLog(
+                                              id: widget.editLog!.id!,
+                                              date: _dateController.text,
+                                              amount: _amountController.text,
+                                              image: _combinedImages.whereType<File>().isNotEmpty
+                                                  ? _combinedImages.whereType<File>().first
+                                                  : null,
+                                              centerName: _centerNameController.text,
+                                              note: _noteController.text,
+                                            );
+                                      } else {
+                                        context
+                                            .read<ServiceLogsCubit>()
+                                            .saveServiceLog(
+                                              date: _dateController.text,
+                                              amount: _amountController.text,
+                                              images: _combinedImages.whereType<File>().toList(),
+                                              centerName: _centerNameController.text,
+                                              contact: _contactController.text,
+                                              note: _noteController.text,
+                                            );
+                                      }
                                     }
                                   },
                             style: ElevatedButton.styleFrom(
@@ -277,7 +291,7 @@ class _AddServiceLogScreenState extends State<AddServiceLogScreen> {
                                     color: Colors.white,
                                   )
                                 : Text(
-                                    l10n.saveDetails,
+                                    widget.editLog != null ? "Update Details" : l10n.saveDetails,
                                     style: const TextStyle(
                                       fontWeight: FontWeight.bold,
                                       fontSize: 16,

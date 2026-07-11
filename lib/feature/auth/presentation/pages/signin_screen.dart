@@ -6,6 +6,7 @@ import 'package:trackify/feature/auth/presentation/pages/signup_screen.dart';
 import 'package:trackify/feature/onboarding/presentation/pages/select_language_screen.dart';
 
 import '../../../../app/app_navigation.dart';
+import '../../../../app/cubit/app_cubit.dart';
 import '../../../../core/utils/shared_preferences.dart';
 import '../../../../core/utils/validators.dart';
 import '../../../../core/widgets/custom_form_field.dart';
@@ -152,6 +153,10 @@ class _SignInScreenState extends State<SignInScreen> {
               setState(() {
                 _isNavigating = true;
               });
+
+              // Load user session details into AppCubit
+              await context.read<AppCubit>().loadUserSession();
+              if (!context.mounted) return;
 
               // Fetch vehicles to determine navigation
               await context.read<MapCubit>().fetchVehicles();

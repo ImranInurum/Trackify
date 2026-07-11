@@ -15,6 +15,10 @@ import 'package:trackify/feature/profile/presentation/cubit/profile_state.dart';
 import 'package:trackify/feature/settings/presentation/pages/settings_screen.dart';
 import 'package:trackify/core/config/network/api_host.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:hive/hive.dart';
+import 'package:trackify/feature/map/presentation/cubit/map_cubit.dart';
+import 'package:trackify/feature/my_garage/presentation/cubit/my_garage_cubit.dart';
+import 'package:trackify/feature/my_profile/presentation/cubit/my_profile_cubit.dart';
 
 import '../../../../core/common/widgets/vehicle_card.dart';
 import '../../../../l10n/app_localizations.dart';
@@ -323,7 +327,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   },
                   child: Container(
                     margin: const EdgeInsets.symmetric(horizontal: 16),
-                    padding: const EdgeInsets.all(14),
+                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
                     decoration: BoxDecoration(
                       color: Theme.of(context).cardColor,
                       borderRadius: BorderRadius.circular(16),
@@ -335,8 +339,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           alignment: Alignment.center,
                           children: [
                             SizedBox(
-                              height: 48,
-                              width: 48,
+                              height: 44,
+                              width: 44,
                               child: CircularProgressIndicator(
                                 value: 0.63,
                                 strokeWidth: 4,
@@ -420,6 +424,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                         final isLocked =
                             _vehicleLockStates[vehicle.imei] ?? false;
+                            
+                        final hasDevice = selectedImei.isNotEmpty && vehicle.imei == selectedImei;
+                        final isDeviceInstalled = vehicle.imei != null && vehicle.imei!.isNotEmpty;
 
                         return VehicleCard(
                           key: ValueKey(
@@ -427,7 +434,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           ),
                           context: context,
                           vehicle: vehicle,
-                          hasDevice: true,
+                          hasDevice: hasDevice,
+                          isDeviceInstalled: isDeviceInstalled,
                           isLocked: isLocked,
                           onVehicleControl: () async {
                             if (vehicle.id != null && vehicle.id!.isNotEmpty) {
@@ -436,19 +444,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 value: vehicle.id!,
                               );
                             }
-                            if (vehicle.imei != null &&
-                                vehicle.imei!.isNotEmpty) {
-                              await AppPreference.instance.set(
-                                key: AppPreference.IMEI,
-                                value: vehicle.imei!,
-                              );
-                            }
+                            await AppPreference.instance.set(
+                              key: AppPreference.IMEI,
+                              value: vehicle.imei ?? '',
+                            );
+                            
+                            AppNavigation.refreshNavigationState();
+                            
                             if (context.mounted) {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) => VehicleControlScreen(
-                                    isFromGarage: false,
+                                    isFromGarage: isDeviceInstalled ? false : true,
                                     passedVehicle: vehicle,
                                   ),
                                 ),
@@ -740,13 +748,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget _logoutButton(AppLocalizations l10n) {
     return Center(
       child: TextButton.icon(
-        onPressed: () {
-          final prefs = AppPreference.instance;
-          prefs.clearAll();
-          Navigator.of(context, rootNavigator: true).pushAndRemoveUntil(
-            MaterialPageRoute(builder: (context) => const SignInScreen()),
-            (Route<dynamic> route) => false,
-          );
+        onPressed: () async {
+          await context.read<AppCubit>().logout();
+          if (mounted) {
+            context.read<ProfileCubit>().reset();
+            context.read<MyProfileCubit>().reset();
+            context.read<MapCubit>().reset();
+            context.read<MyGarageCubit>().reset();
+            Navigator.of(context, rootNavigator: true).pushAndRemoveUntil(
+              MaterialPageRoute(builder: (context) => const SignInScreen()),
+              (Route<dynamic> route) => false,
+            );
+          }
         },
         icon: Icon(Icons.logout, color: Theme.of(context).colorScheme.error),
         label: Text(

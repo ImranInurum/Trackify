@@ -27,10 +27,16 @@ class _SelectLanguageScreenState extends State<SelectLanguageScreen> {
   void _saveLanguageAndContinue() async {
     final prefs = AppPreference.instance;
 
-    await prefs.set(key: AppPreference.KEY_SELECTED_LANGUAGE, value: _selectedLanguageKey);
+    await prefs.set(
+      key: AppPreference.KEY_SELECTED_LANGUAGE,
+      value: _selectedLanguageKey,
+    );
 
     if (!mounted) return;
-    Navigator.push(context, MaterialPageRoute(builder: (_) => const SignInScreen()));
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => const SignInScreen()),
+    );
   }
 
   @override
@@ -67,19 +73,31 @@ class _SelectLanguageScreenState extends State<SelectLanguageScreen> {
                             color: theme.colorScheme.primary,
                           ),
                         ),
-                        errorWidget: (context, url, err) =>
-                            _buildMainContent(context, theme, appState, l10n, null),
-                        imageBuilder: (context, imageProvider) => _buildMainContent(
+                        errorWidget: (context, url, err) => _buildMainContent(
                           context,
                           theme,
                           appState,
                           l10n,
-                          imageProvider,
+                          null,
                         ),
+                        imageBuilder: (context, imageProvider) =>
+                            _buildMainContent(
+                              context,
+                              theme,
+                              appState,
+                              l10n,
+                              imageProvider,
+                            ),
                       );
                     }
 
-                    return _buildMainContent(context, theme, appState, l10n, null);
+                    return _buildMainContent(
+                      context,
+                      theme,
+                      appState,
+                      l10n,
+                      null,
+                    );
                   },
                 );
               },
@@ -129,9 +147,9 @@ class _SelectLanguageScreenState extends State<SelectLanguageScreen> {
                       behavior: HitTestBehavior.opaque,
                       onTap: () {
                         context.read<AppCubit>().changeLocale(
-                              lang['locale'] as Locale,
-                              lang['key'] as String,
-                            );
+                          lang['locale'] as Locale,
+                          lang['key'] as String,
+                        );
                         setState(() {
                           _selectedLanguageKey = lang['key'] as String;
                         });
@@ -148,7 +166,9 @@ class _SelectLanguageScreenState extends State<SelectLanguageScreen> {
                           style: theme.textTheme.titleMedium?.copyWith(
                             fontWeight: FontWeight.w700,
                             fontSize: 14,
-                            color: isSelected ? theme.colorScheme.primary : Colors.white,
+                            color: isSelected
+                                ? theme.colorScheme.primary
+                                : Colors.white,
                           ),
                         ),
                       ),
@@ -176,12 +196,20 @@ class _SelectLanguageScreenState extends State<SelectLanguageScreen> {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
-          BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 20, spreadRadius: 2),
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 20,
+            spreadRadius: 2,
+          ),
         ],
       ),
       child: imageProvider != null
           ? Image(image: imageProvider, height: 220, fit: BoxFit.contain)
-          : Icon(Icons.track_changes_rounded, size: 88, color: colorScheme.primary),
+          : Icon(
+              Icons.track_changes_rounded,
+              size: 88,
+              color: colorScheme.primary,
+            ),
     );
   }
 
@@ -199,7 +227,11 @@ class _SelectLanguageScreenState extends State<SelectLanguageScreen> {
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
-          colors: [overlayTop, Colors.black.withOpacity(isDark ? 0.20 : 0.70), overlayBottom],
+          colors: [
+            overlayTop,
+            Colors.black.withOpacity(isDark ? 0.20 : 0.70),
+            overlayBottom,
+          ],
         ),
       ),
     );

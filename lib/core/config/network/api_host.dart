@@ -110,6 +110,8 @@ class ApiURL {
   // -------------------------
   static const String serviceLogs = "$baseURL/api/service/service-logs";
   static const String addServiceLogs = "$baseURL/api/service/service-logs";
+  static String updateServiceLog(String id) => "$baseURL/api/service/service-logs/$id";
+  static String deleteServiceLog(String id) => "$baseURL/api/service/service-logs/$id";
 
   // -------------------------
   // Overspeed Alert

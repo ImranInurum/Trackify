@@ -689,11 +689,14 @@ class _DraggableAppBarState extends State<DraggableAppBar>
 
               // Right Side info / icon
               if (!_isExpanded && isHeaderRow)
-                widget.collapsedTrailing ??
-                    Icon(
-                      Icons.notifications_none_outlined,
-                      color: Theme.of(context).colorScheme.onSurface,
-                    )
+                if (device.imei == null || device.imei!.isEmpty)
+                  const SizedBox.shrink()
+                else
+                  widget.collapsedTrailing ??
+                      Icon(
+                        Icons.notifications_none_outlined,
+                        color: Theme.of(context).colorScheme.onSurface,
+                      )
               else if (_isExpanded)
                 if (device.imei == null || device.imei!.isEmpty)
                   Row(

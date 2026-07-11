@@ -37,8 +37,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
     super.dispose();
   }
 
-
-
   void _onSignUpPressed(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     if (_formKey.currentState?.validate() ?? false) {
@@ -55,7 +53,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
   }
 
   Widget _buildLogo(SplashState state) {
-    if (state is SplashLoaded && state.logo.path != null && state.logo.path!.isNotEmpty) {
+    if (state is SplashLoaded &&
+        state.logo.path != null &&
+        state.logo.path!.isNotEmpty) {
       return Container(
         padding: EdgeInsets.zero,
         decoration: BoxDecoration(
@@ -116,7 +116,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios_new, color: Theme.of(context).colorScheme.onSurface),
+          icon: Icon(
+            Icons.arrow_back_ios_new,
+            color: Theme.of(context).colorScheme.onSurface,
+          ),
           onPressed: () => Navigator.of(context).pop(),
         ),
       ),
@@ -143,106 +146,112 @@ class _SignUpScreenState extends State<SignUpScreen> {
               final theme = Theme.of(context);
               final textTheme = theme.textTheme;
               return SingleChildScrollView(
-                  padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
-                  child: Form(
-                    key: _formKey,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        _buildLogo(splashState),
-                        const SizedBox(height: 10),
-                        _buildFieldLabel(l10n.name, textTheme),
-                        const SizedBox(height: 8),
-                        CustomFormField(
-                          header: '',
-                          hint: l10n.nameHint,
-                          value: _nameController,
-                          keyboardType: TextInputType.name,
-                          validator: (value) =>
-                              Validators.validateRequired(value, l10n.nameRequired),
+                padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      _buildLogo(splashState),
+                      const SizedBox(height: 10),
+                      _buildFieldLabel(l10n.name, textTheme),
+                      const SizedBox(height: 8),
+                      CustomFormField(
+                        header: '',
+                        hint: l10n.nameHint,
+                        value: _nameController,
+                        keyboardType: TextInputType.name,
+                        validator: (value) => Validators.validateRequired(
+                          value,
+                          l10n.nameRequired,
                         ),
-                        const SizedBox(height: 20),
-                        _buildFieldLabel(l10n.email, textTheme),
-                        const SizedBox(height: 8),
-                        CustomFormField(
-                          header: '',
-                          hint: l10n.emailHint,
-                          value: _emailController,
-                          keyboardType: TextInputType.emailAddress,
-                          validator: (value) => Validators.validateEmail(
-                            value,
-                            l10n.emailRequired,
-                            l10n.invalidEmail,
-                          ),
+                      ),
+                      const SizedBox(height: 20),
+                      _buildFieldLabel(l10n.email, textTheme),
+                      const SizedBox(height: 8),
+                      CustomFormField(
+                        header: '',
+                        hint: l10n.emailHint,
+                        value: _emailController,
+                        keyboardType: TextInputType.emailAddress,
+                        validator: (value) => Validators.validateEmail(
+                          value,
+                          l10n.emailRequired,
+                          l10n.invalidEmail,
                         ),
-                        const SizedBox(height: 20),
-                        _buildFieldLabel(l10n.password, textTheme),
-                        const SizedBox(height: 8),
-                        CustomFormField(
-                          header: '',
-                          hint: l10n.passwordHint,
-                          value: _passwordController,
-                          isPassword: true,
-                          validator: (value) => Validators.validatePassword(
-                            value,
-                            l10n.passwordRequired,
-                            l10n.passwordMinLength,
-                          ),
+                      ),
+                      const SizedBox(height: 20),
+                      _buildFieldLabel(l10n.password, textTheme),
+                      const SizedBox(height: 8),
+                      CustomFormField(
+                        header: '',
+                        hint: l10n.passwordHint,
+                        value: _passwordController,
+                        isPassword: true,
+                        validator: (value) => Validators.validatePassword(
+                          value,
+                          l10n.passwordRequired,
+                          l10n.passwordMinLength,
                         ),
-                        const SizedBox(height: 20),
-                        _buildFieldLabel("Confirm Password", textTheme),
-                        const SizedBox(height: 8),
-                        CustomFormField(
-                          header: '',
-                          hint: "Confirm your password",
-                          value: _confirmPasswordController,
-                          isPassword: true,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return "Please confirm your password";
-                            }
-                            if (value != _passwordController.text) {
-                              return "Passwords do not match";
-                            }
-                            return null;
-                          },
-                        ),
-                        const SizedBox(height: 32),
-                        CommonButton(
-                          onPressed: state is AuthLoading ? null : () => _onSignUpPressed(context),
-                          text: l10n.createAccount,
-                          borderRadius: 8,
-                          isLoading: state is AuthLoading,
-                        ),
-                        const SizedBox(height: 24),
-                        Center(
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                l10n.alreadyHaveAccount,
-                                style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
+                      ),
+                      const SizedBox(height: 20),
+                      _buildFieldLabel("Confirm Password", textTheme),
+                      const SizedBox(height: 8),
+                      CustomFormField(
+                        header: '',
+                        hint: "Confirm your password",
+                        value: _confirmPasswordController,
+                        isPassword: true,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return "Please confirm your password";
+                          }
+                          if (value != _passwordController.text) {
+                            return "Passwords do not match";
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 32),
+                      CommonButton(
+                        onPressed: state is AuthLoading
+                            ? null
+                            : () => _onSignUpPressed(context),
+                        text: l10n.createAccount,
+                        borderRadius: 8,
+                        isLoading: state is AuthLoading,
+                      ),
+                      const SizedBox(height: 24),
+                      Center(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              l10n.alreadyHaveAccount,
+                              style: TextStyle(
+                                color: Theme.of(context).colorScheme.onSurface,
                               ),
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                },
-                                child: Text(
-                                  l10n.signIn,
-                                  style: TextStyle(
-                                    color: Theme.of(context).colorScheme.primary,
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                            ),
+                            TextButton(
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                              child: Text(
+                                l10n.signIn,
+                                style: TextStyle(
+                                  color: Theme.of(context).colorScheme.primary,
+                                  fontWeight: FontWeight.bold,
                                 ),
                               ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
-                        const SizedBox(height: 20),
-                      ],
-                    ),
+                      ),
+                      const SizedBox(height: 20),
+                    ],
                   ),
+                ),
               );
             },
           );

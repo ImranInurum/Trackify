@@ -19,6 +19,7 @@ import '../../../../app/cubit/app_cubit.dart';
 import '../../../../app/app_navigation.dart';
 import '../../../../feature/map/presentation/cubit/map_cubit.dart';
 import '../../../../core/utils/shared_preferences.dart';
+import '../../../../core/common/models/vehicle_list_model.dart';
 
 class DeviceInstallationScreen extends StatefulWidget {
   final String? vehicleId;
@@ -135,22 +136,96 @@ class _DeviceInstallationScreenState extends State<DeviceInstallationScreen>
     super.dispose();
   }
 
-  void _onDetect(BarcodeCapture capture) {
+  void _onDetect(BarcodeCapture capture) async {
     if (_hasScanned) return;
 
     final List<Barcode> barcodes = capture.barcodes;
     for (final barcode in barcodes) {
       final String? rawValue = barcode.rawValue;
       if (rawValue != null && rawValue.isNotEmpty) {
-        final imei = rawValue.trim();
+        _cameraController.stop();
+
+        // ⚠️ Check immediately: if vehicle already has device, show warning before activating Continue
+        if (_isVehicleAlreadyInstalled()) {
+          if (mounted) {
+            await _showAlreadyInstalledDialog();
+            _cameraController.start();
+          }
+          return;
+        }
+
         setState(() {
           _hasScanned = true;
-          _scannedImei = imei;
+          _scannedImei = rawValue.trim();
         });
-        _cameraController.stop();
         break;
       }
     }
+  }
+
+  /// Returns true if the currently selected vehicle already has a device (IMEI) assigned.
+  bool _isVehicleAlreadyInstalled() {
+    final profileState = context.read<ProfileCubit>().state;
+    final currentUserId = AppPreference.instance.getSync(key: AppPreference.KEY_USER_ID);
+
+    if (profileState is VehiclesLoaded && profileState.vehicles.isNotEmpty) {
+      // Ensure the cached vehicles in ProfileCubit belong to the current user
+      final firstVehicleUserId = profileState.vehicles.first.userId;
+      if (currentUserId != null &&
+          currentUserId.isNotEmpty &&
+          firstVehicleUserId != null &&
+          firstVehicleUserId.isNotEmpty &&
+          firstVehicleUserId != currentUserId) {
+        return false;
+      }
+
+      final prefsId = AppPreference.instance.getSync(key: AppPreference.KEY_SELECTED_UID);
+      Vehicle vehicle;
+      if (prefsId.isNotEmpty) {
+        try {
+          vehicle = profileState.vehicles.firstWhere((v) => v.id == prefsId);
+        } catch (_) {
+          vehicle = profileState.vehicles.first;
+        }
+      } else if (widget.vehicleId != null && widget.vehicleId!.isNotEmpty) {
+        try {
+          vehicle = profileState.vehicles.firstWhere((v) => v.id == widget.vehicleId);
+        } catch (_) {
+          vehicle = profileState.vehicles.first;
+        }
+      } else {
+        vehicle = profileState.vehicles.first;
+      }
+      return vehicle.imei != null && vehicle.imei!.isNotEmpty;
+    }
+    return false;
+  }
+
+
+  Future<void> _showAlreadyInstalledDialog() async {
+    await showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Row(
+          children: [
+            Icon(Icons.warning_amber_rounded, color: Colors.orange),
+            SizedBox(width: 8),
+            Text('Device Already Installed'),
+          ],
+        ),
+        content: const Text(
+          'This vehicle already has a Trackify device installed. '
+          'Please contact support if you need to replace or reassign a device.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('OK'),
+          ),
+        ],
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      ),
+    );
   }
 
   @override
@@ -603,6 +678,13 @@ class _DeviceInstallationScreenState extends State<DeviceInstallationScreen>
 
     if (imei != null && imei.isNotEmpty) {
       if (!mounted) return;
+
+      // ⚠️ Check AFTER manual submit: if vehicle already has device, show warning
+      if (_isVehicleAlreadyInstalled()) {
+        await _showAlreadyInstalledDialog();
+        return;
+      }
+
       setState(() {
         _hasScanned = true;
         _scannedImei = imei;

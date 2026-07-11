@@ -8,8 +8,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../app/cubit/app_cubit.dart';
 import '../../../../app/cubit/app_state.dart';
 import '../../../../core/constants/app_languages.dart';
-import '../../../../core/utils/shared_preferences.dart';
 import '../../../auth/presentation/pages/signin_screen.dart';
+import 'package:trackify/feature/profile/presentation/cubit/profile_cubit.dart';
+import 'package:trackify/feature/my_profile/presentation/cubit/my_profile_cubit.dart';
+import 'package:trackify/feature/map/presentation/cubit/map_cubit.dart';
+import 'package:trackify/feature/my_garage/presentation/cubit/my_garage_cubit.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -257,15 +260,20 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 subtitle: l10n.logoutDesc,
                 showArrow: false,
                 showIcon: true,
-                onTap: () {
-                  final prefs = AppPreference.instance;
-                  prefs.clearAll();
-                  Navigator.of(context, rootNavigator: true).pushAndRemoveUntil(
-                    MaterialPageRoute(
-                      builder: (context) => const SignInScreen(),
-                    ),
-                    (Route<dynamic> route) => false,
-                  );
+                onTap: () async {
+                  await context.read<AppCubit>().logout();
+                  if (context.mounted) {
+                    context.read<ProfileCubit>().reset();
+                    context.read<MyProfileCubit>().reset();
+                    context.read<MapCubit>().reset();
+                    context.read<MyGarageCubit>().reset();
+                    Navigator.of(context, rootNavigator: true).pushAndRemoveUntil(
+                      MaterialPageRoute(
+                        builder: (context) => const SignInScreen(),
+                      ),
+                      (Route<dynamic> route) => false,
+                    );
+                  }
                 },
               ),
             const SizedBox(height: 40),

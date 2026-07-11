@@ -13,6 +13,8 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:trackify/app/cubit/app_cubit.dart';
 import 'package:trackify/app/cubit/app_state.dart';
 import 'package:trackify/core/theme/app_colors.dart';
+import 'package:trackify/core/constants/app_images.dart';
+import 'package:trackify/feature/map/presentation/pages/full_screen_map.dart';
 import 'package:trackify/feature/record_via_phone/presentation/cubit/record_via_phone_cubit.dart';
 import 'package:trackify/feature/record_via_phone/presentation/cubit/record_via_phone_state.dart';
 import 'package:trackify/l10n/app_localizations_ar.dart';
@@ -431,16 +433,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
                               heroTag: 'btnMapType',
                               mini: true,
                               backgroundColor: Theme.of(context).cardColor,
-                              onPressed: () {
-                                _rideMapController.future.then((controller) {
-                                  controller.setMapStyle(
-                                    Theme.of(context).brightness ==
-                                            Brightness.dark
-                                        ? _lightMapStyle
-                                        : _darkMapStyle,
-                                  );
-                                });
-                              },
+                              onPressed: () => _showMapStyleBottomSheet(),
                               child: Icon(
                                 Icons.map_outlined,
                                 color:
@@ -453,18 +446,37 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
                               heroTag: 'btnLocation',
                               mini: true,
                               backgroundColor: Theme.of(context).cardColor,
-                              onPressed: () {
+                              onPressed: () async {
+                                // Try AppCubit location first
                                 final appState = context.read<AppCubit>().state;
-                                final pos = appState.currentLocation;
+                                var pos = appState.currentLocation;
+
+                                // Fallback to device GPS if AppCubit hasn't updated yet
+                                if (pos == null) {
+                                  try {
+                                    pos =
+                                        await Geolocator.getLastKnownPosition();
+                                  } catch (_) {}
+                                }
+
                                 if (pos != null) {
-                                  _rideMapController.future.then((controller) {
-                                    controller.animateCamera(
+                                  _rideMapController.future.then((c) {
+                                    c.animateCamera(
                                       CameraUpdate.newLatLngZoom(
-                                        LatLng(pos.latitude, pos.longitude),
-                                        15,
+                                        LatLng(pos!.latitude, pos.longitude),
+                                        16,
                                       ),
                                     );
                                   });
+                                } else {
+                                  if (mounted) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text('Location not available'),
+                                        duration: Duration(seconds: 2),
+                                      ),
+                                    );
+                                  }
                                 }
                               },
                               child: Icon(
@@ -479,8 +491,25 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
                               heroTag: 'btnFullscreen',
                               mini: true,
                               backgroundColor: Theme.of(context).cardColor,
-                              onPressed: () {
-                                // Fullscreen toggle implementation
+                              onPressed: () async {
+                                final appState = context.read<AppCubit>().state;
+                                var pos = appState.currentLocation;
+                                if (pos == null) {
+                                  try {
+                                    pos =
+                                        await Geolocator.getLastKnownPosition();
+                                  } catch (_) {}
+                                }
+                                if (pos != null) {
+                                  _rideMapController.future.then((c) {
+                                    c.animateCamera(
+                                      CameraUpdate.newLatLngZoom(
+                                        LatLng(pos!.latitude, pos.longitude),
+                                        16,
+                                      ),
+                                    );
+                                  });
+                                }
                               },
                               child: Icon(
                                 Icons.fullscreen,
@@ -508,12 +537,14 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
     final appState = context.read<AppCubit>().state;
     final userName = appState.userData?.name ?? 'U';
 
-    String lastUpdatedText = "${AppLocalizations.of(context)!.lastUpdated} ${AppLocalizations.of(context)!.justNow}";
+    String lastUpdatedText =
+        "${AppLocalizations.of(context)!.lastUpdated} ${AppLocalizations.of(context)!.justNow}";
     final currentLoc = appState.currentLocation;
     if (currentLoc != null) {
       final timeFormat = DateFormat('h:mm a');
       final formattedTime = timeFormat.format(currentLoc.timestamp);
-      lastUpdatedText = "${AppLocalizations.of(context)!.lastUpdated} $formattedTime, ${AppLocalizations.of(context)!.today}";
+      lastUpdatedText =
+          "${AppLocalizations.of(context)!.lastUpdated} $formattedTime, ${AppLocalizations.of(context)!.today}";
     }
 
     final bool showStats =
@@ -709,7 +740,9 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
                   builder: (context) {
                     double avgSpeed = 0.0;
                     if (state.rideDuration.inSeconds > 0) {
-                      avgSpeed = state.rideDistance / (state.rideDuration.inSeconds / 3600.0);
+                      avgSpeed =
+                          state.rideDistance /
+                          (state.rideDuration.inSeconds / 3600.0);
                     }
                     return _buildNewStatItem(
                       AppLocalizations.of(context)!.avgSpeedLabel,
@@ -771,9 +804,13 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
   }
 
   String _formatDurationNew(Duration duration) {
-    String hours = duration.inHours > 0 ? '${duration.inHours}${AppLocalizations.of(context)!.hoursShort} ' : '';
-    String minutes = '${duration.inMinutes.remainder(60)}${AppLocalizations.of(context)!.minutesShort} ';
-    String seconds = '${duration.inSeconds.remainder(60)}${AppLocalizations.of(context)!.secondsShort}';
+    String hours = duration.inHours > 0
+        ? '${duration.inHours}${AppLocalizations.of(context)!.hoursShort} '
+        : '';
+    String minutes =
+        '${duration.inMinutes.remainder(60)}${AppLocalizations.of(context)!.minutesShort} ';
+    String seconds =
+        '${duration.inSeconds.remainder(60)}${AppLocalizations.of(context)!.secondsShort}';
     return '$hours$minutes$seconds';
   }
 
@@ -812,7 +849,9 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
             ),
             const SizedBox(width: 8),
             Text(
-              isRecording ? AppLocalizations.of(context)!.stopRideRecording : AppLocalizations.of(context)!.startRideRecording,
+              isRecording
+                  ? AppLocalizations.of(context)!.stopRideRecording
+                  : AppLocalizations.of(context)!.startRideRecording,
               style: TextStyle(
                 color: Theme.of(context).colorScheme.primary,
                 fontSize: 16,
@@ -1276,27 +1315,46 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
           );
         }
 
-        final style = (themeMode == ThemeMode.dark ||
-                  (themeMode == ThemeMode.system &&
-                      MediaQuery.of(context).platformBrightness ==
-                          Brightness.dark))
-              ? _darkMapStyle
-              : _lightMapStyle;
-              
-        // Force update map style when theme changes
+        // Resolve map style based on user selection (mirrors full_screen_map logic)
+        final String? mapStylePref = appState.mapStyle;
+        final String? mapTypePref = appState.mapType;
+        final l10n = AppLocalizations.of(context);
+
+        String? style;
+        MapType resolvedMapType = MapType.normal;
+
+        if (mapTypePref == 'satellite' ||
+            mapStylePref == 'Satellite' ||
+            mapStylePref == l10n?.satelliteStyle) {
+          style = null;
+          resolvedMapType = MapType.satellite;
+        } else if (mapStylePref == 'Dark' || mapStylePref == l10n?.darkStyle) {
+          style = _darkMapStyle;
+        } else if (mapStylePref == 'Light' ||
+            mapStylePref == l10n?.lightStyle) {
+          style = _lightMapStyle;
+        } else if (mapStylePref == 'Simple' ||
+            mapStylePref == l10n?.simpleStyle) {
+          style = _lightMapStyle;
+        } else {
+          // Fall back to theme
+          final isDark =
+              themeMode == ThemeMode.dark ||
+              (themeMode == ThemeMode.system &&
+                  MediaQuery.of(context).platformBrightness == Brightness.dark);
+          style = isDark ? _darkMapStyle : _lightMapStyle;
+        }
+
+        // Apply style whenever state rebuilds
         controller.future.then((c) {
-          if (style != null) {
-            c.setMapStyle(style);
-          } else {
-            c.setMapStyle(null);
-          }
+          c.setMapStyle(style);
         });
 
         return GoogleMap(
           initialCameraPosition: CameraPosition(target: target, zoom: 15),
           myLocationEnabled: !showCurrentLocationMarker,
           zoomControlsEnabled: false,
-          mapType: MapType.normal,
+          mapType: resolvedMapType,
           polylines: polylines,
           markers: allMarkers,
           style: style,
@@ -1304,12 +1362,242 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
             if (!controller.isCompleted) {
               controller.complete(googleMapController);
             }
-            if (style != null) {
-              googleMapController.setMapStyle(style);
-            }
+            googleMapController.setMapStyle(style);
           },
         );
       },
+    );
+  }
+
+  void _showMapStyleBottomSheet() {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      barrierColor: Colors.black45,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(36)),
+      ),
+      builder: (ctx) {
+        return BlocBuilder<AppCubit, AppState>(
+          builder: (context, appState) {
+            final l10n = AppLocalizations.of(context)!;
+            return Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Center(
+                    child: Container(
+                      width: 44,
+                      height: 5,
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).dividerColor,
+                        borderRadius: BorderRadius.circular(3),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  Text(
+                    l10n.mapStyleLabel,
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                      color: Theme.of(context).colorScheme.onSurface,
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      _buildStyleOption(
+                        l10n.darkStyle,
+                        AppImages.darkMapStyle,
+                        appState,
+                      ),
+                      _buildStyleOption(
+                        l10n.lightStyle,
+                        AppImages.lightMapStyle,
+                        appState,
+                      ),
+                      _buildStyleOption(
+                        l10n.simpleStyle,
+                        AppImages.simpleMapStyle,
+                        appState,
+                      ),
+                      _buildStyleOption(
+                        l10n.satelliteStyle,
+                        AppImages.sateLiteMapStyle,
+                        appState,
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 32),
+                  Text(
+                    l10n.mapOptionsLabel,
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                      color: Theme.of(context).colorScheme.onSurface,
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  Row(
+                    children: [
+                      _buildMapOption(
+                        l10n.trafficLabel,
+                        AppImages.trafficMapStyle,
+                        appState.isTrafficEnabled,
+                        (val) => context.read<AppCubit>().updateMapConfig(
+                          isTrafficEnabled: val,
+                        ),
+                      ),
+                      const SizedBox(width: 24),
+                      _buildMapOption(
+                        l10n.labelsLabel,
+                        AppImages.darkMapStyle,
+                        appState.isLabelsEnabled,
+                        (val) => context.read<AppCubit>().updateMapConfig(
+                          isLabelsEnabled: val,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 24),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  Widget _buildStyleOption(String name, String imagePath, AppState appState) {
+    final bool isSelected =
+        appState.mapStyle == name ||
+        (appState.mapType == 'satellite' && name == "Satellite");
+    return GestureDetector(
+      onTap: () {
+        if (name == "Satellite") {
+          context.read<AppCubit>().updateMapConfig(
+            mapType: 'satellite',
+            mapStyle: 'Satellite',
+          );
+        } else {
+          context.read<AppCubit>().updateMapConfig(
+            mapType: 'normal',
+            mapStyle: name,
+          );
+        }
+        // BlocBuilder on _buildMap will rebuild and apply the correct style
+      },
+      child: Column(
+        children: [
+          Container(
+            height: 68,
+            width: 68,
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage(imagePath),
+                fit: BoxFit.cover,
+              ),
+              borderRadius: BorderRadius.circular(16),
+              border: isSelected
+                  ? Border.all(
+                      color: Theme.of(context).colorScheme.primary,
+                      width: 2.5,
+                    )
+                  : Border.all(color: Theme.of(context).dividerColor),
+              boxShadow: [
+                if (isSelected)
+                  BoxShadow(
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.primary.withOpacity(0.2),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
+                  ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            name,
+            style: TextStyle(
+              fontSize: 13,
+              fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+              color: isSelected
+                  ? Theme.of(context).colorScheme.primary
+                  : Theme.of(context).colorScheme.onSurface,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMapOption(
+    String name,
+    String imagePath,
+    bool isActive,
+    Function(bool) onChanged,
+  ) {
+    return GestureDetector(
+      onTap: () => onChanged(!isActive),
+      child: Column(
+        children: [
+          Stack(
+            children: [
+              Container(
+                height: 68,
+                width: 68,
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    image: AssetImage(imagePath),
+                    fit: BoxFit.cover,
+                  ),
+                  borderRadius: BorderRadius.circular(16),
+                  border: isActive
+                      ? Border.all(
+                          color: Theme.of(context).colorScheme.primary,
+                          width: 2,
+                        )
+                      : Border.all(color: Colors.transparent),
+                ),
+              ),
+              if (isActive)
+                Positioned(
+                  top: 4,
+                  right: 4,
+                  child: Container(
+                    padding: const EdgeInsets.all(2),
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.primary,
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(
+                      Icons.check,
+                      color: Colors.white,
+                      size: 12,
+                    ),
+                  ),
+                ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Text(
+            name,
+            style: TextStyle(
+              fontSize: 13,
+              fontWeight: isActive ? FontWeight.bold : FontWeight.w500,
+              color: isActive
+                  ? Theme.of(context).colorScheme.primary
+                  : Theme.of(context).colorScheme.onSurface,
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -1367,11 +1655,16 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
                 Text(
                   AppLocalizations.of(context)!.locationAlwaysAccessWarning,
                   textAlign: TextAlign.center,
-                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
                 const SizedBox(height: 12),
                 Text(
-                  AppLocalizations.of(context)!.goToSettingsAndSelectAllowAllTheTime,
+                  AppLocalizations.of(
+                    context,
+                  )!.goToSettingsAndSelectAllowAllTheTime,
                   textAlign: TextAlign.center,
                   style: const TextStyle(fontSize: 14, color: Colors.grey),
                 ),
@@ -1415,13 +1708,25 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
                         style: TextStyle(color: Colors.white, fontSize: 8),
                       ),
                       const SizedBox(height: 12),
-                      _buildMockOption(AppLocalizations.of(context)!.allowAllTheTime, true),
+                      _buildMockOption(
+                        AppLocalizations.of(context)!.allowAllTheTime,
+                        true,
+                      ),
                       const SizedBox(height: 6),
-                      _buildMockOption(AppLocalizations.of(context)!.onlyWhileUsingTheApp, false),
+                      _buildMockOption(
+                        AppLocalizations.of(context)!.onlyWhileUsingTheApp,
+                        false,
+                      ),
                       const SizedBox(height: 6),
-                      _buildMockOption(AppLocalizations.of(context)!.askEveryTime, false),
+                      _buildMockOption(
+                        AppLocalizations.of(context)!.askEveryTime,
+                        false,
+                      ),
                       const SizedBox(height: 6),
-                      _buildMockOption(AppLocalizations.of(context)!.dontAllow, false),
+                      _buildMockOption(
+                        AppLocalizations.of(context)!.dontAllow,
+                        false,
+                      ),
                     ],
                   ),
                 ),
@@ -1545,7 +1850,9 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
                                 Text(
                                   AppLocalizations.of(context)!.saveOnline,
                                   style: TextStyle(
-                                    color: Theme.of(context).colorScheme.onSurface,
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.onSurface,
                                     fontSize: 16,
                                   ),
                                 ),
@@ -1553,7 +1860,9 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
                                 Text(
                                   AppLocalizations.of(context)!.saveOnlineDesc,
                                   style: TextStyle(
-                                    color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.onSurface.withOpacity(0.7),
                                     fontSize: 13,
                                   ),
                                 ),
@@ -1573,7 +1882,11 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
                       ),
                     ),
                     const SizedBox(height: 16),
-                    Divider(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.2)),
+                    Divider(
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.onSurface.withOpacity(0.2),
+                    ),
                     const SizedBox(height: 16),
                     GestureDetector(
                       onTap: () => setState(() => selectedMode = 1),
@@ -1587,7 +1900,9 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
                                 Text(
                                   AppLocalizations.of(context)!.saveOffline,
                                   style: TextStyle(
-                                    color: Theme.of(context).colorScheme.onSurface,
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.onSurface,
                                     fontSize: 16,
                                   ),
                                 ),
@@ -1595,7 +1910,9 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
                                 Text(
                                   AppLocalizations.of(context)!.saveOfflineDesc,
                                   style: TextStyle(
-                                    color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.onSurface.withOpacity(0.7),
                                     fontSize: 13,
                                   ),
                                 ),
@@ -1615,7 +1932,11 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
                       ),
                     ),
                     const SizedBox(height: 16),
-                    Divider(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.2)),
+                    Divider(
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.onSurface.withOpacity(0.2),
+                    ),
                     const SizedBox(height: 16),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.end,
@@ -1630,7 +1951,10 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
                         ),
                         Text(
                           AppLocalizations.of(context)!.askEveryTime,
-                          style: TextStyle(color: Theme.of(context).colorScheme.onSurface, fontSize: 14),
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.onSurface,
+                            fontSize: 14,
+                          ),
                         ),
                       ],
                     ),
@@ -1643,7 +1967,9 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
                           child: Text(
                             AppLocalizations.of(context)!.cancelBtn,
                             style: TextStyle(
-                              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.onSurface.withOpacity(0.7),
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
                             ),
@@ -1717,7 +2043,12 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
                   children: [
                     Text(
                       AppLocalizations.of(context)!.selectRideLabel,
-                      style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7), fontSize: 16),
+                      style: TextStyle(
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.onSurface.withOpacity(0.7),
+                        fontSize: 16,
+                      ),
                     ),
                     const SizedBox(height: 24),
                     Wrap(
@@ -1733,7 +2064,9 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
                               vertical: 8,
                             ),
                             decoration: BoxDecoration(
-                              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.05),
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.onSurface.withOpacity(0.05),
                               borderRadius: BorderRadius.circular(8),
                               border: Border.all(
                                 color: isSelected
@@ -1747,7 +2080,9 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
                               style: TextStyle(
                                 color: isSelected
                                     ? Theme.of(context).colorScheme.primary
-                                    : Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+                                    : Theme.of(
+                                        context,
+                                      ).colorScheme.onSurface.withOpacity(0.7),
                                 fontSize: 14,
                               ),
                             ),

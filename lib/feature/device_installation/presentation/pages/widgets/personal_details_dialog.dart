@@ -37,7 +37,7 @@ class _PersonalDetailsDialogState extends State<PersonalDetailsDialog> {
   List<csc.State> _states = [];
   List<csc.City> _cities = [];
 
-  bool _isLoadingCountries = false;
+  bool _isLoadingCountries = true;
   bool _isLoadingStates = false;
   bool _isLoadingCities = false;
 
@@ -64,7 +64,6 @@ class _PersonalDetailsDialogState extends State<PersonalDetailsDialog> {
   }
 
   Future<void> _loadCountries() async {
-    setState(() => _isLoadingCountries = true);
     final countries = await csc.getAllCountries();
     if (mounted) {
       setState(() {
@@ -75,7 +74,9 @@ class _PersonalDetailsDialogState extends State<PersonalDetailsDialog> {
   }
 
   Future<void> _loadStates(String countryIsoCode) async {
-    setState(() => _isLoadingStates = true);
+    if (mounted) {
+      setState(() => _isLoadingStates = true);
+    }
     final states = await csc.getStatesOfCountry(countryIsoCode);
     if (mounted) {
       setState(() {
@@ -89,7 +90,9 @@ class _PersonalDetailsDialogState extends State<PersonalDetailsDialog> {
   }
 
   Future<void> _loadCities(String countryIsoCode, String stateIsoCode) async {
-    setState(() => _isLoadingCities = true);
+    if (mounted) {
+      setState(() => _isLoadingCities = true);
+    }
     final cities = await csc.getStateCities(countryIsoCode, stateIsoCode);
     if (mounted) {
       setState(() {
@@ -231,20 +234,40 @@ class _PersonalDetailsDialogState extends State<PersonalDetailsDialog> {
                                     isExpanded: true,
                                     icon: const Icon(Icons.arrow_drop_down, size: 20),
                                     menuMaxHeight: 300,
-                                    items: _countries.isEmpty 
+                                    items: _countries.isEmpty
                                         ? [
                                             const DropdownMenuItem(
                                               value: '+91',
                                               child: Text("🇮🇳 +91", overflow: TextOverflow.ellipsis),
                                             )
                                           ]
-                                        : _countries.map((c) {
-                                            final code = c.phoneCode.startsWith('+') ? c.phoneCode : '+${c.phoneCode}';
-                                            return DropdownMenuItem(
-                                              value: code,
-                                              child: Text("${c.flag} $code", overflow: TextOverflow.ellipsis),
-                                            );
-                                          }).toList(),
+                                        : (() {
+                                            final seenCodes = <String>{};
+                                            final uniqueItems = <DropdownMenuItem<String>>[];
+                                            for (final c in _countries) {
+                                              if (c.phoneCode.isEmpty) continue;
+                                              final code = c.phoneCode.startsWith('+') ? c.phoneCode : '+${c.phoneCode}';
+                                              if (!seenCodes.contains(code)) {
+                                                seenCodes.add(code);
+                                                uniqueItems.add(
+                                                  DropdownMenuItem(
+                                                    value: code,
+                                                    child: Text("${c.flag} $code", overflow: TextOverflow.ellipsis),
+                                                  ),
+                                                );
+                                              }
+                                            }
+                                            if (!seenCodes.contains(_selectedPhoneCode)) {
+                                              uniqueItems.insert(
+                                                0,
+                                                DropdownMenuItem(
+                                                  value: _selectedPhoneCode,
+                                                  child: Text(_selectedPhoneCode, overflow: TextOverflow.ellipsis),
+                                                ),
+                                              );
+                                            }
+                                            return uniqueItems;
+                                          })(),
                                     onChanged: (val) {
                                       if (val != null) setState(() => _selectedPhoneCode = val);
                                     },
@@ -294,12 +317,32 @@ class _PersonalDetailsDialogState extends State<PersonalDetailsDialog> {
                               enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(8.0), borderSide: BorderSide(color: const Color(0xFFD1D5DB))),
                               focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(8.0), borderSide: BorderSide(color: theme.colorScheme.primary, width: 1.5)),
                             ),
-                            items: _countries.map((c) {
-                              return DropdownMenuItem<String>(
-                                value: c.name,
-                                child: Text("${c.flag}  ${c.name}", overflow: TextOverflow.ellipsis),
-                              );
-                            }).toList(),
+                            items: (() {
+                              final seen = <String>{};
+                              final uniqueItems = <DropdownMenuItem<String>>[];
+                              for (final c in _countries) {
+                                if (c.name.isEmpty) continue;
+                                if (!seen.contains(c.name)) {
+                                  seen.add(c.name);
+                                  uniqueItems.add(
+                                    DropdownMenuItem<String>(
+                                      value: c.name,
+                                      child: Text("${c.flag}  ${c.name}", overflow: TextOverflow.ellipsis),
+                                    ),
+                                  );
+                                }
+                              }
+                              if (_selectedCountry != null && !seen.contains(_selectedCountry)) {
+                                uniqueItems.insert(
+                                  0,
+                                  DropdownMenuItem<String>(
+                                    value: _selectedCountry,
+                                    child: Text(_selectedCountry!, overflow: TextOverflow.ellipsis),
+                                  ),
+                                );
+                              }
+                              return uniqueItems;
+                            })(),
                             onChanged: (val) {
                               setState(() => _selectedCountry = val);
                               if (val != null) {
@@ -345,12 +388,32 @@ class _PersonalDetailsDialogState extends State<PersonalDetailsDialog> {
                               enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(8.0), borderSide: BorderSide(color: const Color(0xFFD1D5DB))),
                               focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(8.0), borderSide: BorderSide(color: theme.colorScheme.primary, width: 1.5)),
                             ),
-                            items: _states.map((s) {
-                              return DropdownMenuItem<String>(
-                                value: s.name,
-                                child: Text(s.name, overflow: TextOverflow.ellipsis),
-                              );
-                            }).toList(),
+                            items: (() {
+                              final seen = <String>{};
+                              final uniqueItems = <DropdownMenuItem<String>>[];
+                              for (final s in _states) {
+                                if (s.name.isEmpty) continue;
+                                if (!seen.contains(s.name)) {
+                                  seen.add(s.name);
+                                  uniqueItems.add(
+                                    DropdownMenuItem<String>(
+                                      value: s.name,
+                                      child: Text(s.name, overflow: TextOverflow.ellipsis),
+                                    ),
+                                  );
+                                }
+                              }
+                              if (_selectedState != null && !seen.contains(_selectedState)) {
+                                uniqueItems.insert(
+                                  0,
+                                  DropdownMenuItem<String>(
+                                    value: _selectedState,
+                                    child: Text(_selectedState!, overflow: TextOverflow.ellipsis),
+                                  ),
+                                );
+                              }
+                              return uniqueItems;
+                            })(),
                             onChanged: (val) {
                               setState(() => _selectedState = val);
                               if (val != null && _selectedCountry != null) {
@@ -397,12 +460,32 @@ class _PersonalDetailsDialogState extends State<PersonalDetailsDialog> {
                               enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(8.0), borderSide: BorderSide(color: const Color(0xFFD1D5DB))),
                               focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(8.0), borderSide: BorderSide(color: theme.colorScheme.primary, width: 1.5)),
                             ),
-                            items: _cities.map((c) {
-                              return DropdownMenuItem<String>(
-                                value: c.name,
-                                child: Text(c.name, overflow: TextOverflow.ellipsis),
-                              );
-                            }).toList(),
+                            items: (() {
+                              final seen = <String>{};
+                              final uniqueItems = <DropdownMenuItem<String>>[];
+                              for (final c in _cities) {
+                                if (c.name.isEmpty) continue;
+                                if (!seen.contains(c.name)) {
+                                  seen.add(c.name);
+                                  uniqueItems.add(
+                                    DropdownMenuItem<String>(
+                                      value: c.name,
+                                      child: Text(c.name, overflow: TextOverflow.ellipsis),
+                                    ),
+                                  );
+                                }
+                              }
+                              if (_selectedCity != null && !seen.contains(_selectedCity)) {
+                                uniqueItems.insert(
+                                  0,
+                                  DropdownMenuItem<String>(
+                                    value: _selectedCity,
+                                    child: Text(_selectedCity!, overflow: TextOverflow.ellipsis),
+                                  ),
+                                );
+                              }
+                              return uniqueItems;
+                            })(),
                             onChanged: (val) => setState(() => _selectedCity = val),
                             validator: (val) => val == null || val.isEmpty ? "Required field" : null,
                           ),

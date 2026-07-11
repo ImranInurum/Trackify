@@ -21,6 +21,8 @@ import 'notification_controls_screen.dart';
 import 'edit_vehicle_screen.dart';
 import 'package:trackify/core/utils/distance_utils.dart';
 import 'package:trackify/core/common/models/vehicle_list_model.dart';
+import 'package:trackify/app/cubit/app_cubit.dart';
+import 'package:trackify/app/cubit/app_state.dart';
 
 class VehicleControlScreen extends StatelessWidget {
   final bool isFromGarage;
@@ -34,10 +36,19 @@ class VehicleControlScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final imei = passedVehicle?.imei ?? '';
     return BlocProvider(
-      create: (context) =>
-          VehicleControlCubit(VehicleControlRepositoryImpl())
-            ..loadVehicleDetails(passedVehicle?.imei ?? ''),
+      create: (context) {
+        final cubit = VehicleControlCubit(VehicleControlRepositoryImpl());
+        if (imei.isEmpty && passedVehicle != null) {
+          // No device installed — load directly from the passed vehicle object
+          // without making any API call.
+          cubit.loadFromVehicle(passedVehicle!);
+        } else {
+          cubit.loadVehicleDetails(imei);
+        }
+        return cubit;
+      },
       child: VehicleControlView(
         isFromGarage: isFromGarage,
         passedVehicle: passedVehicle,
@@ -77,7 +88,9 @@ class VehicleControlView extends StatelessWidget {
           if (state is VehicleControlDeleted) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: Text(AppLocalizations.of(context)!.vehicleRemovedSuccessfully),
+                content: Text(
+                  AppLocalizations.of(context)!.vehicleRemovedSuccessfully,
+                ),
                 backgroundColor: Colors.green,
               ),
             );
@@ -397,20 +410,44 @@ class VehicleControlView extends StatelessWidget {
                         const SizedBox(height: 12),
 
                         /// 🔹 JOURNEY CARD
-                        /// 🔹 JOURNEY CARD
-                        JourneyCard(
-                          cardColor: cardColor,
-                          primaryTextColor: primaryTextColor,
-                          secondaryTextColor: secondaryTextColor,
-                          distance: vehicle.vehicleMileage.isNotEmpty ? vehicle.vehicleMileage : "0.0",
-                          hours: "0", // TODO: Update when API provides lifetime hours
-                          minutes: "0", // TODO: Update when API provides lifetime minutes
-                          onTap: () {
-                            Navigator.popUntil(
-                              context,
-                              (route) => route.isFirst,
+                        BlocBuilder<AppCubit, AppState>(
+                          builder: (context, appState) {
+                            final matchingDevice = appState.devices.firstWhere(
+                              (d) =>
+                                  d['imei']?.toString() == vehicle.imei ||
+                                  d['_id']?.toString() == vehicle.id ||
+                                  d['id']?.toString() == vehicle.id,
+                              orElse: () => <String, dynamic>{},
                             );
-                            AppNavigation.setIndex(2);
+                            String distanceTravelled = "0.0";
+                            if (matchingDevice.isNotEmpty) {
+                              final odometerRaw = matchingDevice['odometer'];
+                              if (odometerRaw != null) {
+                                final double? val = double.tryParse(odometerRaw.toString());
+                                if (val != null) {
+                                  distanceTravelled = val.toStringAsFixed(1);
+                                } else {
+                                  distanceTravelled = odometerRaw.toString();
+                                }
+                              }
+                            }
+                            return JourneyCard(
+                              cardColor: cardColor,
+                              primaryTextColor: primaryTextColor,
+                              secondaryTextColor: secondaryTextColor,
+                              distance: distanceTravelled,
+                              hours:
+                                  "0", // TODO: Update when API provides lifetime hours
+                              minutes:
+                                  "0", // TODO: Update when API provides lifetime minutes
+                              onTap: () {
+                                Navigator.popUntil(
+                                  context,
+                                  (route) => route.isFirst,
+                                );
+                                AppNavigation.setIndex(2);
+                              },
+                            );
                           },
                         ),
 
@@ -600,7 +637,10 @@ class VehicleControlView extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  l10n.removeVehicleNamed(vehicle.vehicleName, vehicle.vehicleNumber),
+                                  l10n.removeVehicleNamed(
+                                    vehicle.vehicleName,
+                                    vehicle.vehicleNumber,
+                                  ),
                                   style: TextStyle(
                                     fontSize: 16,
                                     fontWeight: FontWeight.w700,
@@ -1123,9 +1163,7 @@ class VehicleControlView extends StatelessWidget {
       builder: (ctx) => AlertDialog(
         backgroundColor: isDark ? const Color(0xFF1E1E1E) : theme.cardColor,
         title: Text(l10n.removeVehicle),
-        content: Text(
-          l10n.removeVehicleConfirmDesc,
-        ),
+        content: Text(l10n.removeVehicleConfirmDesc),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),

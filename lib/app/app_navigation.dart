@@ -3,15 +3,17 @@ import 'package:flutter/services.dart';
 
 import 'package:trackify/core/constants/app_images.dart';
 import 'package:trackify/feature/profile/presentation/pages/profile_screen.dart';
+import 'package:trackify/core/utils/shared_preferences.dart';
 
 import '../feature/map/presentation/pages/map_screen.dart';
 import '../feature/statistics/presentation/pages/statistics_screen.dart';
 import '../feature/trips/presentation/view/trip_screen.dart';
+import '../feature/product_over_view/product_screen.dart';
 
 class AppNavigation extends StatefulWidget {
   static _AppNavigationState? currentState;
   static final ValueNotifier<int> currentTabNotifier = ValueNotifier<int>(0);
-  
+
   const AppNavigation({super.key});
 
   @override
@@ -20,21 +22,26 @@ class AppNavigation extends StatefulWidget {
   static void setIndex(int index) {
     currentState?._onTabTap(index);
   }
+
+  static void refreshNavigationState() {
+    currentState?._refreshState();
+  }
 }
 
 class _AppNavigationState extends State<AppNavigation> {
   int _currentIndex = 0;
+  bool _previousHasDevice = false;
 
   late final List<GlobalKey<NavigatorState>> _navigatorKeys;
+  late final GlobalKey<NavigatorState> _productNavigatorKey;
 
   @override
   void initState() {
     super.initState();
     AppNavigation.currentState = this;
-    _navigatorKeys = List.generate(
-      4,
-      (index) => GlobalKey<NavigatorState>(),
-    );
+    _previousHasDevice = _hasDevice;
+    _navigatorKeys = List.generate(4, (index) => GlobalKey<NavigatorState>());
+    _productNavigatorKey = GlobalKey<NavigatorState>();
   }
 
   @override
@@ -45,40 +52,121 @@ class _AppNavigationState extends State<AppNavigation> {
     super.dispose();
   }
 
-  final List<String> _icons = [
-    AppImages.homeIcon,
-    AppImages.tripsIcon,
-    AppImages.statesIcon,
-    AppImages.profileIcon,
-  ];
+  bool get _hasDevice {
+    final imei = AppPreference.instance.getSync(key: AppPreference.IMEI);
+    return imei.isNotEmpty;
+  }
+
+  GlobalKey<NavigatorState> _getNavigatorKey(int displayIndex) {
+    if (_hasDevice) {
+      return _navigatorKeys[displayIndex];
+    } else {
+      if (displayIndex == 0) return _navigatorKeys[0];
+      if (displayIndex == 1) return _productNavigatorKey;
+      return _navigatorKeys[3]; // Profile is actual index 3
+    }
+  }
+
+  void _refreshState() {
+    setState(() {
+      if (_previousHasDevice && !_hasDevice) {
+        // Switched from 4 tabs to 3 tabs
+        if (_currentIndex == 3) {
+          _currentIndex = 2; // Profile moves from 3 to 2
+        } else if (_currentIndex == 1 || _currentIndex == 2) {
+          _currentIndex = 0; // Trips/Stats fall back to Map
+        }
+      } else if (!_previousHasDevice && _hasDevice) {
+        // Switched from 3 tabs to 4 tabs
+        if (_currentIndex == 2) {
+          _currentIndex = 3; // Profile moves from 2 to 3
+        } else if (_currentIndex == 1) {
+          _currentIndex = 0; // Product tab falls back to map
+        }
+      }
+      _previousHasDevice = _hasDevice;
+    });
+  }
+
+  List<dynamic> get _currentIcons {
+    if (_hasDevice) {
+      return [
+        AppImages.homeIcon,
+        AppImages.tripsIcon,
+        AppImages.statesIcon,
+        AppImages.profileIcon,
+      ];
+    } else {
+      return [
+        AppImages.homeIcon,
+        Icons.inventory_2_outlined,
+        AppImages.profileIcon,
+      ];
+    }
+  }
+
+  List<Widget> get _currentScreens {
+    if (_hasDevice) {
+      return [
+        _buildNavigator(_navigatorKeys[0], const MapScreen()),
+        _buildNavigator(_navigatorKeys[1], const TripScreen()),
+        _buildNavigator(_navigatorKeys[2], const StatisticsScreen()),
+        _buildNavigator(_navigatorKeys[3], const ProfileScreen()),
+      ];
+    } else {
+      return [
+        _buildNavigator(_navigatorKeys[0], const MapScreen()),
+        _buildNavigator(_productNavigatorKey, const ProductOverviewScreen()),
+        _buildNavigator(_navigatorKeys[3], const ProfileScreen()),
+      ];
+    }
+  }
 
   void _onTabTap(int index) {
     if (_currentIndex == index) {
       // If tapping the same tab, pop to root of that tab
-      _navigatorKeys[index].currentState?.popUntil((route) => route.isFirst);
+      _getNavigatorKey(index).currentState?.popUntil(
+        (route) => route.isFirst,
+      );
       return;
     }
     setState(() {
       _currentIndex = index;
     });
-    AppNavigation.currentTabNotifier.value = index;
+    AppNavigation.currentTabNotifier.value = _getActualIndex(index);
   }
 
-  Widget _buildNavigator(int index, Widget child) {
+  int _getActualIndex(int displayIndex) {
+    if (_hasDevice) return displayIndex;
+    // If no device, displayIndex 0 -> actual 0 (Map)
+    // displayIndex 1 -> actual 1 (Product)
+    // displayIndex 2 -> actual 3 (Profile)
+    if (displayIndex == 2) return 3;
+    return displayIndex;
+  }
+
+  Widget _buildNavigator(GlobalKey<NavigatorState> key, Widget child) {
     return Navigator(
-      key: _navigatorKeys[index],
-      onGenerateRoute: (settings) => MaterialPageRoute(builder: (context) => child),
+      key: key,
+      onGenerateRoute: (settings) =>
+          MaterialPageRoute(builder: (context) => child),
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    final screens = _currentScreens;
+    if (_currentIndex >= screens.length) {
+      _currentIndex = screens.length - 1;
+    }
+
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, result) async {
         if (didPop) return;
 
-        final navigator = _navigatorKeys[_currentIndex].currentState;
+        final navigator =
+            _getNavigatorKey(_currentIndex).currentState;
         if (navigator != null && navigator.canPop()) {
           navigator.pop();
         } else {
@@ -90,15 +178,7 @@ class _AppNavigationState extends State<AppNavigation> {
         }
       },
       child: Scaffold(
-        body: IndexedStack(
-          index: _currentIndex,
-          children: [
-            _buildNavigator(0, const MapScreen()),
-            _buildNavigator(1, const TripScreen()),
-            _buildNavigator(2, const StatisticsScreen()),
-            _buildNavigator(3, const ProfileScreen()),
-          ],
-        ),
+        body: IndexedStack(index: _currentIndex, children: screens),
         bottomNavigationBar: Container(
           decoration: ShapeDecoration(
             color: Theme.of(context).cardColor,
@@ -107,11 +187,16 @@ class _AppNavigationState extends State<AppNavigation> {
                 topLeft: Radius.circular(26),
                 topRight: Radius.circular(26),
               ),
-              side: BorderSide(color: Theme.of(context).dividerColor.withOpacity(0.5), width: 0.8),
+              side: BorderSide(
+                color: Theme.of(context).dividerColor.withOpacity(0.5),
+                width: 0.8,
+              ),
             ),
             shadows: [
               BoxShadow(
-                color: Colors.black.withOpacity(Theme.of(context).brightness == Brightness.dark ? 0.3 : 0.1),
+                color: Colors.black.withOpacity(
+                  Theme.of(context).brightness == Brightness.dark ? 0.3 : 0.1,
+                ),
                 blurRadius: 10,
                 offset: const Offset(0, -2),
               ),
@@ -147,9 +232,15 @@ class _AppNavigationState extends State<AppNavigation> {
                             begin: Alignment.bottomCenter,
                             end: Alignment.topCenter,
                             colors: [
-                              Theme.of(context).colorScheme.primaryContainer.withOpacity(0.02),
-                              Theme.of(context).colorScheme.primaryContainer.withOpacity(0.2),
-                              Theme.of(context).colorScheme.primaryContainer.withOpacity(0.4),
+                              Theme.of(
+                                context,
+                              ).colorScheme.primaryContainer.withOpacity(0.02),
+                              Theme.of(
+                                context,
+                              ).colorScheme.primaryContainer.withOpacity(0.2),
+                              Theme.of(
+                                context,
+                              ).colorScheme.primaryContainer.withOpacity(0.4),
                             ],
                           ),
                         ),
@@ -164,10 +255,10 @@ class _AppNavigationState extends State<AppNavigation> {
                     height: 64,
                     child: Row(
                       children: List.generate(
-                        _icons.length,
+                        _currentIcons.length,
                         (index) => Expanded(
                           child: _RippleNavItem(
-                            assetPath: _icons[index],
+                            assetPath: _currentIcons[index],
                             isSelected: _currentIndex == index,
                             onTap: () => _onTabTap(index),
                           ),
@@ -186,7 +277,7 @@ class _AppNavigationState extends State<AppNavigation> {
 }
 
 class _RippleNavItem extends StatefulWidget {
-  final String assetPath;
+  final dynamic assetPath;
   final bool isSelected;
   final VoidCallback onTap;
 
@@ -290,21 +381,30 @@ class _RippleNavItemState extends State<_RippleNavItem>
                         height: 22,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          border: Border.all(color: Theme.of(context).colorScheme.primary, width: 1.2),
+                          border: Border.all(
+                            color: Theme.of(context).colorScheme.primary,
+                            width: 1.2,
+                          ),
                         ),
                       ),
                     ),
                   ),
                   Transform.scale(
                     scale: _iconScale.value,
-                    child: Image.asset(
-                      widget.assetPath,
-                      width: 24,
-                      height: 24,
-                      fit: BoxFit.contain,
-                      color: iconColor,
-                      colorBlendMode: BlendMode.srcIn,
-                    ),
+                    child: widget.assetPath is String
+                        ? Image.asset(
+                            widget.assetPath as String,
+                            width: 24,
+                            height: 24,
+                            fit: BoxFit.contain,
+                            color: iconColor,
+                            colorBlendMode: BlendMode.srcIn,
+                          )
+                        : Icon(
+                            widget.assetPath as IconData,
+                            size: 26,
+                            color: iconColor,
+                          ),
                   ),
                 ],
               ),

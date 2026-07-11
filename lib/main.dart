@@ -104,6 +104,8 @@ import 'package:trackify/feature/service_logs/data/data_source/service_logs_remo
 import 'package:trackify/feature/service_logs/data/repository/service_logs_repository_impl.dart';
 import 'package:trackify/feature/service_logs/domain/usecase/get_service_logs_usecase.dart';
 import 'package:trackify/feature/service_logs/domain/usecase/save_service_log_usecase.dart';
+import 'package:trackify/feature/service_logs/domain/usecase/update_service_log_usecase.dart';
+import 'package:trackify/feature/service_logs/domain/usecase/delete_service_log_usecase.dart';
 import 'package:trackify/feature/service_logs/presentation/cubit/service_logs_cubit.dart';
 import 'package:trackify/feature/onboarding/data/repositories/splash_repository_impl.dart';
 import 'package:trackify/feature/onboarding/domain/usecases/get_logo_usecase.dart';
@@ -238,6 +240,16 @@ List<BlocProvider> _buildBlocProviders() {
           ),
         ),
         SaveServiceLogUsecase(
+          ServiceLogsRepositoryImpl(
+            ServiceLogsRemoteDataSource(NetworkApiService()),
+          ),
+        ),
+        UpdateServiceLogUsecase(
+          ServiceLogsRepositoryImpl(
+            ServiceLogsRemoteDataSource(NetworkApiService()),
+          ),
+        ),
+        DeleteServiceLogUsecase(
           ServiceLogsRepositoryImpl(
             ServiceLogsRemoteDataSource(NetworkApiService()),
           ),

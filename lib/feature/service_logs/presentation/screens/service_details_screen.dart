@@ -1,17 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../domain/entities/service_log_entity.dart';
+import '../cubit/service_logs_cubit.dart';
 import 'add_service_log_screen.dart';
 import '../../../../l10n/app_localizations.dart';
 
 class ServiceDetailsScreen extends StatelessWidget {
   final ServiceLogEntity log;
 
-  const ServiceDetailsScreen({
-    super.key,
-    required this.log,
-  });
+  const ServiceDetailsScreen({super.key, required this.log});
 
   @override
   Widget build(BuildContext context) {
@@ -26,12 +25,15 @@ class ServiceDetailsScreen extends StatelessWidget {
         final day = date.day;
         final month = DateFormat('MMM').format(date);
         final year = DateFormat("yy").format(date);
-        
+
         String suffix = 'th';
-        if (day % 10 == 1 && day != 11) suffix = 'st';
-        else if (day % 10 == 2 && day != 12) suffix = 'nd';
-        else if (day % 10 == 3 && day != 13) suffix = 'rd';
-        
+        if (day % 10 == 1 && day != 11)
+          suffix = 'st';
+        else if (day % 10 == 2 && day != 12)
+          suffix = 'nd';
+        else if (day % 10 == 3 && day != 13)
+          suffix = 'rd';
+
         formattedDate = "$day$suffix $month '$year";
       }
     } catch (e) {
@@ -41,8 +43,8 @@ class ServiceDetailsScreen extends StatelessWidget {
     final amountStr = log.amount?.toStringAsFixed(0) ?? '0';
 
     return Scaffold(
-      backgroundColor: theme.brightness == Brightness.dark 
-          ? theme.scaffoldBackgroundColor 
+      backgroundColor: theme.brightness == Brightness.dark
+          ? theme.scaffoldBackgroundColor
           : const Color(0xFFF5F5F5),
       appBar: AppBar(
         title: Text(
@@ -59,10 +61,7 @@ class ServiceDetailsScreen extends StatelessWidget {
           onPressed: () {
             Navigator.pop(context);
           },
-          icon: Icon(
-            Icons.arrow_back_ios_new,
-            color: colorScheme.onSurface,
-          ),
+          icon: Icon(Icons.arrow_back_ios_new, color: colorScheme.onSurface),
         ),
         actions: [
           Container(
@@ -72,18 +71,26 @@ class ServiceDetailsScreen extends StatelessWidget {
               shape: BoxShape.circle,
             ),
             child: IconButton(
-              icon: Icon(Icons.delete_rounded, size: 20, color: colorScheme.onSurface.withOpacity(0.75)),
+              icon: Icon(
+                Icons.delete_rounded,
+                size: 20,
+                color: colorScheme.onSurface.withOpacity(0.75),
+              ),
               onPressed: () {
+                final outerNavigator = Navigator.of(context);
                 showDialog(
                   context: context,
-                  builder: (BuildContext context) {
+                  builder: (BuildContext dialogContext) {
                     return AlertDialog(
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(16),
                       ),
                       title: Text(
                         l10n.delete,
-                        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
+                        ),
                       ),
                       content: Text(
                         l10n.deleteServiceLogDesc,
@@ -91,7 +98,7 @@ class ServiceDetailsScreen extends StatelessWidget {
                       ),
                       actions: [
                         TextButton(
-                          onPressed: () => Navigator.pop(context),
+                          onPressed: () => Navigator.pop(dialogContext),
                           child: Text(
                             l10n.cancel,
                             style: TextStyle(
@@ -102,9 +109,13 @@ class ServiceDetailsScreen extends StatelessWidget {
                         ),
                         TextButton(
                           onPressed: () {
-                            // TODO: Call delete API via Cubit here
-                            Navigator.pop(context); // Close dialog
-                            // Navigator.pop(context); // Optional: go back to list screen if successfully deleted
+                            if (log.id != null) {
+                              context.read<ServiceLogsCubit>().deleteServiceLog(
+                                log.id!,
+                              );
+                            }
+                            Navigator.pop(dialogContext); // Close dialog
+                            outerNavigator.pop(); // Go back to list screen
                           },
                           child: Text(
                             l10n.delete,
@@ -128,7 +139,11 @@ class ServiceDetailsScreen extends StatelessWidget {
               shape: BoxShape.circle,
             ),
             child: IconButton(
-              icon: Icon(Icons.edit_rounded, size: 20, color: colorScheme.onSurface.withOpacity(0.75)),
+              icon: Icon(
+                Icons.edit_rounded,
+                size: 20,
+                color: colorScheme.onSurface.withOpacity(0.75),
+              ),
               onPressed: () {
                 Navigator.push(
                   context,
@@ -246,7 +261,9 @@ class ServiceDetailsScreen extends StatelessWidget {
                         const SizedBox(width: 8),
                         InkWell(
                           onTap: () {
-                            Clipboard.setData(ClipboardData(text: log.contact!));
+                            Clipboard.setData(
+                              ClipboardData(text: log.contact!),
+                            );
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(content: Text(l10n.contactCopied)),
                             );
@@ -283,7 +300,10 @@ class ServiceDetailsScreen extends StatelessWidget {
                     decoration: BoxDecoration(
                       color: theme.cardColor,
                       borderRadius: BorderRadius.circular(8),
-                      border: Border.all(color: colorScheme.onSurface.withOpacity(0.1), width: 1),
+                      border: Border.all(
+                        color: colorScheme.onSurface.withOpacity(0.1),
+                        width: 1,
+                      ),
                       image: DecorationImage(
                         image: NetworkImage(imageUrl),
                         fit: BoxFit.cover,
@@ -299,7 +319,10 @@ class ServiceDetailsScreen extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: theme.cardColor,
                   borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: colorScheme.onSurface.withOpacity(0.1), width: 1),
+                  border: Border.all(
+                    color: colorScheme.onSurface.withOpacity(0.1),
+                    width: 1,
+                  ),
                 ),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
