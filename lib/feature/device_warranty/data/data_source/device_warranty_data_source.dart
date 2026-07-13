@@ -3,6 +3,7 @@ import 'package:trackify/core/config/network/base_api_service.dart';
 import '../model/device_warranty_model.dart';
 import '../model/warranty_payment_summary_model.dart';
 import '../model/extend_warranty_model.dart';
+import '../model/warranty_status_model.dart';
 
 abstract class DeviceWarrantyRemoteDataSource {
   Future<DeviceWarrantyModel> getDeviceWarranty(String imei);
@@ -12,6 +13,7 @@ abstract class DeviceWarrantyRemoteDataSource {
   Future<ExtendWarrantyResponseModel> extendWarranty(
     ExtendWarrantyRequest request,
   );
+  Future<WarrantyStatusModel> getDeviceWarrantyStatus(String imei);
 }
 
 class DeviceWarrantyRemoteDataSourceImpl implements DeviceWarrantyRemoteDataSource {
@@ -65,6 +67,20 @@ class DeviceWarrantyRemoteDataSourceImpl implements DeviceWarrantyRemoteDataSour
         final Map<String, dynamic> responseData = r as Map<String, dynamic>? ?? {};
         final Map<String, dynamic> data = responseData['data'] as Map<String, dynamic>? ?? {};
         return ExtendWarrantyResponseModel.fromJson(data);
+      },
+    );
+  }
+
+  @override
+  Future<WarrantyStatusModel> getDeviceWarrantyStatus(String imei) async {
+    final response = await _apiServices.getGetApiResponse(
+      ApiURL.getDeviceWarrantyStatus(imei),
+    );
+    return response.fold(
+      (l) => throw l,
+      (r) {
+        final Map<String, dynamic> responseData = r as Map<String, dynamic>? ?? {};
+        return WarrantyStatusModel.fromJson(responseData);
       },
     );
   }

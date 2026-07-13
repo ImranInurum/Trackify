@@ -4,6 +4,7 @@ import '../../../../l10n/app_localizations.dart';
 
 class ImagePickerBox extends StatelessWidget {
   final File? image;
+  final String? imageUrl;
   final bool isRequired;
   final VoidCallback onTap;
   final VoidCallback? onRemove;
@@ -11,6 +12,7 @@ class ImagePickerBox extends StatelessWidget {
   const ImagePickerBox({
     super.key,
     this.image,
+    this.imageUrl,
     this.isRequired = false,
     required this.onTap,
     this.onRemove,
@@ -34,17 +36,33 @@ class ImagePickerBox extends StatelessWidget {
             width: 1,
           ),
         ),
-        child: image != null
+        child: (image != null || imageUrl != null)
             ? Stack(
                 children: [
                   ClipRRect(
                     borderRadius: BorderRadius.circular(16),
-                    child: Image.file(
-                      image!,
-                      width: double.infinity,
-                      height: double.infinity,
-                      fit: BoxFit.cover,
-                    ),
+                    child: image != null 
+                        ? Image.file(
+                            image!,
+                            width: double.infinity,
+                            height: double.infinity,
+                            fit: BoxFit.cover,
+                          )
+                        : Image.network(
+                            imageUrl!,
+                            width: double.infinity,
+                            height: double.infinity,
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) {
+                              return Center(
+                                child: Icon(
+                                  Icons.broken_image_outlined,
+                                  color: theme.colorScheme.error,
+                                  size: 32,
+                                ),
+                              );
+                            },
+                          ),
                   ),
                   if (onRemove != null)
                     Positioned(

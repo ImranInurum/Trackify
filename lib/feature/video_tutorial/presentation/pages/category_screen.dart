@@ -6,6 +6,7 @@ import 'package:trackify/l10n/app_localizations_ar.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../data/datasource/category_datasource.dart';
 import '../../data/model/category_model.dart';
+import 'package:trackify/core/widgets/trackify_loader.dart';
 
 class CategoryScreen extends StatefulWidget {
   const CategoryScreen({super.key});
@@ -84,10 +85,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
       child:  Column(
         children: [
           isLoading
-              ? const Center(
-            child:
-            CircularProgressIndicator(),
-          )
+              ? const Center(child: TrackifyLoader())
               : ListView.builder(
             shrinkWrap: true,
             itemCount: categories.length,

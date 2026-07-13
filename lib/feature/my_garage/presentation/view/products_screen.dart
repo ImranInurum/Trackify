@@ -6,6 +6,7 @@ import '../../domain/entities/product_entity.dart';
 import '../cubit/product_cubit.dart';
 import '../cubit/product_state.dart';
 import 'checkout_screen.dart';
+import 'package:trackify/core/widgets/trackify_loader.dart';
 
 class ProductScreen extends StatefulWidget {
   const ProductScreen({super.key});
@@ -291,9 +292,7 @@ class _ProductScreenState extends State<ProductScreen> {
             );
           }
 
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
+          return const Center(child: TrackifyLoader());
         },
       ),
     );

@@ -4,6 +4,7 @@ import '../entities/warranty_payment_summary_entity.dart';
 import '../entities/extend_warranty_entity.dart';
 import '../../data/model/warranty_payment_summary_model.dart';
 import '../../data/model/extend_warranty_model.dart';
+import '../../data/model/warranty_status_model.dart';
 
 abstract class DeviceWarrantyRepository {
   ResultFuture<DeviceWarrantyEntity> getDeviceWarranty(String imei);
@@ -13,4 +14,5 @@ abstract class DeviceWarrantyRepository {
   ResultFuture<ExtendWarrantyEntity> extendWarranty(
     ExtendWarrantyRequest request,
   );
+  ResultFuture<WarrantyStatusModel> getDeviceWarrantyStatus(String imei);
 }

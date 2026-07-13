@@ -6,6 +6,7 @@ import 'package:trackify/feature/health_insurance/presentation/cubit/health_insu
 import 'package:trackify/feature/health_insurance/domain/entities/health_insurance_entity.dart';
 
 import '../../../../l10n/app_localizations.dart';
+import 'package:trackify/core/widgets/trackify_loader.dart';
 
 class HealthInsuranceScreen extends StatefulWidget {
   const HealthInsuranceScreen({super.key});
@@ -93,7 +94,7 @@ class _HealthInsuranceScreenState extends State<HealthInsuranceScreen> {
         },
         builder: (context, state) {
           if (state.isLoading) {
-            return const Center(child: CircularProgressIndicator());
+            return const Center(child: TrackifyLoader());
           }
           return Padding(
             padding: const EdgeInsets.all(16),

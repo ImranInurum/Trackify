@@ -12,6 +12,7 @@ import 'nearby_fuel_stations_list.dart';
 
 import 'package:trackify/feature/service_logs/presentation/cubit/service_logs_cubit.dart';
 import 'package:trackify/feature/service_logs/presentation/cubit/service_logs_state.dart';
+import 'package:trackify/core/widgets/trackify_loader.dart';
 
 class DashboardTabView extends StatelessWidget {
   const DashboardTabView({super.key});
@@ -58,9 +59,7 @@ class DashboardTabView extends StatelessWidget {
         }
         
         if (state is FuelLogsLoading) {
-          return const Center(
-            child: CircularProgressIndicator(color: Color(0xFFE5B14B)),
-          );
+          return const Center(child: TrackifyLoader());
         }
 
         if (state is FuelLogsError) {

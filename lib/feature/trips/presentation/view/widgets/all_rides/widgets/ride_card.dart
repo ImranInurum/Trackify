@@ -14,6 +14,28 @@ class RideCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    
+    String displayDate = ride.date;
+    try {
+      DateTime? parsedDate;
+      if (ride.rawStartTime.isNotEmpty) {
+        parsedDate = DateTime.parse(ride.rawStartTime).toLocal();
+      }
+      if (parsedDate != null) {
+        final now = DateTime.now();
+        if (parsedDate.year == now.year && parsedDate.month == now.month && parsedDate.day == now.day) {
+          displayDate = l10n.today;
+        }
+      } else {
+        final now = DateTime.now();
+        final format1 = "${now.day}/${now.month}/${now.year}";
+        final format2 = "${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}";
+        if (ride.date == format1 || ride.date == format2) {
+          displayDate = l10n.today;
+        }
+      }
+    } catch (_) {}
+
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
       onTap: () {
@@ -94,7 +116,7 @@ class RideCard extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        ride.date,
+                        displayDate,
                         style: TextStyle(
                           fontWeight: FontWeight.w700,
                           fontSize: 15,

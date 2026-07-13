@@ -58,13 +58,14 @@ class AppState extends Equatable {
     LatLng? livePosition,
     double? liveBearing,
     String? distanceUnit,
+    bool clearUserData = false,
   }) {
     return AppState(
       themeMode: themeMode ?? this.themeMode,
       locale: locale ?? this.locale,
       isConnected: isConnected ?? this.isConnected,
       currentLocation: currentLocation ?? this.currentLocation,
-      userData: userData ?? this.userData,
+      userData: clearUserData ? null : (userData ?? this.userData),
       isSocketConnected: isSocketConnected ?? this.isSocketConnected,
       devices: devices ?? this.devices,
       dynamicTheme: dynamicTheme ?? this.dynamicTheme,

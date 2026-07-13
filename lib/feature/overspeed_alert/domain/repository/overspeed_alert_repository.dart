@@ -10,4 +10,14 @@ abstract class OverspeedAlertRepository {
   });
 
   ResultFuture<List<OverspeedAlertModel>> getOverspeedAlerts(String imei);
+  
+  ResultFuture<String> updateOverspeedAlert({
+    required String id,
+    required String alertTitle,
+    required int speedLimit,
+    required int duration,
+    required String imei,
+  });
+
+  ResultFuture<String> deleteOverspeedAlert(String id);
 }

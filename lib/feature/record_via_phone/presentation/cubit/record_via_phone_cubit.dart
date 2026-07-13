@@ -11,10 +11,11 @@ import 'package:trackify/feature/record_via_phone/presentation/cubit/record_via_
 class RecordViaPhoneCubit extends Cubit<RecordViaPhoneState> {
   final RecordViaPhoneUseCase _recordViaPhoneUseCase;
   Timer? _rideTimer;
+  StreamSubscription<Position>? _positionStream;
 
   RecordViaPhoneCubit(this._recordViaPhoneUseCase) : super(const MapInitial());
 
-  void startRecording() {
+  void startRecording() async {
     emit(
       MapRecordingUpdate(
         isRecording: true,
@@ -22,8 +23,31 @@ class RecordViaPhoneCubit extends Cubit<RecordViaPhoneState> {
         rideDuration: Duration.zero,
         rideDistance: 0.0,
         currentSpeed: 0.0,
+        topSpeed: 0.0,
+        data: state.data,
+        polylines: state.polylines,
       ),
     );
+
+    // Fetch initial location immediately
+    try {
+      Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
+      );
+      updateRecordingData(position);
+    } catch (e) {
+      debugPrint("Error getting initial location: $e");
+    }
+
+    _positionStream?.cancel();
+    _positionStream = Geolocator.getPositionStream(
+      locationSettings: const LocationSettings(
+        accuracy: LocationAccuracy.high,
+        distanceFilter: 2,
+      ),
+    ).listen((position) {
+      updateRecordingData(position);
+    });
 
     _rideTimer?.cancel();
     _rideTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
@@ -35,6 +59,9 @@ class RecordViaPhoneCubit extends Cubit<RecordViaPhoneState> {
             rideDuration: state.rideDuration + const Duration(seconds: 1),
             rideDistance: state.rideDistance,
             currentSpeed: state.currentSpeed,
+            topSpeed: state.topSpeed,
+            data: state.data,
+            polylines: state.polylines,
           ),
         );
       }
@@ -42,6 +69,7 @@ class RecordViaPhoneCubit extends Cubit<RecordViaPhoneState> {
   }
 
   void stopRecording() {
+    _positionStream?.cancel();
     _rideTimer?.cancel();
     emit(
       MapRecordingUpdate(
@@ -50,6 +78,9 @@ class RecordViaPhoneCubit extends Cubit<RecordViaPhoneState> {
         rideDuration: state.rideDuration,
         rideDistance: state.rideDistance,
         currentSpeed: 0.0,
+        topSpeed: state.topSpeed,
+        data: state.data,
+        polylines: state.polylines,
       ),
     );
     // Here you could also save the ride to a database or API
@@ -74,6 +105,9 @@ class RecordViaPhoneCubit extends Cubit<RecordViaPhoneState> {
 
     updatedPoints.add(newPoint);
 
+    double newCurrentSpeed = position.speed * 3.6; // m/s to km/h
+    double newTopSpeed = newCurrentSpeed > state.topSpeed ? newCurrentSpeed : state.topSpeed;
+
     emit(
       MapRecordingUpdate(
         isRecording: true,
@@ -81,7 +115,10 @@ class RecordViaPhoneCubit extends Cubit<RecordViaPhoneState> {
         rideDuration: state.rideDuration,
         rideDistance:
             state.rideDistance + (addedDistance / 1000), // Convert to km
-        currentSpeed: position.speed * 3.6, // m/s to km/h
+        currentSpeed: newCurrentSpeed,
+        topSpeed: newTopSpeed,
+        data: state.data,
+        polylines: state.polylines,
       ),
     );
   }
@@ -100,6 +137,9 @@ class RecordViaPhoneCubit extends Cubit<RecordViaPhoneState> {
         rideDuration: state.rideDuration,
         rideDistance: state.rideDistance,
         currentSpeed: state.currentSpeed,
+        topSpeed: state.topSpeed,
+        data: state.data,
+        polylines: state.polylines,
       ),
     );
 
@@ -115,6 +155,9 @@ class RecordViaPhoneCubit extends Cubit<RecordViaPhoneState> {
             rideDuration: state.rideDuration,
             rideDistance: state.rideDistance,
             currentSpeed: state.currentSpeed,
+            topSpeed: state.topSpeed,
+            data: state.data,
+            polylines: state.polylines,
           ),
         );
         LoadingScreenOL().hide();
@@ -161,6 +204,7 @@ class RecordViaPhoneCubit extends Cubit<RecordViaPhoneState> {
             rideDuration: state.rideDuration,
             rideDistance: state.rideDistance,
             currentSpeed: state.currentSpeed,
+            topSpeed: state.topSpeed,
           ),
         );
         LoadingScreenOL().hide();
@@ -170,6 +214,7 @@ class RecordViaPhoneCubit extends Cubit<RecordViaPhoneState> {
 
   @override
   Future<void> close() {
+    _positionStream?.cancel();
     _rideTimer?.cancel();
     return super.close();
   }

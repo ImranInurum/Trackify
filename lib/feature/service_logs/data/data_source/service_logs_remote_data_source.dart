@@ -80,4 +80,51 @@ class ServiceLogsRemoteDataSource {
       );
     }
   }
+
+  Future<void> updateServiceLog(String id, Map<String, dynamic> data) async {
+    final imagePath = data['service_bill_image'] as String?;
+    final url = ApiURL.updateServiceLog(id);
+
+    if (imagePath != null && imagePath.isNotEmpty && !imagePath.startsWith('http')) {
+      final fields = <String, String>{};
+      data.forEach((key, value) {
+        if (key != 'service_bill_image' && value != null) {
+          fields[key] = value.toString();
+        }
+      });
+
+      final file = File(imagePath);
+      final bytes = await file.readAsBytes();
+      final fileName = imagePath.split(Platform.pathSeparator).last;
+
+      final response = await _apiServices.getPostUploadMultiPartApiResponse(
+        url,
+        fields,
+        bytes,
+        fileName,
+        'service_bill_image',
+        'PUT',
+      );
+
+      return response.fold(
+        (l) => throw l,
+        (r) => null,
+      );
+    } else {
+      final response = await _apiServices.getPutApiResponse(url, data);
+      return response.fold(
+        (l) => throw l,
+        (r) => null,
+      );
+    }
+  }
+
+  Future<void> deleteServiceLog(String id) async {
+    final url = ApiURL.deleteServiceLog(id);
+    final response = await _apiServices.getDeleteApiResponse(url, {});
+    return response.fold(
+      (l) => throw l,
+      (r) => null,
+    );
+  }
 }

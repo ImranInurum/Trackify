@@ -16,6 +16,7 @@ import '../../../service_logs/presentation/screens/service_logs_screen.dart';
 import '../../../service_logs/presentation/cubit/service_logs_cubit.dart';
 import '../../../service_logs/presentation/cubit/service_logs_state.dart';
 import '../../../Vehicle_control/data/repositories/vehicle_control_repository_impl.dart';
+import 'package:trackify/core/widgets/trackify_loader.dart';
 
 class DocumentFolderScreen extends StatefulWidget {
   const DocumentFolderScreen({super.key});
@@ -899,7 +900,7 @@ class _VehicleSelectorSheet extends StatelessWidget {
           if (isLoading)
             const Padding(
               padding: EdgeInsets.symmetric(vertical: 24),
-              child: Center(child: CircularProgressIndicator()),
+              child: const Center(child: TrackifyLoader()),
             )
           else if (errorMessage != null)
             Padding(
@@ -944,48 +945,51 @@ class _VehicleSelectorSheet extends StatelessWidget {
                         width: isSelected ? 1.5 : 1,
                       ),
                     ),
-                    child: ListTile(
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-                      leading: Container(
-                        padding: const EdgeInsets.all(6),
-                        decoration: BoxDecoration(
-                          color: colorScheme.surface,
-                          shape: BoxShape.circle,
+                    child: Material(
+                      type: MaterialType.transparency,
+                      child: ListTile(
+                        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                        leading: Container(
+                          padding: const EdgeInsets.all(6),
+                          decoration: BoxDecoration(
+                            color: colorScheme.surface,
+                            shape: BoxShape.circle,
+                          ),
+                          child: Image.asset(
+                            'assets/icons/bike2.png',
+                            width: 40,
+                            height: 40,
+                          ),
                         ),
-                        child: Image.asset(
-                          'assets/icons/bike2.png',
-                          width: 40,
-                          height: 40,
+                        title: Text(
+                          '${vehicle.vehicleMaker ?? ''} ${vehicle.vehicleModel ?? ''}'.trim(),
+                          style: TextStyle(
+                            color: isSelected
+                                ? colorScheme.primary
+                                : colorScheme.onSurface,
+                            fontWeight: isSelected
+                                ? FontWeight.w600
+                                : FontWeight.w500,
+                          ),
                         ),
+                        subtitle: vehicle.vehicleNumber != null
+                            ? Text(
+                                vehicle.vehicleNumber!,
+                                style: TextStyle(
+                                  color: colorScheme.onSurfaceVariant,
+                                  fontSize: 12,
+                                ),
+                              )
+                            : null,
+                        trailing: isSelected
+                            ? Icon(
+                                Icons.check_circle,
+                                color: colorScheme.primary,
+                                size: 22,
+                              )
+                            : null,
+                        onTap: () => onSelected(vehicle),
                       ),
-                      title: Text(
-                        '${vehicle.vehicleMaker ?? ''} ${vehicle.vehicleModel ?? ''}'.trim(),
-                        style: TextStyle(
-                          color: isSelected
-                              ? colorScheme.primary
-                              : colorScheme.onSurface,
-                          fontWeight: isSelected
-                              ? FontWeight.w600
-                              : FontWeight.w500,
-                        ),
-                      ),
-                      subtitle: vehicle.vehicleNumber != null
-                          ? Text(
-                              vehicle.vehicleNumber!,
-                              style: TextStyle(
-                                color: colorScheme.onSurfaceVariant,
-                                fontSize: 12,
-                              ),
-                            )
-                          : null,
-                      trailing: isSelected
-                          ? Icon(
-                              Icons.check_circle,
-                              color: colorScheme.primary,
-                              size: 22,
-                            )
-                          : null,
-                      onTap: () => onSelected(vehicle),
                     ),
                   );
                 },

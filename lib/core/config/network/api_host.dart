@@ -47,6 +47,8 @@ class ApiURL {
       "$baseURL/api/vehicle-control/$imei";
   static String deleteVehicle(String id) =>
       "$baseURL/api/vehicle/vehicle/$id";
+  static String checkImei(String imei) =>
+      "$baseURL/api/vehicle/check-imei/$imei";
 
   static String getVehiclesByUserId(String userId) =>
       "$baseURL/api/vehicle/get-vehicles?userId=$userId";
@@ -85,8 +87,8 @@ class ApiURL {
   // -------------------------
   // Notification
   // -------------------------
-  static String notifications(String userId) =>
-      "$baseURL/api/notification/$userId";
+  static String notifications(String userId, {int page = 1, int limit = 20}) =>
+      "$baseURL/api/notification/user/$userId?page=$page&limit=$limit";
   static const String alertTypes = "$baseURL/api/alert-types";
 
   // -------------------------
@@ -110,6 +112,8 @@ class ApiURL {
   // -------------------------
   static const String serviceLogs = "$baseURL/api/service/service-logs";
   static const String addServiceLogs = "$baseURL/api/service/service-logs";
+  static String updateServiceLog(String id) => "$baseURL/api/service/service-logs/$id";
+  static String deleteServiceLog(String id) => "$baseURL/api/service/service-logs/$id";
 
   // -------------------------
   // Overspeed Alert
@@ -118,6 +122,10 @@ class ApiURL {
       "$baseURL/api/overspeed/create-alert";
   static String getOverspeedAlerts(String imei) =>
       "$baseURL/api/overspeed/get-overspeed/$imei";
+  static String updateOverspeedAlert(String alertId) =>
+      "$baseURL/api/overspeed/update-alert/$alertId";
+  static String deleteOverspeedAlert(String alertId) =>
+      "$baseURL/api/overspeed/delete-alert/$alertId";
 
   // -------------------------
   // Add Fuel
@@ -144,6 +152,9 @@ class ApiURL {
   // -------------------------
   static String getDeviceWarranty(String imei) =>
       "$baseURL/api/warranty/device-warranty/$imei";
+      
+  static String getDeviceWarrantyStatus(String imei) =>
+      "$baseURL/api/warranty-status/$imei";
 
   static String getWarrantyPaymentSummary(String imei, String planId) =>
       "$baseURL/api/warranty/warranty-payment-summary/$imei/$planId";

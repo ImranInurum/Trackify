@@ -26,4 +26,26 @@ class OverspeedAlertRemoteDataSource {
       (r) => r,
     );
   }
+
+  Future<dynamic> updateOverspeedAlert(String id, Map<String, dynamic> data) async {
+    final response = await _apiServices.getPutApiResponse(
+      ApiURL.updateOverspeedAlert(id),
+      data,
+    );
+    return response.fold(
+      (l) => throw l,
+      (r) => r,
+    );
+  }
+
+  Future<dynamic> deleteOverspeedAlert(String id) async {
+    final response = await _apiServices.getDeleteApiResponse(
+      ApiURL.deleteOverspeedAlert(id),
+      {},
+    );
+    return response.fold(
+      (l) => throw l,
+      (r) => r,
+    );
+  }
 }

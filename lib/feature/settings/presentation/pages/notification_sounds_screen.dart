@@ -5,6 +5,7 @@ import 'package:trackify/feature/settings/presentation/widgets/setting_list_tile
 import 'package:trackify/l10n/app_localizations.dart';
 import 'package:trackify/core/config/network/api_host.dart';
 import 'package:trackify/core/config/network/network_api_service.dart';
+import 'package:trackify/core/widgets/trackify_loader.dart';
 
 const _channel = MethodChannel('com.trackify.mytrackmate.trackify/notifications');
 
@@ -87,7 +88,7 @@ class _NotificationSoundsScreenState extends State<NotificationSoundsScreen> {
         surfaceTintColor: Colors.transparent,
       ),
       body: _isLoading 
-        ? const Center(child: CircularProgressIndicator())
+        ? const Center(child: TrackifyLoader())
         : _error.isNotEmpty
           ? Center(child: Text(_error, style: TextStyle(color: Colors.red)))
           : ListView.separated(

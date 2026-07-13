@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
@@ -165,9 +166,10 @@ class AppCubit extends Cubit<AppState> with WidgetsBindingObserver {
     if (state == AppLifecycleState.resumed) {
       // App came to foreground - sync everything
       _handleAppResumed();
-    } else if (state == AppLifecycleState.paused) {
-      // Optional: Handle cleanup or background mode if needed
-      print("App moved to background");
+    } else if (state == AppLifecycleState.paused || state == AppLifecycleState.inactive || state == AppLifecycleState.hidden) {
+      // Handle cleanup and prevent socket reconnect crashes in background
+      print("App moved to background, disconnecting socket to save battery and prevent crashes");
+      _socketService.disconnect();
     }
   }
 
@@ -264,6 +266,35 @@ class AppCubit extends Cubit<AppState> with WidgetsBindingObserver {
       value: jsonEncode(user.toJson()),
     );
     emit(state.copyWith(userData: user));
+  }
+
+  Future<void> logout() async {
+    debugPrint("AppCubit: [LOGOUT] Logging out user and clearing all local caches/sessions.");
+    
+    // 1. Disconnect socket
+    _socketService.disconnect();
+    await _socketSubscription?.cancel();
+    _socketSubscription = null;
+
+    // 2. Clear AppCubit state
+    emit(state.copyWith(
+      clearUserData: true,
+      devices: const [],
+      isSocketConnected: false,
+    ));
+
+    // 3. Clear Shared Preferences
+    final prefs = AppPreference.instance;
+    await prefs.clearAll();
+
+    // 4. Clear Hive Cache
+    try {
+      final box = Hive.box('map_cache');
+      await box.clear();
+      debugPrint("AppCubit: [LOGOUT] Hive box 'map_cache' cleared successfully.");
+    } catch (e) {
+      debugPrint("AppCubit: [LOGOUT] Error clearing Hive box 'map_cache': $e");
+    }
   }
 
   Future<void> initializeSocket({String? imei}) async {

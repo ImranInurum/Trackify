@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive/hive.dart';
 import 'package:trackify/core/utils/shared_preferences.dart';
+import 'package:trackify/core/common/models/vehicle_list_model.dart';
 import '../../../../core/config/network/exceptions.dart';
 import '../../domain/entities/vehicle_control_entity.dart';
 import '../../domain/repositories/vehicle_control_repository.dart';
@@ -15,6 +16,40 @@ class VehicleControlCubit extends Cubit<VehicleControlState> {
   final VehicleControlRepository repository;
 
   VehicleControlCubit(this.repository) : super(VehicleControlInitial());
+
+  /// Directly loads vehicle details from a [Vehicle] object without making
+  /// any API call. Used for vehicles that have no device installed (empty IMEI),
+  /// so we show the vehicle's profile data instead of fetching live device data.
+  void loadFromVehicle(Vehicle vehicle) {
+    final maker = vehicle.vehicleMaker?.trim() ?? '';
+    final model = vehicle.vehicleModel?.trim() ?? '';
+    final combined = (maker.isNotEmpty && model.isNotEmpty)
+        ? '$maker $model'
+        : (model.isNotEmpty ? model : maker);
+
+    final entity = VehicleControlEntity(
+      id: vehicle.id ?? '',
+      imei: vehicle.imei ?? '',
+      vehicleName: combined,
+      vehicleNumber: vehicle.vehicleNumber ?? '',
+      fuelType: vehicle.fuelType ?? '',
+      tankCapacity: vehicle.tankCapacity ?? '',
+      vehicleMileage: vehicle.mileage ?? '',
+      bikeImage: null,
+      selectedIcon: 'Bike',
+      selectedColor: 'White',
+      vehicleLock: false,
+      vehicleType: vehicle.vehicleType ?? '',
+      vehicleMaker: maker,
+      vehicleModel: model,
+    );
+
+    emit(VehicleControlLoaded(
+      vehicle: entity,
+      tempIcon: entity.selectedIcon,
+      tempColor: entity.selectedColor,
+    ));
+  }
 
   @override
   void emit(VehicleControlState state) {
@@ -143,7 +178,11 @@ class VehicleControlCubit extends Cubit<VehicleControlState> {
   Future<void> updateTankCapacity(String vehicleIMEI, String capacity) async {
     final currentState = state;
     try {
-      await repository.updateTankCapacity(vehicleIMEI, capacity);
+      if (currentState is VehicleControlLoaded) {
+        await repository.updateTankCapacity(vehicleIMEI, capacity, currentState.vehicle.vehicleMileage);
+      } else {
+        await repository.updateTankCapacity(vehicleIMEI, capacity, '');
+      }
       loadVehicleDetails(vehicleIMEI);
       _refreshGlobalVehicleLists();
     } catch (e) {
@@ -158,7 +197,11 @@ class VehicleControlCubit extends Cubit<VehicleControlState> {
   Future<void> updateMileage(String vehicleIMEI, String mileage) async {
     final currentState = state;
     try {
-      await repository.updateMileage(vehicleIMEI, mileage);
+      if (currentState is VehicleControlLoaded) {
+        await repository.updateMileage(vehicleIMEI, mileage, currentState.vehicle.tankCapacity);
+      } else {
+        await repository.updateMileage(vehicleIMEI, mileage, '');
+      }
       loadVehicleDetails(vehicleIMEI);
       _refreshGlobalVehicleLists();
     } catch (e) {

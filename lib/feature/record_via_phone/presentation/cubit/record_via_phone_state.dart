@@ -8,6 +8,9 @@ abstract class RecordViaPhoneState extends Equatable {
   final Duration rideDuration;
   final double rideDistance;
   final double currentSpeed;
+  final double topSpeed;
+  final List<DataByDate> data;
+  final Set<Polyline>? polylines;
 
   const RecordViaPhoneState({
     this.isRecording = false,
@@ -15,9 +18,10 @@ abstract class RecordViaPhoneState extends Equatable {
     this.rideDuration = Duration.zero,
     this.rideDistance = 0.0,
     this.currentSpeed = 0.0,
+    this.topSpeed = 0.0,
+    this.data = const [],
+    this.polylines,
   });
-
-  Set<Polyline>? get polylines => null;
 
   @override
   List<Object?> get props => [
@@ -26,6 +30,9 @@ abstract class RecordViaPhoneState extends Equatable {
     rideDuration,
     rideDistance,
     currentSpeed,
+    topSpeed,
+    data,
+    polylines,
   ];
 }
 
@@ -40,25 +47,23 @@ class MapLoading extends RecordViaPhoneState {
     super.rideDuration,
     super.rideDistance,
     super.currentSpeed,
+    super.topSpeed,
+    super.data,
+    super.polylines,
   });
 }
 
 class MapDataByDateLoaded extends RecordViaPhoneState {
-  final List<DataByDate> data;
-  final Set<Polyline>? polylines;
-
   const MapDataByDateLoaded({
-    required this.data,
-    required this.polylines,
+    required super.data,
+    required super.polylines,
     super.isRecording,
     super.currentRidePoints,
     super.rideDuration,
     super.rideDistance,
     super.currentSpeed,
+    super.topSpeed,
   });
-
-  @override
-  List<Object?> get props => [...super.props, data, polylines];
 }
 
 class MapError extends RecordViaPhoneState {
@@ -71,6 +76,9 @@ class MapError extends RecordViaPhoneState {
     super.rideDuration,
     super.rideDistance,
     super.currentSpeed,
+    super.topSpeed,
+    super.data,
+    super.polylines,
   });
 
   @override
@@ -84,5 +92,8 @@ class MapRecordingUpdate extends RecordViaPhoneState {
     required super.rideDuration,
     required super.rideDistance,
     required super.currentSpeed,
+    required super.topSpeed,
+    super.data,
+    super.polylines,
   });
 }

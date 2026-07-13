@@ -6,6 +6,7 @@ import 'package:trackify/feature/auth/presentation/pages/signup_screen.dart';
 import 'package:trackify/feature/onboarding/presentation/pages/select_language_screen.dart';
 
 import '../../../../app/app_navigation.dart';
+import '../../../../app/cubit/app_cubit.dart';
 import '../../../../core/utils/shared_preferences.dart';
 import '../../../../core/utils/validators.dart';
 import '../../../../core/widgets/custom_form_field.dart';
@@ -19,6 +20,7 @@ import '../../../onboarding/presentation/pages/select_language_screen.dart';
 import '../cubit/auth_cubit.dart';
 import '../cubit/auth_state.dart';
 import 'forgot_password_screen.dart';
+import 'package:trackify/core/widgets/trackify_loader.dart';
 
 class SignInScreen extends StatefulWidget {
   // final bool isFromSignUp;
@@ -32,6 +34,7 @@ class _SignInScreenState extends State<SignInScreen> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  bool _isNavigating = false;
 
   @override
   void dispose() {
@@ -74,15 +77,18 @@ class _SignInScreenState extends State<SignInScreen> {
                 imageUrl: state.logo.path!,
                 height: 220,
                 fit: BoxFit.contain,
-                placeholder: (context, url) =>
-                    Center(child: CircularProgressIndicator(color: colorScheme.primary)),
+                placeholder: (context, url) => const Center(child: TrackifyLoader()),
                 errorWidget: (context, url, error) => Icon(
                   Icons.track_changes_rounded,
                   size: 88,
                   color: colorScheme.primary,
                 ),
               )
-            : Icon(Icons.track_changes_rounded, size: 88, color: colorScheme.primary),
+            : Icon(
+                Icons.track_changes_rounded,
+                size: 88,
+                color: colorScheme.primary,
+              ),
       ),
     );
   }
@@ -107,13 +113,18 @@ class _SignInScreenState extends State<SignInScreen> {
           backgroundColor: Colors.transparent,
           elevation: 0,
           leading: IconButton(
-            icon: Icon(Icons.arrow_back_ios_new, color: Theme.of(context).colorScheme.onSurface),
+            icon: Icon(
+              Icons.arrow_back_ios_new,
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
             onPressed: () {
               if (Navigator.of(context).canPop()) {
                 Navigator.of(context).pop();
               } else {
                 Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(builder: (_) => const SelectLanguageScreen()),
+                  MaterialPageRoute(
+                    builder: (_) => const SelectLanguageScreen(),
+                  ),
                 );
               }
             },
@@ -124,7 +135,9 @@ class _SignInScreenState extends State<SignInScreen> {
             final l10n = AppLocalizations.of(context)!;
             if (state is AuthSuccess) {
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(l10n.welcome(state.user.user?.email ?? ''))),
+                SnackBar(
+                  content: Text(l10n.welcome(state.user.user?.email ?? '')),
+                ),
               );
 
               final userId = state.user.user?.id ?? "";
@@ -136,6 +149,14 @@ class _SignInScreenState extends State<SignInScreen> {
                 return;
               }
 
+              setState(() {
+                _isNavigating = true;
+              });
+
+              // Load user session details into AppCubit
+              await context.read<AppCubit>().loadUserSession();
+              if (!context.mounted) return;
+
               // Fetch vehicles to determine navigation
               await context.read<MapCubit>().fetchVehicles();
               if (!context.mounted) return;
@@ -145,7 +166,7 @@ class _SignInScreenState extends State<SignInScreen> {
                   (mapState.vehicleList.vehicles?.isNotEmpty ?? false)) {
                 Navigator.pushReplacement(
                   context,
-                  MaterialPageRoute(builder: (_) =>  AppNavigation()),
+                  MaterialPageRoute(builder: (_) => AppNavigation()),
                 );
               } else {
                 Navigator.pushReplacement(
@@ -166,144 +187,163 @@ class _SignInScreenState extends State<SignInScreen> {
                 return SafeArea(
                   child: SingleChildScrollView(
                     padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
-                      child: Form(
-                        key: _formKey,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            _buildLogo(splashState, colorScheme),
-                            const SizedBox(height: 20),
-                            Align(
-                              alignment: Alignment.centerLeft,
+                    child: Form(
+                      key: _formKey,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          _buildLogo(splashState, colorScheme),
+                          const SizedBox(height: 20),
+                          Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              l10n.email,
+                              style: textTheme.bodySmall?.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.onSurface.withOpacity(0.6),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          CustomFormField(
+                            header: '',
+                            hint: l10n.emailHint,
+                            value: _emailController,
+                            validator: (value) => Validators.validateEmail(
+                              value,
+                              l10n.emailRequired,
+                              l10n.invalidEmail,
+                            ),
+                          ),
+                          const SizedBox(height: 24),
+                          Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              l10n.password,
+                              style: textTheme.bodySmall?.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.onSurface.withOpacity(0.6),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          CustomFormField(
+                            header: '',
+                            hint: l10n.passwordHint,
+                            value: _passwordController,
+                            isPassword: true,
+                            validator: (value) => Validators.validatePassword(
+                              value,
+                              l10n.passwordRequired,
+                              l10n.passwordMinLength,
+                              minLength: 6,
+                            ),
+                          ),
+                          Align(
+                            alignment: Alignment.centerRight,
+                            child: TextButton(
+                              onPressed: () {
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        const ForgotPasswordScreen(),
+                                  ),
+                                );
+                              },
                               child: Text(
-                                l10n.email,
-                                style: textTheme.bodySmall?.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                  color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+                                l10n.forgotPassword,
+                                style: TextStyle(
+                                  color: colorScheme.primary,
+                                  fontWeight: FontWeight.w600,
                                 ),
                               ),
                             ),
-                            const SizedBox(height: 8),
-                            CustomFormField(
-                              header: '',
-                              hint: l10n.emailHint,
-                              value: _emailController,
-                              validator: (value) => Validators.validateEmail(
-                                value,
-                                l10n.emailRequired,
-                                l10n.invalidEmail,
-                              ),
-                            ),
-                            const SizedBox(height: 24),
-                            Align(
-                              alignment: Alignment.centerLeft,
-                              child: Text(
-                                l10n.password,
-                                style: textTheme.bodySmall?.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                  color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+                          ),
+                          const SizedBox(height: 32),
+                          CommonButton(
+                            onPressed: (state is AuthLoading || _isNavigating)
+                                ? null
+                                : () => _onLoginPressed(context),
+                            text: l10n.signIn,
+                            borderRadius: 8,
+                            isLoading: state is AuthLoading || _isNavigating,
+                          ),
+                          const SizedBox(height: 15),
+                          Row(
+                            children: [
+                              const Expanded(child: Divider()),
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 16,
                                 ),
-                              ),
-                            ),
-                            const SizedBox(height: 8),
-                            CustomFormField(
-                              header: '',
-                              hint: l10n.passwordHint,
-                              value: _passwordController,
-                              isPassword: true,
-                              validator: (value) => Validators.validatePassword(
-                                value,
-                                l10n.passwordRequired,
-                                l10n.passwordMinLength,
-                                minLength: 6,
-                              ),
-                            ),
-                            Align(
-                              alignment: Alignment.centerRight,
-                              child: TextButton(
-                                onPressed: () {
-                                  Navigator.of(context).push(
-                                    MaterialPageRoute(
-                                      builder: (context) => const ForgotPasswordScreen(),
-                                    ),
-                                  );
-                                },
                                 child: Text(
-                                  l10n.forgotPassword,
+                                  l10n.or,
                                   style: TextStyle(
-                                    color: colorScheme.primary,
-                                    fontWeight: FontWeight.w600,
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.onSurface.withOpacity(0.5),
                                   ),
                                 ),
                               ),
+                              const Expanded(child: Divider()),
+                            ],
+                          ),
+                          const SizedBox(height: 15),
+                          InkWell(
+                            onTap: () =>
+                                context.read<AuthCubit>().loginWithGoogle(),
+                            child: Center(
+                              child: Text(
+                                'Login with Google',
+                                style: TextStyle(
+                                  color: colorScheme.primary,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
                             ),
-                            const SizedBox(height: 32),
-                            CommonButton(
-                              onPressed: state is AuthLoading ? null : () => _onLoginPressed(context),
-                              text: l10n.signIn,
-                              borderRadius: 8,
-                              isLoading: state is AuthLoading,
-                            ),
-                            const SizedBox(height: 15),
-                            Row(
+                          ),
+                          Center(
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                const Expanded(child: Divider()),
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                                  child: Text(
-                                    l10n.or,
-                                    style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5)),
+                                Text(
+                                  l10n.dontHaveAccount,
+                                  style: TextStyle(
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.onSurface,
                                   ),
                                 ),
-                                const Expanded(child: Divider()),
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.of(context).push(
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            const SignUpScreen(),
+                                      ),
+                                    );
+                                  },
+                                  child: Text(
+                                    l10n.signUp,
+                                    style: TextStyle(
+                                      color: colorScheme.primary,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
                               ],
                             ),
-                            const SizedBox(height: 15),
-                            InkWell(
-                              onTap: () => context.read<AuthCubit>().loginWithGoogle(),
-                              child: Center(
-                                child: Text(
-                                  'Login with Google',
-                                  style: TextStyle(
-                                    color: colorScheme.primary,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ),
-                            ),
-                            Center(
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    l10n.dontHaveAccount,
-                                    style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
-                                  ),
-                                  TextButton(
-                                    onPressed: () {
-                                      Navigator.of(context).push(
-                                        MaterialPageRoute(
-                                          builder: (context) => const SignUpScreen(),
-                                        ),
-                                      );
-                                    },
-                                    child: Text(
-                                      l10n.signUp,
-                                      style: TextStyle(
-                                        color: colorScheme.primary,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            const SizedBox(height: 20),
-                          ],
-                        ),
+                          ),
+                          const SizedBox(height: 20),
+                        ],
                       ),
                     ),
+                  ),
                 );
               },
             );

@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -8,6 +9,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:trackify/app/cubit/app_cubit.dart';
 import 'package:trackify/app/cubit/app_state.dart';
+import 'package:trackify/app/app_navigation.dart';
 import 'package:trackify/core/constants/app_images.dart';
 import 'package:trackify/core/theme/app_colors.dart';
 import 'package:trackify/core/utils/map_utils.dart';
@@ -18,6 +20,8 @@ import 'package:trackify/feature/add_vehicle_and_device/choice_selector.dart';
 import 'package:trackify/feature/app_updates/presentiation/pages/update_screen.dart';
 import 'package:trackify/feature/device_warranty/pages/device_warranty_page.dart';
 import 'package:trackify/feature/document_folder/presentation/pages/document_screen.dart';
+import 'package:trackify/feature/device_installation/presentation/pages/device_installation_screen.dart';
+import 'package:trackify/feature/my_garage/presentation/view/products_screen.dart';
 import 'package:trackify/feature/emergency_sos/presentation/pages/emergency_alert_screen.dart';
 import 'package:trackify/feature/help_and_support/presentation/pages/help_support_screen.dart';
 import 'package:trackify/feature/map/data/entity/user_vehicles.dart';
@@ -57,6 +61,10 @@ import 'package:trackify/core/common/models/vehicle_list_model.dart';
 import 'package:trackify/core/utils/distance_utils.dart';
 import 'package:trackify/feature/geo_fence/presentation/cubit/geo_fence_cubit.dart';
 import 'package:trackify/feature/geo_fence/presentation/cubit/geo_fence_state.dart';
+import 'package:trackify/feature/device_warranty/data/repository/device_warranty_repository_impl.dart';
+import 'package:trackify/feature/device_warranty/data/data_source/device_warranty_data_source.dart';
+import 'package:trackify/core/config/network/network_api_service.dart';
+import 'package:trackify/core/widgets/trackify_loader.dart';
 
 class MapScreen extends StatefulWidget {
   const MapScreen({super.key});
@@ -71,6 +79,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
   String? _darkMapStyle;
   Vehicles? _selectedDevice;
   BitmapDescriptor? _customMarker;
+  BitmapDescriptor? _userLocationMarker;
   final prefs = AppPreference.instance;
   bool _isExploreExpanded = false; // For Expandable Explore More section
   final ScrollController _scrollController = ScrollController();
@@ -103,7 +112,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
   LatLng? _animEndMarkerTarget;
   double _animStartMarkerBearing = 0.0;
   double _animEndMarkerBearing = 0.0;
-  
+
   int _lastDataReceivedMs = 0;
   int _lastCameraUpdateMs = 0;
   int _lastMarkerRebuildMs = 0;
@@ -111,6 +120,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
 
   bool _isInitialFocusDone = false;
   bool _hidePromoBanner = false;
+  String _currentMarkerLetter = '';
 
   Timer? _rideHistoryUpdateTimer;
 
@@ -127,7 +137,9 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-    _hidePromoBanner = AppPreference.instance.getBoolSync(key: 'hide_promo_banner');
+    _hidePromoBanner = AppPreference.instance.getBoolSync(
+      key: 'hide_promo_banner',
+    );
 
     _markerAnimController = AnimationController(
       vsync: this,
@@ -136,71 +148,104 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
 
     _markerAnimController!.addListener(() {
       if (_animStartMarkerTarget != null && _animEndMarkerTarget != null) {
-          final now = DateTime.now().millisecondsSinceEpoch;
-          final elapsed = now - _lastDataReceivedMs;
+        final now = DateTime.now().millisecondsSinceEpoch;
+        final elapsed = now - _lastDataReceivedMs;
 
-          if (elapsed > 15000) {
-            // Stop moving if no data received for 15 seconds
-          } else {
-            // Linear constant interpolation for steady movement
-            double t = elapsed / 10000.0; // Assume 10 seconds between updates
-            if (t > 1.0) t = 1.0; // Prevent overshooting
-            
-            final double lat = _animStartMarkerTarget!.latitude + (_animEndMarkerTarget!.latitude - _animStartMarkerTarget!.latitude) * t;
-            final double lng = _animStartMarkerTarget!.longitude + (_animEndMarkerTarget!.longitude - _animStartMarkerTarget!.longitude) * t;
+        bool hasMoved = false;
+
+        if (elapsed > 15000) {
+          // Stop moving if no data received for 15 seconds
+        } else {
+          // Linear constant interpolation for steady movement
+          double t = elapsed / 10000.0; // Assume 10 seconds between updates
+          if (t > 1.0) t = 1.0; // Prevent overshooting
+
+          final double lat =
+              _animStartMarkerTarget!.latitude +
+              (_animEndMarkerTarget!.latitude -
+                      _animStartMarkerTarget!.latitude) *
+                  t;
+          final double lng =
+              _animStartMarkerTarget!.longitude +
+              (_animEndMarkerTarget!.longitude -
+                      _animStartMarkerTarget!.longitude) *
+                  t;
+
+          if (_animatedMarkerPos?.latitude != lat ||
+              _animatedMarkerPos?.longitude != lng) {
             _animatedMarkerPos = LatLng(lat, lng);
-            
-            double diffBearing = _animEndMarkerBearing - _animStartMarkerBearing;
+            hasMoved = true;
+          }
+
+          double diffBearing = _animEndMarkerBearing - _animStartMarkerBearing;
+          if (diffBearing > 180) diffBearing -= 360;
+          if (diffBearing < -180) diffBearing += 360;
+
+          final double newBearing = _animStartMarkerBearing + diffBearing * t;
+          if (_animatedMarkerBearing != newBearing) {
+            _animatedMarkerBearing = newBearing;
+            hasMoved = true;
+          }
+        }
+
+        if (hasMoved && now - _lastMarkerRebuildMs >= 50) {
+          _lastMarkerRebuildMs = now;
+          _mapRebuildNotifier.value++;
+        }
+
+        if (hasMoved &&
+            _isInitialFocusDone &&
+            mounted &&
+            _mapController != null) {
+          if (now - _lastCameraUpdateMs >= 50) {
+            _lastCameraUpdateMs = now;
+
+            final currentTarget = _cameraTarget ?? _animatedMarkerPos!;
+
+            final double latDiff =
+                (_animatedMarkerPos!.latitude - currentTarget.latitude).abs();
+            final double lngDiff =
+                (_animatedMarkerPos!.longitude - currentTarget.longitude).abs();
+            final double distanceDiff = latDiff + lngDiff;
+
+            double dynamicPosFactor = 0.15;
+            if (distanceDiff > 0.002) {
+              dynamicPosFactor = 1.0;
+            } else if (distanceDiff > 0.0006) {
+              dynamicPosFactor =
+                  0.15 + (1.0 - 0.15) * ((distanceDiff - 0.0006) / 0.0014);
+            }
+
+            final double camLat =
+                currentTarget.latitude +
+                (_animatedMarkerPos!.latitude - currentTarget.latitude) *
+                    dynamicPosFactor;
+            final double camLng =
+                currentTarget.longitude +
+                (_animatedMarkerPos!.longitude - currentTarget.longitude) *
+                    dynamicPosFactor;
+
+            double diffBearing = _animatedMarkerBearing - _cameraBearing;
             if (diffBearing > 180) diffBearing -= 360;
             if (diffBearing < -180) diffBearing += 360;
-            
-            _animatedMarkerBearing = _animStartMarkerBearing + diffBearing * t;
-          }
-          
-          if (now - _lastMarkerRebuildMs >= 50) {
-            _lastMarkerRebuildMs = now;
-            _mapRebuildNotifier.value++;
-          }
-          
-          if (_isInitialFocusDone && mounted && _mapController != null) {
-            if (now - _lastCameraUpdateMs >= 50) {
-              _lastCameraUpdateMs = now;
-              
-              final currentTarget = _cameraTarget ?? _animatedMarkerPos!;
-              
-              final double latDiff = (_animatedMarkerPos!.latitude - currentTarget.latitude).abs();
-              final double lngDiff = (_animatedMarkerPos!.longitude - currentTarget.longitude).abs();
-              final double distanceDiff = latDiff + lngDiff;
-              
-              double dynamicPosFactor = 0.15;
-              if (distanceDiff > 0.002) {
-                dynamicPosFactor = 1.0;
-              } else if (distanceDiff > 0.0006) {
-                dynamicPosFactor = 0.15 + (1.0 - 0.15) * ((distanceDiff - 0.0006) / 0.0014);
-              }
+            double newCameraBearing = _cameraBearing + diffBearing * 0.15;
 
-              final double camLat = currentTarget.latitude + (_animatedMarkerPos!.latitude - currentTarget.latitude) * dynamicPosFactor;
-              final double camLng = currentTarget.longitude + (_animatedMarkerPos!.longitude - currentTarget.longitude) * dynamicPosFactor;
-              
-              double diffBearing = _animatedMarkerBearing - _cameraBearing;
-              if (diffBearing > 180) diffBearing -= 360;
-              if (diffBearing < -180) diffBearing += 360;
-              double newCameraBearing = _cameraBearing + diffBearing * 0.15;
+            final nextPos = CameraPosition(
+              target: LatLng(camLat, camLng),
+              zoom: _cameraZoom,
+              tilt: _cameraTilt,
+              bearing: newCameraBearing,
+            );
 
-              final nextPos = CameraPosition(
-                target: LatLng(camLat, camLng),
-                zoom: _cameraZoom,
-                tilt: _cameraTilt,
-                bearing: newCameraBearing,
+            _cameraTarget = nextPos.target;
+            _cameraBearing = newCameraBearing;
+            try {
+              _mapController!.moveCamera(
+                CameraUpdate.newCameraPosition(nextPos),
               );
-              
-              _cameraTarget = nextPos.target;
-              _cameraBearing = newCameraBearing;
-              try {
-                _mapController!.moveCamera(CameraUpdate.newCameraPosition(nextPos));
-              } catch (e) {}
-            }
+            } catch (e) {}
           }
+        }
       }
     });
 
@@ -209,8 +254,12 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
     _scrollController.addListener(_scrollListener);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
+        final appState = context.read<AppCubit>().state;
         context.read<MapCubit>().fetchVehicles();
+        final name = appState.userData?.name ?? 'Me';
+        final letter = name.isNotEmpty ? name[0].toUpperCase() : 'Me';
         final primaryColor = Theme.of(context).colorScheme.primary;
+        _createUserLocationMarker(letter, primaryColor);
         _loadGeoFenceIcons(primaryColor);
       }
     });
@@ -227,13 +276,49 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
   Set<Marker> _cachedGeoMarkers = {};
 
   Future<void> _loadGeoFenceIcons(Color primaryColor) async {
-    _homeIcon = await MapUtils.createGeoFenceMarkerIcon(Icons.home_outlined, primaryColor);
-    _officeIcon = await MapUtils.createGeoFenceMarkerIcon(Icons.apartment_outlined, primaryColor);
-    _familyIcon = await MapUtils.createGeoFenceMarkerIcon(Icons.person_outline, primaryColor);
-    _parkingIcon = await MapUtils.createGeoFenceMarkerIcon(Icons.local_parking_outlined, primaryColor);
-    _othersIcon = await MapUtils.createGeoFenceMarkerIcon(Icons.location_on_outlined, primaryColor);
+    _homeIcon = await MapUtils.createGeoFenceMarkerIcon(
+      Icons.home_outlined,
+      primaryColor,
+    );
+    _officeIcon = await MapUtils.createGeoFenceMarkerIcon(
+      Icons.apartment_outlined,
+      primaryColor,
+    );
+    _familyIcon = await MapUtils.createGeoFenceMarkerIcon(
+      Icons.person_outline,
+      primaryColor,
+    );
+    _parkingIcon = await MapUtils.createGeoFenceMarkerIcon(
+      Icons.local_parking_outlined,
+      primaryColor,
+    );
+    _othersIcon = await MapUtils.createGeoFenceMarkerIcon(
+      Icons.location_on_outlined,
+      primaryColor,
+    );
     _cachedGeoMarkers.clear(); // invalidate cache to apply new icons
     if (mounted) _mapRebuildNotifier.value++;
+  }
+
+  String? _getMapStyle(AppState state, BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+
+    if (state.mapType == 'satellite' ||
+        state.mapStyle == 'Satellite' ||
+        state.mapStyle == l10n?.satelliteStyle) {
+      return null;
+    }
+    if (state.mapStyle == 'Dark' || state.mapStyle == l10n?.darkStyle) {
+      return _darkMapStyle;
+    }
+    if (state.mapStyle == 'Light' || state.mapStyle == l10n?.lightStyle) {
+      return _lightMapStyle;
+    }
+    if (state.mapStyle == 'Simple' || state.mapStyle == l10n?.simpleStyle) {
+      return _lightMapStyle;
+    }
+    final isDarkTheme = Theme.of(context).brightness == Brightness.dark;
+    return isDarkTheme ? _darkMapStyle : _lightMapStyle;
   }
 
   void _scrollListener() {
@@ -259,6 +344,85 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
     if (mounted) {
       setState(() {
         _customMarker = BitmapDescriptor.fromBytes(markerIcon);
+      });
+      _mapRebuildNotifier.value++;
+    }
+  }
+
+  Future<void> _createUserLocationMarker(
+    String letter,
+    Color primaryColor,
+  ) async {
+    const int size = 120;
+    final ui.PictureRecorder recorder = ui.PictureRecorder();
+    final Canvas canvas = Canvas(recorder);
+    const double center = size / 2;
+    const double pinBodyRadius = 36.0;
+    const double tipHeight = 18.0;
+
+    // Outer glow ring
+    final Paint glowPaint = Paint()
+      ..color = Colors.white.withOpacity(0.22)
+      ..style = PaintingStyle.fill;
+    canvas.drawCircle(
+      const Offset(center, center - tipHeight / 2),
+      pinBodyRadius + 12,
+      glowPaint,
+    );
+
+    // White border
+    final Paint borderPaint = Paint()
+      ..color = Colors.white
+      ..style = PaintingStyle.fill;
+    canvas.drawCircle(
+      const Offset(center, center - tipHeight / 2),
+      pinBodyRadius + 3.5,
+      borderPaint,
+    );
+
+    // Circle body with theme primary color
+    final Paint bodyPaint = Paint()
+      ..color = primaryColor
+      ..style = PaintingStyle.fill;
+    canvas.drawCircle(
+      const Offset(center, center - tipHeight / 2),
+      pinBodyRadius,
+      bodyPaint,
+    );
+
+    // Draw the letter
+    final ui.ParagraphBuilder pb =
+        ui.ParagraphBuilder(
+            ui.ParagraphStyle(
+              fontSize: 38,
+              fontWeight: ui.FontWeight.w700,
+              textAlign: TextAlign.center,
+            ),
+          )
+          ..pushStyle(
+            ui.TextStyle(
+              color: Colors.white,
+              fontSize: 38,
+              fontWeight: ui.FontWeight.w700,
+            ),
+          )
+          ..addText(letter);
+    final ui.Paragraph paragraph = pb.build();
+    paragraph.layout(ui.ParagraphConstraints(width: size.toDouble()));
+    canvas.drawParagraph(
+      paragraph,
+      Offset(0, center - tipHeight / 2 - paragraph.height / 2),
+    );
+
+    final ui.Image image = await recorder.endRecording().toImage(size, size);
+    final ByteData? byteData = await image.toByteData(
+      format: ui.ImageByteFormat.png,
+    );
+    if (byteData != null && mounted) {
+      setState(() {
+        _userLocationMarker = BitmapDescriptor.fromBytes(
+          byteData.buffer.asUint8List(),
+        );
       });
       _mapRebuildNotifier.value++;
     }
@@ -297,7 +461,16 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
           d['id'] == _selectedDevice?.id,
       orElse: () => <String, dynamic>{},
     );
-    double bearing = double.tryParse((currData['course'] ?? currData['bearing'] ?? currData['angle'] ?? currData['dir'] ?? '0').toString()) ?? 0.0;
+    double bearing =
+        double.tryParse(
+          (currData['course'] ??
+                  currData['bearing'] ??
+                  currData['angle'] ??
+                  currData['dir'] ??
+                  '0')
+              .toString(),
+        ) ??
+        0.0;
 
     // Glide smoothly focusing on the vehicle (drone camera zoom & rotate effect)
     // 600ms delay ensures native layout/tiles/styles are ready before animation starts
@@ -395,7 +568,9 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
           ),
         );
       } catch (e) {
-        debugPrint("Failed to move camera on disposed/detached map controller: $e");
+        debugPrint(
+          "Failed to move camera on disposed/detached map controller: $e",
+        );
       }
     });
 
@@ -405,25 +580,34 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
   void _manageRideHistoryTimer(AppState state) {
     if (_selectedDevice == null || !mounted) return;
     final liveDevice = state.devices.firstWhere(
-      (d) => d['imei']?.toString() == _selectedDevice?.imei || d['_id']?.toString() == _selectedDevice?.id || d['id']?.toString() == _selectedDevice?.id,
+      (d) =>
+          d['imei']?.toString() == _selectedDevice?.imei ||
+          d['_id']?.toString() == _selectedDevice?.id ||
+          d['id']?.toString() == _selectedDevice?.id,
       orElse: () => <String, dynamic>{},
     );
     if (liveDevice.isNotEmpty) {
       String speedStr = liveDevice['sp']?.toString() ?? "0";
       double speed = double.tryParse(speedStr) ?? 0.0;
       String status = liveDevice['status']?.toString().toLowerCase() ?? '';
-      
+
       bool isMoving = speed > 2.0 || status == 'moving';
-      
+
       if (isMoving) {
-        if (_rideHistoryUpdateTimer == null || !_rideHistoryUpdateTimer!.isActive) {
+        if (_rideHistoryUpdateTimer == null ||
+            !_rideHistoryUpdateTimer!.isActive) {
           context.read<RideHistoryCubit>().getRideHistoryData();
-          _rideHistoryUpdateTimer = Timer.periodic(const Duration(seconds: 20), (_) {
-             if (mounted) context.read<RideHistoryCubit>().getRideHistoryData();
-          });
+          _rideHistoryUpdateTimer = Timer.periodic(
+            const Duration(seconds: 20),
+            (_) {
+              if (mounted)
+                context.read<RideHistoryCubit>().getRideHistoryData();
+            },
+          );
         }
       } else {
-        if (_rideHistoryUpdateTimer != null && _rideHistoryUpdateTimer!.isActive) {
+        if (_rideHistoryUpdateTimer != null &&
+            _rideHistoryUpdateTimer!.isActive) {
           _rideHistoryUpdateTimer?.cancel();
           _rideHistoryUpdateTimer = null;
           // Fetch one last time to get the final parked stats
@@ -431,6 +615,98 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
         }
       }
     }
+  }
+
+  bool _hasShownWarrantyPopup = false;
+
+  Future<void> _checkWarrantyStatus(String imei) async {
+    if (_hasShownWarrantyPopup) return;
+    try {
+      final repository = DeviceWarrantyRepositoryImpl(
+        DeviceWarrantyRemoteDataSourceImpl(NetworkApiService()),
+      );
+      final result = await repository.getDeviceWarrantyStatus(imei);
+      result.fold(
+        (l) {}, // error, ignore
+        (r) {
+          if (!mounted) return;
+          final daysLeft = r.warranty?.daysLeft;
+          if (daysLeft != null && daysLeft <= 2) {
+            _hasShownWarrantyPopup = true;
+            _showWarrantyPopup(daysLeft);
+          }
+        },
+      );
+    } catch (e) {
+      debugPrint("Error checking warranty for popup: $e");
+    }
+  }
+
+  void _showWarrantyPopup(int daysLeft) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        final l10n = AppLocalizations.of(context)!;
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          title: Row(
+            children: [
+              const Icon(
+                Icons.warning_amber_rounded,
+                color: Colors.orange,
+                size: 28,
+              ),
+              const SizedBox(width: 8),
+              Text(
+                l10n.warrantyExpiringTitle,
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
+                ),
+              ),
+            ],
+          ),
+          content: Text(
+            daysLeft <= 0
+                ? l10n.warrantyExpiredDesc
+                : l10n.warrantyExpiringDesc(daysLeft.toString()),
+            style: const TextStyle(fontSize: 14),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text(
+                l10n.dismiss,
+                style: const TextStyle(color: Colors.grey),
+              ),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => const WarrantyScreen(),
+                  ),
+                );
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Theme.of(context).colorScheme.primary,
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+              child: Text(l10n.renewNow),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   double _normalizeBearing(double bearing) {
@@ -455,46 +731,81 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                   final vehicles = state.vehicleList.vehicles ?? [];
                   if (vehicles.isNotEmpty) {
                     if (_selectedDevice == null) {
-                      final savedUid = prefs.getSync(key: AppPreference.KEY_SELECTED_UID);
+                      final savedUid = prefs.getSync(
+                        key: AppPreference.KEY_SELECTED_UID,
+                      );
                       final savedImei = prefs.getSync(key: AppPreference.IMEI);
 
-                      final savedVehicle = vehicles.firstWhere(
-                        (v) => (savedUid.isNotEmpty && v.id == savedUid) || 
-                               (savedImei.isNotEmpty && v.imei == savedImei),
-                        orElse: () => vehicles.first,
-                      );
-                      
+                      // Try to find the previously selected vehicle by UID first,
+                      // then by IMEI. If neither matches, fall back to first vehicle.
+                      Vehicles? matchedVehicle;
+                      if (savedUid.isNotEmpty) {
+                        try {
+                          matchedVehicle = vehicles.firstWhere(
+                            (v) => v.id == savedUid,
+                          );
+                        } catch (_) {}
+                      }
+                      if (matchedVehicle == null && savedImei.isNotEmpty) {
+                        try {
+                          matchedVehicle = vehicles.firstWhere(
+                            (v) => v.imei == savedImei,
+                          );
+                        } catch (_) {}
+                      }
+
+                      final bool foundSavedVehicle = matchedVehicle != null;
+                      final savedVehicle = matchedVehicle ?? vehicles.first;
+
                       setState(() {
                         _selectedDevice = savedVehicle;
                       });
-                      
-                      prefs.set(
-                        key: AppPreference.KEY_SELECTED_UID,
-                        value: savedVehicle.id,
-                      );
-                      prefs.set(
-                        key: AppPreference.IMEI,
-                        value: savedVehicle.imei ?? '',
-                      );
-                      
-                      print("selected device is ${savedVehicle.imei} with id ${savedVehicle.id}");
+
+                      // Only overwrite preferences if we actually found the saved
+                      // vehicle, or if there was nothing saved yet (fresh install).
+                      if (foundSavedVehicle || savedUid.isEmpty) {
+                        prefs.set(
+                          key: AppPreference.KEY_SELECTED_UID,
+                          value: savedVehicle.id,
+                        );
+                        prefs.set(
+                          key: AppPreference.IMEI,
+                          value: savedVehicle.imei ?? '',
+                        );
+                        AppNavigation.refreshNavigationState();
+                      } else {
+                        // The saved vehicle was not found in the current vehicle
+                        // list (e.g. stale cache). Still refresh nav state so the
+                        // tab count matches the saved IMEI (which may be empty).
+                        AppNavigation.refreshNavigationState();
+                      }
+
                       // Refresh rides for the initially selected vehicle
                       context.read<RideHistoryCubit>().getRideHistoryData();
-                      if (savedVehicle.imei != null) {
-                         context.read<GeoFenceCubit>().fetchGeoFences(savedVehicle.imei!);
+                      if (savedVehicle.imei != null &&
+                          savedVehicle.imei!.isNotEmpty) {
+                        context.read<GeoFenceCubit>().fetchGeoFences(
+                          savedVehicle.imei!,
+                        );
+                        _checkWarrantyStatus(savedVehicle.imei!);
                       }
                     } else {
-                      // Update existing selected device if it was changed
+                      // Update existing selected device data if the vehicle list
+                      // was refreshed. Match strictly by ID to avoid confusing
+                      // multiple vehicles that all have a null/empty IMEI.
                       final updatedDevice = vehicles.firstWhere(
-                        (v) => v.id == _selectedDevice!.id || v.imei == _selectedDevice!.imei,
+                        (v) => v.id == _selectedDevice!.id,
                         orElse: () => _selectedDevice!,
                       );
                       if (updatedDevice != _selectedDevice) {
                         setState(() {
                           _selectedDevice = updatedDevice;
                         });
-                        if (updatedDevice.imei != null) {
-                           context.read<GeoFenceCubit>().fetchGeoFences(updatedDevice.imei!);
+                        if (updatedDevice.imei != null &&
+                            updatedDevice.imei!.isNotEmpty) {
+                          context.read<GeoFenceCubit>().fetchGeoFences(
+                            updatedDevice.imei!,
+                          );
                         }
                       }
                     }
@@ -509,22 +820,19 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                   prev.isTrafficEnabled != curr.isTrafficEnabled ||
                   prev.livePosition != curr.livePosition ||
                   prev.liveBearing != curr.liveBearing ||
-                  prev.devices != curr.devices,
+                  prev.devices != curr.devices ||
+                  prev.userData?.name != curr.userData?.name,
               listener: (context, state) async {
+                final name = state.userData?.name ?? 'Me';
+                final letter = name.isNotEmpty ? name[0].toUpperCase() : 'Me';
+                if (_currentMarkerLetter != letter) {
+                  _currentMarkerLetter = letter;
+                  final primaryColor = Theme.of(context).colorScheme.primary;
+                  _createUserLocationMarker(letter, primaryColor);
+                }
                 _manageRideHistoryTimer(state);
                 if (_mapController != null) {
-                  String? style;
-                  if (state.mapStyle == 'Dark') {
-                    style = _darkMapStyle;
-                  } else if (state.mapStyle == 'Light') {
-                    style = _lightMapStyle;
-                  } else if (state.mapStyle == 'Simple') {
-                    style = await MapUtils.loadStyle(
-                      'assets/map_styles/light_map.json',
-                    );
-                  } else if (state.mapStyle == 'Satellite') {
-                    style = null;
-                  }
+                  String? style = _getMapStyle(state, context);
                   if (mounted && _mapController != null) {
                     try {
                       await MapUtils.setStyle(_mapController!, style);
@@ -562,10 +870,21 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                           child: Column(
                             children: [
                               SizedBox(height: topSpacing),
-                              _buildMapSection(),
-                              if (!_hidePromoBanner) _buildPromoBanner(),
+                              if (_selectedDevice == null ||
+                                  _selectedDevice!.imei == null ||
+                                  _selectedDevice!.imei!.isEmpty)
+                                _buildPhoneAsGpsBanner()
+                              else
+                                _buildMapSection(),
+                              if (!_hidePromoBanner &&
+                                  _selectedDevice != null &&
+                                  _selectedDevice!.imei != null &&
+                                  _selectedDevice!.imei!.isNotEmpty)
+                                _buildPromoBanner(),
                               _buildExploreMore(_selectedDevice),
-                              _buildRecentRidesSection(), // Actual RideCard here
+                              _buildRecentRidesSection(
+                                _selectedDevice,
+                              ), // Actual RideCard here
                               _buildVideosSection(), // Vertical videos
                               const SizedBox(height: 100),
                             ],
@@ -657,253 +976,340 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
             ),
           ],
         ),
-        child: BlocBuilder<AppCubit, AppState>(
-          builder: (context, appState) {
-            final currentPos = appState.currentLocation;
-            if (currentPos == null) {
-              return const Center(child: CircularProgressIndicator());
-            }
-            LatLng? bestPos;
-            double bearing = 0.0;
+        child: _buildAnimatedMapCore(showStats: true),
+      ),
+    );
+  }
 
-            // 1. Get live position specific to THIS device from socket data
-            final liveData = appState.devices.firstWhere(
-              (d) =>
-                  d['imei'] == _selectedDevice?.imei ||
-                  d['_id'] == _selectedDevice?.id ||
-                  d['id'] == _selectedDevice?.id,
-              orElse: () => <String, dynamic>{},
+  Widget _buildAnimatedMapCore({bool showStats = true}) {
+    return BlocBuilder<AppCubit, AppState>(
+      builder: (context, appState) {
+        final currentPos = appState.currentLocation;
+        if (currentPos == null) {
+          return const Center(child: TrackifyLoader());
+        }
+        LatLng? bestPos;
+        double bearing = 0.0;
+
+        // 1. Get live position specific to THIS device from socket data
+        final liveData = appState.devices.firstWhere(
+          (d) =>
+              d['imei'] == _selectedDevice?.imei ||
+              d['_id'] == _selectedDevice?.id ||
+              d['id'] == _selectedDevice?.id,
+          orElse: () => <String, dynamic>{},
+        );
+
+        if (liveData.isNotEmpty) {
+          final lat = double.tryParse(liveData['lt']?.toString() ?? '');
+          final lng = double.tryParse(liveData['lg']?.toString() ?? '');
+          if (lat != null && lng != null) {
+            bestPos = LatLng(lat, lng);
+          }
+        }
+
+        double rawCourse =
+            double.tryParse(
+              (liveData['course'] ??
+                      liveData['bearing'] ??
+                      liveData['angle'] ??
+                      liveData['dir'] ??
+                      '-1')
+                  .toString(),
+            ) ??
+            -1.0;
+
+        bearing = _animatedMarkerPos != null
+            ? _animatedMarkerBearing
+            : (rawCourse >= 0 ? rawCourse : 0.0);
+
+        // 2. Fallback to API static location
+        if (bestPos == null &&
+            _selectedDevice?.currentLocation != null &&
+            _selectedDevice!.currentLocation!.lat != null &&
+            _selectedDevice!.currentLocation!.lng != null) {
+          bestPos = LatLng(
+            _selectedDevice!.currentLocation!.lat!,
+            _selectedDevice!.currentLocation!.lng!,
+          );
+        }
+
+        if (bestPos != null && _animatedMarkerPos != null) {
+          double dist = Geolocator.distanceBetween(
+            _animatedMarkerPos!.latitude,
+            _animatedMarkerPos!.longitude,
+            bestPos.latitude,
+            bestPos.longitude,
+          );
+
+          double speed =
+              double.tryParse(
+                (liveData['sp'] ?? liveData['speed'] ?? '0').toString(),
+              ) ??
+              0.0;
+
+          if (dist > 1.0) {
+            double calcB = Geolocator.bearingBetween(
+              _animatedMarkerPos!.latitude,
+              _animatedMarkerPos!.longitude,
+              bestPos.latitude,
+              bestPos.longitude,
             );
+            bearing = (calcB + 360) % 360;
+          } else if (speed > 2.0 && rawCourse >= 0) {
+            bearing = rawCourse;
+          }
+        }
 
-            if (liveData.isNotEmpty) {
-              final lat = double.tryParse(liveData['lt']?.toString() ?? '');
-              final lng = double.tryParse(liveData['lg']?.toString() ?? '');
-              if (lat != null && lng != null) {
-                bestPos = LatLng(lat, lng);
-              }
-            }
+        // 3. Fallback to phone current location
+        bestPos ??= LatLng(currentPos.latitude, currentPos.longitude);
 
-            double rawCourse = double.tryParse(
-              (liveData['course'] ?? liveData['bearing'] ?? liveData['angle'] ?? liveData['dir'] ?? '-1').toString()
-            ) ?? -1.0;
+        // Marker Animation Logic
+        if (_animatedMarkerPos == null) {
+          _animatedMarkerPos = bestPos;
+          _animatedMarkerBearing = bearing;
 
-            bearing = _animatedMarkerPos != null ? _animatedMarkerBearing : (rawCourse >= 0 ? rawCourse : 0.0);
+          // First ping, set camera instantly
+          if (_mapController != null) {
+            _mapController!.moveCamera(
+              CameraUpdate.newCameraPosition(
+                CameraPosition(target: bestPos, zoom: 17.5, bearing: 0.0),
+              ),
+            );
+          }
+        } else {
+          if (_animEndMarkerTarget != bestPos) {
+            _animStartMarkerTarget = _animatedMarkerPos;
+            _animStartMarkerBearing = _animatedMarkerBearing;
 
-            // 2. Fallback to API static location
-            if (bestPos == null &&
-                _selectedDevice?.currentLocation != null &&
-                _selectedDevice!.currentLocation!.lat != null &&
-                _selectedDevice!.currentLocation!.lng != null) {
-              bestPos = LatLng(
-                _selectedDevice!.currentLocation!.lat!,
-                _selectedDevice!.currentLocation!.lng!,
-              );
-            }
-            
-            if (bestPos != null && _animatedMarkerPos != null) {
-              double dist = Geolocator.distanceBetween(
-                _animatedMarkerPos!.latitude,
-                _animatedMarkerPos!.longitude,
-                bestPos.latitude,
-                bestPos.longitude,
-              );
-              
-              double speed = double.tryParse((liveData['sp'] ?? liveData['speed'] ?? '0').toString()) ?? 0.0;
-              
-              if (dist > 1.0) {
-                double calcB = Geolocator.bearingBetween(
-                  _animatedMarkerPos!.latitude,
-                  _animatedMarkerPos!.longitude,
-                  bestPos.latitude,
-                  bestPos.longitude,
-                );
-                bearing = (calcB + 360) % 360;
-              } else if (speed > 2.0 && rawCourse >= 0) {
-                bearing = rawCourse;
-              }
-            }
+            _animEndMarkerTarget = bestPos;
 
+            _animStartMarkerBearing = _normalizeBearing(
+              _animStartMarkerBearing,
+            );
+            double endB = _normalizeBearing(bearing);
+            double diff = endB - _animStartMarkerBearing;
+            if (diff > 180)
+              diff -= 360;
+            else if (diff < -180)
+              diff += 360;
+            _animEndMarkerBearing = _animStartMarkerBearing + diff;
 
-            // 3. Fallback to phone current location
-            bestPos ??= LatLng(currentPos.latitude, currentPos.longitude);
+            _lastDataReceivedMs = DateTime.now().millisecondsSinceEpoch;
+          }
+        }
 
-            // Marker Animation Logic
-            if (_animatedMarkerPos == null) {
-               _animatedMarkerPos = bestPos;
-               _animatedMarkerBearing = bearing;
-               
-               // First ping, set camera instantly
-               if (_mapController != null) {
-                 _mapController!.moveCamera(
-                   CameraUpdate.newCameraPosition(
-                     CameraPosition(
-                       target: bestPos,
-                       zoom: 17.5,
-                       bearing: 0.0,
-                     ),
-                   ),
-                 );
-               }
-            } else {
-               if (_animEndMarkerTarget != bestPos) {
-                 _animStartMarkerTarget = _animatedMarkerPos;
-                 _animStartMarkerBearing = _animatedMarkerBearing;
-                 
-                 _animEndMarkerTarget = bestPos;
-                 
-                 _animStartMarkerBearing = _normalizeBearing(_animStartMarkerBearing);
-                 double endB = _normalizeBearing(bearing);
-                 double diff = endB - _animStartMarkerBearing;
-                 if (diff > 180) diff -= 360;
-                 else if (diff < -180) diff += 360;
-                 _animEndMarkerBearing = _animStartMarkerBearing + diff;
-                 
-                 _lastDataReceivedMs = DateTime.now().millisecondsSinceEpoch;
-               }
-            }
+        return Column(
+          children: [
+            Expanded(
+              child: ClipRRect(
+                borderRadius: BorderRadius.all(Radius.circular(5)),
+                child: IgnorePointer(
+                  child: ValueListenableBuilder<int>(
+                    valueListenable: _mapRebuildNotifier,
+                    builder: (context, _, child) {
+                      final animPos = _animatedMarkerPos ?? bestPos!;
+                      final animBearing = _animatedMarkerPos != null
+                          ? _animatedMarkerBearing
+                          : bearing;
 
-            return Column(
-              children: [
-                Expanded(
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.all(Radius.circular(5)),
-                    child: IgnorePointer(
-                        child: ValueListenableBuilder<int>(
-                          valueListenable: _mapRebuildNotifier,
-                          builder: (context, _, child) {
-                            final animPos = _animatedMarkerPos ?? bestPos!;
-                            final animBearing = _animatedMarkerPos != null ? _animatedMarkerBearing : bearing;
+                      return BlocBuilder<GeoFenceCubit, GeoFenceState>(
+                        builder: (context, geoState) {
+                          Set<Circle> circles = {};
+                          Set<Marker> markers = {};
+                          final bool hasDevice =
+                              _selectedDevice?.imei != null &&
+                              _selectedDevice!.imei!.isNotEmpty;
 
-                            return BlocBuilder<GeoFenceCubit, GeoFenceState>(
-                              builder: (context, geoState) {
-                                Set<Circle> circles = {};
-                                Set<Marker> markers = {
-                                  Marker(
-                                    markerId: const MarkerId('current_location'),
-                                    position: animPos,
-                                    icon: _customMarker ?? BitmapDescriptor.defaultMarker,
-                                    anchor: const Offset(0.5, 0.5),
-                                    flat: true,
-                                    rotation: animBearing % 360,
+                          if (hasDevice) {
+                            markers.add(
+                              Marker(
+                                markerId: const MarkerId('vehicle_marker'),
+                                position: animPos,
+                                icon:
+                                    _customMarker ??
+                                    BitmapDescriptor.defaultMarker,
+                                anchor: const Offset(0.5, 0.5),
+                                flat: true,
+                                rotation: animBearing % 360,
+                              ),
+                            );
+                          } else if (currentPos != null) {
+                            markers.add(
+                              Marker(
+                                markerId: const MarkerId('current_location'),
+                                position: LatLng(
+                                  currentPos.latitude,
+                                  currentPos.longitude,
+                                ),
+                                icon:
+                                    _userLocationMarker ??
+                                    BitmapDescriptor.defaultMarkerWithHue(
+                                      BitmapDescriptor.hueAzure,
+                                    ),
+                                anchor: const Offset(0.5, 0.5),
+                                infoWindow: const InfoWindow(
+                                  title: 'Your location',
+                                ),
+                              ),
+                            );
+                          }
+
+                          if (_lastGeoState != geoState ||
+                              _cachedGeoCircles.isEmpty ||
+                              _cachedGeoMarkers.isEmpty) {
+                            _lastGeoState = geoState;
+                            _cachedGeoCircles.clear();
+                            _cachedGeoMarkers.clear();
+
+                            if (geoState is GeoFenceLoaded) {
+                              for (var fence in geoState.geoFences) {
+                                if (!fence.isActive) continue;
+
+                                _cachedGeoCircles.add(
+                                  Circle(
+                                    circleId: CircleId(
+                                      'geo_circle_${fence.id}_${fence.latitude}',
+                                    ),
+                                    center: LatLng(
+                                      fence.latitude,
+                                      fence.longitude,
+                                    ),
+                                    radius: fence.radius > 10
+                                        ? fence.radius
+                                        : 500.0,
+                                    fillColor: Theme.of(context)
+                                        .colorScheme
+                                        .primary
+                                        .withValues(alpha: 0.3),
+                                    strokeColor: Theme.of(
+                                      context,
+                                    ).colorScheme.primary,
+                                    strokeWidth: 2,
                                   ),
-                                };
+                                );
 
-                                if (_lastGeoState != geoState || _cachedGeoCircles.isEmpty || _cachedGeoMarkers.isEmpty) {
-                                  _lastGeoState = geoState;
-                                  _cachedGeoCircles.clear();
-                                  _cachedGeoMarkers.clear();
+                                BitmapDescriptor markerIcon =
+                                    _othersIcon ??
+                                    BitmapDescriptor.defaultMarkerWithHue(
+                                      BitmapDescriptor.hueCyan,
+                                    );
+                                final typeStr = '${fence.type} ${fence.name}'
+                                    .toLowerCase();
 
-                                  if (geoState is GeoFenceLoaded) {
-                                    for (var fence in geoState.geoFences) {
-                                      if (!fence.isActive) continue;
-                                      
-                                      _cachedGeoCircles.add(
-                                        Circle(
-                                          circleId: CircleId('geo_circle_${fence.id}_${fence.latitude}'),
-                                          center: LatLng(fence.latitude, fence.longitude),
-                                          radius: fence.radius > 10 ? fence.radius : 500.0,
-                                          fillColor: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3),
-                                          strokeColor: Theme.of(context).colorScheme.primary,
-                                          strokeWidth: 2,
-                                        ),
-                                      );
-                                      
-                                      BitmapDescriptor markerIcon = _othersIcon ?? BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueCyan);
-                                      final typeStr = '${fence.type} ${fence.name}'.toLowerCase();
-                                      
-                                      if (typeStr.contains('home') || typeStr.contains('घर') || typeStr.contains('ಮನೆ') || typeStr.contains('வீடு') || typeStr.contains('منزل')) {
-                                        markerIcon = _homeIcon ?? markerIcon;
-                                      } else if (typeStr.contains('office') || typeStr.contains('कार्यालय') || typeStr.contains('ಕಚೇರಿ') || typeStr.contains('அலுவலகம்') || typeStr.contains('مكتب')) {
-                                        markerIcon = _officeIcon ?? markerIcon;
-                                      } else if (typeStr.contains('family') || typeStr.contains('परिवार') || typeStr.contains('कुटुंब') || typeStr.contains('ಕುಟುಂಬ') || typeStr.contains('குடும்பம்') || typeStr.contains('عائلة')) {
-                                        markerIcon = _familyIcon ?? markerIcon;
-                                      } else if (typeStr.contains('parking') || typeStr.contains('पार्किंग') || typeStr.contains('ಪಾರ್ಕಿಂಗ್') || typeStr.contains('பார்க்கிங்') || typeStr.contains('موقف')) {
-                                        markerIcon = _parkingIcon ?? markerIcon;
-                                      }
-
-                                      _cachedGeoMarkers.add(
-                                        Marker(
-                                          markerId: MarkerId('geo_${fence.id}'),
-                                          position: LatLng(fence.latitude, fence.longitude),
-                                          icon: markerIcon,
-                                          infoWindow: InfoWindow(title: fence.name),
-                                        ),
-                                      );
-                                    }
-                                  }
+                                if (typeStr.contains('home') ||
+                                    typeStr.contains('घर') ||
+                                    typeStr.contains('ಮನೆ') ||
+                                    typeStr.contains('வீடு') ||
+                                    typeStr.contains('منزل')) {
+                                  markerIcon = _homeIcon ?? markerIcon;
+                                } else if (typeStr.contains('office') ||
+                                    typeStr.contains('कार्यालय') ||
+                                    typeStr.contains('ಕಚೇರಿ') ||
+                                    typeStr.contains('அலுவலகம்') ||
+                                    typeStr.contains('مكتب')) {
+                                  markerIcon = _officeIcon ?? markerIcon;
+                                } else if (typeStr.contains('family') ||
+                                    typeStr.contains('परिवार') ||
+                                    typeStr.contains('कुटुंब') ||
+                                    typeStr.contains('ಕುಟುಂಬ') ||
+                                    typeStr.contains('குடும்பம்') ||
+                                    typeStr.contains('عائلة')) {
+                                  markerIcon = _familyIcon ?? markerIcon;
+                                } else if (typeStr.contains('parking') ||
+                                    typeStr.contains('पार्किंग') ||
+                                    typeStr.contains('ಪಾರ್ಕಿಂಗ್') ||
+                                    typeStr.contains('பார்க்கிங்') ||
+                                    typeStr.contains('موقف')) {
+                                  markerIcon = _parkingIcon ?? markerIcon;
                                 }
 
-                                circles.addAll(_cachedGeoCircles);
-                                markers.addAll(_cachedGeoMarkers);
-
-                                return GoogleMap(
-                                    key: ValueKey(_selectedDevice?.id),
-                                    initialCameraPosition: CameraPosition(
-                                      target: bestPos!,
-                                      zoom: 17.5,
-                                      bearing: 0.0,
+                                _cachedGeoMarkers.add(
+                                  Marker(
+                                    markerId: MarkerId('geo_${fence.id}'),
+                                    position: LatLng(
+                                      fence.latitude,
+                                      fence.longitude,
                                     ),
-                                    myLocationEnabled: false,
-                                    zoomControlsEnabled: false,
-                                    myLocationButtonEnabled: false,
-                                    scrollGesturesEnabled: false,
-                                    zoomGesturesEnabled: false,
-                                    tiltGesturesEnabled: false,
-                                    rotateGesturesEnabled: false,
-                                    mapType: appState.mapType == 'satellite'
-                                        ? MapType.satellite
-                                        : MapType.normal,
-                                    trafficEnabled: appState.isTrafficEnabled,
-                                    markers: markers,
-                                    circles: circles,
-                                    onMapCreated: (GoogleMapController controller) async {
+                                    icon: markerIcon,
+                                    infoWindow: InfoWindow(title: fence.name),
+                                  ),
+                                );
+                              }
+                            }
+                          }
+
+                          circles.addAll(_cachedGeoCircles);
+                          markers.addAll(_cachedGeoMarkers);
+
+                          return GoogleMap(
+                            key: ValueKey(_selectedDevice?.id),
+                            initialCameraPosition: CameraPosition(
+                              target: bestPos!,
+                              zoom: 17.5,
+                              bearing: 0.0,
+                            ),
+                            myLocationEnabled: false,
+                            zoomControlsEnabled: false,
+                            myLocationButtonEnabled: false,
+                            scrollGesturesEnabled: false,
+                            zoomGesturesEnabled: false,
+                            tiltGesturesEnabled: false,
+                            rotateGesturesEnabled: false,
+                            buildingsEnabled: false,
+                            mapType: appState.mapType == 'satellite'
+                                ? MapType.satellite
+                                : MapType.normal,
+                            trafficEnabled: appState.isTrafficEnabled,
+                            markers: markers,
+                            circles: circles,
+                            style: _getMapStyle(appState, context),
+                            onMapCreated:
+                                (GoogleMapController controller) async {
                                   _mapController = controller;
 
-                                  final appState = context.read<AppCubit>().state;
-                                  if (_darkMapStyle == null || _lightMapStyle == null) {
+                                  final appState = context
+                                      .read<AppCubit>()
+                                      .state;
+                                  if (_darkMapStyle == null ||
+                                      _lightMapStyle == null) {
                                     await _loadMapStyles();
                                   }
 
-                                  String? style;
-                                  if (appState.mapStyle == 'Dark') {
-                                    style = _darkMapStyle;
-                                  } else if (appState.mapStyle == 'Light') {
-                                    style = _lightMapStyle;
-                                  } else if (appState.mapStyle == 'Simple') {
-                                    style = await MapUtils.loadStyle(
-                                      'assets/map_styles/light_map.json',
-                                    );
-                                  }
-
+                                  final style = _getMapStyle(appState, context);
                                   await MapUtils.setStyle(controller, style);
 
                                   // Initialize camera state fields
-                                  _cameraTarget = appState.livePosition ?? bestPos;
+                                  _cameraTarget =
+                                      appState.livePosition ?? bestPos;
                                   _cameraZoom = 15.0;
                                   _cameraTilt = 0.0;
-                                  _cameraBearing = _normalizeBearing(appState.liveBearing - 120.0);
-
-                                      WidgetsBinding.instance.addPostFrameCallback((_) {
-                                        _triggerInitialFocusAnimation();
-                                      });
-                                    },
+                                  _cameraBearing = _normalizeBearing(
+                                    appState.liveBearing - 120.0,
                                   );
-                              },
-                            );
-                          }
-                        ),
-                    ),
+
+                                  WidgetsBinding.instance.addPostFrameCallback((
+                                    _,
+                                  ) {
+                                    _triggerInitialFocusAnimation();
+                                  });
+                                },
+                          );
+                        },
+                      );
+                    },
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  child: _buildStatsRow(),
-                ),
-              ],
-            );
-          },
-        ),
-      ),
+              ),
+            ),
+            if (showStats)
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                child: _buildStatsRow(),
+              ),
+          ],
+        );
+      },
     );
   }
 
@@ -919,57 +1325,108 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
             }
 
             final liveDevice = appState.devices.firstWhere(
-              (d) => d['imei']?.toString() == _selectedDevice?.imei || d['_id']?.toString() == _selectedDevice?.id || d['id']?.toString() == _selectedDevice?.id,
+              (d) =>
+                  d['imei']?.toString() == _selectedDevice?.imei ||
+                  d['_id']?.toString() == _selectedDevice?.id ||
+                  d['id']?.toString() == _selectedDevice?.id,
               orElse: () => <String, dynamic>{},
             );
-            
+
             final odometer = liveDevice['odometer']?.toString() ?? "0";
             dynamic attrs = liveDevice['attributes'];
             if (attrs is String) {
-              try { attrs = jsonDecode(attrs); } catch (_) {}
+              try {
+                attrs = jsonDecode(attrs);
+              } catch (_) {}
             }
 
-            String speed = "${liveDevice['sp'] ?? _selectedDevice?.currentLocation?.speed ?? 0} ${context.displayKmh}";
-            
+            bool isLastRideToday = false;
+            if (lastRide != null) {
+              try {
+                if (lastRide.rawStartTime.isNotEmpty) {
+                  final date = DateTime.parse(lastRide.rawStartTime).toLocal();
+                  final now = DateTime.now();
+                  if (date.year == now.year &&
+                      date.month == now.month &&
+                      date.day == now.day) {
+                    isLastRideToday = true;
+                  }
+                } else {
+                  final now = DateTime.now();
+                  final format1 = "${now.day}/${now.month}/${now.year}";
+                  final format2 =
+                      "${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}";
+                  if (lastRide.date == format1 || lastRide.date == format2) {
+                    isLastRideToday = true;
+                  }
+                }
+              } catch (_) {}
+            }
+
+            String speed =
+                "${liveDevice['sp'] ?? _selectedDevice?.currentLocation?.speed ?? 0} ${context.displayKmh}";
+            if (!isLastRideToday) {
+              speed = "0 ${context.displayKmh}";
+            }
+
             String todayDistanceStr = "0.0";
             String durationStr = "0${l10n.minutesShort} 0${l10n.secondsShort}";
             String topSpeed = "0 ${context.displayKmh}";
             String startTimeStr = "";
 
-            if (lastRide != null) {
-              todayDistanceStr = lastRide.distance.toStringAsFixed(1);
+            if (isLastRideToday && lastRide != null) {
+              todayDistanceStr = lastRide.distance.toStringAsFixed(2);
               durationStr = lastRide.duration;
-              topSpeed = "${lastRide.topSpeed.toStringAsFixed(1)} ${context.displayKmh}";
+              topSpeed =
+                  "${lastRide.topSpeed.toStringAsFixed(1)} ${context.displayKmh}";
               startTimeStr = lastRide.startTime;
             } else {
-              final todayDistanceRaw = liveDevice['todayDistance'] ?? liveDevice['td'] ?? liveDevice['distance'] ?? odometer;
-              if (todayDistanceRaw != null && todayDistanceRaw.toString().isNotEmpty) {
-                 double val = double.tryParse(todayDistanceRaw.toString()) ?? 0.0;
-                 todayDistanceStr = val.toStringAsFixed(1);
+              final todayDistanceRaw =
+                  liveDevice['todayDistance'] ?? liveDevice['td'];
+              if (todayDistanceRaw != null &&
+                  todayDistanceRaw.toString().isNotEmpty) {
+                double val =
+                    double.tryParse(todayDistanceRaw.toString()) ?? 0.0;
+                todayDistanceStr = val.toStringAsFixed(2);
               } else {
-                 todayDistanceStr = odometer;
+                todayDistanceStr = "0.00";
               }
 
-              final todayDurationRaw = liveDevice['todayDuration'] ?? liveDevice['dur'] ?? liveDevice['duration'] ?? "0";
-              if (todayDurationRaw != null && todayDurationRaw.toString().isNotEmpty && todayDurationRaw.toString() != "0") {
+              final todayDurationRaw =
+                  liveDevice['todayDuration'] ??
+                  liveDevice['dur'] ??
+                  liveDevice['duration'] ??
+                  "0";
+              if (todayDurationRaw != null &&
+                  todayDurationRaw.toString().isNotEmpty &&
+                  todayDurationRaw.toString() != "0") {
                 final rawStr = todayDurationRaw.toString();
-                if (rawStr.contains('m') || rawStr.contains('h') || rawStr.contains(':')) {
+                if (rawStr.contains('m') ||
+                    rawStr.contains('h') ||
+                    rawStr.contains(':')) {
                   durationStr = rawStr;
                 } else {
                   final double? numVal = double.tryParse(rawStr);
                   if (numVal != null && numVal > 0) {
                     int totalSeconds = numVal.round();
-                    if (numVal > 100000) { totalSeconds = (numVal / 1000).round(); }
-                    else if (numVal < 1440) { totalSeconds = (numVal * 60).round(); }
+                    if (numVal > 100000) {
+                      totalSeconds = (numVal / 1000).round();
+                    } else if (numVal < 1440) {
+                      totalSeconds = (numVal * 60).round();
+                    }
                     final int h = totalSeconds ~/ 3600;
                     final int m = (totalSeconds % 3600) ~/ 60;
                     final int s = totalSeconds % 60;
-                    if (h > 0) { durationStr = "${h}h ${m}${l10n.minutesShort}"; }
-                    else { durationStr = "${m}${l10n.minutesShort} ${s}${l10n.secondsShort}"; }
+                    if (h > 0) {
+                      durationStr = "${h}h ${m}${l10n.minutesShort}";
+                    } else {
+                      durationStr =
+                          "${m}${l10n.minutesShort} ${s}${l10n.secondsShort}";
+                    }
                   }
                 }
               }
-              
+
               String formatFallbackTime(String? isoString) {
                 if (isoString == null) return "";
                 try {
@@ -979,60 +1436,64 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                   return "";
                 }
               }
-              startTimeStr = formatFallbackTime(liveDevice['lastUpdate']?.toString() ?? liveDevice['deviceTime']?.toString());
+
+              startTimeStr = formatFallbackTime(
+                liveDevice['lastUpdate']?.toString() ??
+                    liveDevice['deviceTime']?.toString(),
+              );
             }
 
             String distance = "$todayDistanceStr ${context.displayKm}";
-            
+
             String headerText = l10n.todayText;
             if (startTimeStr.isNotEmpty && startTimeStr != "--:--") {
               headerText += " | $startTimeStr";
             }
 
-        return Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8.0),
-              child: Row(
-                children: [
-                  Text(
-                    headerText,
-                    style: getBoldStyle(
-                      color: AppColors.paletteGreen,
-                      fontSize: 10,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            return Column(
               children: [
-                Expanded(
-                  child: Column(
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  child: Row(
                     children: [
-                      _buildStatItem(l10n.distanceLabel, distance),
-                      _buildStatItem(l10n.rideDuration, durationStr),
+                      Text(
+                        headerText,
+                        style: getBoldStyle(
+                          color: AppColors.paletteGreen,
+                          fontSize: 10,
+                        ),
+                      ),
                     ],
                   ),
                 ),
-                Expanded(
-                  child: Column(
-                    children: [
-                      _buildStatItem(l10n.speedLabel, speed),
-                      _buildStatItem(l10n.topSpeed, topSpeed),
-                    ],
-                  ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: Column(
+                        children: [
+                          _buildStatItem(l10n.distanceLabel, distance),
+                          _buildStatItem(l10n.rideDuration, durationStr),
+                        ],
+                      ),
+                    ),
+                    Expanded(
+                      child: Column(
+                        children: [
+                          _buildStatItem(l10n.speedLabel, speed),
+                          _buildStatItem(l10n.topSpeed, topSpeed),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
               ],
-            ),
-          ],
+            );
+          },
         );
       },
     );
-  },
-);
-}
+  }
 
   Widget _buildStatItem(String label, String value) {
     final l10n = AppLocalizations.of(context)!;
@@ -1144,7 +1605,10 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
             ),
             GestureDetector(
               onTap: () {
-                AppPreference.instance.setBool(key: 'hide_promo_banner', value: true);
+                AppPreference.instance.setBool(
+                  key: 'hide_promo_banner',
+                  value: true,
+                );
                 setState(() {
                   _hidePromoBanner = true;
                 });
@@ -1153,9 +1617,274 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                 padding: const EdgeInsets.all(4.0),
                 child: Icon(
                   Icons.close,
-                  color: Theme.of(context).colorScheme.onSurface.withOpacity(0.4),
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.onSurface.withOpacity(0.4),
                   size: 20,
                 ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPhoneAsGpsBanner() {
+    final l10n = AppLocalizations.of(context)!;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(
+          height: 18,
+        ), // Added extra space to prevent overlay from top header
+        // Top Horizontal Scrolling Banners
+        SizedBox(
+          height: 70,
+          child: ListView(
+            scrollDirection: Axis.horizontal,
+            physics: const BouncingScrollPhysics(),
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            children: [
+              _buildSmallBanner(
+                icon: Icons.inventory_2_outlined,
+                title: 'Received your Trackify device?',
+                actionText: 'Activate now',
+                onTap: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => const DeviceInstallationScreen(),
+                    ),
+                  );
+                },
+              ),
+              const SizedBox(width: 12),
+              _buildSmallBanner(
+                icon: Icons.local_offer_outlined,
+                title: '5% off on buying from Trackify App',
+                actionText: 'Explore Exclusive Deal',
+                onTap: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => const ProductScreen(),
+                    ),
+                  );
+                },
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 7),
+
+        // Large Record Ride Banner
+        GestureDetector(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => RecordViaPhoneScreen(
+                  imei: _selectedDevice?.imei ?? '',
+                ),
+              ),
+            );
+          },
+          child: Container(
+            margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 5),
+            decoration: BoxDecoration(
+              color: Theme.of(context).cardColor,
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(
+                color: Theme.of(context).dividerColor.withOpacity(0.5),
+                width: 0.5, // Added 0.5 border width as requested
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(isDark ? 0.3 : 0.05),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Text(
+                        'Record Ride with Trackify',
+                        style: getBoldStyle(
+                          color: Theme.of(context).colorScheme.primary,
+                          fontSize: 16, // Reduced by 2 as requested
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      const Text(
+                        '🏍️',
+                        style: TextStyle(fontSize: 16),
+                      ), // Reduced by 2
+                    ],
+                  ),
+                  const SizedBox(height: 6),
+                  Text(
+                    'Make your phone a GPS tracking device!',
+                    style: getRegularStyle(
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.onSurface.withOpacity(0.7),
+                      fontSize: 12, // Reduced by 2 as requested
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+
+                  // Map Image
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(16),
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        SizedBox(
+                          height: 250,
+                          width: double.infinity,
+                          child: _buildAnimatedMapCore(showStats: false),
+                        ),
+                        Container(
+                          width: double.infinity,
+                          height: 250, // Increased height
+                          color: isDark
+                              ? Colors.black.withOpacity(0.2)
+                              : Colors.transparent,
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+
+                  // Bottom Button
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 12,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).scaffoldBackgroundColor,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Go to dashboard',
+                                style: getBoldStyle(
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onSurface,
+                                  fontSize: 14,
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                'Record rides, view past rides & statistics',
+                                style: getRegularStyle(
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onSurface.withOpacity(0.6),
+                                  fontSize: 11,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Icon(
+                          Icons.arrow_forward,
+                          color: Theme.of(context).colorScheme.primary,
+                          size: 20,
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSmallBanner({
+    required IconData icon,
+    required String title,
+    required String actionText,
+    required VoidCallback onTap,
+  }) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(12),
+      child: Container(
+        width: 300,
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        decoration: BoxDecoration(
+          color: Theme.of(context).cardColor,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: Theme.of(context).dividerColor.withOpacity(0.5),
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(isDark ? 0.3 : 0.05),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            Icon(icon, color: Theme.of(context).colorScheme.primary, size: 28),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    title,
+                    style: getRegularStyle(
+                      color: Theme.of(context).colorScheme.onSurface,
+                      fontSize: 12,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    actionText,
+                    style: getBoldStyle(
+                      color: Theme.of(context).colorScheme.primary,
+                      fontSize: 13,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 8),
+            Container(
+              padding: const EdgeInsets.all(4),
+              decoration: BoxDecoration(
+                color: Theme.of(context).scaffoldBackgroundColor,
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                Icons.chevron_right,
+                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+                size: 16,
               ),
             ),
           ],
@@ -1260,7 +1989,12 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
       alignment: Alignment.bottomCenter,
       children: [
         Container(
-          margin: const EdgeInsets.all(16),
+          margin: const EdgeInsets.only(
+            left: 16,
+            right: 16,
+            top: 6,
+            bottom: 16,
+          ),
           padding: const EdgeInsets.fromLTRB(
             16,
             16,
@@ -1358,16 +2092,30 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
     Vehicles? selectedDevice,
     AppLocalizations l10n,
   ) {
+    final isDeviceNotInstalled =
+        selectedDevice == null ||
+        selectedDevice.imei == null ||
+        selectedDevice.imei!.isEmpty;
+    final isLocked =
+        isDeviceNotInstalled &&
+        (option["label"] == l10n.deviceWarrantyLabel ||
+            option["label"] == l10n.overspeedAlert ||
+            option["label"] == l10n.emergency ||
+            option["label"] == l10n.geoFenceAlert ||
+            option["label"] == l10n.fuelLogs ||
+            option["label"] == l10n.serviceLogs);
+
     return InkWell(
-      onTap: () => option["badge"] == l10n.comingSoonOption
-          ? null
-          : _handleExploreTap(option, selectedDevice, l10n),
+      onTap: () {
+        if (isLocked || option["badge"] == l10n.comingSoonOption) return;
+        _handleExploreTap(option, selectedDevice, l10n);
+      },
       child: Column(
         children: [
           if (option["isPlus"] == true)
             _buildPlusBadge(l10n)
           else
-            _buildIconWithBadge(option),
+            _buildIconWithBadge(option, isLocked),
           const SizedBox(height: 8),
           Text(
             option["label"] as String,
@@ -1412,7 +2160,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
     );
   }
 
-  Widget _buildIconWithBadge(Map<String, dynamic> option) {
+  Widget _buildIconWithBadge(Map<String, dynamic> option, bool isLocked) {
     final l10n = AppLocalizations.of(context)!;
     return Stack(
       clipBehavior: Clip.none,
@@ -1431,7 +2179,30 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
             color: Theme.of(context).colorScheme.primary,
           ),
         ),
-        if (option["badge"] != null)
+        if (isLocked)
+          Positioned(
+            top: -4,
+            right: -4,
+            child: Container(
+              padding: const EdgeInsets.all(4),
+              decoration: BoxDecoration(
+                color: Theme.of(context).cardColor,
+                shape: BoxShape.circle,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.1),
+                    blurRadius: 4,
+                  ),
+                ],
+              ),
+              child: Icon(
+                Icons.lock,
+                size: 12,
+                color: Theme.of(context).colorScheme.primary,
+              ),
+            ),
+          )
+        else if (option["badge"] != null)
           Positioned(
             top: -8,
             right: -24,
@@ -1466,7 +2237,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
     if (label == l10n.recordViaPhone) {
       if (selectedDevice?.imei == null) {
         ScaffoldMessenger.of(context).showSnackBar(
-           SnackBar(
+          SnackBar(
             content: Text(l10n.noDeviceFound),
             backgroundColor: Colors.red,
           ),
@@ -1555,7 +2326,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
     } else if (label == l10n.deviceDataPlanLabel) {
       if (selectedDevice?.imei == null) {
         ScaffoldMessenger.of(context).showSnackBar(
-           SnackBar(
+          SnackBar(
             content: Text(l10n.noDeviceFound),
             backgroundColor: Colors.red,
           ),
@@ -1585,22 +2356,31 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
     }
   }
 
-  Widget _buildRecentRidesSection() {
+  Widget _buildRecentRidesSection(Vehicles? selectedDevice) {
+    final isDeviceNotInstalled =
+        selectedDevice == null ||
+        selectedDevice.imei == null ||
+        selectedDevice.imei!.isEmpty;
+    if (isDeviceNotInstalled) {
+      return const SizedBox.shrink();
+    }
+
     return BlocBuilder<RideHistoryCubit, RideHistoryState>(
       builder: (context, state) {
         final l10n = AppLocalizations.of(context)!;
         if (state is RideHistoryLoading) {
           return const Padding(
             padding: EdgeInsets.all(20),
-            child: Center(child: CircularProgressIndicator()),
+            child: Center(child: TrackifyLoader()),
           );
         }
         if (state is RideHistoryFailure) {
           final errorStr = state.exception.toString().toLowerCase();
-          final isNotFound = errorStr.contains('not found') || 
-                             errorStr.contains('no rides') || 
-                             errorStr.contains('no recent rides');
-                             
+          final isNotFound =
+              errorStr.contains('not found') ||
+              errorStr.contains('no rides') ||
+              errorStr.contains('no recent rides');
+
           if (isNotFound) {
             return Padding(
               padding: const EdgeInsets.all(16),
@@ -1691,7 +2471,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
           BlocBuilder<PromoVideoCubit, PromoVideoState>(
             builder: (context, state) {
               if (state is PromoVideoLoading) {
-                return const Center(child: CircularProgressIndicator());
+                return const Center(child: TrackifyLoader());
               }
               if (state is PromoVideoError) {
                 return Center(
@@ -1723,7 +2503,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                     if (index >= state.videos.length) {
                       return const Padding(
                         padding: EdgeInsets.symmetric(vertical: 20),
-                        child: Center(child: CircularProgressIndicator()),
+                        child: Center(child: TrackifyLoader()),
                       );
                     }
 
@@ -1777,7 +2557,11 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
         print("device.imei----------------------------------${device.imei}");
         await prefs.set(key: AppPreference.KEY_SELECTED_UID, value: device.id);
         await prefs.set(key: AppPreference.IMEI, value: device.imei ?? '');
-        setState(() => _selectedDevice = device);
+        AppNavigation.refreshNavigationState();
+        setState(() {
+          _selectedDevice = device;
+          _hasShownWarrantyPopup = false;
+        });
         if (mounted) {
           context.read<RideHistoryCubit>().getRideHistoryData();
         }
@@ -1796,6 +2580,9 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
         }
 
         context.read<AppCubit>().initializeSocket(imei: device.imei);
+        if (device.imei != null) {
+          _checkWarrantyStatus(device.imei!);
+        }
       },
     );
   }

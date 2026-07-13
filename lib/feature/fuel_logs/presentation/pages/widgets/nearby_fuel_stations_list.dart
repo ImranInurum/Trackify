@@ -4,6 +4,7 @@ import 'package:trackify/feature/fuel_logs/presentation/cubit/fuel_stations_cubi
 import 'package:trackify/feature/fuel_logs/presentation/cubit/fuel_stations_state.dart';
 import 'package:trackify/l10n/app_localizations.dart';
 import '../../../data/model/fuel_station_model.dart';
+import 'package:trackify/core/widgets/trackify_loader.dart';
 
 class NearbyFuelStationsDashboard extends StatelessWidget {
   const NearbyFuelStationsDashboard({super.key});
@@ -19,9 +20,7 @@ class NearbyFuelStationsDashboard extends StatelessWidget {
         if (state is FuelStationsLoading) {
           return Padding(
             padding: const EdgeInsets.symmetric(vertical: 24),
-            child: Center(
-              child: CircularProgressIndicator(color: theme.primaryColor),
-            ),
+            child: const Center(child: TrackifyLoader()),
           );
         }
 

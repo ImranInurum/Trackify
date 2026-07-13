@@ -16,6 +16,7 @@ import '../../trip_search_screen.dart';
 
 import 'package:trackify/app/app_navigation.dart';
 import 'package:trackify/core/utils/shared_preferences.dart';
+import 'package:trackify/core/widgets/trackify_loader.dart';
 
 class AllRides extends StatefulWidget {
   const AllRides({super.key});
@@ -155,7 +156,7 @@ class _AllRidesState extends State<AllRides> {
           child: BlocBuilder<RideHistoryCubit, RideHistoryState>(
             builder: (context, state) {
               if (state is RideHistoryLoading) {
-                return const Center(child: CircularProgressIndicator());
+                return const Center(child: TrackifyLoader());
               }
 
               if (state is RideHistorySuccess) {

@@ -7,6 +7,7 @@ import '../cubit/geo_fence_cubit.dart';
 import '../cubit/geo_fence_state.dart';
 import '../widgets/geo_fence_empty_state.dart';
 import 'add_geo_fence_screen.dart';
+import 'package:trackify/core/widgets/trackify_loader.dart';
 
 class GeoFenceScreen extends StatefulWidget {
   final String? vehicleName;
@@ -207,9 +208,7 @@ class _GeoFenceScreenState extends State<GeoFenceScreen> {
 
           return Scaffold(
             backgroundColor: colorScheme.surface,
-            body: Center(
-              child: CircularProgressIndicator(color: colorScheme.primary),
-            ),
+            body: const Center(child: TrackifyLoader()),
           );
         },
       ),

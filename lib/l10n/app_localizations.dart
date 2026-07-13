@@ -1021,7 +1021,7 @@ abstract class AppLocalizations {
   /// No description provided for @expiresInDays.
   ///
   /// In en, this message translates to:
-  /// **'{days} days left'**
+  /// **'Expires in {days} days'**
   String expiresInDays(String days);
 
   /// No description provided for @rechargeNow.
@@ -2389,7 +2389,7 @@ abstract class AppLocalizations {
   /// No description provided for @saveAmount.
   ///
   /// In en, this message translates to:
-  /// **'Save ₹{amount} with this plan'**
+  /// **'Save ?{amount} with this plan'**
   String saveAmount(Object amount);
 
   /// No description provided for @superComboPopularity.
@@ -2935,7 +2935,7 @@ abstract class AppLocalizations {
   /// No description provided for @warranty_extend.
   ///
   /// In en, this message translates to:
-  /// **'Extend warranty of your Trackify Lite by 1 year @ ₹1/day'**
+  /// **'Extend warranty of your Trackify Lite by 1 year @ ?1/day'**
   String get warranty_extend;
 
   /// No description provided for @warranty_vehicle.
@@ -2953,13 +2953,13 @@ abstract class AppLocalizations {
   /// No description provided for @warranty_button.
   ///
   /// In en, this message translates to:
-  /// **'Extend warranty now @ ₹365 '**
+  /// **'Extend warranty now @ ?365 '**
   String get warranty_button;
 
   /// No description provided for @warranty_button_old.
   ///
   /// In en, this message translates to:
-  /// **'₹730'**
+  /// **'?730'**
   String get warranty_button_old;
 
   /// No description provided for @benefit1_highlight.
@@ -2977,7 +2977,7 @@ abstract class AppLocalizations {
   /// No description provided for @benefit2_highlight.
   ///
   /// In en, this message translates to:
-  /// **'Save upto ₹1200'**
+  /// **'Save upto ?1200'**
   String get benefit2_highlight;
 
   /// No description provided for @benefit2_normal.
@@ -3001,7 +3001,7 @@ abstract class AppLocalizations {
   /// No description provided for @benefit4_highlight.
   ///
   /// In en, this message translates to:
-  /// **'Free extended subscription upto ₹2000'**
+  /// **'Free extended subscription upto ?2000'**
   String get benefit4_highlight;
 
   /// No description provided for @benefit4_normal.
@@ -3241,7 +3241,7 @@ abstract class AppLocalizations {
   /// No description provided for @upgradeNowAtJust.
   ///
   /// In en, this message translates to:
-  /// **'Upgrade Now at Just ₹{price}'**
+  /// **'Upgrade Now at Just ?{price}'**
   String upgradeNowAtJust(String price);
 
   /// No description provided for @viewMoreReviews.
@@ -4117,7 +4117,7 @@ abstract class AppLocalizations {
   /// No description provided for @avgSpeedLabel.
   ///
   /// In en, this message translates to:
-  /// **'Avg. Speed'**
+  /// **'Avg Speed'**
   String get avgSpeedLabel;
 
   /// No description provided for @tripQuoteDefault.
@@ -4549,7 +4549,7 @@ abstract class AppLocalizations {
   /// No description provided for @greatSaving.
   ///
   /// In en, this message translates to:
-  /// **'Great! Saving ₹{amount} with this plan'**
+  /// **'Great! Saving ?{amount} with this plan'**
   String greatSaving(Object amount);
 
   /// No description provided for @billSummary.
@@ -4585,7 +4585,7 @@ abstract class AppLocalizations {
   /// No description provided for @payAmount.
   ///
   /// In en, this message translates to:
-  /// **'Pay ₹{amount}'**
+  /// **'Pay ?{amount}'**
   String payAmount(Object amount);
 
   /// No description provided for @liveRecord.
@@ -5247,6 +5247,606 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Are you sure you want to delete your account?'**
   String get confirmDeleteAccount;
+
+  /// No description provided for @expired.
+  ///
+  /// In en, this message translates to:
+  /// **'Expired'**
+  String get expired;
+
+  /// No description provided for @daysLeftText.
+  ///
+  /// In en, this message translates to:
+  /// **'{days} days left'**
+  String daysLeftText(String days);
+
+  /// No description provided for @warrantyExpiringTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Warranty Expiring'**
+  String get warrantyExpiringTitle;
+
+  /// No description provided for @warrantyExpiredDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Your device warranty has expired. Please renew your warranty to continue enjoying premium support and features.'**
+  String get warrantyExpiredDesc;
+
+  /// No description provided for @warrantyExpiringDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Your device warranty will expire in {days} day(s). Please renew it to avoid service interruption.'**
+  String warrantyExpiringDesc(String days);
+
+  /// No description provided for @dismiss.
+  ///
+  /// In en, this message translates to:
+  /// **'Dismiss'**
+  String get dismiss;
+
+  /// No description provided for @allTime.
+  ///
+  /// In en, this message translates to:
+  /// **'All Time'**
+  String get allTime;
+
+  /// No description provided for @totalServices.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Services'**
+  String get totalServices;
+
+  /// No description provided for @avgSpending.
+  ///
+  /// In en, this message translates to:
+  /// **'Avg Spending'**
+  String get avgSpending;
+
+  /// No description provided for @perService.
+  ///
+  /// In en, this message translates to:
+  /// **'/Service'**
+  String get perService;
+
+  /// No description provided for @avgInterval.
+  ///
+  /// In en, this message translates to:
+  /// **'Avg Interval'**
+  String get avgInterval;
+
+  /// No description provided for @months.
+  ///
+  /// In en, this message translates to:
+  /// **'Months'**
+  String get months;
+
+  /// No description provided for @deleteAlertTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Alert'**
+  String get deleteAlertTitle;
+
+  /// No description provided for @deleteAlertDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete this overspeed alert?'**
+  String get deleteAlertDesc;
+
+  /// No description provided for @deleteServiceLogDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete this service log?'**
+  String get deleteServiceLogDesc;
+
+  /// No description provided for @serviceDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Service Details'**
+  String get serviceDetails;
+
+  /// No description provided for @amountText.
+  ///
+  /// In en, this message translates to:
+  /// **'Amount'**
+  String get amountText;
+
+  /// No description provided for @unknownText.
+  ///
+  /// In en, this message translates to:
+  /// **'Unknown'**
+  String get unknownText;
+
+  /// No description provided for @notProvided.
+  ///
+  /// In en, this message translates to:
+  /// **'Not provided'**
+  String get notProvided;
+
+  /// No description provided for @contactCopied.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact copied to clipboard'**
+  String get contactCopied;
+
+  /// No description provided for @noImage.
+  ///
+  /// In en, this message translates to:
+  /// **'No Image'**
+  String get noImage;
+
+  /// No description provided for @startTracking.
+  ///
+  /// In en, this message translates to:
+  /// **'Start Tracking'**
+  String get startTracking;
+
+  /// No description provided for @stopTracking.
+  ///
+  /// In en, this message translates to:
+  /// **'Stop Tracking'**
+  String get stopTracking;
+
+  /// No description provided for @endRide.
+  ///
+  /// In en, this message translates to:
+  /// **'End Ride'**
+  String get endRide;
+
+  /// No description provided for @maxSpeed.
+  ///
+  /// In en, this message translates to:
+  /// **'Max Speed'**
+  String get maxSpeed;
+
+  /// No description provided for @tapToResumeTracking.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap to resume tracking'**
+  String get tapToResumeTracking;
+
+  /// No description provided for @tapToPauseTracking.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap to pause tracking'**
+  String get tapToPauseTracking;
+
+  /// No description provided for @holdToStopTracking.
+  ///
+  /// In en, this message translates to:
+  /// **'Hold to stop tracking'**
+  String get holdToStopTracking;
+
+  /// No description provided for @exportLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Export'**
+  String get exportLabel;
+
+  /// No description provided for @exportRide.
+  ///
+  /// In en, this message translates to:
+  /// **'Export Ride'**
+  String get exportRide;
+
+  /// No description provided for @shareRoute.
+  ///
+  /// In en, this message translates to:
+  /// **'Share Route'**
+  String get shareRoute;
+
+  /// No description provided for @rideNameOptional.
+  ///
+  /// In en, this message translates to:
+  /// **'Ride Name (Optional)'**
+  String get rideNameOptional;
+
+  /// No description provided for @rideNameHint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g., Morning Ride, Off-road trail'**
+  String get rideNameHint;
+
+  /// No description provided for @formatLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Format'**
+  String get formatLabel;
+
+  /// No description provided for @gpxLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'GPX'**
+  String get gpxLabel;
+
+  /// No description provided for @kmlLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'KML'**
+  String get kmlLabel;
+
+  /// No description provided for @includeAnalytics.
+  ///
+  /// In en, this message translates to:
+  /// **'Include Analytics'**
+  String get includeAnalytics;
+
+  /// No description provided for @includeAnalyticsDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Speed, elevation, etc.'**
+  String get includeAnalyticsDesc;
+
+  /// No description provided for @exportingRide.
+  ///
+  /// In en, this message translates to:
+  /// **'Exporting ride...'**
+  String get exportingRide;
+
+  /// No description provided for @shareRide.
+  ///
+  /// In en, this message translates to:
+  /// **'Share Ride'**
+  String get shareRide;
+
+  /// No description provided for @selectFormatToShare.
+  ///
+  /// In en, this message translates to:
+  /// **'Select a format to share your ride data'**
+  String get selectFormatToShare;
+
+  /// No description provided for @gpxFile.
+  ///
+  /// In en, this message translates to:
+  /// **'GPX File'**
+  String get gpxFile;
+
+  /// No description provided for @gpxDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Standard GPS exchange format. Best for Strava, Garmin, etc.'**
+  String get gpxDesc;
+
+  /// No description provided for @kmlFile.
+  ///
+  /// In en, this message translates to:
+  /// **'KML File'**
+  String get kmlFile;
+
+  /// No description provided for @kmlDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Keyhole Markup Language. Best for Google Earth.'**
+  String get kmlDesc;
+
+  /// No description provided for @imageScreenshot.
+  ///
+  /// In en, this message translates to:
+  /// **'Image (Screenshot)'**
+  String get imageScreenshot;
+
+  /// No description provided for @imageScreenshotDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'A beautiful map image with your route.'**
+  String get imageScreenshotDesc;
+
+  /// No description provided for @recordingInProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'Recording in Progress'**
+  String get recordingInProgress;
+
+  /// No description provided for @resumeTracking.
+  ///
+  /// In en, this message translates to:
+  /// **'Resume'**
+  String get resumeTracking;
+
+  /// No description provided for @discardRide.
+  ///
+  /// In en, this message translates to:
+  /// **'Discard Ride'**
+  String get discardRide;
+
+  /// No description provided for @discard.
+  ///
+  /// In en, this message translates to:
+  /// **'Discard'**
+  String get discard;
+
+  /// No description provided for @areYouSureDiscardRide.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to discard this ride?'**
+  String get areYouSureDiscardRide;
+
+  /// No description provided for @kmhLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'km/h'**
+  String get kmhLabel;
+
+  /// No description provided for @hrminLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'hr:min'**
+  String get hrminLabel;
+
+  /// No description provided for @kmLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'km'**
+  String get kmLabel;
+
+  /// No description provided for @exportRideVideoDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Exported ride will be saved in Trackify Ride Videos folder of your Gallery app'**
+  String get exportRideVideoDesc;
+
+  /// No description provided for @chooseNicknameHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a unique nickname for this ride'**
+  String get chooseNicknameHint;
+
+  /// No description provided for @myRideOnTrackify.
+  ///
+  /// In en, this message translates to:
+  /// **'My Ride on Trackify'**
+  String get myRideOnTrackify;
+
+  /// No description provided for @locationAlwaysAccessWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'Trackify ride recording feature only work correctly if it can access your location “all the time”'**
+  String get locationAlwaysAccessWarning;
+
+  /// No description provided for @goToSettingsAndSelectAllowAllTheTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Go to settings and select “Allow all the time”'**
+  String get goToSettingsAndSelectAllowAllTheTime;
+
+  /// No description provided for @locationPermissions.
+  ///
+  /// In en, this message translates to:
+  /// **'Location Permissions'**
+  String get locationPermissions;
+
+  /// No description provided for @allowAllTheTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Allow all the time'**
+  String get allowAllTheTime;
+
+  /// No description provided for @onlyWhileUsingTheApp.
+  ///
+  /// In en, this message translates to:
+  /// **'Only while using the app'**
+  String get onlyWhileUsingTheApp;
+
+  /// No description provided for @askEveryTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask every time'**
+  String get askEveryTime;
+
+  /// No description provided for @dontAllow.
+  ///
+  /// In en, this message translates to:
+  /// **'Don\'t allow'**
+  String get dontAllow;
+
+  /// No description provided for @openSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Open Settings'**
+  String get openSettings;
+
+  /// No description provided for @selectRideMode.
+  ///
+  /// In en, this message translates to:
+  /// **'Select ride mode'**
+  String get selectRideMode;
+
+  /// No description provided for @onlineMode.
+  ///
+  /// In en, this message translates to:
+  /// **'Online Mode'**
+  String get onlineMode;
+
+  /// No description provided for @offlineMode.
+  ///
+  /// In en, this message translates to:
+  /// **'Offline Mode'**
+  String get offlineMode;
+
+  /// No description provided for @continueBtn.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue'**
+  String get continueBtn;
+
+  /// No description provided for @selectRideLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Select a label for your ride'**
+  String get selectRideLabel;
+
+  /// No description provided for @friendsVehicle.
+  ///
+  /// In en, this message translates to:
+  /// **'Friend\'s vehicle'**
+  String get friendsVehicle;
+
+  /// No description provided for @train.
+  ///
+  /// In en, this message translates to:
+  /// **'Train'**
+  String get train;
+
+  /// No description provided for @bus.
+  ///
+  /// In en, this message translates to:
+  /// **'Bus'**
+  String get bus;
+
+  /// No description provided for @auto.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto'**
+  String get auto;
+
+  /// No description provided for @cab.
+  ///
+  /// In en, this message translates to:
+  /// **'Cab'**
+  String get cab;
+
+  /// No description provided for @cycle.
+  ///
+  /// In en, this message translates to:
+  /// **'Cycle'**
+  String get cycle;
+
+  /// No description provided for @walk.
+  ///
+  /// In en, this message translates to:
+  /// **'Walk'**
+  String get walk;
+
+  /// No description provided for @others.
+  ///
+  /// In en, this message translates to:
+  /// **'Others'**
+  String get others;
+
+  /// No description provided for @saveBtn.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get saveBtn;
+
+  /// No description provided for @startRideRecording.
+  ///
+  /// In en, this message translates to:
+  /// **'Start Ride Recording'**
+  String get startRideRecording;
+
+  /// No description provided for @stopRideRecording.
+  ///
+  /// In en, this message translates to:
+  /// **'Stop Ride Recording'**
+  String get stopRideRecording;
+
+  /// No description provided for @saveOnline.
+  ///
+  /// In en, this message translates to:
+  /// **'Save online'**
+  String get saveOnline;
+
+  /// No description provided for @saveOnlineDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Rides are saved online. You can login from any phone to fetch your past rides'**
+  String get saveOnlineDesc;
+
+  /// No description provided for @saveOffline.
+  ///
+  /// In en, this message translates to:
+  /// **'Save offline'**
+  String get saveOffline;
+
+  /// No description provided for @saveOfflineDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Rides are saved on this phone only'**
+  String get saveOfflineDesc;
+
+  /// No description provided for @startRide.
+  ///
+  /// In en, this message translates to:
+  /// **'Start ride'**
+  String get startRide;
+
+  /// No description provided for @goToSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Go to Settings'**
+  String get goToSettings;
+
+  /// No description provided for @rideOnLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Ride on'**
+  String get rideOnLabel;
+
+  /// No description provided for @imageBtn.
+  ///
+  /// In en, this message translates to:
+  /// **'Image'**
+  String get imageBtn;
+
+  /// No description provided for @videoLinkBtn.
+  ///
+  /// In en, this message translates to:
+  /// **'Video Link'**
+  String get videoLinkBtn;
+
+  /// No description provided for @avgLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'AVG'**
+  String get avgLabel;
+
+  /// No description provided for @meterLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'M'**
+  String get meterLabel;
+
+  /// No description provided for @recordViaPhoneTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Record via Phone'**
+  String get recordViaPhoneTitle;
+
+  /// No description provided for @recordRidesTab.
+  ///
+  /// In en, this message translates to:
+  /// **'Record Rides'**
+  String get recordRidesTab;
+
+  /// No description provided for @pastRidesTab.
+  ///
+  /// In en, this message translates to:
+  /// **'Past Rides'**
+  String get pastRidesTab;
+
+  /// No description provided for @statisticsTab.
+  ///
+  /// In en, this message translates to:
+  /// **'Statistics'**
+  String get statisticsTab;
+
+  /// No description provided for @yourPhonesLocation.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Phone\'s Location'**
+  String get yourPhonesLocation;
+
+  /// No description provided for @justNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Just now'**
+  String get justNow;
+
+  /// No description provided for @hoursShort.
+  ///
+  /// In en, this message translates to:
+  /// **'h'**
+  String get hoursShort;
 }
 
 class _AppLocalizationsDelegate

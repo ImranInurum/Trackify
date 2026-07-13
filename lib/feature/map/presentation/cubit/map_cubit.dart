@@ -53,4 +53,8 @@ class MapCubit extends Cubit<MapState> {
       },
     );
   }
+
+  void reset() {
+    emit(MapInitial());
+  }
 }

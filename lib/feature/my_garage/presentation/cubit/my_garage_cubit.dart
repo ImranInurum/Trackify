@@ -56,4 +56,8 @@ class MyGarageCubit extends Cubit<MyGarageState> {
       },
     );
   }
+
+  void reset() {
+    emit(MyGarageInitial());
+  }
 }

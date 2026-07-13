@@ -4,6 +4,9 @@ import '../../../../l10n/app_localizations.dart';
 import '../cubit/notification_timeline_cubit.dart';
 import '../state/notification_timeline_state.dart';
 import 'notification_filter_screen.dart';
+import '../../../../core/widgets/trackify_loader.dart';
+
+import '../../data/repository/notification_repository_impl.dart';
 
 class NotificationTimelineScreen extends StatelessWidget {
   const NotificationTimelineScreen({super.key});
@@ -11,7 +14,7 @@ class NotificationTimelineScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => NotificationTimelineCubit()..fetchTimeline(),
+      create: (context) => NotificationTimelineCubit(NotificationRepositoryImpl())..fetchTimeline(),
       child: const NotificationTimelineView(),
     );
   }
@@ -48,6 +51,11 @@ class _NotificationTimelineViewState extends State<NotificationTimelineView> {
   }
 
   void _handleScroll() {
+    // Pagination trigger
+    if (_scrollController.position.pixels >= _scrollController.position.maxScrollExtent - 200) {
+      context.read<NotificationTimelineCubit>().fetchTimeline(loadMore: true);
+    }
+
     if (dates.isEmpty) return;
 
     double scrollOffset = _scrollController.offset;
@@ -83,7 +91,12 @@ class _NotificationTimelineViewState extends State<NotificationTimelineView> {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
 
-    final bgColor = theme.scaffoldBackgroundColor;
+    // Ensure bgColor is opaque so the sticky header covers the text underneath.
+    Color bgColor = theme.scaffoldBackgroundColor;
+    if (bgColor == Colors.transparent || bgColor.alpha == 0) {
+      bgColor = isDark ? const Color(0xFF121212) : const Color(0xFFF3F4F6); // Standard solid background
+    }
+
     final lineColor = theme.dividerColor;
     final dotColor = theme.primaryColor;
     final primaryTextColor = theme.textTheme.bodyLarge?.color ?? (isDark ? Colors.white : Colors.black);
@@ -119,7 +132,7 @@ class _NotificationTimelineViewState extends State<NotificationTimelineView> {
       body: BlocBuilder<NotificationTimelineCubit, NotificationTimelineState>(
         builder: (context, state) {
           if (state is NotificationTimelineLoading) {
-            return const Center(child: CircularProgressIndicator());
+            return const Center(child: TrackifyLoader(animated: true));
           }
           if (state is NotificationTimelineLoaded) {
             final items = state.notifications;
@@ -151,7 +164,7 @@ class _NotificationTimelineViewState extends State<NotificationTimelineView> {
               children: [
                 ListView.builder(
                   controller: _scrollController,
-                  padding: const EdgeInsets.only(top: 10),
+                  padding: EdgeInsets.zero,
                   itemCount: items.length,
                   itemBuilder: (context, index) {
                     final item = items[index];
@@ -162,7 +175,7 @@ class _NotificationTimelineViewState extends State<NotificationTimelineView> {
                     return Column(
                       children: [
                         if (isFirstInDate) 
-                          _buildDateDivider(context, date,12,3),
+                          _buildDateDivider(context, date),
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 24),
                           child: _buildTimelineItem(
@@ -192,8 +205,8 @@ class _NotificationTimelineViewState extends State<NotificationTimelineView> {
                         builder: (context, date, _) {
                           return Container(
                             color: bgColor,
-                            padding: const EdgeInsets.symmetric(vertical: 10),
-                            child: _buildDateDivider(context, date,14,6),
+                            width: double.infinity,
+                            child: _buildDateDivider(context, date),
                           );
                         },
                       ),
@@ -231,11 +244,12 @@ class _NotificationTimelineViewState extends State<NotificationTimelineView> {
     }
   }
 
-  Widget _buildDateDivider(BuildContext context, String date,double hPadding,double vPadding) {
+  Widget _buildDateDivider(BuildContext context, String date) {
     final theme = Theme.of(context);
     return Center(
       child: Container(
-        padding:  EdgeInsets.symmetric(horizontal: hPadding, vertical: vPadding),
+        margin: const EdgeInsets.symmetric(vertical: 12),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
         decoration: BoxDecoration(
           color: theme.primaryColor,
           borderRadius: BorderRadius.circular(6),
@@ -261,6 +275,7 @@ class _NotificationTimelineViewState extends State<NotificationTimelineView> {
     Color primaryTextColor,
     Color secondaryTextColor,
   ) {
+    final theme = Theme.of(context);
     return IntrinsicHeight(
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -292,13 +307,21 @@ class _NotificationTimelineViewState extends State<NotificationTimelineView> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  item.time.split(',').first,
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w900,
-                    color: primaryTextColor,
-                  ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: Text(
+                        item.title,
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w900,
+                          color: primaryTextColor,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
                 const SizedBox(height: 8),
                 Text(

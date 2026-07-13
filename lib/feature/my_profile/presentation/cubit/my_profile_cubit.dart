@@ -36,4 +36,8 @@ class MyProfileCubit extends Cubit<MyProfileState> {
       },
     );
   }
+
+  void reset() {
+    emit(MyProfileInitial());
+  }
 }

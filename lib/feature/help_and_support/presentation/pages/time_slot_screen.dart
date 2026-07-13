@@ -5,6 +5,7 @@ import '../../../../l10n/app_localizations.dart';
 import '../../data/model/time_slot_model.dart';
 import '../cubit/time_slot_cubit.dart';
 import '../cubit/time_slot_state.dart';
+import 'package:trackify/core/widgets/trackify_loader.dart';
 
 class BookCallSlotScreen extends StatefulWidget {
   const BookCallSlotScreen({super.key});
@@ -145,9 +146,7 @@ class _BookCallSlotScreenState
                 builder: (context, state) {
 
                   if (state is BookingSlotLoading) {
-                    return const Center(
-                      child: CircularProgressIndicator(),
-                    );
+                    return const Center(child: TrackifyLoader());
                   }
 
                   if (state is BookingSlotError) {

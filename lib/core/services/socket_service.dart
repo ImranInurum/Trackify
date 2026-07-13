@@ -45,6 +45,8 @@ class SocketService {
     
     if (imei != null) {
       _currentImei = imei;
+    } else {
+      _currentImei = null;
     }
 
     try {
@@ -140,7 +142,7 @@ class SocketService {
     if (_socket != null && _isConnected) {
       String iMEI = _currentImei ?? await prefs.get(key: AppPreference.IMEI);
       final handshake = {"type": "flutter", "imei": iMEI};
-      _socket!.write(jsonEncode(handshake));
+      _socket!.write('${jsonEncode(handshake)}\n');
       print('[SocketService] 📤 Handshake sent: $handshake');
     }
   }

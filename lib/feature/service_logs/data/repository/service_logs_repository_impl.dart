@@ -64,4 +64,42 @@ class ServiceLogsRepositoryImpl implements ServiceLogsRepository {
       return Left(FetchDataException(e.toString()));
     }
   }
+
+  @override
+  ResultVoid updateServiceLog({
+    required String id,
+    String? serviceDate,
+    double? amount,
+    File? image,
+    String? centerName,
+    String? note,
+  }) async {
+    try {
+      final Map<String, dynamic> data = {};
+      if (serviceDate != null) data['service_date'] = serviceDate;
+      if (amount != null) data['billing_amount'] = amount;
+      if (centerName != null) data['service_center_name'] = centerName;
+      if (note != null) data['additional_note'] = note;
+      if (image != null) data['service_bill_image'] = image.path;
+
+      await _remoteDataSource.updateServiceLog(id, data);
+      return const Right(null);
+    } on AppException catch (e) {
+      return Left(e);
+    } catch (e) {
+      return Left(FetchDataException(e.toString()));
+    }
+  }
+
+  @override
+  ResultVoid deleteServiceLog(String id) async {
+    try {
+      await _remoteDataSource.deleteServiceLog(id);
+      return const Right(null);
+    } on AppException catch (e) {
+      return Left(e);
+    } catch (e) {
+      return Left(FetchDataException(e.toString()));
+    }
+  }
 }

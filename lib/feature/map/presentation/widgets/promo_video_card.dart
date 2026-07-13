@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:trackify/core/utils/active_video_manager.dart';
 import 'package:trackify/feature/map/data/entity/promo_video_model.dart';
 import 'package:video_player/video_player.dart';
+import 'package:trackify/core/widgets/trackify_loader.dart';
 
 class PromoVideoCard extends StatefulWidget {
   final PromoVideoModel video;
@@ -165,9 +166,7 @@ class _PromoVideoCardState extends State<PromoVideoCard> {
                         width: double.infinity,
                         height: double.infinity,
                         placeholder: (context, url) =>
-                            const Center(
-                          child: CircularProgressIndicator(),
-                        ),
+                            const Center(child: TrackifyLoader()),
                         errorWidget: (context, url, error) =>
                             Container(
                           color: Colors.grey[300],

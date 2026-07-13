@@ -10,6 +10,7 @@ import 'package:trackify/feature/my_profile/presentation/cubit/my_profile_state.
 import 'package:trackify/feature/my_profile/data/models/update_profile_request.dart';
 import 'package:intl/intl.dart';
 import 'package:country_state_city/country_state_city.dart' as csc;
+import 'package:trackify/core/widgets/searchable_dropdown.dart';
 
 class EditProfileScreen extends StatefulWidget {
   const EditProfileScreen({super.key});
@@ -558,99 +559,110 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   const SizedBox(height: 32),
 
                   // ── Country dropdown ───────────────────────────────────
-                  _buildBorderedDropdown<String>(
-                    value: _selectedCountry,
+                  SearchableDropdown<String>(
+                    label: l10n.country,
                     hint: l10n.selectCountry,
-                    items: _countries.map((c) {
-                      return DropdownMenuItem<String>(
-                        value: c.name,
-                        child: Row(
-                          children: [
-                            Text(
-                              c.flag,
-                              style: const TextStyle(fontSize: 20),
-                            ),
-                            const SizedBox(width: 10),
-                            Expanded(
-                              child: Text(
-                                c.name,
-                                style: TextStyle(color: onSurface, fontSize: 15),
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                          ],
-                        ),
-                      );
-                    }).toList(),
-                    onChanged: (v) {
+                    value: _selectedCountry,
+                    items: (() {
+                      final seen = <String>{};
+                      final uniqueItems = <String>[];
+                      for (final c in _countries) {
+                        if (c.name.isEmpty) continue;
+                        if (!seen.contains(c.name)) {
+                          seen.add(c.name);
+                          uniqueItems.add(c.name);
+                        }
+                      }
+                      if (_selectedCountry != null && !seen.contains(_selectedCountry)) {
+                        uniqueItems.insert(0, _selectedCountry!);
+                      }
+                      return uniqueItems;
+                    })(),
+                    itemLabel: (item) {
+                      try {
+                        final c = _countries.firstWhere((element) => element.name == item);
+                        return c.flag.isNotEmpty ? "${c.flag}  ${c.name}" : c.name;
+                      } catch (e) {
+                        return item;
+                      }
+                    },
+                    isLoading: _isLoadingCountries,
+                    onChanged: (val) {
                       setState(() {
-                        _selectedCountry = v;
+                        _selectedCountry = val;
                         _selectedState = null;
                         _selectedCity = null;
                         _states = [];
                         _cities = [];
                       });
-                      if (v != null) {
-                        final country = _countries.firstWhere((c) => c.name == v);
+                      if (val != null) {
+                        final country = _countries.firstWhere((c) => c.name == val);
                         _loadStates(country.isoCode);
                       }
                     },
-                    dividerColor: dividerColor,
-                    onSurface: onSurface,
-                    isLoading: _isLoadingCountries,
                   ),
                   const SizedBox(height: 24),
 
                   // ── State dropdown ─────────────────────────────────────
-                  _buildBorderedDropdown<String>(
-                    value: _selectedState,
+                  SearchableDropdown<String>(
+                    label: l10n.state,
                     hint: l10n.selectState,
-                    items: _states.map((s) {
-                      return DropdownMenuItem<String>(
-                        value: s.name,
-                        child: Text(
-                          s.name,
-                          style: TextStyle(color: onSurface, fontSize: 15),
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      );
-                    }).toList(),
-                    onChanged: (v) {
+                    value: _selectedState,
+                    items: (() {
+                      final seen = <String>{};
+                      final uniqueItems = <String>[];
+                      for (final s in _states) {
+                        if (s.name.isEmpty) continue;
+                        if (!seen.contains(s.name)) {
+                          seen.add(s.name);
+                          uniqueItems.add(s.name);
+                        }
+                      }
+                      if (_selectedState != null && !seen.contains(_selectedState)) {
+                        uniqueItems.insert(0, _selectedState!);
+                      }
+                      return uniqueItems;
+                    })(),
+                    itemLabel: (item) => item,
+                    isLoading: _isLoadingStates,
+                    onChanged: (val) {
                       setState(() {
-                        _selectedState = v;
+                        _selectedState = val;
                         _selectedCity = null;
                         _cities = [];
                       });
-                      if (v != null && _selectedCountry != null) {
+                      if (val != null && _selectedCountry != null) {
                         final country = _countries.firstWhere((c) => c.name == _selectedCountry);
-                        final state = _states.firstWhere((s) => s.name == v);
+                        final state = _states.firstWhere((s) => s.name == val);
                         _loadCities(country.isoCode, state.isoCode);
                       }
                     },
-                    dividerColor: dividerColor,
-                    onSurface: onSurface,
-                    isLoading: _isLoadingStates,
                   ),
                   const SizedBox(height: 24),
 
                   // ── City dropdown ──────────────────────────────────────
-                  _buildBorderedDropdown<String>(
-                    value: _selectedCity,
+                  SearchableDropdown<String>(
+                    label: l10n.city,
                     hint: l10n.selectCity,
-                    items: _cities.map((c) {
-                      return DropdownMenuItem<String>(
-                        value: c.name,
-                        child: Text(
-                          c.name,
-                          style: TextStyle(color: onSurface, fontSize: 15),
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      );
-                    }).toList(),
-                    onChanged: (v) => setState(() => _selectedCity = v),
-                    dividerColor: dividerColor,
-                    onSurface: onSurface,
+                    value: _selectedCity,
+                    items: (() {
+                      final seen = <String>{};
+                      final uniqueItems = <String>[];
+                      for (final c in _cities) {
+                        if (c.name.isEmpty) continue;
+                        if (!seen.contains(c.name)) {
+                          seen.add(c.name);
+                          uniqueItems.add(c.name);
+                        }
+                      }
+                      if (_selectedCity != null && !seen.contains(_selectedCity)) {
+                        uniqueItems.insert(0, _selectedCity!);
+                      }
+                      return uniqueItems;
+                    })(),
+                    itemLabel: (item) => item,
                     isLoading: _isLoadingCities,
+                    onChanged: (val) => setState(() => _selectedCity = val),
                   ),
                   const SizedBox(height: 24),
 
@@ -876,67 +888,4 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     );
   }
 
-  // ─── Rounded bordered dropdown ───────────────────────────────────────────────
-  Widget _buildBorderedDropdown<T>({
-    required T? value,
-    required String hint,
-    required List<DropdownMenuItem<T>> items,
-    required ValueChanged<T?> onChanged,
-    required Color dividerColor,
-    required Color onSurface,
-    bool isLoading = false,
-  }) {
-    // Safety check to prevent dropdown assertion crashes
-    final List<DropdownMenuItem<T>> safeItems = List.from(items);
-    if (value != null && !safeItems.any((item) => item.value == value)) {
-      safeItems.add(
-        DropdownMenuItem<T>(
-          value: value,
-          child: Text(
-            value.toString(),
-            style: TextStyle(color: onSurface, fontSize: 15),
-          ),
-        ),
-      );
-    }
-
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-      decoration: BoxDecoration(
-        border: Border.all(color: dividerColor, width: 1.2),
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: DropdownButtonHideUnderline(
-        child: DropdownButton<T>(
-          value: value,
-          isExpanded: true,
-          icon: isLoading
-              ? SizedBox(
-                  width: 22,
-                  height: 22,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2,
-                    color: Theme.of(context).colorScheme.primary,
-                  ),
-                )
-              : Icon(
-                  Icons.keyboard_arrow_down,
-                  color: Theme.of(context).colorScheme.primary,
-                  size: 22,
-                ),
-          dropdownColor: Theme.of(context).scaffoldBackgroundColor,
-          hint: Text(
-            hint,
-            style: TextStyle(
-              color: onSurface.withValues(alpha: 0.4),
-              fontSize: 15,
-            ),
-          ),
-          items: safeItems,
-          onChanged: onChanged,
-          style: TextStyle(color: onSurface, fontSize: 15),
-        ),
-      ),
-    );
-  }
 }

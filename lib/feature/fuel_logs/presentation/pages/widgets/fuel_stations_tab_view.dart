@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:trackify/l10n/app_localizations.dart';
+import 'package:flutter/services.dart';
 import '../../cubit/fuel_stations_cubit.dart';
 import '../../cubit/fuel_stations_state.dart';
 import '../../../data/model/fuel_station_model.dart';
+import 'package:trackify/core/widgets/trackify_loader.dart';
 
 class FuelStationsTabView extends StatefulWidget {
   const FuelStationsTabView({super.key});
@@ -17,6 +19,23 @@ class _FuelStationsTabViewState extends State<FuelStationsTabView> {
   GoogleMapController? _mapController;
   final DraggableScrollableController _sheetController =
       DraggableScrollableController();
+  String? _darkMapStyle;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadMapStyles();
+  }
+
+  Future<void> _loadMapStyles() async {
+    try {
+      _darkMapStyle = await rootBundle.loadString(
+        'assets/map_styles/dark_map.json',
+      );
+    } catch (e) {
+      debugPrint("Error loading map styles: $e");
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,9 +46,7 @@ class _FuelStationsTabViewState extends State<FuelStationsTabView> {
     return BlocBuilder<FuelStationsCubit, FuelStationsState>(
       builder: (context, state) {
         if (state is FuelStationsLoading) {
-          return Center(
-            child: CircularProgressIndicator(color: theme.primaryColor),
-          );
+          return const Center(child: TrackifyLoader());
         }
 
         if (state is FuelStationsError) {
@@ -61,7 +78,14 @@ class _FuelStationsTabViewState extends State<FuelStationsTabView> {
                     target: state.userLocation,
                     zoom: 14,
                   ),
-                  onMapCreated: (controller) => _mapController = controller,
+                  onMapCreated: (controller) {
+                    _mapController = controller;
+                    if (Theme.of(context).brightness == Brightness.dark && _darkMapStyle != null) {
+                      controller.setMapStyle(_darkMapStyle);
+                    } else {
+                      controller.setMapStyle(null);
+                    }
+                  },
                   markers: state.markers,
                   myLocationEnabled: true,
                   myLocationButtonEnabled: false,

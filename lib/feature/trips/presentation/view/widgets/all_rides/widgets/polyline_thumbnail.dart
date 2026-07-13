@@ -239,7 +239,7 @@ class _PolylineThumbnailState extends State<PolylineThumbnail> {
                 // Disable liteMode so the dark theme correctly applies on Android
                 liteModeEnabled: false,
                 mapType: MapType.normal,
-                style: _darkMapStyle, // Provide the loaded dark style
+                style: Theme.of(context).brightness == Brightness.dark ? _darkMapStyle : null, // Provide the loaded dark style conditionally
                 zoomControlsEnabled: false,
                 mapToolbarEnabled: false,
                 myLocationButtonEnabled: false,
@@ -284,13 +284,25 @@ class _PolylineThumbnailState extends State<PolylineThumbnail> {
                     await _loadMapStyle();
                   }
                   // Set the style again on controller to be absolutely safe
-                  if (_darkMapStyle != null && mounted) {
-                    await controller.setMapStyle(_darkMapStyle);
+                  if (mounted) {
+                    try {
+                      if (Theme.of(context).brightness == Brightness.dark && _darkMapStyle != null) {
+                        await controller.setMapStyle(_darkMapStyle);
+                      } else {
+                        await controller.setMapStyle(null);
+                      }
+                    } catch (e) {
+                      debugPrint('Error setting map style: $e');
+                    }
                   }
                   // Delay slightly to allow layout to complete
                   await Future.delayed(const Duration(milliseconds: 150));
                   if (mounted) {
-                    await controller.moveCamera(CameraUpdate.newLatLngBounds(bounds, 20.0));
+                    try {
+                      await controller.moveCamera(CameraUpdate.newLatLngBounds(bounds, 20.0));
+                    } catch (e) {
+                      debugPrint('Error moving camera: $e');
+                    }
                   }
                   
                   // Take a snapshot after a delay to allow markers/polylines/tiles to render

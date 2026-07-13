@@ -15,6 +15,10 @@ import 'package:trackify/feature/profile/presentation/cubit/profile_state.dart';
 import 'package:trackify/feature/settings/presentation/pages/settings_screen.dart';
 import 'package:trackify/core/config/network/api_host.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:hive/hive.dart';
+import 'package:trackify/feature/map/presentation/cubit/map_cubit.dart';
+import 'package:trackify/feature/my_garage/presentation/cubit/my_garage_cubit.dart';
+import 'package:trackify/feature/my_profile/presentation/cubit/my_profile_cubit.dart';
 
 import '../../../../core/common/widgets/vehicle_card.dart';
 import '../../../../l10n/app_localizations.dart';
@@ -27,6 +31,7 @@ import '../../../notifications/presentation/screen/notification_timeline.dart';
 import 'package:trackify/core/common/models/vehicle_list_model.dart';
 import '../../../Vehicle_control/data/repositories/vehicle_control_repository_impl.dart';
 import 'package:trackify/core/utils/distance_utils.dart';
+import 'package:trackify/core/widgets/trackify_loader.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -37,6 +42,7 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   final Map<String, bool> _vehicleLockStates = {};
+  int _vehicleCardRefreshCount = 0;
 
   Future<void> _fetchLockStatus(String imei) async {
     if (imei.isEmpty || _vehicleLockStates.containsKey(imei)) return;
@@ -77,12 +83,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   void _handleVehicleLock(BuildContext context, Vehicle vehicle) async {
-    if (vehicle.imei == null || vehicle.imei!.isEmpty) return;
+    if (vehicle.imei == null || vehicle.imei!.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(AppLocalizations.of(context)!.buyTrackifyDevice),
+          backgroundColor: Colors.orange,
+        ),
+      );
+      return;
+    }
 
     final imei = vehicle.imei!;
     final currentLockState = _vehicleLockStates[imei] ?? false;
     final targetLockState = !currentLockState;
-    
+
     final l10n = AppLocalizations.of(context)!;
 
     try {
@@ -96,7 +110,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              targetLockState ? l10n.vehicleLockedSuccessfully : l10n.vehicleUnlockedSuccessfully,
+              targetLockState
+                  ? l10n.vehicleLockedSuccessfully
+                  : l10n.vehicleUnlockedSuccessfully,
             ),
             backgroundColor: Colors.green,
           ),
@@ -128,7 +144,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ? userName[0].toUpperCase()
               : "G";
           final userMobile = user?.mobileNumber ?? "";
-          
+
           String profileImageUrl = '';
           if (user?.userProfile != null && user!.userProfile!.isNotEmpty) {
             String path = user.userProfile!.replaceAll('\\', '/');
@@ -136,7 +152,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
               profileImageUrl = path;
             } else {
               final base = ApiURL.baseURL;
-              profileImageUrl = path.startsWith('/') ? '$base$path' : '$base/$path';
+              profileImageUrl = path.startsWith('/')
+                  ? '$base$path'
+                  : '$base/$path';
             }
           }
 
@@ -171,28 +189,29 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 ? CachedNetworkImage(
                                     imageUrl: profileImageUrl,
                                     fit: BoxFit.cover,
-                                    placeholder: (context, url) => const Center(
-                                      child: CircularProgressIndicator(
-                                        strokeWidth: 2,
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                    errorWidget: (context, url, error) => Center(
-                                      child: Text(
-                                        userInitials,
-                                        style: TextStyle(
-                                          fontSize: 28,
-                                          color: Theme.of(context).colorScheme.onPrimary,
+                                    placeholder: (context, url) =>
+                                        const Center(child: TrackifyLoader()),
+                                    errorWidget: (context, url, error) =>
+                                        Center(
+                                          child: Text(
+                                            userInitials,
+                                            style: TextStyle(
+                                              fontSize: 28,
+                                              color: Theme.of(
+                                                context,
+                                              ).colorScheme.onPrimary,
+                                            ),
+                                          ),
                                         ),
-                                      ),
-                                    ),
                                   )
                                 : Center(
                                     child: Text(
                                       userInitials,
                                       style: TextStyle(
                                         fontSize: 28,
-                                        color: Theme.of(context).colorScheme.onPrimary,
+                                        color: Theme.of(
+                                          context,
+                                        ).colorScheme.onPrimary,
                                       ),
                                     ),
                                   ),
@@ -236,6 +255,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ),
                         Icon(
                           Icons.chevron_right,
+                          size: 40,
                           color: Theme.of(
                             context,
                           ).colorScheme.onSurface.withOpacity(0.3),
@@ -305,7 +325,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   },
                   child: Container(
                     margin: const EdgeInsets.symmetric(horizontal: 16),
-                    padding: const EdgeInsets.all(14),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 14,
+                      vertical: 10,
+                    ),
                     decoration: BoxDecoration(
                       color: Theme.of(context).cardColor,
                       borderRadius: BorderRadius.circular(16),
@@ -317,8 +340,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           alignment: Alignment.center,
                           children: [
                             SizedBox(
-                              height: 48,
-                              width: 48,
+                              height: 44,
+                              width: 44,
                               child: CircularProgressIndicator(
                                 value: 0.63,
                                 strokeWidth: 4,
@@ -378,9 +401,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   child: BlocBuilder<ProfileCubit, ProfileState>(
                     builder: (context, state) {
                       if (state is VehiclesLoading) {
-                        return const Center(
-                          child: CircularProgressIndicator(),
-                        );
+                        return const Center(child: TrackifyLoader());
                       }
                       if (state is VehiclesLoaded &&
                           state.vehicles.isNotEmpty) {
@@ -392,8 +413,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         );
                         final vehicle = state.vehicles.firstWhere(
                           (v) =>
-                              (selectedUid.isNotEmpty &&
-                                  v.id == selectedUid) ||
+                              (selectedUid.isNotEmpty && v.id == selectedUid) ||
                               (selectedImei.isNotEmpty &&
                                   v.imei == selectedImei),
                           orElse: () => state.vehicles.first,
@@ -406,42 +426,64 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         final isLocked =
                             _vehicleLockStates[vehicle.imei] ?? false;
 
+                        final hasDevice =
+                            selectedImei.isNotEmpty &&
+                            vehicle.imei == selectedImei;
+                        final isDeviceInstalled =
+                            vehicle.imei != null && vehicle.imei!.isNotEmpty;
+
                         return VehicleCard(
+                          key: ValueKey(
+                            '${vehicle.id}-$_vehicleCardRefreshCount',
+                          ),
                           context: context,
                           vehicle: vehicle,
-                          hasDevice: true,
+                          hasDevice: hasDevice,
+                          isDeviceInstalled: isDeviceInstalled,
                           isLocked: isLocked,
                           onVehicleControl: () async {
-                            if (vehicle.id != null &&
-                                vehicle.id!.isNotEmpty) {
+                            if (vehicle.id != null && vehicle.id!.isNotEmpty) {
                               await AppPreference.instance.set(
                                 key: AppPreference.KEY_SELECTED_UID,
                                 value: vehicle.id!,
                               );
                             }
-                            if (vehicle.imei != null &&
-                                vehicle.imei!.isNotEmpty) {
-                              await AppPreference.instance.set(
-                                key: AppPreference.IMEI,
-                                value: vehicle.imei!,
-                              );
-                            }
+                            await AppPreference.instance.set(
+                              key: AppPreference.IMEI,
+                              value: vehicle.imei ?? '',
+                            );
+
+                            AppNavigation.refreshNavigationState();
+
                             if (context.mounted) {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) =>
-                                      VehicleControlScreen(
-                                        isFromGarage: false,
-                                        passedVehicle: vehicle,
-                                      ),
+                                  builder: (context) => VehicleControlScreen(
+                                    isFromGarage: isDeviceInstalled
+                                        ? false
+                                        : true,
+                                    passedVehicle: vehicle,
+                                  ),
                                 ),
                               );
                             }
                           },
-                          onLock: () =>
-                              _handleVehicleLock(context, vehicle),
+                          onLock: () => _handleVehicleLock(context, vehicle),
                           onRecharge: () {
+                            if (vehicle.imei == null || vehicle.imei!.isEmpty) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                    AppLocalizations.of(
+                                      context,
+                                    )!.buyTrackifyDevice,
+                                  ),
+                                  backgroundColor: Colors.orange,
+                                ),
+                              );
+                              return;
+                            }
                             Navigator.push(
                               context,
                               MaterialPageRoute(
@@ -449,13 +491,31 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               ),
                             );
                           },
-                          onRenew: () {
-                            Navigator.push(
+                          onRenew: () async {
+                            if (vehicle.imei == null || vehicle.imei!.isEmpty) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                    AppLocalizations.of(
+                                      context,
+                                    )!.buyTrackifyDevice,
+                                  ),
+                                  backgroundColor: Colors.orange,
+                                ),
+                              );
+                              return;
+                            }
+                            final result = await Navigator.push(
                               context,
                               MaterialPageRoute(
                                 builder: (context) => WarrantyScreen(),
                               ),
                             );
+                            if (result == true && mounted) {
+                              setState(() {
+                                _vehicleCardRefreshCount++;
+                              });
+                            }
                           },
                         );
                       }
@@ -567,47 +627,52 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ),
                       ),
                       Divider(height: 1, color: Theme.of(context).dividerColor),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: RadioListTile<String>(
-                              title: Text(l10n.km),
-                              value: 'km',
-                              groupValue: appState.distanceUnit,
-                              contentPadding: EdgeInsets.zero,
-                              dense: true,
-                              activeColor: Theme.of(
-                                context,
-                              ).colorScheme.primary,
-                              onChanged: (value) {
-                                if (value != null) {
-                                  context.read<AppCubit>().changeDistanceUnit(
-                                    value,
-                                  );
-                                }
-                              },
+                      Material(
+                        type: MaterialType.transparency,
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: RadioListTile<String>(
+                                title: Text(l10n.km),
+                                value: 'km',
+                                groupValue: appState.distanceUnit,
+                                contentPadding: EdgeInsets.zero,
+                                dense: true,
+                                activeColor: Theme.of(
+                                  context,
+                                ).colorScheme.primary,
+                                onChanged: (value) {
+                                  if (value != null) {
+                                    context.read<AppCubit>().changeDistanceUnit(
+                                      value,
+                                    );
+                                  }
+                                },
+                              ),
                             ),
-                          ),
-                          Expanded(
-                            child: RadioListTile<String>(
-                              title: Text(AppLocalizations.of(context)!.miles),
-                              value: 'mi',
-                              groupValue: appState.distanceUnit,
-                              contentPadding: EdgeInsets.zero,
-                              dense: true,
-                              activeColor: Theme.of(
-                                context,
-                              ).colorScheme.primary,
-                              onChanged: (value) {
-                                if (value != null) {
-                                  context.read<AppCubit>().changeDistanceUnit(
-                                    value,
-                                  );
-                                }
-                              },
+                            Expanded(
+                              child: RadioListTile<String>(
+                                title: Text(
+                                  AppLocalizations.of(context)!.miles,
+                                ),
+                                value: 'mi',
+                                groupValue: appState.distanceUnit,
+                                contentPadding: EdgeInsets.zero,
+                                dense: true,
+                                activeColor: Theme.of(
+                                  context,
+                                ).colorScheme.primary,
+                                onChanged: (value) {
+                                  if (value != null) {
+                                    context.read<AppCubit>().changeDistanceUnit(
+                                      value,
+                                    );
+                                  }
+                                },
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ],
                   ),
@@ -689,13 +754,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget _logoutButton(AppLocalizations l10n) {
     return Center(
       child: TextButton.icon(
-        onPressed: () {
-          final prefs = AppPreference.instance;
-          prefs.clearAll();
-          Navigator.of(context, rootNavigator: true).pushAndRemoveUntil(
-            MaterialPageRoute(builder: (context) => const SignInScreen()),
-            (Route<dynamic> route) => false,
-          );
+        onPressed: () async {
+          await context.read<AppCubit>().logout();
+          if (mounted) {
+            context.read<ProfileCubit>().reset();
+            context.read<MyProfileCubit>().reset();
+            context.read<MapCubit>().reset();
+            context.read<MyGarageCubit>().reset();
+            Navigator.of(context, rootNavigator: true).pushAndRemoveUntil(
+              MaterialPageRoute(builder: (context) => const SignInScreen()),
+              (Route<dynamic> route) => false,
+            );
+          }
         },
         icon: Icon(Icons.logout, color: Theme.of(context).colorScheme.error),
         label: Text(

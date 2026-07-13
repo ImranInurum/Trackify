@@ -167,38 +167,41 @@ class _VehicleSelectorSheet extends StatelessWidget {
               final vehicle = vehicles[index];
               final isSelected = vehicle.id == selectedVehicle?.id;
 
-              return Material(
+              return Container(
                 color: isSelected
                     ? theme.scaffoldBackgroundColor.withOpacity(1)
                     : theme.cardColor,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 4.0),
-                  child: ListTile(
-                    leading: Image.asset(
-                      'assets/icons/bike2.png',
-                      width: 50,
-                      height: 50,
-                    ),
-                    title: Text(
-                      "${vehicle.vehicleMaker ?? ""} ${vehicle.vehicleModel ?? ""}"
-                          .trim(),
-                      style: theme.textTheme.bodyLarge?.copyWith(
-                        fontWeight: isSelected
-                            ? FontWeight.bold
-                            : FontWeight.normal,
-                        color: isSelected
-                            ? theme.colorScheme.primary
-                            : theme.colorScheme.onSurface,
+                child: Material(
+                  type: MaterialType.transparency,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 4.0),
+                    child: ListTile(
+                      leading: Image.asset(
+                        'assets/icons/bike2.png',
+                        width: 50,
+                        height: 50,
                       ),
+                      title: Text(
+                        "${vehicle.vehicleMaker ?? ""} ${vehicle.vehicleModel ?? ""}"
+                            .trim(),
+                        style: theme.textTheme.bodyLarge?.copyWith(
+                          fontWeight: isSelected
+                              ? FontWeight.bold
+                              : FontWeight.normal,
+                          color: isSelected
+                              ? theme.colorScheme.primary
+                              : theme.colorScheme.onSurface,
+                        ),
+                      ),
+                      subtitle: Text(vehicle.vehicleNumber ?? ""),
+                      trailing: isSelected
+                          ? Icon(
+                              Icons.check_circle,
+                              color: theme.colorScheme.primary,
+                            )
+                          : null,
+                      onTap: () => onSelected(vehicle),
                     ),
-                    subtitle: Text(vehicle.vehicleNumber ?? ""),
-                    trailing: isSelected
-                        ? Icon(
-                            Icons.check_circle,
-                            color: theme.colorScheme.primary,
-                          )
-                        : null,
-                    onTap: () => onSelected(vehicle),
                   ),
                 ),
               );

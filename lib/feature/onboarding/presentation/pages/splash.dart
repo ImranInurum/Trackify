@@ -13,6 +13,9 @@ import 'package:trackify/feature/onboarding/presentation/pages/select_language_s
 import '../../../../app/app_navigation.dart';
 import '../../../../app/cubit/app_cubit.dart';
 
+import 'dart:async';
+import '../../../../core/widgets/trackify_splash.dart';
+
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
 
@@ -21,6 +24,8 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
+  final Completer<void> _animationCompleter = Completer<void>();
+
   @override
   void initState() {
     super.initState();
@@ -30,9 +35,6 @@ class _SplashScreenState extends State<SplashScreen> {
   Future<void> _initializeApp() async {
     final logoFetch = context.read<SplashCubit>().fetchLogo();
     context.read<AppCubit>().fetchTheme();
-
-    // Brief splash display
-    final splashWait = Future.delayed(const Duration(milliseconds: 2000));
 
     // Init SharedPreferences singleton
     await AppPreference.instance.init();
@@ -48,8 +50,8 @@ class _SplashScreenState extends State<SplashScreen> {
       ApiURL.updateAuthToken(token);
     }
 
-    // Wait for both the minimum splash time and the logo fetch to finish
-    await Future.wait([splashWait, logoFetch]);
+    // Wait for both the minimum splash animation time and the logo fetch to finish
+    await Future.wait([_animationCompleter.future, logoFetch]);
 
     if (!mounted) return;
 
@@ -88,35 +90,12 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.surface,
-      body: Center(
-        child: BlocBuilder<SplashCubit, SplashState>(
-          builder: (context, state) {
-            if (state is SplashLoading) {
-              return const CircularProgressIndicator();
-            }
-
-            if (state is SplashLoaded && state.logo.path != null) {
-              return Image.network(
-                state.logo.path!,
-                height: 120,
-                errorBuilder: (context, error, stackTrace) => Icon(
-                  Icons.track_changes,
-                  size: 80,
-                  color: Theme.of(context).colorScheme.primary,
-                ),
-              );
-            } else {
-              return Icon(
-                Icons.track_changes,
-                size: 80,
-                color: Theme.of(context).colorScheme.primary,
-              );
-            }
-          },
-        ),
-      ),
+    return TrackifySplash(
+      onFinished: () {
+        if (!_animationCompleter.isCompleted) {
+          _animationCompleter.complete();
+        }
+      },
     );
   }
 }

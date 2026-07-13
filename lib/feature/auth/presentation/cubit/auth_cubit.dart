@@ -26,8 +26,14 @@ class AuthCubit extends Cubit<AuthState> {
         },
         (user) async {
           final prefs = AppPreference.instance;
-          await prefs.set(key: AppPreference.KEY_TOKEN, value: user.token ?? "");
-          await prefs.set(key: AppPreference.KEY_USER_ID, value: user.user?.id ?? "");
+          await prefs.set(
+            key: AppPreference.KEY_TOKEN,
+            value: user.token ?? "",
+          );
+          await prefs.set(
+            key: AppPreference.KEY_USER_ID,
+            value: user.user?.id ?? "",
+          );
           await prefs.set(
             key: AppPreference.KEY_USER_DETAILS,
             value: jsonEncode(user.user?.toJson()),
@@ -107,8 +113,8 @@ class AuthCubit extends Cubit<AuthState> {
 
   Future<void> loginWithGoogle() async {
     try {
-      final userCredential =
-          await GoogleAuthService.instance.signInWithGoogle();
+      final userCredential = await GoogleAuthService.instance
+          .signInWithGoogle();
 
       if (userCredential != null && userCredential.user != null) {
         final firebaseUser = userCredential.user!;
@@ -128,9 +134,13 @@ class AuthCubit extends Cubit<AuthState> {
           (user) async {
             final prefs = AppPreference.instance;
             await prefs.set(
-                key: AppPreference.KEY_TOKEN, value: user.token ?? "");
+              key: AppPreference.KEY_TOKEN,
+              value: user.token ?? "",
+            );
             await prefs.set(
-                key: AppPreference.KEY_USER_ID, value: user.user?.id ?? "");
+              key: AppPreference.KEY_USER_ID,
+              value: user.user?.id ?? "",
+            );
             await prefs.set(
               key: AppPreference.KEY_USER_DETAILS,
               value: jsonEncode(user.user?.toJson()),
@@ -150,7 +160,9 @@ class AuthCubit extends Cubit<AuthState> {
 
   Future<void> _updateFcmToken(String userId) async {
     try {
-      final fcmToken = await AppPreference.instance.get(key: AppPreference.KEY_FCM_TOKEN);
+      final fcmToken = await AppPreference.instance.get(
+        key: AppPreference.KEY_FCM_TOKEN,
+      );
       if (fcmToken.isNotEmpty && userId.isNotEmpty) {
         final body = {"userId": userId, "fcmToken": fcmToken};
         final result = await _authCase.saveFcmTokenCall(body);
@@ -159,7 +171,9 @@ class AuthCubit extends Cubit<AuthState> {
           (data) => print('FCM token saved successfully: $data'),
         );
       } else {
-        print('FCM token or userId is empty, skipping save. FCM: $fcmToken, UID: $userId');
+        print(
+          'FCM token or userId is empty, skipping save. FCM: $fcmToken, UID: $userId',
+        );
       }
     } catch (e) {
       print('Error saving FCM token: $e');

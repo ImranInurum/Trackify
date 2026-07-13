@@ -7,11 +7,17 @@ import 'package:trackify/feature/auth/presentation/pages/signin_screen.dart';
 import 'package:trackify/l10n/app_localizations.dart';
 
 import '../../core/theme/app_colors.dart';
+import '../../app/cubit/app_cubit.dart';
+import '../profile/presentation/cubit/profile_cubit.dart';
+import '../my_profile/presentation/cubit/my_profile_cubit.dart';
+import '../map/presentation/cubit/map_cubit.dart';
+import '../my_garage/presentation/cubit/my_garage_cubit.dart';
 import '../onboarding/presentation/cubit/splash_cubit.dart';
 import '../onboarding/presentation/cubit/splash_state.dart';
 import 'add_vehicle/presentation/view/add_vehicle_screen.dart';
 import '../device_installation/presentation/pages/device_installation_screen.dart';
 import '../reach_me_sticker/presentation/screens/scan_qr_screen.dart';
+import 'package:trackify/core/widgets/trackify_loader.dart';
 
 class ChoiceSelector extends StatefulWidget {
   const ChoiceSelector({super.key});
@@ -33,15 +39,18 @@ class _ChoiceSelectorState extends State<ChoiceSelector> {
                 imageUrl: state.logo.path!,
                 height: 100,
                 fit: BoxFit.contain,
-                placeholder: (context, url) =>
-                    Center(child: CircularProgressIndicator(color: colorScheme.primary)),
+                placeholder: (context, url) => const Center(child: TrackifyLoader()),
                 errorWidget: (context, url, error) => Icon(
                   Icons.track_changes_rounded,
                   size: 64,
                   color: colorScheme.primary,
                 ),
               )
-            : Icon(Icons.track_changes_rounded, size: 64, color: colorScheme.primary),
+            : Icon(
+                Icons.track_changes_rounded,
+                size: 64,
+                color: colorScheme.primary,
+              ),
       ),
     );
   }
@@ -55,7 +64,10 @@ class _ChoiceSelectorState extends State<ChoiceSelector> {
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios_new, color: Theme.of(context).colorScheme.onSurface),
+          icon: Icon(
+            Icons.arrow_back_ios_new,
+            color: Theme.of(context).colorScheme.onSurface,
+          ),
           onPressed: () {
             if (Navigator.of(context).canPop()) {
               Navigator.of(context).pop();
@@ -74,7 +86,10 @@ class _ChoiceSelectorState extends State<ChoiceSelector> {
                     // Logo — dynamic via SplashCubit (same pattern as SignInScreen)
                     BlocBuilder<SplashCubit, SplashState>(
                       builder: (context, splashState) {
-                        return _buildLogo(splashState, Theme.of(context).colorScheme);
+                        return _buildLogo(
+                          splashState,
+                          Theme.of(context).colorScheme,
+                        );
                       },
                     ),
                     const SizedBox(height: 10),
@@ -90,7 +105,8 @@ class _ChoiceSelectorState extends State<ChoiceSelector> {
                       onTap: () {
                         Navigator.of(context).push(
                           MaterialPageRoute(
-                            builder: (context) => const DeviceInstallationScreen(),
+                            builder: (context) =>
+                                const DeviceInstallationScreen(),
                           ),
                         );
                       },
@@ -137,23 +153,37 @@ class _ChoiceSelectorState extends State<ChoiceSelector> {
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 20),
               child: TextButton.icon(
-                onPressed: () {
-                  final prefs = AppPreference.instance;
-                  prefs.clearAll();
-                  Navigator.of(context, rootNavigator: true).pushAndRemoveUntil(
-                    MaterialPageRoute(builder: (context) => const SignInScreen()),
-                    (Route<dynamic> route) => false,
-                  );
+                onPressed: () async {
+                  await context.read<AppCubit>().logout();
+                  if (context.mounted) {
+                    context.read<ProfileCubit>().reset();
+                    context.read<MyProfileCubit>().reset();
+                    context.read<MapCubit>().reset();
+                    context.read<MyGarageCubit>().reset();
+                    Navigator.of(
+                      context,
+                      rootNavigator: true,
+                    ).pushAndRemoveUntil(
+                      MaterialPageRoute(
+                        builder: (context) => const SignInScreen(),
+                      ),
+                      (Route<dynamic> route) => false,
+                    );
+                  }
                 },
                 icon: Icon(
                   Icons.logout,
-                  color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.onSurface.withOpacity(0.5),
                   size: 20,
                 ),
                 label: Text(
                   l10n.logout,
                   style: TextStyle(
-                    color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.onSurface.withOpacity(0.5),
                     fontSize: 15,
                     fontWeight: FontWeight.w500,
                   ),
@@ -201,14 +231,19 @@ class _ChoiceSelectorState extends State<ChoiceSelector> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            const SizedBox(height: 8), // Replaced padding with slight spacing from top
+            const SizedBox(
+              height: 8,
+            ), // Replaced padding with slight spacing from top
             Icon(
               Icons.arrow_forward,
               color: Theme.of(context).colorScheme.onSurface.withOpacity(0.4),
               size: 20,
             ),
             Padding(
-              padding: const EdgeInsets.only(left: 12.0, bottom: 20.0), // Removed right padding, reduced bottom
+              padding: const EdgeInsets.only(
+                left: 12.0,
+                bottom: 20.0,
+              ), // Removed right padding, reduced bottom
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
@@ -230,7 +265,9 @@ class _ChoiceSelectorState extends State<ChoiceSelector> {
                           Text(
                             subtitle,
                             style: TextStyle(
-                              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.onSurface.withOpacity(0.6),
                               fontSize: 13,
                               height: 1.4,
                             ),
@@ -255,7 +292,9 @@ class _ChoiceSelectorState extends State<ChoiceSelector> {
                             errorBuilder: (context, error, stackTrace) => Icon(
                               Icons.inventory_2_outlined,
                               size: 40,
-                              color: Theme.of(context).hintColor.withOpacity(0.5),
+                              color: Theme.of(
+                                context,
+                              ).hintColor.withOpacity(0.5),
                             ),
                           ),
                         ),

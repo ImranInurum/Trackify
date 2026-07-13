@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../../main.dart';
+import 'trackify_loader.dart';
 
 class LoadingScreenOL {
   static final LoadingScreenOL _instance = LoadingScreenOL._internal();
@@ -19,25 +20,10 @@ class LoadingScreenOL {
     if (_loadingCount == 1 && _overlayEntry == null) {
       _overlayEntry = OverlayEntry(
         builder: (context) => const Material(
-          color: Colors.black45,
+          color: Colors.transparent,
           child: Center(
-            child: Column(
-              children: [
-                SizedBox(
-                  height: 5,
-                  child: LinearProgressIndicator(
-                    valueColor: AlwaysStoppedAnimation<Color>(Color(0xFFB0B0DF)),
-                    backgroundColor: Colors.black12,
-                  ),
-                ),
-                Expanded(
-                    child: Center(
-                      child: CupertinoActivityIndicator(
-                        animating: true,
-                        color: Colors.white,
-                      ),
-                    ))
-              ],
+            child: TrackifyLoader(
+              animated: true,
             ),
           ),
         ),

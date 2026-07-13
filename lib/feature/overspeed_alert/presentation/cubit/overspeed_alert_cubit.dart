@@ -4,12 +4,16 @@ import 'package:trackify/core/common/usecase/get_user_vehicles_usecase.dart';
 import 'package:trackify/feature/overspeed_alert/data/model/overspeed_alert_model.dart';
 import 'package:trackify/feature/overspeed_alert/domain/usecase/create_overspeed_alert_usecase.dart';
 import 'package:trackify/feature/overspeed_alert/domain/usecase/get_overspeed_alerts_usecase.dart';
+import 'package:trackify/feature/overspeed_alert/domain/usecase/update_overspeed_alert_usecase.dart';
+import 'package:trackify/feature/overspeed_alert/domain/usecase/delete_overspeed_alert_usecase.dart';
 import 'overspeed_alert_state.dart';
 
 class OverspeedAlertCubit extends Cubit<OverspeedAlertState> {
   final GetUserVehiclesUsecase getUserVehiclesUsecase;
   final CreateOverspeedAlertUsecase createOverspeedAlertUsecase;
   final GetOverspeedAlertsUsecase getOverspeedAlertsUsecase;
+  final UpdateOverspeedAlertUsecase updateOverspeedAlertUsecase;
+  final DeleteOverspeedAlertUsecase deleteOverspeedAlertUsecase;
 
   List<OverspeedAlertModel> _alerts = [];
 
@@ -17,6 +21,8 @@ class OverspeedAlertCubit extends Cubit<OverspeedAlertState> {
     required this.getUserVehiclesUsecase,
     required this.createOverspeedAlertUsecase,
     required this.getOverspeedAlertsUsecase,
+    required this.updateOverspeedAlertUsecase,
+    required this.deleteOverspeedAlertUsecase,
   }) : super(OverspeedAlertInitial());
 
   Future<void> fetchInitialData({Vehicle? targetVehicle}) async {
@@ -114,6 +120,97 @@ class OverspeedAlertCubit extends Cubit<OverspeedAlertState> {
         duration: timeDuration,
         imei: imeiString,
       );
+
+      result.fold(
+        (failure) {
+          emit(OverspeedAlertError(failure.message));
+          emit(currentState);
+        },
+        (message) {
+          emit(OverspeedAlertSuccess(message: message));
+          // Re-fetch data for the currently selected vehicle
+          if (currentState.selectedVehicle != null) {
+            selectVehicle(currentState.selectedVehicle!);
+          } else {
+            fetchInitialData();
+          }
+        },
+      );
+    } catch (e) {
+      emit(OverspeedAlertError(e.toString()));
+      emit(currentState);
+    }
+  }
+
+  Future<void> updateOverspeedAlert({
+    required String id,
+    required String title,
+    required int speedLimit,
+    required int timeDuration,
+    required List<Vehicle> selectedVehicles,
+  }) async {
+    if (state is! OverspeedAlertLoaded) return;
+    final currentState = state as OverspeedAlertLoaded;
+
+    if (selectedVehicles.isEmpty) {
+      emit(const OverspeedAlertError('Please select at least one vehicle'));
+      emit(currentState);
+      return;
+    }
+
+    emit(OverspeedAlertSubmitting());
+
+    try {
+      final imeiString = selectedVehicles
+          .map((v) => v.imei)
+          .where((imei) => imei != null && imei.isNotEmpty)
+          .join(',');
+
+      if (imeiString.isEmpty) {
+        emit(
+          const OverspeedAlertError('Selected vehicles do not have an IMEI'),
+        );
+        emit(currentState);
+        return;
+      }
+
+      final result = await updateOverspeedAlertUsecase.call(
+        id: id,
+        alertTitle: title,
+        speedLimit: speedLimit,
+        duration: timeDuration,
+        imei: imeiString,
+      );
+
+      result.fold(
+        (failure) {
+          emit(OverspeedAlertError(failure.message));
+          emit(currentState);
+        },
+        (message) {
+          emit(OverspeedAlertSuccess(message: message));
+          // Re-fetch data for the currently selected vehicle
+          if (currentState.selectedVehicle != null) {
+            selectVehicle(currentState.selectedVehicle!);
+          } else {
+            fetchInitialData();
+          }
+        },
+      );
+    } catch (e) {
+      emit(OverspeedAlertError(e.toString()));
+      emit(currentState);
+    }
+  }
+
+  Future<void> deleteOverspeedAlert(String alertId) async {
+    if (state is! OverspeedAlertLoaded) return;
+    final currentState = state as OverspeedAlertLoaded;
+
+    emit(OverspeedAlertSubmitting());
+
+    try {
+      final result = await deleteOverspeedAlertUsecase.call(alertId);
 
       result.fold(
         (failure) {

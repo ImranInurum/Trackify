@@ -4,6 +4,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:trackify/feature/add_vehicle_and_device/add_vehicle/data/models/vehicle_config_models.dart';
 
 import '../../../../../app/app_navigation.dart';
+import '../../../../map/presentation/cubit/map_cubit.dart';
+import '../../../../profile/presentation/cubit/profile_cubit.dart';
 import '../../../../../core/theme/app_theme_extension.dart';
 import '../../../../../core/widgets/custom_form_field.dart';
 import '../../../../../l10n/app_localizations.dart';
@@ -11,6 +13,8 @@ import '../../../../onboarding/presentation/cubit/splash_cubit.dart';
 import '../../../../onboarding/presentation/cubit/splash_state.dart';
 import '../cubit/add_vehicle_cubit.dart';
 import '../cubit/add_vehicle_state.dart';
+import '../widgets/vehicle_number_field.dart';
+import 'package:trackify/core/widgets/trackify_loader.dart';
 
 // ─── Screen ──────────────────────────────────────────────────────────────────
 
@@ -42,22 +46,28 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
   // ─── Logo (same SplashCubit pattern as all auth screens) ───────────────────
   Widget _buildLogo(SplashState state, ColorScheme colorScheme) {
     return Center(
-      child: (state is SplashLoaded &&
+      child:
+          (state is SplashLoaded &&
               state.logo.path != null &&
               state.logo.path!.isNotEmpty)
           ? CachedNetworkImage(
               imageUrl: state.logo.path!,
-              height: 100, // Reduced from 220 to minimize top/bottom empty space in the image container
+              height:
+                  100, // Reduced from 220 to minimize top/bottom empty space in the image container
               fit: BoxFit.contain,
               placeholder: (context, url) =>
-                  Center(child: CircularProgressIndicator(color: colorScheme.primary)),
+                  const Center(child: TrackifyLoader()),
               errorWidget: (context, url, error) => Icon(
                 Icons.track_changes_rounded,
                 size: 88,
                 color: colorScheme.primary,
               ),
             )
-          : Icon(Icons.track_changes_rounded, size: 88, color: colorScheme.primary),
+          : Icon(
+              Icons.track_changes_rounded,
+              size: 88,
+              color: colorScheme.primary,
+            ),
     );
   }
 
@@ -88,7 +98,9 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
                   color: selected ? active : inactive,
                   width: selected ? 2 : 1.5,
                 ),
-                color: selected ? active.withValues(alpha: 0.06) : Colors.transparent,
+                color: selected
+                    ? active.withValues(alpha: 0.06)
+                    : Colors.transparent,
               ),
               child: Icon(icon, color: selected ? active : inactive, size: 22),
             ),
@@ -135,7 +147,9 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
                   color: selected ? active : inactive,
                   width: selected ? 2 : 1.5,
                 ),
-                color: selected ? active.withValues(alpha: 0.06) : Colors.transparent,
+                color: selected
+                    ? active.withValues(alpha: 0.06)
+                    : Colors.transparent,
               ),
               child: Icon(icon, color: selected ? active : inactive, size: 22),
             ),
@@ -184,13 +198,18 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
               SizedBox(
                 height: 12,
                 width: 12,
-                child: CircularProgressIndicator(strokeWidth: 1.5, color: theme.colorScheme.primary),
+                child: CircularProgressIndicator(
+                  strokeWidth: 1.5,
+                  color: theme.colorScheme.primary,
+                ),
               ),
           ],
         ),
         const SizedBox(height: 6),
         GestureDetector(
-          onTap: (onChanged == null || items.isEmpty) && !isLoading ? onDisabledTap : null,
+          onTap: (onChanged == null || items.isEmpty) && !isLoading
+              ? onDisabledTap
+              : null,
           behavior: HitTestBehavior.opaque,
           child: Container(
             height: 48,
@@ -198,7 +217,9 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
             decoration: BoxDecoration(
               color: Colors.transparent,
               borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: theme.colorScheme.onSurface.withOpacity(0.12)),
+              border: Border.all(
+                color: theme.colorScheme.onSurface.withOpacity(0.12),
+              ),
             ),
             padding: const EdgeInsets.symmetric(horizontal: 14),
             child: Theme(
@@ -218,14 +239,26 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
                   elevation: 4,
                   hint: Text(
                     hint ?? label,
-                    style: TextStyle(color: theme.colorScheme.onSurface.withOpacity(0.5), fontSize: 14),
+                    style: TextStyle(
+                      color: theme.colorScheme.onSurface.withOpacity(0.5),
+                      fontSize: 14,
+                    ),
                   ),
-                  icon: Icon(Icons.arrow_drop_down, color: theme.colorScheme.primary),
+                  icon: Icon(
+                    Icons.arrow_drop_down,
+                    color: theme.colorScheme.primary,
+                  ),
                   items: items
                       .map(
                         (e) => DropdownMenuItem(
                           value: e,
-                          child: Text(itemLabel(e), style: TextStyle(color: theme.colorScheme.onSurface, fontSize: 14)),
+                          child: Text(
+                            itemLabel(e),
+                            style: TextStyle(
+                              color: theme.colorScheme.onSurface,
+                              fontSize: 14,
+                            ),
+                          ),
                         ),
                       )
                       .toList(),
@@ -253,50 +286,76 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
 
   IconData _getVehicleIcon(String type) {
     final t = type.toLowerCase();
-    if (t.contains('2') || t.contains('two') || t.contains('bike') || t.contains('scooter') || t.contains('motor')) {
+    if (t.contains('2') ||
+        t.contains('two') ||
+        t.contains('bike') ||
+        t.contains('scooter') ||
+        t.contains('motor') ||
+        t.contains('moped')) {
       return Icons.two_wheeler_rounded;
-    } else if (t.contains('3') || t.contains('rickshaw') || t.contains('rikshaw') || t.contains('auto')) {
+    } else if (t.contains('3') ||
+        t.contains('rickshaw') ||
+        t.contains('rikshaw') ||
+        t.contains('auto')) {
       return Icons.electric_rickshaw_rounded;
     } else if (t.contains('bus')) {
       return Icons.directions_bus_rounded;
-    } else if (t.contains('van') || t.contains('tempo') || t.contains('traveller')) {
+    } else if (t.contains('van') ||
+        t.contains('tempo') ||
+        t.contains('traveller')) {
       return Icons.airport_shuttle_rounded;
-    } else if (t.contains('truck') || t.contains('lorry') || t.contains('heavy') || t.contains('pickup') || t.contains('lcv') || t.contains('hcv')) {
+    } else if (t.contains('truck') ||
+        t.contains('lorry') ||
+        t.contains('heavy') ||
+        t.contains('pickup') ||
+        t.contains('lcv') ||
+        t.contains('hcv')) {
       return Icons.local_shipping_rounded;
     } else if (t.contains('tractor') || t.contains('earth')) {
       return Icons.agriculture_rounded;
     } else if (t.contains('boat') || t.contains('ship')) {
       return Icons.directions_boat_rounded;
-    } else if (t.contains('4') || t.contains('four') || t.contains('car') || t.contains('suv')) {
+    } else if (t.contains('car') ||
+        t.contains('suv') ||
+        t.contains('four') ||
+        t.contains('4')) {
       return Icons.directions_car_rounded;
+    } else if (t.contains('commercial ev') || t.contains('ev')) {
+      return Icons.electric_car_rounded;
     } else {
       return Icons.commute_rounded; // Generic vehicle icon fallback
     }
   }
 
   String _getVehicleLabel(String type, AppLocalizations l10n) {
-    final t = type.toLowerCase();
-    if (t.contains('2') || t.contains('two') || t.contains('bike') || t.contains('scooter') || t.contains('motor')) {
-      return l10n.twoWheeler;
-    } else if (t.contains('4') || t.contains('four') || t.contains('car') || t.contains('suv')) {
-      return l10n.fourWheeler;
-    } else if (t.contains('3') || t.contains('rickshaw') || t.contains('rikshaw') || t.contains('auto')) {
+    final t = type.toLowerCase().trim();
+    if (t == 'bike') {
+      return l10n.bike;
+    } else if (t == 'auto rickshaw') {
       return l10n.autoRickshaw;
-    } else {
-      return type
-          .replaceAll('_', ' ')
-          .split(' ')
-          .map((e) => e.isNotEmpty ? e[0].toUpperCase() + e.substring(1) : '')
-          .join(' ')
-          .trim();
     }
+
+    if (type.isNotEmpty &&
+        type[0] == type[0].toUpperCase() &&
+        !type.contains('_')) {
+      return type;
+    }
+
+    return type
+        .replaceAll('_', ' ')
+        .split(' ')
+        .map((e) => e.isNotEmpty ? e[0].toUpperCase() + e.substring(1) : '')
+        .join(' ')
+        .trim();
   }
 
   IconData _getFuelIcon(String fuel) {
     final f = fuel.toLowerCase();
     if (f.contains('petrol') || f.contains('gasoline')) {
       return Icons.water_drop_rounded;
-    } else if (f.contains('electric') || f.contains('ev') || f.contains('battery')) {
+    } else if (f.contains('electric') ||
+        f.contains('ev') ||
+        f.contains('battery')) {
       return Icons.bolt_rounded;
     } else if (f.contains('diesel')) {
       return Icons.local_gas_station_rounded;
@@ -325,7 +384,10 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios_new, color: theme.colorScheme.onSurface),
+          icon: Icon(
+            Icons.arrow_back_ios_new,
+            color: theme.colorScheme.onSurface,
+          ),
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: Text(
@@ -342,7 +404,7 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
             previous.selectedConfig?.id != current.selectedConfig?.id ||
             previous.successResponse != current.successResponse ||
             previous.errorMessage != current.errorMessage,
-        listener: (context, state) {
+        listener: (context, state) async {
           // If vehicle type changed, reset the vehicle number controller
           final cubit = context.read<AddVehicleCubit>();
           // Note: We don't want to reset on initial load or if both are null
@@ -356,10 +418,18 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
           if (state.successResponse != null) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: Text(l10n.vehicleAdded), 
+                content: Text(l10n.vehicleAdded),
                 backgroundColor: appColors?.success ?? Colors.green,
               ),
             );
+
+            await Future.wait([
+              context.read<ProfileCubit>().fetchVehicles(),
+              context.read<MapCubit>().fetchVehicles(),
+            ]);
+
+            if (!context.mounted) return;
+
             Navigator.of(context, rootNavigator: true).pushAndRemoveUntil(
               MaterialPageRoute(builder: (context) => const AppNavigation()),
               (route) => false,
@@ -367,7 +437,7 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
           } else if (state.errorMessage != null) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: Text(state.errorMessage!), 
+                content: Text(state.errorMessage!),
                 backgroundColor: theme.colorScheme.error,
               ),
             );
@@ -375,7 +445,8 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
           }
         },
         child: BlocListener<AddVehicleCubit, AddVehicleState>(
-          listenWhen: (prev, curr) => prev.selectedConfig?.id != curr.selectedConfig?.id,
+          listenWhen: (prev, curr) =>
+              prev.selectedConfig?.id != curr.selectedConfig?.id,
           listener: (context, state) {
             _vehicleNumberController.clear();
             FocusScope.of(context).unfocus();
@@ -392,7 +463,7 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
                         if (state.isLoadingConfig && state.configs.isEmpty) {
                           return const Padding(
                             padding: EdgeInsets.only(top: 100),
-                            child: Center(child: CircularProgressIndicator()),
+                            child: const Center(child: TrackifyLoader()),
                           );
                         }
 
@@ -419,8 +490,12 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
                                     child: _buildVehicleTypeItem(
                                       config: config,
                                       icon: _getVehicleIcon(config.type),
-                                      label: _getVehicleLabel(config.type, l10n),
-                                      selected: state.selectedConfig?.id == config.id,
+                                      label: _getVehicleLabel(
+                                        config.type,
+                                        l10n,
+                                      ),
+                                      selected:
+                                          state.selectedConfig?.id == config.id,
                                     ),
                                   );
                                 }).toList(),
@@ -436,18 +511,26 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
                                 ? SingleChildScrollView(
                                     scrollDirection: Axis.horizontal,
                                     child: Row(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: state.selectedConfig!.supportedFuelTypes
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: state
+                                          .selectedConfig!
+                                          .supportedFuelTypes
                                           .map((fuel) {
                                             return Padding(
-                                              padding: const EdgeInsets.only(right: 4),
+                                              padding: const EdgeInsets.only(
+                                                right: 4,
+                                              ),
                                               child: _buildFuelTypeItem(
                                                 type: fuel,
                                                 icon: _getFuelIcon(fuel),
                                                 label: fuel.isNotEmpty
-                                                    ? fuel[0].toUpperCase() + fuel.substring(1)
+                                                    ? fuel[0].toUpperCase() +
+                                                          fuel.substring(1)
                                                     : fuel,
-                                                selected: state.selectedFuelType == fuel,
+                                                selected:
+                                                    state.selectedFuelType ==
+                                                    fuel,
                                               ),
                                             );
                                           })
@@ -480,17 +563,25 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
                                   ? null
                                   : (val) {
                                       if (val != null) {
-                                        context.read<AddVehicleCubit>().selectMaker(val);
+                                        context
+                                            .read<AddVehicleCubit>()
+                                            .selectMaker(val);
                                       }
                                     },
                               onDisabledTap: () {
                                 if (state.selectedFuelType == null) {
                                   ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(content: Text(l10n.pleaseSelectFuelTypeFirst)),
+                                    SnackBar(
+                                      content: Text(
+                                        l10n.pleaseSelectFuelTypeFirst,
+                                      ),
+                                    ),
                                   );
                                 } else if (state.makers.isEmpty) {
                                   ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(content: Text(l10n.vehicleMakeListEmpty)),
+                                    SnackBar(
+                                      content: Text(l10n.vehicleMakeListEmpty),
+                                    ),
                                   );
                                 }
                               },
@@ -509,17 +600,25 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
                                   ? null
                                   : (val) {
                                       if (val != null) {
-                                        context.read<AddVehicleCubit>().selectModel(val);
+                                        context
+                                            .read<AddVehicleCubit>()
+                                            .selectModel(val);
                                       }
                                     },
                               onDisabledTap: () {
                                 if (state.selectedMaker == null) {
                                   ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(content: Text(l10n.pleaseSelectVehicleMakeFirst)),
+                                    SnackBar(
+                                      content: Text(
+                                        l10n.pleaseSelectVehicleMakeFirst,
+                                      ),
+                                    ),
                                   );
                                 } else if (state.models.isEmpty) {
                                   ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(content: Text(l10n.vehicleModelListEmpty)),
+                                    SnackBar(
+                                      content: Text(l10n.vehicleModelListEmpty),
+                                    ),
                                   );
                                 }
                               },
@@ -527,17 +626,8 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
                             const SizedBox(height: 20),
 
                             // ── Vehicle Number ────────────────────────────────────────
-                            CustomFormField(
-                              header: l10n.vehicleNumber,
-                              hint: l10n.vehicleNumberHint,
-                              value: _vehicleNumberController,
-                              textCapitalization: TextCapitalization.characters,
-                              validator: (val) {
-                                if (val == null || val.trim().isEmpty) {
-                                  return l10n.pleaseEnterVehicleNumber;
-                                }
-                                return null;
-                              },
+                            VehicleNumberField(
+                              controller: _vehicleNumberController,
                             ),
 
                             const SizedBox(height: 32),
@@ -560,9 +650,12 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
                           onPressed: state.isSubmitting
                               ? null
                               : () {
-                                  if (_formKey.currentState?.validate() ?? false) {
+                                  if (_formKey.currentState?.validate() ??
+                                      false) {
                                     context.read<AddVehicleCubit>().addVehicle(
-                                      vehicleNumber: _vehicleNumberController.text.trim(),
+                                      vehicleNumber: _vehicleNumberController
+                                          .text
+                                          .trim(),
                                     );
                                   }
                                 },
@@ -574,7 +667,8 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
                               borderRadius: BorderRadius.circular(8),
                             ),
                             elevation: 0,
-                            disabledBackgroundColor: theme.colorScheme.secondary.withOpacity(0.6),
+                            disabledBackgroundColor: theme.colorScheme.secondary
+                                .withOpacity(0.6),
                           ),
                           child: state.isSubmitting
                               ? const SizedBox(

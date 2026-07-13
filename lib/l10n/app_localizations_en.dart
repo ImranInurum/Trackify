@@ -482,7 +482,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String expiresInDays(String days) {
-    return '$days days left';
+    return 'Expires in $days days';
   }
 
   @override
@@ -1215,7 +1215,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String saveAmount(Object amount) {
-    return 'Save ₹$amount with this plan';
+    return 'Save ?$amount with this plan';
   }
 
   @override
@@ -1503,7 +1503,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get warranty_extend =>
-      'Extend warranty of your Trackify Lite by 1 year @ ₹1/day';
+      'Extend warranty of your Trackify Lite by 1 year @ ?1/day';
 
   @override
   String get warranty_vehicle => 'Vehicle';
@@ -1512,10 +1512,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get warranty_expiry => 'Warranty expiry date';
 
   @override
-  String get warranty_button => 'Extend warranty now @ ₹365 ';
+  String get warranty_button => 'Extend warranty now @ ?365 ';
 
   @override
-  String get warranty_button_old => '₹730';
+  String get warranty_button_old => '?730';
 
   @override
   String get benefit1_highlight => 'Guaranteed replacement';
@@ -1524,7 +1524,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get benefit1_normal => ' in case of failure';
 
   @override
-  String get benefit2_highlight => 'Save upto ₹1200';
+  String get benefit2_highlight => 'Save upto ?1200';
 
   @override
   String get benefit2_normal => ' on device repair';
@@ -1536,7 +1536,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get benefit3_normal => ' for device related issues';
 
   @override
-  String get benefit4_highlight => 'Free extended subscription upto ₹2000';
+  String get benefit4_highlight => 'Free extended subscription upto ?2000';
 
   @override
   String get benefit4_normal => ' for faulty period';
@@ -1665,7 +1665,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String upgradeNowAtJust(String price) {
-    return 'Upgrade Now at Just ₹$price';
+    return 'Upgrade Now at Just ?$price';
   }
 
   @override
@@ -2119,7 +2119,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get tripStats => 'Trip Stats';
 
   @override
-  String get avgSpeedLabel => 'Avg. Speed';
+  String get avgSpeedLabel => 'Avg Speed';
 
   @override
   String get tripQuoteDefault => 'Every trip has a story. Yours goes here.';
@@ -2344,7 +2344,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String greatSaving(Object amount) {
-    return 'Great! Saving ₹$amount with this plan';
+    return 'Great! Saving ?$amount with this plan';
   }
 
   @override
@@ -2364,7 +2364,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String payAmount(Object amount) {
-    return 'Pay ₹$amount';
+    return 'Pay ?$amount';
   }
 
   @override
@@ -2721,4 +2721,317 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get confirmDeleteAccount =>
       'Are you sure you want to delete your account?';
+
+  @override
+  String get expired => 'Expired';
+
+  @override
+  String daysLeftText(String days) {
+    return '$days days left';
+  }
+
+  @override
+  String get warrantyExpiringTitle => 'Warranty Expiring';
+
+  @override
+  String get warrantyExpiredDesc =>
+      'Your device warranty has expired. Please renew your warranty to continue enjoying premium support and features.';
+
+  @override
+  String warrantyExpiringDesc(String days) {
+    return 'Your device warranty will expire in $days day(s). Please renew it to avoid service interruption.';
+  }
+
+  @override
+  String get dismiss => 'Dismiss';
+
+  @override
+  String get allTime => 'All Time';
+
+  @override
+  String get totalServices => 'Total Services';
+
+  @override
+  String get avgSpending => 'Avg Spending';
+
+  @override
+  String get perService => '/Service';
+
+  @override
+  String get avgInterval => 'Avg Interval';
+
+  @override
+  String get months => 'Months';
+
+  @override
+  String get deleteAlertTitle => 'Delete Alert';
+
+  @override
+  String get deleteAlertDesc =>
+      'Are you sure you want to delete this overspeed alert?';
+
+  @override
+  String get deleteServiceLogDesc =>
+      'Are you sure you want to delete this service log?';
+
+  @override
+  String get serviceDetails => 'Service Details';
+
+  @override
+  String get amountText => 'Amount';
+
+  @override
+  String get unknownText => 'Unknown';
+
+  @override
+  String get notProvided => 'Not provided';
+
+  @override
+  String get contactCopied => 'Contact copied to clipboard';
+
+  @override
+  String get noImage => 'No Image';
+
+  @override
+  String get startTracking => 'Start Tracking';
+
+  @override
+  String get stopTracking => 'Stop Tracking';
+
+  @override
+  String get endRide => 'End Ride';
+
+  @override
+  String get maxSpeed => 'Max Speed';
+
+  @override
+  String get tapToResumeTracking => 'Tap to resume tracking';
+
+  @override
+  String get tapToPauseTracking => 'Tap to pause tracking';
+
+  @override
+  String get holdToStopTracking => 'Hold to stop tracking';
+
+  @override
+  String get exportLabel => 'Export';
+
+  @override
+  String get exportRide => 'Export Ride';
+
+  @override
+  String get shareRoute => 'Share Route';
+
+  @override
+  String get rideNameOptional => 'Ride Name (Optional)';
+
+  @override
+  String get rideNameHint => 'e.g., Morning Ride, Off-road trail';
+
+  @override
+  String get formatLabel => 'Format';
+
+  @override
+  String get gpxLabel => 'GPX';
+
+  @override
+  String get kmlLabel => 'KML';
+
+  @override
+  String get includeAnalytics => 'Include Analytics';
+
+  @override
+  String get includeAnalyticsDesc => 'Speed, elevation, etc.';
+
+  @override
+  String get exportingRide => 'Exporting ride...';
+
+  @override
+  String get shareRide => 'Share Ride';
+
+  @override
+  String get selectFormatToShare => 'Select a format to share your ride data';
+
+  @override
+  String get gpxFile => 'GPX File';
+
+  @override
+  String get gpxDesc =>
+      'Standard GPS exchange format. Best for Strava, Garmin, etc.';
+
+  @override
+  String get kmlFile => 'KML File';
+
+  @override
+  String get kmlDesc => 'Keyhole Markup Language. Best for Google Earth.';
+
+  @override
+  String get imageScreenshot => 'Image (Screenshot)';
+
+  @override
+  String get imageScreenshotDesc => 'A beautiful map image with your route.';
+
+  @override
+  String get recordingInProgress => 'Recording in Progress';
+
+  @override
+  String get resumeTracking => 'Resume';
+
+  @override
+  String get discardRide => 'Discard Ride';
+
+  @override
+  String get discard => 'Discard';
+
+  @override
+  String get areYouSureDiscardRide =>
+      'Are you sure you want to discard this ride?';
+
+  @override
+  String get kmhLabel => 'km/h';
+
+  @override
+  String get hrminLabel => 'hr:min';
+
+  @override
+  String get kmLabel => 'km';
+
+  @override
+  String get exportRideVideoDesc =>
+      'Exported ride will be saved in Trackify Ride Videos folder of your Gallery app';
+
+  @override
+  String get chooseNicknameHint => 'Choose a unique nickname for this ride';
+
+  @override
+  String get myRideOnTrackify => 'My Ride on Trackify';
+
+  @override
+  String get locationAlwaysAccessWarning =>
+      'Trackify ride recording feature only work correctly if it can access your location “all the time”';
+
+  @override
+  String get goToSettingsAndSelectAllowAllTheTime =>
+      'Go to settings and select “Allow all the time”';
+
+  @override
+  String get locationPermissions => 'Location Permissions';
+
+  @override
+  String get allowAllTheTime => 'Allow all the time';
+
+  @override
+  String get onlyWhileUsingTheApp => 'Only while using the app';
+
+  @override
+  String get askEveryTime => 'Ask every time';
+
+  @override
+  String get dontAllow => 'Don\'t allow';
+
+  @override
+  String get openSettings => 'Open Settings';
+
+  @override
+  String get selectRideMode => 'Select ride mode';
+
+  @override
+  String get onlineMode => 'Online Mode';
+
+  @override
+  String get offlineMode => 'Offline Mode';
+
+  @override
+  String get continueBtn => 'Continue';
+
+  @override
+  String get selectRideLabel => 'Select a label for your ride';
+
+  @override
+  String get friendsVehicle => 'Friend\'s vehicle';
+
+  @override
+  String get train => 'Train';
+
+  @override
+  String get bus => 'Bus';
+
+  @override
+  String get auto => 'Auto';
+
+  @override
+  String get cab => 'Cab';
+
+  @override
+  String get cycle => 'Cycle';
+
+  @override
+  String get walk => 'Walk';
+
+  @override
+  String get others => 'Others';
+
+  @override
+  String get saveBtn => 'Save';
+
+  @override
+  String get startRideRecording => 'Start Ride Recording';
+
+  @override
+  String get stopRideRecording => 'Stop Ride Recording';
+
+  @override
+  String get saveOnline => 'Save online';
+
+  @override
+  String get saveOnlineDesc =>
+      'Rides are saved online. You can login from any phone to fetch your past rides';
+
+  @override
+  String get saveOffline => 'Save offline';
+
+  @override
+  String get saveOfflineDesc => 'Rides are saved on this phone only';
+
+  @override
+  String get startRide => 'Start ride';
+
+  @override
+  String get goToSettings => 'Go to Settings';
+
+  @override
+  String get rideOnLabel => 'Ride on';
+
+  @override
+  String get imageBtn => 'Image';
+
+  @override
+  String get videoLinkBtn => 'Video Link';
+
+  @override
+  String get avgLabel => 'AVG';
+
+  @override
+  String get meterLabel => 'M';
+
+  @override
+  String get recordViaPhoneTitle => 'Record via Phone';
+
+  @override
+  String get recordRidesTab => 'Record Rides';
+
+  @override
+  String get pastRidesTab => 'Past Rides';
+
+  @override
+  String get statisticsTab => 'Statistics';
+
+  @override
+  String get yourPhonesLocation => 'Your Phone\'s Location';
+
+  @override
+  String get justNow => 'Just now';
+
+  @override
+  String get hoursShort => 'h';
 }

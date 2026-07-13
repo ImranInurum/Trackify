@@ -12,26 +12,31 @@ class VehicleControlRepositoryImpl implements VehicleControlRepository {
   final BaseApiServices _apiService = NetworkApiService();
 
   @override
-  Future<VehicleControlEntity> getVehicleControlDetails(String vehicleIMEI) async {
+  Future<VehicleControlEntity> getVehicleControlDetails(
+    String vehicleIMEI,
+  ) async {
     String actualIMEI = vehicleIMEI;
     if (actualIMEI.isEmpty) {
       try {
-        final userId = await AppPreference.instance.get(key: AppPreference.KEY_USER_ID);
+        final userId = await AppPreference.instance.get(
+          key: AppPreference.KEY_USER_ID,
+        );
         if (userId.isNotEmpty) {
-          final vehiclesRes = await _apiService.getGetApiResponse(ApiURL.getVehiclesByUserId(userId));
-          vehiclesRes.fold(
-            (failure) => null,
-            (data) {
-              final list = VehicleListResponse.fromJson(data);
-              if (list.vehicles != null && list.vehicles!.isNotEmpty) {
-                final firstImei = list.vehicles!.first.imei;
-                if (firstImei != null && firstImei.isNotEmpty) {
-                  actualIMEI = firstImei;
-                  AppPreference.instance.set(key: AppPreference.IMEI, value: firstImei);
-                }
-              }
-            },
+          final vehiclesRes = await _apiService.getGetApiResponse(
+            ApiURL.getVehiclesByUserId(userId),
           );
+          vehiclesRes.fold((failure) => null, (data) {
+            final list = VehicleListResponse.fromJson(data);
+            if (list.vehicles != null && list.vehicles!.isNotEmpty) {
+              final firstImei = list.vehicles!.first.imei;
+              if (firstImei != null && firstImei.isNotEmpty) {
+                actualIMEI = firstImei;
+                // NOTE: Do NOT overwrite AppPreference.IMEI here.
+                // The user's selected vehicle preference must only be changed
+                // through explicit user actions, not as a side-effect of loading data.
+              }
+            }
+          });
         }
       } catch (_) {}
     }
@@ -43,28 +48,28 @@ class VehicleControlRepositoryImpl implements VehicleControlRepository {
 
     AppException? apiFailure;
     Map<String, dynamic> controlData = {};
-    controlResult.fold(
-      (failure) => apiFailure = failure,
-      (data) {
-        if (data is Map && data['success'] == true && data['data'] != null) {
-          controlData = Map<String, dynamic>.from(data['data']);
-        }
-      },
-    );
+    controlResult.fold((failure) => apiFailure = failure, (data) {
+      if (data is Map && data['success'] == true && data['data'] != null) {
+        controlData = Map<String, dynamic>.from(data['data']);
+      }
+    });
 
-    String vehicleName = "MT 15 V2";
-    String vehicleNumber = "GJ 01 AB 1234";
-    String fuelType = "Petrol";
+    String vehicleName = "";
+    String vehicleNumber = "";
+    String fuelType = "";
     String vehicleType = '';
     String vehicleMaker = '';
     String vehicleModel = '';
     bool fallbackSuccess = false;
 
-    if (controlData.containsKey('vehicleDetails') && controlData['vehicleDetails'] != null) {
+    if (controlData.containsKey('vehicleDetails') &&
+        controlData['vehicleDetails'] != null) {
       final details = Map<String, dynamic>.from(controlData['vehicleDetails']);
       final maker = details['vehicleMaker'] ?? details['brandId'] ?? '';
       final model = details['vehicleModel'] ?? details['modelId'] ?? '';
-      vehicleName = maker.isNotEmpty && model.isNotEmpty ? '$maker $model' : (model.isNotEmpty ? model : vehicleName);
+      vehicleName = maker.isNotEmpty && model.isNotEmpty
+          ? '$maker $model'
+          : (model.isNotEmpty ? model : vehicleName);
       vehicleNumber = details['vehicleNumber'] ?? vehicleNumber;
       fuelType = details['fuelType'] ?? fuelType;
       vehicleType = details['vehicleType'] ?? '';
@@ -72,38 +77,70 @@ class VehicleControlRepositoryImpl implements VehicleControlRepository {
       vehicleModel = model;
     } else {
       try {
-        final userId = await AppPreference.instance.get(key: AppPreference.KEY_USER_ID);
+        final userId = await AppPreference.instance.get(
+          key: AppPreference.KEY_USER_ID,
+        );
         if (userId.isNotEmpty) {
-          final vehiclesRes = await _apiService.getGetApiResponse(ApiURL.getVehiclesByUserId(userId));
-          vehiclesRes.fold(
-            (failure) => null,
-            (data) {
-              final list = VehicleListResponse.fromJson(data);
-              final match = list.vehicles?.firstWhere(
-                (v) => v.imei == vehicleIMEI,
-                orElse: () => Vehicle(),
-              );
-              if (match != null && match.id != null) {
-                vehicleName = match.vehicleModel ?? vehicleName;
-                vehicleNumber = match.vehicleNumber ?? vehicleNumber;
-                fuelType = match.fuelType ?? fuelType;
-                vehicleType = match.vehicleType ?? vehicleType;
-                vehicleMaker = match.vehicleMaker ?? vehicleMaker;
-                vehicleModel = match.vehicleModel ?? vehicleModel;
-                fallbackSuccess = true;
-              }
-            },
+          final vehiclesRes = await _apiService.getGetApiResponse(
+            ApiURL.getVehiclesByUserId(userId),
           );
+          vehiclesRes.fold((failure) => null, (data) {
+            final list = VehicleListResponse.fromJson(data);
+            final match = list.vehicles?.firstWhere(
+              (v) => v.imei == vehicleIMEI,
+              orElse: () => Vehicle(),
+            );
+            if (match != null && match.id != null) {
+              vehicleName = match.vehicleModel ?? vehicleName;
+              vehicleNumber = match.vehicleNumber ?? vehicleNumber;
+              fuelType = match.fuelType ?? fuelType;
+              vehicleType = match.vehicleType ?? vehicleType;
+              vehicleMaker = match.vehicleMaker ?? match.brandId ?? vehicleMaker;
+              vehicleModel = match.vehicleModel ?? vehicleModel;
+              fallbackSuccess = true;
+            }
+          });
         }
       } catch (_) {}
     }
 
-    final tankCapacity = (controlData['tankCapacity'] ?? '').toString();
-    final vehicleMileage = (controlData['vehicleMileage'] ?? '').toString();
+    String tankCapacity = '';
+    String vehicleMileage = '';
+    // Try to load tankCapacity & mileage from vehicle list first as fallback
+    try {
+      final userId = await AppPreference.instance.get(key: AppPreference.KEY_USER_ID);
+      if (userId.isNotEmpty) {
+        final vehiclesRes = await _apiService.getGetApiResponse(ApiURL.getVehiclesByUserId(userId));
+        vehiclesRes.fold((failure) => null, (data) {
+          final list = VehicleListResponse.fromJson(data);
+          final match = list.vehicles?.firstWhere(
+            (v) => v.imei == actualIMEI,
+            orElse: () => Vehicle(),
+          );
+          if (match != null && match.id != null) {
+            if (tankCapacity.isEmpty) tankCapacity = match.tankCapacity ?? '';
+            if (vehicleMileage.isEmpty) vehicleMileage = match.mileage ?? '';
+            if (vehicleType.isEmpty) vehicleType = match.vehicleType ?? '';
+            if (vehicleMaker.isEmpty) vehicleMaker = match.vehicleMaker ?? match.brandId ?? '';
+            if (vehicleModel.isEmpty) vehicleModel = match.vehicleModel ?? '';
+            if (fuelType.isEmpty) fuelType = match.fuelType ?? '';
+            if (vehicleNumber.isEmpty) vehicleNumber = match.vehicleNumber ?? '';
+          }
+        });
+      }
+    } catch (_) {}
+
+    // Override with control API data if available
+    if (controlData.containsKey('tankCapacity') && controlData['tankCapacity'] != null) {
+      tankCapacity = controlData['tankCapacity'].toString();
+    }
+    if (controlData.containsKey('vehicleMileage') && controlData['vehicleMileage'] != null) {
+      vehicleMileage = controlData['vehicleMileage'].toString();
+    }
     final selectedIcon = controlData['vehicleIcon'] ?? 'Bike';
     final selectedColor = controlData['vehicleColor'] ?? 'White';
     final vehicleLock = controlData['vehicleLock'] ?? false;
-    
+
     String? bikeImage;
     if (controlData['vehicleImage'] != null) {
       final img = controlData['vehicleImage'].toString();
@@ -140,82 +177,47 @@ class VehicleControlRepositoryImpl implements VehicleControlRepository {
 
   @override
   Future<void> updateVehicleIcon(String vehicleIMEI, String icon) async {
-    final response = await _apiService.getPostUploadMultiPartApiResponse(
+    final response = await _apiService.getPutApiResponse(
       ApiURL.updateVehicleControl(vehicleIMEI),
       {"imei": vehicleIMEI, "vehicleIcon": icon},
-      null,
-      '',
-      '',
-      'PUT',
     );
-    response.fold(
-      (failure) => throw failure,
-      (success) => null,
-    );
+    response.fold((failure) => throw failure, (success) => null);
   }
 
   @override
   Future<void> updateVehicleColor(String vehicleIMEI, String color) async {
-    final response = await _apiService.getPostUploadMultiPartApiResponse(
+    final response = await _apiService.getPutApiResponse(
       ApiURL.updateVehicleControl(vehicleIMEI),
       {"imei": vehicleIMEI, "vehicleColor": color},
-      null,
-      '',
-      '',
-      'PUT',
     );
-    response.fold(
-      (failure) => throw failure,
-      (success) => null,
-    );
+    response.fold((failure) => throw failure, (success) => null);
   }
 
   @override
-  Future<void> updateTankCapacity(String vehicleIMEI, String capacity) async {
-    final response = await _apiService.getPostUploadMultiPartApiResponse(
+  Future<void> updateTankCapacity(String vehicleIMEI, String capacity, String currentMileage) async {
+    final response = await _apiService.getPutApiResponse(
       ApiURL.updateVehicleControl(vehicleIMEI),
-      {"imei": vehicleIMEI, "tankCapacity": capacity},
-      null,
-      '',
-      '',
-      'PUT',
+      {"imei": vehicleIMEI, "tankCapacity": capacity, "vehicleMileage": currentMileage},
     );
-    response.fold(
-      (failure) => throw failure,
-      (success) => null,
-    );
+    response.fold((failure) => throw failure, (success) => null);
   }
 
   @override
-  Future<void> updateMileage(String vehicleIMEI, String mileage) async {
-    final response = await _apiService.getPostUploadMultiPartApiResponse(
+  Future<void> updateMileage(String vehicleIMEI, String mileage, String currentCapacity) async {
+    final response = await _apiService.getPutApiResponse(
       ApiURL.updateVehicleControl(vehicleIMEI),
-      {"imei": vehicleIMEI, "vehicleMileage": mileage},
-      null,
-      '',
-      '',
-      'PUT',
+      {"imei": vehicleIMEI, "vehicleMileage": mileage, "tankCapacity": currentCapacity},
     );
-    response.fold(
-      (failure) => throw failure,
-      (success) => null,
-    );
+    response.fold((failure) => throw failure, (success) => null);
   }
 
   @override
   Future<void> updateVehicleLock(String vehicleIMEI, bool lockState) async {
-    final response = await _apiService.getPostUploadMultiPartApiResponse(
+    final response = await _apiService.getPutApiResponse(
       ApiURL.updateVehicleControl(vehicleIMEI),
-      {"imei": vehicleIMEI, "vehicleLock": lockState.toString()},
-      null,
-      '',
-      '',
-      'PUT',
+      {"imei": vehicleIMEI, "vehicleLock": lockState},
     );
-    response.fold(
-      (failure) => throw failure,
-      (success) => null,
-    );
+    response.fold((failure) => throw failure, (success) => null);
   }
 
   @override
@@ -238,7 +240,7 @@ class VehicleControlRepositoryImpl implements VehicleControlRepository {
       'vehicleMaker': vehicleMaker,
       'vehicleModel': vehicleModel,
     };
-    
+
     if (brandId.isNotEmpty) {
       payload['brandId'] = brandId;
     }
@@ -250,10 +252,7 @@ class VehicleControlRepositoryImpl implements VehicleControlRepository {
       ApiURL.updateVehicleDetails(vehicleIMEI),
       payload,
     );
-    response.fold(
-      (failure) => throw failure,
-      (success) => null,
-    );
+    response.fold((failure) => throw failure, (success) => null);
   }
 
   @override
@@ -271,10 +270,7 @@ class VehicleControlRepositoryImpl implements VehicleControlRepository {
       'vehicleImage',
       'PUT',
     );
-    response.fold(
-      (failure) => throw failure,
-      (success) => null,
-    );
+    response.fold((failure) => throw failure, (success) => null);
   }
 
   @override
@@ -283,9 +279,6 @@ class VehicleControlRepositoryImpl implements VehicleControlRepository {
       ApiURL.deleteVehicle(vehicleId),
       {},
     );
-    response.fold(
-      (failure) => throw failure,
-      (success) => null,
-    );
+    response.fold((failure) => throw failure, (success) => null);
   }
 }

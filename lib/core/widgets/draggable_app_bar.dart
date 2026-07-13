@@ -11,6 +11,10 @@ import 'package:trackify/core/theme/app_colors.dart';
 import 'package:trackify/feature/map/data/entity/user_vehicles.dart';
 import 'package:trackify/feature/trips/presentation/cubit/ride_history_cubit.dart';
 import 'package:trackify/feature/trips/presentation/cubit/ride_history_state.dart';
+import 'package:trackify/feature/device_warranty/data/model/warranty_status_model.dart';
+import 'package:trackify/feature/device_warranty/data/repository/device_warranty_repository_impl.dart';
+import 'package:trackify/feature/device_warranty/data/data_source/device_warranty_data_source.dart';
+import 'package:trackify/core/config/network/network_api_service.dart';
 import '../../l10n/app_localizations.dart';
 
 class DraggableAppBar extends StatefulWidget {
@@ -24,6 +28,7 @@ class DraggableAppBar extends StatefulWidget {
   final Widget? collapsedTrailing;
 
   final Widget? expandedTrailing;
+  final int? refreshKey;
 
   const DraggableAppBar({
     super.key,
@@ -34,6 +39,7 @@ class DraggableAppBar extends StatefulWidget {
     this.selectedDevice,
     this.collapsedTrailing,
     this.expandedTrailing,
+    this.refreshKey,
   });
 
   @override
@@ -47,6 +53,7 @@ class _DraggableAppBarState extends State<DraggableAppBar>
   late final Animation<double> _overlayOpacity;
 
   final Map<String, Map<String, dynamic>> _deviceStatusMap = {};
+  final Map<String, WarrantyStatusModel?> _warrantyStatusMap = {};
   final Set<String> _fetchingImeis = {};
   Timer? _statusTimer;
 
@@ -89,11 +96,22 @@ class _DraggableAppBarState extends State<DraggableAppBar>
     });
   }
 
+  @override
+  void didUpdateWidget(DraggableAppBar oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.vehicles != widget.vehicles ||
+        oldWidget.selectedDevice != widget.selectedDevice ||
+        oldWidget.refreshKey != widget.refreshKey) {
+      _fetchStatuses();
+    }
+  }
+
   void _fetchStatuses() {
     for (final device in _vehicles) {
       final imei = device.imei ?? '';
       if (imei.isNotEmpty) {
         _fetchDeviceStatus(imei);
+        _fetchWarrantyStatus(imei);
       }
     }
   }
@@ -102,13 +120,15 @@ class _DraggableAppBarState extends State<DraggableAppBar>
     if (imei.isEmpty || _fetchingImeis.contains(imei)) return;
     _fetchingImeis.add(imei);
     try {
-      final response = await http.get(
-        Uri.parse(ApiURL.deviceStatus(imei)),
-        headers: {
-          'Authorization': 'Bearer ${ApiURL.authToken}',
-          'Content-Type': 'application/json',
-        },
-      ).timeout(const Duration(seconds: 10));
+      final response = await http
+          .get(
+            Uri.parse(ApiURL.deviceStatus(imei)),
+            headers: {
+              'Authorization': 'Bearer ${ApiURL.authToken}',
+              'Content-Type': 'application/json',
+            },
+          )
+          .timeout(const Duration(seconds: 10));
 
       if (response.statusCode == 200) {
         final Map<String, dynamic> jsonResponse = jsonDecode(response.body);
@@ -127,6 +147,28 @@ class _DraggableAppBarState extends State<DraggableAppBar>
       debugPrint("Error fetching device status for $imei: $e");
     } finally {
       _fetchingImeis.remove(imei);
+    }
+  }
+
+  Future<void> _fetchWarrantyStatus(String imei) async {
+    if (imei.isEmpty || _warrantyStatusMap.containsKey(imei)) return;
+    try {
+      final repository = DeviceWarrantyRepositoryImpl(
+        DeviceWarrantyRemoteDataSourceImpl(NetworkApiService()),
+      );
+      final result = await repository.getDeviceWarrantyStatus(imei);
+      if (mounted) {
+        setState(() {
+          _warrantyStatusMap[imei] = result.fold((l) => null, (r) => r);
+        });
+      }
+    } catch (e) {
+      debugPrint("Error fetching warranty status for $imei: $e");
+      if (mounted) {
+        setState(() {
+          _warrantyStatusMap[imei] = null;
+        });
+      }
     }
   }
 
@@ -511,7 +553,8 @@ class _DraggableAppBarState extends State<DraggableAppBar>
             statusColor = Colors.green;
           } else if (statusStr.toLowerCase() == 'idle') {
             statusColor = Colors.red;
-          } else if (statusStr.toLowerCase() == 'parking' || statusStr.toLowerCase() == 'parked') {
+          } else if (statusStr.toLowerCase() == 'parking' ||
+              statusStr.toLowerCase() == 'parked') {
             statusColor = Colors.blue;
           } else {
             statusColor = Colors.grey;
@@ -570,35 +613,74 @@ class _DraggableAppBarState extends State<DraggableAppBar>
                         // Tag
                         _buildTag(device),
                         // Status Container
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 8,
-                            vertical: 2,
-                          ),
-                          decoration: BoxDecoration(
-                            color: statusColor.withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(12),
-                            border: Border.all(
-                              color: statusColor.withOpacity(0.3),
-                              width: 1,
+                        if (device.imei == null || device.imei!.isEmpty)
+                          !_isExpanded
+                              ? Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 8,
+                                    vertical: 2,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: Colors.orange.withOpacity(0.1),
+                                    borderRadius: BorderRadius.circular(12),
+                                    border: Border.all(
+                                      color: Colors.orange.withOpacity(0.3),
+                                      width: 1,
+                                    ),
+                                  ),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      const Icon(
+                                        Icons.shield,
+                                        color: Colors.orange,
+                                        size: 10,
+                                      ),
+                                      const SizedBox(width: 4),
+                                      Text(
+                                        AppLocalizations.of(
+                                          context,
+                                        )!.buyTrackifyDevice,
+                                        style: const TextStyle(
+                                          fontSize: 10,
+                                          color: Colors.orange,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                )
+                              : const SizedBox.shrink()
+                        else
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 2,
+                            ),
+                            decoration: BoxDecoration(
+                              color: statusColor.withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(
+                                color: statusColor.withOpacity(0.3),
+                                width: 1,
+                              ),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(Icons.circle, color: statusColor, size: 7),
+                                const SizedBox(width: 4),
+                                Text(
+                                  statusLabel,
+                                  style: TextStyle(
+                                    fontSize: 11,
+                                    color: statusColor,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(Icons.circle, color: statusColor, size: 7),
-                              const SizedBox(width: 4),
-                              Text(
-                                statusLabel,
-                                style: TextStyle(
-                                  fontSize: 11,
-                                  color: statusColor,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
                       ],
                     ),
                   ],
@@ -607,61 +689,89 @@ class _DraggableAppBarState extends State<DraggableAppBar>
 
               // Right Side info / icon
               if (!_isExpanded && isHeaderRow)
-                widget.collapsedTrailing ??
-                    Icon(
-                      Icons.notifications_none_outlined,
-                      color: Theme.of(context).colorScheme.onSurface,
-                    )
-              else if (_isExpanded && isHeaderRow)
-                (() {
-                  int daysLeft = 60; // Set to 60 as requested
-                  Color textColor;
-                  String text;
-
-                  if (daysLeft <= 0) {
-                    textColor = Colors.grey;
-                    text = "Expired";
-                  } else if (daysLeft <= 15) {
-                    textColor = Colors.red;
-                    text = AppLocalizations.of(context)!.expiresInDays(daysLeft.toString());
-                  } else if (daysLeft <= 60) {
-                    textColor = Colors.orange;
-                    text = AppLocalizations.of(context)!.expiresInDays(daysLeft.toString());
-                  } else if (daysLeft <= 150) {
-                    textColor = Colors.amber; // Yellow
-                    text = AppLocalizations.of(context)!.expiresInDays(daysLeft.toString());
-                  } else if (daysLeft <= 250) {
-                    textColor = Colors.lightGreen;
-                    text = AppLocalizations.of(context)!.expiresInDays(daysLeft.toString());
-                  } else {
-                    textColor = Colors.green;
-                    text = AppLocalizations.of(context)!.expiresInDays(daysLeft.toString());
-                  }
-                  
-                  return Text(
-                    text,
-                    style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w700,
-                      color: textColor,
-                    ),
-                  );
-                })()
-              else if (_isExpanded && !isHeaderRow)
-                Row(
-                  children: [
-                    const Icon(Icons.shield, color: Colors.orange, size: 14),
-                    const SizedBox(width: 4),
-                    Text(
-                      AppLocalizations.of(context)!.buyTrackifyDevice,
-                      style: const TextStyle(
-                        fontSize: 9,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.orange,
+                if (device.imei == null || device.imei!.isEmpty)
+                  const SizedBox.shrink()
+                else
+                  widget.collapsedTrailing ??
+                      Icon(
+                        Icons.notifications_none_outlined,
+                        color: Theme.of(context).colorScheme.onSurface,
+                      )
+              else if (_isExpanded)
+                if (device.imei == null || device.imei!.isEmpty)
+                  Row(
+                    children: [
+                      const Icon(Icons.shield, color: Colors.orange, size: 14),
+                      const SizedBox(width: 4),
+                      Text(
+                        AppLocalizations.of(context)!.buyTrackifyDevice,
+                        style: const TextStyle(
+                          fontSize: 9,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.orange,
+                        ),
                       ),
-                    ),
-                  ],
-                ),
+                    ],
+                  )
+                else
+                  (() {
+                    if (!_warrantyStatusMap.containsKey(device.imei)) {
+                      return const SizedBox(
+                        height: 12,
+                        width: 12,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      );
+                    }
+
+                    final warranty = _warrantyStatusMap[device.imei];
+                    if (warranty == null || warranty.warranty == null) {
+                      return const SizedBox.shrink();
+                    }
+
+                    int daysLeft = warranty.warranty?.daysLeft ?? 0;
+
+                    Color textColor;
+                    String text;
+
+                    if (daysLeft <= 0) {
+                      textColor = Colors.grey;
+                      text = AppLocalizations.of(context)!.expired;
+                    } else if (daysLeft <= 15) {
+                      textColor = Colors.red;
+                      text = AppLocalizations.of(
+                        context,
+                      )!.daysLeftText(daysLeft.toString());
+                    } else if (daysLeft <= 60) {
+                      textColor = Colors.orange;
+                      text = AppLocalizations.of(
+                        context,
+                      )!.daysLeftText(daysLeft.toString());
+                    } else if (daysLeft <= 150) {
+                      textColor = Colors.amber; // Yellow
+                      text = AppLocalizations.of(
+                        context,
+                      )!.daysLeftText(daysLeft.toString());
+                    } else if (daysLeft <= 250) {
+                      textColor = Colors.lightGreen;
+                      text = AppLocalizations.of(
+                        context,
+                      )!.daysLeftText(daysLeft.toString());
+                    } else {
+                      textColor = Colors.green;
+                      text = AppLocalizations.of(
+                        context,
+                      )!.daysLeftText(daysLeft.toString());
+                    }
+
+                    return Text(
+                      text,
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w700,
+                        color: textColor,
+                      ),
+                    );
+                  })(),
             ],
           ),
         ),
@@ -682,17 +792,37 @@ class _DraggableAppBarState extends State<DraggableAppBar>
 
   Widget _buildVehicleImageOrIcon(BuildContext context, Vehicles device) {
     final type = device.vehicleType.toLowerCase();
-    
+
     if (type.contains('car')) {
-      return Icon(Icons.directions_car, size: 40, color: Theme.of(context).colorScheme.primary);
+      return Icon(
+        Icons.directions_car,
+        size: 40,
+        color: Theme.of(context).colorScheme.primary,
+      );
     } else if (type.contains('truck')) {
-      return Icon(Icons.local_shipping, size: 40, color: Theme.of(context).colorScheme.primary);
+      return Icon(
+        Icons.local_shipping,
+        size: 40,
+        color: Theme.of(context).colorScheme.primary,
+      );
     } else if (type.contains('bus')) {
-      return Icon(Icons.directions_bus, size: 40, color: Theme.of(context).colorScheme.primary);
+      return Icon(
+        Icons.directions_bus,
+        size: 40,
+        color: Theme.of(context).colorScheme.primary,
+      );
     } else if (type.contains('van')) {
-      return Icon(Icons.airport_shuttle, size: 40, color: Theme.of(context).colorScheme.primary);
+      return Icon(
+        Icons.airport_shuttle,
+        size: 40,
+        color: Theme.of(context).colorScheme.primary,
+      );
     } else if (type.contains('tractor')) {
-      return Icon(Icons.agriculture, size: 40, color: Theme.of(context).colorScheme.primary);
+      return Icon(
+        Icons.agriculture,
+        size: 40,
+        color: Theme.of(context).colorScheme.primary,
+      );
     } else {
       // Default to bike image
       return Image.asset(

@@ -5,6 +5,7 @@ import '../cubit/notification_cubit.dart';
 import '../cubit/notification_state.dart';
 import '../widget/notification_card.dart';
 import '../../data/repository/notification_repository_impl.dart';
+import '../../../../core/widgets/trackify_loader.dart';
 
 class NotificationListScreen extends StatelessWidget {
   const NotificationListScreen({super.key});
@@ -15,15 +16,19 @@ class NotificationListScreen extends StatelessWidget {
     final theme = Theme.of(context);
 
     return BlocProvider(
-      create: (context) => NotificationCubit(NotificationRepositoryImpl())..fetchNotifications(),
+      create: (context) =>
+          NotificationCubit(NotificationRepositoryImpl())..fetchNotifications(),
       child: Scaffold(
         backgroundColor: theme.scaffoldBackgroundColor,
         appBar: AppBar(
           backgroundColor: theme.appBarTheme.backgroundColor,
           elevation: 0,
           leading: IconButton(
-            icon: Icon(Icons.arrow_back_ios_new, 
-              color: theme.colorScheme.onSurface, size: 20),
+            icon: Icon(
+              Icons.arrow_back_ios_new,
+              color: theme.colorScheme.onSurface,
+              size: 20,
+            ),
             onPressed: () => Navigator.of(context).pop(),
           ),
           title: Text(
@@ -39,13 +44,17 @@ class NotificationListScreen extends StatelessWidget {
         body: BlocBuilder<NotificationCubit, NotificationState>(
           builder: (context, state) {
             if (state is NotificationLoading) {
-              return const Center(child: CircularProgressIndicator());
+              return const Center(child: TrackifyLoader(animated: true));
             } else if (state is NotificationError) {
               return Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.error_outline_rounded, color: theme.colorScheme.error, size: 60),
+                    Icon(
+                      Icons.error_outline_rounded,
+                      color: theme.colorScheme.error,
+                      size: 60,
+                    ),
                     const SizedBox(height: 16),
                     Text(
                       state.message,
@@ -54,7 +63,9 @@ class NotificationListScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 16),
                     ElevatedButton(
-                      onPressed: () => context.read<NotificationCubit>().fetchNotifications(),
+                      onPressed: () => context
+                          .read<NotificationCubit>()
+                          .fetchNotifications(),
                       child: Text(l10n.retry),
                     ),
                   ],
@@ -68,11 +79,17 @@ class NotificationListScreen extends StatelessWidget {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.notifications_off_outlined, color: theme.hintColor.withOpacity(0.4), size: 80),
+                      Icon(
+                        Icons.notifications_off_outlined,
+                        color: theme.hintColor.withOpacity(0.4),
+                        size: 80,
+                      ),
                       const SizedBox(height: 16),
                       Text(
                         l10n.noNotifications,
-                        style: theme.textTheme.titleMedium?.copyWith(color: theme.hintColor),
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          color: theme.hintColor,
+                        ),
                       ),
                     ],
                   ),
@@ -80,7 +97,8 @@ class NotificationListScreen extends StatelessWidget {
               }
 
               return RefreshIndicator(
-                onRefresh: () => context.read<NotificationCubit>().fetchNotifications(),
+                onRefresh: () =>
+                    context.read<NotificationCubit>().fetchNotifications(),
                 child: ListView.builder(
                   padding: const EdgeInsets.symmetric(vertical: 12),
                   itemCount: notifications.length,
@@ -97,3 +115,12 @@ class NotificationListScreen extends StatelessWidget {
     );
   }
 }
+
+
+    // NotificationTimelineItem(
+    //   id: "1",
+    //   title: "12:57:16 PM",
+    //   description: "Motion sensed",
+    //   time: "12:57:16 PM, 6 May Wed",
+    //   category: "Motion sensed",
+    // ),

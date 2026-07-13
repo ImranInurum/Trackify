@@ -7,6 +7,7 @@ import 'package:trackify/feature/video_tutorial/presentation/cubit/tutorial_cubi
 import 'package:trackify/feature/video_tutorial/presentation/cubit/tutorial_state.dart';
 import 'package:video_player/video_player.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
+import 'package:trackify/core/widgets/trackify_loader.dart';
 
 class TutorialScreen extends StatefulWidget {
   final String categoryId;
@@ -299,10 +300,7 @@ class _TutorialScreenState
                             context,
                             url,
                             ) =>
-                        const Center(
-                          child:
-                          CircularProgressIndicator(),
-                        ),
+                        const Center(child: TrackifyLoader()),
 
                         errorWidget:
                             (
@@ -431,10 +429,7 @@ class _TutorialScreenState
           if (state
           is TutorialLoading) {
 
-            return const Center(
-              child:
-              CircularProgressIndicator(),
-            );
+            return const Center(child: TrackifyLoader());
           }
 
           if (state

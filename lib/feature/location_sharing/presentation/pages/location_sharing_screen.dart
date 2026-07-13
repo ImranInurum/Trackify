@@ -5,6 +5,7 @@ import '../cubit/location_sharing_cubit.dart';
 import '../cubit/location_sharing_state.dart';
 import 'location_sharing_detail_screen.dart';
 import 'widgets/location_sharing_card.dart';
+import 'package:trackify/core/widgets/trackify_loader.dart';
 
 class LocationSharingScreen extends StatefulWidget {
   const LocationSharingScreen({super.key});
@@ -54,7 +55,7 @@ class _LocationSharingScreenState extends State<LocationSharingScreen> {
         body: BlocBuilder<LocationSharingCubit, LocationSharingState>(
           builder: (context, state) {
             if (state is LocationSharingLoading) {
-              return const Center(child: CircularProgressIndicator());
+              return const Center(child: TrackifyLoader());
             } else if (state is LocationSharingLoaded) {
               return ListView.builder(
                 padding: const EdgeInsets.symmetric(vertical: 8),

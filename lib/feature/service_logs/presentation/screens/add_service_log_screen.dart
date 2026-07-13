@@ -7,11 +7,15 @@ import '../cubit/service_logs_cubit.dart';
 import '../cubit/service_logs_state.dart';
 import '../widgets/vehicle_selection_app_bar.dart';
 import '../widgets/image_picker_box.dart';
+import '../../domain/entities/service_log_entity.dart';
 import '../../../../core/common/models/vehicle_list_model.dart';
 import '../../../../l10n/app_localizations.dart';
+import 'package:trackify/core/widgets/trackify_loader.dart';
 
 class AddServiceLogScreen extends StatefulWidget {
-  const AddServiceLogScreen({super.key});
+  final ServiceLogEntity? editLog;
+  
+  const AddServiceLogScreen({super.key, this.editLog});
 
   @override
   State<AddServiceLogScreen> createState() => _AddServiceLogScreenState();
@@ -25,7 +29,32 @@ class _AddServiceLogScreenState extends State<AddServiceLogScreen> {
   final _contactController = TextEditingController();
   final _noteController = TextEditingController();
   final ImagePicker _imagePicker = ImagePicker();
-  List<File> _billImages = [];
+  final List<dynamic> _combinedImages = [];
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.editLog != null) {
+      if (widget.editLog!.billImages != null) {
+        final validImages = widget.editLog!.billImages!.where((img) => img.trim().isNotEmpty).toList();
+        _combinedImages.addAll(validImages);
+      }
+      if (widget.editLog!.serviceDate != null) {
+        try {
+          final date = DateTime.parse(widget.editLog!.serviceDate!);
+          _dateController.text = DateFormat('yyyy-MM-dd').format(date);
+        } catch (_) {
+          _dateController.text = widget.editLog!.serviceDate!;
+        }
+      }
+      if (widget.editLog!.amount != null) {
+        _amountController.text = widget.editLog!.amount!.toStringAsFixed(0);
+      }
+      _centerNameController.text = widget.editLog!.centerName ?? '';
+      _contactController.text = widget.editLog!.contact ?? '';
+      _noteController.text = widget.editLog!.note ?? '';
+    }
+  }
 
   @override
   void dispose() {
@@ -52,21 +81,21 @@ class _AddServiceLogScreenState extends State<AddServiceLogScreen> {
   }
 
   Future<void> _pickImage() async {
-    if (_billImages.length >= 2) return;
+    if (_combinedImages.length >= 2) return;
 
     final XFile? image = await _imagePicker.pickImage(
       source: ImageSource.gallery,
     );
     if (image != null) {
       setState(() {
-        _billImages.add(File(image.path));
+        _combinedImages.add(File(image.path));
       });
     }
   }
 
   void _removeImage(int index) {
     setState(() {
-      _billImages.removeAt(index);
+      _combinedImages.removeAt(index);
     });
   }
 
@@ -108,7 +137,7 @@ class _AddServiceLogScreenState extends State<AddServiceLogScreen> {
             vehicles = state.vehicles;
             selectedVehicle = state.selectedVehicle;
           } else {
-            return const Center(child: CircularProgressIndicator());
+            return const Center(child: TrackifyLoader());
           }
 
           return Column(
@@ -140,22 +169,28 @@ class _AddServiceLogScreenState extends State<AddServiceLogScreen> {
                         Row(
                           children: [
                             ImagePickerBox(
-                              image: _billImages.isNotEmpty
-                                  ? _billImages[0]
+                              image: _combinedImages.isNotEmpty && _combinedImages[0] is File
+                                  ? _combinedImages[0] as File
+                                  : null,
+                              imageUrl: _combinedImages.isNotEmpty && _combinedImages[0] is String
+                                  ? _combinedImages[0] as String
                                   : null,
                               isRequired: true,
                               onTap: _pickImage,
-                              onRemove: _billImages.isNotEmpty
+                              onRemove: _combinedImages.isNotEmpty
                                   ? () => _removeImage(0)
                                   : null,
                             ),
                             const SizedBox(width: 16),
                             ImagePickerBox(
-                              image: _billImages.length > 1
-                                  ? _billImages[1]
+                              image: _combinedImages.length > 1 && _combinedImages[1] is File
+                                  ? _combinedImages[1] as File
+                                  : null,
+                              imageUrl: _combinedImages.length > 1 && _combinedImages[1] is String
+                                  ? _combinedImages[1] as String
                                   : null,
                               onTap: _pickImage,
-                              onRemove: _billImages.length > 1
+                              onRemove: _combinedImages.length > 1
                                   ? () => _removeImage(1)
                                   : null,
                             ),
@@ -217,17 +252,31 @@ class _AddServiceLogScreenState extends State<AddServiceLogScreen> {
                                 ? null
                                 : () {
                                     if (_formKey.currentState!.validate()) {
-                                      context
-                                          .read<ServiceLogsCubit>()
-                                          .saveServiceLog(
-                                            date: _dateController.text,
-                                            amount: _amountController.text,
-                                            images: _billImages,
-                                            centerName:
-                                                _centerNameController.text,
-                                            contact: _contactController.text,
-                                            note: _noteController.text,
-                                          );
+                                      if (widget.editLog != null) {
+                                        context
+                                            .read<ServiceLogsCubit>()
+                                            .updateServiceLog(
+                                              id: widget.editLog!.id!,
+                                              date: _dateController.text,
+                                              amount: _amountController.text,
+                                              image: _combinedImages.whereType<File>().isNotEmpty
+                                                  ? _combinedImages.whereType<File>().first
+                                                  : null,
+                                              centerName: _centerNameController.text,
+                                              note: _noteController.text,
+                                            );
+                                      } else {
+                                        context
+                                            .read<ServiceLogsCubit>()
+                                            .saveServiceLog(
+                                              date: _dateController.text,
+                                              amount: _amountController.text,
+                                              images: _combinedImages.whereType<File>().toList(),
+                                              centerName: _centerNameController.text,
+                                              contact: _contactController.text,
+                                              note: _noteController.text,
+                                            );
+                                      }
                                     }
                                   },
                             style: ElevatedButton.styleFrom(
@@ -243,7 +292,7 @@ class _AddServiceLogScreenState extends State<AddServiceLogScreen> {
                                     color: Colors.white,
                                   )
                                 : Text(
-                                    l10n.saveDetails,
+                                    widget.editLog != null ? "Update Details" : l10n.saveDetails,
                                     style: const TextStyle(
                                       fontWeight: FontWeight.bold,
                                       fontSize: 16,

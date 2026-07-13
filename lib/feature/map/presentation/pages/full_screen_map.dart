@@ -4,6 +4,7 @@ import 'dart:ui' as ui;
 import 'package:geolocator/geolocator.dart';
 
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -31,6 +32,9 @@ import 'package:trackify/feature/trips/data/entity/ride_model.dart';
 import 'package:trackify/feature/map/presentation/pages/shared_with_me_screen.dart';
 import 'package:trackify/feature/geo_fence/presentation/cubit/geo_fence_cubit.dart';
 import 'package:trackify/feature/geo_fence/presentation/cubit/geo_fence_state.dart';
+import 'package:trackify/feature/my_garage/presentation/view/products_screen.dart';
+import 'package:trackify/feature/device_installation/presentation/pages/device_installation_screen.dart';
+import 'package:trackify/core/widgets/trackify_loader.dart';
 
 class FullScreenMap extends StatefulWidget {
   final Vehicles? selectedVehicle;
@@ -91,6 +95,7 @@ class _FullScreenMapState extends State<FullScreenMap>
   int _lastMarkerRebuildMs = 0;
   final ValueNotifier<int> _mapRebuildNotifier = ValueNotifier<int>(0);
   final ValueNotifier<double> _sheetExtent = ValueNotifier<double>(0.14);
+  String _currentMarkerLetter = '';
 
   late final FullScreenMapUiCubit _uiCubit;
 
@@ -117,6 +122,8 @@ class _FullScreenMapState extends State<FullScreenMap>
         final now = DateTime.now().millisecondsSinceEpoch;
         final elapsed = now - _lastDataReceivedMs;
 
+        bool hasMoved = false;
+
         if (elapsed > 15000) {
           // Stop moving if no data received for 15 seconds
         } else {
@@ -134,22 +141,32 @@ class _FullScreenMapState extends State<FullScreenMap>
               (_animEndMarkerTarget!.longitude -
                       _animStartMarkerTarget!.longitude) *
                   t;
-          _animatedMarkerPos = LatLng(lat, lng);
+
+          if (_animatedMarkerPos?.latitude != lat ||
+              _animatedMarkerPos?.longitude != lng) {
+            _animatedMarkerPos = LatLng(lat, lng);
+            hasMoved = true;
+          }
 
           double diffBearing = _animEndMarkerBearing - _animStartMarkerBearing;
           if (diffBearing > 180) diffBearing -= 360;
           if (diffBearing < -180) diffBearing += 360;
 
-          _animatedMarkerBearing = _animStartMarkerBearing + diffBearing * t;
+          final double newBearing = _animStartMarkerBearing + diffBearing * t;
+          if (_animatedMarkerBearing != newBearing) {
+            _animatedMarkerBearing = newBearing;
+            hasMoved = true;
+          }
         }
 
-        if (now - _lastMarkerRebuildMs >= 50) {
+        if (hasMoved && now - _lastMarkerRebuildMs >= 50) {
           _lastMarkerRebuildMs = now;
           _mapRebuildNotifier.value++;
         }
 
         // Drone-style camera tracking (throttled to 20fps for performance)
-        if (_uiCubit.state.isAutoFollowing &&
+        if (hasMoved &&
+            _uiCubit.state.isAutoFollowing &&
             mounted &&
             _mapController != null) {
           final appState = context.read<AppCubit>().state;
@@ -277,8 +294,24 @@ class _FullScreenMapState extends State<FullScreenMap>
   }
 
   Future<void> _loadCustomMarker() async {
+    String assetPath = AppImages.bikeImage;
+
+    // Check Hive for selected icon
+    if (_currentVehicle?.imei != null && _currentVehicle!.imei!.isNotEmpty) {
+      try {
+        final box = Hive.box('map_cache');
+        final cacheData = box.get('vehicle_control_${_currentVehicle!.imei}');
+        if (cacheData != null) {
+          final cachedMap = jsonDecode(cacheData.toString());
+          final iconStr = cachedMap['selectedIcon']?.toString();
+          // If we had different asset images, we could set assetPath here
+          // For now, we will just use bikeImage as the base asset
+        }
+      } catch (_) {}
+    }
+
     final Uint8List markerIcon = await MapUtils.getBytesFromAsset(
-      AppImages.bikeImage,
+      assetPath,
       110,
     );
     if (mounted) {
@@ -300,7 +333,7 @@ class _FullScreenMapState extends State<FullScreenMap>
 
     // Outer glow ring
     final Paint glowPaint = Paint()
-      ..color = const Color(0xFFFFB300).withOpacity(0.22)
+      ..color = Colors.white.withOpacity(0.22)
       ..style = PaintingStyle.fill;
     canvas.drawCircle(
       const Offset(center, center - tipHeight / 2),
@@ -507,18 +540,26 @@ class _FullScreenMapState extends State<FullScreenMap>
     double bearing,
     GeoFenceState geoState,
   ) {
-    final markers = <Marker>{
-      Marker(
-        markerId: const MarkerId('vehicle_marker'),
-        position: vehiclePos,
-        icon: _uiCubit.state.customMarker ?? BitmapDescriptor.defaultMarker,
-        anchor: const Offset(0.5, 0.5),
-        flat: true,
-        rotation: bearing % 360,
-      ),
-    };
+    final markers = <Marker>{};
 
-    if (_uiCubit.state.showCurrentLocation && currentPos != null) {
+    final bool hasDevice =
+        _currentVehicle?.imei != null && _currentVehicle!.imei!.isNotEmpty;
+
+    if (hasDevice) {
+      markers.add(
+        Marker(
+          markerId: const MarkerId('vehicle_marker'),
+          position: vehiclePos,
+          icon: _uiCubit.state.customMarker ?? BitmapDescriptor.defaultMarker,
+          anchor: const Offset(0.5, 0.5),
+          flat: true,
+          rotation: bearing % 360,
+        ),
+      );
+    }
+
+    if ((_uiCubit.state.showCurrentLocation || !hasDevice) &&
+        currentPos != null) {
       markers.add(
         Marker(
           markerId: const MarkerId('current_location'),
@@ -606,7 +647,9 @@ class _FullScreenMapState extends State<FullScreenMap>
             circleId: CircleId('geo_circle_${fence.id}_${fence.latitude}'),
             center: LatLng(fence.latitude, fence.longitude),
             radius: fence.radius > 10 ? fence.radius : 500.0,
-            fillColor: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3),
+            fillColor: Theme.of(
+              context,
+            ).colorScheme.primary.withValues(alpha: 0.3),
             strokeColor: Theme.of(context).colorScheme.primary,
             strokeWidth: 2,
           ),
@@ -650,7 +693,8 @@ class _FullScreenMapState extends State<FullScreenMap>
         appState.currentLocation!.latitude,
         appState.currentLocation!.longitude,
       );
-      _fitBothMarkersOnMap(vehiclePos, phonePos, animBearing);
+      // Force bearing to 0.0 (North Up) so the map overview doesn't appear upside down
+      _fitBothMarkersOnMap(vehiclePos, phonePos, 0.0);
     } else {
       _animateCameraTo(
         target: _animatedMarkerPos ?? vehiclePos,
@@ -680,7 +724,19 @@ class _FullScreenMapState extends State<FullScreenMap>
 
     // Map degree difference to zoom level (approximate)
     double zoom = 15.0;
-    if (maxDiff > 0.5) {
+    if (maxDiff > 60.0) {
+      zoom = 2.0;
+    } else if (maxDiff > 30.0) {
+      zoom = 3.0;
+    } else if (maxDiff > 10.0) {
+      zoom = 4.5;
+    } else if (maxDiff > 5.0) {
+      zoom = 6.0;
+    } else if (maxDiff > 2.0) {
+      zoom = 7.5;
+    } else if (maxDiff > 1.0) {
+      zoom = 8.5;
+    } else if (maxDiff > 0.5) {
       zoom = 10.0;
     } else if (maxDiff > 0.2) {
       zoom = 11.5;
@@ -790,19 +846,27 @@ class _FullScreenMapState extends State<FullScreenMap>
 
   Future<void> _updateMapStyle(GoogleMapController controller) async {
     final appConfig = context.read<AppCubit>().state;
+    final l10n = AppLocalizations.of(context);
 
-    if (appConfig.mapType == 'satellite') {
+    if (appConfig.mapType == 'satellite' ||
+        appConfig.mapStyle == 'Satellite' ||
+        appConfig.mapStyle == l10n?.satelliteStyle) {
       await MapUtils.setStyle(controller, null);
       return;
     }
 
     String? style;
-    if (appConfig.mapStyle == 'Dark') {
+    if (appConfig.mapStyle == 'Dark' || appConfig.mapStyle == l10n?.darkStyle) {
       style = _darkMapStyle;
-    } else if (appConfig.mapStyle == 'Light') {
+    } else if (appConfig.mapStyle == 'Light' ||
+        appConfig.mapStyle == l10n?.lightStyle) {
       style = _lightMapStyle;
-    } else if (appConfig.mapStyle == 'Simple') {
-      style = await MapUtils.loadStyle('assets/map_styles/light_map.json');
+    } else if (appConfig.mapStyle == 'Simple' ||
+        appConfig.mapStyle == l10n?.simpleStyle) {
+      style = _lightMapStyle;
+    } else {
+      final isDarkTheme = Theme.of(context).brightness == Brightness.dark;
+      style = isDarkTheme ? _darkMapStyle : _lightMapStyle;
     }
 
     await MapUtils.setStyle(controller, style);
@@ -1060,6 +1124,8 @@ class _FullScreenMapState extends State<FullScreenMap>
   Widget build(BuildContext context) {
     return BlocListener<AppCubit, AppState>(
       listenWhen: (previous, current) {
+        if (previous.userData?.name != current.userData?.name) return true;
+
         if (_useDemoSimulation) return false;
         // Find previous position for this specific device
         final prevData = previous.devices.firstWhere(
@@ -1085,6 +1151,13 @@ class _FullScreenMapState extends State<FullScreenMap>
             prevData['bearing'] != currData['bearing'];
       },
       listener: (context, state) {
+        final name = state.userData?.name ?? 'Me';
+        final letter = name.isNotEmpty ? name[0].toUpperCase() : 'M';
+        if (_currentMarkerLetter != letter) {
+          _currentMarkerLetter = letter;
+          final primaryColor = Theme.of(context).colorScheme.primary;
+          _createUserLocationMarker(letter, primaryColor);
+        }
         final target = _getBestPosition();
         if (target != null) {
           // Extract bearing for this specific device
@@ -1185,7 +1258,7 @@ class _FullScreenMapState extends State<FullScreenMap>
       builder: (context, appState) {
         final currentPos = appState.currentLocation;
         if (currentPos == null) {
-          return const Center(child: CircularProgressIndicator());
+          return const Center(child: TrackifyLoader());
         }
 
         // Prioritize Live Position from Socket
@@ -1240,67 +1313,78 @@ class _FullScreenMapState extends State<FullScreenMap>
 
             return BlocBuilder<GeoFenceCubit, GeoFenceState>(
               builder: (context, geoState) {
-                return Listener(
-                  onPointerMove: (_) {
-                    if (_uiCubit.state.isAutoFollowing) {
-                      _uiCubit.setAutoFollowing(false);
-                    }
+                return BlocBuilder<FullScreenMapUiCubit, FullScreenMapUiState>(
+                  bloc: _uiCubit,
+                  builder: (context, uiState) {
+                    return Listener(
+                      onPointerMove: (_) {
+                        if (_uiCubit.state.isAutoFollowing) {
+                          _uiCubit.setAutoFollowing(false);
+                        }
+                      },
+                      child: GoogleMap(
+                        initialCameraPosition: CameraPosition(
+                          target: bestPos!,
+                          zoom: 16.0,
+                          bearing: 0.0,
+                        ),
+                        myLocationEnabled: false,
+                        zoomControlsEnabled: false,
+                        myLocationButtonEnabled: false,
+                        mapToolbarEnabled: false,
+                        buildingsEnabled: false,
+                        style: appState.mapType == 'satellite'
+                            ? null
+                            : (Theme.of(context).brightness == Brightness.dark
+                                  ? _darkMapStyle
+                                  : _lightMapStyle),
+                        mapType: appState.mapType == 'satellite'
+                            ? MapType.satellite
+                            : MapType.normal,
+                        trafficEnabled: appState.isTrafficEnabled,
+                        padding: EdgeInsets.only(
+                          bottom: MediaQuery.of(context).size.height * 0.16,
+                        ),
+                        onCameraMove: (position) {
+                          if (_uiCubit.state.isAutoFollowing) return;
+                          if (_cameraAnimationController != null &&
+                              _cameraAnimationController!.isAnimating)
+                            return;
+
+                          _cameraTarget = position.target;
+                          _cameraZoom = position.zoom;
+                          _cameraTilt = position.tilt;
+                          _cameraBearing = position.bearing;
+                        },
+                        onCameraMoveStarted: () {},
+                        markers: _buildMarkers(
+                          animPos,
+                          currentPos,
+                          animBearing,
+                          geoState,
+                        ),
+                        circles: _buildCircles(geoState),
+                        onMapCreated: (controller) async {
+                          _mapController = controller;
+
+                          if (_darkMapStyle == null || _lightMapStyle == null) {
+                            await _loadMapStyles();
+                          }
+                          _updateMapStyle(controller);
+
+                          // Initialize camera state fields
+                          _cameraTarget = bestPos;
+                          _cameraZoom = 16.0;
+                          _cameraTilt = 0.0;
+                          _cameraBearing = 0.0;
+
+                          WidgetsBinding.instance.addPostFrameCallback((_) {
+                            _triggerInitialFocusAnimation();
+                          });
+                        },
+                      ),
+                    );
                   },
-                  child: GoogleMap(
-                    initialCameraPosition: CameraPosition(
-                      target: bestPos!,
-                      zoom: 16.0,
-                      bearing: 0.0,
-                    ),
-                    myLocationEnabled: false,
-                    zoomControlsEnabled: false,
-                    myLocationButtonEnabled: false,
-                    mapToolbarEnabled: false,
-                    mapType: appState.mapType == 'satellite'
-                        ? MapType.satellite
-                        : MapType.normal,
-                    trafficEnabled: appState.isTrafficEnabled,
-                    padding: EdgeInsets.only(
-                      bottom: MediaQuery.of(context).size.height * 0.16,
-                    ),
-                    onCameraMove: (position) {
-                      if (_uiCubit.state.isAutoFollowing) return;
-                      if (_cameraAnimationController != null &&
-                          _cameraAnimationController!.isAnimating)
-                        return;
-
-                      _cameraTarget = position.target;
-                      _cameraZoom = position.zoom;
-                      _cameraTilt = position.tilt;
-                      _cameraBearing = position.bearing;
-                    },
-                    onCameraMoveStarted: () {},
-                    markers: _buildMarkers(
-                      animPos,
-                      currentPos,
-                      animBearing,
-                      geoState,
-                    ),
-                    circles: _buildCircles(geoState),
-                    onMapCreated: (controller) async {
-                      _mapController = controller;
-
-                      if (_darkMapStyle == null || _lightMapStyle == null) {
-                        await _loadMapStyles();
-                      }
-                      _updateMapStyle(controller);
-
-                      // Initialize camera state fields
-                      _cameraTarget = bestPos;
-                      _cameraZoom = 16.0;
-                      _cameraTilt = 0.0;
-                      _cameraBearing = 0.0;
-
-                      WidgetsBinding.instance.addPostFrameCallback((_) {
-                        _triggerInitialFocusAnimation();
-                      });
-                    },
-                  ),
                 );
               },
             );
@@ -1543,12 +1627,48 @@ class _FullScreenMapState extends State<FullScreenMap>
     );
   }
 
+  IconData _getVehicleIcon(Vehicles? vehicle) {
+    if (vehicle == null) return Icons.motorcycle;
+
+    // 1. Check Hive cache for selected icon
+    final imei = vehicle.imei;
+    if (imei != null && imei.isNotEmpty) {
+      try {
+        final box = Hive.box('map_cache');
+        final cacheData = box.get('vehicle_control_$imei');
+        if (cacheData != null) {
+          final cachedMap = jsonDecode(cacheData.toString());
+          final iconStr = cachedMap['selectedIcon']?.toString();
+          if (iconStr != null) {
+            if (iconStr == 'Scooty') return Icons.moped;
+            if (iconStr == 'My Vehicle' || iconStr == 'Car')
+              return Icons.directions_car;
+            if (iconStr == 'Bike') return Icons.motorcycle;
+          }
+        }
+      } catch (_) {}
+    }
+
+    // 2. Fallback to vehicleType
+    final type = vehicle.vehicleType.toLowerCase();
+    if (type.contains('scoot') || type.contains('moped')) {
+      return Icons.moped;
+    } else if (type.contains('car') ||
+        type.contains('my vehicle') ||
+        type.contains('four')) {
+      return Icons.directions_car;
+    }
+    return Icons.motorcycle;
+  }
+
   Widget _buildRightSideActions() {
     return ValueListenableBuilder<double>(
       valueListenable: _sheetExtent,
       builder: (context, extent, child) {
         final screenHeight = MediaQuery.of(context).size.height;
         final bottomMargin = (extent * screenHeight) + 16.0;
+        final bool hasDevice =
+            _currentVehicle?.imei != null && _currentVehicle!.imei!.isNotEmpty;
         return Positioned(
           right: 16,
           bottom: bottomMargin,
@@ -1557,9 +1677,10 @@ class _FullScreenMapState extends State<FullScreenMap>
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
               _buildMapActionButton(
-                Icons.motorcycle,
+                _getVehicleIcon(_currentVehicle),
                 badgeIcon: Icons.edit,
                 onTap: _showVehicleIconPicker,
+                isDisabled: !hasDevice,
               ),
               _buildMapActionButton(
                 Icons.map_outlined,
@@ -1573,10 +1694,12 @@ class _FullScreenMapState extends State<FullScreenMap>
                       _buildMapActionButton(
                         Icons.person_pin_circle_outlined,
                         onTap: () {
+                          if (!hasDevice) return;
                           _uiCubit.toggleCurrentLocation();
                           _applyCameraForCurrentMode();
                         },
                         isActiveColor: uiState.showCurrentLocation,
+                        isDisabled: !hasDevice,
                       ),
                       _buildMapActionButton(
                         Icons.my_location,
@@ -1587,7 +1710,11 @@ class _FullScreenMapState extends State<FullScreenMap>
                   );
                 },
               ),
-              _buildMapActionButton(Icons.fullscreen, onTap: _focusOnBike),
+              _buildMapActionButton(
+                Icons.fullscreen,
+                onTap: _focusOnBike,
+                isDisabled: !hasDevice,
+              ),
             ],
           ),
         );
@@ -1625,9 +1752,7 @@ class _FullScreenMapState extends State<FullScreenMap>
                             ),
                           ),
                           height: 200,
-                          child: const Center(
-                            child: CircularProgressIndicator(),
-                          ),
+                          child: const Center(child: TrackifyLoader()),
                         );
                       }
 
@@ -1736,12 +1861,18 @@ class _FullScreenMapState extends State<FullScreenMap>
     IconData? badgeIcon,
     VoidCallback? onTap,
     bool isActiveColor = false,
+    bool isDisabled = false,
   }) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: Stack(
         children: [
-          _buildRoundButton(icon, onTap: onTap, isActiveColor: isActiveColor),
+          _buildRoundButton(
+            icon,
+            onTap: isDisabled ? null : onTap,
+            isActiveColor: isActiveColor,
+            isDisabled: isDisabled,
+          ),
           if (hasNotification || badgeIcon != null)
             Positioned(
               right: 0,
@@ -1775,34 +1906,42 @@ class _FullScreenMapState extends State<FullScreenMap>
     IconData icon, {
     VoidCallback? onTap,
     bool isActiveColor = false,
+    bool isDisabled = false,
   }) {
     final theme = Theme.of(context);
     return BouncingWidget(
-      onTap: onTap ?? () {},
+      onTap: isDisabled ? () {} : (onTap ?? () {}),
       child: Container(
         height: 48,
         width: 48,
         decoration: BoxDecoration(
-          color: isActiveColor ? theme.colorScheme.primary : theme.cardColor,
+          color: isDisabled
+              ? theme.colorScheme.onSurface.withOpacity(0.08)
+              : (isActiveColor ? theme.colorScheme.primary : theme.cardColor),
           shape: BoxShape.circle,
           border: Border.all(
-            color: isActiveColor
-                ? theme.colorScheme.primary
-                : theme.dividerColor,
+            color: isDisabled
+                ? theme.dividerColor.withOpacity(0.3)
+                : (isActiveColor
+                      ? theme.colorScheme.primary
+                      : theme.dividerColor),
           ),
           boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.1),
-              blurRadius: 4,
-              offset: const Offset(0, 2),
-            ),
+            if (!isDisabled)
+              BoxShadow(
+                color: Colors.black.withOpacity(0.1),
+                blurRadius: 4,
+                offset: const Offset(0, 2),
+              ),
           ],
         ),
         child: Icon(
           icon,
-          color: isActiveColor
-              ? theme.colorScheme.onPrimary
-              : theme.colorScheme.onSurface.withOpacity(0.85),
+          color: isDisabled
+              ? theme.colorScheme.onSurface.withOpacity(0.3)
+              : (isActiveColor
+                    ? theme.colorScheme.onPrimary
+                    : theme.colorScheme.onSurface.withOpacity(0.85)),
           size: 24,
         ),
       ),
@@ -1870,11 +2009,17 @@ class _FullScreenMapState extends State<FullScreenMap>
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              _buildVehicleHeader(),
-                              const SizedBox(height: 8),
-                              _buildStatsGrid(),
-                              const SizedBox(height: 12),
-                              _buildBottomInfoCards(),
+                              _buildVehicleHeader(hasDevice: _currentVehicle?.imei != null && _currentVehicle!.imei!.isNotEmpty),
+                              if (_currentVehicle?.imei != null && _currentVehicle!.imei!.isNotEmpty) ...[
+                                const SizedBox(height: 8),
+                                _buildStatsGrid(),
+                                const SizedBox(height: 12),
+                                _buildBottomInfoCards(),
+                              ] else ...[
+                                const SizedBox(height: 40),
+                                _buildBuyDeviceButton(),
+                                const SizedBox(height: 40),
+                              ],
                             ],
                           ),
                         ),
@@ -1890,187 +2035,314 @@ class _FullScreenMapState extends State<FullScreenMap>
     );
   }
 
-  Widget _buildVehicleHeader() {
-    return BlocBuilder<AppCubit, AppState>(
-      builder: (context, state) {
-        final liveDevice = state.devices.firstWhere(
-          (d) =>
-              d['imei']?.toString() == _currentVehicle?.imei ||
-              d['_id']?.toString() == _currentVehicle?.id ||
-              d['id']?.toString() == _currentVehicle?.id,
-          orElse: () => <String, dynamic>{},
-        );
-
-        final liveSpeed =
-            liveDevice['sp']?.toString() ??
-            _currentVehicle?.currentLocation?.speed?.toString() ??
-            "0";
-
-        // Use time from socket data or fallback to API's currentLocation time
-        final stoppedAtStr =
-            liveDevice['time']?.toString() ??
-            liveDevice['deviceTime']?.toString() ??
-            liveDevice['dt']?.toString() ??
-            _currentVehicle?.currentLocation?.time ??
-            _currentVehicle?.updatedAt?.toIso8601String();
-
-        String parkedSince = "";
-        final speedVal = double.tryParse(liveSpeed) ?? 0.0;
-
-        if (speedVal <= 5 && stoppedAtStr != null && stoppedAtStr.isNotEmpty) {
-          try {
-            DateTime stoppedAt;
-            int? unixTime = int.tryParse(stoppedAtStr);
-            if (unixTime != null && unixTime > 1000000000) {
-              if (unixTime > 1000000000000) {
-                stoppedAt = DateTime.fromMillisecondsSinceEpoch(
-                  unixTime,
-                ).toLocal();
-              } else {
-                stoppedAt = DateTime.fromMillisecondsSinceEpoch(
-                  unixTime * 1000,
-                ).toLocal();
-              }
-            } else {
-              stoppedAt = DateTime.parse(stoppedAtStr).toLocal();
-            }
-
-            final now = DateTime.now();
-            final isToday =
-                stoppedAt.year == now.year &&
-                stoppedAt.month == now.month &&
-                stoppedAt.day == now.day;
-
-            final timeFormat = DateFormat('hh:mm a');
-            if (isToday) {
-              parkedSince = '${timeFormat.format(stoppedAt)}, Today';
-            } else {
-              final dateFormat = DateFormat('MMM dd');
-              parkedSince =
-                  '${timeFormat.format(stoppedAt)}, ${dateFormat.format(stoppedAt)}';
-            }
-          } catch (e) {
-            debugPrint(
-              'Failed to parse parked since time: $stoppedAtStr. Error: $e',
-            );
-            parkedSince = "";
-          }
-        }
-
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
+  Widget _buildBuyDeviceButton() {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const ProductScreen(),
+                ),
+              );
+            },
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
               children: [
-                // Vehicle Icon
-                Image.asset(
-                  AppImages.bikeImage,
-                  height: 48,
-                  width: 48,
-                  fit: BoxFit.contain,
-                ),
-                const SizedBox(width: 12),
-                // Vehicle Name and Number
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        _currentVehicle?.vehicleMaker ??
-                            AppLocalizations.of(
-                              context,
-                            )!.vehicleNamePlaceholder,
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Theme.of(context).colorScheme.onSurface,
-                        ),
-                      ),
-                      Text(
-                        _currentVehicle?.vehicleNumber ??
-                            AppLocalizations.of(
-                              context,
-                            )!.vehicleNumberPlaceholder,
-                        style: const TextStyle(
-                          fontSize: 14,
-                          color: Color(
-                            0xFF4A90A4,
-                          ), // Matched blue from screenshot
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ],
+                const Icon(Icons.shopping_bag_outlined, color: Colors.orange, size: 20),
+                const SizedBox(width: 8),
+                Text(
+                  AppLocalizations.of(context)!.buyTrackifyDevice,
+                  style: const TextStyle(
+                    color: Colors.orange,
+                    fontSize: 15,
+                    fontWeight: FontWeight.bold,
                   ),
-                ),
-                // Speed Info with Animated Switcher
-                AnimatedSwitcher(
-                  duration: const Duration(milliseconds: 400),
-                  layoutBuilder:
-                      (Widget? currentChild, List<Widget> previousChildren) {
-                        return Stack(
-                          alignment: Alignment.centerRight,
-                          children: <Widget>[
-                            ...previousChildren,
-                            if (currentChild != null) currentChild,
-                          ],
-                        );
-                      },
-                  switchInCurve: Curves.easeOutBack,
-                  switchOutCurve: Curves.easeInQuint,
-                  transitionBuilder: (child, animation) {
-                    final offsetAnimation = Tween<Offset>(
-                      begin: Offset(
-                        0.0,
-                        _uiCubit.state.isSlidingUp ? -0.5 : 0.5,
-                      ),
-                      end: Offset.zero,
-                    ).animate(animation);
-                    return FadeTransition(
-                      opacity: animation,
-                      child: SlideTransition(
-                        position: offsetAnimation,
-                        child: child,
-                      ),
-                    );
-                  },
-                  child: _buildHeaderMetric(liveDevice, liveSpeed),
-                ),
-                const SizedBox(width: 12),
-                // Up/Down Arrows
-                Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    _buildSmallArrowButton(
-                      Icons.keyboard_arrow_up,
-                      onTap: () => _changeHeaderMetric(context, true),
-                    ),
-                    const SizedBox(height: 12),
-                    _buildSmallArrowButton(
-                      Icons.keyboard_arrow_down,
-                      onTap: () => _changeHeaderMetric(context, false),
-                    ),
-                  ],
                 ),
               ],
             ),
-            const SizedBox(height: 8),
-            // Parked Since Status
-            if (parkedSince.isNotEmpty)
-              Text(
-                AppLocalizations.of(context)!.parkedSinceTime(parkedSince),
+          ),
+          const SizedBox(height: 16),
+          SizedBox(
+            width: double.infinity,
+            height: 46,
+            child: ElevatedButton.icon(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const DeviceInstallationScreen(),
+                  ),
+                );
+              },
+              icon: Icon(
+                Icons.memory,
+                color: Theme.of(context).colorScheme.onPrimary,
+              ),
+              label: Text(
+                AppLocalizations.of(context)!.installDevice,
                 style: TextStyle(
-                  fontSize: 14,
-                  color: Theme.of(
-                    context,
-                  ).colorScheme.onSurface.withOpacity(0.5),
-                  fontWeight: FontWeight.w500,
+                  color: Theme.of(context).colorScheme.onPrimary,
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 0.5,
                 ),
               ),
-          ],
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Theme.of(context).colorScheme.primary,
+                elevation: 0,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(14),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildVehicleHeader({bool hasDevice = true}) {
+    return BlocBuilder<RideHistoryCubit, RideHistoryState>(
+      builder: (context, rideState) {
+        return BlocBuilder<AppCubit, AppState>(
+          builder: (context, state) {
+            Ride? lastRide;
+            if (rideState is RideHistorySuccess && rideState.rides.isNotEmpty) {
+              lastRide = rideState.rides.last;
+            }
+
+            final liveDevice = state.devices.firstWhere(
+              (d) =>
+                  d['imei']?.toString() == _currentVehicle?.imei ||
+                  d['_id']?.toString() == _currentVehicle?.id ||
+                  d['id']?.toString() == _currentVehicle?.id,
+              orElse: () => <String, dynamic>{},
+            );
+
+            bool isLastRideToday = false;
+            if (lastRide != null) {
+              try {
+                if (lastRide.rawStartTime.isNotEmpty) {
+                  final date = DateTime.parse(lastRide.rawStartTime).toLocal();
+                  final now = DateTime.now();
+                  if (date.year == now.year &&
+                      date.month == now.month &&
+                      date.day == now.day) {
+                    isLastRideToday = true;
+                  }
+                } else {
+                  final now = DateTime.now();
+                  final format1 = "${now.day}/${now.month}/${now.year}";
+                  final format2 =
+                      "${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}";
+                  if (lastRide.date == format1 || lastRide.date == format2) {
+                    isLastRideToday = true;
+                  }
+                }
+              } catch (_) {}
+            }
+
+            String liveSpeed =
+                liveDevice['sp']?.toString() ??
+                _currentVehicle?.currentLocation?.speed?.toString() ??
+                "0";
+
+            if (!isLastRideToday) {
+              liveSpeed = "0";
+            }
+
+            // Use time from socket data or fallback to API's currentLocation time
+            final stoppedAtStr =
+                liveDevice['time']?.toString() ??
+                liveDevice['deviceTime']?.toString() ??
+                liveDevice['dt']?.toString() ??
+                _currentVehicle?.currentLocation?.time ??
+                _currentVehicle?.updatedAt?.toIso8601String();
+
+            String parkedSince = "";
+            final speedVal = double.tryParse(liveSpeed) ?? 0.0;
+
+            if (speedVal <= 5 &&
+                stoppedAtStr != null &&
+                stoppedAtStr.isNotEmpty) {
+              try {
+                DateTime stoppedAt;
+                int? unixTime = int.tryParse(stoppedAtStr);
+                if (unixTime != null && unixTime > 1000000000) {
+                  if (unixTime > 1000000000000) {
+                    stoppedAt = DateTime.fromMillisecondsSinceEpoch(
+                      unixTime,
+                    ).toLocal();
+                  } else {
+                    stoppedAt = DateTime.fromMillisecondsSinceEpoch(
+                      unixTime * 1000,
+                    ).toLocal();
+                  }
+                } else {
+                  stoppedAt = DateTime.parse(stoppedAtStr).toLocal();
+                }
+
+                final now = DateTime.now();
+                final isToday =
+                    stoppedAt.year == now.year &&
+                    stoppedAt.month == now.month &&
+                    stoppedAt.day == now.day;
+
+                final timeFormat = DateFormat('hh:mm a');
+                if (isToday) {
+                  parkedSince = '${timeFormat.format(stoppedAt)}, Today';
+                } else {
+                  final dateFormat = DateFormat('MMM dd');
+                  parkedSince =
+                      '${timeFormat.format(stoppedAt)}, ${dateFormat.format(stoppedAt)}';
+                }
+              } catch (e) {
+                debugPrint(
+                  'Failed to parse parked since time: $stoppedAtStr. Error: $e',
+                );
+                parkedSince = "";
+              }
+            }
+
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    // Vehicle Icon
+                    Container(
+                      height: 48,
+                      width: 48,
+                      decoration: BoxDecoration(
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.primary.withOpacity(0.1),
+                        shape: BoxShape.circle,
+                      ),
+                      child: Center(
+                        child: Icon(
+                          _getVehicleIcon(_currentVehicle),
+                          color: Theme.of(context).colorScheme.primary,
+                          size: 28,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    // Vehicle Name and Number
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            _currentVehicle?.vehicleMaker ??
+                                AppLocalizations.of(
+                                  context,
+                                )!.vehicleNamePlaceholder,
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: Theme.of(context).colorScheme.onSurface,
+                            ),
+                          ),
+                          Text(
+                            _currentVehicle?.vehicleNumber ??
+                                AppLocalizations.of(
+                                  context,
+                                )!.vehicleNumberPlaceholder,
+                            style: const TextStyle(
+                              fontSize: 14,
+                              color: Color(
+                                0xFF4A90A4,
+                              ), // Matched blue from screenshot
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    if (hasDevice) ...[
+                      // Speed Info with Animated Switcher
+                      AnimatedSwitcher(
+                        duration: const Duration(milliseconds: 400),
+                      layoutBuilder:
+                          (
+                            Widget? currentChild,
+                            List<Widget> previousChildren,
+                          ) {
+                            return Stack(
+                              alignment: Alignment.centerRight,
+                              children: <Widget>[
+                                ...previousChildren,
+                                if (currentChild != null) currentChild,
+                              ],
+                            );
+                          },
+                      switchInCurve: Curves.easeOutBack,
+                      switchOutCurve: Curves.easeInQuint,
+                      transitionBuilder: (child, animation) {
+                        final offsetAnimation = Tween<Offset>(
+                          begin: Offset(
+                            0.0,
+                            _uiCubit.state.isSlidingUp ? -0.5 : 0.5,
+                          ),
+                          end: Offset.zero,
+                        ).animate(animation);
+                        return FadeTransition(
+                          opacity: animation,
+                          child: SlideTransition(
+                            position: offsetAnimation,
+                            child: child,
+                          ),
+                        );
+                      },
+                      child: _buildHeaderMetric(liveDevice, liveSpeed),
+                    ),
+                    const SizedBox(width: 12),
+                    // Up/Down Arrows
+                    Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        _buildSmallArrowButton(
+                          Icons.keyboard_arrow_up,
+                          onTap: () => _changeHeaderMetric(context, true),
+                        ),
+                        const SizedBox(height: 12),
+                        _buildSmallArrowButton(
+                          Icons.keyboard_arrow_down,
+                          onTap: () => _changeHeaderMetric(context, false),
+                        ),
+                      ],
+                    ),
+                    ],
+                  ],
+                ),
+                const SizedBox(height: 8),
+                // Parked Since Status
+                if (hasDevice && parkedSince.isNotEmpty)
+                  Text(
+                    AppLocalizations.of(context)!.parkedSinceTime(parkedSince),
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.onSurface.withOpacity(0.5),
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+              ],
+            );
+          },
         );
       },
     );
@@ -2215,24 +2487,48 @@ class _FullScreenMapState extends State<FullScreenMap>
                 "0${AppLocalizations.of(context)!.minutesShort} 0${AppLocalizations.of(context)!.secondsShort}";
             String topSpeedStr = "0 ${context.displayKmh}";
 
+            bool isLastRideToday = false;
             if (lastRide != null) {
-              todayDistanceStr = lastRide.distance.toStringAsFixed(1);
+              try {
+                if (lastRide.rawStartTime.isNotEmpty) {
+                  final date = DateTime.parse(lastRide.rawStartTime).toLocal();
+                  final now = DateTime.now();
+                  if (date.year == now.year &&
+                      date.month == now.month &&
+                      date.day == now.day) {
+                    isLastRideToday = true;
+                  }
+                } else {
+                  final now = DateTime.now();
+                  final format1 = "${now.day}/${now.month}/${now.year}";
+                  final format2 =
+                      "${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}";
+                  if (lastRide.date == format1 || lastRide.date == format2) {
+                    isLastRideToday = true;
+                  }
+                }
+              } catch (_) {}
+            }
+
+            if (!isLastRideToday) {
+              liveSpeed = "0";
+            }
+
+            if (isLastRideToday && lastRide != null) {
+              todayDistanceStr = lastRide.distance.toStringAsFixed(2);
               durationStr = lastRide.duration;
               topSpeedStr =
                   "${lastRide.topSpeed.toStringAsFixed(1)} ${context.displayKmh}";
             } else {
               final todayDistanceRaw =
-                  liveDevice['todayDistance'] ??
-                  liveDevice['td'] ??
-                  liveDevice['distance'] ??
-                  odometer;
+                  liveDevice['todayDistance'] ?? liveDevice['td'];
               if (todayDistanceRaw != null &&
                   todayDistanceRaw.toString().isNotEmpty) {
                 double val =
                     double.tryParse(todayDistanceRaw.toString()) ?? 0.0;
-                todayDistanceStr = val.toStringAsFixed(1);
+                todayDistanceStr = val.toStringAsFixed(2);
               } else {
-                todayDistanceStr = odometer;
+                todayDistanceStr = "0.00";
               }
 
               final todayDurationRaw =

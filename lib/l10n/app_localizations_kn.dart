@@ -486,7 +486,7 @@ class AppLocalizationsKn extends AppLocalizations {
 
   @override
   String expiresInDays(String days) {
-    return '$days ದಿನಗಳಲ್ಲಿ ಮುಕ್ತಾಯಗೊಳ್ಳುತ್ತದೆ';
+    return '$days ದಿನಗಳಲ್ಲಿ ಮುಕ್ತಾಯ';
   }
 
   @override
@@ -535,7 +535,7 @@ class AppLocalizationsKn extends AppLocalizations {
   String get settingsDesc => 'ಭಾಷೆ, ಖಾತೆ ಸೆಟ್ಟಿಂಗ್‌ಗಳು ಮತ್ತು ಇನ್ನಷ್ಟು';
 
   @override
-  String get notifications => 'ಅಧಿಸೂಚನೆಗಳು';
+  String get notifications => 'ಸೂಚನೆಗಳು';
 
   @override
   String get noNotifications => 'ಯಾವುದೇ ಅಧಿಸೂಚನೆಗಳು ಕಂಡುಬಂದಿಲ್ಲ';
@@ -793,13 +793,13 @@ class AppLocalizationsKn extends AppLocalizations {
   String get todayText => 'ಇಂದು';
 
   @override
-  String get distanceLabel => 'ದೂರ';
+  String get distanceLabel => 'Distance';
 
   @override
   String get rideDuration => 'ರೈಡ್ ಅವಧಿ';
 
   @override
-  String get speedLabel => 'ವೇಗ';
+  String get speedLabel => 'Speed';
 
   @override
   String get minutesShort => 'ನಿ';
@@ -1049,7 +1049,7 @@ class AppLocalizationsKn extends AppLocalizations {
   String get serviceCenterName => 'ಸೇವಾ ಕೇಂದ್ರದ ಹೆಸರು';
 
   @override
-  String get serviceCenterContact => 'ಸೇವಾ ಕೇಂದ್ರದ ಸಂಪರ್ಕ';
+  String get serviceCenterContact => 'ಸೇವಾ ಕೇಂದ್ರ ಸಂಪರ್ಕ';
 
   @override
   String get additionalNote => 'ಹೆಚ್ಚುವರಿ ಟಿಪ್ಪಣಿ';
@@ -1106,7 +1106,7 @@ class AppLocalizationsKn extends AppLocalizations {
   String get statsTab => 'ಅಂಕಿಅಂಶಗಳು';
 
   @override
-  String get timeLabel => 'ಸಮಯ';
+  String get timeLabel => 'Time';
 
   @override
   String get weekly => 'ವಾರದ';
@@ -2127,7 +2127,7 @@ class AppLocalizationsKn extends AppLocalizations {
   String get tripStats => 'ಪ್ರವಾಸದ ಅಂಕಿಅಂಶಗಳು';
 
   @override
-  String get avgSpeedLabel => 'ಸರಾಸರಿ ವೇಗ';
+  String get avgSpeedLabel => 'Avg Speed';
 
   @override
   String get tripQuoteDefault =>
@@ -2735,4 +2735,317 @@ class AppLocalizationsKn extends AppLocalizations {
   @override
   String get confirmDeleteAccount =>
       'Are you sure you want to delete your account?';
+
+  @override
+  String get expired => 'ಮುಕ್ತಾಯವಾಗಿದೆ';
+
+  @override
+  String daysLeftText(String days) {
+    return '$days ದಿನಗಳು ಬಾಕಿ ಉಳಿದಿವೆ';
+  }
+
+  @override
+  String get warrantyExpiringTitle => 'ಖಾತರಿ ಮುಕ್ತಾಯಗೊಳ್ಳುತ್ತಿದೆ';
+
+  @override
+  String get warrantyExpiredDesc =>
+      'ನಿಮ್ಮ ಸಾಧನದ ಖಾತರಿ ಅವಧಿ ಮುಗಿದಿದೆ. ಪ್ರೀಮಿಯಂ ಬೆಂಬಲ ಮತ್ತು ವೈಶಿಷ್ಟ್ಯಗಳನ್ನು ಆನಂದಿಸುವುದನ್ನು ಮುಂದುವರಿಸಲು ದಯವಿಟ್ಟು ನಿಮ್ಮ ಖಾತರಿಯನ್ನು ನವೀಕರಿಸಿ.';
+
+  @override
+  String warrantyExpiringDesc(String days) {
+    return 'ನಿಮ್ಮ ಸಾಧನದ ಖಾತರಿ $days ದಿನಗಳಲ್ಲಿ ಮುಕ್ತಾಯಗೊಳ್ಳುತ್ತದೆ. ಸೇವಾ ಅಡಚಣೆಯನ್ನು ತಪ್ಪಿಸಲು ದಯವಿಟ್ಟು ಅದನ್ನು ನವೀಕರಿಸಿ.';
+  }
+
+  @override
+  String get dismiss => 'ವಜಾಗೊಳಿಸಿ';
+
+  @override
+  String get allTime => 'ಎಲ್ಲಾ ಸಮಯ';
+
+  @override
+  String get totalServices => 'ಒಟ್ಟು ಸೇವೆಗಳು';
+
+  @override
+  String get avgSpending => 'ಸರಾಸರಿ ವೆಚ್ಚ';
+
+  @override
+  String get perService => '/ಸೇವೆ';
+
+  @override
+  String get avgInterval => 'ಸರಾಸರಿ ಅಂತರ';
+
+  @override
+  String get months => 'ತಿಂಗಳುಗಳು';
+
+  @override
+  String get deleteAlertTitle => 'ಎಚ್ಚರಿಕೆ ಅಳಿಸಿ';
+
+  @override
+  String get deleteAlertDesc =>
+      'ಈ ಅತಿಯಾದ ವೇಗದ ಎಚ್ಚರಿಕೆಯನ್ನು ಅಳಿಸಲು ನೀವು ಖಚಿತವಾಗಿರುವಿರಾ?';
+
+  @override
+  String get deleteServiceLogDesc =>
+      'ಈ ಸೇವಾ ಲಾಗ್ ಅನ್ನು ಅಳಿಸಲು ನೀವು ಖಚಿತವಾಗಿರುವಿರಾ?';
+
+  @override
+  String get serviceDetails => 'ಸೇವಾ ವಿವರಗಳು';
+
+  @override
+  String get amountText => 'ಮೊತ್ತ';
+
+  @override
+  String get unknownText => 'ಗೊತ್ತಿಲ್ಲದ';
+
+  @override
+  String get notProvided => 'ಒದಗಿಸಲಾಗಿಲ್ಲ';
+
+  @override
+  String get contactCopied => 'ಸಂಪರ್ಕವನ್ನು ನಕಲಿಸಲಾಗಿದೆ';
+
+  @override
+  String get noImage => 'ಚಿತ್ರವಿಲ್ಲ';
+
+  @override
+  String get startTracking => 'Start Tracking';
+
+  @override
+  String get stopTracking => 'Stop Tracking';
+
+  @override
+  String get endRide => 'End Ride';
+
+  @override
+  String get maxSpeed => 'Max Speed';
+
+  @override
+  String get tapToResumeTracking => 'Tap to resume tracking';
+
+  @override
+  String get tapToPauseTracking => 'Tap to pause tracking';
+
+  @override
+  String get holdToStopTracking => 'Hold to stop tracking';
+
+  @override
+  String get exportLabel => 'Export';
+
+  @override
+  String get exportRide => 'Export Ride';
+
+  @override
+  String get shareRoute => 'Share Route';
+
+  @override
+  String get rideNameOptional => 'Ride Name (Optional)';
+
+  @override
+  String get rideNameHint => 'e.g., Morning Ride, Off-road trail';
+
+  @override
+  String get formatLabel => 'Format';
+
+  @override
+  String get gpxLabel => 'GPX';
+
+  @override
+  String get kmlLabel => 'KML';
+
+  @override
+  String get includeAnalytics => 'Include Analytics';
+
+  @override
+  String get includeAnalyticsDesc => 'Speed, elevation, etc.';
+
+  @override
+  String get exportingRide => 'Exporting ride...';
+
+  @override
+  String get shareRide => 'Share Ride';
+
+  @override
+  String get selectFormatToShare => 'Select a format to share your ride data';
+
+  @override
+  String get gpxFile => 'GPX File';
+
+  @override
+  String get gpxDesc =>
+      'Standard GPS exchange format. Best for Strava, Garmin, etc.';
+
+  @override
+  String get kmlFile => 'KML File';
+
+  @override
+  String get kmlDesc => 'Keyhole Markup Language. Best for Google Earth.';
+
+  @override
+  String get imageScreenshot => 'Image (Screenshot)';
+
+  @override
+  String get imageScreenshotDesc => 'A beautiful map image with your route.';
+
+  @override
+  String get recordingInProgress => 'Recording in Progress';
+
+  @override
+  String get resumeTracking => 'Resume';
+
+  @override
+  String get discardRide => 'Discard Ride';
+
+  @override
+  String get discard => 'Discard';
+
+  @override
+  String get areYouSureDiscardRide =>
+      'Are you sure you want to discard this ride?';
+
+  @override
+  String get kmhLabel => 'km/h';
+
+  @override
+  String get hrminLabel => 'hr:min';
+
+  @override
+  String get kmLabel => 'km';
+
+  @override
+  String get exportRideVideoDesc =>
+      'Exported ride will be saved in Trackify Ride Videos folder of your Gallery app';
+
+  @override
+  String get chooseNicknameHint => 'Choose a unique nickname for this ride';
+
+  @override
+  String get myRideOnTrackify => 'My Ride on Trackify';
+
+  @override
+  String get locationAlwaysAccessWarning =>
+      'Trackify ride recording feature only work correctly if it can access your location “all the time”';
+
+  @override
+  String get goToSettingsAndSelectAllowAllTheTime =>
+      'Go to settings and select “Allow all the time”';
+
+  @override
+  String get locationPermissions => 'Location Permissions';
+
+  @override
+  String get allowAllTheTime => 'Allow all the time';
+
+  @override
+  String get onlyWhileUsingTheApp => 'Only while using the app';
+
+  @override
+  String get askEveryTime => 'Ask every time';
+
+  @override
+  String get dontAllow => 'Don\'t allow';
+
+  @override
+  String get openSettings => 'Open Settings';
+
+  @override
+  String get selectRideMode => 'Select ride mode';
+
+  @override
+  String get onlineMode => 'Online Mode';
+
+  @override
+  String get offlineMode => 'Offline Mode';
+
+  @override
+  String get continueBtn => 'Continue';
+
+  @override
+  String get selectRideLabel => 'Select a label for your ride';
+
+  @override
+  String get friendsVehicle => 'Friend\'s vehicle';
+
+  @override
+  String get train => 'Train';
+
+  @override
+  String get bus => 'Bus';
+
+  @override
+  String get auto => 'Auto';
+
+  @override
+  String get cab => 'Cab';
+
+  @override
+  String get cycle => 'Cycle';
+
+  @override
+  String get walk => 'Walk';
+
+  @override
+  String get others => 'Others';
+
+  @override
+  String get saveBtn => 'Save';
+
+  @override
+  String get startRideRecording => 'Start Ride Recording';
+
+  @override
+  String get stopRideRecording => 'Stop Ride Recording';
+
+  @override
+  String get saveOnline => 'Save online';
+
+  @override
+  String get saveOnlineDesc =>
+      'Rides are saved online. You can login from any phone to fetch your past rides';
+
+  @override
+  String get saveOffline => 'Save offline';
+
+  @override
+  String get saveOfflineDesc => 'Rides are saved on this phone only';
+
+  @override
+  String get startRide => 'Start ride';
+
+  @override
+  String get goToSettings => 'Go to Settings';
+
+  @override
+  String get rideOnLabel => 'Ride on';
+
+  @override
+  String get imageBtn => 'Image';
+
+  @override
+  String get videoLinkBtn => 'Video Link';
+
+  @override
+  String get avgLabel => 'AVG';
+
+  @override
+  String get meterLabel => 'M';
+
+  @override
+  String get recordViaPhoneTitle => 'Record via Phone';
+
+  @override
+  String get recordRidesTab => 'Record Rides';
+
+  @override
+  String get pastRidesTab => 'Past Rides';
+
+  @override
+  String get statisticsTab => 'Statistics';
+
+  @override
+  String get yourPhonesLocation => 'Your Phone\'s Location';
+
+  @override
+  String get justNow => 'Just now';
+
+  @override
+  String get hoursShort => 'h';
 }

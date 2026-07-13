@@ -7,6 +7,7 @@ import '../cubit/overspeed_alert_cubit.dart';
 import '../cubit/overspeed_alert_state.dart';
 import 'package:trackify/core/common/models/vehicle_list_model.dart';
 import 'package:trackify/feature/overspeed_alert/data/model/overspeed_alert_model.dart';
+import 'package:trackify/core/widgets/trackify_loader.dart';
 
 
 class OverSpeedAlertScreen extends StatefulWidget {
@@ -55,7 +56,7 @@ class _OverSpeedAlertScreenState extends State<OverSpeedAlertScreen> {
       body: BlocBuilder<OverspeedAlertCubit, OverspeedAlertState>(
         builder: (context, state) {
           if (state is OverspeedAlertInitial) {
-            return const Center(child: CircularProgressIndicator());
+            return const Center(child: TrackifyLoader());
           }
 
           if (state is OverspeedAlertError) {
@@ -70,7 +71,7 @@ class _OverSpeedAlertScreenState extends State<OverSpeedAlertScreen> {
             return Column(
               children: [
                 if (state is OverspeedAlertLoading)
-                  const Expanded(child: Center(child: CircularProgressIndicator()))
+                  const Expanded(child: const Center(child: TrackifyLoader()))
                 else if (alerts.isEmpty)
                   Expanded(
                     child: Center(
@@ -112,9 +113,47 @@ class _OverSpeedAlertScreenState extends State<OverSpeedAlertScreen> {
                               overspeedAlert: item,
                               vehicle: selectedVehicle,
                               onDelete: () {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(content: Text(l10n.deleteFunctionalityComingSoon)),
-                                );
+                                if (item.id != null) {
+                                  showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return AlertDialog(
+                                        backgroundColor: theme.cardColor,
+                                        title: Text(
+                                          l10n.deleteAlertTitle,
+                                          style: theme.textTheme.titleMedium?.copyWith(
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        content: Text(
+                                          l10n.deleteAlertDesc,
+                                          style: theme.textTheme.bodyMedium,
+                                        ),
+                                        actions: [
+                                          TextButton(
+                                            onPressed: () => Navigator.pop(context),
+                                            child: Text(
+                                              l10n.cancel,
+                                              style: theme.textTheme.bodyMedium?.copyWith(
+                                                color: theme.colorScheme.onSurface.withOpacity(0.6),
+                                              ),
+                                            ),
+                                        ),
+                                          ElevatedButton(
+                                            style: ElevatedButton.styleFrom(
+                                              backgroundColor: Colors.redAccent,
+                                            ),
+                                            onPressed: () {
+                                              Navigator.pop(context);
+                                              context.read<OverspeedAlertCubit>().deleteOverspeedAlert(item.id!);
+                                            },
+                                            child: Text(l10n.delete, style: const TextStyle(color: Colors.white)),
+                                          ),
+                                        ],
+                                      );
+                                    },
+                                  );
+                                }
                               },
                             ),
                           );

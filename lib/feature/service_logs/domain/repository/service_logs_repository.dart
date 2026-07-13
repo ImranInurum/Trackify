@@ -21,4 +21,15 @@ abstract class ServiceLogsRepository {
     String? contact,
     String? note,
   });
+
+  ResultVoid updateServiceLog({
+    required String id,
+    String? serviceDate,
+    double? amount,
+    File? image,
+    String? centerName,
+    String? note,
+  });
+
+  ResultVoid deleteServiceLog(String id);
 }

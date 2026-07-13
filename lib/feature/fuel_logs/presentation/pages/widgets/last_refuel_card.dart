@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:trackify/l10n/app_localizations.dart';
 
+import '../../cubit/fuel_logs_cubit.dart';
 import '../../cubit/fuel_logs_state.dart';
 import 'package:trackify/core/utils/distance_utils.dart';
 
@@ -221,9 +223,12 @@ class LastRefuelCard extends StatelessWidget {
 
   void _showUpdateMileageDialog(BuildContext context, AppLocalizations l10n) {
     final theme = Theme.of(context);
+    final initialMileage = state.mileageArai == 'null' ? '' : state.mileageArai;
+    final TextEditingController _controller = TextEditingController(text: initialMileage);
+
     showDialog(
       context: context,
-      builder: (context) => Dialog(
+      builder: (ctx) => Dialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
         backgroundColor: theme.colorScheme.surface,
         child: Padding(
@@ -247,6 +252,7 @@ class LastRefuelCard extends StatelessWidget {
               ),
               const SizedBox(height: 16),
               TextField(
+                controller: _controller,
                 keyboardType: TextInputType.number,
                 decoration: InputDecoration(
                   fillColor: theme.inputDecorationTheme.fillColor,
@@ -281,7 +287,7 @@ class LastRefuelCard extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   TextButton(
-                    onPressed: () => Navigator.pop(context),
+                    onPressed: () => Navigator.pop(ctx),
                     child: Text(
                       l10n.cancel,
                       style: TextStyle(color: theme.hintColor, fontSize: 16),
@@ -289,7 +295,13 @@ class LastRefuelCard extends StatelessWidget {
                   ),
                   const SizedBox(width: 8),
                   TextButton(
-                    onPressed: () => Navigator.pop(context),
+                    onPressed: () {
+                      final mileageText = _controller.text.trim();
+                      if (mileageText.isNotEmpty) {
+                        context.read<FuelLogsCubit>().updateMileage(mileageText);
+                      }
+                      Navigator.pop(ctx);
+                    },
                     child: Text(
                       l10n.save,
                       style: TextStyle(

@@ -730,7 +730,7 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
                     zoom: 4.2,
                   ),
                   mapType: MapType.normal,
-                  style: mapState.darkMapStyle,
+                  style: Theme.of(context).brightness == Brightness.dark ? mapState.darkMapStyle : null,
                   zoomControlsEnabled: false,
                   myLocationButtonEnabled: false,
                   compassEnabled: false,

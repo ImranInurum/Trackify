@@ -13,6 +13,7 @@ import 'package:trackify/feature/trips/presentation/view/widgets/all_rides/widge
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:trackify/l10n/app_localizations.dart';
 import 'package:trackify/core/utils/distance_utils.dart';
+import 'package:trackify/core/widgets/trackify_loader.dart';
 
 class CreateTripScreen extends StatefulWidget {
   final String? initialTitle;
@@ -108,9 +109,7 @@ class _CreateTripScreenState extends State<CreateTripScreen> {
                   child: BlocBuilder<RideHistoryCubit, RideHistoryState>(
                     builder: (context, rideState) {
                       if (rideState is RideHistoryLoading) {
-                        return const Center(
-                          child: CircularProgressIndicator(color: Color(0xFFE5B14B)),
-                        );
+                        return const Center(child: TrackifyLoader());
                       }
                       if (rideState is RideHistorySuccess) {
                         final groupedRides = _groupRidesByDate(rideState.rides);
