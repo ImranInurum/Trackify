@@ -64,6 +64,7 @@ import 'package:trackify/feature/geo_fence/presentation/cubit/geo_fence_state.da
 import 'package:trackify/feature/device_warranty/data/repository/device_warranty_repository_impl.dart';
 import 'package:trackify/feature/device_warranty/data/data_source/device_warranty_data_source.dart';
 import 'package:trackify/core/config/network/network_api_service.dart';
+import 'package:trackify/core/widgets/trackify_loader.dart';
 
 class MapScreen extends StatefulWidget {
   const MapScreen({super.key});
@@ -985,7 +986,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
       builder: (context, appState) {
         final currentPos = appState.currentLocation;
         if (currentPos == null) {
-          return const Center(child: CircularProgressIndicator());
+          return const Center(child: TrackifyLoader());
         }
         LatLng? bestPos;
         double bearing = 0.0;
@@ -2370,7 +2371,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
         if (state is RideHistoryLoading) {
           return const Padding(
             padding: EdgeInsets.all(20),
-            child: Center(child: CircularProgressIndicator()),
+            child: Center(child: TrackifyLoader()),
           );
         }
         if (state is RideHistoryFailure) {
@@ -2470,7 +2471,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
           BlocBuilder<PromoVideoCubit, PromoVideoState>(
             builder: (context, state) {
               if (state is PromoVideoLoading) {
-                return const Center(child: CircularProgressIndicator());
+                return const Center(child: TrackifyLoader());
               }
               if (state is PromoVideoError) {
                 return Center(
@@ -2502,7 +2503,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                     if (index >= state.videos.length) {
                       return const Padding(
                         padding: EdgeInsets.symmetric(vertical: 20),
-                        child: Center(child: CircularProgressIndicator()),
+                        child: Center(child: TrackifyLoader()),
                       );
                     }
 

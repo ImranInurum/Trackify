@@ -9,6 +9,7 @@ import 'package:trackify/feature/my_profile/presentation/cubit/my_profile_state.
 import 'package:trackify/l10n/app_localizations.dart';
 import 'package:trackify/core/theme/app_theme_extension.dart';
 import 'package:country_state_city/country_state_city.dart' as csc;
+import 'package:trackify/core/widgets/searchable_dropdown.dart';
 
 class PersonalDetailsDialog extends StatefulWidget {
   const PersonalDetailsDialog({Key? key}) : super(key: key);
@@ -284,65 +285,34 @@ class _PersonalDetailsDialogState extends State<PersonalDetailsDialog> {
                           ),
                           const SizedBox(height: 16),
                           // Country Dropdown
-                          Align(
-                            alignment: Alignment.centerLeft,
-                            child: Padding(
-                              padding: const EdgeInsets.only(bottom: 8.0, left: 4.0),
-                              child: Text(
-                                "Country",
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w600,
-                                  color: Theme.of(context).colorScheme.onSurface,
-                                ),
-                              ),
-                            ),
-                          ),
-                          DropdownButtonFormField<String>(
+                          SearchableDropdown<String>(
+                            label: "Country",
+                            hint: "Select your country",
                             value: _selectedCountry,
-                            hint: const Text("Select your country"),
-                            isExpanded: true,
-                            icon: _isLoadingCountries 
-                                ? SizedBox(
-                                    width: 12, 
-                                    height: 12, 
-                                    child: CircularProgressIndicator(strokeWidth: 1.5, color: theme.colorScheme.primary),
-                                  )
-                                : const Icon(Icons.arrow_drop_down),
-                            decoration: InputDecoration(
-                              filled: true,
-                              fillColor: theme.cardColor,
-                              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                              border: OutlineInputBorder(borderRadius: BorderRadius.circular(8.0), borderSide: BorderSide(color: const Color(0xFFD1D5DB))),
-                              enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(8.0), borderSide: BorderSide(color: const Color(0xFFD1D5DB))),
-                              focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(8.0), borderSide: BorderSide(color: theme.colorScheme.primary, width: 1.5)),
-                            ),
                             items: (() {
                               final seen = <String>{};
-                              final uniqueItems = <DropdownMenuItem<String>>[];
+                              final uniqueItems = <String>[];
                               for (final c in _countries) {
                                 if (c.name.isEmpty) continue;
                                 if (!seen.contains(c.name)) {
                                   seen.add(c.name);
-                                  uniqueItems.add(
-                                    DropdownMenuItem<String>(
-                                      value: c.name,
-                                      child: Text("${c.flag}  ${c.name}", overflow: TextOverflow.ellipsis),
-                                    ),
-                                  );
+                                  uniqueItems.add(c.name);
                                 }
                               }
                               if (_selectedCountry != null && !seen.contains(_selectedCountry)) {
-                                uniqueItems.insert(
-                                  0,
-                                  DropdownMenuItem<String>(
-                                    value: _selectedCountry,
-                                    child: Text(_selectedCountry!, overflow: TextOverflow.ellipsis),
-                                  ),
-                                );
+                                uniqueItems.insert(0, _selectedCountry!);
                               }
                               return uniqueItems;
                             })(),
+                            itemLabel: (item) {
+                              try {
+                                final c = _countries.firstWhere((element) => element.name == item);
+                                return c.flag.isNotEmpty ? "${c.flag}  ${c.name}" : c.name;
+                              } catch (e) {
+                                return item;
+                              }
+                            },
+                            isLoading: _isLoadingCountries,
                             onChanged: (val) {
                               setState(() => _selectedCountry = val);
                               if (val != null) {
@@ -350,70 +320,31 @@ class _PersonalDetailsDialogState extends State<PersonalDetailsDialog> {
                                 _loadStates(country.isoCode);
                               }
                             },
-                            validator: (val) => val == null || val.isEmpty ? "Required field" : null,
                           ),
                           const SizedBox(height: 16),
                           
                           // State Dropdown
-                          Align(
-                            alignment: Alignment.centerLeft,
-                            child: Padding(
-                              padding: const EdgeInsets.only(bottom: 8.0, left: 4.0),
-                              child: Text(
-                                "State",
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w600,
-                                  color: Theme.of(context).colorScheme.onSurface,
-                                ),
-                              ),
-                            ),
-                          ),
-                          DropdownButtonFormField<String>(
+                          SearchableDropdown<String>(
+                            label: "State",
+                            hint: "Select your state",
                             value: _selectedState,
-                            hint: const Text("Select your state"),
-                            isExpanded: true,
-                            icon: _isLoadingStates 
-                                ? SizedBox(
-                                    width: 12, 
-                                    height: 12, 
-                                    child: CircularProgressIndicator(strokeWidth: 1.5, color: theme.colorScheme.primary),
-                                  )
-                                : const Icon(Icons.arrow_drop_down),
-                            decoration: InputDecoration(
-                              filled: true,
-                              fillColor: theme.cardColor,
-                              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                              border: OutlineInputBorder(borderRadius: BorderRadius.circular(8.0), borderSide: BorderSide(color: const Color(0xFFD1D5DB))),
-                              enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(8.0), borderSide: BorderSide(color: const Color(0xFFD1D5DB))),
-                              focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(8.0), borderSide: BorderSide(color: theme.colorScheme.primary, width: 1.5)),
-                            ),
                             items: (() {
                               final seen = <String>{};
-                              final uniqueItems = <DropdownMenuItem<String>>[];
+                              final uniqueItems = <String>[];
                               for (final s in _states) {
                                 if (s.name.isEmpty) continue;
                                 if (!seen.contains(s.name)) {
                                   seen.add(s.name);
-                                  uniqueItems.add(
-                                    DropdownMenuItem<String>(
-                                      value: s.name,
-                                      child: Text(s.name, overflow: TextOverflow.ellipsis),
-                                    ),
-                                  );
+                                  uniqueItems.add(s.name);
                                 }
                               }
                               if (_selectedState != null && !seen.contains(_selectedState)) {
-                                uniqueItems.insert(
-                                  0,
-                                  DropdownMenuItem<String>(
-                                    value: _selectedState,
-                                    child: Text(_selectedState!, overflow: TextOverflow.ellipsis),
-                                  ),
-                                );
+                                uniqueItems.insert(0, _selectedState!);
                               }
                               return uniqueItems;
                             })(),
+                            itemLabel: (item) => item,
+                            isLoading: _isLoadingStates,
                             onChanged: (val) {
                               setState(() => _selectedState = val);
                               if (val != null && _selectedCountry != null) {
@@ -422,72 +353,32 @@ class _PersonalDetailsDialogState extends State<PersonalDetailsDialog> {
                                 _loadCities(country.isoCode, state.isoCode);
                               }
                             },
-                            validator: (val) => val == null || val.isEmpty ? "Required field" : null,
                           ),
                           const SizedBox(height: 16),
                           
                           // City Dropdown
-                          Align(
-                            alignment: Alignment.centerLeft,
-                            child: Padding(
-                              padding: const EdgeInsets.only(bottom: 8.0, left: 4.0),
-                              child: Text(
-                                "City",
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w600,
-                                  color: Theme.of(context).colorScheme.onSurface,
-                                ),
-                              ),
-                            ),
-                          ),
-                          DropdownButtonFormField<String>(
+                          SearchableDropdown<String>(
+                            label: "City",
+                            hint: "Select your city",
                             value: _selectedCity,
-                            hint: const Text("Select your city"),
-                            isExpanded: true,
-                            icon: _isLoadingCities 
-                                ? SizedBox(
-                                    width: 12, 
-                                    height: 12, 
-                                    child: CircularProgressIndicator(strokeWidth: 1.5, color: theme.colorScheme.primary),
-                                  )
-                                : const Icon(Icons.arrow_drop_down),
-                            decoration: InputDecoration(
-                              filled: true,
-                              fillColor: theme.cardColor,
-                              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                              border: OutlineInputBorder(borderRadius: BorderRadius.circular(8.0), borderSide: BorderSide(color: const Color(0xFFD1D5DB))),
-                              enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(8.0), borderSide: BorderSide(color: const Color(0xFFD1D5DB))),
-                              focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(8.0), borderSide: BorderSide(color: theme.colorScheme.primary, width: 1.5)),
-                            ),
                             items: (() {
                               final seen = <String>{};
-                              final uniqueItems = <DropdownMenuItem<String>>[];
+                              final uniqueItems = <String>[];
                               for (final c in _cities) {
                                 if (c.name.isEmpty) continue;
                                 if (!seen.contains(c.name)) {
                                   seen.add(c.name);
-                                  uniqueItems.add(
-                                    DropdownMenuItem<String>(
-                                      value: c.name,
-                                      child: Text(c.name, overflow: TextOverflow.ellipsis),
-                                    ),
-                                  );
+                                  uniqueItems.add(c.name);
                                 }
                               }
                               if (_selectedCity != null && !seen.contains(_selectedCity)) {
-                                uniqueItems.insert(
-                                  0,
-                                  DropdownMenuItem<String>(
-                                    value: _selectedCity,
-                                    child: Text(_selectedCity!, overflow: TextOverflow.ellipsis),
-                                  ),
-                                );
+                                uniqueItems.insert(0, _selectedCity!);
                               }
                               return uniqueItems;
                             })(),
+                            itemLabel: (item) => item,
+                            isLoading: _isLoadingCities,
                             onChanged: (val) => setState(() => _selectedCity = val),
-                            validator: (val) => val == null || val.isEmpty ? "Required field" : null,
                           ),
                         ],
                       ),

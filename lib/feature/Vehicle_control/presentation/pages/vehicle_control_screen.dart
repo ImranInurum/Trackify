@@ -27,6 +27,7 @@ import 'package:trackify/core/utils/distance_utils.dart';
 import 'package:trackify/core/common/models/vehicle_list_model.dart';
 import 'package:trackify/app/cubit/app_cubit.dart';
 import 'package:trackify/app/cubit/app_state.dart';
+import 'package:trackify/core/widgets/trackify_loader.dart';
 
 class VehicleControlScreen extends StatelessWidget {
   final bool isFromGarage;
@@ -305,11 +306,21 @@ class _VehicleControlViewState extends State<VehicleControlView> {
                         return l10n.mobileNumberRequired;
                       }
                       final cleanValue = value.trim();
-                      if (cleanValue.length < 7 || cleanValue.length > 15) {
-                        return l10n.invalidMobileNumber;
-                      }
                       if (!RegExp(r'^[0-9]+$').hasMatch(cleanValue)) {
                         return l10n.invalidMobileNumber;
+                      }
+
+                      if (selectedPhoneCode == '+91') {
+                        if (cleanValue.length != 10) {
+                          return l10n.invalidMobileNumber;
+                        }
+                        if (!RegExp(r'^[6-9][0-9]{9}$').hasMatch(cleanValue)) {
+                          return l10n.invalidMobileNumber;
+                        }
+                      } else {
+                        if (cleanValue.length < 7 || cleanValue.length > 15) {
+                          return l10n.invalidMobileNumber;
+                        }
                       }
                       return null;
                     },
@@ -405,7 +416,7 @@ class _VehicleControlViewState extends State<VehicleControlView> {
         child: BlocBuilder<VehicleControlCubit, VehicleControlState>(
           builder: (context, state) {
             if (state is VehicleControlLoading) {
-              return const Center(child: CircularProgressIndicator());
+              return const Center(child: TrackifyLoader());
             }
             if (state is VehicleControlError) {
               return Center(
@@ -1172,7 +1183,9 @@ class _VehicleControlViewState extends State<VehicleControlView> {
           ),
           backgroundColor: Colors.orange.shade700,
           behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
           duration: const Duration(seconds: 3),
         ),
       );
@@ -1314,7 +1327,9 @@ class _VehicleControlViewState extends State<VehicleControlView> {
           ),
           backgroundColor: Colors.orange.shade700,
           behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
           duration: const Duration(seconds: 3),
         ),
       );

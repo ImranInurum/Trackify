@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../cubit/feature_cubit.dart';
 import '../cubit/feature_state.dart';
 import 'geo_fenc_screen.dart';
+import 'package:trackify/core/widgets/trackify_loader.dart';
 
 class FeatureDetailsScreen extends StatefulWidget {
 
@@ -92,11 +93,7 @@ class _FeatureDetailsScreenState
           /// ================= LOADING =================
           if (state is FeatureLoading) {
 
-            return Center(
-              child: CircularProgressIndicator(
-                color: colorScheme.primary,
-              ),
-            );
+            return const Center(child: TrackifyLoader());
           }
 
           /// ================= ERROR =================

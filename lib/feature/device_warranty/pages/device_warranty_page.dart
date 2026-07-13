@@ -8,6 +8,7 @@ import 'package:trackify/feature/device_warranty/presentation/cubit/device_warra
 import 'package:trackify/feature/device_warranty/domain/entities/device_warranty_entity.dart';
 import '../../../l10n/app_localizations.dart';
 import 'device_warranty_confirm_screen.dart';
+import 'package:trackify/core/widgets/trackify_loader.dart';
 
 class WarrantyScreen extends StatefulWidget {
   const WarrantyScreen({super.key});
@@ -93,9 +94,7 @@ class _WarrantyScreenState extends State<WarrantyScreen> {
       body: BlocBuilder<DeviceWarrantyCubit, DeviceWarrantyState>(
         builder: (context, state) {
           if (state is DeviceWarrantyLoading || state is DeviceWarrantyInitial) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
+            return const Center(child: TrackifyLoader());
           }
 
           if (state is DeviceWarrantyError) {
@@ -224,9 +223,7 @@ class _WarrantyScreenState extends State<WarrantyScreen> {
         placeholder: (context, url) => const SizedBox(
           height: 100,
           width: 100,
-          child: Center(
-            child: CircularProgressIndicator(strokeWidth: 2),
-          ),
+          child: const Center(child: TrackifyLoader()),
         ),
         errorWidget: (context, url, error) => Image.asset(
           AppImages.installDevices,

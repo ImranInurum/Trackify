@@ -10,6 +10,7 @@ import '../../domain/entity/plus_membership_entity.dart';
 import '../../data/data_source/plus_membership_remote_data_source.dart';
 import '../../data/repository/plus_membership_repository_impl.dart';
 import '../../domain/usecase/get_plus_membership_details.dart';
+import 'package:trackify/core/widgets/trackify_loader.dart';
 
 class UpgradeToPlusScreen extends StatefulWidget {
   const UpgradeToPlusScreen({super.key});
@@ -86,9 +87,7 @@ class _UpgradeToPlusScreenState extends State<UpgradeToPlusScreen> {
           if (state is UpgradeToPlusLoading || state is UpgradeToPlusInitial) {
             return Scaffold(
               backgroundColor: AppColors.backgroundDark,
-              body: const Center(
-                child: CircularProgressIndicator(color: AppColors.goldStart),
-              ),
+              body: const Center(child: TrackifyLoader()),
             );
           }
 

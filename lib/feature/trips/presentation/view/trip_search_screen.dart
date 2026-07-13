@@ -9,6 +9,7 @@ import 'package:trackify/feature/trips/presentation/view/widgets/trips/widgets/t
 import 'package:trackify/feature/trips/presentation/view/widgets/all_rides/widgets/ride_card.dart';
 import 'package:trackify/l10n/app_localizations.dart';
 import 'package:trackify/core/utils/distance_utils.dart';
+import 'package:trackify/core/widgets/trackify_loader.dart';
 
 class TripSearchScreen extends StatefulWidget {
   final bool isTripSearch;
@@ -91,9 +92,7 @@ class _TripSearchScreenState extends State<TripSearchScreen> {
             child: BlocBuilder<RideHistoryCubit, RideHistoryState>(
               builder: (context, state) {
                 if (state is RideHistoryLoading) {
-                  return const Center(
-                    child: CircularProgressIndicator(color: Color(0xFFE5B14B)),
-                  );
+                  return const Center(child: TrackifyLoader());
                 }
                 if (state is RideHistorySuccess) {
                   if (state.rides.isEmpty) {

@@ -9,28 +9,18 @@ import 'package:trackify/core/config/network/network_api_service.dart';
 import 'fuel_logs_state.dart';
 
 class FuelLogsCubit extends Cubit<FuelLogsState> {
-
   /// Stores the current IMEI so we can reload after adding a refuel.
   String _currentImei = '';
 
   FuelLogsCubit() : super(FuelLogsInitial());
 
-  Future<void> loadFuelLogs(
-      String imei,
-      ) async {
-
+  Future<void> loadFuelLogs(String imei) async {
     try {
-
       _currentImei = imei;
 
       emit(FuelLogsLoading());
 
-      final response = await http.get(
-
-        Uri.parse(
-          ApiURL.dashboard(imei),
-        ),
-      );
+      final response = await http.get(Uri.parse(ApiURL.dashboard(imei)));
 
       print("=========== FUEL LOG API HIT ===========");
 
@@ -39,125 +29,85 @@ class FuelLogsCubit extends Cubit<FuelLogsState> {
       print("RESPONSE BODY : ${response.body}");
 
       if (response.statusCode == 200) {
+        final decodedData = jsonDecode(response.body);
 
-        final decodedData =
-        jsonDecode(response.body);
+        final data = decodedData['data'];
 
-        final data =
-        decodedData['data'];
-
-        final lastRefuel =
-        data['lastRefuel'];
+        final lastRefuel = data['lastRefuel'];
 
         emit(
-
           FuelLogsLoaded(
-
             // =========================
             // OLD STATE DATA
             // =========================
+            odometerReading: data['odometerReading']?.toString() ?? '0',
 
-            odometerReading:
-            data['odometerReading']?.toString() ?? '0',
+            tankCapacity: data['tankCapacity']?.toString() ?? '0',
 
-            tankCapacity:
-            data['tankCapacity']?.toString() ?? '0',
+            fuelRemaining: data['fuelRemaining']?.toString() ?? '0',
 
-            fuelRemaining:
-            data['fuelRemaining']?.toString() ?? '0',
+            distanceRemaining: data['distanceRemaining']?.toString() ?? '0',
 
-            distanceRemaining:
-            data['distanceRemaining']?.toString() ?? '0',
+            mileageArai: data['vehicleMileage']?.toString() ?? '0',
 
-            mileageArai:
-            data['vehicleMileage']?.toString() ?? '0',
-
-            distanceTravelled:
-            data['distanceTravelled']?.toString() ?? '0',
+            distanceTravelled: data['distanceTravelled']?.toString() ?? '0',
 
             spendingAmount:
-            data['spending']?['thisMonthAmount']?.toString() ?? '0',
+                data['spending']?['thisMonthAmount']?.toString() ?? '0',
 
             spendingLiters:
-            data['spending']?['thisMonthFuel']?.toString() ?? '0',
+                data['spending']?['thisMonthFuel']?.toString() ?? '0',
 
-            lastRefuelDate:
-            lastRefuel?['date']?.toString() ?? "N/A",
+            lastRefuelDate: lastRefuel?['date']?.toString() ?? "N/A",
 
-            lastRefuelAmount:
-            lastRefuel?['amount']?.toString() ?? "0",
+            lastRefuelAmount: lastRefuel?['amount']?.toString() ?? "0",
 
-            lastRefuelLiters:
-            lastRefuel?['fuelFilled']?.toString() ?? "0",
+            lastRefuelLiters: lastRefuel?['fuelFilled']?.toString() ?? "0",
 
             totalFuelAdded:
-            data['spending']?['thisMonthFuel']?.toString() ?? '0',
+                data['spending']?['thisMonthFuel']?.toString() ?? '0',
 
             totalSpendings:
-            data['spending']?['thisMonthAmount']?.toString() ?? '0',
+                data['spending']?['thisMonthAmount']?.toString() ?? '0',
 
-            averageMileage:
-            data['vehicleMileage']?.toString() ?? '0',
+            averageMileage: data['vehicleMileage']?.toString() ?? '0',
 
-            refuelCount:
-            data['refuelCount']?.toString() ?? '0',
+            refuelCount: data['refuelCount']?.toString() ?? '0',
 
             refuelLogs: const [],
 
             // =========================
             // NEW API DATA
             // =========================
+            imei: data['imei']?.toString() ?? '',
 
-            imei:
-            data['imei']?.toString() ?? '',
+            vehicleImage: data['vehicleImage']?.toString() ?? '',
 
-            vehicleImage:
-            data['vehicleImage']?.toString() ?? '',
+            vehicleIcon: data['vehicleIcon']?.toString() ?? '',
 
-            vehicleIcon:
-            data['vehicleIcon']?.toString() ?? '',
-
-            vehicleColor:
-            data['vehicleColor']?.toString() ?? '',
+            vehicleColor: data['vehicleColor']?.toString() ?? '',
 
             thisWeekAmount:
-            data['spending']?['thisWeekAmount']?.toString() ?? '0',
+                data['spending']?['thisWeekAmount']?.toString() ?? '0',
 
-            thisWeekFuel:
-            data['spending']?['thisWeekFuel']?.toString() ?? '0',
+            thisWeekFuel: data['spending']?['thisWeekFuel']?.toString() ?? '0',
 
             thisMonthAmount:
-            data['spending']?['thisMonthAmount']?.toString() ?? '0',
+                data['spending']?['thisMonthAmount']?.toString() ?? '0',
 
             thisMonthFuel:
-            data['spending']?['thisMonthFuel']?.toString() ?? '0',
-            
+                data['spending']?['thisMonthFuel']?.toString() ?? '0',
+
             id: '',
           ),
         );
-
       } else {
-
-        emit(
-
-          const FuelLogsError(
-            "Failed To Load Fuel Logs",
-          ),
-        );
+        emit(const FuelLogsError("Failed To Load Fuel Logs"));
       }
-
     } catch (e) {
+      print("FUEL LOG ERROR : $e");
 
-      print(
-        "FUEL LOG ERROR : $e",
-      );
-
-      emit(
-
-        FuelLogsError(
-          e.toString(),
-        ),
-      );
+      emit(FuelLogsError(e.toString()));
     }
   }
 
@@ -180,7 +130,7 @@ class FuelLogsCubit extends Cubit<FuelLogsState> {
           "currentOdometer": int.tryParse(odometerReading) ?? 0,
         },
       );
-      
+
       response.fold(
         (failure) => throw Exception(failure.message),
         (success) async => await reloadFuelLogs(),
@@ -193,9 +143,14 @@ class FuelLogsCubit extends Cubit<FuelLogsState> {
 
   Future<void> updateTankCapacity(String capacity) async {
     if (_currentImei.isEmpty) return;
+    final currentState = state;
     try {
       final repo = VehicleControlRepositoryImpl();
-      await repo.updateTankCapacity(_currentImei, capacity);
+      String currentMileage = '';
+      if (currentState is FuelLogsLoaded) {
+        currentMileage = currentState.mileageArai;
+      }
+      await repo.updateTankCapacity(_currentImei, capacity, currentMileage);
       await reloadFuelLogs();
     } catch (e) {
       print("Tank capacity update error: $e");
@@ -205,9 +160,14 @@ class FuelLogsCubit extends Cubit<FuelLogsState> {
 
   Future<void> updateMileage(String mileage) async {
     if (_currentImei.isEmpty) return;
+    final currentState = state;
     try {
       final repo = VehicleControlRepositoryImpl();
-      await repo.updateMileage(_currentImei, mileage);
+      String currentTankCapacity = '';
+      if (currentState is FuelLogsLoaded) {
+        currentTankCapacity = currentState.tankCapacity;
+      }
+      await repo.updateMileage(_currentImei, mileage, currentTankCapacity);
       await reloadFuelLogs();
     } catch (e) {
       print("Mileage update error: $e");

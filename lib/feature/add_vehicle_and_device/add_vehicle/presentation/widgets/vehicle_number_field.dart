@@ -33,14 +33,43 @@ class _VehicleNumberFieldState extends State<VehicleNumberField> {
   bool _isValidVehicleNumber(String number) {
     final normalized = number.replaceAll(' ', '').replaceAll('-', '').toUpperCase();
     if (normalized.isEmpty) return false;
-    final indianRegex = RegExp(r'^[A-Z]{2}[0-9]{1,2}[A-Z]{1,3}[0-9]{1,4}$');
-    final swissRegex = RegExp(r'^[A-Z]{2}[0-9]{1,6}$');
-    final germanRegex = RegExp(r'^[A-Z]{2,5}[0-9]{1,4}[EH]?$');
+
+    // 1. India / UK Pattern: Letters -> Numbers -> Letters
+    // If a plate starts with 2 letters, 1-2 numbers, and then letters, it's definitively this style.
+    if (RegExp(r'^[A-Z]{2}[0-9]{1,2}[A-Z]').hasMatch(normalized)) {
+      // Indian: UP32AB1234 (Strictly requires 4 digits at the end)
+      final indianRegex = RegExp(r'^[A-Z]{2}[0-9]{1,2}[A-Z]{1,3}[0-9]{4}$');
+      // UK: AB12CDE (Strictly requires 3 letters at the end)
+      final ukRegex = RegExp(r'^[A-Z]{2}[0-9]{2}[A-Z]{3}$');
+      
+      return indianRegex.hasMatch(normalized) || ukRegex.hasMatch(normalized);
+    }
+
+    // 2. Italy: Exactly 7 characters (e.g. AB123CD)
     final italyRegex = RegExp(r'^[A-Z]{2}[0-9]{3}[A-Z]{2}$');
-    return indianRegex.hasMatch(normalized) ||
-        swissRegex.hasMatch(normalized) ||
-        germanRegex.hasMatch(normalized) ||
-        italyRegex.hasMatch(normalized);
+    if (italyRegex.hasMatch(normalized) && normalized.length == 7) {
+      return true;
+    }
+
+    // 3. Germany: 5 to 9 characters (1-3 letters, 1-2 letters, 1-4 numbers)
+    final germanRegex = RegExp(r'^[A-Z]{1,3}[A-Z]{1,2}[0-9]{1,4}[EH]?$');
+    if (germanRegex.hasMatch(normalized) && normalized.length >= 5 && normalized.length <= 9) {
+      return true;
+    }
+
+    // 4. Switzerland: 5 to 8 characters (2 letters, 3-6 numbers)
+    final swissRegex = RegExp(r'^[A-Z]{2}[0-9]{3,6}$');
+    if (swissRegex.hasMatch(normalized) && normalized.length >= 5 && normalized.length <= 8) {
+      return true;
+    }
+
+    // 5. General Fallback: 6 to 15 characters, must contain both letters and numbers
+    final generalRegex = RegExp(r'^(?=.*[A-Z])(?=.*[0-9])[A-Z0-9]{6,15}$');
+    if (generalRegex.hasMatch(normalized)) {
+      return true;
+    }
+
+    return false;
   }
 
   @override
@@ -62,9 +91,11 @@ class _VehicleNumberFieldState extends State<VehicleNumberField> {
         ),
         const SizedBox(height: 8),
         TextFormField(
+          autovalidateMode: AutovalidateMode.onUserInteraction,
           controller: widget.controller,
           textCapitalization: TextCapitalization.characters,
           keyboardType: TextInputType.text,
+          maxLength: 15,
           style: theme.textTheme.bodyLarge,
           inputFormatters: [
             FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z0-9 \-]')),
@@ -91,6 +122,7 @@ class _VehicleNumberFieldState extends State<VehicleNumberField> {
             return null;
           },
           decoration: InputDecoration(
+            counterText: '',
             hintText: "e.g. UP32AB1234",
             hintStyle: theme.textTheme.bodyMedium?.copyWith(
               color: theme.hintColor,
@@ -136,7 +168,7 @@ class _VehicleNumberFieldState extends State<VehicleNumberField> {
         Text(
           "Enter your vehicle registration number as printed on the RC.",
           style: theme.textTheme.bodySmall?.copyWith(
-            color: theme.colorScheme.onSurface.withOpacity(0.5),
+            color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
             fontSize: 12,
           ),
         ),

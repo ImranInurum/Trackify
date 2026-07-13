@@ -47,6 +47,8 @@ class ApiURL {
       "$baseURL/api/vehicle-control/$imei";
   static String deleteVehicle(String id) =>
       "$baseURL/api/vehicle/vehicle/$id";
+  static String checkImei(String imei) =>
+      "$baseURL/api/vehicle/check-imei/$imei";
 
   static String getVehiclesByUserId(String userId) =>
       "$baseURL/api/vehicle/get-vehicles?userId=$userId";
@@ -85,8 +87,8 @@ class ApiURL {
   // -------------------------
   // Notification
   // -------------------------
-  static String notifications(String userId) =>
-      "$baseURL/api/notification/$userId";
+  static String notifications(String userId, {int page = 1, int limit = 20}) =>
+      "$baseURL/api/notification/user/$userId?page=$page&limit=$limit";
   static const String alertTypes = "$baseURL/api/alert-types";
 
   // -------------------------

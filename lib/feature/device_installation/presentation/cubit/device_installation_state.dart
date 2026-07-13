@@ -14,6 +14,8 @@ class DeviceInstallationLoading extends DeviceInstallationState {}
 
 class DeviceInstallationSuccess extends DeviceInstallationState {}
 
+class DeviceInstallationImeiAlreadyAssigned extends DeviceInstallationState {}
+
 class DeviceInstallationFailure extends DeviceInstallationState {
   final AppException exception;
   const DeviceInstallationFailure(this.exception);

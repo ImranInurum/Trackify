@@ -27,6 +27,8 @@ import 'package:trackify/feature/record_via_phone/presentation/pages/ride_playba
 import 'package:trackify/feature/record_via_phone/presentation/pages/widgets/share_ride_bottom_sheet.dart';
 import 'package:trackify/feature/map/presentation/pages/shared_with_me_screen.dart';
 import 'package:trackify/feature/record_via_phone/presentation/pages/shared_rides_screen.dart';
+import 'package:trackify/core/widgets/trackify_loader.dart';
+import 'package:trackify/feature/location_sharing/presentation/pages/location_sharing_screen.dart';
 
 class RecordViaPhoneScreen extends StatefulWidget {
   final String imei;
@@ -787,16 +789,10 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: isDark
-              ? [const Color(0xFF1B2536), const Color(0xFF131A26)]
-              : [Colors.white, const Color(0xFFF8FAFC)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
+        color: theme.cardColor,
         borderRadius: BorderRadius.circular(24),
         border: Border.all(
-          color: isDark ? Colors.white.withOpacity(0.05) : Colors.black.withOpacity(0.05),
+          color: theme.colorScheme.onSurface.withOpacity(0.05),
           width: 1,
         ),
         boxShadow: [
@@ -938,7 +934,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
                     child: Container(
                       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                       decoration: BoxDecoration(
-                        color: const Color(0xFF131A26),
+                        color: isDark ? const Color(0xFF131A26) : Colors.white,
                         borderRadius: BorderRadius.circular(24),
                         border: Border.all(color: Colors.amber, width: 1.5),
                         boxShadow: [
@@ -1347,36 +1343,10 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
                               mini: true,
                               backgroundColor: Theme.of(context).cardColor,
                               onPressed: () {
-                                final cubit = context
-                                    .read<RecordViaPhoneCubit>();
-                                final state = cubit.state;
-
-                                if (state.currentRidePoints.isEmpty) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      content: Text(
-                                        'No ride data to share yet.',
-                                      ),
-                                    ),
-                                  );
-                                  return;
-                                }
-
-                                showModalBottomSheet(
-                                  context: context,
-                                  isScrollControlled: true,
-                                  backgroundColor: Colors.transparent,
-                                  builder: (ctx) => ShareRideBottomSheet(
-                                    title: "My Ride on Trackify",
-                                    date: DateTime.now(),
-                                    distance: state.rideDistance,
-                                    duration: state.rideDuration,
-                                    avgSpeed: state.rideDuration.inSeconds > 0
-                                        ? (state.rideDistance /
-                                              (state.rideDuration.inSeconds /
-                                                  3600))
-                                        : 0.0,
-                                    routePoints: state.currentRidePoints,
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => const LocationSharingScreen(),
                                   ),
                                 );
                               },
@@ -2484,7 +2454,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
         final themeMode = appState.themeMode;
 
         if (currentPos == null && initialTarget == null) {
-          return const Center(child: CircularProgressIndicator());
+          return const Center(child: TrackifyLoader());
         }
 
         final target =

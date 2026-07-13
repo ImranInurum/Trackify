@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import '../../cubit/fuel_stations_cubit.dart';
 import '../../cubit/fuel_stations_state.dart';
 import '../../../data/model/fuel_station_model.dart';
+import 'package:trackify/core/widgets/trackify_loader.dart';
 
 class FuelStationsTabView extends StatefulWidget {
   const FuelStationsTabView({super.key});
@@ -45,9 +46,7 @@ class _FuelStationsTabViewState extends State<FuelStationsTabView> {
     return BlocBuilder<FuelStationsCubit, FuelStationsState>(
       builder: (context, state) {
         if (state is FuelStationsLoading) {
-          return Center(
-            child: CircularProgressIndicator(color: theme.primaryColor),
-          );
+          return const Center(child: TrackifyLoader());
         }
 
         if (state is FuelStationsError) {

@@ -8,6 +8,7 @@ import '../widgets/service_log_card.dart';
 import 'add_service_log_screen.dart';
 import 'service_details_screen.dart';
 import '../../../../l10n/app_localizations.dart';
+import 'package:trackify/core/widgets/trackify_loader.dart';
 
 class ServiceLogsScreen extends StatefulWidget {
   const ServiceLogsScreen({super.key});
@@ -76,7 +77,7 @@ class _ServiceLogsScreenState extends State<ServiceLogsScreen> {
     }
 
     if (state is ServiceLogsLoading) {
-      return const Center(child: CircularProgressIndicator());
+      return const Center(child: TrackifyLoader());
     }
 
     if (state is ServiceLogsError) {

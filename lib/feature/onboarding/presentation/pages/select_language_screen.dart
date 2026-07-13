@@ -12,6 +12,7 @@ import '../../../../core/constants/app_languages.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../cubit/splash_cubit.dart';
 import '../cubit/splash_state.dart';
+import 'package:trackify/core/widgets/trackify_loader.dart';
 
 class SelectLanguageScreen extends StatefulWidget {
   const SelectLanguageScreen({super.key});
@@ -68,11 +69,7 @@ class _SelectLanguageScreenState extends State<SelectLanguageScreen> {
                         splashState.logo.path!.isNotEmpty) {
                       return CachedNetworkImage(
                         imageUrl: splashState.logo.path!,
-                        placeholder: (context, url) => Center(
-                          child: CircularProgressIndicator(
-                            color: theme.colorScheme.primary,
-                          ),
-                        ),
+                        placeholder: (context, url) => const Center(child: TrackifyLoader()),
                         errorWidget: (context, url, err) => _buildMainContent(
                           context,
                           theme,

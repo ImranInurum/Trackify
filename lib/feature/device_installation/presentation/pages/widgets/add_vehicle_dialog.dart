@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:trackify/core/widgets/searchable_dropdown.dart';
 import 'package:trackify/feature/add_vehicle_and_device/add_vehicle/data/models/vehicle_config_models.dart';
 
 import 'package:trackify/core/theme/app_theme_extension.dart';
@@ -9,6 +10,7 @@ import 'package:trackify/l10n/app_localizations.dart';
 import 'package:trackify/feature/add_vehicle_and_device/add_vehicle/presentation/cubit/add_vehicle_cubit.dart';
 import 'package:trackify/feature/add_vehicle_and_device/add_vehicle/presentation/cubit/add_vehicle_state.dart';
 import 'package:trackify/feature/add_vehicle_and_device/add_vehicle/presentation/widgets/vehicle_number_field.dart';
+import 'package:trackify/core/widgets/trackify_loader.dart';
 
 class AddVehicleDialog extends StatefulWidget {
   const AddVehicleDialog({super.key});
@@ -137,76 +139,15 @@ class _AddVehicleDialogState extends State<AddVehicleDialog> {
     String? hint,
     VoidCallback? onDisabledTap,
   }) {
-    final theme = Theme.of(context);
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              label,
-              style: theme.textTheme.labelMedium?.copyWith(
-                fontWeight: FontWeight.w500,
-                color: theme.colorScheme.onSurface.withOpacity(0.6),
-              ),
-            ),
-            if (isLoading)
-              SizedBox(
-                height: 12,
-                width: 12,
-                child: CircularProgressIndicator(strokeWidth: 1.5, color: theme.colorScheme.primary),
-              ),
-          ],
-        ),
-        const SizedBox(height: 6),
-        GestureDetector(
-          onTap: (onChanged == null || items.isEmpty) && !isLoading ? onDisabledTap : null,
-          behavior: HitTestBehavior.opaque,
-          child: Container(
-            height: 48,
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              color: Colors.transparent,
-              borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: theme.colorScheme.onSurface.withOpacity(0.12)),
-            ),
-            padding: const EdgeInsets.symmetric(horizontal: 14),
-            child: Theme(
-              data: theme.copyWith(
-                splashColor: Colors.transparent,
-                highlightColor: Colors.transparent,
-                hoverColor: Colors.transparent,
-              ),
-              child: DropdownButtonHideUnderline(
-                child: DropdownButton<T>(
-                  dropdownColor: theme.scaffoldBackgroundColor,
-                  value: value,
-                  isExpanded: true,
-                  isDense: true,
-                  focusColor: Colors.transparent,
-                  borderRadius: BorderRadius.circular(12),
-                  elevation: 4,
-                  hint: Text(
-                    hint ?? label,
-                    style: TextStyle(color: theme.colorScheme.onSurface.withOpacity(0.5), fontSize: 14),
-                  ),
-                  icon: Icon(Icons.arrow_drop_down, color: theme.colorScheme.primary),
-                  items: items
-                      .map(
-                        (e) => DropdownMenuItem(
-                          value: e,
-                          child: Text(itemLabel(e), style: TextStyle(color: theme.colorScheme.onSurface, fontSize: 14)),
-                        ),
-                      )
-                      .toList(),
-                  onChanged: isLoading ? null : onChanged,
-                ),
-              ),
-            ),
-          ),
-        ),
-      ],
+    return SearchableDropdown<T>(
+      label: label,
+      value: value,
+      items: items,
+      itemLabel: itemLabel,
+      onChanged: onChanged,
+      isLoading: isLoading,
+      hint: hint,
+      onDisabledTap: onDisabledTap,
     );
   }
 
@@ -358,7 +299,7 @@ class _AddVehicleDialogState extends State<AddVehicleDialog> {
                             if (state.isLoadingConfig && state.configs.isEmpty) {
                               return const Padding(
                                 padding: EdgeInsets.only(top: 100),
-                                child: Center(child: CircularProgressIndicator()),
+                                child: const Center(child: TrackifyLoader()),
                               );
                             }
 

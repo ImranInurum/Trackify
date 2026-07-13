@@ -10,6 +10,7 @@ import '../../../add_vehicle_and_device/add_vehicle/presentation/cubit/add_vehic
 import '../../../add_vehicle_and_device/add_vehicle/presentation/widgets/vehicle_number_field.dart';
 import '../../domain/entities/vehicle_control_entity.dart';
 import '../cubit/vehicle_control_cubit.dart';
+import 'package:trackify/core/widgets/trackify_loader.dart';
 
 class EditVehicleScreen extends StatelessWidget {
   final VehicleControlEntity vehicle;
@@ -326,7 +327,7 @@ class _EditVehicleViewState extends State<_EditVehicleView> {
           _runPreselectStages(state, context.read<AddVehicleCubit>());
 
           if (state.isLoadingConfig && state.configs.isEmpty) {
-            return const Center(child: CircularProgressIndicator());
+            return const Center(child: TrackifyLoader());
           }
 
           return SingleChildScrollView(

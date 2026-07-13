@@ -7,6 +7,7 @@ import '../../data/model/my_issue_model.dart';
 import '../../data/model/suggestion_model.dart';
 import '../cubit/help_cubit.dart';
 import '../cubit/help_state.dart';
+import 'package:trackify/core/widgets/trackify_loader.dart';
 
 class MyIssueScreen
     extends StatefulWidget {
@@ -73,10 +74,7 @@ class _MyIssueScreenState
         builder: (context, state) {
 
           if (state.isLoading) {
-            return const Center(
-              child:
-              CircularProgressIndicator(),
-            );
+            return const Center(child: TrackifyLoader());
           }
 
           if (state.error != null) {

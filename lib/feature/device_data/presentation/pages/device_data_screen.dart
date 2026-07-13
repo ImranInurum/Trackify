@@ -8,6 +8,7 @@ import '../../../order_summary/presentation/pages/order_summary_screen.dart';
 import '../../domain/entity/recharge_plan_entity.dart';
 import '../cubit/device_data_cubit.dart';
 import '../cubit/device_data_state.dart';
+import 'package:trackify/core/widgets/trackify_loader.dart';
 
 class DeviceDataScreen extends StatefulWidget {
   const DeviceDataScreen({super.key});
@@ -34,7 +35,7 @@ class _DeviceDataScreenState extends State<DeviceDataScreen> {
     final state = context.watch<DeviceDataCubit>().state;
 
     if (state is DeviceDataLoading) {
-      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+      return const Scaffold(body: const Center(child: TrackifyLoader()));
     }
 
     if (state is DeviceDataError) {

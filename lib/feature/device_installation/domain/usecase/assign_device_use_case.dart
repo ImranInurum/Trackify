@@ -10,4 +10,8 @@ class AssignDeviceUseCase {
   ResultFuture<dynamic> assignDevice({required AssignDeviceRequest request}) {
     return _repository.assignDevice(request);
   }
+
+  ResultFuture<bool> checkImeiAssigned(String imei) {
+    return _repository.checkImeiAssigned(imei);
+  }
 }

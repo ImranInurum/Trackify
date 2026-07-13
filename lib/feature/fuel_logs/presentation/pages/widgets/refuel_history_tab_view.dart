@@ -13,6 +13,7 @@ import '../../cubit/refuel_history_state.dart';
 
 import 'refuel_history/refuel_log_list_item.dart';
 import 'refuel_history/refuel_summary_grid.dart';
+import 'package:trackify/core/widgets/trackify_loader.dart';
 
 class RefuelHistoryTabView extends StatefulWidget {
   final String imei;
@@ -50,7 +51,7 @@ class _RefuelHistoryTabViewState extends State<RefuelHistoryTabView> {
     return BlocBuilder<RefuelHistoryCubit, RefuelHistoryState>(
       builder: (context, refuelState) {
         if (refuelState is RefuelHistoryLoading) {
-          return const Center(child: CircularProgressIndicator());
+          return const Center(child: TrackifyLoader());
         }
 
         if (refuelState is RefuelHistoryLoaded) {

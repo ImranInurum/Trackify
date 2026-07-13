@@ -34,6 +34,7 @@ import 'package:trackify/feature/geo_fence/presentation/cubit/geo_fence_cubit.da
 import 'package:trackify/feature/geo_fence/presentation/cubit/geo_fence_state.dart';
 import 'package:trackify/feature/my_garage/presentation/view/products_screen.dart';
 import 'package:trackify/feature/device_installation/presentation/pages/device_installation_screen.dart';
+import 'package:trackify/core/widgets/trackify_loader.dart';
 
 class FullScreenMap extends StatefulWidget {
   final Vehicles? selectedVehicle;
@@ -1257,7 +1258,7 @@ class _FullScreenMapState extends State<FullScreenMap>
       builder: (context, appState) {
         final currentPos = appState.currentLocation;
         if (currentPos == null) {
-          return const Center(child: CircularProgressIndicator());
+          return const Center(child: TrackifyLoader());
         }
 
         // Prioritize Live Position from Socket
@@ -1751,9 +1752,7 @@ class _FullScreenMapState extends State<FullScreenMap>
                             ),
                           ),
                           height: 200,
-                          child: const Center(
-                            child: CircularProgressIndicator(),
-                          ),
+                          child: const Center(child: TrackifyLoader()),
                         );
                       }
 

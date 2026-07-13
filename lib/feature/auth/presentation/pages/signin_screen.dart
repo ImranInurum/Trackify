@@ -20,6 +20,7 @@ import '../../../onboarding/presentation/pages/select_language_screen.dart';
 import '../cubit/auth_cubit.dart';
 import '../cubit/auth_state.dart';
 import 'forgot_password_screen.dart';
+import 'package:trackify/core/widgets/trackify_loader.dart';
 
 class SignInScreen extends StatefulWidget {
   // final bool isFromSignUp;
@@ -76,9 +77,7 @@ class _SignInScreenState extends State<SignInScreen> {
                 imageUrl: state.logo.path!,
                 height: 220,
                 fit: BoxFit.contain,
-                placeholder: (context, url) => Center(
-                  child: CircularProgressIndicator(color: colorScheme.primary),
-                ),
+                placeholder: (context, url) => const Center(child: TrackifyLoader()),
                 errorWidget: (context, url, error) => Icon(
                   Icons.track_changes_rounded,
                   size: 88,

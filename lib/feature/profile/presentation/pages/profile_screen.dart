@@ -31,6 +31,7 @@ import '../../../notifications/presentation/screen/notification_timeline.dart';
 import 'package:trackify/core/common/models/vehicle_list_model.dart';
 import '../../../Vehicle_control/data/repositories/vehicle_control_repository_impl.dart';
 import 'package:trackify/core/utils/distance_utils.dart';
+import 'package:trackify/core/widgets/trackify_loader.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -188,12 +189,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 ? CachedNetworkImage(
                                     imageUrl: profileImageUrl,
                                     fit: BoxFit.cover,
-                                    placeholder: (context, url) => const Center(
-                                      child: CircularProgressIndicator(
-                                        strokeWidth: 2,
-                                        color: Colors.white,
-                                      ),
-                                    ),
+                                    placeholder: (context, url) =>
+                                        const Center(child: TrackifyLoader()),
                                     errorWidget: (context, url, error) =>
                                         Center(
                                           child: Text(
@@ -258,6 +255,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ),
                         Icon(
                           Icons.chevron_right,
+                          size: 40,
                           color: Theme.of(
                             context,
                           ).colorScheme.onSurface.withOpacity(0.3),
@@ -327,7 +325,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   },
                   child: Container(
                     margin: const EdgeInsets.symmetric(horizontal: 16),
-                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 14,
+                      vertical: 10,
+                    ),
                     decoration: BoxDecoration(
                       color: Theme.of(context).cardColor,
                       borderRadius: BorderRadius.circular(16),
@@ -400,7 +401,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   child: BlocBuilder<ProfileCubit, ProfileState>(
                     builder: (context, state) {
                       if (state is VehiclesLoading) {
-                        return const Center(child: CircularProgressIndicator());
+                        return const Center(child: TrackifyLoader());
                       }
                       if (state is VehiclesLoaded &&
                           state.vehicles.isNotEmpty) {
@@ -424,9 +425,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                         final isLocked =
                             _vehicleLockStates[vehicle.imei] ?? false;
-                            
-                        final hasDevice = selectedImei.isNotEmpty && vehicle.imei == selectedImei;
-                        final isDeviceInstalled = vehicle.imei != null && vehicle.imei!.isNotEmpty;
+
+                        final hasDevice =
+                            selectedImei.isNotEmpty &&
+                            vehicle.imei == selectedImei;
+                        final isDeviceInstalled =
+                            vehicle.imei != null && vehicle.imei!.isNotEmpty;
 
                         return VehicleCard(
                           key: ValueKey(
@@ -448,15 +452,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               key: AppPreference.IMEI,
                               value: vehicle.imei ?? '',
                             );
-                            
+
                             AppNavigation.refreshNavigationState();
-                            
+
                             if (context.mounted) {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) => VehicleControlScreen(
-                                    isFromGarage: isDeviceInstalled ? false : true,
+                                    isFromGarage: isDeviceInstalled
+                                        ? false
+                                        : true,
                                     passedVehicle: vehicle,
                                   ),
                                 ),

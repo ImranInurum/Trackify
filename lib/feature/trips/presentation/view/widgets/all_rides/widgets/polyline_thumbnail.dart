@@ -285,16 +285,24 @@ class _PolylineThumbnailState extends State<PolylineThumbnail> {
                   }
                   // Set the style again on controller to be absolutely safe
                   if (mounted) {
-                    if (Theme.of(context).brightness == Brightness.dark && _darkMapStyle != null) {
-                      await controller.setMapStyle(_darkMapStyle);
-                    } else {
-                      await controller.setMapStyle(null);
+                    try {
+                      if (Theme.of(context).brightness == Brightness.dark && _darkMapStyle != null) {
+                        await controller.setMapStyle(_darkMapStyle);
+                      } else {
+                        await controller.setMapStyle(null);
+                      }
+                    } catch (e) {
+                      debugPrint('Error setting map style: $e');
                     }
                   }
                   // Delay slightly to allow layout to complete
                   await Future.delayed(const Duration(milliseconds: 150));
                   if (mounted) {
-                    await controller.moveCamera(CameraUpdate.newLatLngBounds(bounds, 20.0));
+                    try {
+                      await controller.moveCamera(CameraUpdate.newLatLngBounds(bounds, 20.0));
+                    } catch (e) {
+                      debugPrint('Error moving camera: $e');
+                    }
                   }
                   
                   // Take a snapshot after a delay to allow markers/polylines/tiles to render

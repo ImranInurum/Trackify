@@ -10,6 +10,7 @@ import 'package:trackify/feature/device_warranty/presentation/cubit/extend_warra
 import 'package:trackify/feature/device_warranty/presentation/cubit/extend_warranty_state.dart';
 
 import '../../../l10n/app_localizations.dart';
+import 'package:trackify/core/widgets/trackify_loader.dart';
 
 class DeviceWarrantyConfirmScreen extends StatefulWidget {
   final DeviceWarrantyEntity warrantyData;
@@ -88,7 +89,7 @@ class _DeviceWarrantyConfirmScreenState
           builder: (context, state) {
             if (state is WarrantyPaymentSummaryLoading ||
                 state is WarrantyPaymentSummaryInitial) {
-              return const Center(child: CircularProgressIndicator());
+              return const Center(child: TrackifyLoader());
             }
 
             if (state is WarrantyPaymentSummaryError) {

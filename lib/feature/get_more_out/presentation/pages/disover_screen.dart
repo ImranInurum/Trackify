@@ -9,6 +9,7 @@ import '../../domain/usecase/get_safey_usecase.dart';
 import '../cubit/discover_cubit.dart';
 import '../cubit/disocver_state.dart';
 import '../cubit/feature_cubit.dart';
+import 'package:trackify/core/widgets/trackify_loader.dart';
 
 
 class DiscoverFeaturesScreen extends StatefulWidget {
@@ -212,11 +213,7 @@ class _DiscoverFeaturesScreenState
           }
 
           /// ================= LOADING =================
-          return Center(
-            child: CircularProgressIndicator(
-              color: colorScheme.primary,
-            ),
-          );
+          return const Center(child: TrackifyLoader());
         },
       ),
     );

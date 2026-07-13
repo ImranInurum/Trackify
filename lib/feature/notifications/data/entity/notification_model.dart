@@ -1,12 +1,20 @@
 class NotificationModel {
   final bool? status;
   final String? message;
+  final int? total;
+  final int? page;
+  final int? limit;
+  final int? totalPages;
   final int? count;
   final List<NotificationData>? data;
 
   NotificationModel({
     this.status,
     this.message,
+    this.total,
+    this.page,
+    this.limit,
+    this.totalPages,
     this.count,
     this.data,
   });
@@ -15,6 +23,10 @@ class NotificationModel {
     return NotificationModel(
       status: json['status'] as bool?,
       message: json['message'] as String?,
+      total: json['total'] as int?,
+      page: json['page'] as int?,
+      limit: json['limit'] as int?,
+      totalPages: json['totalPages'] as int?,
       count: json['count'] as int?,
       data: (json['data'] as List<dynamic>?)
           ?.map((e) => NotificationData.fromJson(e as Map<String, dynamic>))
@@ -26,6 +38,10 @@ class NotificationModel {
     return {
       'status': status,
       'message': message,
+      'total': total,
+      'page': page,
+      'limit': limit,
+      'totalPages': totalPages,
       'count': count,
       'data': data?.map((e) => e.toJson()).toList(),
     };

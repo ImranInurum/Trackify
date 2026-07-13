@@ -14,6 +14,7 @@ import 'package:trackify/feature/fuel_logs/presentation/pages/widgets/dashboard_
 import 'package:trackify/feature/fuel_logs/presentation/pages/widgets/fuel_stations_tab_view.dart';
 import 'package:trackify/feature/fuel_logs/data/data source/refuel_data_source.dart';
 import 'package:trackify/feature/fuel_logs/presentation/cubit/refuel_history_cubit.dart';
+import 'package:trackify/core/widgets/trackify_loader.dart';
 
 class FuelLogsScreen extends StatefulWidget {
   const FuelLogsScreen({super.key});
@@ -130,9 +131,7 @@ class _FuelLogsScreenState extends State<FuelLogsScreen>
                   onPressed: () => Navigator.pop(context),
                 ),
               ),
-              body: Center(
-                child: CircularProgressIndicator(color: theme.primaryColor),
-              ),
+              body: const Center(child: TrackifyLoader()),
             );
           }
 

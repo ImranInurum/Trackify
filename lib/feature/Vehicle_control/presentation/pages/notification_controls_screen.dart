@@ -5,6 +5,7 @@ import 'package:trackify/feature/service_logs/presentation/widgets/vehicle_selec
 import 'package:trackify/l10n/app_localizations.dart';
 import 'package:trackify/feature/service_logs/presentation/cubit/service_logs_cubit.dart';
 import 'package:trackify/feature/service_logs/presentation/cubit/service_logs_state.dart';
+import 'package:trackify/core/widgets/trackify_loader.dart';
 
 class NotificationControlsScreen extends StatefulWidget {
   const NotificationControlsScreen({super.key});
@@ -45,9 +46,7 @@ class _NotificationControlsScreenState extends State<NotificationControlsScreen>
                   ),
                 ),
                 const Expanded(
-                  child: Center(
-                    child: CircularProgressIndicator(),
-                  ),
+                  child: const Center(child: TrackifyLoader()),
                 ),
               ],
             );

@@ -16,6 +16,7 @@ import '../../../service_logs/presentation/screens/service_logs_screen.dart';
 import '../../../service_logs/presentation/cubit/service_logs_cubit.dart';
 import '../../../service_logs/presentation/cubit/service_logs_state.dart';
 import '../../../Vehicle_control/data/repositories/vehicle_control_repository_impl.dart';
+import 'package:trackify/core/widgets/trackify_loader.dart';
 
 class DocumentFolderScreen extends StatefulWidget {
   const DocumentFolderScreen({super.key});
@@ -899,7 +900,7 @@ class _VehicleSelectorSheet extends StatelessWidget {
           if (isLoading)
             const Padding(
               padding: EdgeInsets.symmetric(vertical: 24),
-              child: Center(child: CircularProgressIndicator()),
+              child: const Center(child: TrackifyLoader()),
             )
           else if (errorMessage != null)
             Padding(

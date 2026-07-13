@@ -10,6 +10,7 @@ import '../widgets/image_picker_box.dart';
 import '../../domain/entities/service_log_entity.dart';
 import '../../../../core/common/models/vehicle_list_model.dart';
 import '../../../../l10n/app_localizations.dart';
+import 'package:trackify/core/widgets/trackify_loader.dart';
 
 class AddServiceLogScreen extends StatefulWidget {
   final ServiceLogEntity? editLog;
@@ -136,7 +137,7 @@ class _AddServiceLogScreenState extends State<AddServiceLogScreen> {
             vehicles = state.vehicles;
             selectedVehicle = state.selectedVehicle;
           } else {
-            return const Center(child: CircularProgressIndicator());
+            return const Center(child: TrackifyLoader());
           }
 
           return Column(

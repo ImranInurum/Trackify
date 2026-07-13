@@ -17,6 +17,7 @@ import '../onboarding/presentation/cubit/splash_state.dart';
 import 'add_vehicle/presentation/view/add_vehicle_screen.dart';
 import '../device_installation/presentation/pages/device_installation_screen.dart';
 import '../reach_me_sticker/presentation/screens/scan_qr_screen.dart';
+import 'package:trackify/core/widgets/trackify_loader.dart';
 
 class ChoiceSelector extends StatefulWidget {
   const ChoiceSelector({super.key});
@@ -38,9 +39,7 @@ class _ChoiceSelectorState extends State<ChoiceSelector> {
                 imageUrl: state.logo.path!,
                 height: 100,
                 fit: BoxFit.contain,
-                placeholder: (context, url) => Center(
-                  child: CircularProgressIndicator(color: colorScheme.primary),
-                ),
+                placeholder: (context, url) => const Center(child: TrackifyLoader()),
                 errorWidget: (context, url, error) => Icon(
                   Icons.track_changes_rounded,
                   size: 64,

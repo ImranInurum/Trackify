@@ -194,19 +194,19 @@ class VehicleControlRepositoryImpl implements VehicleControlRepository {
   }
 
   @override
-  Future<void> updateTankCapacity(String vehicleIMEI, String capacity) async {
+  Future<void> updateTankCapacity(String vehicleIMEI, String capacity, String currentMileage) async {
     final response = await _apiService.getPutApiResponse(
       ApiURL.updateVehicleControl(vehicleIMEI),
-      {"imei": vehicleIMEI, "tankCapacity": capacity},
+      {"imei": vehicleIMEI, "tankCapacity": capacity, "vehicleMileage": currentMileage},
     );
     response.fold((failure) => throw failure, (success) => null);
   }
 
   @override
-  Future<void> updateMileage(String vehicleIMEI, String mileage) async {
+  Future<void> updateMileage(String vehicleIMEI, String mileage, String currentCapacity) async {
     final response = await _apiService.getPutApiResponse(
       ApiURL.updateVehicleControl(vehicleIMEI),
-      {"imei": vehicleIMEI, "vehicleMileage": mileage},
+      {"imei": vehicleIMEI, "vehicleMileage": mileage, "tankCapacity": currentCapacity},
     );
     response.fold((failure) => throw failure, (success) => null);
   }

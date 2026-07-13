@@ -12,6 +12,7 @@ import 'package:trackify/core/common/models/vehicle_list_model.dart';
 import '../../../../core/common/widgets/vehicle_card.dart';
 import '../../../Vehicle_control/presentation/pages/vehicle_control_screen.dart';
 import '../../../Vehicle_control/data/repositories/vehicle_control_repository_impl.dart';
+import 'package:trackify/core/widgets/trackify_loader.dart';
 
 class MyGarageScreen extends StatefulWidget {
   const MyGarageScreen({super.key});
@@ -79,7 +80,7 @@ class _MyGarageScreenState extends State<MyGarageScreen> {
       body: BlocBuilder<MyGarageCubit, MyGarageState>(
         builder: (context, state) {
           if (state is VehiclesLoading) {
-            return const Center(child: CircularProgressIndicator());
+            return const Center(child: TrackifyLoader());
           }
 
           if (state is FetchVehicleError) {

@@ -178,7 +178,11 @@ class VehicleControlCubit extends Cubit<VehicleControlState> {
   Future<void> updateTankCapacity(String vehicleIMEI, String capacity) async {
     final currentState = state;
     try {
-      await repository.updateTankCapacity(vehicleIMEI, capacity);
+      if (currentState is VehicleControlLoaded) {
+        await repository.updateTankCapacity(vehicleIMEI, capacity, currentState.vehicle.vehicleMileage);
+      } else {
+        await repository.updateTankCapacity(vehicleIMEI, capacity, '');
+      }
       loadVehicleDetails(vehicleIMEI);
       _refreshGlobalVehicleLists();
     } catch (e) {
@@ -193,7 +197,11 @@ class VehicleControlCubit extends Cubit<VehicleControlState> {
   Future<void> updateMileage(String vehicleIMEI, String mileage) async {
     final currentState = state;
     try {
-      await repository.updateMileage(vehicleIMEI, mileage);
+      if (currentState is VehicleControlLoaded) {
+        await repository.updateMileage(vehicleIMEI, mileage, currentState.vehicle.tankCapacity);
+      } else {
+        await repository.updateMileage(vehicleIMEI, mileage, '');
+      }
       loadVehicleDetails(vehicleIMEI);
       _refreshGlobalVehicleLists();
     } catch (e) {

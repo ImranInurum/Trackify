@@ -9,6 +9,7 @@ import 'package:trackify/feature/service_logs/presentation/widgets/vehicle_selec
 import '../cubit/statistics_cubit.dart';
 import '../cubit/statistics_state.dart';
 import '../../data/model/statistics_response_model.dart';
+import 'package:trackify/core/widgets/trackify_loader.dart';
 
 class StatisticsScreen extends StatefulWidget {
   const StatisticsScreen({super.key});
@@ -74,7 +75,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
               elevation: 0,
               centerTitle: false,
             ),
-            body: const Center(child: CircularProgressIndicator()),
+            body: const Center(child: TrackifyLoader()),
           );
         }
 
@@ -175,7 +176,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                 const SizedBox(height: 12),
                 if (state is StatisticsLoading)
                   const Expanded(
-                    child: Center(child: CircularProgressIndicator()),
+                    child: const Center(child: TrackifyLoader()),
                   )
                 else if (state is StatisticsError)
                   Expanded(

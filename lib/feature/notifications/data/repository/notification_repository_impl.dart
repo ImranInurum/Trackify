@@ -11,9 +11,9 @@ class NotificationRepositoryImpl implements NotificationRepository {
   static final BaseApiServices _apiServices = NetworkApiService();
 
   @override
-  ResultFuture<NotificationModel> getNotifications(String userId) async {
+  ResultFuture<NotificationModel> getNotifications(String userId, {int page = 1, int limit = 20}) async {
     try {
-      final res = await _apiServices.getGetApiResponse(ApiURL.notifications(userId));
+      final res = await _apiServices.getGetApiResponse(ApiURL.notifications(userId, page: page, limit: limit));
       return res.fold(
         (error) => Left(error),
         (data) => Right(NotificationModel.fromJson(data)),

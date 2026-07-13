@@ -4,8 +4,8 @@ abstract class VehicleControlRepository {
   Future<VehicleControlEntity> getVehicleControlDetails(String vehicleIMEI);
   Future<void> updateVehicleIcon(String vehicleIMEI, String icon);
   Future<void> updateVehicleColor(String vehicleIMEI, String color);
-  Future<void> updateTankCapacity(String vehicleIMEI, String capacity);
-  Future<void> updateMileage(String vehicleIMEI, String mileage);
+  Future<void> updateTankCapacity(String vehicleIMEI, String capacity, String currentMileage);
+  Future<void> updateMileage(String vehicleIMEI, String mileage, String currentCapacity);
   Future<void> updateVehicleDetails({
     required String vehicleIMEI,
     required String vehicleName,

@@ -13,6 +13,7 @@ import 'package:trackify/core/config/network/api_host.dart';
 import 'package:trackify/feature/auth/data/entity/login_response_model.dart';
 
 import 'edit_profile_screen.dart';
+import 'package:trackify/core/widgets/trackify_loader.dart';
 
 class MyProfileScreen extends StatefulWidget {
   const MyProfileScreen({super.key});
@@ -174,13 +175,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                                               imageUrl: profileImageUrl,
                                               fit: BoxFit.cover,
                                               placeholder: (context, url) =>
-                                                  const Center(
-                                                    child:
-                                                        CircularProgressIndicator(
-                                                          strokeWidth: 2,
-                                                          color: Colors.white,
-                                                        ),
-                                                  ),
+                                                  const Center(child: TrackifyLoader()),
                                               errorWidget:
                                                   (
                                                     context,
@@ -220,12 +215,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                                         color: Colors.black.withValues(
                                           alpha: 0.4,
                                         ),
-                                        child: const Center(
-                                          child: CircularProgressIndicator(
-                                            strokeWidth: 3,
-                                            color: Colors.white,
-                                          ),
-                                        ),
+                                        child: const Center(child: TrackifyLoader()),
                                       ),
                                     ),
                                 ],
