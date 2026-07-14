@@ -633,7 +633,7 @@ class _VehicleControlViewState extends State<VehicleControlView> {
                                   cardColor: cardColor,
                                   onEdit: () => _showTankCapacityDialog(
                                     context,
-                                    vehicle.id,
+                                    vehicle.imei,
                                     vehicle.tankCapacity,
                                   ),
                                 ),
@@ -647,7 +647,7 @@ class _VehicleControlViewState extends State<VehicleControlView> {
                                   cardColor: cardColor,
                                   onEdit: () => _showMileageDialog(
                                     context,
-                                    vehicle.id,
+                                    vehicle.imei,
                                     vehicle.vehicleMileage,
                                   ),
                                 ),

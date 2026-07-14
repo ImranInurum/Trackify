@@ -9,9 +9,11 @@ import 'package:intl/intl.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:trackify/core/utils/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:trackify/app/cubit/app_cubit.dart';
 import 'package:trackify/app/cubit/app_state.dart';
+import 'package:trackify/app/app_navigation.dart';
 import 'package:trackify/core/constants/app_images.dart';
 import 'package:trackify/core/utils/map_utils.dart';
 import 'package:trackify/core/widgets/bouncing_widget.dart';
@@ -35,6 +37,10 @@ import 'package:trackify/feature/geo_fence/presentation/cubit/geo_fence_state.da
 import 'package:trackify/feature/my_garage/presentation/view/products_screen.dart';
 import 'package:trackify/feature/device_installation/presentation/pages/device_installation_screen.dart';
 import 'package:trackify/core/widgets/trackify_loader.dart';
+import 'package:trackify/feature/device_warranty/data/repository/device_warranty_repository_impl.dart';
+import 'package:trackify/feature/device_warranty/data/data_source/device_warranty_data_source.dart';
+import 'package:trackify/core/config/network/network_api_service.dart';
+import 'package:trackify/feature/device_warranty/pages/device_warranty_page.dart';
 
 class FullScreenMap extends StatefulWidget {
   final Vehicles? selectedVehicle;
@@ -56,6 +62,7 @@ class _FullScreenMapState extends State<FullScreenMap>
   ];
 
   Vehicles? _currentVehicle;
+  bool _isWarrantyExpired = false;
   int _statsPageIndex = 0;
   GoogleMapController? _mapController;
   String? _lightMapStyle;
@@ -104,8 +111,9 @@ class _FullScreenMapState extends State<FullScreenMap>
     super.initState();
     _uiCubit = FullScreenMapUiCubit();
     _currentVehicle = widget.selectedVehicle;
-    if (_currentVehicle?.imei != null) {
+    if (_currentVehicle?.imei != null && _currentVehicle!.imei!.isNotEmpty) {
       context.read<GeoFenceCubit>().fetchGeoFences(_currentVehicle!.imei!);
+      _checkWarrantyStatus(_currentVehicle!.imei!);
     }
 
     _markerAnimController = AnimationController(
@@ -241,6 +249,63 @@ class _FullScreenMapState extends State<FullScreenMap>
         _loadGeoFenceIcons(primaryColor);
       }
     });
+  }
+
+  @override
+  void didUpdateWidget(FullScreenMap oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.selectedVehicle != oldWidget.selectedVehicle) {
+      setState(() {
+        _currentVehicle = widget.selectedVehicle;
+        _isWarrantyExpired = false;
+      });
+      if (_currentVehicle?.imei != null && _currentVehicle!.imei!.isNotEmpty) {
+        _checkWarrantyStatus(_currentVehicle!.imei!);
+      }
+    }
+  }
+
+  Future<void> _checkWarrantyStatus(String imei) async {
+    try {
+      final repository = DeviceWarrantyRepositoryImpl(
+        DeviceWarrantyRemoteDataSourceImpl(NetworkApiService()),
+      );
+      final result = await repository.getDeviceWarrantyStatus(imei);
+      result.fold(
+        (l) {
+          final previouslyExpired = AppPreference.instance.getBoolSync(key: 'KEY_WARRANTY_EXPIRED');
+          if (previouslyExpired) {
+            AppPreference.instance.setBool(key: 'KEY_WARRANTY_EXPIRED', value: false).then((_) {
+              AppNavigation.refreshNavigationState();
+            });
+          }
+          if (mounted) {
+            setState(() {
+              _isWarrantyExpired = false;
+            });
+          }
+        },
+        (r) {
+          if (!mounted) return;
+          final daysLeft = r.warranty?.daysLeft;
+          final isExpired = r.warranty?.isExpired ?? false;
+          final expired = isExpired || (daysLeft != null && daysLeft <= 0);
+
+          final previouslyExpired = AppPreference.instance.getBoolSync(key: 'KEY_WARRANTY_EXPIRED');
+          if (previouslyExpired != expired) {
+            AppPreference.instance.setBool(key: 'KEY_WARRANTY_EXPIRED', value: expired).then((_) {
+              AppNavigation.refreshNavigationState();
+            });
+          }
+
+          setState(() {
+            _isWarrantyExpired = expired;
+          });
+        },
+      );
+    } catch (e) {
+      debugPrint("Error checking warranty in full screen map: $e");
+    }
   }
 
   BitmapDescriptor? _homeIcon;
@@ -407,32 +472,40 @@ class _FullScreenMapState extends State<FullScreenMap>
     final currentPos = appState.currentLocation;
     LatLng? bestPos;
 
-    // 1. Get live position specific to THIS device from socket data
-    final liveData = appState.devices.firstWhere(
-      (d) =>
-          d['imei'] == _currentVehicle?.imei ||
-          d['_id'] == _currentVehicle?.id ||
-          d['id'] == _currentVehicle?.id,
-      orElse: () => <String, dynamic>{},
-    );
+    final bool isDeviceNotInstalledOrExpired =
+        _currentVehicle == null ||
+        _currentVehicle!.imei == null ||
+        _currentVehicle!.imei!.isEmpty ||
+        _isWarrantyExpired;
 
-    if (liveData.isNotEmpty) {
-      final lat = double.tryParse(liveData['lt']?.toString() ?? '');
-      final lng = double.tryParse(liveData['lg']?.toString() ?? '');
-      if (lat != null && lng != null) {
-        bestPos = LatLng(lat, lng);
-      }
-    }
-
-    // 2. Fallback to API static location
-    if (bestPos == null &&
-        _currentVehicle?.currentLocation != null &&
-        _currentVehicle!.currentLocation!.lat != null &&
-        _currentVehicle!.currentLocation!.lng != null) {
-      bestPos = LatLng(
-        _currentVehicle!.currentLocation!.lat!,
-        _currentVehicle!.currentLocation!.lng!,
+    if (!isDeviceNotInstalledOrExpired) {
+      // 1. Get live position specific to THIS device from socket data
+      final liveData = appState.devices.firstWhere(
+        (d) =>
+            d['imei'] == _currentVehicle?.imei ||
+            d['_id'] == _currentVehicle?.id ||
+            d['id'] == _currentVehicle?.id,
+        orElse: () => <String, dynamic>{},
       );
+
+      if (liveData.isNotEmpty) {
+        final lat = double.tryParse(liveData['lt']?.toString() ?? '');
+        final lng = double.tryParse(liveData['lg']?.toString() ?? '');
+        if (lat != null && lng != null) {
+          bestPos = LatLng(lat, lng);
+        }
+      }
+
+      // 2. Fallback to API static location
+      if (bestPos == null &&
+          _currentVehicle?.currentLocation != null &&
+          _currentVehicle!.currentLocation!.lat != null &&
+          _currentVehicle!.currentLocation!.lng != null) {
+        bestPos = LatLng(
+          _currentVehicle!.currentLocation!.lat!,
+          _currentVehicle!.currentLocation!.lng!,
+        );
+      }
     }
 
     // 3. Fallback to phone current location
@@ -446,24 +519,34 @@ class _FullScreenMapState extends State<FullScreenMap>
     LatLng? target = _getBestPosition();
     if (target == null) return;
 
-    final appState = context.read<AppCubit>().state;
-    final currData = appState.devices.firstWhere(
-      (d) =>
-          d['imei'] == _currentVehicle?.imei ||
-          d['_id'] == _currentVehicle?.id ||
-          d['id'] == _currentVehicle?.id,
-      orElse: () => <String, dynamic>{},
-    );
-    double bearing =
-        double.tryParse(
-          (currData['course'] ??
-                  currData['bearing'] ??
-                  currData['angle'] ??
-                  currData['dir'] ??
-                  '0')
-              .toString(),
-        ) ??
-        0.0;
+    final bool isDeviceNotInstalledOrExpired =
+        _currentVehicle == null ||
+        _currentVehicle!.imei == null ||
+        _currentVehicle!.imei!.isEmpty ||
+        _isWarrantyExpired;
+
+    double bearing = 0.0;
+
+    if (!isDeviceNotInstalledOrExpired) {
+      final appState = context.read<AppCubit>().state;
+      final currData = appState.devices.firstWhere(
+        (d) =>
+            d['imei'] == _currentVehicle?.imei ||
+            d['_id'] == _currentVehicle?.id ||
+            d['id'] == _currentVehicle?.id,
+        orElse: () => <String, dynamic>{},
+      );
+      bearing =
+          double.tryParse(
+            (currData['course'] ??
+                    currData['bearing'] ??
+                    currData['angle'] ??
+                    currData['dir'] ??
+                    '0')
+                .toString(),
+          ) ??
+          0.0;
+    }
 
     // Glide smoothly focusing on the vehicle (drone camera zoom & rotate effect)
     // 600ms delay ensures native layout/tiles/styles are ready before animation starts
@@ -473,7 +556,9 @@ class _FullScreenMapState extends State<FullScreenMap>
         target: target,
         zoom: 18.0,
         tilt: 0.0,
-        bearing: _animatedMarkerPos != null ? _animatedMarkerBearing : bearing,
+        bearing: isDeviceNotInstalledOrExpired
+            ? 0.0
+            : (_animatedMarkerPos != null ? _animatedMarkerBearing : bearing),
         duration: const Duration(milliseconds: 4000), // slow cinematic glide
         curve: Curves.easeInOutCubic,
       );
@@ -543,7 +628,9 @@ class _FullScreenMapState extends State<FullScreenMap>
     final markers = <Marker>{};
 
     final bool hasDevice =
-        _currentVehicle?.imei != null && _currentVehicle!.imei!.isNotEmpty;
+        _currentVehicle?.imei != null &&
+        _currentVehicle!.imei!.isNotEmpty &&
+        !_isWarrantyExpired;
 
     if (hasDevice) {
       markers.add(
@@ -1261,45 +1348,57 @@ class _FullScreenMapState extends State<FullScreenMap>
           return const Center(child: TrackifyLoader());
         }
 
-        // Prioritize Live Position from Socket
-        LatLng? bestPos = appState.livePosition;
+        final bool isDeviceNotInstalledOrExpired =
+            _currentVehicle == null ||
+            _currentVehicle!.imei == null ||
+            _currentVehicle!.imei!.isEmpty ||
+            _isWarrantyExpired;
 
-        // Fallback to selected vehicle's static location
-        if (bestPos == null &&
-            _currentVehicle?.currentLocation != null &&
-            _currentVehicle!.currentLocation!.lat != null &&
-            _currentVehicle!.currentLocation!.lng != null) {
-          bestPos = LatLng(
-            _currentVehicle!.currentLocation!.lat!,
-            _currentVehicle!.currentLocation!.lng!,
+        LatLng? bestPos;
+        double bearing = 0.0;
+
+        if (isDeviceNotInstalledOrExpired) {
+          bestPos = LatLng(currentPos.latitude, currentPos.longitude);
+        } else {
+          // Prioritize Live Position from Socket
+          bestPos = appState.livePosition;
+
+          // Fallback to selected vehicle's static location
+          if (bestPos == null &&
+              _currentVehicle?.currentLocation != null &&
+              _currentVehicle!.currentLocation!.lat != null &&
+              _currentVehicle!.currentLocation!.lng != null) {
+            bestPos = LatLng(
+              _currentVehicle!.currentLocation!.lat!,
+              _currentVehicle!.currentLocation!.lng!,
+            );
+          }
+
+          // 1. Get live position specific to THIS device from socket data
+          final liveData = appState.devices.firstWhere(
+            (d) =>
+                d['imei'] == _currentVehicle?.imei ||
+                d['_id'] == _currentVehicle?.id ||
+                d['id'] == _currentVehicle?.id,
+            orElse: () => <String, dynamic>{},
           );
+
+          if (liveData.isNotEmpty) {
+            bearing =
+                double.tryParse(
+                  (liveData['course'] ??
+                          liveData['bearing'] ??
+                          liveData['angle'] ??
+                          liveData['dir'] ??
+                          '0')
+                      .toString(),
+                ) ??
+                0.0;
+          }
         }
 
         // Final fallback to phone location
         bestPos ??= LatLng(currentPos.latitude, currentPos.longitude);
-
-        // 1. Get live position specific to THIS device from socket data
-        final liveData = appState.devices.firstWhere(
-          (d) =>
-              d['imei'] == _currentVehicle?.imei ||
-              d['_id'] == _currentVehicle?.id ||
-              d['id'] == _currentVehicle?.id,
-          orElse: () => <String, dynamic>{},
-        );
-
-        double bearing = 0.0;
-        if (liveData.isNotEmpty) {
-          bearing =
-              double.tryParse(
-                (liveData['course'] ??
-                        liveData['bearing'] ??
-                        liveData['angle'] ??
-                        liveData['dir'] ??
-                        '0')
-                    .toString(),
-              ) ??
-              0.0;
-        }
 
         double startBearing = _normalizeBearing(bearing - 120.0);
 
@@ -1668,7 +1767,9 @@ class _FullScreenMapState extends State<FullScreenMap>
         final screenHeight = MediaQuery.of(context).size.height;
         final bottomMargin = (extent * screenHeight) + 16.0;
         final bool hasDevice =
-            _currentVehicle?.imei != null && _currentVehicle!.imei!.isNotEmpty;
+            _currentVehicle?.imei != null &&
+            _currentVehicle!.imei!.isNotEmpty &&
+            !_isWarrantyExpired;
         return Positioned(
           right: 16,
           bottom: bottomMargin,
@@ -1723,7 +1824,7 @@ class _FullScreenMapState extends State<FullScreenMap>
   }
 
   void _showVehicleIconPicker() {
-    if (_currentVehicle?.imei == null) return;
+    if (_currentVehicle?.imei == null || _isWarrantyExpired) return;
 
     showModalBottomSheet(
       context: context,
@@ -2009,8 +2110,15 @@ class _FullScreenMapState extends State<FullScreenMap>
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              _buildVehicleHeader(hasDevice: _currentVehicle?.imei != null && _currentVehicle!.imei!.isNotEmpty),
-                              if (_currentVehicle?.imei != null && _currentVehicle!.imei!.isNotEmpty) ...[
+                              _buildVehicleHeader(
+                                hasDevice:
+                                    _currentVehicle?.imei != null &&
+                                    _currentVehicle!.imei!.isNotEmpty &&
+                                    !_isWarrantyExpired,
+                              ),
+                              if (_currentVehicle?.imei != null &&
+                                  _currentVehicle!.imei!.isNotEmpty &&
+                                  !_isWarrantyExpired) ...[
                                 const SizedBox(height: 8),
                                 _buildStatsGrid(),
                                 const SizedBox(height: 12),
@@ -2036,6 +2144,11 @@ class _FullScreenMapState extends State<FullScreenMap>
   }
 
   Widget _buildBuyDeviceButton() {
+    final l10n = AppLocalizations.of(context)!;
+    final bool isExpired = _isWarrantyExpired &&
+        _currentVehicle?.imei != null &&
+        _currentVehicle!.imei!.isNotEmpty;
+
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
@@ -2047,18 +2160,20 @@ class _FullScreenMapState extends State<FullScreenMap>
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(
-                  builder: (context) => const ProductScreen(),
-                ),
+                MaterialPageRoute(builder: (context) => const ProductScreen()),
               );
             },
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Icon(Icons.shopping_bag_outlined, color: Colors.orange, size: 20),
+                const Icon(
+                  Icons.shopping_bag_outlined,
+                  color: Colors.orange,
+                  size: 20,
+                ),
                 const SizedBox(width: 8),
                 Text(
-                  AppLocalizations.of(context)!.buyTrackifyDevice,
+                  l10n.buyTrackifyDevice,
                   style: const TextStyle(
                     color: Colors.orange,
                     fontSize: 15,
@@ -2074,19 +2189,28 @@ class _FullScreenMapState extends State<FullScreenMap>
             height: 46,
             child: ElevatedButton.icon(
               onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const DeviceInstallationScreen(),
-                  ),
-                );
+                if (isExpired) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const WarrantyScreen(),
+                    ),
+                  );
+                } else {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const DeviceInstallationScreen(),
+                    ),
+                  );
+                }
               },
               icon: Icon(
-                Icons.memory,
+                isExpired ? Icons.history_toggle_off : Icons.memory,
                 color: Theme.of(context).colorScheme.onPrimary,
               ),
               label: Text(
-                AppLocalizations.of(context)!.installDevice,
+                isExpired ? l10n.renewNow : l10n.installDevice,
                 style: TextStyle(
                   color: Theme.of(context).colorScheme.onPrimary,
                   fontSize: 16,
@@ -2275,55 +2399,55 @@ class _FullScreenMapState extends State<FullScreenMap>
                       // Speed Info with Animated Switcher
                       AnimatedSwitcher(
                         duration: const Duration(milliseconds: 400),
-                      layoutBuilder:
-                          (
-                            Widget? currentChild,
-                            List<Widget> previousChildren,
-                          ) {
-                            return Stack(
-                              alignment: Alignment.centerRight,
-                              children: <Widget>[
-                                ...previousChildren,
-                                if (currentChild != null) currentChild,
-                              ],
-                            );
-                          },
-                      switchInCurve: Curves.easeOutBack,
-                      switchOutCurve: Curves.easeInQuint,
-                      transitionBuilder: (child, animation) {
-                        final offsetAnimation = Tween<Offset>(
-                          begin: Offset(
-                            0.0,
-                            _uiCubit.state.isSlidingUp ? -0.5 : 0.5,
+                        layoutBuilder:
+                            (
+                              Widget? currentChild,
+                              List<Widget> previousChildren,
+                            ) {
+                              return Stack(
+                                alignment: Alignment.centerRight,
+                                children: <Widget>[
+                                  ...previousChildren,
+                                  if (currentChild != null) currentChild,
+                                ],
+                              );
+                            },
+                        switchInCurve: Curves.easeOutBack,
+                        switchOutCurve: Curves.easeInQuint,
+                        transitionBuilder: (child, animation) {
+                          final offsetAnimation = Tween<Offset>(
+                            begin: Offset(
+                              0.0,
+                              _uiCubit.state.isSlidingUp ? -0.5 : 0.5,
+                            ),
+                            end: Offset.zero,
+                          ).animate(animation);
+                          return FadeTransition(
+                            opacity: animation,
+                            child: SlideTransition(
+                              position: offsetAnimation,
+                              child: child,
+                            ),
+                          );
+                        },
+                        child: _buildHeaderMetric(liveDevice, liveSpeed),
+                      ),
+                      const SizedBox(width: 12),
+                      // Up/Down Arrows
+                      Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          _buildSmallArrowButton(
+                            Icons.keyboard_arrow_up,
+                            onTap: () => _changeHeaderMetric(context, true),
                           ),
-                          end: Offset.zero,
-                        ).animate(animation);
-                        return FadeTransition(
-                          opacity: animation,
-                          child: SlideTransition(
-                            position: offsetAnimation,
-                            child: child,
+                          const SizedBox(height: 12),
+                          _buildSmallArrowButton(
+                            Icons.keyboard_arrow_down,
+                            onTap: () => _changeHeaderMetric(context, false),
                           ),
-                        );
-                      },
-                      child: _buildHeaderMetric(liveDevice, liveSpeed),
-                    ),
-                    const SizedBox(width: 12),
-                    // Up/Down Arrows
-                    Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        _buildSmallArrowButton(
-                          Icons.keyboard_arrow_up,
-                          onTap: () => _changeHeaderMetric(context, true),
-                        ),
-                        const SizedBox(height: 12),
-                        _buildSmallArrowButton(
-                          Icons.keyboard_arrow_down,
-                          onTap: () => _changeHeaderMetric(context, false),
-                        ),
-                      ],
-                    ),
+                        ],
+                      ),
                     ],
                   ],
                 ),

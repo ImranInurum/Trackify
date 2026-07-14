@@ -1843,9 +1843,6 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
             
         List<PastRide> rides = _groupDataIntoRides(state.data);
         
-        if (rides.isEmpty) {
-          rides = _getMockRides(userLoc);
-        }
         
         if (_selectedFilterTag != null) {
           rides = rides.where((r) => r.tag.toLowerCase() == _selectedFilterTag!.toLowerCase()).toList();
@@ -1972,9 +1969,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
         : null;
 
     List<PastRide> rides = _groupDataIntoRides(state.data);
-    if (rides.isEmpty) {
-      rides = _getMockRides(userLoc);
-    }
+    
 
     if (_selectedFilterTag != null) {
       rides = rides.where((r) => r.tag.toLowerCase() == _selectedFilterTag!.toLowerCase()).toList();
@@ -3144,7 +3139,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
                             Navigator.pop(ctx);
                             screenContext
                                 .read<RecordViaPhoneCubit>()
-                                .startRecording();
+                                .startRecording(mode: selectedMode);
                           },
                           child: Text(
                             AppLocalizations.of(context)!.startRide,
@@ -3258,36 +3253,68 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
                         TextButton(
-                          onPressed: () {
+                          onPressed: () async {
                             Navigator.pop(ctx);
 
                             final cubit = screenContext
                                 .read<RecordViaPhoneCubit>();
-                            final state = cubit.state;
+                            final rideState = cubit.state;
 
+                            final points = rideState.currentRidePoints;
+                            final distance = rideState.rideDistance;
+                            final duration = rideState.rideDuration;
+                            final topSpd = rideState.topSpeed;
+                            final avgSpd = duration.inSeconds > 0
+                                ? (distance / (duration.inSeconds / 3600))
+                                : 0.0;
+
+                            // ── OFFLINE MODE ──
+                            if (cubit.saveMode == 1) {
+                              final success = await cubit.saveRideOffline(
+                                tag: selectedLabel,
+                                points: points,
+                                distanceKm: distance,
+                                duration: duration,
+                                avgSpeed: avgSpd,
+                                topSpeed: topSpd,
+                              );
+
+                              if (screenContext.mounted) {
+                                ScaffoldMessenger.of(screenContext).showSnackBar(
+                                  SnackBar(
+                                    content: Text(
+                                      success
+                                          ? '✅ Ride saved offline successfully!'
+                                          : '❌ Failed to save ride offline.',
+                                    ),
+                                    backgroundColor:
+                                        success ? Colors.green : Colors.red,
+                                    duration: const Duration(seconds: 3),
+                                  ),
+                                );
+                              }
+
+                              cubit.stopRecording();
+                              return;
+                            }
+
+                            // ── ONLINE MODE — open playback then stop ──
                             Navigator.push(
                               screenContext,
                               MaterialPageRoute(
                                 builder: (_) => RidePlaybackScreen(
-                                  points: state.currentRidePoints,
-                                  totalDistance: state.rideDistance,
-                                  totalDuration: state.rideDuration,
-                                  topSpeed: state.currentSpeed > 0
-                                      ? state.currentSpeed
-                                      : (state.rideDuration.inSeconds > 0
-                                            ? (state.rideDistance /
-                                                  (state
-                                                          .rideDuration
-                                                          .inSeconds /
-                                                      3600))
+                                  points: points,
+                                  totalDistance: distance,
+                                  totalDuration: duration,
+                                  topSpeed: topSpd > 0
+                                      ? topSpd
+                                      : (duration.inSeconds > 0
+                                            ? (distance /
+                                                  (duration.inSeconds / 3600))
                                             : 0.0),
-                                  avgSpeed: state.rideDuration.inSeconds > 0
-                                      ? (state.rideDistance /
-                                            (state.rideDuration.inSeconds /
-                                                3600))
-                                      : 0.0,
+                                  avgSpeed: avgSpd,
                                   startTime: DateTime.now().subtract(
-                                    state.rideDuration,
+                                    duration,
                                   ),
                                 ),
                               ),

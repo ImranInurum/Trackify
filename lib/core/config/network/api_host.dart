@@ -212,6 +212,9 @@ class ApiURL {
   static String updateProfile(String userId) =>
       "$baseURL/api/auth/user-detail/$userId";
 
+  static String deleteAccount(String userId) =>
+      "$baseURL/user/delete/$userId";
+
   // -------------------------
   // Statistics
   // -------------------------

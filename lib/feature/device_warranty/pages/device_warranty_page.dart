@@ -74,14 +74,16 @@ class _WarrantyScreenState extends State<WarrantyScreen> {
         backgroundColor: theme.scaffoldBackgroundColor,
         elevation: 0,
         centerTitle: false,
-        leading: IconButton(
-          icon: Icon(
-            Icons.arrow_back_ios_new,
-            color: colorScheme.onSurface,
-            size: 20,
-          ),
-          onPressed: () => Navigator.pop(context),
-        ),
+        leading: Navigator.canPop(context)
+            ? IconButton(
+                icon: Icon(
+                  Icons.arrow_back_ios_new,
+                  color: colorScheme.onSurface,
+                  size: 20,
+                ),
+                onPressed: () => Navigator.pop(context),
+              )
+            : null,
         title: Text(
           l10n.warranty_title,
           style: theme.textTheme.titleMedium?.copyWith(

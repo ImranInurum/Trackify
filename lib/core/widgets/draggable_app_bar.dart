@@ -15,6 +15,7 @@ import 'package:trackify/feature/device_warranty/data/model/warranty_status_mode
 import 'package:trackify/feature/device_warranty/data/repository/device_warranty_repository_impl.dart';
 import 'package:trackify/feature/device_warranty/data/data_source/device_warranty_data_source.dart';
 import 'package:trackify/core/config/network/network_api_service.dart';
+import 'package:trackify/core/utils/shared_preferences.dart';
 import '../../l10n/app_localizations.dart';
 
 class DraggableAppBar extends StatefulWidget {
@@ -540,10 +541,25 @@ class _DraggableAppBarState extends State<DraggableAppBar>
     required bool isHighlighted,
   }) {
     final imei = device.imei ?? '';
-    String statusLabel = 'Offline';
+    final isSelectedDevice =
+        _selectedDevice != null && device.id == _selectedDevice!.id;
+    final bool isPrefExpired =
+        isSelectedDevice &&
+        AppPreference.instance.getBoolSync(key: 'KEY_WARRANTY_EXPIRED');
+
+    final warranty = _warrantyStatusMap[imei];
+    final bool isExpired =
+        isPrefExpired ||
+        (warranty != null &&
+            (warranty.warranty?.isExpired == true ||
+                (warranty.warranty?.daysLeft ?? 0) <= 0));
+
+    String statusLabel = isExpired
+        ? AppLocalizations.of(context)!.expired
+        : 'Offline';
     Color statusColor = Colors.grey;
 
-    if (imei.isNotEmpty) {
+    if (imei.isNotEmpty && !isExpired) {
       if (_deviceStatusMap.containsKey(imei)) {
         final statusData = _deviceStatusMap[imei];
         final statusStr = statusData?['status']?.toString();
@@ -588,6 +604,8 @@ class _DraggableAppBarState extends State<DraggableAppBar>
                   children: [
                     Text(
                       "${device.vehicleMaker} ${device.vehicleModel}",
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.w700,
@@ -651,6 +669,8 @@ class _DraggableAppBarState extends State<DraggableAppBar>
                                   ),
                                 )
                               : const SizedBox.shrink()
+                        else if (isExpired && _isExpanded)
+                          const SizedBox.shrink()
                         else
                           Container(
                             padding: const EdgeInsets.symmetric(

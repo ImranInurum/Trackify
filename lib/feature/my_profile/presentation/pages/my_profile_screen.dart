@@ -138,6 +138,42 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
         child: BlocBuilder<AppCubit, AppState>(
           builder: (context, state) {
             final user = state.userData;
+            int completeness = 0;
+            if (user != null) {
+              if (user.userProfile != null && user.userProfile!.trim().isNotEmpty) {
+                completeness += 20;
+              }
+              if (user.name != null && user.name!.trim().isNotEmpty) {
+                completeness += 10;
+              }
+              if (user.email != null && user.email!.trim().isNotEmpty) {
+                completeness += 10;
+              }
+              if (user.mobileNumber != null && user.mobileNumber!.trim().isNotEmpty) {
+                completeness += 10;
+              }
+              if (user.dateOfBirth != null && user.dateOfBirth!.trim().isNotEmpty) {
+                completeness += 10;
+              }
+              if (user.country != null && user.country!.trim().isNotEmpty) {
+                completeness += 10;
+              }
+              if (user.state != null && user.state!.trim().isNotEmpty) {
+                completeness += 10;
+              }
+              if (user.city != null && user.city!.trim().isNotEmpty) {
+                completeness += 10;
+              }
+              if (user.address != null && user.address!.trim().isNotEmpty) {
+                completeness += 10;
+              }
+            }
+            completeness = completeness.clamp(0, 100);
+
+            final progressColor = completeness == 100
+                ? Colors.green
+                : (completeness >= 50 ? Colors.orange : Theme.of(context).colorScheme.error);
+
             final userName = user?.name ?? "";
             final userEmail = user?.email ?? "";
             final userMobile = user?.mobileNumber ?? "";
@@ -293,13 +329,11 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                                     ),
                                   ),
                                   FractionallySizedBox(
-                                    widthFactor: 0.36,
+                                    widthFactor: completeness / 100.0,
                                     child: Container(
                                       height: 6,
                                       decoration: BoxDecoration(
-                                        color: Theme.of(
-                                          context,
-                                        ).colorScheme.error,
+                                        color: progressColor,
                                         borderRadius: BorderRadius.circular(3),
                                       ),
                                     ),
@@ -309,113 +343,153 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                             ),
                             const SizedBox(width: 12),
                             Icon(
-                              Icons.check_circle_outline,
+                              completeness == 100
+                                  ? Icons.check_circle
+                                  : Icons.check_circle_outline,
                               size: 24,
-                              color: Theme.of(
-                                context,
-                              ).colorScheme.onSurface.withValues(alpha: 0.3),
+                              color: completeness == 100
+                                  ? Colors.green
+                                  : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.3),
                             ),
                             const SizedBox(width: 4),
                             Text(
-                              "36%",
+                              "$completeness%",
                               style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 14,
-                                color: Theme.of(context).colorScheme.onSurface,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 14,
+                                  color: Theme.of(context).colorScheme.onSurface,
                               ),
                             ),
                           ],
                         ),
-                        const SizedBox(height: 7),
-                        Text(
-                          l10n.lastUpdatedOn("23 Feb 2026"),
-                          style: TextStyle(
-                            color: Theme.of(
-                              context,
-                            ).colorScheme.onSurface.withValues(alpha: 0.4),
-                            fontSize: 12,
-                          ),
-                        ),
-                        const SizedBox(height: 7),
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.all(8),
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                border: Border.all(
+                        const SizedBox(height: 12),
+                        if (completeness < 100) ...[
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.all(8),
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  border: Border.all(
+                                    color: Theme.of(context).colorScheme.primary,
+                                  ),
+                                ),
+                                child: Icon(
+                                  (user?.userProfile == null || user!.userProfile!.trim().isEmpty)
+                                      ? Icons.person_outline
+                                      : Icons.edit_note_outlined,
+                                  size: 20,
                                   color: Theme.of(context).colorScheme.primary,
                                 ),
                               ),
-                              child: Icon(
-                                Icons.person_outline,
-                                size: 20,
-                                color: Theme.of(context).colorScheme.primary,
-                              ),
-                            ),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    l10n.addProfilePicture,
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.normal,
-                                      color: Theme.of(
-                                        context,
-                                      ).colorScheme.onSurface,
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      (user?.userProfile == null || user!.userProfile!.trim().isEmpty)
+                                          ? l10n.addProfilePicture
+                                          : "Complete your personal details",
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.normal,
+                                        color: Theme.of(
+                                          context,
+                                        ).colorScheme.onSurface,
+                                      ),
                                     ),
-                                  ),
-                                  const SizedBox(height: 10),
-                                  SizedBox(
-                                    height:
-                                        36, // Smaller height for a compact button
-                                    child: ElevatedButton(
-                                      onPressed: _isUploading
-                                          ? null
-                                          : () => _pickAndUploadImage(user),
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor: Theme.of(
-                                          context,
-                                        ).colorScheme.primary,
-                                        foregroundColor: Theme.of(
-                                          context,
-                                        ).colorScheme.onPrimary,
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(
-                                            8,
+                                    const SizedBox(height: 10),
+                                    SizedBox(
+                                      height: 36,
+                                      child: ElevatedButton(
+                                        onPressed: (user?.userProfile == null || user!.userProfile!.trim().isEmpty)
+                                            ? (_isUploading ? null : () => _pickAndUploadImage(user))
+                                            : () {
+                                                Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                    builder: (context) => const EditProfileScreen(),
+                                                  ),
+                                                );
+                                              },
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: Theme.of(
+                                            context,
+                                          ).colorScheme.primary,
+                                          foregroundColor: Theme.of(
+                                            context,
+                                          ).colorScheme.onPrimary,
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(8),
+                                          ),
+                                          elevation: 0,
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 16,
                                           ),
                                         ),
-                                        elevation: 0,
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 16,
-                                        ),
+                                        child: _isUploading && (user?.userProfile == null || user!.userProfile!.trim().isEmpty)
+                                            ? const SizedBox(
+                                                height: 16,
+                                                width: 16,
+                                                child: CircularProgressIndicator(
+                                                  strokeWidth: 2,
+                                                  color: Colors.white,
+                                                ),
+                                              )
+                                            : Text(
+                                                (user?.userProfile == null || user!.userProfile!.trim().isEmpty)
+                                                    ? l10n.addProfilePicture
+                                                    : l10n.personalDetails,
+                                                style: const TextStyle(
+                                                  fontSize: 12,
+                                                ),
+                                              ),
                                       ),
-                                      child: _isUploading
-                                          ? const SizedBox(
-                                              height: 16,
-                                              width: 16,
-                                              child: CircularProgressIndicator(
-                                                strokeWidth: 2,
-                                                color: Colors.white,
-                                              ),
-                                            )
-                                          : Text(
-                                              l10n.addProfilePicture,
-                                              style: const TextStyle(
-                                                fontSize: 12,
-                                              ),
-                                            ),
                                     ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
-                            ),
-                          ],
-                        ),
+                            ],
+                          ),
+                        ] else ...[
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.all(8),
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  border: Border.all(
+                                    color: Colors.green,
+                                  ),
+                                ),
+                                child: const Icon(
+                                  Icons.check_circle_outline_rounded,
+                                  size: 20,
+                                  color: Colors.green,
+                                ),
+                              ),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      "Your profile is 100% complete!",
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.normal,
+                                        color: Colors.green.shade700,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
                       ],
                     ),
                   ),

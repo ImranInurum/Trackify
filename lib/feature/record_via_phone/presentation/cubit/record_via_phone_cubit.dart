@@ -1,9 +1,11 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:hive/hive.dart';
 import 'package:trackify/core/widgets/loading_screen_ol.dart';
 import 'package:trackify/feature/record_via_phone/domain/usecase/record_via_phone_use_case.dart';
 import 'package:trackify/feature/record_via_phone/presentation/cubit/record_via_phone_state.dart';
@@ -13,9 +15,15 @@ class RecordViaPhoneCubit extends Cubit<RecordViaPhoneState> {
   Timer? _rideTimer;
   StreamSubscription<Position>? _positionStream;
 
+  /// 0 = online, 1 = offline
+  int saveMode = 0;
+
+  static const String _offlineRidesKey = 'offline_saved_rides';
+
   RecordViaPhoneCubit(this._recordViaPhoneUseCase) : super(const MapInitial());
 
-  void startRecording() async {
+  void startRecording({int mode = 0}) async {
+    saveMode = mode;
     emit(
       MapRecordingUpdate(
         isRecording: true,
@@ -83,7 +91,63 @@ class RecordViaPhoneCubit extends Cubit<RecordViaPhoneState> {
         polylines: state.polylines,
       ),
     );
-    // Here you could also save the ride to a database or API
+  }
+
+  /// Saves the completed ride locally to Hive 'offline_rides' box.
+  Future<bool> saveRideOffline({
+    required String tag,
+    required List<LatLng> points,
+    required double distanceKm,
+    required Duration duration,
+    required double avgSpeed,
+    required double topSpeed,
+  }) async {
+    try {
+      final box = Hive.box(_offlineRidesKey);
+      final id = 'ride_${DateTime.now().millisecondsSinceEpoch}';
+
+      final rideMap = {
+        'id': id,
+        'tag': tag,
+        'dateStr': DateTime.now().toIso8601String(),
+        'distanceKm': distanceKm,
+        'durationSeconds': duration.inSeconds,
+        'avgSpeed': avgSpeed,
+        'topSpeed': topSpeed,
+        'points': points
+            .map((p) => {'lat': p.latitude, 'lng': p.longitude})
+            .toList(),
+      };
+
+      await box.put(id, jsonEncode(rideMap));
+      debugPrint('✅ Offline ride saved to Hive. Key: $id | Total: ${box.length}');
+      return true;
+    } catch (e) {
+      debugPrint('❌ Error saving offline ride to Hive: $e');
+      return false;
+    }
+  }
+
+  /// Returns all locally saved offline rides from Hive, newest first.
+  Future<List<Map<String, dynamic>>> getOfflineRides() async {
+    final box = Hive.box(_offlineRidesKey);
+    final rides = box.values
+        .map((v) => jsonDecode(v as String) as Map<String, dynamic>)
+        .toList();
+    // Sort newest first by dateStr
+    rides.sort((a, b) {
+      final aDate = DateTime.tryParse(a['dateStr'] ?? '') ?? DateTime(0);
+      final bDate = DateTime.tryParse(b['dateStr'] ?? '') ?? DateTime(0);
+      return bDate.compareTo(aDate);
+    });
+    return rides;
+  }
+
+  /// Deletes a specific offline ride by its id key.
+  Future<void> deleteOfflineRide(String id) async {
+    final box = Hive.box(_offlineRidesKey);
+    await box.delete(id);
+    debugPrint('🗑️ Offline ride deleted. Key: $id');
   }
 
   void updateRecordingData(Position position) {

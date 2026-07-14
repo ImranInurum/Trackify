@@ -10,14 +10,17 @@ class PrivacyScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    
+
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Theme.of(context).colorScheme.onSurface),
+          icon: Icon(
+            Icons.arrow_back,
+            color: Theme.of(context).colorScheme.onSurface,
+          ),
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: Text(
@@ -53,7 +56,9 @@ class PrivacyScreen extends StatelessWidget {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const CurrentSessionsScreen()),
+                  MaterialPageRoute(
+                    builder: (context) => const CurrentSessionsScreen(),
+                  ),
                 );
               },
             ),
@@ -66,7 +71,9 @@ class PrivacyScreen extends StatelessWidget {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const DeleteAccountScreen()),
+                  MaterialPageRoute(
+                    builder: (context) => const DeleteAccountScreen(),
+                  ),
                 );
               },
             ),
@@ -109,19 +116,29 @@ class PrivacyScreen extends StatelessWidget {
                   TextField(
                     controller: oldPasswordController,
                     obscureText: true,
-                    style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.onSurface,
+                    ),
                     decoration: InputDecoration(
                       hintText: l10n.oldPassword,
                       hintStyle: TextStyle(
-                        color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.onSurface.withOpacity(0.5),
                         fontSize: 14,
                         fontWeight: FontWeight.w400,
                       ),
                       enabledBorder: UnderlineInputBorder(
-                        borderSide: BorderSide(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5)),
+                        borderSide: BorderSide(
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.onSurface.withOpacity(0.5),
+                        ),
                       ),
                       focusedBorder: UnderlineInputBorder(
-                        borderSide: BorderSide(color: Theme.of(context).colorScheme.onSurface),
+                        borderSide: BorderSide(
+                          color: Theme.of(context).colorScheme.onSurface,
+                        ),
                       ),
                       contentPadding: const EdgeInsets.only(bottom: 8),
                       isDense: true,
@@ -131,19 +148,29 @@ class PrivacyScreen extends StatelessWidget {
                   TextField(
                     controller: newPasswordController,
                     obscureText: true,
-                    style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.onSurface,
+                    ),
                     decoration: InputDecoration(
                       hintText: l10n.newPassword,
                       hintStyle: TextStyle(
-                        color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.onSurface.withOpacity(0.5),
                         fontSize: 14,
                         fontWeight: FontWeight.w400,
                       ),
                       enabledBorder: UnderlineInputBorder(
-                        borderSide: BorderSide(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5)),
+                        borderSide: BorderSide(
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.onSurface.withOpacity(0.5),
+                        ),
                       ),
                       focusedBorder: UnderlineInputBorder(
-                        borderSide: BorderSide(color: Theme.of(context).colorScheme.onSurface),
+                        borderSide: BorderSide(
+                          color: Theme.of(context).colorScheme.onSurface,
+                        ),
                       ),
                       contentPadding: const EdgeInsets.only(bottom: 8),
                       isDense: true,
@@ -153,20 +180,30 @@ class PrivacyScreen extends StatelessWidget {
                   TextField(
                     controller: confirmPasswordController,
                     obscureText: true,
-                    style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.onSurface,
+                    ),
                     decoration: InputDecoration(
                       hintText: l10n.confirmNewPasswordTitle,
                       errorText: errorMessage,
                       hintStyle: TextStyle(
-                        color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.onSurface.withOpacity(0.5),
                         fontSize: 14,
                         fontWeight: FontWeight.w400,
                       ),
                       enabledBorder: UnderlineInputBorder(
-                        borderSide: BorderSide(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5)),
+                        borderSide: BorderSide(
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.onSurface.withOpacity(0.5),
+                        ),
                       ),
                       focusedBorder: UnderlineInputBorder(
-                        borderSide: BorderSide(color: Theme.of(context).colorScheme.onSurface),
+                        borderSide: BorderSide(
+                          color: Theme.of(context).colorScheme.onSurface,
+                        ),
                       ),
                       contentPadding: const EdgeInsets.only(bottom: 8),
                       isDense: true,
@@ -201,7 +238,9 @@ class PrivacyScreen extends StatelessWidget {
                           l10n.logoutOfAllDevices,
                           style: TextStyle(
                             fontSize: 14,
-                            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.8),
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSurface.withOpacity(0.8),
                           ),
                         ),
                       ),
@@ -210,7 +249,11 @@ class PrivacyScreen extends StatelessWidget {
                   const SizedBox(height: 10),
                 ],
               ),
-              actionsPadding: const EdgeInsets.only(right: 16, bottom: 12, top: 12),
+              actionsPadding: const EdgeInsets.only(
+                right: 16,
+                bottom: 12,
+                top: 12,
+              ),
               actions: [
                 TextButton(
                   onPressed: () {
@@ -226,7 +269,8 @@ class PrivacyScreen extends StatelessWidget {
                 ),
                 TextButton(
                   onPressed: () {
-                    if (newPasswordController.text != confirmPasswordController.text) {
+                    if (newPasswordController.text !=
+                        confirmPasswordController.text) {
                       setState(() {
                         errorMessage = l10n.passwordsDoNotMatch;
                       });

@@ -166,10 +166,14 @@ class _DeviceDataScreenState extends State<DeviceDataScreen> {
                     const SizedBox(height: 4),
                     Row(
                       children: [
-                        Text(
-                          vehicleDisplayName,
-                          style: text.titleMedium?.copyWith(
-                            fontWeight: FontWeight.bold,
+                        Flexible(
+                          child: Text(
+                            vehicleDisplayName,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: text.titleMedium?.copyWith(
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
                         const SizedBox(width: 8),

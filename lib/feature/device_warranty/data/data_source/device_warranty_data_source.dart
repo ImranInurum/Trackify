@@ -1,5 +1,6 @@
 import 'package:trackify/core/config/network/api_host.dart';
 import 'package:trackify/core/config/network/base_api_service.dart';
+import 'package:trackify/core/config/network/exceptions.dart';
 import '../model/device_warranty_model.dart';
 import '../model/warranty_payment_summary_model.dart';
 import '../model/extend_warranty_model.dart';
@@ -27,7 +28,21 @@ class DeviceWarrantyRemoteDataSourceImpl implements DeviceWarrantyRemoteDataSour
       ApiURL.getDeviceWarranty(imei),
     );
     return response.fold(
-      (l) => throw l,
+      (l) {
+        if (l is NotFoundException && l.message.toLowerCase().contains("no warranty found")) {
+          return DeviceWarrantyModel(
+            vehicle: null,
+            warranty: DeviceWarrantyDetailsModel(
+              expiryDate: '',
+              expiryDateText: 'Expired',
+              daysLeft: 0,
+              daysLeftText: 'Expired',
+            ),
+            offer: null,
+          );
+        }
+        throw l;
+      },
       (r) {
         final Map<String, dynamic> responseData = r as Map<String, dynamic>? ?? {};
         final Map<String, dynamic> data = responseData['data'] as Map<String, dynamic>? ?? {};
@@ -77,7 +92,25 @@ class DeviceWarrantyRemoteDataSourceImpl implements DeviceWarrantyRemoteDataSour
       ApiURL.getDeviceWarrantyStatus(imei),
     );
     return response.fold(
-      (l) => throw l,
+      (l) {
+        if (l is NotFoundException && l.message.toLowerCase().contains("no warranty found")) {
+          return WarrantyStatusModel(
+            success: true,
+            imei: imei,
+            warranty: WarrantyStatusData(
+              startDate: '',
+              expiryDate: '',
+              durationMonths: 0,
+              daysLeft: 0,
+              isExpired: true,
+              status: 'Expired',
+              paymentMethod: '',
+              amountPaid: 0,
+            ),
+          );
+        }
+        throw l;
+      },
       (r) {
         final Map<String, dynamic> responseData = r as Map<String, dynamic>? ?? {};
         return WarrantyStatusModel.fromJson(responseData);
