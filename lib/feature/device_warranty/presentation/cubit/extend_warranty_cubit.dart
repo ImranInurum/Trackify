@@ -1,4 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:trackify/core/utils/shared_preferences.dart';
+import 'package:trackify/app/app_navigation.dart';
 import '../../data/model/extend_warranty_model.dart';
 import '../../domain/usecase/extend_warranty_usecase.dart';
 import 'extend_warranty_state.dart';
@@ -41,7 +43,12 @@ class ExtendWarrantyCubit extends Cubit<ExtendWarrantyState> {
 
     result.fold(
       (failure) => emit(ExtendWarrantyError(failure.message)),
-      (entity) => emit(ExtendWarrantySuccess(entity, "Warranty extended successfully")),
+      (entity) {
+        AppPreference.instance.setBool(key: 'KEY_WARRANTY_EXPIRED', value: false).then((_) {
+          AppNavigation.refreshNavigationState();
+        });
+        emit(ExtendWarrantySuccess(entity, "Warranty extended successfully"));
+      },
     );
   }
 }

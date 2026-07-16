@@ -560,15 +560,15 @@ class _RefuelHistoryTabViewState extends State<RefuelHistoryTabView> {
                           headingRowColor: MaterialStateProperty.all(
                             Theme.of(context).primaryColor.withOpacity(0.1),
                           ),
-                          columns: const [
-                            DataColumn(label: Text('Date')),
-                            DataColumn(label: Text('Time')),
-                            DataColumn(label: Text('Odometer')),
-                            DataColumn(label: Text('Location')),
-                            DataColumn(label: Text('Amount')),
-                            DataColumn(label: Text('Rate')),
-                            DataColumn(label: Text('Liters')),
-                            DataColumn(label: Text('Mileage')),
+                          columns: [
+                            DataColumn(label: Text(l10n.dateHeader)),
+                            DataColumn(label: Text(l10n.timeHeader)),
+                            DataColumn(label: Text(l10n.odometerHeader)),
+                            DataColumn(label: Text(l10n.locationHeader)),
+                            DataColumn(label: Text(l10n.amountHeader)),
+                            DataColumn(label: Text(l10n.rateHeader)),
+                            DataColumn(label: Text(l10n.litersHeader)),
+                            DataColumn(label: Text(l10n.mileageHeader)),
                           ],
                           rows: logs.map((log) {
                             final dateStr =
@@ -614,7 +614,7 @@ class _RefuelHistoryTabViewState extends State<RefuelHistoryTabView> {
                                 ),
                               )
                             : const Icon(Icons.download),
-                        label: Text(isDownloading ? 'Downloading...' : 'Download CSV'),
+                        label: Text(isDownloading ? l10n.downloadingStatus : l10n.downloadCsvButton),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Theme.of(context).primaryColor,
                           foregroundColor: Colors.white,
@@ -633,6 +633,7 @@ class _RefuelHistoryTabViewState extends State<RefuelHistoryTabView> {
   }
 
   Future<void> _downloadCsv(BuildContext context, List<RefuelLog> logs) async {
+    final l10n = AppLocalizations.of(context)!;
     try {
       StringBuffer sb = StringBuffer();
       sb.writeln('Date,Time,Odometer,Location,Amount,Rate,Liters,Mileage');
@@ -664,13 +665,13 @@ class _RefuelHistoryTabViewState extends State<RefuelHistoryTabView> {
 
       if (outputFile != null && context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('File downloaded successfully!')),
+          SnackBar(content: Text(l10n.fileDownloadSuccess)),
         );
       }
     } catch (e) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error downloading file: $e')),
+          SnackBar(content: Text(l10n.errorDownloadingFile(e.toString()))),
         );
       }
     }

@@ -111,16 +111,16 @@ class RideHistoryCubit extends Cubit<RideHistoryState> {
         case 'Date':
           final dateA = DateTime.tryParse(a.rawStartTime) ?? _parseFallback(a);
           final dateB = DateTime.tryParse(b.rawStartTime) ?? _parseFallback(b);
-          comparison = dateA.compareTo(dateB);
+          comparison = dateB.compareTo(dateA); // Descending
           break;
         case 'Distance':
-          comparison = a.distance.compareTo(b.distance);
+          comparison = b.distance.compareTo(a.distance); // Descending
           break;
         case 'Duration':
           // Extract minutes for comparison
           int durA = int.tryParse(a.duration.replaceAll('m', '')) ?? 0;
           int durB = int.tryParse(b.duration.replaceAll('m', '')) ?? 0;
-          comparison = durA.compareTo(durB);
+          comparison = durB.compareTo(durA); // Descending
           break;
       }
       

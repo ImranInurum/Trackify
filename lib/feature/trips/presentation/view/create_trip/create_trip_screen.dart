@@ -75,7 +75,7 @@ class _CreateTripScreenState extends State<CreateTripScreen> {
               context,
               MaterialPageRoute(
                 builder: (context) => TripDetailsScreen(
-                  tripName: state.title,
+                  tripName: state.title == 'Trip 1' ? l10n.tripLabel('1') : state.title,
                   rides: state.rides,
                 ),
               ),

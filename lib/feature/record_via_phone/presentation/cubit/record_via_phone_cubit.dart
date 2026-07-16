@@ -93,6 +93,12 @@ class RecordViaPhoneCubit extends Cubit<RecordViaPhoneState> {
     );
   }
 
+  Future<Box> _getOfflineRidesBox() async {
+    return Hive.isBoxOpen(_offlineRidesKey)
+        ? Hive.box(_offlineRidesKey)
+        : await Hive.openBox(_offlineRidesKey);
+  }
+
   /// Saves the completed ride locally to Hive 'offline_rides' box.
   Future<bool> saveRideOffline({
     required String tag,
@@ -103,7 +109,7 @@ class RecordViaPhoneCubit extends Cubit<RecordViaPhoneState> {
     required double topSpeed,
   }) async {
     try {
-      final box = Hive.box(_offlineRidesKey);
+      final box = await _getOfflineRidesBox();
       final id = 'ride_${DateTime.now().millisecondsSinceEpoch}';
 
       final rideMap = {
@@ -130,24 +136,33 @@ class RecordViaPhoneCubit extends Cubit<RecordViaPhoneState> {
 
   /// Returns all locally saved offline rides from Hive, newest first.
   Future<List<Map<String, dynamic>>> getOfflineRides() async {
-    final box = Hive.box(_offlineRidesKey);
-    final rides = box.values
-        .map((v) => jsonDecode(v as String) as Map<String, dynamic>)
-        .toList();
-    // Sort newest first by dateStr
-    rides.sort((a, b) {
-      final aDate = DateTime.tryParse(a['dateStr'] ?? '') ?? DateTime(0);
-      final bDate = DateTime.tryParse(b['dateStr'] ?? '') ?? DateTime(0);
-      return bDate.compareTo(aDate);
-    });
-    return rides;
+    try {
+      final box = await _getOfflineRidesBox();
+      final rides = box.values
+          .map((v) => jsonDecode(v as String) as Map<String, dynamic>)
+          .toList();
+      // Sort newest first by dateStr
+      rides.sort((a, b) {
+        final aDate = DateTime.tryParse(a['dateStr'] ?? '') ?? DateTime(0);
+        final bDate = DateTime.tryParse(b['dateStr'] ?? '') ?? DateTime(0);
+        return bDate.compareTo(aDate);
+      });
+      return rides;
+    } catch (e) {
+      debugPrint('❌ Error fetching offline rides: $e');
+      return [];
+    }
   }
 
   /// Deletes a specific offline ride by its id key.
   Future<void> deleteOfflineRide(String id) async {
-    final box = Hive.box(_offlineRidesKey);
-    await box.delete(id);
-    debugPrint('🗑️ Offline ride deleted. Key: $id');
+    try {
+      final box = await _getOfflineRidesBox();
+      await box.delete(id);
+      debugPrint('🗑️ Offline ride deleted. Key: $id');
+    } catch (e) {
+      debugPrint('❌ Error deleting offline ride: $e');
+    }
   }
 
   void updateRecordingData(Position position) {

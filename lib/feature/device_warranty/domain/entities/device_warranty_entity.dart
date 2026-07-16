@@ -47,6 +47,8 @@ class DeviceWarrantyDetailsEntity extends Equatable {
     required this.daysLeftText,
   });
 
+  bool get isExpired => daysLeft <= 0;
+
   @override
   List<Object?> get props => [expiryDate, expiryDateText, daysLeft, daysLeftText];
 }

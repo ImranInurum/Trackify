@@ -700,7 +700,7 @@ class _HelpSuggestionScreenState extends State<HelpSuggestionScreen> {
           } else {
             if (mounted) {
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Could not open FAQ')),
+                SnackBar(content: Text(l10n.couldNotOpenFaq)),
               );
             }
           }
@@ -712,7 +712,7 @@ class _HelpSuggestionScreenState extends State<HelpSuggestionScreen> {
           } else {
             if (mounted) {
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Could not open Terms & Conditions')),
+                SnackBar(content: Text(l10n.couldNotOpenTerms)),
               );
             }
           }
@@ -723,7 +723,7 @@ class _HelpSuggestionScreenState extends State<HelpSuggestionScreen> {
             await launchUrl(url, mode: LaunchMode.externalApplication);
           } else {
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Could not open privacy policy')),
+              SnackBar(content: Text(l10n.couldNotOpenPrivacy)),
             );
           }
         }),

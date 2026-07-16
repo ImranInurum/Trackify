@@ -1,6 +1,9 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../data/entity/ride_model.dart';
 import 'create_trip_state.dart';
+import 'package:hive/hive.dart';
+import 'dart:convert';
+import 'package:flutter/foundation.dart';
 
 class CreateTripCubit extends Cubit<CreateTripState> {
   CreateTripCubit() : super(CreateTripInitial());
@@ -51,12 +54,24 @@ class CreateTripCubit extends Cubit<CreateTripState> {
       
       emit(CreateTripLoading());
       
-      // Simulate API call
-      await Future.delayed(const Duration(seconds: 2));
+      final tripTitle = currentSuccess.tripTitle ?? "Trip 1";
+      final tripData = {
+        'title': tripTitle,
+        'rides': currentSuccess.selectedRides.map((e) => e.toJson()).toList(),
+      };
+      
+      try {
+        final box = await Hive.openBox('saved_trips');
+        final trips = List<dynamic>.from(box.get('trips_list', defaultValue: []));
+        trips.add(jsonEncode(tripData));
+        await box.put('trips_list', trips);
+      } catch (e) {
+        debugPrint('Error saving trip: $e');
+      }
       
       // Emit saved state with the data
       emit(CreateTripSaved(
-        title: currentSuccess.tripTitle ?? "Trip 1",
+        title: tripTitle,
         rides: currentSuccess.selectedRides,
       ));
     }

@@ -64,7 +64,7 @@ class _AppNavigationState extends State<AppNavigation> {
 
   bool get _isWarrantyExpired {
     if (!_hasDevice) return false;
-    return AppPreference.instance.getBoolSync(key: 'KEY_WARRANTY_EXPIRED');
+    return AppPreference.instance.getBoolSync(key: 'KEY_WARRANTY_EXPIRED', defaultValue: true);
   }
 
   bool get _isThreeTabMode => !_hasDevice || _isWarrantyExpired;

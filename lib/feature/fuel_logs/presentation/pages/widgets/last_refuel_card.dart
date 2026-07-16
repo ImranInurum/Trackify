@@ -224,7 +224,7 @@ class LastRefuelCard extends StatelessWidget {
   void _showUpdateMileageDialog(BuildContext context, AppLocalizations l10n) {
     final theme = Theme.of(context);
     final initialMileage = state.mileageArai == 'null' ? '' : state.mileageArai;
-    final TextEditingController _controller = TextEditingController(text: initialMileage);
+    final TextEditingController controller = TextEditingController(text: initialMileage);
 
     showDialog(
       context: context,
@@ -252,7 +252,7 @@ class LastRefuelCard extends StatelessWidget {
               ),
               const SizedBox(height: 16),
               TextField(
-                controller: _controller,
+                controller: controller,
                 keyboardType: TextInputType.number,
                 decoration: InputDecoration(
                   fillColor: theme.inputDecorationTheme.fillColor,
@@ -295,12 +295,22 @@ class LastRefuelCard extends StatelessWidget {
                   ),
                   const SizedBox(width: 8),
                   TextButton(
-                    onPressed: () {
-                      final mileageText = _controller.text.trim();
+                    onPressed: () async {
+                      final mileageText = controller.text.trim();
                       if (mileageText.isNotEmpty) {
-                        context.read<FuelLogsCubit>().updateMileage(mileageText);
+                        final error = await context.read<FuelLogsCubit>().updateMileage(mileageText);
+                        if (error != null && context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(error),
+                              backgroundColor: Colors.redAccent,
+                            ),
+                          );
+                        }
                       }
-                      Navigator.pop(ctx);
+                      if (context.mounted) {
+                        Navigator.pop(ctx);
+                      }
                     },
                     child: Text(
                       l10n.save,

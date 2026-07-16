@@ -6,6 +6,7 @@ import 'package:trackify/feature/overspeed_alert/data/model/overspeed_alert_mode
 import '../cubit/overspeed_alert_cubit.dart';
 import '../cubit/overspeed_alert_state.dart';
 import '../widgets/vehicle_multi_selection_dialog.dart';
+import 'package:trackify/core/widgets/loading_screen_ol.dart';
 
 class AddOverspeedAlertScreen extends StatefulWidget {
   /// Pass an existing alert to pre-fill the form (edit mode).
@@ -28,6 +29,9 @@ class _AddOverspeedAlertScreenState extends State<AddOverspeedAlertScreen> {
 
   /// Local selection — the ONLY place vehicle selection lives.
   List<Vehicle> _selectedVehicles = [];
+  
+  /// Local cache for all vehicles to prevent UI flicker on state change
+  List<Vehicle> _allVehicles = [];
 
   @override
   void initState() {
@@ -41,6 +45,7 @@ class _AddOverspeedAlertScreenState extends State<AddOverspeedAlertScreen> {
       // Find the vehicle matching the alert's IMEI
       final cubitState = context.read<OverspeedAlertCubit>().state;
       if (cubitState is OverspeedAlertLoaded) {
+        _allVehicles = cubitState.userVehicles;
         final vehicle = cubitState.userVehicles.cast<Vehicle?>().firstWhere(
               (v) => v?.imei == alert.imei,
               orElse: () => null,
@@ -52,8 +57,11 @@ class _AddOverspeedAlertScreenState extends State<AddOverspeedAlertScreen> {
     } else {
       // Pre-select the currently active vehicle from the Cubit
       final cubitState = context.read<OverspeedAlertCubit>().state;
-      if (cubitState is OverspeedAlertLoaded && cubitState.selectedVehicle != null) {
-        _selectedVehicles = [cubitState.selectedVehicle!];
+      if (cubitState is OverspeedAlertLoaded) {
+        _allVehicles = cubitState.userVehicles;
+        if (cubitState.selectedVehicle != null) {
+          _selectedVehicles = [cubitState.selectedVehicle!];
+        }
       }
     }
   }
@@ -65,23 +73,7 @@ class _AddOverspeedAlertScreenState extends State<AddOverspeedAlertScreen> {
     super.dispose();
   }
 
-  Future<void> _showVehicleSelectionDialog() async {
-    final cubitState = context.read<OverspeedAlertCubit>().state;
-    final allVehicles =
-        cubitState is OverspeedAlertLoaded ? cubitState.userVehicles : <Vehicle>[];
 
-    final result = await showDialog<List<Vehicle>>(
-      context: context,
-      builder: (_) => VehicleMultiSelectionDialog(
-        vehicles: allVehicles,
-        initialSelection: _selectedVehicles,
-      ),
-    );
-
-    if (result != null) {
-      setState(() => _selectedVehicles = result);
-    }
-  }
 
   void _submitForm() {
     if (!_formKey.currentState!.validate()) return;
@@ -311,45 +303,72 @@ class _AddOverspeedAlertScreenState extends State<AddOverspeedAlertScreen> {
 
   Widget _buildVehicleSelectionField(AppLocalizations l10n) {
     final theme = Theme.of(context);
-    final count = _selectedVehicles.length;
+    final allVehicles = _allVehicles;
+
     return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Icon(Icons.directions_car_filled_outlined,
-            color: theme.colorScheme.onSurface.withOpacity(0.6), size: 20),
+        Padding(
+          padding: const EdgeInsets.only(top: 12.0),
+          child: Icon(Icons.directions_car_filled_outlined,
+              color: theme.colorScheme.onSurface.withOpacity(0.6), size: 20),
+        ),
         const SizedBox(width: 16),
         Expanded(
           flex: 2,
-          child: Text(
-            l10n.selectYourVehicle,
-            style: theme.textTheme.bodyMedium?.copyWith(
-                color: theme.colorScheme.onSurface.withOpacity(0.8)),
+          child: Padding(
+            padding: const EdgeInsets.only(top: 12.0),
+            child: Text(
+              l10n.selectYourVehicle,
+              style: theme.textTheme.bodyMedium?.copyWith(
+                  color: theme.colorScheme.onSurface.withOpacity(0.8)),
+            ),
           ),
         ),
         Expanded(
           flex: 3,
-          child: InkWell(
-            onTap: _showVehicleSelectionDialog,
-            child: Container(
-              padding: const EdgeInsets.only(bottom: 8),
-              decoration: BoxDecoration(
-                border: Border(
-                    bottom: BorderSide(color: theme.dividerColor)),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    '$count ${l10n.selected}',
+          child: allVehicles.isEmpty
+              ? Padding(
+                  padding: const EdgeInsets.only(top: 12.0),
+                  child: Text(
+                    'No vehicles available.',
                     style: theme.textTheme.bodyMedium,
                   ),
-                  Icon(Icons.open_in_new_rounded,
-                      color:
-                          theme.colorScheme.onSurface.withOpacity(0.6),
-                      size: 16),
-                ],
-              ),
-            ),
-          ),
+                )
+              : ListView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  padding: EdgeInsets.zero,
+                  itemCount: allVehicles.length,
+                  itemBuilder: (context, index) {
+                    final vehicle = allVehicles[index];
+                    final isSelected =
+                        _selectedVehicles.any((v) => v.id == vehicle.id);
+                    return CheckboxListTile(
+                      contentPadding: EdgeInsets.zero,
+                      controlAffinity: ListTileControlAffinity.leading,
+                      dense: true,
+                      title: Text(
+                        '${vehicle.vehicleModel} — ${vehicle.vehicleNumber}',
+                        style: theme.textTheme.bodyMedium,
+                      ),
+                      value: isSelected,
+                      activeColor: theme.colorScheme.primary,
+                      checkColor: theme.colorScheme.onPrimary,
+                      side: BorderSide(color: theme.colorScheme.primary),
+                      onChanged: (bool? checked) {
+                        setState(() {
+                          if (checked == true) {
+                            _selectedVehicles.add(vehicle);
+                          } else {
+                            _selectedVehicles.removeWhere(
+                                (v) => v.id == vehicle.id);
+                          }
+                        });
+                      },
+                    );
+                  },
+                ),
         ),
       ],
     );

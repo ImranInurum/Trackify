@@ -220,7 +220,7 @@ class DeleteAccountScreen extends StatelessWidget {
             TextButton(
               onPressed: () async {
                 final scaffoldMessenger = ScaffoldMessenger.of(context);
-                final navigator = Navigator.of(context);
+                final navigator = Navigator.of(context, rootNavigator: true);
                 final appCubit = context.read<AppCubit>();
                 final userId = appCubit.state.userData?.id;
 
@@ -228,8 +228,8 @@ class DeleteAccountScreen extends StatelessWidget {
 
                 if (userId == null || userId.isEmpty) {
                   scaffoldMessenger.showSnackBar(
-                    const SnackBar(
-                      content: Text('Failed to delete account: User ID not found.'),
+                    SnackBar(
+                      content: Text(l10n.deleteAccountFailedNoUser),
                       backgroundColor: Colors.redAccent,
                     ),
                   );
@@ -244,15 +244,15 @@ class DeleteAccountScreen extends StatelessWidget {
                   (failure) {
                     scaffoldMessenger.showSnackBar(
                       SnackBar(
-                        content: Text('Error deleting account: ${failure.message}'),
+                        content: Text(l10n.errorDeletingAccount(failure.message)),
                         backgroundColor: Colors.redAccent,
                       ),
                     );
                   },
                   (_) {
                     scaffoldMessenger.showSnackBar(
-                      const SnackBar(
-                        content: Text('Account successfully deleted.'),
+                      SnackBar(
+                        content: Text(l10n.deleteAccountSuccess),
                         backgroundColor: Colors.green,
                       ),
                     );

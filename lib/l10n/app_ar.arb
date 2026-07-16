@@ -195,16 +195,16 @@
   "logout": "تسجيل الخروج",
   "dataPlan": "خطة البيانات",
   "warranty": "الضمان",
-  "expiresInDays": "تنتهي في {days} أيام",
+  "expiresInDays": "ينتهي في غضون {days} يومًا",
   "@expiresInDays": {
     "placeholders": {
       "days": {
-        "type": "String"
+        "type": "int"
       }
     }
   },
   "rechargeNow": "اشحن الآن",
-  "renewNow": "جدد الآن",
+  "renewNow": "تجديد الآن",
   "secureYourVehicle": "أمن مركبتك",
   "secureYourVehicleDesc": "اشترِ جهاز Trackify الآن لتتبع مباشر وراحة بال.",
   "boughtDeviceInstallNow": "هل اشتريت الجهاز؟ ",
@@ -755,6 +755,8 @@
   "sortBy": "فرز حسب",
   "duration": "المدة",
   "oldestToRecent": "من الأقدم إلى الأحدث",
+  "longToShort": "من الأطول إلى الأقصر",
+  "shortToLong": "من الأقصر إلى الأطول",
   "date": "التاريخ",
   "noTripsFound": "لم يتم العثور على رحلات لـ \"{query}\"",
   "ridesCount": "{count} رحلات",
@@ -1117,7 +1119,7 @@
   "areYouSureDiscardRide": "Are you sure you want to discard this ride?",
   "kmhLabel": "km/h",
   "hrminLabel": "hr:min",
-  "kmLabel": "km",
+  "kmLabel": "كم",
   "exportRideVideoDesc": "Exported ride will be saved in Trackify Ride Videos folder of your Gallery app",
   "chooseNicknameHint": "Choose a unique nickname for this ride",
   "myRideOnTrackify": "My Ride on Trackify",
@@ -1162,5 +1164,114 @@
   "statisticsTab": "Statistics",
   "yourPhonesLocation": "Your Phone's Location",
   "justNow": "Just now",
-  "hoursShort": "h"
+  "hoursShort": "h",
+  "exploreProducts": "استكشف المنتجات",
+  "decideBestProductText": "غير قادر على تحديد أي منتج هو",
+  "bestForYou": "الأفضل لك؟",
+  "callUs": "اتصل بنا",
+  "happyTrackifyUsers": "مستخدمو تراكيفاي السعداء",
+  "umeshDarwatkar": "أوميش دارواتكار",
+  "umeshDarwatkarDuration": "مستخدم تراكيفاي منذ عام واحد",
+  "umeshDarwatkarReview": "أوصي بشدة بجهاز تراكيفاي جي بي إس لأي شخص يبحث عن أداة ملاحة موثوقة ودقيقة للدراجات. يحتوي على ميزات رائعة مثل اكتشاف السرقة، وتنبيه الحوادث، ومشاركة الرحلة مباشرة، وتسجيل الرحلة وتتبع الوقود. إنه سهل التثبيت وتطبيقه سهل الاستخدام للغاية مع الكثير من الميزات.",
+  "rohitSharma": "روهيت شارما",
+  "rohitSharmaDuration": "مستخدم تراكيفاي منذ عامين",
+  "rohitSharmaReview": "باستخدام الجهاز، أود تسليط الضوء على مشاركة تتبع الحركة مع الآخرين بحيث يمكن لصديقي تتبعي بأسهل طريقة. التطبيق سريع الاستجابة ومفيد للغاية.",
+  "peopleSmartIntro": "شخصًا جعلوا دراجاتهم ذكية.\nجرب الميزات ",
+  "smartText": "الذكية ",
+  "featuresOfTrackify": "لتراكيفاي 🏍️",
+  "accidentAlertCard": "تنبيه الحوادث",
+  "antiTheftAlertCard": "تنبيه ضد السرقة",
+  "liveGpsTrackingCard": "تتبع مباشر لنظام تحديد المواقع",
+  "chooseDeviceSuitsYou": "اختر الجهاز الذي يناسبك تمامًا",
+  "lite": "لايت",
+  "pro": "برو",
+  "go": "جو",
+  "deviceSim": "جهاز + شريحة إيرتل/في",
+  "ignitionOnOffAlert": "تنبيه تشغيل/إيقاف التشغيل",
+  "tamperAlert": "تنبيه العبث",
+  "portable": "محمول",
+  "replacementWarrantyMonths": "ضمان الاستبدال\n(أشهر)",
+  "trackifySmartGpsIot": "تراكيفاي ذكي جي بي إس إنترنت الأشياء",
+  "monthAppSubscription": "اشتراك تطبيق لمدة 12 شهرًا\n\n",
+  "simActivationCharges": "رسوم تفعيل الشريحة",
+  "selectProduct": "اختر المنتج",
+  "usersBoughtProduct": "*اشترى 31 مستخدمًا {productName} بالأمس",
+  "@usersBoughtProduct": {
+    "placeholders": {
+      "productName": {
+        "type": "String"
+      }
+    }
+  },
+  "outOfStock": "نفذت الكمية",
+  "withText": "مع ",
+  "buyNowForPrice": "اشترِ الآن مقابل {price} روبية",
+  "@buyNowForPrice": {
+    "placeholders": {
+      "price": {
+        "type": "String"
+      }
+    }
+  },
+  "liveTracking": "متابعة مباشرة",
+  "googlePlay": "جوجل بلاي",
+  "searchForItem": "البحث عن عنصر...",
+  "completePersonalDetails": "اكتملت التفاصيل الشخصية",
+  "personalDetailsDesc": "يرجى تقديم هذه التفاصيل قبل تثبيت الجهاز.",
+  "lastNameLabel": "الاسم الأخير",
+  "enterLastName": "أدخل اسمك الأخير",
+  "requiredField": "حقل مطلوب",
+  "enterMobileNumber": "أدخل رقم هاتفك المحمول",
+  "saveAndContinue": "حفظ ومتابعة",
+  "yourLocationLabel": "موقعك",
+  "deviceWarrantyExpired": "انتهت صلاحية ضمان الجهاز",
+  "receivedTrackifyDevicePrompt": "هل استلمت جهاز Trackify الخاص بك؟",
+  "fivePercentOffPromo": "خصم 5% عند الشراء من تطبيق Trackify",
+  "activateNow": "تفعيل الآن",
+  "exploreExclusiveDeal": "اكتشف الصفقة الحصرية",
+  "rechargePlan": "خطة الشحن",
+  "rechargeExpired": "انتهت صلاحية الشحن",
+  "trackifyBrandLabel": "تراكيفاي",
+  "hrMinLabel": "ساعة:دقيقة",
+  "enterCustomTag": "أدخل علامة مخصصة",
+  "locationNotAvailable": "الموقع غير متوفر",
+  "deleteAccountFailedNoUser": "فشل حذف الحساب: لم يتم العثور على معرّف المستخدم.",
+  "deleteAccountSuccess": "تم حذف الحساب بنجاح.",
+  "errorDeletingAccount": "خطأ أثناء حذف الحساب: {message}",
+  "@errorDeletingAccount": {
+    "placeholders": {
+      "message": {
+        "type": "String"
+      }
+    }
+  },
+  "invalidVehicleRegistrationNumber": "يرجى إدخال رقم تسجيل مركبة صالح.",
+  "cropImageTitle": "قص الصورة",
+  "pleaseEnterVehicleRegistrationNumber": "يرجى إدخال رقم تسجيل المركبة.",
+  "vehicleRegNoRcHelpText": "أدخل رقم تسجيل مركبتك كما هو مطبوع على رخصة السير (RC).",
+  "vehicleNumberHintAlternative": "مثال: UP32AB1234",
+  "vehicleRegistrationNumberLabel": "رقم تسجيل المركبة",
+  "notificationFallback": "إشعار",
+  "dateHeader": "التاريخ",
+  "timeHeader": "الوقت",
+  "odometerHeader": "عداد المسافات",
+  "locationHeader": "الموقع",
+  "amountHeader": "المبلغ",
+  "rateHeader": "السعر",
+  "litersHeader": "لترات",
+  "mileageHeader": "مسافة المقطوعة",
+  "downloadingStatus": "جارٍ التنزيل...",
+  "downloadCsvButton": "تنزيل CSV",
+  "fileDownloadSuccess": "تم تنزيل الملف بنجاح!",
+  "errorDownloadingFile": "خطأ أثناء تنزيل الملف: {error}",
+  "@errorDownloadingFile": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "couldNotOpenFaq": "تعذر فتح الأسئلة الشائعة",
+  "couldNotOpenTerms": "تعذر فتح الشروط والأحكام",
+  "couldNotOpenPrivacy": "تعذر فتح سياسة الخصوصية"
 }

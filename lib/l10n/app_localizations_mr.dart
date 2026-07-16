@@ -483,8 +483,8 @@ class AppLocalizationsMr extends AppLocalizations {
   String get warranty => 'वॉरंटी';
 
   @override
-  String expiresInDays(String days) {
-    return '$days दिवसांत कालबाह्य';
+  String expiresInDays(int days) {
+    return '$days दिवसांत संपेल';
   }
 
   @override
@@ -2061,11 +2061,17 @@ class AppLocalizationsMr extends AppLocalizations {
   String get oldestToRecent => 'जुन्यापासून अलीकडीलपर्यंत';
 
   @override
+  String get longToShort => 'लांब ते लहान';
+
+  @override
+  String get shortToLong => 'लहान ते लांब';
+
+  @override
   String get date => 'तारीख';
 
   @override
   String noTripsFound(String query) {
-    return '\"$query\" साठी कोणतीही ट्रिप सापडली नाही';
+    return '\"$query\" साठी कोणतीही ट्रिप आढळली नाही';
   }
 
   @override
@@ -2894,7 +2900,7 @@ class AppLocalizationsMr extends AppLocalizations {
   String get hrminLabel => 'hr:min';
 
   @override
-  String get kmLabel => 'km';
+  String get kmLabel => 'किमी';
 
   @override
   String get exportRideVideoDesc =>
@@ -3034,4 +3040,265 @@ class AppLocalizationsMr extends AppLocalizations {
 
   @override
   String get hoursShort => 'h';
+
+  @override
+  String get exploreProducts => 'उत्पाद एक्सप्लोर करा';
+
+  @override
+  String get decideBestProductText => 'कोणता उत्पादन तुमच्यासाठी';
+
+  @override
+  String get bestForYou => 'सर्वोत्तम आहे हे ठरवू शकत नाही?';
+
+  @override
+  String get callUs => 'आम्हाला कॉल करा';
+
+  @override
+  String get happyTrackifyUsers => 'आनंदी ट्रॅकिफाय वापरकर्ते';
+
+  @override
+  String get umeshDarwatkar => 'उमेश दरवटकर';
+
+  @override
+  String get umeshDarwatkarDuration =>
+      'गेल्या १ वर्षापासून ट्रॅकिफाय वापरकर्ता';
+
+  @override
+  String get umeshDarwatkarReview =>
+      'बाईकसाठी विश्वासार्ह आणि अचूक नेव्हिगेशन साधन शोधत असलेल्या कोणालाही मी ट्रॅकिफाय जीपीएस डिव्हाइसची शिफारस करतो. यात चोरी शोधणे, अपघात अलर्ट, लाइव्ह राइड शेअरिंग, राइड रेकॉर्डिंग आणि इंधन ट्रॅकिंग यांसारखी उत्तम वैशिष्ट्ये आहेत. हे स्थापित करणे सोपे आहे आणि त्याचे ॲप अनेक वैशिष्ट्यांसह वापरण्यास अतिशय सोपे आहे.';
+
+  @override
+  String get rohitSharma => 'रोहित शर्मा';
+
+  @override
+  String get rohitSharmaDuration => 'गेल्या २ वर्षांपासून ट्रॅकिफाय वापरकर्ता';
+
+  @override
+  String get rohitSharmaReview =>
+      'डिव्हाइस वापरताना हालचालींचा मागोवा घेणे आणि ते इतर लोकांसोबत शेअर करणे ही सर्वात सोपी पद्धत आहे जेणेकरून माझा मित्र मला ट्रॅक करू शकेल. ॲप अतिशय प्रतिसाद देणारे आणि उपयुक्त आहे.';
+
+  @override
+  String get peopleSmartIntro =>
+      'लोकांनी त्यांच्या बाईकला स्मार्ट बनवले.\nअनुभव घ्या ';
+
+  @override
+  String get smartText => 'स्मार्ट ';
+
+  @override
+  String get featuresOfTrackify => 'ट्रॅकिफायची वैशिष्ट्ये 🏍️';
+
+  @override
+  String get accidentAlertCard => 'अपघात अलर्ट';
+
+  @override
+  String get antiTheftAlertCard => 'चोरीविरोधी अलर्ट';
+
+  @override
+  String get liveGpsTrackingCard => 'लाइव्ह जीपीएस ट्रॅकिंग';
+
+  @override
+  String get chooseDeviceSuitsYou => 'तुमच्यासाठी योग्य असलेले डिव्हाइस निवडा';
+
+  @override
+  String get lite => 'लाइट';
+
+  @override
+  String get pro => 'प्रो';
+
+  @override
+  String get go => 'गो';
+
+  @override
+  String get deviceSim => 'डिव्हाइस + एअरटेल/व्हीआय सिम';
+
+  @override
+  String get ignitionOnOffAlert => 'इग्निशन चालू/बंद अलर्ट';
+
+  @override
+  String get tamperAlert => 'छेडछाड अलर्ट';
+
+  @override
+  String get portable => 'पोर्टेबल';
+
+  @override
+  String get replacementWarrantyMonths => 'बदली वॉरंटी\n(महिने)';
+
+  @override
+  String get trackifySmartGpsIot => 'ट्रॅकिफाय स्मार्ट जीपीएस IoT';
+
+  @override
+  String get monthAppSubscription => '१२ महिने ॲप\nसबस्क्रिप्शन\n\n';
+
+  @override
+  String get simActivationCharges => 'सिम ॲक्टिव्हेशन शुल्क';
+
+  @override
+  String get selectProduct => 'उत्पादन निवडा';
+
+  @override
+  String usersBoughtProduct(String productName) {
+    return '*काल ३१ वापरकर्त्यांनी $productName खरेदी केले';
+  }
+
+  @override
+  String get outOfStock => 'स्टॉकमध्ये नाही';
+
+  @override
+  String get withText => 'सोबत ';
+
+  @override
+  String buyNowForPrice(String price) {
+    return '₹$price साठी आता खरेदी करा';
+  }
+
+  @override
+  String get liveTracking => 'लाइव्ह ट्रॅकिंग';
+
+  @override
+  String get googlePlay => 'गुगल प्ले';
+
+  @override
+  String get searchForItem => 'आयटम शोधा...';
+
+  @override
+  String get completePersonalDetails => 'वैयक्तिक तपशील पूर्ण करा';
+
+  @override
+  String get personalDetailsDesc =>
+      'कृपया डिव्हाइस इन्स्टॉलेशनपूर्वी हे तपशील प्रदान करा.';
+
+  @override
+  String get lastNameLabel => 'आडनाव';
+
+  @override
+  String get enterLastName => 'तुमचे आडनाव प्रविष्ट करा';
+
+  @override
+  String get requiredField => 'आवश्यक फील्ड';
+
+  @override
+  String get enterMobileNumber => 'तुमचा मोबाईल नंबर प्रविष्ट करा';
+
+  @override
+  String get saveAndContinue => 'जतन करा आणि पुढे जा';
+
+  @override
+  String get yourLocationLabel => 'तुमचे स्थान';
+
+  @override
+  String get deviceWarrantyExpired => 'डिव्हाइसची वॉरंटी संपली';
+
+  @override
+  String get receivedTrackifyDevicePrompt =>
+      'तुम्हाला तुमचे ट्रॅकिफाय डिव्हाइस मिळाले का?';
+
+  @override
+  String get fivePercentOffPromo => 'ट्रॅकिफाय ॲपवरून खरेदीवर ५% सूट';
+
+  @override
+  String get activateNow => 'आता सक्रिय करा';
+
+  @override
+  String get exploreExclusiveDeal => 'एक्सक्लूसिव डील शोधा';
+
+  @override
+  String get rechargePlan => 'रिचार्ज प्लॅन';
+
+  @override
+  String get rechargeExpired => 'रिचार्ज संपला';
+
+  @override
+  String get trackifyBrandLabel => 'ट्रॅकिफाय';
+
+  @override
+  String get hrMinLabel => 'ता:मि';
+
+  @override
+  String get enterCustomTag => 'कस्टम टॅग प्रविष्ट करा';
+
+  @override
+  String get locationNotAvailable => 'स्थान उपलब्ध नाही';
+
+  @override
+  String get deleteAccountFailedNoUser =>
+      'खाते हटविण्यात अयशस्वी: युझर आयडी आढळला नाही.';
+
+  @override
+  String get deleteAccountSuccess => 'खाते यशस्वीरित्या हटवले गेले.';
+
+  @override
+  String errorDeletingAccount(String message) {
+    return 'खाते हटविण्यात त्रुटी: $message';
+  }
+
+  @override
+  String get invalidVehicleRegistrationNumber =>
+      'कृपया वैध वाहन नोंदणी क्रमांक प्रविष्ट करा.';
+
+  @override
+  String get cropImageTitle => 'इमेज क्रॉप करा';
+
+  @override
+  String get pleaseEnterVehicleRegistrationNumber =>
+      'कृपया वाहन नोंदणी क्रमांक प्रविष्ट करा.';
+
+  @override
+  String get vehicleRegNoRcHelpText =>
+      'आरसीवर छापल्याप्रमाणे तुमचा वाहन नोंदणी क्रमांक प्रविष्ट करा.';
+
+  @override
+  String get vehicleNumberHintAlternative => 'उदा. UP32AB1234';
+
+  @override
+  String get vehicleRegistrationNumberLabel => 'वाहन नोंदणी क्रमांक';
+
+  @override
+  String get notificationFallback => 'सूचना';
+
+  @override
+  String get dateHeader => 'तारीख';
+
+  @override
+  String get timeHeader => 'वेळ';
+
+  @override
+  String get odometerHeader => 'ओडोमीटर';
+
+  @override
+  String get locationHeader => 'स्थान';
+
+  @override
+  String get amountHeader => 'रक्कम';
+
+  @override
+  String get rateHeader => 'दर';
+
+  @override
+  String get litersHeader => 'लिटर';
+
+  @override
+  String get mileageHeader => 'मायलेज';
+
+  @override
+  String get downloadingStatus => 'डाउनलोड होत आहे...';
+
+  @override
+  String get downloadCsvButton => 'CSV डाउनलोड करा';
+
+  @override
+  String get fileDownloadSuccess => 'फाइल यशस्वीरित्या डाउनलोड झाली!';
+
+  @override
+  String errorDownloadingFile(String error) {
+    return 'فाइल डाउनलोड करताना त्रुटी: $error';
+  }
+
+  @override
+  String get couldNotOpenFaq => 'FAQ उघडता आले नाही';
+
+  @override
+  String get couldNotOpenTerms => 'नियम आणि अटी उघडता आल्या नाहीत';
+
+  @override
+  String get couldNotOpenPrivacy => 'गोपनीयता धोरण उघडता आले नाही';
 }

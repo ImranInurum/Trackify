@@ -479,15 +479,15 @@ class AppLocalizationsTa extends AppLocalizations {
   String get warranty => 'உத்தரவாதம்';
 
   @override
-  String expiresInDays(String days) {
-    return '$days நாட்களில் காலாவதியாகும்';
+  String expiresInDays(int days) {
+    return '$days நாட்களில் காலாவதியாகிறது';
   }
 
   @override
   String get rechargeNow => 'ரீசார்ஜ் செய்க';
 
   @override
-  String get renewNow => 'புதுப்பிக்கவும்';
+  String get renewNow => 'இப்போது புதுப்பிக்கவும்';
 
   @override
   String get secureYourVehicle => 'வாகனத்தைப் பாதுகாக்கவும்';
@@ -918,7 +918,7 @@ class AppLocalizationsTa extends AppLocalizations {
   String get emailAddressLabel => 'மின்னஞ்சல் முகவரி';
 
   @override
-  String get mobileNumberLabel => 'மொபைல் எண்';
+  String get mobileNumberLabel => 'கைபேசி எண்';
 
   @override
   String get countryLabel => 'நாடு';
@@ -2070,6 +2070,12 @@ class AppLocalizationsTa extends AppLocalizations {
   String get oldestToRecent => 'பழையது முதல் புதியது வரை';
 
   @override
+  String get longToShort => 'நீண்டதிலிருந்து குறுகியது';
+
+  @override
+  String get shortToLong => 'குறுகியதிலிருந்து நீண்டது';
+
+  @override
   String get date => 'தேதி';
 
   @override
@@ -2911,7 +2917,7 @@ class AppLocalizationsTa extends AppLocalizations {
   String get hrminLabel => 'hr:min';
 
   @override
-  String get kmLabel => 'km';
+  String get kmLabel => 'கிமீ';
 
   @override
   String get exportRideVideoDesc =>
@@ -3051,4 +3057,268 @@ class AppLocalizationsTa extends AppLocalizations {
 
   @override
   String get hoursShort => 'h';
+
+  @override
+  String get exploreProducts => 'தயாரிப்புகளை ஆராயுங்கள்';
+
+  @override
+  String get decideBestProductText => 'எந்த தயாரிப்பு உங்களுக்கு';
+
+  @override
+  String get bestForYou => 'சிறந்தது என்று தீர்மானிக்க முடியவில்லையா?';
+
+  @override
+  String get callUs => 'எங்களை அழையுங்கள்';
+
+  @override
+  String get happyTrackifyUsers => 'மகிழ்ச்சியான ட்ராக்கிஃபை பயனர்கள்';
+
+  @override
+  String get umeshDarwatkar => 'உமேஷ் தர்வத்கர்';
+
+  @override
+  String get umeshDarwatkarDuration => 'கடந்த 1 வருடமாக ட்ராக்கிஃபை பயனர்';
+
+  @override
+  String get umeshDarwatkarReview =>
+      'பைக்குகளுக்கு நம்பகமான மற்றும் துல்லியமான வழிசெலுத்தல் கருவியைத் தேடும் எவருக்கும் ட்ராக்கிஃபை ஜிபிஎஸ் சாதனத்தை நான் கடுமையாக பரிந்துரைக்கிறேன். இதில் திருட்டு கண்டறிதல், விபத்து எச்சரிக்கை, நேரலை சவாரி பகிர்வு, சவாரி பதிவு மற்றும் எரிபொருள் கண்காணிப்பு போன்ற சிறந்த அம்சங்கள் உள்ளன. இதை நிறுவுவது எளிது மற்றும் அதன் ஆப் பல அம்சங்களுடன் பயன்படுத்த மிகவும் எளிதானது.';
+
+  @override
+  String get rohitSharma => 'ரோஹித் சர்மா';
+
+  @override
+  String get rohitSharmaDuration => 'கடந்த 2 வருடமாக ட்ராக்கிஃபை பயனர்';
+
+  @override
+  String get rohitSharmaReview =>
+      'சாதனத்தைப் பயன்படுத்தும் போது இயக்கக் கண்காணிப்பை மற்றவர்களுடன் பகிர்வது எளிதான வழியாகும், இதனால் எனது நண்பர் என்னைக் கண்காணிக்க முடியும். ஆப் மிகவும் பதிலளிக்கக்கூடியது மற்றும் பயனுள்ளது.';
+
+  @override
+  String get peopleSmartIntro =>
+      'நபர்கள் தங்கள் பைக்கை ஸ்மார்ட் ஆக்கினர்.\nஅனுபவியுங்கள் ';
+
+  @override
+  String get smartText => 'ஸ்மார்ட் ';
+
+  @override
+  String get featuresOfTrackify => 'ட்ராக்கிஃபை அம்சங்கள் 🏍️';
+
+  @override
+  String get accidentAlertCard => 'விபத்து எச்சரிக்கை';
+
+  @override
+  String get antiTheftAlertCard => 'திருட்டு எதிர்ப்பு எச்சரிக்கை';
+
+  @override
+  String get liveGpsTrackingCard => 'நேரலை ஜிபிஎஸ் கண்காணிப்பு';
+
+  @override
+  String get chooseDeviceSuitsYou =>
+      'உங்களுக்குப் பொருத்தமான சாதனத்தைத் தேர்ந்தெடுக்கவும்';
+
+  @override
+  String get lite => 'லைட்';
+
+  @override
+  String get pro => 'ப்ரோ';
+
+  @override
+  String get go => 'கோ';
+
+  @override
+  String get deviceSim => 'சாதனம் + ஏர்டெல்/வி சிம்';
+
+  @override
+  String get ignitionOnOffAlert => 'இக்னிஷன் ஆன்/ஆಫ್ எச்சரிக்கை';
+
+  @override
+  String get tamperAlert => 'டேம்பர் எச்சரிக்கை';
+
+  @override
+  String get portable => 'போர்ட்டபிள்';
+
+  @override
+  String get replacementWarrantyMonths => 'மாற்று உத்தரவாதம்\n(மாதங்கள்)';
+
+  @override
+  String get trackifySmartGpsIot => 'ட்ராக்கிஃபை ஸ்மார்ட் ஜிபிஎஸ் IoT';
+
+  @override
+  String get monthAppSubscription => '12 மாத ஆப்\nசந்தா\n\n';
+
+  @override
+  String get simActivationCharges => 'சிம் செயல்படுத்தும் கட்டணம்';
+
+  @override
+  String get selectProduct => 'தயாரிப்பைத் தேர்ந்தெடுக்கவும்';
+
+  @override
+  String usersBoughtProduct(String productName) {
+    return '*நேற்று 31 பயனர்கள் $productName வாங்கினர்';
+  }
+
+  @override
+  String get outOfStock => 'இருப்பு இல்லை';
+
+  @override
+  String get withText => 'உடன் ';
+
+  @override
+  String buyNowForPrice(String price) {
+    return '₹$price க்கு இப்போது வாங்கவும்';
+  }
+
+  @override
+  String get liveTracking => 'நேரலை கண்காணிப்பு';
+
+  @override
+  String get googlePlay => 'கூகுள் பிளே';
+
+  @override
+  String get searchForItem => 'பொருளைத் தேடுங்கள்...';
+
+  @override
+  String get completePersonalDetails => 'தனிப்பட்ட விவரங்களை பூர்த்தி செய்க';
+
+  @override
+  String get personalDetailsDesc =>
+      'சாதன நிறுவலுக்கு முன் இந்த விவரங்களை வழங்கவும்.';
+
+  @override
+  String get lastNameLabel => 'இறுதி பெயர்';
+
+  @override
+  String get enterLastName => 'உங்கள் கடைசி பெயரை உள்ளிடவும்';
+
+  @override
+  String get requiredField => 'தேவையான புலம்';
+
+  @override
+  String get enterMobileNumber => 'உங்கள் மொபைல் எண்ணை உள்ளிடவும்';
+
+  @override
+  String get saveAndContinue => 'சேமித்து தொடரவும்';
+
+  @override
+  String get yourLocationLabel => 'உங்கள் இருப்பிடம்';
+
+  @override
+  String get deviceWarrantyExpired => 'சாதனத்தின் உத்தரவாதம் முடிவடைந்தது';
+
+  @override
+  String get receivedTrackifyDevicePrompt =>
+      'உங்கள் டிராகிஃபை சாதனத்தைப் பெற்றீர்களா?';
+
+  @override
+  String get fivePercentOffPromo =>
+      'டிராகிஃபை பயன்பாட்டிலிருந்து வாங்கினால் 5% தள்ளுபடி';
+
+  @override
+  String get activateNow => 'இப்போது செயல்படுத்தவும்';
+
+  @override
+  String get exploreExclusiveDeal => 'பிரத்யேக சலுகையை ஆராயுங்கள்';
+
+  @override
+  String get rechargePlan => 'ரீசார்ஜ் திட்டம்';
+
+  @override
+  String get rechargeExpired => 'ரீசார்ஜ் காலாவதியானது';
+
+  @override
+  String get trackifyBrandLabel => 'டிராகிஃபை';
+
+  @override
+  String get hrMinLabel => 'மணி:நிமி';
+
+  @override
+  String get enterCustomTag => 'தனிப்பயன் குறிச்சொல்லை உள்ளிடவும்';
+
+  @override
+  String get locationNotAvailable => 'இருப்பிடம் கிடைக்கவில்லை';
+
+  @override
+  String get deleteAccountFailedNoUser =>
+      'கணக்கை நீக்க முடியவில்லை: பயனர் ஐடி கிடைக்கவில்லை.';
+
+  @override
+  String get deleteAccountSuccess => 'கணக்கு வெற்றிகரமாக நீக்கப்பட்டது.';
+
+  @override
+  String errorDeletingAccount(String message) {
+    return 'கணக்கை நீக்குவதில் பிழை: $message';
+  }
+
+  @override
+  String get invalidVehicleRegistrationNumber =>
+      'செல்லுபடியாகும் வாகன பதிவு எண்ணை உள்ளிடவும்.';
+
+  @override
+  String get cropImageTitle => 'படத்தை பயிர் செய்க';
+
+  @override
+  String get pleaseEnterVehicleRegistrationNumber =>
+      'வாகன பதிவு எண்ணை உள்ளிடவும்.';
+
+  @override
+  String get vehicleRegNoRcHelpText =>
+      'பதிவுச் சான்றிதழில் (RC) அச்சிடப்பட்டுள்ளபடி உங்கள் வாகனப் பதிவு எண்ணை உள்ளிடவும்.';
+
+  @override
+  String get vehicleNumberHintAlternative => 'எ.கா. UP32AB1234';
+
+  @override
+  String get vehicleRegistrationNumberLabel => 'வாகன பதிவு எண்';
+
+  @override
+  String get notificationFallback => 'அறிவிப்பு';
+
+  @override
+  String get dateHeader => 'தேதி';
+
+  @override
+  String get timeHeader => 'நேரம்';
+
+  @override
+  String get odometerHeader => 'ஓடோமீட்டர்';
+
+  @override
+  String get locationHeader => 'இடம்';
+
+  @override
+  String get amountHeader => 'தொகை';
+
+  @override
+  String get rateHeader => 'விகிதம்';
+
+  @override
+  String get litersHeader => 'லிட்டர்';
+
+  @override
+  String get mileageHeader => 'மைலேஜ்';
+
+  @override
+  String get downloadingStatus => 'பதிவிறக்குகிறது...';
+
+  @override
+  String get downloadCsvButton => 'CSV பதிவிறக்கவும்';
+
+  @override
+  String get fileDownloadSuccess =>
+      'கோப்பு வெற்றிகரமாக பதிவிறக்கம் செய்யப்பட்டது!';
+
+  @override
+  String errorDownloadingFile(String error) {
+    return 'கோப்பைப் பதிவிறக்குவதில் பிழை: $error';
+  }
+
+  @override
+  String get couldNotOpenFaq => 'FAQ-ஐத் திறக்க முடியவில்லை';
+
+  @override
+  String get couldNotOpenTerms =>
+      'விதிமுறைகள் மற்றும் நிபந்தனைகளைத் திறக்க முடியவில்லை';
+
+  @override
+  String get couldNotOpenPrivacy => 'தனியுரிமைக் கொள்கையைத் திறக்க முடியவில்லை';
 }

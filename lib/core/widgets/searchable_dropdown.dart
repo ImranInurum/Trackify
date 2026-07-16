@@ -1,6 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:trackify/l10n/app_localizations.dart';
 
 class SearchableDropdown<T> extends StatefulWidget {
   final String label;
@@ -56,6 +57,7 @@ class _SearchableDropdownState<T> extends State<SearchableDropdown<T>> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -162,7 +164,7 @@ class _SearchableDropdownState<T> extends State<SearchableDropdown<T>> {
                             horizontal: 10,
                             vertical: 8,
                           ),
-                          hintText: 'Search for an item...',
+                          hintText: l10n?.searchForItem ?? 'Search for an item...',
                           hintStyle: const TextStyle(fontSize: 12),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(8),

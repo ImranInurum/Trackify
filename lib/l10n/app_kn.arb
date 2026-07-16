@@ -195,11 +195,11 @@
   "logout": "ಲಾಗ್ ಔಟ್",
   "dataPlan": "ಡೇಟಾ ಪ್ಲಾನ್",
   "warranty": "ವಾರಂಟಿ",
-  "expiresInDays": "{days} ದಿನಗಳಲ್ಲಿ ಮುಕ್ತಾಯ",
+  "expiresInDays": "{days} ದಿನಗಳಲ್ಲಿ ಅವಧಿ ಮುಗಿಯುತ್ತದೆ",
   "@expiresInDays": {
     "placeholders": {
       "days": {
-        "type": "String"
+        "type": "int"
       }
     }
   },
@@ -733,8 +733,10 @@
   "sortBy": "ಇದರ ಮೂಲಕ ವಿಂಗಡಿಸಿ",
   "duration": "ಅವಧಿ",
   "oldestToRecent": "ಹಳೆಯದರಿಂದ ಇತ್ತೀಚಿನದಕ್ಕೆ",
+  "longToShort": "ಉದ್ದದಿಂದ ಚಿಕ್ಕದಕ್ಕೆ",
+  "shortToLong": "ಚಿಕ್ಕದರಿಂದ ಉದ್ದಕ್ಕೆ",
   "date": "ದಿನಾಂಕ",
-  "noTripsFound": "\"{query}\" ಗಾಗಿ ಯಾವುದೇ ಪ್ರವಾಸಗಳು ಕಂಡುಬಂದಿಲ್ಲ",
+  "noTripsFound": "\"{query}\" ಗಾಗಿ ಯಾವುದೇ ಟ್ರಿಪ್‌ಗಳು ಕಂಡುಬಂದಿಲ್ಲ",
   "ridesCount": "{count} ಸವಾರಿಗಳು",
   "@ridesCount": {
     "placeholders": {
@@ -1117,7 +1119,7 @@
   "areYouSureDiscardRide": "Are you sure you want to discard this ride?",
   "kmhLabel": "km/h",
   "hrminLabel": "hr:min",
-  "kmLabel": "km",
+  "kmLabel": "ಕಿಮೀ",
   "exportRideVideoDesc": "Exported ride will be saved in Trackify Ride Videos folder of your Gallery app",
   "chooseNicknameHint": "Choose a unique nickname for this ride",
   "myRideOnTrackify": "My Ride on Trackify",
@@ -1162,5 +1164,114 @@
   "statisticsTab": "Statistics",
   "yourPhonesLocation": "Your Phone's Location",
   "justNow": "Just now",
-  "hoursShort": "h"
+  "hoursShort": "h",
+  "exploreProducts": "ಉತ್ಪನ್ನಗಳನ್ನು ಅನ್ವೇಷಿಸಿ",
+  "decideBestProductText": "ಯಾವ ಉತ್ಪನ್ನವು ನಿಮಗೆ",
+  "bestForYou": "ಅತ್ಯುತ್ತಮ ಎಂದು ನಿರ್ಧರಿಸಲು ಸಾಧ್ಯವಾಗುತ್ತಿಲ್ಲವೇ?",
+  "callUs": "ನಮಗೆ ಕರೆ ಮಾಡಿ",
+  "happyTrackifyUsers": "ಹ್ಯಾಪಿ ಟ್ರ್ಯಾಕಿಫೈ ಬಳಕೆದಾರರು",
+  "umeshDarwatkar": "ಉಮೇಶ್ ದರ್ವಾಟ್ಕರ್",
+  "umeshDarwatkarDuration": "ಕಳೆದ 1 ವರ್ಷದಿಂದ ಟ್ರ್ಯಾಕಿಫೈ ಬಳಕೆದಾರ",
+  "umeshDarwatkarReview": "ಬೈಕ್‌ಗಳಿಗಾಗಿ ವಿಶ್ವಾಸಾರ್ಹ ಮತ್ತು ನಿಖರವಾದ ನ್ಯಾವಿಗೇಷನ್ ಉಪಕರಣವನ್ನು ಹುಡುಕುತ್ತಿರುವ ಯಾರಿಗಾದರೂ ನಾನು ಟ್ರ್ಯಾಕಿಫೈ ಜಿಪಿಎಸ್ ಸಾಧನವನ್ನು ಬಲವಾಗಿ ಶಿಫಾರಸು ಮಾಡುತ್ತೇನೆ. ಇದು ಕಳ್ಳತನ ಪತ್ತೆ, ಅಪಘಾತದ ಎಚ್ಚರಿಕೆ, ಲೈವ್ ರೈಡ್ ಹಂಚಿಕೆ, ರೈಡ್ ರೆಕಾರ್ಡಿಂಗ್ ಮತ್ತು ಇಂಧನ ಟ್ರ್ಯಾಕಿಂಗ್‌ನಂತಹ ಉತ್ತಮ ವೈಶಿಷ್ಟ್ಯಗಳನ್ನು ಹೊಂದಿದೆ. ಇದನ್ನು ಸ್ಥಾಪಿಸುವುದು ಸುಲಭ ಮತ್ತು ಇದರ ಆಪ್ ಸಾಕಷ್ಟು ವೈಶಿಷ್ಟ್ಯಗಳೊಂದಿಗೆ ಬಳಸಲು ತುಂಬಾ ಸುಲಭವಾಗಿದೆ.",
+  "rohitSharma": "ರೋಹಿತ್ ಶರ್ಮಾ",
+  "rohitSharmaDuration": "ಕಳೆದ 2 ವರ್ಷದಿಂದ ಟ್ರ್ಯಾಕಿಫೈ ಬಳಕೆದಾರ",
+  "rohitSharmaReview": "ಸಾಧನವನ್ನು ಬಳಸುವಾಗ ಚಲನೆಯ ಟ್ರ್ಯಾಕಿಂಗ್ ಅನ್ನು ಇತರ ಜನರೊಂದಿಗೆ ಹಂಚಿಕೊಳ್ಳುವುದು ಸುಲಭವಾದ ಮಾರ್ಗವಾಗಿದೆ ಇದರಿಂದ ನನ್ನ ಸ್ನೇಹಿತ ನನ್ನನ್ನು ಟ್ರ್ಯಾಕ್ ಮಾಡಬಹುದು. ಆಪ್ ತುಂಬಾ ಸ್ಪಂದಿಸುತ್ತದೆ ಮತ್ತು ಉಪಯುಕ್ತವಾಗಿದೆ.",
+  "peopleSmartIntro": "ಜನರು ತಮ್ಮ ಬೈಕ್ ಅನ್ನು ಸ್ಮಾರ್ಟ್ ಮಾಡಿದ್ದಾರೆ.\nಅನುಭವಿಸಿ ",
+  "smartText": "ಸ್ಮಾರ್ಟ್ ",
+  "featuresOfTrackify": "ಟ್ರ್ಯಾಕಿಫೈ ವೈಶಿಷ್ಟ್ಯಗಳು 🏍️",
+  "accidentAlertCard": "ಅಪಘಾತದ ಎಚ್ಚರಿಕೆ",
+  "antiTheftAlertCard": "ಕಳ್ಳತನ ವಿರೋಧಿ ಎಚ್ಚರಿಕೆ",
+  "liveGpsTrackingCard": "ಲೈವ್ ಜಿಪಿಎಸ್ ಟ್ರ್ಯಾಕಿಂಗ್",
+  "chooseDeviceSuitsYou": "ನಿಮಗೆ ಸೂಕ್ತವಾದ ಸಾಧನವನ್ನು ಆರಿಸಿ",
+  "lite": "ಲೈಟ್",
+  "pro": "ಪ್ರೊ",
+  "go": "ಗೋ",
+  "deviceSim": "ಸಾಧನ + ಏರ್‌ಟೆಲ್/ವಿ ಸಿಮ್",
+  "ignitionOnOffAlert": "ಇಗ್ನಿಷನ್ ಆನ್/ಆಫ್ ಎಚ್ಚರಿಕೆ",
+  "tamperAlert": "ಟ್ಯಾಂಪರ್ ಎಚ್ಚರಿಕೆ",
+  "portable": "ಪೋರ್ಟಬಲ್",
+  "replacementWarrantyMonths": "ಬದಲಿ ವಾರಂಟಿ\n(ತಿಂಗಳುಗಳು)",
+  "trackifySmartGpsIot": "ಟ್ರ್ಯಾಕಿಫೈ ಸ್ಮಾರ್ಟ್ ಜಿಪಿಎಸ್ IoT",
+  "monthAppSubscription": "12 ತಿಂಗಳ ಆಪ್\nಚಂದಾದಾರಿಕೆ\n\n",
+  "simActivationCharges": "ಸಿಮ್ ಸಕ್ರಿಯಗೊಳಿಸುವ ಶುಲ್ಕಗಳು",
+  "selectProduct": "ಉತ್ಪನ್ನವನ್ನು ಆಯ್ಕೆಮಾಡಿ",
+  "usersBoughtProduct": "*ನಿನ್ನೆ 31 ಬಳಕೆದಾರರು {productName} ಖರೀದಿಸಿದ್ದಾರೆ",
+  "@usersBoughtProduct": {
+    "placeholders": {
+      "productName": {
+        "type": "String"
+      }
+    }
+  },
+  "outOfStock": "ಸ್ಟಾಕ್ ಮುಗಿದಿದೆ",
+  "withText": "ನೊಂದಿಗೆ ",
+  "buyNowForPrice": "₹{price} ಗೆ ಈಗ ಖರೀದಿಸಿ",
+  "@buyNowForPrice": {
+    "placeholders": {
+      "price": {
+        "type": "String"
+      }
+    }
+  },
+  "liveTracking": "ಲೈವ್ ಟ್ರ್ಯಾಕಿಂಗ್",
+  "googlePlay": "ಗೂಗಲ್ ಪ್ಲೇ",
+  "searchForItem": "ಐಟಂ ಹುಡುಕಿ...",
+  "completePersonalDetails": "ವೈಯಕ್ತಿಕ ವಿವರಗಳನ್ನು ಪೂರ್ಣಗೊಳಿಸಿ",
+  "personalDetailsDesc": "ಸಾಧನ ಸ್ಥಾಪನೆಗೆ ಮುನ್ನ ದಯವಿಟ್ಟು ಈ ವಿವರಗಳನ್ನು ಒದಗಿಸಿ.",
+  "lastNameLabel": "ಕೊನೆಯ ಹೆಸರು",
+  "enterLastName": "ನಿಮ್ಮ ಕೊನೆಯ ಹೆಸರನ್ನು ನಮೂದಿಸಿ",
+  "requiredField": "ಅಗತ್ಯವಿರುವ ಕ್ಷೇತ್ರ",
+  "enterMobileNumber": "ನಿಮ್ಮ ಮೊಬೈಲ್ ಸಂಖ್ಯೆಯನ್ನು ನಮೂದಿಸಿ",
+  "saveAndContinue": "ಉಳಿಸಿ ಮತ್ತು ಮುಂದುವರೆಯಿರಿ",
+  "yourLocationLabel": "ನಿಮ್ಮ ಸ್ಥಳ",
+  "deviceWarrantyExpired": "ಸಾಧನದ ವಾರಂಟಿ ಅವಧಿ ಮುಗಿದಿದೆ",
+  "receivedTrackifyDevicePrompt": "ನಿಮ್ಮ ಟ್ರ್ಯಾಕಿಫೈ ಸಾಧನ ಸ್ವೀಕರಿಸಲಾಗಿದೆಯೇ?",
+  "fivePercentOffPromo": "ಟ್ರ್ಯಾಕಿಫೈ ಆಪ್‌ನಿಂದ ಖರೀದಿಸಲು 5% ರಿಯಾಯಿತಿ",
+  "activateNow": "ಈಗ ಸಕ್ರಿಯಗೊಳಿಸಿ",
+  "exploreExclusiveDeal": "ವಿಶೇಷ ಕೊಡುಗೆಯನ್ನು ಅನ್ವೇಷಿಸಿ",
+  "rechargePlan": "ರೀಚಾರ್ಜ್ ಪ್ಲಾನ್",
+  "rechargeExpired": "ರೀಚಾರ್ಜ್ ಅವಧಿ ಮುಗಿದಿದೆ",
+  "trackifyBrandLabel": "ಟ್ರ್ಯಾಕಿಫೈ",
+  "hrMinLabel": "ಗಂ:ನಿ",
+  "enterCustomTag": "ಕಸ್ಟಮ್ ಟ್ಯಾಗ್ ನಮೂದಿಸಿ",
+  "locationNotAvailable": "ಸ್ಥಳ ಲಭ್ಯವಿಲ್ಲ",
+  "deleteAccountFailedNoUser": "ಖಾತೆಯನ್ನು ಅಳಿಸಲು ವಿಫಲವಾಗಿದೆ: ಬಳಕೆದಾರರ ಐಡಿ ಕಂಡುಬಂದಿಲ್ಲ.",
+  "deleteAccountSuccess": "ಖಾತೆಯನ್ನು ಯಶಸ್ವಿಯಾಗಿ ಅಳಿಸಲಾಗಿದೆ.",
+  "errorDeletingAccount": "ಖಾತೆ ಅಳಿಸುವಲ್ಲಿ ದೋಷ: {message}",
+  "@errorDeletingAccount": {
+    "placeholders": {
+      "message": {
+        "type": "String"
+      }
+    }
+  },
+  "invalidVehicleRegistrationNumber": "ದಯವಿಟ್ಟು ಮಾನ್ಯವಾದ ವಾಹನ ನೋಂದಣಿ ಸಂಖ್ಯೆಯನ್ನು ನಮೂದಿಸಿ.",
+  "cropImageTitle": "ಚಿತ್ರವನ್ನು ಕ್ರಾಪ್ ಮಾಡಿ",
+  "pleaseEnterVehicleRegistrationNumber": "ದಯವಿಟ್ಟು ವಾಹನ ನೋಂದಣಿ ಸಂಖ್ಯೆಯನ್ನು ನಮೂದಿಸಿ.",
+  "vehicleRegNoRcHelpText": "ಆರ್‌ಸಿಯಲ್ಲಿ ಮುದ್ರಿಸಿರುವಂತೆ ನಿಮ್ಮ ವಾಹನ ನೋಂದಣಿ ಸಂಖ್ಯೆಯನ್ನು ನಮೂದಿಸಿ.",
+  "vehicleNumberHintAlternative": "ಉದಾಹರಣೆಗೆ: UP32AB1234",
+  "vehicleRegistrationNumberLabel": "ವಾಹನ ನೋಂದಣಿ ಸಂಖ್ಯೆ",
+  "notificationFallback": "ಸೂಚನೆ",
+  "dateHeader": "ದಿನಾಂಕ",
+  "timeHeader": "ಸಮಯ",
+  "odometerHeader": "ಓಡೋಮೀಟರ್",
+  "locationHeader": "ಸ್ಥಳ",
+  "amountHeader": "ಮೊತ್ತ",
+  "rateHeader": "ದರ",
+  "litersHeader": "ಲೀಟರ್‌ಗಳು",
+  "mileageHeader": "ಮೈಲೇಜ್",
+  "downloadingStatus": "ಡೌನ್‌ಲೋಡ್ ಆಗುತ್ತಿದೆ...",
+  "downloadCsvButton": "CSV ಡೌನ್‌ಲೋಡ್ ಮಾಡಿ",
+  "fileDownloadSuccess": "ಫೈಲ್ ಯಶಸ್ವಿಯಾಗಿ ಡೌನ್‌ಲೋಡ್ ಆಗಿದೆ!",
+  "errorDownloadingFile": "ಫೈಲ್ ಡೌನ್‌ಲೋಡ್ ಮಾಡುವಲ್ಲಿ ದೋಷ: {error}",
+  "@errorDownloadingFile": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "couldNotOpenFaq": "FAQ ತೆರೆಯಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ",
+  "couldNotOpenTerms": "ನಿಯಮಗಳು ಮತ್ತು ನಿಬಂಧನೆಗಳನ್ನು ತೆರೆಯಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ",
+  "couldNotOpenPrivacy": "ಗೌಪ್ಯತಾ ನೀತಿಯನ್ನು ತೆರೆಯಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ"
 }

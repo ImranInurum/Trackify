@@ -9,20 +9,23 @@ class NotificationCubit extends Cubit<NotificationState> {
   NotificationCubit(this._repository) : super(NotificationInitial());
 
   Future<void> fetchNotifications() async {
+    if (isClosed) return;
     emit(NotificationLoading());
     
     final userId = await AppPreference.instance.get(key: AppPreference.KEY_USER_ID);
     
     if (userId.isEmpty) {
-      emit(const NotificationError("User ID not found"));
+      if (!isClosed) emit(const NotificationError("User ID not found"));
       return;
     }
 
     final result = await _repository.getNotifications(userId);
     
-    result.fold(
-      (error) => emit(NotificationError(error.message)),
-      (data) => emit(NotificationLoaded(data)),
-    );
+    if (!isClosed) {
+      result.fold(
+        (error) => emit(NotificationError(error.message)),
+        (data) => emit(NotificationLoaded(data)),
+      );
+    }
   }
 }

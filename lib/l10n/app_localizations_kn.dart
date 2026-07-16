@@ -485,8 +485,8 @@ class AppLocalizationsKn extends AppLocalizations {
   String get warranty => 'ವಾರಂಟಿ';
 
   @override
-  String expiresInDays(String days) {
-    return '$days ದಿನಗಳಲ್ಲಿ ಮುಕ್ತಾಯ';
+  String expiresInDays(int days) {
+    return '$days ದಿನಗಳಲ್ಲಿ ಅವಧಿ ಮುಗಿಯುತ್ತದೆ';
   }
 
   @override
@@ -2068,11 +2068,17 @@ class AppLocalizationsKn extends AppLocalizations {
   String get oldestToRecent => 'ಹಳೆಯದರಿಂದ ಇತ್ತೀಚಿನದಕ್ಕೆ';
 
   @override
+  String get longToShort => 'ಉದ್ದದಿಂದ ಚಿಕ್ಕದಕ್ಕೆ';
+
+  @override
+  String get shortToLong => 'ಚಿಕ್ಕದರಿಂದ ಉದ್ದಕ್ಕೆ';
+
+  @override
   String get date => 'ದಿನಾಂಕ';
 
   @override
   String noTripsFound(String query) {
-    return '\"$query\" ಗಾಗಿ ಯಾವುದೇ ಪ್ರವಾಸಗಳು ಕಂಡುಬಂದಿಲ್ಲ';
+    return '\"$query\" ಗಾಗಿ ಯಾವುದೇ ಟ್ರಿಪ್‌ಗಳು ಕಂಡುಬಂದಿಲ್ಲ';
   }
 
   @override
@@ -2908,7 +2914,7 @@ class AppLocalizationsKn extends AppLocalizations {
   String get hrminLabel => 'hr:min';
 
   @override
-  String get kmLabel => 'km';
+  String get kmLabel => 'ಕಿಮೀ';
 
   @override
   String get exportRideVideoDesc =>
@@ -3048,4 +3054,265 @@ class AppLocalizationsKn extends AppLocalizations {
 
   @override
   String get hoursShort => 'h';
+
+  @override
+  String get exploreProducts => 'ಉತ್ಪನ್ನಗಳನ್ನು ಅನ್ವೇಷಿಸಿ';
+
+  @override
+  String get decideBestProductText => 'ಯಾವ ಉತ್ಪನ್ನವು ನಿಮಗೆ';
+
+  @override
+  String get bestForYou => 'ಅತ್ಯುತ್ತಮ ಎಂದು ನಿರ್ಧರಿಸಲು ಸಾಧ್ಯವಾಗುತ್ತಿಲ್ಲವೇ?';
+
+  @override
+  String get callUs => 'ನಮಗೆ ಕರೆ ಮಾಡಿ';
+
+  @override
+  String get happyTrackifyUsers => 'ಹ್ಯಾಪಿ ಟ್ರ್ಯಾಕಿಫೈ ಬಳಕೆದಾರರು';
+
+  @override
+  String get umeshDarwatkar => 'ಉಮೇಶ್ ದರ್ವಾಟ್ಕರ್';
+
+  @override
+  String get umeshDarwatkarDuration => 'ಕಳೆದ 1 ವರ್ಷದಿಂದ ಟ್ರ್ಯಾಕಿಫೈ ಬಳಕೆದಾರ';
+
+  @override
+  String get umeshDarwatkarReview =>
+      'ಬೈಕ್‌ಗಳಿಗಾಗಿ ವಿಶ್ವಾಸಾರ್ಹ ಮತ್ತು ನಿಖರವಾದ ನ್ಯಾವಿಗೇಷನ್ ಉಪಕರಣವನ್ನು ಹುಡುಕುತ್ತಿರುವ ಯಾರಿಗಾದರೂ ನಾನು ಟ್ರ್ಯಾಕಿಫೈ ಜಿಪಿಎಸ್ ಸಾಧನವನ್ನು ಬಲವಾಗಿ ಶಿಫಾರಸು ಮಾಡುತ್ತೇನೆ. ಇದು ಕಳ್ಳತನ ಪತ್ತೆ, ಅಪಘಾತದ ಎಚ್ಚರಿಕೆ, ಲೈವ್ ರೈಡ್ ಹಂಚಿಕೆ, ರೈಡ್ ರೆಕಾರ್ಡಿಂಗ್ ಮತ್ತು ಇಂಧನ ಟ್ರ್ಯಾಕಿಂಗ್‌ನಂತಹ ಉತ್ತಮ ವೈಶಿಷ್ಟ್ಯಗಳನ್ನು ಹೊಂದಿದೆ. ಇದನ್ನು ಸ್ಥಾಪಿಸುವುದು ಸುಲಭ ಮತ್ತು ಇದರ ಆಪ್ ಸಾಕಷ್ಟು ವೈಶಿಷ್ಟ್ಯಗಳೊಂದಿಗೆ ಬಳಸಲು ತುಂಬಾ ಸುಲಭವಾಗಿದೆ.';
+
+  @override
+  String get rohitSharma => 'ರೋಹಿತ್ ಶರ್ಮಾ';
+
+  @override
+  String get rohitSharmaDuration => 'ಕಳೆದ 2 ವರ್ಷದಿಂದ ಟ್ರ್ಯಾಕಿಫೈ ಬಳಕೆದಾರ';
+
+  @override
+  String get rohitSharmaReview =>
+      'ಸಾಧನವನ್ನು ಬಳಸುವಾಗ ಚಲನೆಯ ಟ್ರ್ಯಾಕಿಂಗ್ ಅನ್ನು ಇತರ ಜನರೊಂದಿಗೆ ಹಂಚಿಕೊಳ್ಳುವುದು ಸುಲಭವಾದ ಮಾರ್ಗವಾಗಿದೆ ಇದರಿಂದ ನನ್ನ ಸ್ನೇಹಿತ ನನ್ನನ್ನು ಟ್ರ್ಯಾಕ್ ಮಾಡಬಹುದು. ಆಪ್ ತುಂಬಾ ಸ್ಪಂದಿಸುತ್ತದೆ ಮತ್ತು ಉಪಯುಕ್ತವಾಗಿದೆ.';
+
+  @override
+  String get peopleSmartIntro =>
+      'ಜನರು ತಮ್ಮ ಬೈಕ್ ಅನ್ನು ಸ್ಮಾರ್ಟ್ ಮಾಡಿದ್ದಾರೆ.\nಅನುಭವಿಸಿ ';
+
+  @override
+  String get smartText => 'ಸ್ಮಾರ್ಟ್ ';
+
+  @override
+  String get featuresOfTrackify => 'ಟ್ರ್ಯಾಕಿಫೈ ವೈಶಿಷ್ಟ್ಯಗಳು 🏍️';
+
+  @override
+  String get accidentAlertCard => 'ಅಪಘಾತದ ಎಚ್ಚರಿಕೆ';
+
+  @override
+  String get antiTheftAlertCard => 'ಕಳ್ಳತನ ವಿರೋಧಿ ಎಚ್ಚರಿಕೆ';
+
+  @override
+  String get liveGpsTrackingCard => 'ಲೈವ್ ಜಿಪಿಎಸ್ ಟ್ರ್ಯಾಕಿಂಗ್';
+
+  @override
+  String get chooseDeviceSuitsYou => 'ನಿಮಗೆ ಸೂಕ್ತವಾದ ಸಾಧನವನ್ನು ಆರಿಸಿ';
+
+  @override
+  String get lite => 'ಲೈಟ್';
+
+  @override
+  String get pro => 'ಪ್ರೊ';
+
+  @override
+  String get go => 'ಗೋ';
+
+  @override
+  String get deviceSim => 'ಸಾಧನ + ಏರ್‌ಟೆಲ್/ವಿ ಸಿಮ್';
+
+  @override
+  String get ignitionOnOffAlert => 'ಇಗ್ನಿಷನ್ ಆನ್/ಆಫ್ ಎಚ್ಚರಿಕೆ';
+
+  @override
+  String get tamperAlert => 'ಟ್ಯಾಂಪರ್ ಎಚ್ಚರಿಕೆ';
+
+  @override
+  String get portable => 'ಪೋರ್ಟಬಲ್';
+
+  @override
+  String get replacementWarrantyMonths => 'ಬದಲಿ ವಾರಂಟಿ\n(ತಿಂಗಳುಗಳು)';
+
+  @override
+  String get trackifySmartGpsIot => 'ಟ್ರ್ಯಾಕಿಫೈ ಸ್ಮಾರ್ಟ್ ಜಿಪಿಎಸ್ IoT';
+
+  @override
+  String get monthAppSubscription => '12 ತಿಂಗಳ ಆಪ್\nಚಂದಾದಾರಿಕೆ\n\n';
+
+  @override
+  String get simActivationCharges => 'ಸಿಮ್ ಸಕ್ರಿಯಗೊಳಿಸುವ ಶುಲ್ಕಗಳು';
+
+  @override
+  String get selectProduct => 'ಉತ್ಪನ್ನವನ್ನು ಆಯ್ಕೆಮಾಡಿ';
+
+  @override
+  String usersBoughtProduct(String productName) {
+    return '*ನಿನ್ನೆ 31 ಬಳಕೆದಾರರು $productName ಖರೀದಿಸಿದ್ದಾರೆ';
+  }
+
+  @override
+  String get outOfStock => 'ಸ್ಟಾಕ್ ಮುಗಿದಿದೆ';
+
+  @override
+  String get withText => 'ನೊಂದಿಗೆ ';
+
+  @override
+  String buyNowForPrice(String price) {
+    return '₹$price ಗೆ ಈಗ ಖರೀದಿಸಿ';
+  }
+
+  @override
+  String get liveTracking => 'ಲೈವ್ ಟ್ರ್ಯಾಕಿಂಗ್';
+
+  @override
+  String get googlePlay => 'ಗೂಗಲ್ ಪ್ಲೇ';
+
+  @override
+  String get searchForItem => 'ಐಟಂ ಹುಡುಕಿ...';
+
+  @override
+  String get completePersonalDetails => 'ವೈಯಕ್ತಿಕ ವಿವರಗಳನ್ನು ಪೂರ್ಣಗೊಳಿಸಿ';
+
+  @override
+  String get personalDetailsDesc =>
+      'ಸಾಧನ ಸ್ಥಾಪನೆಗೆ ಮುನ್ನ ದಯವಿಟ್ಟು ಈ ವಿವರಗಳನ್ನು ಒದಗಿಸಿ.';
+
+  @override
+  String get lastNameLabel => 'ಕೊನೆಯ ಹೆಸರು';
+
+  @override
+  String get enterLastName => 'ನಿಮ್ಮ ಕೊನೆಯ ಹೆಸರನ್ನು ನಮೂದಿಸಿ';
+
+  @override
+  String get requiredField => 'ಅಗತ್ಯವಿರುವ ಕ್ಷೇತ್ರ';
+
+  @override
+  String get enterMobileNumber => 'ನಿಮ್ಮ ಮೊಬೈಲ್ ಸಂಖ್ಯೆಯನ್ನು ನಮೂದಿಸಿ';
+
+  @override
+  String get saveAndContinue => 'ಉಳಿಸಿ ಮತ್ತು ಮುಂದುವರೆಯಿರಿ';
+
+  @override
+  String get yourLocationLabel => 'ನಿಮ್ಮ ಸ್ಥಳ';
+
+  @override
+  String get deviceWarrantyExpired => 'ಸಾಧನದ ವಾರಂಟಿ ಅವಧಿ ಮುಗಿದಿದೆ';
+
+  @override
+  String get receivedTrackifyDevicePrompt =>
+      'ನಿಮ್ಮ ಟ್ರ್ಯಾಕಿಫೈ ಸಾಧನ ಸ್ವೀಕರಿಸಲಾಗಿದೆಯೇ?';
+
+  @override
+  String get fivePercentOffPromo => 'ಟ್ರ್ಯಾಕಿಫೈ ಆಪ್‌ನಿಂದ ಖರೀದಿಸಲು 5% ರಿಯಾಯಿತಿ';
+
+  @override
+  String get activateNow => 'ಈಗ ಸಕ್ರಿಯಗೊಳಿಸಿ';
+
+  @override
+  String get exploreExclusiveDeal => 'ವಿಶೇಷ ಕೊಡುಗೆಯನ್ನು ಅನ್ವೇಷಿಸಿ';
+
+  @override
+  String get rechargePlan => 'ರೀಚಾರ್ಜ್ ಪ್ಲಾನ್';
+
+  @override
+  String get rechargeExpired => 'ರೀಚಾರ್ಜ್ ಅವಧಿ ಮುಗಿದಿದೆ';
+
+  @override
+  String get trackifyBrandLabel => 'ಟ್ರ್ಯಾಕಿಫೈ';
+
+  @override
+  String get hrMinLabel => 'ಗಂ:ನಿ';
+
+  @override
+  String get enterCustomTag => 'ಕಸ್ಟಮ್ ಟ್ಯಾಗ್ ನಮೂದಿಸಿ';
+
+  @override
+  String get locationNotAvailable => 'ಸ್ಥಳ ಲಭ್ಯವಿಲ್ಲ';
+
+  @override
+  String get deleteAccountFailedNoUser =>
+      'ಖಾತೆಯನ್ನು ಅಳಿಸಲು ವಿಫಲವಾಗಿದೆ: ಬಳಕೆದಾರರ ಐಡಿ ಕಂಡುಬಂದಿಲ್ಲ.';
+
+  @override
+  String get deleteAccountSuccess => 'ಖಾತೆಯನ್ನು ಯಶಸ್ವಿಯಾಗಿ ಅಳಿಸಲಾಗಿದೆ.';
+
+  @override
+  String errorDeletingAccount(String message) {
+    return 'ಖಾತೆ ಅಳಿಸುವಲ್ಲಿ ದೋಷ: $message';
+  }
+
+  @override
+  String get invalidVehicleRegistrationNumber =>
+      'ದಯವಿಟ್ಟು ಮಾನ್ಯವಾದ ವಾಹನ ನೋಂದಣಿ ಸಂಖ್ಯೆಯನ್ನು ನಮೂದಿಸಿ.';
+
+  @override
+  String get cropImageTitle => 'ಚಿತ್ರವನ್ನು ಕ್ರಾಪ್ ಮಾಡಿ';
+
+  @override
+  String get pleaseEnterVehicleRegistrationNumber =>
+      'ದಯವಿಟ್ಟು ವಾಹನ ನೋಂದಣಿ ಸಂಖ್ಯೆಯನ್ನು ನಮೂದಿಸಿ.';
+
+  @override
+  String get vehicleRegNoRcHelpText =>
+      'ಆರ್‌ಸಿಯಲ್ಲಿ ಮುದ್ರಿಸಿರುವಂತೆ ನಿಮ್ಮ ವಾಹನ ನೋಂದಣಿ ಸಂಖ್ಯೆಯನ್ನು ನಮೂದಿಸಿ.';
+
+  @override
+  String get vehicleNumberHintAlternative => 'ಉದಾಹರಣೆಗೆ: UP32AB1234';
+
+  @override
+  String get vehicleRegistrationNumberLabel => 'ವಾಹನ ನೋಂದಣಿ ಸಂಖ್ಯೆ';
+
+  @override
+  String get notificationFallback => 'ಸೂಚನೆ';
+
+  @override
+  String get dateHeader => 'ದಿನಾಂಕ';
+
+  @override
+  String get timeHeader => 'ಸಮಯ';
+
+  @override
+  String get odometerHeader => 'ಓಡೋಮೀಟರ್';
+
+  @override
+  String get locationHeader => 'ಸ್ಥಳ';
+
+  @override
+  String get amountHeader => 'ಮೊತ್ತ';
+
+  @override
+  String get rateHeader => 'ದರ';
+
+  @override
+  String get litersHeader => 'ಲೀಟರ್‌ಗಳು';
+
+  @override
+  String get mileageHeader => 'ಮೈಲೇಜ್';
+
+  @override
+  String get downloadingStatus => 'ಡೌನ್‌ಲೋಡ್ ಆಗುತ್ತಿದೆ...';
+
+  @override
+  String get downloadCsvButton => 'CSV ಡೌನ್‌ಲೋಡ್ ಮಾಡಿ';
+
+  @override
+  String get fileDownloadSuccess => 'ಫೈಲ್ ಯಶಸ್ವಿಯಾಗಿ ಡೌನ್‌ಲೋಡ್ ಆಗಿದೆ!';
+
+  @override
+  String errorDownloadingFile(String error) {
+    return 'ಫೈಲ್ ಡೌನ್‌ಲೋಡ್ ಮಾಡುವಲ್ಲಿ ದೋಷ: $error';
+  }
+
+  @override
+  String get couldNotOpenFaq => 'FAQ ತೆರೆಯಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ';
+
+  @override
+  String get couldNotOpenTerms =>
+      'ನಿಯಮಗಳು ಮತ್ತು ನಿಬಂಧನೆಗಳನ್ನು ತೆರೆಯಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ';
+
+  @override
+  String get couldNotOpenPrivacy => 'ಗೌಪ್ಯತಾ ನೀತಿಯನ್ನು ತೆರೆಯಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ';
 }

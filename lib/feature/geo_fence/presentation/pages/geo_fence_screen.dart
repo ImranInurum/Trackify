@@ -154,7 +154,7 @@ class _GeoFenceScreenState extends State<GeoFenceScreen> {
                             if (!val) {
                               _showToggleConfirmation(context, fence);
                             } else {
-                              context.read<GeoFenceCubit>().toggleGeoFenceStatus(fence.imei, true);
+                              context.read<GeoFenceCubit>().toggleGeoFenceStatus(fence.id, true);
                             }
                           },
                           activeThumbColor: colorScheme.primary,
@@ -307,7 +307,7 @@ class _GeoFenceScreenState extends State<GeoFenceScreen> {
           TextButton(
             onPressed: () {
               Navigator.pop(dialogContext);
-              context.read<GeoFenceCubit>().toggleGeoFenceStatus(fence.imei, false);
+              context.read<GeoFenceCubit>().toggleGeoFenceStatus(fence.id, false);
             },
             child: Text(
               l10n.turnOff,

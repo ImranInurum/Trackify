@@ -105,23 +105,21 @@ class _SortingBottomSheetState extends State<SortingBottomSheet> {
                       isSelected: _selectedSortBy == 'Distance',
                       onTap: () => setState(() => _selectedSortBy = 'Distance'),
                     ),
-                    const SizedBox(width: 10),
-                    _SortOptionChip(
-                      label: l10n.duration,
-                      isSelected: _selectedSortBy == 'Duration',
-                      onTap: () => setState(() => _selectedSortBy = 'Duration'),
-                    ),
                   ],
                 ),
                 const SizedBox(height: 30),
                 _RadioOption(
-                  label: l10n.recentToOldest,
+                  label: _selectedSortBy == 'Date'
+                      ? l10n.recentToOldest
+                      : l10n.longToShort,
                   isSelected: _isRecentToOldest,
                   onTap: () => setState(() => _isRecentToOldest = true),
                 ),
                 const SizedBox(height: 20),
                 _RadioOption(
-                  label: l10n.oldestToRecent,
+                  label: _selectedSortBy == 'Date'
+                      ? l10n.oldestToRecent
+                      : l10n.shortToLong,
                   isSelected: !_isRecentToOldest,
                   onTap: () => setState(() => _isRecentToOldest = false),
                 ),

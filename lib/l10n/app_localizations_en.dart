@@ -481,7 +481,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get warranty => 'Warranty';
 
   @override
-  String expiresInDays(String days) {
+  String expiresInDays(int days) {
     return 'Expires in $days days';
   }
 
@@ -489,7 +489,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get rechargeNow => 'Recharge Now';
 
   @override
-  String get renewNow => 'Renew Now';
+  String get renewNow => 'Renew now';
 
   @override
   String get secureYourVehicle => 'Secure Your Vehicle';
@@ -1215,7 +1215,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String saveAmount(Object amount) {
-    return 'Save ?$amount with this plan';
+    return 'Save ₹$amount with this plan';
   }
 
   @override
@@ -1665,7 +1665,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String upgradeNowAtJust(String price) {
-    return 'Upgrade Now at Just ?$price';
+    return 'Upgrade Now at Just ₹$price';
   }
 
   @override
@@ -2060,6 +2060,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get oldestToRecent => 'Oldest to Recent';
 
   @override
+  String get longToShort => 'Long to Short';
+
+  @override
+  String get shortToLong => 'Short to Long';
+
+  @override
   String get date => 'Date';
 
   @override
@@ -2344,7 +2350,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String greatSaving(Object amount) {
-    return 'Great! Saving ?$amount with this plan';
+    return 'Great! Saving ₹$amount with this plan';
   }
 
   @override
@@ -2364,7 +2370,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String payAmount(Object amount) {
-    return 'Pay ?$amount';
+    return 'Pay ₹$amount';
   }
 
   @override
@@ -3034,4 +3040,262 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get hoursShort => 'h';
+
+  @override
+  String get exploreProducts => 'Explore Products';
+
+  @override
+  String get decideBestProductText => 'Not able to decide which product is';
+
+  @override
+  String get bestForYou => 'Best for you?';
+
+  @override
+  String get callUs => 'Call Us';
+
+  @override
+  String get happyTrackifyUsers => 'Happy Trackify Users';
+
+  @override
+  String get umeshDarwatkar => 'Umesh Darwatkar';
+
+  @override
+  String get umeshDarwatkarDuration => 'Trackify user from past 1 years';
+
+  @override
+  String get umeshDarwatkarReview =>
+      'I highly recommend Trackify GPS device to anyone looking for a reliable and accurate navigation tool for bikes it has great features like Theft Detection, Accident Alert, Live Ride Sharing, Ride Recording & Fuel Tracking. Its easy to install & it Apps is very easy to use with lots of features.';
+
+  @override
+  String get rohitSharma => 'Rohit Sharma';
+
+  @override
+  String get rohitSharmaDuration => 'Trackify user from past 2 years';
+
+  @override
+  String get rohitSharmaReview =>
+      'Using the device would like to highlight in movement tracking sharing it with the other people so that my friend can track me is the easiest way. The App is very responsive and useful.';
+
+  @override
+  String get peopleSmartIntro => 'people made their bike smart.\nExperience ';
+
+  @override
+  String get smartText => 'Smart ';
+
+  @override
+  String get featuresOfTrackify => 'features of Trackify 🏍️';
+
+  @override
+  String get accidentAlertCard => 'Accident alert';
+
+  @override
+  String get antiTheftAlertCard => 'Anti-Theft alert';
+
+  @override
+  String get liveGpsTrackingCard => 'Live GPS Tracking';
+
+  @override
+  String get chooseDeviceSuitsYou => 'Choose device which suits you well';
+
+  @override
+  String get lite => 'Lite';
+
+  @override
+  String get pro => 'Pro';
+
+  @override
+  String get go => 'Go';
+
+  @override
+  String get deviceSim => 'Device + Airtel/Vi SIM';
+
+  @override
+  String get ignitionOnOffAlert => 'Ignition ON/OFF Alert';
+
+  @override
+  String get tamperAlert => 'Tamper Alert';
+
+  @override
+  String get portable => 'Portable';
+
+  @override
+  String get replacementWarrantyMonths => 'Replacement Warranty\n(months)';
+
+  @override
+  String get trackifySmartGpsIot => 'Trackify Smart GPS IoT';
+
+  @override
+  String get monthAppSubscription => '12 Month App\nSubscription\n\n';
+
+  @override
+  String get simActivationCharges => 'SIM Activation Charges';
+
+  @override
+  String get selectProduct => 'Select Product';
+
+  @override
+  String usersBoughtProduct(String productName) {
+    return '*31 users bought $productName yesterday';
+  }
+
+  @override
+  String get outOfStock => 'Out of Stock';
+
+  @override
+  String get withText => 'with ';
+
+  @override
+  String buyNowForPrice(String price) {
+    return 'Buy Now for ₹$price';
+  }
+
+  @override
+  String get liveTracking => 'Live Tracking';
+
+  @override
+  String get googlePlay => 'Google Play';
+
+  @override
+  String get searchForItem => 'Search for an item...';
+
+  @override
+  String get completePersonalDetails => 'Complete Personal Details';
+
+  @override
+  String get personalDetailsDesc =>
+      'Please provide these details before device installation.';
+
+  @override
+  String get lastNameLabel => 'Last Name';
+
+  @override
+  String get enterLastName => 'Enter your last name';
+
+  @override
+  String get requiredField => 'Required field';
+
+  @override
+  String get enterMobileNumber => 'Enter your mobile number';
+
+  @override
+  String get saveAndContinue => 'Save & Continue';
+
+  @override
+  String get yourLocationLabel => 'Your location';
+
+  @override
+  String get deviceWarrantyExpired => 'Device warranty expired';
+
+  @override
+  String get receivedTrackifyDevicePrompt => 'Received your Trackify device?';
+
+  @override
+  String get fivePercentOffPromo => '5% off on buying from Trackify App';
+
+  @override
+  String get activateNow => 'Activate now';
+
+  @override
+  String get exploreExclusiveDeal => 'Explore Exclusive Deal';
+
+  @override
+  String get rechargePlan => 'Recharge Plan';
+
+  @override
+  String get rechargeExpired => 'Recharge expired';
+
+  @override
+  String get trackifyBrandLabel => 'TRACKIFY';
+
+  @override
+  String get hrMinLabel => 'hr:min';
+
+  @override
+  String get enterCustomTag => 'Enter custom tag';
+
+  @override
+  String get locationNotAvailable => 'Location not available';
+
+  @override
+  String get deleteAccountFailedNoUser =>
+      'Failed to delete account: User ID not found.';
+
+  @override
+  String get deleteAccountSuccess => 'Account successfully deleted.';
+
+  @override
+  String errorDeletingAccount(String message) {
+    return 'Error deleting account: $message';
+  }
+
+  @override
+  String get invalidVehicleRegistrationNumber =>
+      'Please enter a valid vehicle registration number.';
+
+  @override
+  String get cropImageTitle => 'Crop Image';
+
+  @override
+  String get pleaseEnterVehicleRegistrationNumber =>
+      'Please enter a vehicle registration number.';
+
+  @override
+  String get vehicleRegNoRcHelpText =>
+      'Enter your vehicle registration number as printed on the RC.';
+
+  @override
+  String get vehicleNumberHintAlternative => 'e.g. UP32AB1234';
+
+  @override
+  String get vehicleRegistrationNumberLabel => 'Vehicle Registration Number';
+
+  @override
+  String get notificationFallback => 'Notification';
+
+  @override
+  String get dateHeader => 'Date';
+
+  @override
+  String get timeHeader => 'Time';
+
+  @override
+  String get odometerHeader => 'Odometer';
+
+  @override
+  String get locationHeader => 'Location';
+
+  @override
+  String get amountHeader => 'Amount';
+
+  @override
+  String get rateHeader => 'Rate';
+
+  @override
+  String get litersHeader => 'Liters';
+
+  @override
+  String get mileageHeader => 'Mileage';
+
+  @override
+  String get downloadingStatus => 'Downloading...';
+
+  @override
+  String get downloadCsvButton => 'Download CSV';
+
+  @override
+  String get fileDownloadSuccess => 'File downloaded successfully!';
+
+  @override
+  String errorDownloadingFile(String error) {
+    return 'Error downloading file: $error';
+  }
+
+  @override
+  String get couldNotOpenFaq => 'Could not open FAQ';
+
+  @override
+  String get couldNotOpenTerms => 'Could not open Terms & Conditions';
+
+  @override
+  String get couldNotOpenPrivacy => 'Could not open privacy policy';
 }

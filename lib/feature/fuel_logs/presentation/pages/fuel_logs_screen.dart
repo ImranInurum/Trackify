@@ -206,9 +206,15 @@ class _FuelLogsScreenState extends State<FuelLogsScreen>
             ),
             floatingActionButton: FloatingActionButton.extended(
               onPressed: () async {
+                final fuelLogsCubit = context.read<FuelLogsCubit>();
                 await Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const AddFuelScreen()),
+                  MaterialPageRoute(
+                    builder: (_) => BlocProvider.value(
+                      value: fuelLogsCubit,
+                      child: const AddFuelScreen(),
+                    ),
+                  ),
                 );
                 // Refresh both cubits when returning from AddFuelScreen
                 if (context.mounted) {

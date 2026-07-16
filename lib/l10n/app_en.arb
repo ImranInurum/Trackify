@@ -190,12 +190,12 @@
   "@expiresInDays": {
     "placeholders": {
       "days": {
-        "type": "String"
+        "type": "int"
       }
     }
   },
   "rechargeNow": "Recharge Now",
-  "renewNow": "Renew Now",
+  "renewNow": "Renew now",
   "secureYourVehicle": "Secure Your Vehicle",
   "secureYourVehicleDesc": "Buy Trackify device now for real-time tracking and complete peace of mind.",
   "boughtDeviceInstallNow": "Bought a device? ",
@@ -480,7 +480,7 @@
   "superComboPlan": "Super Combo Plan",
   "month12Validity": "12-Month Validity",
   "month6Validity": "6-Month Validity",
-  "saveAmount": "Save ?{amount} with this plan",
+  "saveAmount": "Save ₹{amount} with this plan",
   "@saveAmount": {
     "placeholders": {
       "amount": {}
@@ -648,7 +648,7 @@
   "offerings": "Offerings",
   "plus": "Plus",
   "regular": "Regular",
-  "upgradeNowAtJust": "Upgrade Now at Just ?{price}",
+  "upgradeNowAtJust": "Upgrade Now at Just ₹{price}",
   "@upgradeNowAtJust": {
     "placeholders": {
       "price": {
@@ -790,6 +790,8 @@
   "sortBy": "Sort By",
   "duration": "Duration",
   "oldestToRecent": "Oldest to Recent",
+  "longToShort": "Long to Short",
+  "shortToLong": "Short to Long",
   "date": "Date",
   "noTripsFound": "No trips found for \"{query}\"",
   "ridesCount": "{count} rides",
@@ -921,13 +923,13 @@
   "orderSummary": "Order Summary",
   "selectedPlan": "Selected Plan",
   "validity": "Validity",
-  "greatSaving": "Great! Saving ?{amount} with this plan",
+  "greatSaving": "Great! Saving ₹{amount} with this plan",
   "billSummary": "Bill Summary",
   "planPrice": "Plan Price",
   "discount": "Discount",
   "total": "Total",
   "gstTaxes": "GST (govt. taxes)",
-  "payAmount": "Pay ?{amount}",
+  "payAmount": "Pay ₹{amount}",
   "liveRecord": "Live Record",
   "history": "History",
   "stats": "Stats",
@@ -1161,5 +1163,114 @@
   "statisticsTab": "Statistics",
   "yourPhonesLocation": "Your Phone's Location",
   "justNow": "Just now",
-  "hoursShort": "h"
+  "hoursShort": "h",
+  "exploreProducts": "Explore Products",
+  "decideBestProductText": "Not able to decide which product is",
+  "bestForYou": "Best for you?",
+  "callUs": "Call Us",
+  "happyTrackifyUsers": "Happy Trackify Users",
+  "umeshDarwatkar": "Umesh Darwatkar",
+  "umeshDarwatkarDuration": "Trackify user from past 1 years",
+  "umeshDarwatkarReview": "I highly recommend Trackify GPS device to anyone looking for a reliable and accurate navigation tool for bikes it has great features like Theft Detection, Accident Alert, Live Ride Sharing, Ride Recording & Fuel Tracking. Its easy to install & it Apps is very easy to use with lots of features.",
+  "rohitSharma": "Rohit Sharma",
+  "rohitSharmaDuration": "Trackify user from past 2 years",
+  "rohitSharmaReview": "Using the device would like to highlight in movement tracking sharing it with the other people so that my friend can track me is the easiest way. The App is very responsive and useful.",
+  "peopleSmartIntro": "people made their bike smart.\nExperience ",
+  "smartText": "Smart ",
+  "featuresOfTrackify": "features of Trackify 🏍️",
+  "accidentAlertCard": "Accident alert",
+  "antiTheftAlertCard": "Anti-Theft alert",
+  "liveGpsTrackingCard": "Live GPS Tracking",
+  "chooseDeviceSuitsYou": "Choose device which suits you well",
+  "lite": "Lite",
+  "pro": "Pro",
+  "go": "Go",
+  "deviceSim": "Device + Airtel/Vi SIM",
+  "ignitionOnOffAlert": "Ignition ON/OFF Alert",
+  "tamperAlert": "Tamper Alert",
+  "portable": "Portable",
+  "replacementWarrantyMonths": "Replacement Warranty\n(months)",
+  "trackifySmartGpsIot": "Trackify Smart GPS IoT",
+  "monthAppSubscription": "12 Month App\nSubscription\n\n",
+  "simActivationCharges": "SIM Activation Charges",
+  "selectProduct": "Select Product",
+  "usersBoughtProduct": "*31 users bought {productName} yesterday",
+  "@usersBoughtProduct": {
+    "placeholders": {
+      "productName": {
+        "type": "String"
+      }
+    }
+  },
+  "outOfStock": "Out of Stock",
+  "withText": "with ",
+  "buyNowForPrice": "Buy Now for ₹{price}",
+  "@buyNowForPrice": {
+    "placeholders": {
+      "price": {
+        "type": "String"
+      }
+    }
+  },
+  "liveTracking": "Live Tracking",
+  "googlePlay": "Google Play",
+  "searchForItem": "Search for an item...",
+  "completePersonalDetails": "Complete Personal Details",
+  "personalDetailsDesc": "Please provide these details before device installation.",
+  "lastNameLabel": "Last Name",
+  "enterLastName": "Enter your last name",
+  "requiredField": "Required field",
+  "enterMobileNumber": "Enter your mobile number",
+  "saveAndContinue": "Save & Continue",
+  "yourLocationLabel": "Your location",
+  "deviceWarrantyExpired": "Device warranty expired",
+  "receivedTrackifyDevicePrompt": "Received your Trackify device?",
+  "fivePercentOffPromo": "5% off on buying from Trackify App",
+  "activateNow": "Activate now",
+  "exploreExclusiveDeal": "Explore Exclusive Deal",
+  "rechargePlan": "Recharge Plan",
+  "rechargeExpired": "Recharge expired",
+  "trackifyBrandLabel": "TRACKIFY",
+  "hrMinLabel": "hr:min",
+  "enterCustomTag": "Enter custom tag",
+  "locationNotAvailable": "Location not available",
+  "deleteAccountFailedNoUser": "Failed to delete account: User ID not found.",
+  "deleteAccountSuccess": "Account successfully deleted.",
+  "errorDeletingAccount": "Error deleting account: {message}",
+  "@errorDeletingAccount": {
+    "placeholders": {
+      "message": {
+        "type": "String"
+      }
+    }
+  },
+  "invalidVehicleRegistrationNumber": "Please enter a valid vehicle registration number.",
+  "cropImageTitle": "Crop Image",
+  "pleaseEnterVehicleRegistrationNumber": "Please enter a vehicle registration number.",
+  "vehicleRegNoRcHelpText": "Enter your vehicle registration number as printed on the RC.",
+  "vehicleNumberHintAlternative": "e.g. UP32AB1234",
+  "vehicleRegistrationNumberLabel": "Vehicle Registration Number",
+  "notificationFallback": "Notification",
+  "dateHeader": "Date",
+  "timeHeader": "Time",
+  "odometerHeader": "Odometer",
+  "locationHeader": "Location",
+  "amountHeader": "Amount",
+  "rateHeader": "Rate",
+  "litersHeader": "Liters",
+  "mileageHeader": "Mileage",
+  "downloadingStatus": "Downloading...",
+  "downloadCsvButton": "Download CSV",
+  "fileDownloadSuccess": "File downloaded successfully!",
+  "errorDownloadingFile": "Error downloading file: {error}",
+  "@errorDownloadingFile": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "couldNotOpenFaq": "Could not open FAQ",
+  "couldNotOpenTerms": "Could not open Terms & Conditions",
+  "couldNotOpenPrivacy": "Could not open privacy policy"
 }

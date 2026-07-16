@@ -10,19 +10,116 @@ import '../cubit/discover_cubit.dart';
 import '../cubit/disocver_state.dart';
 import '../cubit/feature_cubit.dart';
 import 'package:trackify/core/widgets/trackify_loader.dart';
-
+import 'package:trackify/feature/get_more_out/presentation/cubit/geo_fenc_cubit.dart';
+import 'package:trackify/feature/get_more_out/domain/usecase/geo_fenc_usecase.dart';
+import 'package:trackify/feature/get_more_out/data/repository/geo_fenc_repository_impl.dart';
+import 'package:trackify/feature/get_more_out/data/data%20source/geo_fence_local_data.dart';
+import 'package:trackify/feature/get_more_out/presentation/pages/intro_details_screen.dart';
+import 'package:trackify/feature/location_sharing/presentation/pages/location_sharing_screen.dart';
+import 'package:trackify/core/utils/shared_preferences.dart';
+import '../../domain/entities/discover_entity.dart';
 
 class DiscoverFeaturesScreen extends StatefulWidget {
-
   const DiscoverFeaturesScreen({super.key});
 
   @override
-  State<DiscoverFeaturesScreen> createState() =>
-      _DiscoverFeaturesScreenState();
+  State<DiscoverFeaturesScreen> createState() => _DiscoverFeaturesScreenState();
 }
 
-class _DiscoverFeaturesScreenState
-    extends State<DiscoverFeaturesScreen> {
+class _DiscoverFeaturesScreenState extends State<DiscoverFeaturesScreen> {
+  Color _getStatusColor(String text, ColorScheme colorScheme) {
+    final match = RegExp(r'(\d+)/(\d+)').firstMatch(text);
+    if (match != null) {
+      final explored = int.tryParse(match.group(1) ?? '0') ?? 0;
+      final total = int.tryParse(match.group(2) ?? '0') ?? 0;
+      if (explored >= total && total > 0) {
+        return Colors.green;
+      } else {
+        return Colors.amber.shade700;
+      }
+    }
+    return colorScheme.primary;
+  }
+
+  String _getLocalExploredText(DiscoverEntity feature) {
+    final prefs = AppPreference.instance;
+    final list = prefs.getStringList(key: AppPreference.KEY_EXPLORED_FEATURES);
+    
+    // Count how many features of this category have been explored
+    final exploredCount = list.where((id) => id.startsWith('${feature.id}_')).length;
+    
+    // Parse total from backend string
+    int total = 0;
+    final match = RegExp(r'\d+/(\d+)').firstMatch(feature.exploredText);
+    if (match != null) {
+      total = int.tryParse(match.group(1) ?? '0') ?? 0;
+    } else {
+      total = int.tryParse(feature.exploredText) ?? 0;
+    }
+    
+    if (total == 0) return feature.exploredText; // Fallback
+    
+    final finalExplored = exploredCount > total ? total : exploredCount;
+    return '$finalExplored/$total Features explored';
+  }
+
+  void _handleNavigation(BuildContext context, DiscoverEntity feature) {
+    Widget? targetScreen;
+
+    if (feature.route != null && feature.route!.isNotEmpty) {
+      final route = feature.route!.toLowerCase();
+      if (route.contains('geofence')) {
+        targetScreen = BlocProvider(
+          create: (_) => GeoFenceIntroCubit(
+            GetGeoFenceIntroUseCase(
+              GeoFenceIntroRepositoryImpl(GeoFenceIntroDataSource()),
+            ),
+          ),
+          child: IntroDetailsScreen(title: feature.title, categoryId: feature.id),
+        );
+      } else if (route.contains('location') || route.contains('share')) {
+        targetScreen = const LocationSharingScreen();
+      }
+    }
+
+    if (targetScreen != null) {
+      final prefs = AppPreference.instance;
+      final list = prefs.getStringList(key: AppPreference.KEY_EXPLORED_FEATURES);
+      final key = '${feature.id}_main';
+      if (!list.contains(key)) {
+        list.add(key);
+        prefs.setStringList(key: AppPreference.KEY_EXPLORED_FEATURES, value: list);
+      }
+
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (_) => targetScreen!),
+      ).then((_) {
+        if (context.mounted) {
+          setState(() {});
+        }
+      });
+    } else {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => BlocProvider(
+            create: (_) => FeatureCubit(
+              GetFeatureUseCase(FeatureRepositoryImpl(FeatureDataSource())),
+            ),
+            child: FeatureDetailsScreen(
+              appBarTitle: feature.title,
+              categoryId: feature.id,
+            ),
+          ),
+        ),
+      ).then((_) {
+        if (context.mounted) {
+          setState(() {});
+        }
+      });
+    }
+  }
 
   @override
   void initState() {
@@ -75,35 +172,7 @@ class _DiscoverFeaturesScreenState
                 final feature = state.discoverList[index];
 
                 return GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-
-                      context,
-
-                      MaterialPageRoute(
-
-                        builder: (_) => BlocProvider(
-
-                          create: (_) => FeatureCubit(
-
-                            GetFeatureUseCase(
-
-                              FeatureRepositoryImpl(
-                                FeatureDataSource(),
-                              ),
-                            ),
-                          ),
-
-                          child: FeatureDetailsScreen(
-
-                            appBarTitle: feature.title,
-
-                            categoryId: feature.id,
-                          ),
-                        ),
-                      ),
-                    );
-                  },
+                  onTap: () => _handleNavigation(context, feature),
                   child: Container(
                     height: 200,
                     margin: const EdgeInsets.only(bottom: 20),
@@ -148,18 +217,27 @@ class _DiscoverFeaturesScreenState
                                   color: colorScheme.surface.withOpacity(0.54),
                                   borderRadius: BorderRadius.circular(12),
                                   border: Border.all(
-                                    color: colorScheme.outlineVariant.withOpacity(0.2),
+                                    color: colorScheme.outlineVariant
+                                        .withOpacity(0.2),
                                   ),
                                 ),
-                                child: Text(
-                                  feature.exploredText,
-                                  style: TextStyle(
-                                    color: index == 1 || index == 3
-                                        ? colorScheme.primary
-                                        : Colors.green, // Keep green as status color
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 13,
-                                  ),
+                                child: Builder(
+                                  builder: (context) {
+                                    final localText = _getLocalExploredText(feature);
+                                    return Text(
+                                      localText.toLowerCase().contains('feature') 
+                                          ? localText 
+                                          : '$localText Features explored',
+                                      style: TextStyle(
+                                        color: _getStatusColor(
+                                          localText,
+                                          colorScheme,
+                                        ),
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 13,
+                                      ),
+                                    );
+                                  }
                                 ),
                               ),
 

@@ -1,9 +1,13 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:ui' as ui;
+import 'dart:math' as math;
+import 'package:trackify/core/utils/shared_preferences.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:trackify/core/widgets/loading_screen_ol.dart';
+import 'package:trackify/l10n/app_localizations.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -54,6 +58,7 @@ import 'package:trackify/feature/map/presentation/widgets/promo_video_card.dart'
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:http/http.dart' as http;
 import 'package:trackify/feature/map/data/entity/promo_offer_model.dart';
+import 'package:trackify/core/config/network/api_host.dart';
 
 import '../../../../core/config/style_manager.dart';
 import '../../../upgrade_to_plus/presentation/pages/upgrade_to_plus.dart';
@@ -71,6 +76,8 @@ import 'package:trackify/core/widgets/trackify_loader.dart';
 import '../../../device_data/presentation/cubit/device_data_cubit.dart';
 import '../../../device_data/presentation/cubit/device_data_state.dart';
 import '../../../device_data/domain/entity/current_plan_entity.dart';
+import 'package:trackify/feature/get_more_out/presentation/cubit/discover_cubit.dart';
+import 'package:trackify/feature/get_more_out/presentation/cubit/disocver_state.dart';
 
 class MapScreen extends StatefulWidget {
   const MapScreen({super.key});
@@ -132,6 +139,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
   Timer? _rideHistoryUpdateTimer;
 
   // Dynamic offers state
+  List<PromoOfferModel> _allOffers = [];
   List<PromoOfferModel> _promoOffers = [];
   bool _isLoadingOffers = false;
   int _currentOfferIndex = 0;
@@ -286,76 +294,114 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
 
   Future<void> _fetchOffers() async {
     if (!mounted) return;
+    print('[MapScreen Banners] Fetching offers from API...');
     setState(() {
       _isLoadingOffers = true;
     });
 
     try {
-      final response = await http.get(
-        Uri.parse("http://139.59.1.109:5000/api/promo/offers"),
-      ).timeout(const Duration(seconds: 3));
+      final response = await http
+          .get(Uri.parse(ApiURL.promoOffers))
+          .timeout(const Duration(seconds: 10));
+
+      print('[MapScreen Banners] Status code: ${response.statusCode}');
+      print('[MapScreen Banners] Response body: ${response.body}');
 
       if (response.statusCode >= 200 && response.statusCode < 300) {
         final decoded = jsonDecode(response.body);
+        List<PromoOfferModel> fetchedOffers = [];
         if (decoded is List) {
-          if (mounted) {
-            setState(() {
-              _promoOffers = decoded.map((e) => PromoOfferModel.fromJson(e)).toList();
-              _isLoadingOffers = false;
-            });
-            _startOfferAutoScroll();
-            return;
-          }
+          fetchedOffers = decoded
+              .map((e) => PromoOfferModel.fromJson(e))
+              .toList();
         } else if (decoded is Map && decoded['data'] is List) {
-          if (mounted) {
-            setState(() {
-              _promoOffers = (decoded['data'] as List)
-                  .map((e) => PromoOfferModel.fromJson(e))
-                  .toList();
-              _isLoadingOffers = false;
-            });
-            _startOfferAutoScroll();
-            return;
-          }
+          fetchedOffers = (decoded['data'] as List)
+              .map((e) => PromoOfferModel.fromJson(e))
+              .toList();
+        }
+
+        print('[MapScreen Banners] Parsed ${fetchedOffers.length} offers.');
+
+        if (mounted) {
+          setState(() {
+            _allOffers = fetchedOffers;
+            _isLoadingOffers = false;
+          });
+          _filterOffers();
+          _startOfferAutoScroll();
+          return;
         }
       }
     } catch (e) {
-      debugPrint("Error fetching offers: $e");
+      print('[MapScreen Banners] Error fetching offers: $e');
     }
 
-    // Fallback to beautiful mock/demo data
+    // Fallback to empty list (no mock/demo banners)
     if (mounted) {
       setState(() {
-        _promoOffers = [
-          PromoOfferModel(
-            id: '1',
-            imageUrl: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1000&auto=format&fit=crop',
-            tagText: 'OFFER EXPIRING SOON',
-            redirectScreen: 'upgrade_to_plus',
-          ),
-          PromoOfferModel(
-            id: '2',
-            imageUrl: 'https://images.unsplash.com/photo-1634017839464-5c339ebe3cb4?q=80&w=1000&auto=format&fit=crop',
-            tagText: 'SPECIAL DISCOUNT',
-            redirectScreen: 'upgrade_to_plus',
-          ),
-          PromoOfferModel(
-            id: '3',
-            imageUrl: 'https://images.unsplash.com/photo-1614850523459-c2f4c699c52e?q=80&w=1000&auto=format&fit=crop',
-            tagText: 'LIMITED EDITION PLAN',
-            redirectScreen: 'upgrade_to_plus',
-          ),
-        ];
+        _allOffers = [];
         _isLoadingOffers = false;
       });
+      _filterOffers();
       _startOfferAutoScroll();
+    }
+  }
+
+  void _filterOffers() {
+    if (!mounted) return;
+    final now = DateTime.now();
+    print('[MapScreen Banners] Filtering offers. Current local time: $now');
+    final active = _allOffers.where((offer) {
+      print(
+        '[MapScreen Banners] Offer: ${offer.tagText} | isActive: ${offer.isActive} | showDateTime: ${offer.showDateTime} | expiryDateTime: ${offer.expiryDateTime}',
+      );
+      if (!offer.isActive) {
+        print('[MapScreen Banners] -> Skipped: Not active');
+        return false;
+      }
+      if (offer.showDateTime != null && now.isBefore(offer.showDateTime!)) {
+        print('[MapScreen Banners] -> Skipped: Not yet show time');
+        return false;
+      }
+      if (offer.expiryDateTime != null &&
+          !now.isBefore(offer.expiryDateTime!)) {
+        print('[MapScreen Banners] -> Skipped: Already expired');
+        return false;
+      }
+      print('[MapScreen Banners] -> Kept: Active!');
+      return true;
+    }).toList();
+
+    print('[MapScreen Banners] Active offers count: ${active.length}');
+
+    bool isChanged = active.length != _promoOffers.length;
+    if (!isChanged) {
+      for (int i = 0; i < active.length; i++) {
+        if (active[i].id != _promoOffers[i].id) {
+          isChanged = true;
+          break;
+        }
+      }
+    }
+
+    if (isChanged) {
+      setState(() {
+        _promoOffers = active;
+        if (_currentOfferIndex >= _promoOffers.length) {
+          _currentOfferIndex = 0;
+        }
+      });
     }
   }
 
   void _startOfferAutoScroll() {
     _offerAutoScrollTimer?.cancel();
     _offerAutoScrollTimer = Timer.periodic(const Duration(seconds: 4), (timer) {
-      if (_promoOffers.isEmpty || !mounted || _offerPageController.hasClients == false) return;
+      _filterOffers();
+      if (_promoOffers.isEmpty ||
+          !mounted ||
+          _offerPageController.hasClients == false)
+        return;
       int nextIndex = _currentOfferIndex + 1;
       if (nextIndex >= _promoOffers.length) {
         nextIndex = 0;
@@ -375,6 +421,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
   BitmapDescriptor? _othersIcon;
 
   GeoFenceState? _lastGeoState;
+  String? _lastImeiForGeoCircles;
   Set<Circle> _cachedGeoCircles = {};
   Set<Marker> _cachedGeoMarkers = {};
 
@@ -532,6 +579,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
   }
 
   LatLng? _getBestPosition() {
+    if (!mounted) return null;
     final appState = context.read<AppCubit>().state;
     final currentPos = appState.currentLocation;
     LatLng? bestPos;
@@ -749,9 +797,18 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
   }
 
   bool _hasShownWarrantyPopup = false;
-  bool _isWarrantyExpired = false;
+  bool _isWarrantyExpired = AppPreference.instance.getBoolSync(
+    key: 'KEY_WARRANTY_EXPIRED',
+    defaultValue: true,
+  );
+  bool _isWarrantyLoading = true;
 
   Future<void> _checkWarrantyStatus(String imei) async {
+    if (mounted) {
+      setState(() {
+        _isWarrantyLoading = true;
+      });
+    }
     try {
       final repository = DeviceWarrantyRepositoryImpl(
         DeviceWarrantyRemoteDataSourceImpl(NetworkApiService()),
@@ -759,33 +816,47 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
       final result = await repository.getDeviceWarrantyStatus(imei);
       result.fold(
         (l) {
-          final previouslyExpired = AppPreference.instance.getBoolSync(key: 'KEY_WARRANTY_EXPIRED');
+          final previouslyExpired = AppPreference.instance.getBoolSync(
+            key: 'KEY_WARRANTY_EXPIRED',
+            defaultValue: true,
+          );
           if (previouslyExpired) {
-            AppPreference.instance.setBool(key: 'KEY_WARRANTY_EXPIRED', value: false).then((_) {
-              AppNavigation.refreshNavigationState();
-            });
+            AppPreference.instance
+                .setBool(key: 'KEY_WARRANTY_EXPIRED', value: false)
+                .then((_) {
+                  AppNavigation.refreshNavigationState();
+                });
           }
           if (mounted) {
             setState(() {
               _isWarrantyExpired = false;
+              _isWarrantyLoading = false;
             });
           }
         }, // error, ignore
         (r) {
           if (!mounted) return;
           final daysLeft = r.warranty?.daysLeft;
-          final isExpired = r.warranty?.isExpired ?? false;
-          final expired = isExpired || (daysLeft != null && daysLeft <= 0);
+          final bool apiIsExpired = r.warranty?.isExpired ?? false;
+          final expired = (daysLeft != null && daysLeft > 0)
+              ? false
+              : (apiIsExpired || (daysLeft != null && daysLeft <= 0));
 
-          final previouslyExpired = AppPreference.instance.getBoolSync(key: 'KEY_WARRANTY_EXPIRED');
+          final previouslyExpired = AppPreference.instance.getBoolSync(
+            key: 'KEY_WARRANTY_EXPIRED',
+            defaultValue: true,
+          );
           if (previouslyExpired != expired) {
-            AppPreference.instance.setBool(key: 'KEY_WARRANTY_EXPIRED', value: expired).then((_) {
-              AppNavigation.refreshNavigationState();
-            });
+            AppPreference.instance
+                .setBool(key: 'KEY_WARRANTY_EXPIRED', value: expired)
+                .then((_) {
+                  AppNavigation.refreshNavigationState();
+                });
           }
 
           setState(() {
             _isWarrantyExpired = expired;
+            _isWarrantyLoading = false;
           });
           // Refresh recharge plan data to show alongside warranty expired banner
           if (expired && mounted) {
@@ -801,6 +872,11 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
       );
     } catch (e) {
       debugPrint("Error checking warranty for popup: $e");
+      if (mounted) {
+        setState(() {
+          _isWarrantyLoading = false;
+        });
+      }
     }
   }
 
@@ -879,10 +955,13 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+    _isWarrantyExpired = AppPreference.instance.getBoolSync(
+      key: 'KEY_WARRANTY_EXPIRED',
+      defaultValue: true,
+    );
     final l10n = AppLocalizations.of(context)!;
     return BlocProvider(
-      create: (context) =>
-          PromoVideoCubit(PromoVideoRepositoryImpl())..fetchPromoVideos(),
+      create: (context) => PromoVideoCubit(PromoVideoRepositoryImpl()),
       child: Scaffold(
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         body: MultiBlocListener(
@@ -895,10 +974,13 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                 if (mounted) {
                   setState(() {
                     _selectedDevice = null;
-                    _isWarrantyExpired = false;
+                    _isWarrantyExpired = true;
+                    _isWarrantyLoading = false;
                     _hasShownWarrantyPopup = false;
                   });
-                  debugPrint('[MapScreen] Logout detected — warranty & device state reset.');
+                  debugPrint(
+                    '[MapScreen] Logout detected — warranty & device state reset.',
+                  );
                 }
               },
             ),
@@ -909,7 +991,8 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                   if (vehicles.isNotEmpty) {
                     // Re-select device on login or when device list refreshes
                     final currentImei = _selectedDevice?.imei;
-                    if (_selectedDevice == null || !vehicles.any((v) => v.imei == currentImei)) {
+                    if (_selectedDevice == null ||
+                        !vehicles.any((v) => v.imei == currentImei)) {
                       final savedUid = prefs.getSync(
                         key: AppPreference.KEY_SELECTED_UID,
                       );
@@ -973,9 +1056,17 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                           savedVehicle.imei!,
                         );
                         _checkWarrantyStatus(savedVehicle.imei!);
+                        context.read<PromoVideoCubit>().fetchPromoVideos(
+                          savedVehicle.imei!,
+                        );
                       } else {
                         setState(() {
-                          _isWarrantyExpired = false;
+                          _isWarrantyExpired = AppPreference.instance
+                              .getBoolSync(
+                                key: 'KEY_WARRANTY_EXPIRED',
+                                defaultValue: true,
+                              );
+                          _isWarrantyLoading = false;
                         });
                       }
                     } else {
@@ -996,12 +1087,27 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                             updatedDevice.imei!,
                           );
                           _checkWarrantyStatus(updatedDevice.imei!);
+                          context.read<PromoVideoCubit>().fetchPromoVideos(
+                            updatedDevice.imei!,
+                          );
                         } else {
                           setState(() {
-                            _isWarrantyExpired = false;
+                            _isWarrantyExpired = AppPreference.instance
+                                .getBoolSync(
+                                  key: 'KEY_WARRANTY_EXPIRED',
+                                  defaultValue: true,
+                                );
+                            _isWarrantyLoading = false;
                           });
                         }
                       }
+                    }
+                  } else {
+                    // No vehicles available
+                    if (mounted) {
+                      setState(() {
+                        _isWarrantyLoading = false;
+                      });
                     }
                   }
                 }
@@ -1070,12 +1176,20 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                             children: [
                               SizedBox(height: topSpacing),
                               _buildOfferSection(),
-                              if (isDeviceNotInstalledOrExpired)
+                              if (_isWarrantyLoading)
+                                const Padding(
+                                  padding: EdgeInsets.symmetric(
+                                    vertical: 100.0,
+                                  ),
+                                  child: Center(child: TrackifyLoader()),
+                                )
+                              else if (isDeviceNotInstalledOrExpired)
                                 _buildPhoneAsGpsBanner()
                               else
                                 _buildMapSection(),
                               if (!_hidePromoBanner &&
-                                  !isDeviceNotInstalledOrExpired)
+                                  !isDeviceNotInstalledOrExpired &&
+                                  !_isWarrantyLoading)
                                 _buildPromoBanner(),
                               _buildExploreMore(_selectedDevice),
                               _buildRecentRidesSection(
@@ -1147,6 +1261,14 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
   }
 
   Widget _buildOfferSection() {
+    if (_isLoadingOffers) {
+      return const Padding(
+        padding: EdgeInsets.symmetric(vertical: 20),
+        child: Center(
+          child: TrackifyLoader(size: 150, animated: true),
+        ),
+      );
+    }
     if (_promoOffers.isEmpty) return const SizedBox.shrink();
     return Column(
       children: [
@@ -1201,16 +1323,18 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
     if (_promoOffers.isEmpty) return const SizedBox.shrink();
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
-    
+
     return Container(
       margin: const EdgeInsets.only(top: 8, bottom: 4),
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
       decoration: BoxDecoration(
         color: isDark ? theme.cardColor : Colors.grey[200],
         borderRadius: BorderRadius.circular(20),
-        border: isDark ? Border.all(color: theme.dividerColor, width: 0.5) : null,
-        gradient: isDark 
-            ? null 
+        border: isDark
+            ? Border.all(color: theme.dividerColor, width: 0.5)
+            : null,
+        gradient: isDark
+            ? null
             : LinearGradient(
                 colors: [Colors.grey[200]!, Colors.grey[300]!],
                 begin: Alignment.topCenter,
@@ -1259,9 +1383,13 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
           ),
           const SizedBox(width: 4),
           Icon(
-            _isOfferExpanded ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
+            _isOfferExpanded
+                ? Icons.keyboard_arrow_up
+                : Icons.keyboard_arrow_down,
             size: 14,
-            color: isDark ? theme.colorScheme.onSurface.withOpacity(0.7) : Colors.black54,
+            color: isDark
+                ? theme.colorScheme.onSurface.withOpacity(0.7)
+                : Colors.black54,
           ),
         ],
       ),
@@ -1272,13 +1400,9 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
     final theme = Theme.of(context);
     return GestureDetector(
       onTap: () {
-        if (offer.redirectScreen == 'upgrade_to_plus') {
-          Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (context) => const UpgradeToPlusScreen(),
-            ),
-          );
-        }
+        Navigator.of(context).push(
+          MaterialPageRoute(builder: (context) => const UpgradeToPlusScreen()),
+        );
       },
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 16),
@@ -1305,10 +1429,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                 placeholder: (context, url) => Container(
                   color: theme.cardColor,
                   child: Center(
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      valueColor: AlwaysStoppedAnimation<Color>(theme.colorScheme.primary),
-                    ),
+                    child: const TrackifyLoader(size: 80, animated: true),
                   ),
                 ),
                 errorWidget: (context, url, error) => Container(
@@ -1344,10 +1465,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                   child: Container(
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(16),
-                      border: Border.all(
-                        color: theme.dividerColor,
-                        width: 0.5,
-                      ),
+                      border: Border.all(color: theme.dividerColor, width: 0.5),
                     ),
                   ),
                 ),
@@ -1534,6 +1652,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
 
                       return BlocBuilder<GeoFenceCubit, GeoFenceState>(
                         builder: (context, geoState) {
+                          final l10n = AppLocalizations.of(context)!;
                           Set<Circle> circles = {};
                           Set<Marker> markers = {};
                           final bool hasDevice =
@@ -1568,23 +1687,27 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                                       BitmapDescriptor.hueAzure,
                                     ),
                                 anchor: const Offset(0.5, 0.5),
-                                infoWindow: const InfoWindow(
-                                  title: 'Your location',
+                                infoWindow: InfoWindow(
+                                  title: l10n.yourLocationLabel,
                                 ),
                               ),
                             );
                           }
 
+                          final currentImei = _selectedDevice?.imei;
                           if (_lastGeoState != geoState ||
+                              _lastImeiForGeoCircles != currentImei ||
                               _cachedGeoCircles.isEmpty ||
                               _cachedGeoMarkers.isEmpty) {
                             _lastGeoState = geoState;
+                            _lastImeiForGeoCircles = currentImei;
                             _cachedGeoCircles.clear();
                             _cachedGeoMarkers.clear();
 
                             if (geoState is GeoFenceLoaded) {
                               for (var fence in geoState.geoFences) {
                                 if (!fence.isActive) continue;
+                                if (fence.imei != currentImei) continue;
 
                                 _cachedGeoCircles.add(
                                   Circle(
@@ -2039,114 +2162,171 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
 
   Widget _buildPromoBanner() {
     final l10n = AppLocalizations.of(context)!;
-    return GestureDetector(
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const DiscoverFeaturesScreen(),
-          ),
-        );
-      },
-      child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 16),
-        padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          color: Theme.of(context).cardColor,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-            color: Theme.of(context).dividerColor.withOpacity(0.5),
-          ),
-        ),
-        child: Row(
-          children: [
-            SizedBox(
-              width: 44,
-              height: 44,
-              child: Stack(
-                alignment: Alignment.center,
-                children: [
-                  CircularProgressIndicator(
-                    value: 0.63,
-                    strokeWidth: 3.5,
-                    backgroundColor: Theme.of(context).dividerColor,
-                    valueColor: AlwaysStoppedAnimation<Color>(
-                      Theme.of(context).colorScheme.primary,
-                    ),
-                  ),
-                  Text(
-                    l10n.progressPercentage("63"),
-                    style: getBoldStyle(
-                      color: Theme.of(context).colorScheme.primary,
-                      fontSize: 10,
-                    ),
-                  ),
-                ],
+    return BlocBuilder<DiscoverCubit, DiscoverState>(
+      builder: (context, state) {
+        double progressValue = double.tryParse(
+              AppPreference.instance.getSync(key: 'discover_progress_value'),
+            ) ?? 0.0;
+        String progressString = AppPreference.instance.getSync(
+              key: 'discover_progress_string',
+            );
+        if (progressString.isEmpty) {
+          progressString = "0";
+        }
+
+        if (state is DiscoverLoaded) {
+          int explored = 0;
+          int total = 0;
+          final regex = RegExp(r'\d+/(\d+)');
+          final prefs = AppPreference.instance;
+          final list = prefs.getStringList(key: AppPreference.KEY_EXPLORED_FEATURES);
+
+          for (var item in state.discoverList) {
+            final match = regex.firstMatch(item.exploredText);
+            int catTotal = 0;
+            if (match != null) {
+              catTotal = int.tryParse(match.group(1) ?? '0') ?? 0;
+            } else {
+              catTotal = int.tryParse(item.exploredText) ?? 0;
+            }
+            
+            if (catTotal > 0) {
+              total += catTotal;
+              
+              final catExplored = list.where((id) => id.startsWith('${item.id}_')).length;
+              explored += (catExplored > catTotal ? catTotal : catExplored);
+            }
+          }
+          if (total > 0) {
+            final calculatedValue = explored / total;
+            final calculatedString = (calculatedValue * 100).toInt().toString();
+
+            if (calculatedValue != progressValue || calculatedString != progressString) {
+              progressValue = calculatedValue;
+              progressString = calculatedString;
+              prefs.set(key: 'discover_progress_value', value: progressValue.toString());
+              prefs.set(key: 'discover_progress_string', value: progressString);
+            }
+          }
+        }
+
+        final Color progressColor = Theme.of(context).colorScheme.primary;
+
+        return GestureDetector(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const DiscoverFeaturesScreen(),
+              ),
+            ).then((_) {
+              if (mounted) {
+                setState(() {}); // Force rebuild to recalculate progress from updated local list
+                context.read<DiscoverCubit>().fetchDiscoverFeatures();
+              }
+            });
+          },
+          child: Container(
+            margin: const EdgeInsets.symmetric(horizontal: 16),
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: Theme.of(context).cardColor,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(
+                color: Theme.of(context).dividerColor.withOpacity(0.5),
               ),
             ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
+            child: Row(
+              children: [
+                SizedBox(
+                  width: 44,
+                  height: 44,
+                  child: Stack(
+                    alignment: Alignment.center,
                     children: [
-                      Text(
-                        l10n.getMoreOutOfTrackify,
-                        style: getBoldStyle(
-                          color: Theme.of(context).colorScheme.primary,
-                          fontSize: 14,
+                      CircularProgressIndicator(
+                        value: progressValue,
+                        strokeWidth: 3.5,
+                        backgroundColor: Theme.of(context).dividerColor,
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          progressColor,
                         ),
                       ),
-                      Icon(
-                        Icons.chevron_right,
-                        color: Theme.of(context).colorScheme.primary,
-                        size: 18,
+                      Text(
+                        l10n.progressPercentage(progressString),
+                        style: getBoldStyle(
+                          color: progressColor,
+                          fontSize: 10,
+                        ),
                       ),
                     ],
                   ),
-                  Text(
-                    l10n.discoverMoreDesc,
-                    style: getRegularStyle(
-                      color: Theme.of(
-                        context,
-                      ).colorScheme.onSurface.withOpacity(0.6),
-                      fontSize: 11,
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Text(
+                            l10n.getMoreOutOfTrackify,
+                            style: getBoldStyle(
+                              color: progressColor,
+                              fontSize: 14,
+                            ),
+                          ),
+                          Icon(
+                            Icons.chevron_right,
+                            color: progressColor,
+                            size: 18,
+                          ),
+                        ],
+                      ),
+                      Text(
+                        l10n.discoverMoreDesc,
+                        style: getRegularStyle(
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.onSurface.withOpacity(0.6),
+                          fontSize: 11,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                GestureDetector(
+                  onTap: () {
+                    AppPreference.instance.setBool(
+                      key: 'hide_promo_banner',
+                      value: true,
+                    );
+                    setState(() {
+                      _hidePromoBanner = true;
+                    });
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.all(4.0),
+                    child: Icon(
+                      Icons.close,
+                      color: Theme.of(context).dividerColor,
+                      size: 20,
                     ),
                   ),
-                ],
-              ),
-            ),
-            GestureDetector(
-              onTap: () {
-                AppPreference.instance.setBool(
-                  key: 'hide_promo_banner',
-                  value: true,
-                );
-                setState(() {
-                  _hidePromoBanner = true;
-                });
-              },
-              child: Padding(
-                padding: const EdgeInsets.all(4.0),
-                child: Icon(
-                  Icons.close,
-                  color: Theme.of(
-                    context,
-                  ).colorScheme.onSurface.withOpacity(0.4),
-                  size: 20,
                 ),
-              ),
+              ],
             ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 
   Widget _buildPhoneAsGpsBanner() {
+    final l10n = AppLocalizations.of(context)!;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bool showOnlyWarrantyExpired = _isWarrantyExpired &&
+    final bool showOnlyWarrantyExpired =
+        _isWarrantyExpired &&
         _selectedDevice?.imei != null &&
         _selectedDevice!.imei!.isNotEmpty;
 
@@ -2162,6 +2342,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
           child: showOnlyWarrantyExpired
               ? Builder(
                   builder: (context) {
+                    final l10n = AppLocalizations.of(context)!;
                     final dataState = context.watch<DeviceDataCubit>().state;
                     CurrentPlanEntity? currentPlan;
                     if (dataState is DeviceDataLoaded) {
@@ -2171,13 +2352,13 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                     final bool isRechargeExpired =
                         currentPlan == null || currentPlan.daysLeft <= 0;
                     final String rechargeLabel = isRechargeExpired
-                        ? 'Recharge expired'
-                        : 'Expires in ${currentPlan!.daysLeft} days';
+                        ? l10n.rechargeExpired
+                        : l10n.expiresInDays(currentPlan!.daysLeft);
                     final Color rechargeColor = isRechargeExpired
                         ? Colors.red
                         : currentPlan!.daysLeft <= 30
-                            ? Colors.orange
-                            : Colors.green;
+                        ? Colors.orange
+                        : Colors.green;
 
                     return ListView(
                       scrollDirection: Axis.horizontal,
@@ -2186,8 +2367,8 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                       children: [
                         _buildSmallBanner(
                           icon: Icons.history_toggle_off,
-                          title: 'Device warranty expired',
-                          actionText: 'Renew now',
+                          title: l10n.deviceWarrantyExpired,
+                          actionText: l10n.renewNow,
                           onTap: () {
                             Navigator.of(context).push(
                               MaterialPageRoute(
@@ -2199,7 +2380,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                         const SizedBox(width: 12),
                         _buildStatusCard(
                           icon: Icons.sim_card_outlined,
-                          label: 'Recharge Plan',
+                          label: l10n.rechargePlan,
                           statusText: rechargeLabel,
                           statusColor: rechargeColor,
                           onTap: () {
@@ -2221,12 +2402,13 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                   children: [
                     _buildSmallBanner(
                       icon: Icons.inventory_2_outlined,
-                      title: 'Received your Trackify device?',
-                      actionText: 'Activate now',
+                      title: l10n.receivedTrackifyDevicePrompt,
+                      actionText: l10n.activateNow,
                       onTap: () {
                         Navigator.of(context).push(
                           MaterialPageRoute(
-                            builder: (context) => const DeviceInstallationScreen(),
+                            builder: (context) =>
+                                const DeviceInstallationScreen(),
                           ),
                         );
                       },
@@ -2234,8 +2416,8 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                     const SizedBox(width: 12),
                     _buildSmallBanner(
                       icon: Icons.local_offer_outlined,
-                      title: '5% off on buying from Trackify App',
-                      actionText: 'Explore Exclusive Deal',
+                      title: l10n.fivePercentOffPromo,
+                      actionText: l10n.exploreExclusiveDeal,
                       onTap: () {
                         Navigator.of(context).push(
                           MaterialPageRoute(
@@ -2481,10 +2663,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
         decoration: BoxDecoration(
           color: Theme.of(context).cardColor,
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: statusColor.withOpacity(0.35),
-            width: 1,
-          ),
+          border: Border.all(color: statusColor.withOpacity(0.35), width: 1),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(isDark ? 0.3 : 0.05),
@@ -2512,7 +2691,9 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                   Text(
                     label,
                     style: getRegularStyle(
-                      color: Theme.of(context).colorScheme.onSurface.withOpacity(0.55),
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.onSurface.withOpacity(0.55),
                       fontSize: 10,
                     ),
                     maxLines: 1,
@@ -2748,7 +2929,8 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
             option["label"] == l10n.geoFenceAlert ||
             option["label"] == l10n.fuelLogs ||
             option["label"] == l10n.serviceLogs ||
-            (option["label"] == l10n.deviceWarrantyLabel && isDeviceNotInstalled));
+            (option["label"] == l10n.deviceWarrantyLabel &&
+                isDeviceNotInstalled));
 
     return InkWell(
       onTap: () {
@@ -2992,7 +3174,13 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
           builder: (context) =>
               GeoFenceScreen(vehicleName: vName, imei: selectedDevice?.imei),
         ),
-      );
+      ).then((_) {
+        if (mounted &&
+            selectedDevice?.imei != null &&
+            selectedDevice!.imei!.isNotEmpty) {
+          context.read<GeoFenceCubit>().fetchGeoFences(selectedDevice!.imei!);
+        }
+      });
     } else if (label == l10n.upgradeToPlus.replaceFirst(' to ', ' to\n')) {
       Navigator.push(
         context,
@@ -3128,8 +3316,13 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                         style: const TextStyle(color: Colors.red),
                       ),
                       TextButton(
-                        onPressed: () =>
-                            context.read<PromoVideoCubit>().fetchPromoVideos(),
+                        onPressed: () {
+                          if (_selectedDevice?.imei != null) {
+                            context.read<PromoVideoCubit>().fetchPromoVideos(
+                              _selectedDevice!.imei!,
+                            );
+                          }
+                        },
                         child: Text(l10n.retry),
                       ),
                     ],
@@ -3171,6 +3364,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
     return DraggableAppBar(
       vehicles: vehicles,
       selectedDevice: _selectedDevice,
+      refreshKey: _isWarrantyExpired ? 1 : 0,
       collapsedTrailing: IconButton(
         onPressed: () => Navigator.push(
           context,
@@ -3203,13 +3397,18 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
         print("device.imei----------------------------------${device.imei}");
         await prefs.set(key: AppPreference.KEY_SELECTED_UID, value: device.id);
         await prefs.set(key: AppPreference.IMEI, value: device.imei ?? '');
+        if (!mounted) return;
         AppNavigation.refreshNavigationState();
         setState(() {
           _selectedDevice = device;
           _hasShownWarrantyPopup = false;
+          _cachedGeoCircles.clear();
+          _cachedGeoMarkers.clear();
+          _lastGeoState = null;
         });
-        if (mounted) {
-          context.read<RideHistoryCubit>().getRideHistoryData();
+        context.read<RideHistoryCubit>().getRideHistoryData();
+        if (device.imei != null && device.imei!.isNotEmpty) {
+          context.read<GeoFenceCubit>().fetchGeoFences(device.imei!);
         }
         if (_mapController != null &&
             device.currentLocation?.lat != null &&
@@ -3229,11 +3428,18 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
         if (device.imei != null && device.imei!.isNotEmpty) {
           _checkWarrantyStatus(device.imei!);
         } else {
-          final previouslyExpired = AppPreference.instance.getBoolSync(key: 'KEY_WARRANTY_EXPIRED');
+          final previouslyExpired = AppPreference.instance.getBoolSync(
+            key: 'KEY_WARRANTY_EXPIRED',
+            defaultValue: true,
+          );
           if (previouslyExpired) {
-            AppPreference.instance.setBool(key: 'KEY_WARRANTY_EXPIRED', value: false).then((_) {
-              AppNavigation.refreshNavigationState();
-            });
+            AppPreference.instance
+                .setBool(key: 'KEY_WARRANTY_EXPIRED', value: false)
+                .then((_) {
+                  if (mounted) {
+                    AppNavigation.refreshNavigationState();
+                  }
+                });
           }
           setState(() {
             _isWarrantyExpired = false;

@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:trackify/core/constants/app_images.dart';
 import 'package:trackify/feature/my_garage/presentation/view/checkout_screen.dart';
+import 'package:trackify/l10n/app_localizations.dart';
 
 class ProductOverviewScreen extends StatelessWidget {
   const ProductOverviewScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          "Products",
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+        title: Text(
+          l10n?.products ?? "Products",
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
         ),
         centerTitle: false,
         elevation: 0,
@@ -60,9 +62,9 @@ class ProductOverviewScreen extends StatelessWidget {
                       borderRadius: BorderRadius.circular(24),
                     ),
                   ),
-                  child: const Text(
-                    "Explore Products",
-                    style: TextStyle(fontWeight: FontWeight.bold),
+                  child: Text(
+                    l10n?.exploreProducts ?? "Explore Products",
+                    style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
                 ),
               ),
@@ -72,16 +74,16 @@ class ProductOverviewScreen extends StatelessWidget {
               child: Column(
                 children: [
                   Text(
-                    "Not able to decide which product is",
+                    l10n?.decideBestProductText ?? "Not able to decide which product is",
                     style: TextStyle(
                       fontSize: 16,
                       color: Theme.of(context).colorScheme.onSurfaceVariant,
                     ),
                   ),
                   const SizedBox(height: 4),
-                  const Text(
-                    "Best for you?",
-                    style: TextStyle(
+                  Text(
+                    l10n?.bestForYou ?? "Best for you?",
+                    style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
                     ),
@@ -97,9 +99,9 @@ class ProductOverviewScreen extends StatelessWidget {
                         borderRadius: BorderRadius.circular(24),
                       ),
                     ),
-                    child: const Text(
-                      "Call Us",
-                      style: TextStyle(fontWeight: FontWeight.bold),
+                    child: Text(
+                      l10n?.callUs ?? "Call Us",
+                      style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
                   ),
                 ],
@@ -115,11 +117,12 @@ class ProductOverviewScreen extends StatelessWidget {
   }
 
   Widget _buildHappyUsersSection(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          "Happy Trackify Users",
+          l10n?.happyTrackifyUsers ?? "Happy Trackify Users",
           style: Theme.of(context).textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
@@ -132,19 +135,19 @@ class ProductOverviewScreen extends StatelessWidget {
             children: [
               _buildUserTestimonial(
                 context,
-                name: "Umesh Darwatkar",
-                duration: "Trackify user from past 1 years",
+                name: l10n?.umeshDarwatkar ?? "Umesh Darwatkar",
+                duration: l10n?.umeshDarwatkarDuration ?? "Trackify user from past 1 years",
                 review:
-                    "I highly recommend Trackify GPS device to anyone looking for a reliable and accurate navigation tool for bikes it has great features like Theft Detection, Accident Alert, Live Ride Sharing, Ride Recording & Fuel Tracking. Its easy to install & it Apps is very easy to use with lots of features.",
+                    l10n?.umeshDarwatkarReview ?? "I highly recommend Trackify GPS device to anyone looking for a reliable and accurate navigation tool for bikes it has great features like Theft Detection, Accident Alert, Live Ride Sharing, Ride Recording & Fuel Tracking. Its easy to install & it Apps is very easy to use with lots of features.",
                 imageAsset: AppImages.profileIcon,
               ),
               const SizedBox(width: 16),
               _buildUserTestimonial(
                 context,
-                name: "Rohit Sharma",
-                duration: "Trackify user from past 2 years",
+                name: l10n?.rohitSharma ?? "Rohit Sharma",
+                duration: l10n?.rohitSharmaDuration ?? "Trackify user from past 2 years",
                 review:
-                    "Using the device would like to highlight in movement tracking sharing it with the other people so that my friend can track me is the easiest way. The App is very responsive and useful.",
+                    l10n?.rohitSharmaReview ?? "Using the device would like to highlight in movement tracking sharing it with the other people so that my friend can track me is the easiest way. The App is very responsive and useful.",
                 imageAsset: AppImages.profileIcon,
               ),
             ],
@@ -155,6 +158,7 @@ class ProductOverviewScreen extends StatelessWidget {
   }
 
   Widget _buildPromoCard(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Container(
       decoration: BoxDecoration(
         color: Theme.of(context).cardColor,
@@ -187,15 +191,15 @@ class ProductOverviewScreen extends StatelessWidget {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  const TextSpan(text: 'people made their bike smart.\nExperience '),
+                  TextSpan(text: l10n?.peopleSmartIntro ?? 'people made their bike smart.\nExperience '),
                   TextSpan(
-                    text: 'Smart ',
+                    text: l10n?.smartText ?? 'Smart ',
                     style: TextStyle(
                       color: Theme.of(context).colorScheme.primary,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  const TextSpan(text: 'features of Trackify 🏍️'),
+                  TextSpan(text: l10n?.featuresOfTrackify ?? 'features of Trackify 🏍️'),
                 ],
               ),
             ),
@@ -240,11 +244,12 @@ class ProductOverviewScreen extends StatelessWidget {
   }
 
   Widget _buildTrackifyFeatures(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          "Trackify features",
+          l10n?.features ?? "Trackify features",
           style: Theme.of(context).textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
@@ -257,19 +262,19 @@ class ProductOverviewScreen extends StatelessWidget {
             children: [
               _buildFeatureItem(
                 context,
-                title: "Accident alert",
+                title: l10n?.accidentAlertCard ?? "Accident alert",
                 imageAsset: AppImages.roadImage,
               ),
               const SizedBox(width: 12),
               _buildFeatureItem(
                 context,
-                title: "Anti-Theft alert",
+                title: l10n?.antiTheftAlertCard ?? "Anti-Theft alert",
                 imageAsset: AppImages.safeParking,
               ),
               const SizedBox(width: 12),
               _buildFeatureItem(
                 context,
-                title: "Live GPS Tracking",
+                title: l10n?.liveGpsTrackingCard ?? "Live GPS Tracking",
                 imageAsset: AppImages.exploreApp,
               ),
             ],
@@ -324,11 +329,12 @@ class ProductOverviewScreen extends StatelessWidget {
   }
 
   Widget _buildDeviceComparisonTable(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          "Choose device which suits you well",
+          l10n?.chooseDeviceSuitsYou ?? "Choose device which suits you well",
           style: Theme.of(context).textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
@@ -342,20 +348,25 @@ class ProductOverviewScreen extends StatelessWidget {
           ),
           child: Column(
             children: [
-              _buildTableRow(context, ["Features", "Lite", "Pro", "Go"], isHeader: true),
-              _buildTableRow(context, ["Device + Airtel/Vi SIM", "✓", "✓", "✓"], iconData: Icons.sim_card_outlined),
-              _buildTableRow(context, ["Live Tracking", "✓", "✓", "✓"], iconData: Icons.my_location_outlined),
-              _buildTableRow(context, ["Statistics", "✓", "✓", "✓"], iconData: Icons.bar_chart_outlined),
-              _buildTableRow(context, ["Fuel Logs", "✓", "✓", "✓"], iconData: Icons.local_gas_station_outlined),
-              _buildTableRow(context, ["Accident Alerts", "x", "✓", "x"], iconData: Icons.motorcycle_outlined), // Actually it's a bike falling, close enough
-              _buildTableRow(context, ["Ignition ON/OFF Alert", "✓", "✓", "x"], iconData: Icons.key_outlined),
-              _buildTableRow(context, ["Remote Engine OFF", "✓", "x", "x"], iconData: Icons.power_settings_new_outlined),
-              _buildTableRow(context, ["Tamper Alert", "x", "✓", "x"], iconData: Icons.vibration_outlined),
-              _buildTableRow(context, ["Portable", "x", "x", "✓"], iconData: Icons.pan_tool_outlined),
-              _buildTableRow(context, ["Voice Monitoring", "x", "x", "✓"], iconData: Icons.mic_none_outlined),
-              _buildTableRow(context, ["Overspeed Alert", "✓", "✓", "✓"], iconData: Icons.speed_outlined),
-              _buildTableRow(context, ["Geo Fence Alert", "✓", "✓", "✓"], iconData: Icons.share_location_outlined),
-              _buildTableRow(context, ["Replacement Warranty\n(months)", "12", "12", "12"], iconData: Icons.sync_outlined),
+              _buildTableRow(context, [
+                l10n?.features ?? "Features",
+                l10n?.lite ?? "Lite",
+                l10n?.pro ?? "Pro",
+                l10n?.go ?? "Go"
+              ], isHeader: true),
+              _buildTableRow(context, [l10n?.deviceSim ?? "Device + Airtel/Vi SIM", "✓", "✓", "✓"], iconData: Icons.sim_card_outlined),
+              _buildTableRow(context, [l10n?.liveTracking ?? "Live Tracking", "✓", "✓", "✓"], iconData: Icons.my_location_outlined),
+              _buildTableRow(context, [l10n?.statistics ?? "Statistics", "✓", "✓", "✓"], iconData: Icons.bar_chart_outlined),
+              _buildTableRow(context, [l10n?.fuelLogs ?? "Fuel Logs", "✓", "✓", "✓"], iconData: Icons.local_gas_station_outlined),
+              _buildTableRow(context, [l10n?.accidentAlert ?? "Accident Alerts", "x", "✓", "x"], iconData: Icons.motorcycle_outlined), // Actually it's a bike falling, close enough
+              _buildTableRow(context, [l10n?.ignitionOnOffAlert ?? "Ignition ON/OFF Alert", "✓", "✓", "x"], iconData: Icons.key_outlined),
+              _buildTableRow(context, [l10n?.remoteEngineOff ?? "Remote Engine OFF", "✓", "x", "x"], iconData: Icons.power_settings_new_outlined),
+              _buildTableRow(context, [l10n?.tamperAlert ?? "Tamper Alert", "x", "✓", "x"], iconData: Icons.vibration_outlined),
+              _buildTableRow(context, [l10n?.portable ?? "Portable", "x", "x", "✓"], iconData: Icons.pan_tool_outlined),
+              _buildTableRow(context, [l10n?.voiceMonitoring ?? "Voice Monitoring", "x", "x", "✓"], iconData: Icons.mic_none_outlined),
+              _buildTableRow(context, [l10n?.overspeedAlert ?? "Overspeed Alert", "✓", "✓", "✓"], iconData: Icons.speed_outlined),
+              _buildTableRow(context, [l10n?.geoFenceAlert ?? "Geo Fence Alert", "✓", "✓", "✓"], iconData: Icons.share_location_outlined),
+              _buildTableRow(context, [l10n?.replacementWarrantyMonths ?? "Replacement Warranty\n(months)", "12", "12", "12"], iconData: Icons.sync_outlined),
               _buildPricingRow(context),
             ],
           ),
@@ -437,6 +448,7 @@ class ProductOverviewScreen extends StatelessWidget {
   }
 
   Widget _buildPricingRow(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Container(
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surfaceContainerHighest.withOpacity(0.3),
@@ -465,7 +477,7 @@ class ProductOverviewScreen extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        "Trackify Smart GPS IoT",
+                        l10n?.trackifySmartGpsIot ?? "Trackify Smart GPS IoT",
                         style: TextStyle(
                           color: Theme.of(context).colorScheme.primary,
                           fontWeight: FontWeight.bold,
@@ -479,12 +491,12 @@ class ProductOverviewScreen extends StatelessWidget {
                             color: Theme.of(context).colorScheme.onSurfaceVariant,
                             fontSize: 10,
                           ),
-                          children: const [
-                            TextSpan(text: "with "),
+                          children: [
+                            TextSpan(text: l10n?.withText ?? "with "),
                             TextSpan(
-                                text: "12 Month App\nSubscription\n\n",
-                                style: TextStyle(fontWeight: FontWeight.bold)),
-                            TextSpan(text: "SIM Activation Charges"),
+                                text: l10n?.monthAppSubscription ?? "12 Month App\nSubscription\n\n",
+                                style: const TextStyle(fontWeight: FontWeight.bold)),
+                            TextSpan(text: l10n?.simActivationCharges ?? "SIM Activation Charges"),
                           ],
                         ),
                       ),
@@ -547,6 +559,7 @@ class ProductOverviewScreen extends StatelessWidget {
       required String duration,
       required String review,
       required String imageAsset}) {
+    final l10n = AppLocalizations.of(context);
     return Container(
       width: 280,
       padding: const EdgeInsets.all(16),
@@ -588,7 +601,7 @@ class ProductOverviewScreen extends StatelessWidget {
                     Row(
                       children: [
                         const Icon(Icons.play_arrow, color: Colors.green, size: 12),
-                        const Text("Google Play", style: TextStyle(fontSize: 8, fontWeight: FontWeight.bold)),
+                        Text(l10n?.googlePlay ?? "Google Play", style: const TextStyle(fontSize: 8, fontWeight: FontWeight.bold)),
                         const SizedBox(width: 4),
                         ...List.generate(
                           5,
@@ -647,9 +660,9 @@ class _ProductSelectionBottomSheetState extends State<ProductSelectionBottomShee
       "oldPrice": "1599"
     }
   };
-
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final details = _productDetails[_selectedProduct]!;
     final isOut = details['isOut'] as bool;
     final price = details['price'] as String;
@@ -676,9 +689,9 @@ class _ProductSelectionBottomSheetState extends State<ProductSelectionBottomShee
             ),
           ),
           const SizedBox(height: 24),
-          const Text(
-            "Select Product",
-            style: TextStyle(
+          Text(
+            l10n?.selectProduct ?? "Select Product",
+            style: const TextStyle(
               fontSize: 16,
               color: Colors.grey,
               fontWeight: FontWeight.w500,
@@ -703,7 +716,7 @@ class _ProductSelectionBottomSheetState extends State<ProductSelectionBottomShee
           const SizedBox(height: 32),
           if (!isOut) ...[
             Text(
-              "*31 users bought $_selectedProduct yesterday",
+              l10n?.usersBoughtProduct(_selectedProduct) ?? "*31 users bought $_selectedProduct yesterday",
               style: const TextStyle(
                 color: Colors.green,
                 fontWeight: FontWeight.w500,
@@ -738,8 +751,7 @@ class _ProductSelectionBottomSheetState extends State<ProductSelectionBottomShee
                       fontWeight: FontWeight.bold,
                     ),
                     children: [
-                      const TextSpan(text: "Buy Now for ₹"),
-                      TextSpan(text: price),
+                      TextSpan(text: l10n?.buyNowForPrice(price) ?? "Buy Now for ₹$price"),
                       const TextSpan(text: "  "),
                       TextSpan(
                         text: "₹$oldPrice",
@@ -767,9 +779,9 @@ class _ProductSelectionBottomSheetState extends State<ProductSelectionBottomShee
                     borderRadius: BorderRadius.circular(24),
                   ),
                 ),
-                child: const Text(
-                  "Out of Stock",
-                  style: TextStyle(
+                child: Text(
+                  l10n?.outOfStock ?? "Out of Stock",
+                  style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
                   ),

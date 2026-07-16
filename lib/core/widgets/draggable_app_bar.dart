@@ -16,6 +16,7 @@ import 'package:trackify/feature/device_warranty/data/repository/device_warranty
 import 'package:trackify/feature/device_warranty/data/data_source/device_warranty_data_source.dart';
 import 'package:trackify/core/config/network/network_api_service.dart';
 import 'package:trackify/core/utils/shared_preferences.dart';
+import 'package:trackify/app/app_navigation.dart';
 import '../../l10n/app_localizations.dart';
 
 class DraggableAppBar extends StatefulWidget {
@@ -103,6 +104,9 @@ class _DraggableAppBarState extends State<DraggableAppBar>
     if (oldWidget.vehicles != widget.vehicles ||
         oldWidget.selectedDevice != widget.selectedDevice ||
         oldWidget.refreshKey != widget.refreshKey) {
+      if (oldWidget.refreshKey != widget.refreshKey) {
+        _warrantyStatusMap.clear();
+      }
       _fetchStatuses();
     }
   }
@@ -162,6 +166,21 @@ class _DraggableAppBarState extends State<DraggableAppBar>
         setState(() {
           _warrantyStatusMap[imei] = result.fold((l) => null, (r) => r);
         });
+        
+        // Sync global state for the selected device
+        final r = _warrantyStatusMap[imei];
+        if (r != null && _selectedDevice != null && _selectedDevice!.imei == imei) {
+          final daysLeft = r.warranty?.daysLeft;
+          final bool apiIsExpired = r.warranty?.isExpired ?? false;
+          final expired = (daysLeft != null && daysLeft > 0) ? false : (apiIsExpired || (daysLeft != null && daysLeft <= 0));
+          
+          final previouslyExpired = AppPreference.instance.getBoolSync(key: 'KEY_WARRANTY_EXPIRED', defaultValue: true);
+          if (previouslyExpired != expired) {
+            AppPreference.instance.setBool(key: 'KEY_WARRANTY_EXPIRED', value: expired).then((_) {
+              AppNavigation.refreshNavigationState();
+            });
+          }
+        }
       }
     } catch (e) {
       debugPrint("Error fetching warranty status for $imei: $e");
@@ -545,14 +564,17 @@ class _DraggableAppBarState extends State<DraggableAppBar>
         _selectedDevice != null && device.id == _selectedDevice!.id;
     final bool isPrefExpired =
         isSelectedDevice &&
-        AppPreference.instance.getBoolSync(key: 'KEY_WARRANTY_EXPIRED');
+        AppPreference.instance.getBoolSync(key: 'KEY_WARRANTY_EXPIRED', defaultValue: true);
 
     final warranty = _warrantyStatusMap[imei];
+    final daysLeft = warranty?.warranty?.daysLeft;
+    final bool isFetchedExpired = warranty != null &&
+        ((daysLeft != null && daysLeft > 0)
+            ? false
+            : (warranty.warranty?.isExpired == true || (daysLeft ?? 0) <= 0));
+
     final bool isExpired =
-        isPrefExpired ||
-        (warranty != null &&
-            (warranty.warranty?.isExpired == true ||
-                (warranty.warranty?.daysLeft ?? 0) <= 0));
+        warranty != null ? isFetchedExpired : isPrefExpired;
 
     String statusLabel = isExpired
         ? AppLocalizations.of(context)!.expired

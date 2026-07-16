@@ -101,7 +101,11 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    state.message,
+                    state.message == 'No vehicles found'
+                        ? l10n.noVehiclesInGarage
+                        : state.message == 'No IMEI provided'
+                            ? l10n.noDeviceFound
+                            : state.message,
                     style: TextStyle(color: theme.colorScheme.error),
                   ),
                   const SizedBox(height: 16),
@@ -185,7 +189,11 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            state.message,
+                            state.message == 'No vehicles found'
+                                ? l10n.noVehiclesInGarage
+                                : state.message == 'No IMEI provided'
+                                    ? l10n.noDeviceFound
+                                    : state.message,
                             style: TextStyle(color: theme.colorScheme.error),
                           ),
                           const SizedBox(height: 16),

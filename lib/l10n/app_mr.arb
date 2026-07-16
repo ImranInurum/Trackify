@@ -195,11 +195,11 @@
   "logout": "लॉगआउट",
   "dataPlan": "डेटा प्लॅन",
   "warranty": "वॉरंटी",
-  "expiresInDays": "{days} दिवसांत कालबाह्य",
+  "expiresInDays": "{days} दिवसांत संपेल",
   "@expiresInDays": {
     "placeholders": {
       "days": {
-        "type": "String"
+        "type": "int"
       }
     }
   },
@@ -599,8 +599,10 @@
   "sortBy": "याद्वारे वर्गीकरण",
   "duration": "कालावधी",
   "oldestToRecent": "जुन्यापासून अलीकडीलपर्यंत",
+  "longToShort": "लांब ते लहान",
+  "shortToLong": "लहान ते लांब",
   "date": "तारीख",
-  "noTripsFound": "\"{query}\" साठी कोणतीही ट्रिप सापडली नाही",
+  "noTripsFound": "\"{query}\" साठी कोणतीही ट्रिप आढळली नाही",
   "ridesCount": "{count} राइड्स",
   "@ridesCount": {
     "placeholders": {
@@ -1117,7 +1119,7 @@
   "areYouSureDiscardRide": "Are you sure you want to discard this ride?",
   "kmhLabel": "km/h",
   "hrminLabel": "hr:min",
-  "kmLabel": "km",
+  "kmLabel": "किमी",
   "exportRideVideoDesc": "Exported ride will be saved in Trackify Ride Videos folder of your Gallery app",
   "chooseNicknameHint": "Choose a unique nickname for this ride",
   "myRideOnTrackify": "My Ride on Trackify",
@@ -1162,5 +1164,114 @@
   "statisticsTab": "Statistics",
   "yourPhonesLocation": "Your Phone's Location",
   "justNow": "Just now",
-  "hoursShort": "h"
+  "hoursShort": "h",
+  "exploreProducts": "उत्पाद एक्सप्लोर करा",
+  "decideBestProductText": "कोणता उत्पादन तुमच्यासाठी",
+  "bestForYou": "सर्वोत्तम आहे हे ठरवू शकत नाही?",
+  "callUs": "आम्हाला कॉल करा",
+  "happyTrackifyUsers": "आनंदी ट्रॅकिफाय वापरकर्ते",
+  "umeshDarwatkar": "उमेश दरवटकर",
+  "umeshDarwatkarDuration": "गेल्या १ वर्षापासून ट्रॅकिफाय वापरकर्ता",
+  "umeshDarwatkarReview": "बाईकसाठी विश्वासार्ह आणि अचूक नेव्हिगेशन साधन शोधत असलेल्या कोणालाही मी ट्रॅकिफाय जीपीएस डिव्हाइसची शिफारस करतो. यात चोरी शोधणे, अपघात अलर्ट, लाइव्ह राइड शेअरिंग, राइड रेकॉर्डिंग आणि इंधन ट्रॅकिंग यांसारखी उत्तम वैशिष्ट्ये आहेत. हे स्थापित करणे सोपे आहे आणि त्याचे ॲप अनेक वैशिष्ट्यांसह वापरण्यास अतिशय सोपे आहे.",
+  "rohitSharma": "रोहित शर्मा",
+  "rohitSharmaDuration": "गेल्या २ वर्षांपासून ट्रॅकिफाय वापरकर्ता",
+  "rohitSharmaReview": "डिव्हाइस वापरताना हालचालींचा मागोवा घेणे आणि ते इतर लोकांसोबत शेअर करणे ही सर्वात सोपी पद्धत आहे जेणेकरून माझा मित्र मला ट्रॅक करू शकेल. ॲप अतिशय प्रतिसाद देणारे आणि उपयुक्त आहे.",
+  "peopleSmartIntro": "लोकांनी त्यांच्या बाईकला स्मार्ट बनवले.\nअनुभव घ्या ",
+  "smartText": "स्मार्ट ",
+  "featuresOfTrackify": "ट्रॅकिफायची वैशिष्ट्ये 🏍️",
+  "accidentAlertCard": "अपघात अलर्ट",
+  "antiTheftAlertCard": "चोरीविरोधी अलर्ट",
+  "liveGpsTrackingCard": "लाइव्ह जीपीएस ट्रॅकिंग",
+  "chooseDeviceSuitsYou": "तुमच्यासाठी योग्य असलेले डिव्हाइस निवडा",
+  "lite": "लाइट",
+  "pro": "प्रो",
+  "go": "गो",
+  "deviceSim": "डिव्हाइस + एअरटेल/व्हीआय सिम",
+  "ignitionOnOffAlert": "इग्निशन चालू/बंद अलर्ट",
+  "tamperAlert": "छेडछाड अलर्ट",
+  "portable": "पोर्टेबल",
+  "replacementWarrantyMonths": "बदली वॉरंटी\n(महिने)",
+  "trackifySmartGpsIot": "ट्रॅकिफाय स्मार्ट जीपीएस IoT",
+  "monthAppSubscription": "१२ महिने ॲप\nसबस्क्रिप्शन\n\n",
+  "simActivationCharges": "सिम ॲक्टिव्हेशन शुल्क",
+  "selectProduct": "उत्पादन निवडा",
+  "usersBoughtProduct": "*काल ३१ वापरकर्त्यांनी {productName} खरेदी केले",
+  "@usersBoughtProduct": {
+    "placeholders": {
+      "productName": {
+        "type": "String"
+      }
+    }
+  },
+  "outOfStock": "स्टॉकमध्ये नाही",
+  "withText": "सोबत ",
+  "buyNowForPrice": "₹{price} साठी आता खरेदी करा",
+  "@buyNowForPrice": {
+    "placeholders": {
+      "price": {
+        "type": "String"
+      }
+    }
+  },
+  "liveTracking": "लाइव्ह ट्रॅकिंग",
+  "googlePlay": "गुगल प्ले",
+  "searchForItem": "आयटम शोधा...",
+  "completePersonalDetails": "वैयक्तिक तपशील पूर्ण करा",
+  "personalDetailsDesc": "कृपया डिव्हाइस इन्स्टॉलेशनपूर्वी हे तपशील प्रदान करा.",
+  "lastNameLabel": "आडनाव",
+  "enterLastName": "तुमचे आडनाव प्रविष्ट करा",
+  "requiredField": "आवश्यक फील्ड",
+  "enterMobileNumber": "तुमचा मोबाईल नंबर प्रविष्ट करा",
+  "saveAndContinue": "जतन करा आणि पुढे जा",
+  "yourLocationLabel": "तुमचे स्थान",
+  "deviceWarrantyExpired": "डिव्हाइसची वॉरंटी संपली",
+  "receivedTrackifyDevicePrompt": "तुम्हाला तुमचे ट्रॅकिफाय डिव्हाइस मिळाले का?",
+  "fivePercentOffPromo": "ट्रॅकिफाय ॲपवरून खरेदीवर ५% सूट",
+  "activateNow": "आता सक्रिय करा",
+  "exploreExclusiveDeal": "एक्सक्लूसिव डील शोधा",
+  "rechargePlan": "रिचार्ज प्लॅन",
+  "rechargeExpired": "रिचार्ज संपला",
+  "trackifyBrandLabel": "ट्रॅकिफाय",
+  "hrMinLabel": "ता:मि",
+  "enterCustomTag": "कस्टम टॅग प्रविष्ट करा",
+  "locationNotAvailable": "स्थान उपलब्ध नाही",
+  "deleteAccountFailedNoUser": "खाते हटविण्यात अयशस्वी: युझर आयडी आढळला नाही.",
+  "deleteAccountSuccess": "खाते यशस्वीरित्या हटवले गेले.",
+  "errorDeletingAccount": "खाते हटविण्यात त्रुटी: {message}",
+  "@errorDeletingAccount": {
+    "placeholders": {
+      "message": {
+        "type": "String"
+      }
+    }
+  },
+  "invalidVehicleRegistrationNumber": "कृपया वैध वाहन नोंदणी क्रमांक प्रविष्ट करा.",
+  "cropImageTitle": "इमेज क्रॉप करा",
+  "pleaseEnterVehicleRegistrationNumber": "कृपया वाहन नोंदणी क्रमांक प्रविष्ट करा.",
+  "vehicleRegNoRcHelpText": "आरसीवर छापल्याप्रमाणे तुमचा वाहन नोंदणी क्रमांक प्रविष्ट करा.",
+  "vehicleNumberHintAlternative": "उदा. UP32AB1234",
+  "vehicleRegistrationNumberLabel": "वाहन नोंदणी क्रमांक",
+  "notificationFallback": "सूचना",
+  "dateHeader": "तारीख",
+  "timeHeader": "वेळ",
+  "odometerHeader": "ओडोमीटर",
+  "locationHeader": "स्थान",
+  "amountHeader": "रक्कम",
+  "rateHeader": "दर",
+  "litersHeader": "लिटर",
+  "mileageHeader": "मायलेज",
+  "downloadingStatus": "डाउनलोड होत आहे...",
+  "downloadCsvButton": "CSV डाउनलोड करा",
+  "fileDownloadSuccess": "फाइल यशस्वीरित्या डाउनलोड झाली!",
+  "errorDownloadingFile": "فाइल डाउनलोड करताना त्रुटी: {error}",
+  "@errorDownloadingFile": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "couldNotOpenFaq": "FAQ उघडता आले नाही",
+  "couldNotOpenTerms": "नियम आणि अटी उघडता आल्या नाहीत",
+  "couldNotOpenPrivacy": "गोपनीयता धोरण उघडता आले नाही"
 }

@@ -3,8 +3,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../cubit/feature_cubit.dart';
 import '../cubit/feature_state.dart';
-import 'geo_fenc_screen.dart';
+import 'intro_details_screen.dart';
 import 'package:trackify/core/widgets/trackify_loader.dart';
+import 'package:trackify/core/utils/shared_preferences.dart';
 
 class FeatureDetailsScreen extends StatefulWidget {
 
@@ -124,6 +125,13 @@ class _FeatureDetailsScreenState
                 return GestureDetector(
 
                   onTap: () {
+                    final prefs = AppPreference.instance;
+                    final list = prefs.getStringList(key: AppPreference.KEY_EXPLORED_FEATURES);
+                    final key = '${widget.categoryId}_${item.id}';
+                    if (!list.contains(key)) {
+                      list.add(key);
+                      prefs.setStringList(key: AppPreference.KEY_EXPLORED_FEATURES, value: list);
+                    }
 
                     Navigator.push(
 
@@ -132,7 +140,7 @@ class _FeatureDetailsScreenState
                       MaterialPageRoute(
 
                         builder: (_) =>
-                            GeofancyScreen(
+                            IntroDetailsScreen(
                               title: item.title,
                               categoryId: item.id,
                             ),

@@ -10,9 +10,13 @@ import 'package:trackify/feature/fuel_logs/data/repository/overpass_service.dart
 import 'package:geolocator/geolocator.dart';
 
 import 'package:trackify/feature/fuel_logs/presentation/cubit/fuel_logs_cubit.dart';
+import 'package:trackify/feature/fuel_logs/presentation/cubit/fuel_logs_state.dart';
 import 'package:trackify/feature/service_logs/presentation/cubit/service_logs_cubit.dart';
 import 'package:trackify/feature/service_logs/presentation/cubit/service_logs_state.dart';
 import 'package:trackify/feature/service_logs/presentation/widgets/vehicle_selection_app_bar.dart';
+import 'package:trackify/app/cubit/app_cubit.dart';
+import 'package:trackify/app/cubit/app_state.dart';
+import 'package:trackify/core/common/models/vehicle_list_model.dart';
 
 class AddFuelScreen extends StatefulWidget {
   const AddFuelScreen({super.key});
@@ -121,15 +125,88 @@ class _AddFuelScreenState extends State<AddFuelScreen> with TickerProviderStateM
 
 
 
+  void _validateForm() {
+    setState(() {});
+  }
+
+  bool get _isFormValid {
+    if (odometerController.text.trim().isEmpty) return false;
+    if (amountController.text.trim().isEmpty) return false;
+    if (priceController.text.trim().isEmpty) return false;
+    if (!isFullTankSelected && !isPartialTankSelected) return false;
+    if (isPartialTankSelected && fuelBeforeRefuelController.text.trim().isEmpty) return false;
+    return true;
+  }
+
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 3, vsync: this);
     _loadNearestFuelStation();
+    odometerController.addListener(_validateForm);
+    amountController.addListener(_validateForm);
+    priceController.addListener(_validateForm);
+    fuelBeforeRefuelController.addListener(_validateForm);
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      final serviceState = context.read<ServiceLogsCubit>().state;
+      if (serviceState is ServiceLogsLoaded && serviceState.selectedVehicle != null) {
+        _autofillOdometer(serviceState.selectedVehicle);
+      }
+    });
+  }
+
+  String _formatOdometer(String value) {
+    final parsed = double.tryParse(value);
+    if (parsed != null) {
+      return parsed.toInt().toString();
+    }
+    return value;
+  }
+
+  void _autofillOdometer(Vehicle? vehicle) {
+    if (vehicle == null) return;
+
+    // First priority: Odometer from FuelLogsCubit dashboard state
+    final fuelLogsState = context.read<FuelLogsCubit>().state;
+    if (fuelLogsState is FuelLogsLoaded) {
+      final odo = fuelLogsState.odometerReading;
+      if (odo.isNotEmpty && odo != "0" && odo != "null") {
+        odometerController.text = _formatOdometer(odo);
+        _validateForm();
+        return;
+      }
+    }
+
+    // Second priority: Odometer from AppCubit live devices
+    final imei = vehicle.imei;
+    final id = vehicle.id;
+    final appState = context.read<AppCubit>().state;
+    final liveDevice = appState.devices.firstWhere(
+      (d) =>
+          (imei != null && imei.isNotEmpty && d['imei']?.toString() == imei) ||
+          (id != null && id.isNotEmpty && (d['id']?.toString() == id || d['_id']?.toString() == id)),
+      orElse: () => <String, dynamic>{},
+    );
+    if (liveDevice.isNotEmpty && liveDevice['odometer'] != null) {
+      final odometerVal = liveDevice['odometer'].toString();
+      if (odometerVal.isNotEmpty && odometerVal != "0") {
+        odometerController.text = _formatOdometer(odometerVal);
+        _validateForm();
+        return;
+      }
+    }
+    odometerController.clear();
+    _validateForm();
   }
 
   @override
   void dispose() {
+    odometerController.removeListener(_validateForm);
+    amountController.removeListener(_validateForm);
+    priceController.removeListener(_validateForm);
+    fuelBeforeRefuelController.removeListener(_validateForm);
     _tabController.dispose();
     super.dispose();
   }
@@ -153,7 +230,7 @@ class _AddFuelScreenState extends State<AddFuelScreen> with TickerProviderStateM
                 BorderRadius.circular(16),
               ),
             ),
-            onPressed: (isFullTankSelected || isPartialTankSelected)
+            onPressed: _isFormValid
                 ? () async {
                     final combinedDateTime = DateTime(
                       _selectedDate.year,
@@ -169,9 +246,9 @@ class _AddFuelScreenState extends State<AddFuelScreen> with TickerProviderStateM
                         vehicle: currentServiceState.selectedVehicle?.imei ?? '',
                         dateTime: combinedDateTime,
                         fuelStation: selectedFuelStationName ?? l10n.fuelStationName,
-                        odometer: int.tryParse(
+                        odometer: (double.tryParse(
                           odometerController.text,
-                        ) ?? 0,
+                        ) ?? 0).toInt(),
                         amount: double.tryParse(
                           amountController.text,
                         ) ?? 0,
@@ -193,7 +270,7 @@ class _AddFuelScreenState extends State<AddFuelScreen> with TickerProviderStateM
               l10n.save,
               style: TextStyle(
                 fontSize: 20,
-                color: (isFullTankSelected || isPartialTankSelected) 
+                color: _isFormValid 
                     ? colorScheme.onPrimary 
                     : colorScheme.onSurface.withOpacity(0.38),
                 fontWeight: FontWeight.w600,
@@ -204,24 +281,56 @@ class _AddFuelScreenState extends State<AddFuelScreen> with TickerProviderStateM
       ),
 
       body: SafeArea(
-        child: BlocListener<
-            AddFuelCubit,
-            AddFuelState>(
-          listener: (context, state) {
-
-            if (state is AddFuelSuccess) {
-
-              ScaffoldMessenger.of(context)
-                  .showSnackBar(
-                SnackBar(
-                  content: Text(
-                    l10n.savedSuccessfully,
-                  ),
-                ),
-              );
-            }
-          },
-
+        child: MultiBlocListener(
+          listeners: [
+            BlocListener<AddFuelCubit, AddFuelState>(
+              listener: (context, state) {
+                if (state is AddFuelSuccess) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(
+                        l10n.savedSuccessfully,
+                      ),
+                    ),
+                  );
+                }
+              },
+            ),
+            BlocListener<AppCubit, AppState>(
+              listener: (context, state) {
+                if (odometerController.text.trim().isEmpty) {
+                  final serviceState = context.read<ServiceLogsCubit>().state;
+                  if (serviceState is ServiceLogsLoaded && serviceState.selectedVehicle != null) {
+                    _autofillOdometer(serviceState.selectedVehicle);
+                  }
+                }
+              },
+            ),
+            BlocListener<ServiceLogsCubit, ServiceLogsState>(
+              listenWhen: (previous, current) {
+                if (previous is ServiceLogsLoaded && current is ServiceLogsLoaded) {
+                  return previous.selectedVehicle?.id != current.selectedVehicle?.id;
+                }
+                return current is ServiceLogsLoaded;
+              },
+              listener: (context, state) {
+                if (state is ServiceLogsLoaded && state.selectedVehicle != null) {
+                  _autofillOdometer(state.selectedVehicle);
+                }
+              },
+            ),
+            BlocListener<FuelLogsCubit, FuelLogsState>(
+              listener: (context, state) {
+                if (state is FuelLogsLoaded) {
+                  final odo = state.odometerReading;
+                  if (odo.isNotEmpty && odo != "0" && odo != "null") {
+                    odometerController.text = _formatOdometer(odo);
+                    _validateForm();
+                  }
+                }
+              },
+            ),
+          ],
           child: SingleChildScrollView(
             padding: const EdgeInsets.all(10),
             child: Column(
@@ -269,6 +378,7 @@ class _AddFuelScreenState extends State<AddFuelScreen> with TickerProviderStateM
                             onVehicleSelected: (vehicle) {
                               context.read<ServiceLogsCubit>().selectVehicle(vehicle.id!);
                               context.read<FuelLogsCubit>().loadFuelLogs(vehicle.imei ?? '');
+                              _autofillOdometer(vehicle);
                             },
                           ),
 

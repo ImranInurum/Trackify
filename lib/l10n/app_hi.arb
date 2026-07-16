@@ -195,11 +195,11 @@
   "logout": "लॉगआउट",
   "dataPlan": "डेटा प्लान",
   "warranty": "वारंटी",
-  "expiresInDays": "{days} दिनों में समाप्त",
+  "expiresInDays": "{days} दिनों में समाप्त होगा",
   "@expiresInDays": {
     "placeholders": {
       "days": {
-        "type": "String"
+        "type": "int"
       }
     }
   },
@@ -794,8 +794,10 @@
   "sortBy": "इसके अनुसार सॉर्ट करें",
   "duration": "अवधि",
   "oldestToRecent": "पुराने से नया",
+  "longToShort": "लंबे से छोटा",
+  "shortToLong": "छोटे से लंबा",
   "date": "तारीख",
-  "noTripsFound": "\"{query}\" के लिए कोई ट्रिप नहीं मिली",
+  "noTripsFound": "\"{query}\" के लिए कोई यात्रा नहीं मिली",
   "ridesCount": "{count} राइड्स",
   "@ridesCount": {
     "placeholders": {
@@ -1162,5 +1164,114 @@
   "statisticsTab": "आँकड़े",
   "yourPhonesLocation": "आपके फ़ोन की लोकेशन",
   "justNow": "अभी-अभी",
-  "hoursShort": "घं"
+  "hoursShort": "घं",
+  "exploreProducts": "प्रोडक्ट्स देखें",
+  "decideBestProductText": "तय नहीं कर पा रहे हैं कि कौन सा प्रोडक्ट",
+  "bestForYou": "आपके लिए सबसे अच्छा है?",
+  "callUs": "हमें कॉल करें",
+  "happyTrackifyUsers": "हैप्पी ट्रैकिफाई यूज़र्स",
+  "umeshDarwatkar": "उमेश दरवटकर",
+  "umeshDarwatkarDuration": "पिछले 1 साल से ट्रैकिफाई यूज़र",
+  "umeshDarwatkarReview": "मैं उन सभी लोगों को ट्रैकिफाई जीपीएस डिवाइस की अत्यधिक अनुशंसा करता हूं जो बाइक के लिए एक विश्वसनीय और सटीक नेविगेशन टूल की तलाश में हैं। इसमें थेफ्ट डिटेक्शन, एक्सीडेंट अलर्ट, लाइव राइड शेयरिंग, राइड रिकॉर्डिंग और फ्यूल ट्रैकिंग जैसी बेहतरीन सुविधाएं हैं। इसे इंस्टॉल करना आसान है और इसका ऐप बहुत सारे फीचर्स के साथ उपयोग करने में बहुत आसान है।",
+  "rohitSharma": "रोहित शर्मा",
+  "rohitSharmaDuration": "पिछले 2 साल से ट्रैकिफाई यूज़र",
+  "rohitSharmaReview": "डिवाइस का उपयोग करते समय मूवमेंट ट्रैकिंग को अन्य लोगों के साथ साझा करना सबसे आसान तरीका है ताकि मेरा दोस्त मुझे ट्रैक कर सके। ऐप बहुत प्रतिक्रियाशील और उपयोगी है।",
+  "peopleSmartIntro": "लोगों ने अपनी बाइक को स्मार्ट बनाया।\nअनुभव करें ",
+  "smartText": "स्मार्ट ",
+  "featuresOfTrackify": "ट्रैकिफाई के फीचर्स 🏍️",
+  "accidentAlertCard": "दुर्घटना अलर्ट",
+  "antiTheftAlertCard": "एंटी-थेफ्ट अलर्ट",
+  "liveGpsTrackingCard": "लाइव जीपीएस ट्रैकिंग",
+  "chooseDeviceSuitsYou": "वह डिवाइस चुनें जो आपके लिए सबसे उपयुक्त हो",
+  "lite": "लाइट",
+  "pro": "प्रो",
+  "go": "गो",
+  "deviceSim": "डिवाइस + एयरटेल/वीआई सिम",
+  "ignitionOnOffAlert": "इग्निशन चालू/बंद अलर्ट",
+  "tamperAlert": "छेड़छाड़ अलर्ट",
+  "portable": "पोर्टेबल",
+  "replacementWarrantyMonths": "रिप्लेसमेंट वारंटी\n(महीने)",
+  "trackifySmartGpsIot": "ट्रैकिफाई स्मार्ट जीपीएस IoT",
+  "monthAppSubscription": "12 महीने का ऐप\nसब्सक्रिप्शन\n\n",
+  "simActivationCharges": "सिम एक्टिवेशन शुल्क",
+  "selectProduct": "प्रोडक्ट चुनें",
+  "usersBoughtProduct": "*कल 31 यूज़र्स ने {productName} खरीदा",
+  "@usersBoughtProduct": {
+    "placeholders": {
+      "productName": {
+        "type": "String"
+      }
+    }
+  },
+  "outOfStock": "आउट ऑफ स्टॉक",
+  "withText": "के साथ ",
+  "buyNowForPrice": "₹{price} के लिए अभी खरीदें",
+  "@buyNowForPrice": {
+    "placeholders": {
+      "price": {
+        "type": "String"
+      }
+    }
+  },
+  "liveTracking": "लाइव ट्रैकिंग",
+  "googlePlay": "गूगल प्ले",
+  "searchForItem": "आइटम खोजें...",
+  "completePersonalDetails": "व्यक्तिगत विवरण पूरा करें",
+  "personalDetailsDesc": "कृपया डिवाइस इंस्टॉलेशन से पहले ये विवरण प्रदान करें।",
+  "lastNameLabel": "उपनाम",
+  "enterLastName": "अपना उपनाम दर्ज करें",
+  "requiredField": "आवश्यक फ़ील्ड",
+  "enterMobileNumber": "अपना मोबाइल नंबर दर्ज करें",
+  "saveAndContinue": "सहेजें और जारी रखें",
+  "yourLocationLabel": "आपका स्थान",
+  "deviceWarrantyExpired": "डिवाइस वारंटी समाप्त हो गई",
+  "receivedTrackifyDevicePrompt": "क्या आपको अपना ट्रैकिफाई डिवाइस प्राप्त हुआ?",
+  "fivePercentOffPromo": "ट्रैकिफाई ऐप से खरीदने पर 5% की छूट",
+  "activateNow": "अभी सक्रिय करें",
+  "exploreExclusiveDeal": "विशेष डील देखें",
+  "rechargePlan": "रिचार्ज प्लान",
+  "rechargeExpired": "रिचार्ज समाप्त हो गया",
+  "trackifyBrandLabel": "ट्रैकिफाई",
+  "hrMinLabel": "घं:मि",
+  "enterCustomTag": "कस्टम टैग दर्ज करें",
+  "locationNotAvailable": "स्थान उपलब्ध नहीं है",
+  "deleteAccountFailedNoUser": "खाता हटाने में विफल: उपयोगकर्ता आईडी नहीं मिली।",
+  "deleteAccountSuccess": "खाता सफलतापूर्वक हटा दिया गया।",
+  "errorDeletingAccount": "खाता हटाने में त्रुटि: {message}",
+  "@errorDeletingAccount": {
+    "placeholders": {
+      "message": {
+        "type": "String"
+      }
+    }
+  },
+  "invalidVehicleRegistrationNumber": "कृपया एक वैध वाहन पंजीकरण संख्या दर्ज करें।",
+  "cropImageTitle": "इमेज क्रॉप करें",
+  "pleaseEnterVehicleRegistrationNumber": "कृपया वाहन पंजीकरण संख्या दर्ज करें।",
+  "vehicleRegNoRcHelpText": "आरसी पर छपे अनुसार अपना वाहन पंजीकरण संख्या दर्ज करें।",
+  "vehicleNumberHintAlternative": "जैसे: UP32AB1234",
+  "vehicleRegistrationNumberLabel": "वाहन पंजीकरण संख्या",
+  "notificationFallback": "अधिसूचना",
+  "dateHeader": "तिथि",
+  "timeHeader": "समय",
+  "odometerHeader": "ओडोमीटर",
+  "locationHeader": "स्थान",
+  "amountHeader": "राशि",
+  "rateHeader": "दर",
+  "litersHeader": "लीटर",
+  "mileageHeader": "माइलेज",
+  "downloadingStatus": "डाउनलोड हो रहा है...",
+  "downloadCsvButton": "CSV डाउनलोड करें",
+  "fileDownloadSuccess": "फ़ाइल सफलतापूर्वक डाउनलोड हो गई!",
+  "errorDownloadingFile": "फ़ाइल डाउनलोड करने में त्रुटि: {error}",
+  "@errorDownloadingFile": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "couldNotOpenFaq": "अक्सर पूछे जाने वाले प्रश्न नहीं खोले जा सके",
+  "couldNotOpenTerms": "नियम और शर्तें नहीं खोली जा सकीं",
+  "couldNotOpenPrivacy": "गोपनीयता नीति नहीं खोली जा सकी"
 }

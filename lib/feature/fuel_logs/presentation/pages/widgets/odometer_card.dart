@@ -130,9 +130,10 @@ class OdometerCard extends StatelessWidget {
     if (reading.isEmpty || reading == 'null') return "000000";
     double? val = double.tryParse(reading);
     if (val != null) {
-      // If it's a whole number, we can either keep it as is or format to 2 decimal places. 
-      // The user requested 2 digits.
-      return val.toStringAsFixed(2);
+      return val.toInt().toString();
+    }
+    if (reading.contains('.')) {
+      return reading.split('.')[0];
     }
     return reading;
   }
@@ -240,11 +241,21 @@ class OdometerCard extends StatelessWidget {
                   ),
                   const SizedBox(width: 8),
                   TextButton(
-                    onPressed: () {
+                    onPressed: () async {
                       if (controller.text.isNotEmpty) {
-                        cubit.updateOdometer(controller.text);
+                        final error = await cubit.updateOdometer(controller.text);
+                        if (error != null && context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(error),
+                              backgroundColor: Colors.redAccent,
+                            ),
+                          );
+                        }
                       }
-                      Navigator.pop(context);
+                      if (context.mounted) {
+                        Navigator.pop(context);
+                      }
                     },
                     child: Text(
                       l10n.save,
@@ -347,11 +358,21 @@ class OdometerCard extends StatelessWidget {
                   ),
                   const SizedBox(width: 8),
                   TextButton(
-                    onPressed: () {
+                    onPressed: () async {
                       if (controller.text.isNotEmpty) {
-                        cubit.updateTankCapacity(controller.text);
+                        final error = await cubit.updateTankCapacity(controller.text);
+                        if (error != null && context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(error),
+                              backgroundColor: Colors.redAccent,
+                            ),
+                          );
+                        }
                       }
-                      Navigator.pop(context);
+                      if (context.mounted) {
+                        Navigator.pop(context);
+                      }
                     },
                     child: Text(
                       l10n.save,
