@@ -1,5 +1,8 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'dart:convert';
+import 'package:hive/hive.dart';
+import 'package:trackify/feature/trips/data/entity/ride_model.dart';
 import 'package:trackify/feature/trips/presentation/view/trip_details/trip_details_screen.dart';
 import 'package:trackify/feature/trips/presentation/view/widgets/trips/widgets/trip_card.dart';
 import 'package:trackify/feature/trips/presentation/view/widgets/trips/widgets/trip_empty_state.dart';
@@ -25,7 +28,10 @@ class _TripsState extends State<Trips> {
   bool _showOverlay = false;
   bool _isFabExtended = true;
   String _searchQuery = '';
+  List<Map<String, dynamic>> _savedTrips = [];
+  bool _isLoadingTrips = true;
   late final Timer _fabTimer;
+  StreamSubscription? _boxSubscription;
 
   @override
   void initState() {
@@ -57,6 +63,47 @@ class _TripsState extends State<Trips> {
     });
 
     _checkTooltipVisibility();
+    _loadSavedTrips();
+  }
+
+  Future<void> _loadSavedTrips() async {
+    try {
+      final box = await Hive.openBox('saved_trips');
+      
+      if (_boxSubscription == null) {
+        _boxSubscription = box.watch().listen((_) {
+          _updateTripsFromBox(box);
+        });
+      }
+      
+      _updateTripsFromBox(box);
+    } catch (e) {
+      debugPrint('Error loading saved trips: $e');
+      if (mounted) {
+        setState(() {
+          _isLoadingTrips = false;
+        });
+      }
+    }
+  }
+
+  void _updateTripsFromBox(Box box) {
+    final tripsJson = box.get('trips_list', defaultValue: []) as List<dynamic>;
+    
+    final List<Map<String, dynamic>> trips = [];
+    for (var jsonStr in tripsJson) {
+      try {
+        final decoded = jsonDecode(jsonStr as String);
+        trips.add(decoded);
+      } catch (_) {}
+    }
+    
+    if (mounted) {
+      setState(() {
+        _savedTrips = trips.reversed.toList(); // Newest first
+        _isLoadingTrips = false;
+      });
+    }
   }
 
   Future<void> _checkTooltipVisibility() async {
@@ -80,6 +127,7 @@ class _TripsState extends State<Trips> {
   @override
   void dispose() {
     _fabTimer.cancel();
+    _boxSubscription?.cancel();
     super.dispose();
   }
 
@@ -201,50 +249,43 @@ class _TripsState extends State<Trips> {
               ),
               const SizedBox(height: 12),
               Expanded(
-                child: BlocBuilder<RideHistoryCubit, RideHistoryState>(
-                  builder: (context, state) {
-                    if (state is RideHistorySuccess && state.rides.isNotEmpty) {
-                      // Filter logic: In a real app, we'd filter trip entities.
-                      // For now, we'll check if the mock "Trip 1" matches the query.
-                      final matchesSearch = "trip 1".contains(_searchQuery);
-
-                      if (!matchesSearch) {
-                        return Center(
-                          child: Text(
-                            "No trips found",
-                            style: TextStyle(
-                              color: theme.colorScheme.onSurface.withValues(
-                                alpha: 0.5,
-                              ),
-                            ),
-                          ),
-                        );
-                      }
-
-                      return ListView(
+                child: _isLoadingTrips 
+                  ? const Center(child: CircularProgressIndicator()) 
+                  : _savedTrips.isEmpty 
+                    ? const TripEmptyState()
+                    : ListView.builder(
                         padding: const EdgeInsets.symmetric(horizontal: 16),
-                        children: [
-                          TripCard(
-                            title: "Trip 1",
-                            rides: state.rides,
-                            onTap: () {
-                              Navigator.push(
+                        itemCount: _savedTrips.length,
+                        itemBuilder: (context, index) {
+                          final trip = _savedTrips[index];
+                          final ridesData = trip['rides'] as List<dynamic>;
+                          final rides = ridesData.map((e) => Ride.fromJson(e as Map<String, dynamic>)).toList();
+                          
+                          // Optional: Apply filter logic based on _searchQuery
+                          if (_searchQuery.isNotEmpty) {
+                            final title = (trip['title'] as String?) ?? '';
+                            if (!title.toLowerCase().contains(_searchQuery.toLowerCase())) {
+                              return const SizedBox.shrink();
+                            }
+                          }
+                          
+                          return TripCard(
+                            title: trip['title'] ?? l10n.tripLabel('${index + 1}'),
+                            rides: rides,
+                            onTap: () async {
+                              await Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) => TripDetailsScreen(
-                                    tripName: "Trip 1",
-                                    rides: state.rides,
+                                    tripName: trip['title'] ?? l10n.tripLabel('${index + 1}'),
+                                    rides: rides,
                                   ),
                                 ),
                               );
                             },
-                          ),
-                        ],
-                      );
-                    }
-                    return const TripEmptyState();
-                  },
-                ),
+                          );
+                        },
+                      ),
               ),
             ],
           ),
@@ -266,11 +307,12 @@ class _TripsState extends State<Trips> {
         ],
       ),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {
-          Navigator.push(
+        onPressed: () async {
+          await Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => const CreateTripScreen()),
           );
+          _loadSavedTrips();
         },
         tooltip: l10n.createNewTrip,
         backgroundColor: theme.primaryColor,

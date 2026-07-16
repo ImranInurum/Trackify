@@ -563,7 +563,7 @@ class _EditVehicleViewState extends State<_EditVehicleView> {
                       if (!_isValidVehicleNumber(numberStr)) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
-                            content: const Text("Please enter a valid vehicle registration number."),
+                            content: Text(l10n.invalidVehicleRegistrationNumber),
                             backgroundColor: theme.colorScheme.error,
                           ),
                         );

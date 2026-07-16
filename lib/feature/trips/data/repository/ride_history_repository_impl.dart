@@ -24,7 +24,8 @@ class RideHistoryRepositoryImpl implements RideHistoryRepository {
       return result.fold(
         (exception) => Left(exception),
         (response) {
-          debugPrint('ride history response received: $response');
+          final dataList = response is Map ? (response['data'] as List?) : null;
+          debugPrint('ride history response received: status=${response is Map ? response['status'] : null}, count=${dataList?.length ?? 0}');
           try {
             final historyResponse = RideHistoryResponseModel.fromJson(response);
             

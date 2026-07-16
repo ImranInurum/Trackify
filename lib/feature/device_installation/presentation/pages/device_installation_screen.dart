@@ -589,11 +589,12 @@ class _DeviceInstallationScreenState extends State<DeviceInstallationScreen>
 
   Future<void> _handleContinue() async {
     if (_scannedImei == null) return;
+    final targetImei = _scannedImei!;
 
     if (!mounted) return;
     
     // First, verify the IMEI is not already assigned
-    final isFree = await context.read<DeviceInstallationCubit>().checkImeiOnly(_scannedImei!);
+    final isFree = await context.read<DeviceInstallationCubit>().checkImeiOnly(targetImei);
     if (!isFree) return; // Flow stops here if assigned, cubit emits AlreadyAssigned state
 
     if (!mounted) return;
@@ -679,7 +680,7 @@ class _DeviceInstallationScreenState extends State<DeviceInstallationScreen>
     if (!mounted) return;
     context.read<DeviceInstallationCubit>().assignDevice(
       vehicleId: vId,
-      imei: _scannedImei!,
+      imei: targetImei,
     );
   }
 

@@ -1022,7 +1022,7 @@ abstract class AppLocalizations {
   ///
   /// In en, this message translates to:
   /// **'Expires in {days} days'**
-  String expiresInDays(String days);
+  String expiresInDays(int days);
 
   /// No description provided for @rechargeNow.
   ///
@@ -1033,7 +1033,7 @@ abstract class AppLocalizations {
   /// No description provided for @renewNow.
   ///
   /// In en, this message translates to:
-  /// **'Renew Now'**
+  /// **'Renew now'**
   String get renewNow;
 
   /// No description provided for @secureYourVehicle.
@@ -2389,7 +2389,7 @@ abstract class AppLocalizations {
   /// No description provided for @saveAmount.
   ///
   /// In en, this message translates to:
-  /// **'Save ?{amount} with this plan'**
+  /// **'Save ₹{amount} with this plan'**
   String saveAmount(Object amount);
 
   /// No description provided for @superComboPopularity.
@@ -3241,7 +3241,7 @@ abstract class AppLocalizations {
   /// No description provided for @upgradeNowAtJust.
   ///
   /// In en, this message translates to:
-  /// **'Upgrade Now at Just ?{price}'**
+  /// **'Upgrade Now at Just ₹{price}'**
   String upgradeNowAtJust(String price);
 
   /// No description provided for @viewMoreReviews.
@@ -4006,6 +4006,18 @@ abstract class AppLocalizations {
   /// **'Oldest to Recent'**
   String get oldestToRecent;
 
+  /// No description provided for @longToShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Long to Short'**
+  String get longToShort;
+
+  /// No description provided for @shortToLong.
+  ///
+  /// In en, this message translates to:
+  /// **'Short to Long'**
+  String get shortToLong;
+
   /// No description provided for @date.
   ///
   /// In en, this message translates to:
@@ -4549,7 +4561,7 @@ abstract class AppLocalizations {
   /// No description provided for @greatSaving.
   ///
   /// In en, this message translates to:
-  /// **'Great! Saving ?{amount} with this plan'**
+  /// **'Great! Saving ₹{amount} with this plan'**
   String greatSaving(Object amount);
 
   /// No description provided for @billSummary.
@@ -4585,7 +4597,7 @@ abstract class AppLocalizations {
   /// No description provided for @payAmount.
   ///
   /// In en, this message translates to:
-  /// **'Pay ?{amount}'**
+  /// **'Pay ₹{amount}'**
   String payAmount(Object amount);
 
   /// No description provided for @liveRecord.
@@ -5847,6 +5859,492 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'h'**
   String get hoursShort;
+
+  /// No description provided for @exploreProducts.
+  ///
+  /// In en, this message translates to:
+  /// **'Explore Products'**
+  String get exploreProducts;
+
+  /// No description provided for @decideBestProductText.
+  ///
+  /// In en, this message translates to:
+  /// **'Not able to decide which product is'**
+  String get decideBestProductText;
+
+  /// No description provided for @bestForYou.
+  ///
+  /// In en, this message translates to:
+  /// **'Best for you?'**
+  String get bestForYou;
+
+  /// No description provided for @callUs.
+  ///
+  /// In en, this message translates to:
+  /// **'Call Us'**
+  String get callUs;
+
+  /// No description provided for @happyTrackifyUsers.
+  ///
+  /// In en, this message translates to:
+  /// **'Happy Trackify Users'**
+  String get happyTrackifyUsers;
+
+  /// No description provided for @umeshDarwatkar.
+  ///
+  /// In en, this message translates to:
+  /// **'Umesh Darwatkar'**
+  String get umeshDarwatkar;
+
+  /// No description provided for @umeshDarwatkarDuration.
+  ///
+  /// In en, this message translates to:
+  /// **'Trackify user from past 1 years'**
+  String get umeshDarwatkarDuration;
+
+  /// No description provided for @umeshDarwatkarReview.
+  ///
+  /// In en, this message translates to:
+  /// **'I highly recommend Trackify GPS device to anyone looking for a reliable and accurate navigation tool for bikes it has great features like Theft Detection, Accident Alert, Live Ride Sharing, Ride Recording & Fuel Tracking. Its easy to install & it Apps is very easy to use with lots of features.'**
+  String get umeshDarwatkarReview;
+
+  /// No description provided for @rohitSharma.
+  ///
+  /// In en, this message translates to:
+  /// **'Rohit Sharma'**
+  String get rohitSharma;
+
+  /// No description provided for @rohitSharmaDuration.
+  ///
+  /// In en, this message translates to:
+  /// **'Trackify user from past 2 years'**
+  String get rohitSharmaDuration;
+
+  /// No description provided for @rohitSharmaReview.
+  ///
+  /// In en, this message translates to:
+  /// **'Using the device would like to highlight in movement tracking sharing it with the other people so that my friend can track me is the easiest way. The App is very responsive and useful.'**
+  String get rohitSharmaReview;
+
+  /// No description provided for @peopleSmartIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'people made their bike smart.\nExperience '**
+  String get peopleSmartIntro;
+
+  /// No description provided for @smartText.
+  ///
+  /// In en, this message translates to:
+  /// **'Smart '**
+  String get smartText;
+
+  /// No description provided for @featuresOfTrackify.
+  ///
+  /// In en, this message translates to:
+  /// **'features of Trackify 🏍️'**
+  String get featuresOfTrackify;
+
+  /// No description provided for @accidentAlertCard.
+  ///
+  /// In en, this message translates to:
+  /// **'Accident alert'**
+  String get accidentAlertCard;
+
+  /// No description provided for @antiTheftAlertCard.
+  ///
+  /// In en, this message translates to:
+  /// **'Anti-Theft alert'**
+  String get antiTheftAlertCard;
+
+  /// No description provided for @liveGpsTrackingCard.
+  ///
+  /// In en, this message translates to:
+  /// **'Live GPS Tracking'**
+  String get liveGpsTrackingCard;
+
+  /// No description provided for @chooseDeviceSuitsYou.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose device which suits you well'**
+  String get chooseDeviceSuitsYou;
+
+  /// No description provided for @lite.
+  ///
+  /// In en, this message translates to:
+  /// **'Lite'**
+  String get lite;
+
+  /// No description provided for @pro.
+  ///
+  /// In en, this message translates to:
+  /// **'Pro'**
+  String get pro;
+
+  /// No description provided for @go.
+  ///
+  /// In en, this message translates to:
+  /// **'Go'**
+  String get go;
+
+  /// No description provided for @deviceSim.
+  ///
+  /// In en, this message translates to:
+  /// **'Device + Airtel/Vi SIM'**
+  String get deviceSim;
+
+  /// No description provided for @ignitionOnOffAlert.
+  ///
+  /// In en, this message translates to:
+  /// **'Ignition ON/OFF Alert'**
+  String get ignitionOnOffAlert;
+
+  /// No description provided for @tamperAlert.
+  ///
+  /// In en, this message translates to:
+  /// **'Tamper Alert'**
+  String get tamperAlert;
+
+  /// No description provided for @portable.
+  ///
+  /// In en, this message translates to:
+  /// **'Portable'**
+  String get portable;
+
+  /// No description provided for @replacementWarrantyMonths.
+  ///
+  /// In en, this message translates to:
+  /// **'Replacement Warranty\n(months)'**
+  String get replacementWarrantyMonths;
+
+  /// No description provided for @trackifySmartGpsIot.
+  ///
+  /// In en, this message translates to:
+  /// **'Trackify Smart GPS IoT'**
+  String get trackifySmartGpsIot;
+
+  /// No description provided for @monthAppSubscription.
+  ///
+  /// In en, this message translates to:
+  /// **'12 Month App\nSubscription\n\n'**
+  String get monthAppSubscription;
+
+  /// No description provided for @simActivationCharges.
+  ///
+  /// In en, this message translates to:
+  /// **'SIM Activation Charges'**
+  String get simActivationCharges;
+
+  /// No description provided for @selectProduct.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Product'**
+  String get selectProduct;
+
+  /// No description provided for @usersBoughtProduct.
+  ///
+  /// In en, this message translates to:
+  /// **'*31 users bought {productName} yesterday'**
+  String usersBoughtProduct(String productName);
+
+  /// No description provided for @outOfStock.
+  ///
+  /// In en, this message translates to:
+  /// **'Out of Stock'**
+  String get outOfStock;
+
+  /// No description provided for @withText.
+  ///
+  /// In en, this message translates to:
+  /// **'with '**
+  String get withText;
+
+  /// No description provided for @buyNowForPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'Buy Now for ₹{price}'**
+  String buyNowForPrice(String price);
+
+  /// No description provided for @liveTracking.
+  ///
+  /// In en, this message translates to:
+  /// **'Live Tracking'**
+  String get liveTracking;
+
+  /// No description provided for @googlePlay.
+  ///
+  /// In en, this message translates to:
+  /// **'Google Play'**
+  String get googlePlay;
+
+  /// No description provided for @searchForItem.
+  ///
+  /// In en, this message translates to:
+  /// **'Search for an item...'**
+  String get searchForItem;
+
+  /// No description provided for @completePersonalDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Complete Personal Details'**
+  String get completePersonalDetails;
+
+  /// No description provided for @personalDetailsDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Please provide these details before device installation.'**
+  String get personalDetailsDesc;
+
+  /// No description provided for @lastNameLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Last Name'**
+  String get lastNameLabel;
+
+  /// No description provided for @enterLastName.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your last name'**
+  String get enterLastName;
+
+  /// No description provided for @requiredField.
+  ///
+  /// In en, this message translates to:
+  /// **'Required field'**
+  String get requiredField;
+
+  /// No description provided for @enterMobileNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your mobile number'**
+  String get enterMobileNumber;
+
+  /// No description provided for @saveAndContinue.
+  ///
+  /// In en, this message translates to:
+  /// **'Save & Continue'**
+  String get saveAndContinue;
+
+  /// No description provided for @yourLocationLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Your location'**
+  String get yourLocationLabel;
+
+  /// No description provided for @deviceWarrantyExpired.
+  ///
+  /// In en, this message translates to:
+  /// **'Device warranty expired'**
+  String get deviceWarrantyExpired;
+
+  /// No description provided for @receivedTrackifyDevicePrompt.
+  ///
+  /// In en, this message translates to:
+  /// **'Received your Trackify device?'**
+  String get receivedTrackifyDevicePrompt;
+
+  /// No description provided for @fivePercentOffPromo.
+  ///
+  /// In en, this message translates to:
+  /// **'5% off on buying from Trackify App'**
+  String get fivePercentOffPromo;
+
+  /// No description provided for @activateNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Activate now'**
+  String get activateNow;
+
+  /// No description provided for @exploreExclusiveDeal.
+  ///
+  /// In en, this message translates to:
+  /// **'Explore Exclusive Deal'**
+  String get exploreExclusiveDeal;
+
+  /// No description provided for @rechargePlan.
+  ///
+  /// In en, this message translates to:
+  /// **'Recharge Plan'**
+  String get rechargePlan;
+
+  /// No description provided for @rechargeExpired.
+  ///
+  /// In en, this message translates to:
+  /// **'Recharge expired'**
+  String get rechargeExpired;
+
+  /// No description provided for @trackifyBrandLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'TRACKIFY'**
+  String get trackifyBrandLabel;
+
+  /// No description provided for @hrMinLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'hr:min'**
+  String get hrMinLabel;
+
+  /// No description provided for @enterCustomTag.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter custom tag'**
+  String get enterCustomTag;
+
+  /// No description provided for @locationNotAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Location not available'**
+  String get locationNotAvailable;
+
+  /// No description provided for @deleteAccountFailedNoUser.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to delete account: User ID not found.'**
+  String get deleteAccountFailedNoUser;
+
+  /// No description provided for @deleteAccountSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Account successfully deleted.'**
+  String get deleteAccountSuccess;
+
+  /// No description provided for @errorDeletingAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Error deleting account: {message}'**
+  String errorDeletingAccount(String message);
+
+  /// No description provided for @invalidVehicleRegistrationNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a valid vehicle registration number.'**
+  String get invalidVehicleRegistrationNumber;
+
+  /// No description provided for @cropImageTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Crop Image'**
+  String get cropImageTitle;
+
+  /// No description provided for @pleaseEnterVehicleRegistrationNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a vehicle registration number.'**
+  String get pleaseEnterVehicleRegistrationNumber;
+
+  /// No description provided for @vehicleRegNoRcHelpText.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your vehicle registration number as printed on the RC.'**
+  String get vehicleRegNoRcHelpText;
+
+  /// No description provided for @vehicleNumberHintAlternative.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. UP32AB1234'**
+  String get vehicleNumberHintAlternative;
+
+  /// No description provided for @vehicleRegistrationNumberLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Vehicle Registration Number'**
+  String get vehicleRegistrationNumberLabel;
+
+  /// No description provided for @notificationFallback.
+  ///
+  /// In en, this message translates to:
+  /// **'Notification'**
+  String get notificationFallback;
+
+  /// No description provided for @dateHeader.
+  ///
+  /// In en, this message translates to:
+  /// **'Date'**
+  String get dateHeader;
+
+  /// No description provided for @timeHeader.
+  ///
+  /// In en, this message translates to:
+  /// **'Time'**
+  String get timeHeader;
+
+  /// No description provided for @odometerHeader.
+  ///
+  /// In en, this message translates to:
+  /// **'Odometer'**
+  String get odometerHeader;
+
+  /// No description provided for @locationHeader.
+  ///
+  /// In en, this message translates to:
+  /// **'Location'**
+  String get locationHeader;
+
+  /// No description provided for @amountHeader.
+  ///
+  /// In en, this message translates to:
+  /// **'Amount'**
+  String get amountHeader;
+
+  /// No description provided for @rateHeader.
+  ///
+  /// In en, this message translates to:
+  /// **'Rate'**
+  String get rateHeader;
+
+  /// No description provided for @litersHeader.
+  ///
+  /// In en, this message translates to:
+  /// **'Liters'**
+  String get litersHeader;
+
+  /// No description provided for @mileageHeader.
+  ///
+  /// In en, this message translates to:
+  /// **'Mileage'**
+  String get mileageHeader;
+
+  /// No description provided for @downloadingStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Downloading...'**
+  String get downloadingStatus;
+
+  /// No description provided for @downloadCsvButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Download CSV'**
+  String get downloadCsvButton;
+
+  /// No description provided for @fileDownloadSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'File downloaded successfully!'**
+  String get fileDownloadSuccess;
+
+  /// No description provided for @errorDownloadingFile.
+  ///
+  /// In en, this message translates to:
+  /// **'Error downloading file: {error}'**
+  String errorDownloadingFile(String error);
+
+  /// No description provided for @couldNotOpenFaq.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not open FAQ'**
+  String get couldNotOpenFaq;
+
+  /// No description provided for @couldNotOpenTerms.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not open Terms & Conditions'**
+  String get couldNotOpenTerms;
+
+  /// No description provided for @couldNotOpenPrivacy.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not open privacy policy'**
+  String get couldNotOpenPrivacy;
 }
 
 class _AppLocalizationsDelegate

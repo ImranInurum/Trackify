@@ -119,30 +119,33 @@ class FuelLogsCubit extends Cubit<FuelLogsState> {
     }
   }
 
-  Future<void> updateOdometer(String odometerReading) async {
-    if (_currentImei.isEmpty) return;
+  Future<String?> updateOdometer(String odometerReading) async {
+    if (_currentImei.isEmpty) return "IMEI is empty";
     try {
       final apiService = NetworkApiService();
       final response = await apiService.getPostApiResponse(
         ApiURL.updateOdometer,
         {
           "imei": _currentImei,
-          "currentOdometer": int.tryParse(odometerReading) ?? 0,
+          "currentOdometer": (double.tryParse(odometerReading) ?? 0).toInt(),
         },
       );
 
-      response.fold(
-        (failure) => throw Exception(failure.message),
-        (success) async => await reloadFuelLogs(),
+      return response.fold(
+        (failure) => failure.message,
+        (success) async {
+          await reloadFuelLogs();
+          return null;
+        },
       );
     } catch (e) {
       print("Odometer update error: $e");
-      rethrow;
+      return e.toString();
     }
   }
 
-  Future<void> updateTankCapacity(String capacity) async {
-    if (_currentImei.isEmpty) return;
+  Future<String?> updateTankCapacity(String capacity) async {
+    if (_currentImei.isEmpty) return "IMEI is empty";
     final currentState = state;
     try {
       final repo = VehicleControlRepositoryImpl();
@@ -152,14 +155,15 @@ class FuelLogsCubit extends Cubit<FuelLogsState> {
       }
       await repo.updateTankCapacity(_currentImei, capacity, currentMileage);
       await reloadFuelLogs();
+      return null;
     } catch (e) {
       print("Tank capacity update error: $e");
-      rethrow;
+      return e.toString();
     }
   }
 
-  Future<void> updateMileage(String mileage) async {
-    if (_currentImei.isEmpty) return;
+  Future<String?> updateMileage(String mileage) async {
+    if (_currentImei.isEmpty) return "IMEI is empty";
     final currentState = state;
     try {
       final repo = VehicleControlRepositoryImpl();
@@ -169,9 +173,10 @@ class FuelLogsCubit extends Cubit<FuelLogsState> {
       }
       await repo.updateMileage(_currentImei, mileage, currentTankCapacity);
       await reloadFuelLogs();
+      return null;
     } catch (e) {
       print("Mileage update error: $e");
-      rethrow;
+      return e.toString();
     }
   }
 }

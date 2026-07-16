@@ -178,11 +178,8 @@ class _PromoVideoCardState extends State<PromoVideoCard> {
                         ),
                       ),
 
-                    // LOADING
                     if (_isLoading)
-                      const CircularProgressIndicator(
-                        color: Colors.white,
-                      ),
+                      const TrackifyLoader(size: 80, animated: true),
 
                     // PLAY BUTTON
                     if (!_isLoading && !_isPlaying)

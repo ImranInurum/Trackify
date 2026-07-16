@@ -312,7 +312,7 @@ class _VehicleCardState extends State<VehicleCard> {
                       }) {
                         if (hasNoPlan || daysLeft == null) return "--";
                         if (daysLeft <= 0) return l10n.expired;
-                        return l10n.expiresInDays(daysLeft.toString());
+                        return l10n.expiresInDays(daysLeft);
                       }
 
                       return Column(

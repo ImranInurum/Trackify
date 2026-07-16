@@ -163,6 +163,7 @@ Future<void> _setUp() async {
   await AppPreference.instance.init();
   await Hive.initFlutter();
   await Hive.openBox('map_cache');
+  await Hive.openBox('offline_rides');
   await NotificationService.initialize();
 
   debugPrint('Trackify bootstrap completed');

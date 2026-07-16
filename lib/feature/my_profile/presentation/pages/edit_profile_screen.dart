@@ -286,89 +286,184 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   }
 
   void _showEditMobileDialog() {
-    final ctrl = TextEditingController(text: _mobile.replaceAll('+91', ''));
+    String tempPhoneCode = '+91';
+    String tempPhoneNumber = _mobile;
+
+    for (final c in _countries) {
+      if (c.phoneCode.isNotEmpty) {
+        final code = c.phoneCode.startsWith('+') ? c.phoneCode : '+${c.phoneCode}';
+        if (_mobile.startsWith(code)) {
+          tempPhoneCode = code;
+          tempPhoneNumber = _mobile.substring(code.length);
+          break;
+        }
+      }
+    }
+
+    final dialogFormKey = GlobalKey<FormState>();
+    final ctrl = TextEditingController(text: tempPhoneNumber);
+
     showDialog(
       context: context,
-      builder: (dialogCtx) => AlertDialog(
-        backgroundColor: Theme.of(context).cardColor,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        titlePadding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
-        contentPadding: const EdgeInsets.fromLTRB(20, 20, 20, 10),
-        title: Text(
-          l10n.editMobileNumber,
-          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-        ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Theme.of(context).dividerColor),
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                  child: const Row(
+      builder: (dialogCtx) => StatefulBuilder(
+        builder: (context, setDialogState) {
+          return AlertDialog(
+            backgroundColor: Theme.of(context).cardColor,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+            titlePadding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+            contentPadding: const EdgeInsets.fromLTRB(20, 20, 20, 10),
+            title: Text(
+              l10n.editMobileNumber,
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            content: Form(
+              key: dialogFormKey,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('🇮🇳', style: TextStyle(fontSize: 18)),
-                      Icon(Icons.arrow_drop_down, size: 20),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Theme.of(context).dividerColor),
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: DropdownButtonHideUnderline(
+                          child: DropdownButton<String>(
+                            value: tempPhoneCode,
+                            isDense: true,
+                            items: (() {
+                              final seenCodes = <String>{};
+                              final uniqueItems = <DropdownMenuItem<String>>[];
+                              for (final c in _countries) {
+                                if (c.phoneCode.isEmpty) continue;
+                                final code = c.phoneCode.startsWith('+') ? c.phoneCode : '+${c.phoneCode}';
+                                if (!seenCodes.contains(code)) {
+                                  seenCodes.add(code);
+                                  uniqueItems.add(
+                                    DropdownMenuItem<String>(
+                                      value: code,
+                                      child: Text(
+                                        c.flag.isNotEmpty ? "${c.flag} $code" : code,
+                                        style: const TextStyle(fontSize: 14),
+                                      ),
+                                    ),
+                                  );
+                                }
+                              }
+                              if (!seenCodes.contains(tempPhoneCode)) {
+                                uniqueItems.insert(
+                                  0,
+                                  DropdownMenuItem<String>(
+                                    value: tempPhoneCode,
+                                    child: Text(tempPhoneCode, style: const TextStyle(fontSize: 14)),
+                                  ),
+                                );
+                              }
+                              return uniqueItems;
+                            })(),
+                            onChanged: (val) {
+                              if (val != null) {
+                                setDialogState(() {
+                                  tempPhoneCode = val;
+                                });
+                                try {
+                                  final cleanCode = val.replaceAll('+', '');
+                                  final matchingCountry = _countries.firstWhere(
+                                    (c) => c.phoneCode == cleanCode || c.phoneCode == val,
+                                  );
+                                  setState(() {
+                                    _selectedCountry = matchingCountry.name;
+                                  });
+                                  _loadStates(matchingCountry.isoCode);
+                                } catch (_) {}
+                              }
+                            },
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: TextFormField(
+                          controller: ctrl,
+                          keyboardType: TextInputType.phone,
+                          style: const TextStyle(fontSize: 16),
+                          decoration: InputDecoration(
+                            labelText: l10n.mobileNumber,
+                            labelStyle: TextStyle(
+                              fontSize: 12.5,
+                              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+                            ),
+                            floatingLabelBehavior: FloatingLabelBehavior.auto,
+                            isDense: true,
+                            contentPadding: const EdgeInsets.only(bottom: 8),
+                            enabledBorder: UnderlineInputBorder(
+                              borderSide: BorderSide(color: Theme.of(context).dividerColor),
+                            ),
+                            focusedBorder: UnderlineInputBorder(
+                              borderSide: BorderSide(color: Theme.of(context).colorScheme.primary),
+                            ),
+                          ),
+                          validator: (val) {
+                            if (val == null || val.trim().isEmpty) {
+                              return l10n.required;
+                            }
+                            final cleanValue = val.trim();
+                            if (!RegExp(r'^[0-9]+$').hasMatch(cleanValue)) {
+                              return l10n.invalidMobileNumber;
+                            }
+
+                            if (tempPhoneCode == '+91') {
+                              if (cleanValue.length != 10) {
+                                return l10n.invalidMobileNumber;
+                              }
+                              if (!RegExp(r'^[6-9][0-9]{9}$').hasMatch(cleanValue)) {
+                                return l10n.invalidMobileNumber;
+                              }
+                            } else {
+                              if (cleanValue.length < 7 || cleanValue.length > 15) {
+                                return l10n.invalidMobileNumber;
+                              }
+                            }
+                            return null;
+                          },
+                        ),
+                      ),
                     ],
                   ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: TextFormField(
-                    controller: ctrl,
-                    keyboardType: TextInputType.phone,
-                    style: const TextStyle(fontSize: 16),
-                    decoration: InputDecoration(
-                      labelText: l10n.tenDigitMobileNumber,
-                      labelStyle: TextStyle(
-                        fontSize: 12.5,
-                        color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
-                      ),
-                      floatingLabelBehavior: FloatingLabelBehavior.auto,
-                      isDense: true,
-                      contentPadding: const EdgeInsets.only(bottom: 8),
-                      enabledBorder: UnderlineInputBorder(
-                        borderSide: BorderSide(color: Theme.of(context).dividerColor),
-                      ),
-                      focusedBorder: UnderlineInputBorder(
-                        borderSide: BorderSide(color: Theme.of(context).colorScheme.primary),
-                      ),
-                    ),
+                ],
+              ),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(dialogCtx),
+                child: Text(
+                  l10n.cancel,
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
                   ),
                 ),
-              ],
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(dialogCtx),
-            child: Text(
-              l10n.cancel,
-              style: TextStyle(
-                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
               ),
-            ),
-          ),
-          TextButton(
-            onPressed: () {
-              setState(() => _mobile = '+91${ctrl.text.trim()}');
-              Navigator.pop(dialogCtx);
-            },
-            child: Text(
-              l10n.saveAndVerify,
-              style: TextStyle(
-                color: Theme.of(context).colorScheme.primary,
-                fontWeight: FontWeight.bold,
+              TextButton(
+                onPressed: () {
+                  if (dialogFormKey.currentState?.validate() ?? false) {
+                    setState(() => _mobile = '$tempPhoneCode${ctrl.text.trim()}');
+                    Navigator.pop(dialogCtx);
+                  }
+                },
+                child: Text(
+                  l10n.save,
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.primary,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
               ),
-            ),
-          ),
-        ],
+            ],
+          );
+        },
       ),
     );
   }
@@ -597,6 +692,22 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       });
                       if (val != null) {
                         final country = _countries.firstWhere((c) => c.name == val);
+                        if (country.phoneCode.isNotEmpty) {
+                          final code = country.phoneCode.startsWith('+') ? country.phoneCode : '+${country.phoneCode}';
+                          String baseNumber = _mobile;
+                          for (final c in _countries) {
+                            if (c.phoneCode.isNotEmpty) {
+                              final currentCode = c.phoneCode.startsWith('+') ? c.phoneCode : '+${c.phoneCode}';
+                              if (_mobile.startsWith(currentCode)) {
+                                baseNumber = _mobile.substring(currentCode.length);
+                                break;
+                              }
+                            }
+                          }
+                          setState(() {
+                            _mobile = '$code$baseNumber';
+                          });
+                        }
                         _loadStates(country.isoCode);
                       }
                     },

@@ -13,15 +13,17 @@ class PromoVideoCubit extends Cubit<PromoVideoState> {
   List<PromoVideoModel> _allVideos = [];
   int _displayedCount = 5;
 
-  Future<void> fetchPromoVideos() async {
+  Future<void> fetchPromoVideos(String imei) async {
     final box = Hive.box('map_cache');
-    final cachedData = box.get('promo_videos_data');
+    final cachedData = box.get('promo_videos_data_$imei');
 
     List<PromoVideoModel> cachedList = [];
     if (cachedData != null) {
       try {
         final decoded = jsonDecode(cachedData.toString()) as List<dynamic>;
-        cachedList = decoded.map((e) => PromoVideoModel.fromJson(e as Map<String, dynamic>)).toList();
+        cachedList = decoded
+            .map((e) => PromoVideoModel.fromJson(e as Map<String, dynamic>))
+            .toList();
       } catch (_) {
         // Cache parsing failed, ignore
       }
@@ -35,8 +37,8 @@ class PromoVideoCubit extends Cubit<PromoVideoState> {
       emit(PromoVideoLoading());
     }
 
-    final result = await _repository.getPromoVideos();
-    
+    final result = await _repository.getPromoVideos(imei);
+
     if (isClosed) return;
 
     result.fold(
@@ -49,7 +51,10 @@ class PromoVideoCubit extends Cubit<PromoVideoState> {
         _allVideos = videos;
         _displayedCount = 5;
         try {
-          box.put('promo_videos_data', jsonEncode(videos.map((e) => e.toJson()).toList()));
+          box.put(
+            'promo_videos_data_$imei',
+            jsonEncode(videos.map((e) => e.toJson()).toList()),
+          );
         } catch (_) {
           // Cache saving failed, ignore
         }
@@ -67,9 +72,11 @@ class PromoVideoCubit extends Cubit<PromoVideoState> {
 
   void _emitLoadedState() {
     final displayed = _allVideos.take(_displayedCount).toList();
-    emit(PromoVideoLoaded(
-      videos: displayed, 
-      hasMore: _displayedCount < _allVideos.length,
-    ));
+    emit(
+      PromoVideoLoaded(
+        videos: displayed,
+        hasMore: _displayedCount < _allVideos.length,
+      ),
+    );
   }
 }

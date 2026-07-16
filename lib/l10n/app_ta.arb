@@ -195,16 +195,16 @@
   "logout": "உள்நுழைவு விலகல்",
   "dataPlan": "டேட்டா திட்டம்",
   "warranty": "உத்தரவாதம்",
-  "expiresInDays": "{days} நாட்களில் காலாவதியாகும்",
+  "expiresInDays": "{days} நாட்களில் காலாவதியாகிறது",
   "@expiresInDays": {
     "placeholders": {
       "days": {
-        "type": "String"
+        "type": "int"
       }
     }
   },
   "rechargeNow": "ரீசார்ஜ் செய்க",
-  "renewNow": "புதுப்பிக்கவும்",
+  "renewNow": "இப்போது புதுப்பிக்கவும்",
   "secureYourVehicle": "வாகனத்தைப் பாதுகாக்கவும்",
   "secureYourVehicleDesc": "அடிப்படை கண்காணிப்புக்காக சாதனத்தை வாங்கவும்",
   "boughtDeviceInstallNow": "சாதனம் வாங்கினீர்களா? ",
@@ -395,7 +395,7 @@
   "personalDetails": "தனிப்பட்ட விவரங்கள்",
   "userNameLabel": "பெயர்",
   "emailAddressLabel": "மின்னஞ்சல் முகவரி",
-  "mobileNumberLabel": "மொபைல் எண்",
+  "mobileNumberLabel": "கைபேசி எண்",
   "countryLabel": "நாடு",
   "stateLabel": "மாநிலம்",
   "cityLabel": "நகரம்",
@@ -707,6 +707,8 @@
   "sortBy": "இதன் மூலம் வரிசைப்படுத்து",
   "duration": "கால அளவு",
   "oldestToRecent": "பழையது முதல் புதியது வரை",
+  "longToShort": "நீண்டதிலிருந்து குறுகியது",
+  "shortToLong": "குறுகியதிலிருந்து நீண்டது",
   "date": "தேதி",
   "noTripsFound": "\"{query}\" க்கான பயணங்கள் எதுவும் கிடைக்கவில்லை",
   "ridesCount": "{count} சவாரிகள்",
@@ -1117,7 +1119,7 @@
   "areYouSureDiscardRide": "Are you sure you want to discard this ride?",
   "kmhLabel": "km/h",
   "hrminLabel": "hr:min",
-  "kmLabel": "km",
+  "kmLabel": "கிமீ",
   "exportRideVideoDesc": "Exported ride will be saved in Trackify Ride Videos folder of your Gallery app",
   "chooseNicknameHint": "Choose a unique nickname for this ride",
   "myRideOnTrackify": "My Ride on Trackify",
@@ -1162,5 +1164,114 @@
   "statisticsTab": "Statistics",
   "yourPhonesLocation": "Your Phone's Location",
   "justNow": "Just now",
-  "hoursShort": "h"
+  "hoursShort": "h",
+  "exploreProducts": "தயாரிப்புகளை ஆராயுங்கள்",
+  "decideBestProductText": "எந்த தயாரிப்பு உங்களுக்கு",
+  "bestForYou": "சிறந்தது என்று தீர்மானிக்க முடியவில்லையா?",
+  "callUs": "எங்களை அழையுங்கள்",
+  "happyTrackifyUsers": "மகிழ்ச்சியான ட்ராக்கிஃபை பயனர்கள்",
+  "umeshDarwatkar": "உமேஷ் தர்வத்கர்",
+  "umeshDarwatkarDuration": "கடந்த 1 வருடமாக ட்ராக்கிஃபை பயனர்",
+  "umeshDarwatkarReview": "பைக்குகளுக்கு நம்பகமான மற்றும் துல்லியமான வழிசெலுத்தல் கருவியைத் தேடும் எவருக்கும் ட்ராக்கிஃபை ஜிபிஎஸ் சாதனத்தை நான் கடுமையாக பரிந்துரைக்கிறேன். இதில் திருட்டு கண்டறிதல், விபத்து எச்சரிக்கை, நேரலை சவாரி பகிர்வு, சவாரி பதிவு மற்றும் எரிபொருள் கண்காணிப்பு போன்ற சிறந்த அம்சங்கள் உள்ளன. இதை நிறுவுவது எளிது மற்றும் அதன் ஆப் பல அம்சங்களுடன் பயன்படுத்த மிகவும் எளிதானது.",
+  "rohitSharma": "ரோஹித் சர்மா",
+  "rohitSharmaDuration": "கடந்த 2 வருடமாக ட்ராக்கிஃபை பயனர்",
+  "rohitSharmaReview": "சாதனத்தைப் பயன்படுத்தும் போது இயக்கக் கண்காணிப்பை மற்றவர்களுடன் பகிர்வது எளிதான வழியாகும், இதனால் எனது நண்பர் என்னைக் கண்காணிக்க முடியும். ஆப் மிகவும் பதிலளிக்கக்கூடியது மற்றும் பயனுள்ளது.",
+  "peopleSmartIntro": "நபர்கள் தங்கள் பைக்கை ஸ்மார்ட் ஆக்கினர்.\nஅனுபவியுங்கள் ",
+  "smartText": "ஸ்மார்ட் ",
+  "featuresOfTrackify": "ட்ராக்கிஃபை அம்சங்கள் 🏍️",
+  "accidentAlertCard": "விபத்து எச்சரிக்கை",
+  "antiTheftAlertCard": "திருட்டு எதிர்ப்பு எச்சரிக்கை",
+  "liveGpsTrackingCard": "நேரலை ஜிபிஎஸ் கண்காணிப்பு",
+  "chooseDeviceSuitsYou": "உங்களுக்குப் பொருத்தமான சாதனத்தைத் தேர்ந்தெடுக்கவும்",
+  "lite": "லைட்",
+  "pro": "ப்ரோ",
+  "go": "கோ",
+  "deviceSim": "சாதனம் + ஏர்டெல்/வி சிம்",
+  "ignitionOnOffAlert": "இக்னிஷன் ஆன்/ஆಫ್ எச்சரிக்கை",
+  "tamperAlert": "டேம்பர் எச்சரிக்கை",
+  "portable": "போர்ட்டபிள்",
+  "replacementWarrantyMonths": "மாற்று உத்தரவாதம்\n(மாதங்கள்)",
+  "trackifySmartGpsIot": "ட்ராக்கிஃபை ஸ்மார்ட் ஜிபிஎஸ் IoT",
+  "monthAppSubscription": "12 மாத ஆப்\nசந்தா\n\n",
+  "simActivationCharges": "சிம் செயல்படுத்தும் கட்டணம்",
+  "selectProduct": "தயாரிப்பைத் தேர்ந்தெடுக்கவும்",
+  "usersBoughtProduct": "*நேற்று 31 பயனர்கள் {productName} வாங்கினர்",
+  "@usersBoughtProduct": {
+    "placeholders": {
+      "productName": {
+        "type": "String"
+      }
+    }
+  },
+  "outOfStock": "இருப்பு இல்லை",
+  "withText": "உடன் ",
+  "buyNowForPrice": "₹{price} க்கு இப்போது வாங்கவும்",
+  "@buyNowForPrice": {
+    "placeholders": {
+      "price": {
+        "type": "String"
+      }
+    }
+  },
+  "liveTracking": "நேரலை கண்காணிப்பு",
+  "googlePlay": "கூகுள் பிளே",
+  "searchForItem": "பொருளைத் தேடுங்கள்...",
+  "completePersonalDetails": "தனிப்பட்ட விவரங்களை பூர்த்தி செய்க",
+  "personalDetailsDesc": "சாதன நிறுவலுக்கு முன் இந்த விவரங்களை வழங்கவும்.",
+  "lastNameLabel": "இறுதி பெயர்",
+  "enterLastName": "உங்கள் கடைசி பெயரை உள்ளிடவும்",
+  "requiredField": "தேவையான புலம்",
+  "enterMobileNumber": "உங்கள் மொபைல் எண்ணை உள்ளிடவும்",
+  "saveAndContinue": "சேமித்து தொடரவும்",
+  "yourLocationLabel": "உங்கள் இருப்பிடம்",
+  "deviceWarrantyExpired": "சாதனத்தின் உத்தரவாதம் முடிவடைந்தது",
+  "receivedTrackifyDevicePrompt": "உங்கள் டிராகிஃபை சாதனத்தைப் பெற்றீர்களா?",
+  "fivePercentOffPromo": "டிராகிஃபை பயன்பாட்டிலிருந்து வாங்கினால் 5% தள்ளுபடி",
+  "activateNow": "இப்போது செயல்படுத்தவும்",
+  "exploreExclusiveDeal": "பிரத்யேக சலுகையை ஆராயுங்கள்",
+  "rechargePlan": "ரீசார்ஜ் திட்டம்",
+  "rechargeExpired": "ரீசார்ஜ் காலாவதியானது",
+  "trackifyBrandLabel": "டிராகிஃபை",
+  "hrMinLabel": "மணி:நிமி",
+  "enterCustomTag": "தனிப்பயன் குறிச்சொல்லை உள்ளிடவும்",
+  "locationNotAvailable": "இருப்பிடம் கிடைக்கவில்லை",
+  "deleteAccountFailedNoUser": "கணக்கை நீக்க முடியவில்லை: பயனர் ஐடி கிடைக்கவில்லை.",
+  "deleteAccountSuccess": "கணக்கு வெற்றிகரமாக நீக்கப்பட்டது.",
+  "errorDeletingAccount": "கணக்கை நீக்குவதில் பிழை: {message}",
+  "@errorDeletingAccount": {
+    "placeholders": {
+      "message": {
+        "type": "String"
+      }
+    }
+  },
+  "invalidVehicleRegistrationNumber": "செல்லுபடியாகும் வாகன பதிவு எண்ணை உள்ளிடவும்.",
+  "cropImageTitle": "படத்தை பயிர் செய்க",
+  "pleaseEnterVehicleRegistrationNumber": "வாகன பதிவு எண்ணை உள்ளிடவும்.",
+  "vehicleRegNoRcHelpText": "பதிவுச் சான்றிதழில் (RC) அச்சிடப்பட்டுள்ளபடி உங்கள் வாகனப் பதிவு எண்ணை உள்ளிடவும்.",
+  "vehicleNumberHintAlternative": "எ.கா. UP32AB1234",
+  "vehicleRegistrationNumberLabel": "வாகன பதிவு எண்",
+  "notificationFallback": "அறிவிப்பு",
+  "dateHeader": "தேதி",
+  "timeHeader": "நேரம்",
+  "odometerHeader": "ஓடோமீட்டர்",
+  "locationHeader": "இடம்",
+  "amountHeader": "தொகை",
+  "rateHeader": "விகிதம்",
+  "litersHeader": "லிட்டர்",
+  "mileageHeader": "மைலேஜ்",
+  "downloadingStatus": "பதிவிறக்குகிறது...",
+  "downloadCsvButton": "CSV பதிவிறக்கவும்",
+  "fileDownloadSuccess": "கோப்பு வெற்றிகரமாக பதிவிறக்கம் செய்யப்பட்டது!",
+  "errorDownloadingFile": "கோப்பைப் பதிவிறக்குவதில் பிழை: {error}",
+  "@errorDownloadingFile": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "couldNotOpenFaq": "FAQ-ஐத் திறக்க முடியவில்லை",
+  "couldNotOpenTerms": "விதிமுறைகள் மற்றும் நிபந்தனைகளைத் திறக்க முடியவில்லை",
+  "couldNotOpenPrivacy": "தனியுரிமைக் கொள்கையைத் திறக்க முடியவில்லை"
 }

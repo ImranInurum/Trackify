@@ -1,20 +1,3 @@
-// TrackifyLoader — progress-fill wordmark loader (Flutter)
-//
-// Usage:
-//   TrackifyLoader(progress: 65, message: 'Loading fleet data...')
-//
-// Setup:
-// 1. Copy assets/trackify_wordmark.png into your app's assets/ folder.
-// 2. Register it in pubspec.yaml:
-//      flutter:
-//        assets:
-//          - assets/trackify_wordmark.png
-//
-// Note: the source PNG has a flattened white background (no alpha channel).
-// This widget looks correct on white / very light backgrounds, matching the
-// web version. If you need it on a dark or colored background, ask design
-// for a transparent-background export of the wordmark.
-
 import 'package:flutter/material.dart';
 
 class TrackifyLoader extends StatefulWidget {
@@ -48,7 +31,8 @@ class _TrackifyLoaderState extends State<TrackifyLoader> {
   void initState() {
     super.initState();
     if (widget.animated) {
-      _progress = 0;
+      _stopIndex = 1;
+      _progress = _stops[_stopIndex];
       _scheduleLoop();
     } else {
       _progress = widget.progress;

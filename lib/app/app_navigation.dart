@@ -9,6 +9,7 @@ import '../feature/map/presentation/pages/map_screen.dart';
 import '../feature/statistics/presentation/pages/statistics_screen.dart';
 import '../feature/trips/presentation/view/trip_screen.dart';
 import '../feature/product_over_view/product_screen.dart';
+import '../feature/device_warranty/pages/device_warranty_page.dart';
 
 class AppNavigation extends StatefulWidget {
   static _AppNavigationState? currentState;
@@ -31,17 +32,21 @@ class AppNavigation extends StatefulWidget {
 class _AppNavigationState extends State<AppNavigation> {
   int _currentIndex = 0;
   bool _previousHasDevice = false;
+  bool _previousIsWarrantyExpired = false;
 
   late final List<GlobalKey<NavigatorState>> _navigatorKeys;
   late final GlobalKey<NavigatorState> _productNavigatorKey;
+  late final GlobalKey<NavigatorState> _warrantyNavigatorKey;
 
   @override
   void initState() {
     super.initState();
     AppNavigation.currentState = this;
     _previousHasDevice = _hasDevice;
+    _previousIsWarrantyExpired = _isWarrantyExpired;
     _navigatorKeys = List.generate(4, (index) => GlobalKey<NavigatorState>());
     _productNavigatorKey = GlobalKey<NavigatorState>();
+    _warrantyNavigatorKey = GlobalKey<NavigatorState>();
   }
 
   @override
@@ -57,39 +62,59 @@ class _AppNavigationState extends State<AppNavigation> {
     return imei.isNotEmpty;
   }
 
+  bool get _isWarrantyExpired {
+    if (!_hasDevice) return false;
+    return AppPreference.instance.getBoolSync(key: 'KEY_WARRANTY_EXPIRED', defaultValue: true);
+  }
+
+  bool get _isThreeTabMode => !_hasDevice || _isWarrantyExpired;
+
   GlobalKey<NavigatorState> _getNavigatorKey(int displayIndex) {
-    if (_hasDevice) {
+    if (!_isThreeTabMode) {
       return _navigatorKeys[displayIndex];
     } else {
       if (displayIndex == 0) return _navigatorKeys[0];
-      if (displayIndex == 1) return _productNavigatorKey;
+      if (displayIndex == 1) {
+        return _isWarrantyExpired ? _warrantyNavigatorKey : _productNavigatorKey;
+      }
       return _navigatorKeys[3]; // Profile is actual index 3
     }
   }
 
   void _refreshState() {
     setState(() {
-      if (_previousHasDevice && !_hasDevice) {
+      final bool currentlyThreeTabs = _isThreeTabMode;
+      final bool previouslyThreeTabs = !_previousHasDevice || _previousIsWarrantyExpired;
+
+      if (previouslyThreeTabs && !currentlyThreeTabs) {
+        // Switched from 3 tabs to 4 tabs
+        if (_currentIndex == 2) {
+          _currentIndex = 3; // Profile moves from 2 to 3
+        } else if (_currentIndex == 1) {
+          _currentIndex = 0; // Middle tab falls back to Map
+        }
+      } else if (!previouslyThreeTabs && currentlyThreeTabs) {
         // Switched from 4 tabs to 3 tabs
         if (_currentIndex == 3) {
           _currentIndex = 2; // Profile moves from 3 to 2
         } else if (_currentIndex == 1 || _currentIndex == 2) {
           _currentIndex = 0; // Trips/Stats fall back to Map
         }
-      } else if (!_previousHasDevice && _hasDevice) {
-        // Switched from 3 tabs to 4 tabs
-        if (_currentIndex == 2) {
-          _currentIndex = 3; // Profile moves from 2 to 3
-        } else if (_currentIndex == 1) {
-          _currentIndex = 0; // Product tab falls back to map
+      } else if (previouslyThreeTabs && currentlyThreeTabs) {
+        // Both layouts are 3 tabs, but maybe transitioned between Expired and Uninstalled states
+        if (_previousIsWarrantyExpired != _isWarrantyExpired) {
+          if (_currentIndex == 1) {
+            _currentIndex = 0; // Reset middle tab to Map to be safe
+          }
         }
       }
       _previousHasDevice = _hasDevice;
+      _previousIsWarrantyExpired = _isWarrantyExpired;
     });
   }
 
   List<dynamic> get _currentIcons {
-    if (_hasDevice) {
+    if (!_isThreeTabMode) {
       return [
         AppImages.homeIcon,
         AppImages.tripsIcon,
@@ -99,14 +124,14 @@ class _AppNavigationState extends State<AppNavigation> {
     } else {
       return [
         AppImages.homeIcon,
-        Icons.inventory_2_outlined,
+        _isWarrantyExpired ? Icons.shield_outlined : Icons.inventory_2_outlined,
         AppImages.profileIcon,
       ];
     }
   }
 
   List<Widget> get _currentScreens {
-    if (_hasDevice) {
+    if (!_isThreeTabMode) {
       return [
         _buildNavigator(_navigatorKeys[0], const MapScreen()),
         _buildNavigator(_navigatorKeys[1], const TripScreen()),
@@ -116,7 +141,10 @@ class _AppNavigationState extends State<AppNavigation> {
     } else {
       return [
         _buildNavigator(_navigatorKeys[0], const MapScreen()),
-        _buildNavigator(_productNavigatorKey, const ProductOverviewScreen()),
+        _buildNavigator(
+          _isWarrantyExpired ? _warrantyNavigatorKey : _productNavigatorKey,
+          _isWarrantyExpired ? const WarrantyScreen() : const ProductOverviewScreen(),
+        ),
         _buildNavigator(_navigatorKeys[3], const ProfileScreen()),
       ];
     }
@@ -137,9 +165,9 @@ class _AppNavigationState extends State<AppNavigation> {
   }
 
   int _getActualIndex(int displayIndex) {
-    if (_hasDevice) return displayIndex;
-    // If no device, displayIndex 0 -> actual 0 (Map)
-    // displayIndex 1 -> actual 1 (Product)
+    if (!_isThreeTabMode) return displayIndex;
+    // If 3-tab mode, displayIndex 0 -> actual 0 (Map)
+    // displayIndex 1 -> actual 1 (Product or Warranty/Trips)
     // displayIndex 2 -> actual 3 (Profile)
     if (displayIndex == 2) return 3;
     return displayIndex;

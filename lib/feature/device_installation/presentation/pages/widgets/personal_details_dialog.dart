@@ -174,7 +174,7 @@ class _PersonalDetailsDialogState extends State<PersonalDetailsDialog> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              "Complete Personal Details",
+                              l10n.completePersonalDetails,
                               style: theme.textTheme.titleLarge?.copyWith(
                                 fontWeight: FontWeight.bold,
                                 color: theme.colorScheme.onSurface,
@@ -182,7 +182,7 @@ class _PersonalDetailsDialogState extends State<PersonalDetailsDialog> {
                             ),
                             const SizedBox(height: 8),
                             Text(
-                              "Please provide these details before device installation.",
+                              l10n.personalDetailsDesc,
                               style: theme.textTheme.bodyMedium?.copyWith(
                                 color: theme.colorScheme.onSurface.withOpacity(0.6),
                               ),
@@ -204,20 +204,20 @@ class _PersonalDetailsDialogState extends State<PersonalDetailsDialog> {
                       child: Column(
                         children: [
                           CustomFormField(
-                            header: "Last Name",
-                            hint: "Enter your last name",
+                            header: l10n.lastNameLabel,
+                            hint: l10n.enterLastName,
                             value: _lastNameController,
                             validator: (val) {
                               if (val == null || val.trim().isEmpty) {
-                                return "Required field";
+                                return l10n.requiredField;
                               }
                               return null;
                             },
                           ),
                           const SizedBox(height: 16),
                           CustomFormField(
-                            header: "Mobile Number",
-                            hint: "Enter your mobile number",
+                            header: l10n.mobileNumberLabel,
+                            hint: l10n.enterMobileNumber,
                             value: _mobileController,
                             keyboardType: TextInputType.phone,
                             prefixIcon: Container(
@@ -270,7 +270,17 @@ class _PersonalDetailsDialogState extends State<PersonalDetailsDialog> {
                                             return uniqueItems;
                                           })(),
                                     onChanged: (val) {
-                                      if (val != null) setState(() => _selectedPhoneCode = val);
+                                      if (val != null) {
+                                        setState(() => _selectedPhoneCode = val);
+                                        try {
+                                          final cleanCode = val.replaceAll('+', '');
+                                          final matchingCountry = _countries.firstWhere(
+                                            (c) => c.phoneCode == cleanCode || c.phoneCode == val,
+                                          );
+                                          setState(() => _selectedCountry = matchingCountry.name);
+                                          _loadStates(matchingCountry.isoCode);
+                                        } catch (_) {}
+                                      }
                                     },
                                   ),
                                 ),
@@ -278,7 +288,24 @@ class _PersonalDetailsDialogState extends State<PersonalDetailsDialog> {
                             ),
                             validator: (val) {
                               if (val == null || val.trim().isEmpty) {
-                                return "Required field";
+                                return l10n.requiredField;
+                              }
+                              final cleanValue = val.trim();
+                              if (!RegExp(r'^[0-9]+$').hasMatch(cleanValue)) {
+                                return l10n.invalidMobileNumber;
+                              }
+
+                              if (_selectedPhoneCode == '+91') {
+                                if (cleanValue.length != 10) {
+                                  return l10n.invalidMobileNumber;
+                                }
+                                if (!RegExp(r'^[6-9][0-9]{9}$').hasMatch(cleanValue)) {
+                                  return l10n.invalidMobileNumber;
+                                }
+                              } else {
+                                if (cleanValue.length < 7 || cleanValue.length > 15) {
+                                  return l10n.invalidMobileNumber;
+                                }
                               }
                               return null;
                             },
@@ -286,8 +313,8 @@ class _PersonalDetailsDialogState extends State<PersonalDetailsDialog> {
                           const SizedBox(height: 16),
                           // Country Dropdown
                           SearchableDropdown<String>(
-                            label: "Country",
-                            hint: "Select your country",
+                            label: l10n.countryLabel,
+                            hint: l10n.selectCountry,
                             value: _selectedCountry,
                             items: (() {
                               final seen = <String>{};
@@ -317,6 +344,10 @@ class _PersonalDetailsDialogState extends State<PersonalDetailsDialog> {
                               setState(() => _selectedCountry = val);
                               if (val != null) {
                                 final country = _countries.firstWhere((c) => c.name == val);
+                                if (country.phoneCode.isNotEmpty) {
+                                  final code = country.phoneCode.startsWith('+') ? country.phoneCode : '+${country.phoneCode}';
+                                  setState(() => _selectedPhoneCode = code);
+                                }
                                 _loadStates(country.isoCode);
                               }
                             },
@@ -325,8 +356,8 @@ class _PersonalDetailsDialogState extends State<PersonalDetailsDialog> {
                           
                           // State Dropdown
                           SearchableDropdown<String>(
-                            label: "State",
-                            hint: "Select your state",
+                            label: l10n.stateLabel,
+                            hint: l10n.selectState,
                             value: _selectedState,
                             items: (() {
                               final seen = <String>{};
@@ -358,8 +389,8 @@ class _PersonalDetailsDialogState extends State<PersonalDetailsDialog> {
                           
                           // City Dropdown
                           SearchableDropdown<String>(
-                            label: "City",
-                            hint: "Select your city",
+                            label: l10n.cityLabel,
+                            hint: l10n.selectCity,
                             value: _selectedCity,
                             items: (() {
                               final seen = <String>{};
@@ -409,9 +440,9 @@ class _PersonalDetailsDialogState extends State<PersonalDetailsDialog> {
                                     strokeWidth: 2,
                                   ),
                                 )
-                              : const Text(
-                                  "Save & Continue",
-                                  style: TextStyle(
+                              : Text(
+                                  l10n.saveAndContinue,
+                                  style: const TextStyle(
                                     fontSize: 16,
                                     fontWeight: FontWeight.w600,
                                   ),

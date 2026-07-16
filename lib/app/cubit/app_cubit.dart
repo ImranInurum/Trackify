@@ -19,6 +19,9 @@ import '../../core/constants/app_languages.dart';
 import '../../feature/auth/data/entity/login_response_model.dart';
 import 'app_state.dart';
 
+import 'package:fpdart/fpdart.dart';
+import '../../core/config/network/exceptions.dart';
+
 class AppCubit extends Cubit<AppState> with WidgetsBindingObserver {
   final ConnectivityService _connectivityService;
   final LocationService _locationService;
@@ -297,18 +300,35 @@ class AppCubit extends Cubit<AppState> with WidgetsBindingObserver {
     }
   }
 
+  Future<Either<AppException, Map<String, dynamic>>> deleteAccount(String userId) async {
+    final url = ApiURL.deleteAccount(userId);
+    try {
+      final result = await _apiServices.getDeleteApiResponse(url, {});
+      return result.fold(
+        (failure) {
+          debugPrint("AppCubit: [DELETE ACCOUNT] API failed: ${failure.message}");
+          return Left(failure);
+        },
+        (data) async {
+          debugPrint("AppCubit: [DELETE ACCOUNT] API succeeded. Logging out user.");
+          await logout();
+          return Right(Map<String, dynamic>.from(data is Map ? data : {}));
+        },
+      );
+    } catch (e) {
+      debugPrint("AppCubit: [DELETE ACCOUNT] Exception occurred: $e");
+      return Left(FetchDataException("Unexpected error during account deletion: $e"));
+    }
+  }
+
   Future<void> initializeSocket({String? imei}) async {
     print('initializeSocket for IMEI: $imei');
 
     // Ensure we start fresh on each initialization (critical for switching vehicles/IMEIs)
     _socketService.disconnect();
-    await _socketSubscription?.cancel();
 
-    try {
-      await _socketService.connect(ApiURL.socketURL, imei: imei);
-
-      emit(state.copyWith(isSocketConnected: true));
-
+    // Set up the listener before connecting to avoid missing immediate packets
+    if (_socketSubscription == null) {
       _socketSubscription = _socketService.deviceDataStream.listen(
         (deviceData) {
           print("DATAAA : ${deviceData}");
@@ -319,6 +339,11 @@ class AppCubit extends Cubit<AppState> with WidgetsBindingObserver {
           emit(state.copyWith(isSocketConnected: false));
         },
       );
+    }
+
+    try {
+      await _socketService.connect(ApiURL.socketURL, imei: imei);
+      emit(state.copyWith(isSocketConnected: true));
     } catch (e) {
       print('Socket initialization error: $e');
       emit(state.copyWith(isSocketConnected: false));

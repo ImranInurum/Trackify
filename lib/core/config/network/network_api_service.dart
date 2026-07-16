@@ -117,7 +117,13 @@ class NetworkApiService implements BaseApiServices {
     final decodedBody = _decodeResponse(responseBody);
     
     if (kDebugMode) {
-      debugPrint("statusCode: $statusCode responseData:$decodedBody");
+      final urlStr = response.request?.url.toString() ?? '';
+      if (urlStr.contains('/journey/ride-history')) {
+        final dataLen = decodedBody is Map ? (decodedBody['data'] as List?)?.length : null;
+        debugPrint("statusCode: $statusCode responseData: {status: ${decodedBody is Map ? decodedBody['status'] : null}, data_length: $dataLen}");
+      } else {
+        debugPrint("statusCode: $statusCode responseData:$decodedBody");
+      }
     }
 
     final bodyIsMap = decodedBody is Map<String, dynamic>;

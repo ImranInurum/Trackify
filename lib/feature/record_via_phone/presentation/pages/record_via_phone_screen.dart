@@ -52,6 +52,8 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
   String? _selectedFilterTag;
   final Map<int, String> _rideTags = {};
   DateTime _selectedStatsDate = DateTime.now();
+  late DateTime _statsStartDate;
+  late DateTime _statsEndDate;
   final Set<int> _favoriteRides = {};
   BitmapDescriptor? _startMarkerIcon;
   BitmapDescriptor? _endMarkerIcon;
@@ -63,10 +65,13 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
     _fetchMobileDeviceName();
     _initStartEndMarkers();
 
+    final now = DateTime.now();
+    _statsStartDate = DateTime(now.year, now.month, now.day);
+    _statsEndDate = DateTime(now.year, now.month, now.day, 23, 59, 59);
+
     // Pre-fetch today's history
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _initCustomMarker();
-      final now = DateTime.now();
       final today = DateFormat('yyyy-MM-dd').format(now);
       context.read<RecordViaPhoneCubit>().fetchDeviceDataByDate(
         imei: widget.imei,
@@ -121,10 +126,18 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
   String _getStatsDateText() {
     if (_activeDateFilter == "Today") {
       return "${DateFormat('MMMM d').format(DateTime.now())} (Today)";
-    } else if (_activeDateFilter == "Weekly") {
-      return "Weekly Statistics";
-    } else if (_activeDateFilter == "Monthly") {
-      return "Monthly Statistics";
+    } else if (_activeDateFilter == "Yesterday") {
+      final yesterday = DateTime.now().subtract(const Duration(days: 1));
+      return "${DateFormat('MMMM d').format(yesterday)} (Yesterday)";
+    } else if (_activeDateFilter == "This week" || 
+               _activeDateFilter == "Last week" || 
+               _activeDateFilter == "Last 7 days" ||
+               _activeDateFilter == "This month" ||
+               _activeDateFilter == "Last month" ||
+               _activeDateFilter == "Last 30 days") {
+      final startStr = DateFormat('MMM d').format(_statsStartDate);
+      final endStr = DateFormat('MMM d').format(_statsEndDate);
+      return "$_activeDateFilter ($startStr - $endStr)";
     } else if (_activeDateFilter.contains(" - ")) {
       return _activeDateFilter;
     } else {
@@ -140,6 +153,8 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
 
     setState(() {
       _selectedStatsDate = newDate;
+      _statsStartDate = DateTime(newDate.year, newDate.month, newDate.day);
+      _statsEndDate = DateTime(newDate.year, newDate.month, newDate.day, 23, 59, 59);
       
       final checkDate = DateTime(newDate.year, newDate.month, newDate.day);
       if (checkDate == today) {
@@ -464,6 +479,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
   }
 
   void _showEditTagDialog(int index, String currentTag) {
+    final l10n = AppLocalizations.of(context)!;
     final textController = TextEditingController(text: currentTag);
     final tags = ["Walk", "Car", "Bike", "Train", "Bus", "Auto", "Cab", "Cycle", "Others"];
 
@@ -486,7 +502,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
                   TextField(
                     controller: textController,
                     decoration: InputDecoration(
-                      hintText: "Enter custom tag",
+                      hintText: l10n.enterCustomTag,
                       hintStyle: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.4)),
                       enabledBorder: UnderlineInputBorder(
                         borderSide: BorderSide(color: Theme.of(context).dividerColor),
@@ -650,104 +666,31 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
   }
 
   void _showDateFilterBottomSheet() {
-    final filters = ["Today", "Weekly", "Monthly", "Custom"];
-    
     showModalBottomSheet(
       context: context,
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
       ),
+      isScrollControlled: true,
       builder: (ctx) {
-        return Padding(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Center(
-                child: Container(
-                  width: 40,
-                  height: 4,
-                  decoration: BoxDecoration(
-                    color: Colors.grey.withOpacity(0.3),
-                    borderRadius: BorderRadius.circular(2),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 20),
-              Text(
-                "Filter by date",
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: Theme.of(context).colorScheme.onSurface,
-                ),
-              ),
-              const SizedBox(height: 16),
-              Column(
-                children: filters.map((label) {
-                  final isSelected = _activeDateFilter == label || 
-                      (label == "Custom" && !_activeDateFilter.startsWith("Today") && !_activeDateFilter.startsWith("Weekly") && !_activeDateFilter.startsWith("Monthly"));
-                  
-                  return ListTile(
-                    contentPadding: EdgeInsets.zero,
-                    title: Text(
-                      label,
-                      style: TextStyle(
-                        color: isSelected
-                            ? Theme.of(context).colorScheme.primary
-                            : Theme.of(context).colorScheme.onSurface,
-                        fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                      ),
-                    ),
-                    trailing: isSelected
-                        ? Icon(Icons.check, color: Theme.of(context).colorScheme.primary)
-                        : null,
-                    onTap: () async {
-                      Navigator.pop(ctx);
-                      
-                      final now = DateTime.now();
-                      DateTime start = now, end = now;
-                      String newFilterStr = label;
-                      
-                      if (label == "Today") {
-                        start = DateTime(now.year, now.month, now.day);
-                      } else if (label == "Weekly") {
-                        start = now.subtract(const Duration(days: 7));
-                      } else if (label == "Monthly") {
-                        start = DateTime(now.year, now.month - 1, now.day);
-                      } else if (label == "Custom") {
-                        final picked = await showDateRangePicker(
-                          context: context,
-                          firstDate: DateTime(2020),
-                          lastDate: now,
-                        );
-                        if (picked != null) {
-                          start = picked.start;
-                          end = picked.end;
-                          newFilterStr = "${DateFormat('dd/MM').format(start)} - ${DateFormat('dd/MM').format(end)}";
-                        } else {
-                          return;
-                        }
-                      }
-                      
-                      setState(() {
-                        _activeDateFilter = newFilterStr;
-                      });
-                      
-                      context.read<RecordViaPhoneCubit>().fetchDeviceDataByDate(
-                        imei: widget.imei,
-                        startDate: DateFormat('yyyy-MM-dd').format(start),
-                        endDate: DateFormat('yyyy-MM-dd').format(end),
-                      );
-                    },
-                  );
-                }).toList(),
-              ),
-              const SizedBox(height: 12),
-            ],
-          ),
+        return _DateRangePickerBottomSheet(
+          initialActiveFilter: _activeDateFilter,
+          initialStartDate: _statsStartDate,
+          initialEndDate: _statsEndDate,
+          onFilterSelected: (label, start, end) {
+            setState(() {
+              _activeDateFilter = label;
+              _statsStartDate = start;
+              _statsEndDate = end;
+              _selectedStatsDate = start;
+            });
+            context.read<RecordViaPhoneCubit>().fetchDeviceDataByDate(
+              imei: widget.imei,
+              startDate: DateFormat('yyyy-MM-dd').format(start),
+              endDate: DateFormat('yyyy-MM-dd').format(end),
+            );
+          },
         );
       },
     );
@@ -1120,6 +1063,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     final color = theme.colorScheme;
 
@@ -1439,9 +1383,11 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
                                 } else {
                                   if (mounted) {
                                     ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
-                                        content: Text('Location not available'),
-                                        duration: Duration(seconds: 2),
+                                      SnackBar(
+                                        content: Text(
+                                          l10n.locationNotAvailable,
+                                        ),
+                                        duration: const Duration(seconds: 2),
                                       ),
                                     );
                                   }
@@ -1836,145 +1782,194 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
   Widget _buildHistoryView() {
     return BlocBuilder<RecordViaPhoneCubit, RecordViaPhoneState>(
       builder: (context, state) {
-        final appState = context.read<AppCubit>().state;
-        final userLoc = appState.currentLocation != null 
-            ? LatLng(appState.currentLocation!.latitude, appState.currentLocation!.longitude) 
-            : null;
+        return FutureBuilder<List<Map<String, dynamic>>>(
+          future: context.read<RecordViaPhoneCubit>().getOfflineRides(),
+          builder: (context, snapshot) {
+            final offlineRidesRaw = snapshot.data ?? [];
+            final List<PastRide> offlineRides = offlineRidesRaw.map((r) {
+              final List<dynamic> ptsRaw = r['points'] ?? [];
+              final List<LatLng> pts = ptsRaw
+                  .map((p) => LatLng(
+                        (p['lat'] as num?)?.toDouble() ?? 0.0,
+                        (p['lng'] as num?)?.toDouble() ?? 0.0,
+                      ))
+                  .toList();
+
+              // Parse dateStr to a nice format
+              String displayDate = r['dateStr'] ?? '';
+              if (displayDate.isNotEmpty) {
+                try {
+                  final dt = DateTime.parse(displayDate);
+                  displayDate = "${dt.year}-${dt.month.toString().padLeft(2, '0')}-${dt.day.toString().padLeft(2, '0')} ${dt.hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')}";
+                } catch (_) {}
+              }
+
+              return PastRide(
+                dateStr: displayDate,
+                tag: r['tag'] ?? 'Offline',
+                isFavorite: false,
+                distanceKm: (r['distanceKm'] as num?)?.toDouble() ?? 0.0,
+                duration: Duration(
+                  seconds: (r['durationSeconds'] as num?)?.toInt() ?? 0,
+                ),
+                avgSpeed: (r['avgSpeed'] as num?)?.toDouble() ?? 0.0,
+                points: pts,
+              );
+            }).toList();
+
+            List<PastRide> rides = _groupDataIntoRides(state.data);
             
-        List<PastRide> rides = _groupDataIntoRides(state.data);
-        
-        if (rides.isEmpty) {
-          rides = _getMockRides(userLoc);
-        }
-        
-        if (_selectedFilterTag != null) {
-          rides = rides.where((r) => r.tag.toLowerCase() == _selectedFilterTag!.toLowerCase()).toList();
-        }
-        
-        return Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 8),
-              child: Row(
-                children: [
-                  InkWell(
-                    onTap: () => _showTagFilterBottomSheet(),
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).cardColor,
-                        borderRadius: BorderRadius.circular(10),
-                        border: Border.all(
-                          color: _selectedFilterTag != null
-                              ? Theme.of(context).colorScheme.primary
-                              : Theme.of(context).dividerColor,
-                          width: 1.5,
-                        ),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(
-                            Icons.tune,
-                            size: 16,
-                            color: _selectedFilterTag != null
-                                ? Theme.of(context).colorScheme.primary
-                                : Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
-                          ),
-                          const SizedBox(width: 8),
-                          Text(
-                            _selectedFilterTag != null ? 'Tag: $_selectedFilterTag' : 'Filter by tags',
-                            style: TextStyle(
+            // Merge both offline and online rides
+            rides = [...offlineRides, ...rides];
+
+            // Sort by date Str descending so newest rides are always at the top
+            rides.sort((a, b) {
+              final aDate = DateTime.tryParse(a.dateStr) ?? DateTime(0);
+              final bDate = DateTime.tryParse(b.dateStr) ?? DateTime(0);
+              return bDate.compareTo(aDate);
+            });
+            
+            if (_selectedFilterTag != null) {
+              rides = rides.where((r) => r.tag.toLowerCase() == _selectedFilterTag!.toLowerCase()).toList();
+            }
+            
+            return Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 8),
+                  child: Row(
+                    children: [
+                      InkWell(
+                        onTap: () => _showTagFilterBottomSheet(),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                          decoration: BoxDecoration(
+                            color: Theme.of(context).cardColor,
+                            borderRadius: BorderRadius.circular(10),
+                            border: Border.all(
                               color: _selectedFilterTag != null
                                   ? Theme.of(context).colorScheme.primary
-                                  : Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
-                              fontSize: 13,
-                              fontWeight: FontWeight.w500,
+                                  : Theme.of(context).dividerColor,
+                              width: 1.5,
                             ),
                           ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  InkWell(
-                    onTap: () => _showDateFilterBottomSheet(),
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).cardColor,
-                        borderRadius: BorderRadius.circular(10),
-                        border: Border.all(
-                          color: _activeDateFilter != "Today"
-                              ? Theme.of(context).colorScheme.primary
-                              : Theme.of(context).dividerColor,
-                          width: 1.5,
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                Icons.tune,
+                                size: 16,
+                                color: _selectedFilterTag != null
+                                    ? Theme.of(context).colorScheme.primary
+                                    : Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+                              ),
+                              const SizedBox(width: 8),
+                              Text(
+                                _selectedFilterTag != null ? 'Tag: $_selectedFilterTag' : 'Filter by tags',
+                                style: TextStyle(
+                                  color: _selectedFilterTag != null
+                                      ? Theme.of(context).colorScheme.primary
+                                      : Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(
-                            Icons.calendar_today,
-                            size: 14,
-                            color: _activeDateFilter != "Today"
-                                ? Theme.of(context).colorScheme.primary
-                                : Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
-                          ),
-                          const SizedBox(width: 8),
-                          Text(
-                            'Date: $_activeDateFilter',
-                            style: TextStyle(
+                      const SizedBox(width: 8),
+                      InkWell(
+                        onTap: () => _showDateFilterBottomSheet(),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                          decoration: BoxDecoration(
+                            color: Theme.of(context).cardColor,
+                            borderRadius: BorderRadius.circular(10),
+                            border: Border.all(
                               color: _activeDateFilter != "Today"
                                   ? Theme.of(context).colorScheme.primary
-                                  : Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
-                              fontSize: 13,
-                              fontWeight: FontWeight.w500,
+                                  : Theme.of(context).dividerColor,
+                              width: 1.5,
                             ),
                           ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            
-            Expanded(
-              child: rides.isEmpty
-                  ? Center(
-                      child: Text(
-                        "No past rides found",
-                        style: TextStyle(
-                          color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                Icons.calendar_today,
+                                size: 14,
+                                color: _activeDateFilter != "Today"
+                                    ? Theme.of(context).colorScheme.primary
+                                    : Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+                              ),
+                              const SizedBox(width: 8),
+                              Text(
+                                'Date: $_activeDateFilter',
+                                style: TextStyle(
+                                  color: _activeDateFilter != "Today"
+                                      ? Theme.of(context).colorScheme.primary
+                                      : Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
-                    )
-                  : ListView.builder(
-                      itemCount: rides.length,
-                      padding: const EdgeInsets.only(bottom: 24),
-                      itemBuilder: (context, index) {
-                        return _buildRideCard(rides[index], index);
-                      },
-                    ),
-            ),
-          ],
+                    ],
+                  ),
+                ),
+                
+                Expanded(
+                  child: rides.isEmpty
+                      ? Center(
+                          child: Text(
+                            "No past rides found",
+                            style: TextStyle(
+                              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+                            ),
+                          ),
+                        )
+                      : ListView.builder(
+                          itemCount: rides.length,
+                          padding: const EdgeInsets.only(bottom: 24),
+                          itemBuilder: (context, index) {
+                            return _buildRideCard(rides[index], index);
+                          },
+                        ),
+                ),
+              ],
+            );
+          },
         );
       },
     );
   }
 
   // --- Statistics View ---
-  Map<String, dynamic> _calculateStats(RecordViaPhoneState state) {
+  Map<String, dynamic> _calculateStats(RecordViaPhoneState state, List<PastRide> offlineRides) {
     final appState = context.read<AppCubit>().state;
     final userLoc = appState.currentLocation != null 
         ? LatLng(appState.currentLocation!.latitude, appState.currentLocation!.longitude) 
         : null;
 
+    // Filter offline rides by currently selected date range
+    final startOfDay = DateTime(_statsStartDate.year, _statsStartDate.month, _statsStartDate.day);
+    final endOfDay = DateTime(_statsEndDate.year, _statsEndDate.month, _statsEndDate.day, 23, 59, 59, 999);
+
+    final filteredOfflineRides = offlineRides.where((r) {
+      final rideDate = DateTime.tryParse(r.dateStr);
+      if (rideDate == null) return false;
+      return rideDate.isAfter(startOfDay.subtract(const Duration(milliseconds: 1))) &&
+             rideDate.isBefore(endOfDay.add(const Duration(milliseconds: 1)));
+    }).toList();
+
     List<PastRide> rides = _groupDataIntoRides(state.data);
-    if (rides.isEmpty) {
-      rides = _getMockRides(userLoc);
-    }
+    
+    // Merge both offline and online rides
+    rides = [...filteredOfflineRides, ...rides];
 
     if (_selectedFilterTag != null) {
       rides = rides.where((r) => r.tag.toLowerCase() == _selectedFilterTag!.toLowerCase()).toList();
@@ -1992,98 +1987,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
       };
     }
 
-    // If there is no tag filter and state.data is not empty, use original logic to be precise
-    if (_selectedFilterTag == null && state.data.isNotEmpty) {
-      final data = state.data;
-      double totalDistance = 0.0;
-      double topSpeed = 0.0;
-      double sumSpeed = 0.0;
-      int movingPointsCount = 0;
-      int ridesCount = 0;
-      Duration drivingTime = const Duration();
-      int safetyDeduction = 0;
-
-      DataByDate? prevPoint;
-      DateTime? prevTime;
-
-      final sortedData = List<DataByDate>.from(data);
-      sortedData.sort((a, b) {
-        final aDt = a.dt ?? '';
-        final bDt = b.dt ?? '';
-        final dtCompare = aDt.compareTo(bDt);
-        if (dtCompare != 0) return dtCompare;
-
-        final aTm = a.tm ?? '';
-        final bTm = b.tm ?? '';
-        return aTm.compareTo(bTm);
-      });
-
-      for (var point in sortedData) {
-        final lat = double.tryParse(point.lt ?? '');
-        final lng = double.tryParse(point.lg ?? '');
-        final speed = point.sp ?? 0.0;
-
-        DateTime? currTime;
-        if (point.dt != null && point.tm != null) {
-          currTime = DateTime.tryParse('${point.dt} ${point.tm}');
-        }
-
-        if (speed > topSpeed) topSpeed = speed;
-
-        if (speed > 80) safetyDeduction += 1;
-
-        if (speed > 5.0) {
-          sumSpeed += speed;
-          movingPointsCount++;
-        }
-
-        if (lat != null && lng != null && prevPoint != null) {
-          final prevLat = double.tryParse(prevPoint.lt ?? '');
-          final prevLng = double.tryParse(prevPoint.lg ?? '');
-
-          if (prevLat != null && prevLng != null) {
-            final dist = Geolocator.distanceBetween(prevLat, prevLng, lat, lng);
-            if (dist > 5.0 && dist < 50000) {
-              totalDistance += (dist / 1000);
-            }
-          }
-        }
-
-        if (currTime != null && prevTime != null) {
-          final diff = currTime.difference(prevTime);
-          if (diff.inMinutes < 60) {
-            if (speed > 5.0) {
-              drivingTime += diff;
-            }
-          } else {
-            ridesCount++;
-          }
-        }
-
-        prevPoint = point;
-        prevTime = currTime;
-      }
-
-      if (ridesCount == 0 && sortedData.isNotEmpty) ridesCount = 1;
-
-      double avgSpeed = movingPointsCount > 0
-          ? sumSpeed / movingPointsCount
-          : 0.0;
-      double fuel = totalDistance * 0.08;
-      int safetyScore = (100 - (safetyDeduction * 0.5)).round().clamp(0, 100);
-
-      return {
-        'distance': totalDistance,
-        'drivingTime': drivingTime,
-        'topSpeed': topSpeed,
-        'avgSpeed': avgSpeed,
-        'totalRides': ridesCount,
-        'fuel': fuel,
-        'safetyScore': safetyScore,
-      };
-    }
-
-    // Otherwise calculate from the filtered rides list
+    // Calculate from the filtered rides list (works for both offline & online)
     double totalDistance = 0.0;
     double topSpeed = 0.0;
     double speedSum = 0.0;
@@ -2137,178 +2041,222 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
 
     return BlocBuilder<RecordViaPhoneCubit, RecordViaPhoneState>(
       builder: (context, state) {
-        final stats = _calculateStats(state);
+        return FutureBuilder<List<Map<String, dynamic>>>(
+          future: context.read<RecordViaPhoneCubit>().getOfflineRides(),
+          builder: (context, snapshot) {
+            final offlineRidesRaw = snapshot.data ?? [];
+            final List<PastRide> offlineRides = offlineRidesRaw.map((r) {
+              final List<dynamic> ptsRaw = r['points'] ?? [];
+              final List<LatLng> pts = ptsRaw
+                  .map((p) => LatLng(
+                        (p['lat'] as num?)?.toDouble() ?? 0.0,
+                        (p['lng'] as num?)?.toDouble() ?? 0.0,
+                      ))
+                  .toList();
 
-        return SingleChildScrollView(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Date Selector Card
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                decoration: BoxDecoration(
-                  color: theme.cardColor,
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(
-                    color: theme.dividerColor.withValues(alpha: 0.1),
-                    width: 1,
-                  ),
+              String displayDate = r['dateStr'] ?? '';
+              if (displayDate.isNotEmpty) {
+                try {
+                  final dt = DateTime.parse(displayDate);
+                  displayDate = "${dt.year}-${dt.month.toString().padLeft(2, '0')}-${dt.day.toString().padLeft(2, '0')} ${dt.hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')}";
+                } catch (_) {}
+              }
+
+              return PastRide(
+                dateStr: displayDate,
+                tag: r['tag'] ?? 'Offline',
+                isFavorite: false,
+                distanceKm: (r['distanceKm'] as num?)?.toDouble() ?? 0.0,
+                duration: Duration(
+                  seconds: (r['durationSeconds'] as num?)?.toInt() ?? 0,
                 ),
-                child: Row(
-                  children: [
-                    Icon(
-                      Icons.calendar_today_outlined,
-                      color: colorScheme.onSurface.withValues(alpha: 0.7),
-                      size: 20,
-                    ),
-                    const SizedBox(width: 12),
-                    Text(
-                      _getStatsDateText(),
-                      style: theme.textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.w600,
-                        color: colorScheme.onSurface,
-                      ),
-                    ),
-                    const Spacer(),
-                    // Left Chevron Button
-                    InkWell(
-                      onTap: () => _changeStatsDate(-1),
-                      borderRadius: BorderRadius.circular(20),
-                      child: Container(
-                        padding: const EdgeInsets.all(8),
-                        child: Icon(
-                          Icons.chevron_left,
-                          color: colorScheme.onSurface,
-                          size: 24,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    // Right Chevron Button (disabled if today)
-                    Builder(
-                      builder: (context) {
-                        final now = DateTime.now();
-                        final isToday = DateTime(
-                              _selectedStatsDate.year,
-                              _selectedStatsDate.month,
-                              _selectedStatsDate.day,
-                            ).isAtSameMomentAs(
-                              DateTime(now.year, now.month, now.day),
-                            );
-                        return InkWell(
-                          onTap: isToday ? null : () => _changeStatsDate(1),
-                          borderRadius: BorderRadius.circular(20),
-                          child: Container(
-                            padding: const EdgeInsets.all(8),
-                            child: Icon(
-                              Icons.chevron_right,
-                              color: isToday
-                                  ? colorScheme.onSurface.withValues(alpha: 0.25)
-                                  : colorScheme.onSurface,
-                              size: 24,
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 16),
-              // Tag Filter Chip
-              Row(
+                avgSpeed: (r['avgSpeed'] as num?)?.toDouble() ?? 0.0,
+                points: pts,
+              );
+            }).toList();
+
+            final stats = _calculateStats(state, offlineRides);
+
+            return SingleChildScrollView(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  // Date Selector Card
                   InkWell(
-                    onTap: () => _showTagFilterBottomSheet(),
-                    borderRadius: BorderRadius.circular(10),
+                    onTap: () => _showDateFilterBottomSheet(),
+                    borderRadius: BorderRadius.circular(12),
                     child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                       decoration: BoxDecoration(
                         color: theme.cardColor,
-                        borderRadius: BorderRadius.circular(10),
+                        borderRadius: BorderRadius.circular(12),
                         border: Border.all(
-                          color: _selectedFilterTag != null
-                              ? colorScheme.primary
-                              : theme.dividerColor.withValues(alpha: 0.1),
-                          width: 1.5,
+                          color: theme.dividerColor.withValues(alpha: 0.1),
+                          width: 1,
                         ),
                       ),
                       child: Row(
-                        mainAxisSize: MainAxisSize.min,
                         children: [
                           Icon(
-                            Icons.tune,
-                            size: 16,
-                            color: _selectedFilterTag != null
-                                ? colorScheme.primary
-                                : colorScheme.onSurface.withValues(alpha: 0.6),
+                            Icons.calendar_today_outlined,
+                            color: colorScheme.onSurface.withValues(alpha: 0.7),
+                            size: 20,
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Text(
+                              _getStatsDateText(),
+                              style: theme.textTheme.titleMedium?.copyWith(
+                                fontWeight: FontWeight.w600,
+                                color: colorScheme.onSurface,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
                           ),
                           const SizedBox(width: 8),
-                          Text(
-                            _selectedFilterTag != null ? 'Tag: $_selectedFilterTag' : 'Filter by tags',
-                            style: TextStyle(
-                              color: _selectedFilterTag != null
-                                  ? colorScheme.primary
-                                  : colorScheme.onSurface.withValues(alpha: 0.6),
-                              fontSize: 13,
-                              fontWeight: FontWeight.w500,
+                          // Left Chevron Button
+                          InkWell(
+                            onTap: () => _changeStatsDate(-1),
+                            borderRadius: BorderRadius.circular(20),
+                            child: Container(
+                              padding: const EdgeInsets.all(8),
+                              child: Icon(
+                                Icons.chevron_left,
+                                color: colorScheme.onSurface,
+                                size: 24,
+                              ),
                             ),
+                          ),
+                          const SizedBox(width: 8),
+                          // Right Chevron Button (disabled if today)
+                          Builder(
+                            builder: (context) {
+                              final now = DateTime.now();
+                              final isToday = DateTime(
+                                    _selectedStatsDate.year,
+                                    _selectedStatsDate.month,
+                                    _selectedStatsDate.day,
+                                  ).isAtSameMomentAs(
+                                    DateTime(now.year, now.month, now.day),
+                                  );
+                              return InkWell(
+                                onTap: isToday ? null : () => _changeStatsDate(1),
+                                borderRadius: BorderRadius.circular(20),
+                                child: Container(
+                                  padding: const EdgeInsets.all(8),
+                                  child: Icon(
+                                    Icons.chevron_right,
+                                    color: isToday
+                                        ? colorScheme.onSurface.withValues(alpha: 0.25)
+                                        : colorScheme.onSurface,
+                                    size: 24,
+                                  ),
+                                ),
+                              );
+                            },
                           ),
                         ],
                       ),
                     ),
                   ),
+                  const SizedBox(height: 16),
+                  // Tag Filter Chip
+                  Row(
+                    children: [
+                      InkWell(
+                        onTap: () => _showTagFilterBottomSheet(),
+                        borderRadius: BorderRadius.circular(10),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                          decoration: BoxDecoration(
+                            color: theme.cardColor,
+                            borderRadius: BorderRadius.circular(10),
+                            border: Border.all(
+                              color: _selectedFilterTag != null
+                                  ? colorScheme.primary
+                                  : theme.dividerColor.withValues(alpha: 0.1),
+                              width: 1.5,
+                            ),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                Icons.tune,
+                                size: 16,
+                                color: _selectedFilterTag != null
+                                    ? colorScheme.primary
+                                    : colorScheme.onSurface.withValues(alpha: 0.6),
+                              ),
+                              const SizedBox(width: 8),
+                              Text(
+                                _selectedFilterTag != null ? 'Tag: $_selectedFilterTag' : 'Filter by tags',
+                                style: TextStyle(
+                                  color: _selectedFilterTag != null
+                                      ? colorScheme.primary
+                                      : colorScheme.onSurface.withValues(alpha: 0.6),
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 20),
+                  _buildSummaryCard(stats),
+                  const SizedBox(height: 25),
+                  Text(
+                    l10n.quickStats,
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).colorScheme.onSurface,
+                    ),
+                  ),
+                  const SizedBox(height: 15),
+                  GridView.count(
+                    crossAxisCount: 2,
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    mainAxisSpacing: 15,
+                    crossAxisSpacing: 15,
+                    childAspectRatio: 1.2,
+                    children: [
+                      _buildStatCard(
+                        l10n.totalRides,
+                        "${stats['totalRides']}",
+                        Icons.directions_car,
+                        Colors.blue,
+                      ),
+                      _buildStatCard(
+                        l10n.averageSpeed,
+                        "${(stats['avgSpeed'] as double).toStringAsFixed(0)} km/h",
+                        Icons.speed,
+                        Colors.orange,
+                      ),
+                      _buildStatCard(
+                        l10n.topSpeed,
+                        "${(stats['topSpeed'] as double).toStringAsFixed(0)} km/h",
+                        Icons.bolt,
+                        Colors.purple,
+                      ),
+                      _buildStatCard(
+                        l10n.totalFuel,
+                        "${(stats['fuel'] as double).toStringAsFixed(1)} L",
+                        Icons.local_gas_station,
+                        Colors.green,
+                      ),
+                    ],
+                  ),
                 ],
               ),
-              const SizedBox(height: 20),
-              _buildSummaryCard(stats),
-              const SizedBox(height: 25),
-              Text(
-                l10n.quickStats,
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Theme.of(context).colorScheme.onSurface,
-                ),
-              ),
-              const SizedBox(height: 15),
-              GridView.count(
-                crossAxisCount: 2,
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                mainAxisSpacing: 15,
-                crossAxisSpacing: 15,
-                childAspectRatio: 1.2,
-                children: [
-                  _buildStatCard(
-                    l10n.totalRides,
-                    "${stats['totalRides']}",
-                    Icons.directions_car,
-                    Colors.blue,
-                  ),
-                  _buildStatCard(
-                    l10n.averageSpeed,
-                    "${(stats['avgSpeed'] as double).toStringAsFixed(0)} km/h",
-                    Icons.speed,
-                    Colors.orange,
-                  ),
-                  _buildStatCard(
-                    l10n.topSpeed,
-                    "${(stats['topSpeed'] as double).toStringAsFixed(0)} km/h",
-                    Icons.bolt,
-                    Colors.purple,
-                  ),
-                  _buildStatCard(
-                    l10n.totalFuel,
-                    "${(stats['fuel'] as double).toStringAsFixed(1)} L",
-                    Icons.local_gas_station,
-                    Colors.green,
-                  ),
-                ],
-              ),
-            ],
-          ),
+            );
+          },
         );
       },
     );
@@ -2463,11 +2411,12 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
         Set<Marker> allMarkers = Set.from(markers);
 
         if (showCurrentLocationMarker && currentPos != null) {
+          final l10n = AppLocalizations.of(context)!;
           allMarkers.add(
             Marker(
               markerId: const MarkerId("current_device_location"),
               position: LatLng(currentPos.latitude, currentPos.longitude),
-              infoWindow: const InfoWindow(title: 'Your location'),
+              infoWindow: InfoWindow(title: l10n.yourLocationLabel),
               icon:
                   _customMarkerIcon ??
                   BitmapDescriptor.defaultMarkerWithHue(
@@ -2976,7 +2925,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
     showDialog(
       context: screenContext,
       builder: (ctx) {
-        int selectedMode = 0; // 0 for online, 1 for offline
+        int selectedMode = 1; // 0 for online, 1 for offline
         bool askEveryTime = true;
 
         return StatefulBuilder(
@@ -3144,7 +3093,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
                             Navigator.pop(ctx);
                             screenContext
                                 .read<RecordViaPhoneCubit>()
-                                .startRecording();
+                                .startRecording(mode: selectedMode);
                           },
                           child: Text(
                             AppLocalizations.of(context)!.startRide,
@@ -3258,36 +3207,68 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
                         TextButton(
-                          onPressed: () {
+                          onPressed: () async {
                             Navigator.pop(ctx);
 
                             final cubit = screenContext
                                 .read<RecordViaPhoneCubit>();
-                            final state = cubit.state;
+                            final rideState = cubit.state;
 
+                            final points = rideState.currentRidePoints;
+                            final distance = rideState.rideDistance;
+                            final duration = rideState.rideDuration;
+                            final topSpd = rideState.topSpeed;
+                            final avgSpd = duration.inSeconds > 0
+                                ? (distance / (duration.inSeconds / 3600))
+                                : 0.0;
+
+                            // ── OFFLINE MODE ──
+                            if (cubit.saveMode == 1) {
+                              final success = await cubit.saveRideOffline(
+                                tag: selectedLabel,
+                                points: points,
+                                distanceKm: distance,
+                                duration: duration,
+                                avgSpeed: avgSpd,
+                                topSpeed: topSpd,
+                              );
+
+                              if (screenContext.mounted) {
+                                ScaffoldMessenger.of(screenContext).showSnackBar(
+                                  SnackBar(
+                                    content: Text(
+                                      success
+                                          ? '✅ Ride saved offline successfully!'
+                                          : '❌ Failed to save ride offline.',
+                                    ),
+                                    backgroundColor:
+                                        success ? Colors.green : Colors.red,
+                                    duration: const Duration(seconds: 3),
+                                  ),
+                                );
+                              }
+
+                              cubit.stopRecording();
+                              return;
+                            }
+
+                            // ── ONLINE MODE — open playback then stop ──
                             Navigator.push(
                               screenContext,
                               MaterialPageRoute(
                                 builder: (_) => RidePlaybackScreen(
-                                  points: state.currentRidePoints,
-                                  totalDistance: state.rideDistance,
-                                  totalDuration: state.rideDuration,
-                                  topSpeed: state.currentSpeed > 0
-                                      ? state.currentSpeed
-                                      : (state.rideDuration.inSeconds > 0
-                                            ? (state.rideDistance /
-                                                  (state
-                                                          .rideDuration
-                                                          .inSeconds /
-                                                      3600))
+                                  points: points,
+                                  totalDistance: distance,
+                                  totalDuration: duration,
+                                  topSpeed: topSpd > 0
+                                      ? topSpd
+                                      : (duration.inSeconds > 0
+                                            ? (distance /
+                                                  (duration.inSeconds / 3600))
                                             : 0.0),
-                                  avgSpeed: state.rideDuration.inSeconds > 0
-                                      ? (state.rideDistance /
-                                            (state.rideDuration.inSeconds /
-                                                3600))
-                                      : 0.0,
+                                  avgSpeed: avgSpd,
                                   startTime: DateTime.now().subtract(
-                                    state.rideDuration,
+                                    duration,
                                   ),
                                 ),
                               ),
@@ -3355,4 +3336,319 @@ class PastRide {
     required this.avgSpeed,
     required this.points,
   });
+}
+
+class _DateRangePickerBottomSheet extends StatefulWidget {
+  final String initialActiveFilter;
+  final DateTime initialStartDate;
+  final DateTime initialEndDate;
+  final Function(String label, DateTime start, DateTime end) onFilterSelected;
+
+  const _DateRangePickerBottomSheet({
+    required this.initialActiveFilter,
+    required this.initialStartDate,
+    required this.initialEndDate,
+    required this.onFilterSelected,
+  });
+
+  @override
+  State<_DateRangePickerBottomSheet> createState() => _DateRangePickerBottomSheetState();
+}
+
+class _DateRangePickerBottomSheetState extends State<_DateRangePickerBottomSheet> with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+  late String _activeFilter;
+
+  @override
+  void initState() {
+    super.initState();
+    _activeFilter = widget.initialActiveFilter;
+    
+    int initialIndex = 0; // "Day" tab
+    if (_activeFilter == "This week" || _activeFilter == "Last week" || _activeFilter == "Last 7 days") {
+      initialIndex = 1; // "Week" tab
+    } else if (_activeFilter == "This month" || _activeFilter == "Last month" || _activeFilter == "Last 30 days") {
+      initialIndex = 2; // "Month" tab
+    } else if (_activeFilter.contains(" - ") || _activeFilter == "Custom") {
+      initialIndex = 3; // "Other" tab
+    }
+    
+    _tabController = TabController(length: 4, vsync: this, initialIndex: initialIndex);
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+
+  void _selectFilter(String label, DateTime start, DateTime end) {
+    widget.onFilterSelected(label, start, end);
+    Navigator.pop(context);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final yesterday = today.subtract(const Duration(days: 1));
+
+    // Week dates
+    final daysToSubtract = today.weekday - 1;
+    final thisWeekStart = today.subtract(Duration(days: daysToSubtract));
+    final thisWeekEnd = thisWeekStart.add(const Duration(days: 6));
+
+    final lastWeekStart = thisWeekStart.subtract(const Duration(days: 7));
+    final lastWeekEnd = lastWeekStart.add(const Duration(days: 6));
+
+    final last7DaysStart = today.subtract(const Duration(days: 7));
+
+    // Month dates
+    final thisMonthStart = DateTime(today.year, today.month, 1);
+    final thisMonthEnd = DateTime(today.year, today.month + 1, 0);
+
+    final lastMonthStart = DateTime(today.year, today.month - 1, 1);
+    final lastMonthEnd = DateTime(today.year, today.month, 0);
+
+    final last30DaysStart = today.subtract(const Duration(days: 30));
+
+    return Material(
+      color: Colors.transparent,
+      child: Container(
+        padding: const EdgeInsets.only(top: 16, bottom: 24),
+        decoration: BoxDecoration(
+          color: theme.scaffoldBackgroundColor,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Center(
+              child: Container(
+                width: 44,
+                height: 5,
+                decoration: BoxDecoration(
+                  color: theme.dividerColor.withOpacity(0.2),
+                  borderRadius: BorderRadius.circular(3),
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+            TabBar(
+              controller: _tabController,
+              labelColor: colorScheme.primary,
+              unselectedLabelColor: colorScheme.onSurface.withOpacity(0.6),
+              indicatorColor: colorScheme.primary,
+              indicatorSize: TabBarIndicatorSize.tab,
+              dividerColor: Colors.transparent,
+              tabs: const [
+                Tab(text: "Day"),
+                Tab(text: "Week"),
+                Tab(text: "Month"),
+                Tab(text: "Other"),
+              ],
+            ),
+            const SizedBox(height: 16),
+            SizedBox(
+              height: 250,
+              child: TabBarView(
+                controller: _tabController,
+                children: [
+                  // Day Tab
+                  ListView(
+                    shrinkWrap: true,
+                    physics: const ClampingScrollPhysics(),
+                    children: [
+                      _buildOption(
+                        title: "Today",
+                        subtitle: DateFormat('MMM d, yyyy').format(today),
+                        isSelected: _activeFilter == "Today",
+                        onTap: () => _selectFilter(
+                          "Today",
+                          today,
+                          DateTime(today.year, today.month, today.day, 23, 59, 59),
+                        ),
+                      ),
+                      _buildOption(
+                        title: "Yesterday",
+                        subtitle: DateFormat('MMM d, yyyy').format(yesterday),
+                        isSelected: _activeFilter == "Yesterday",
+                        onTap: () => _selectFilter(
+                          "Yesterday",
+                          yesterday,
+                          DateTime(yesterday.year, yesterday.month, yesterday.day, 23, 59, 59),
+                        ),
+                      ),
+                      _buildOption(
+                        title: "Select custom day",
+                        subtitle: "Pick a specific single date",
+                        isSelected: false,
+                        onTap: () async {
+                          final picked = await showDatePicker(
+                            context: context,
+                            initialDate: today,
+                            firstDate: DateTime(2020),
+                            lastDate: today,
+                          );
+                          if (picked != null) {
+                            final checkDate = DateTime(picked.year, picked.month, picked.day);
+                            String label = DateFormat('dd/MM').format(picked);
+                            if (checkDate == today) {
+                              label = "Today";
+                            } else if (checkDate == yesterday) {
+                              label = "Yesterday";
+                            }
+                            _selectFilter(
+                              label,
+                              picked,
+                              DateTime(picked.year, picked.month, picked.day, 23, 59, 59),
+                            );
+                          }
+                        },
+                      ),
+                    ],
+                  ),
+                  // Week Tab
+                  ListView(
+                    shrinkWrap: true,
+                    physics: const ClampingScrollPhysics(),
+                    children: [
+                      _buildOption(
+                        title: "This week",
+                        subtitle: "${DateFormat('MMM d').format(thisWeekStart)} - ${DateFormat('MMM d').format(thisWeekEnd)}",
+                        isSelected: _activeFilter == "This week",
+                        onTap: () => _selectFilter(
+                          "This week",
+                          thisWeekStart,
+                          thisWeekEnd,
+                        ),
+                      ),
+                      _buildOption(
+                        title: "Last week",
+                        subtitle: "${DateFormat('MMM d').format(lastWeekStart)} - ${DateFormat('MMM d').format(lastWeekEnd)}",
+                        isSelected: _activeFilter == "Last week",
+                        onTap: () => _selectFilter(
+                          "Last week",
+                          lastWeekStart,
+                          lastWeekEnd,
+                        ),
+                      ),
+                      _buildOption(
+                        title: "Last 7 days",
+                        subtitle: "${DateFormat('MMM d').format(last7DaysStart)} - ${DateFormat('MMM d').format(today)}",
+                        isSelected: _activeFilter == "Last 7 days",
+                        onTap: () => _selectFilter(
+                          "Last 7 days",
+                          last7DaysStart,
+                          today,
+                        ),
+                      ),
+                    ],
+                  ),
+                  // Month Tab
+                  ListView(
+                    shrinkWrap: true,
+                    physics: const ClampingScrollPhysics(),
+                    children: [
+                      _buildOption(
+                        title: "This month",
+                        subtitle: "${DateFormat('MMM d').format(thisMonthStart)} - ${DateFormat('MMM d').format(thisMonthEnd)}",
+                        isSelected: _activeFilter == "This month",
+                        onTap: () => _selectFilter(
+                          "This month",
+                          thisMonthStart,
+                          thisMonthEnd,
+                        ),
+                      ),
+                      _buildOption(
+                        title: "Last month",
+                        subtitle: "${DateFormat('MMM d').format(lastMonthStart)} - ${DateFormat('MMM d').format(lastMonthEnd)}",
+                        isSelected: _activeFilter == "Last month",
+                        onTap: () => _selectFilter(
+                          "Last month",
+                          lastMonthStart,
+                          lastMonthEnd,
+                        ),
+                      ),
+                      _buildOption(
+                        title: "Last 30 days",
+                        subtitle: "${DateFormat('MMM d').format(last30DaysStart)} - ${DateFormat('MMM d').format(today)}",
+                        isSelected: _activeFilter == "Last 30 days",
+                        onTap: () => _selectFilter(
+                          "Last 30 days",
+                          last30DaysStart,
+                          today,
+                        ),
+                      ),
+                    ],
+                  ),
+                  // Other Tab
+                  ListView(
+                    shrinkWrap: true,
+                    physics: const ClampingScrollPhysics(),
+                    children: [
+                      _buildOption(
+                        title: "Custom date range",
+                        subtitle: _activeFilter.contains(" - ") ? _activeFilter : "Select start and end dates",
+                        isSelected: _activeFilter.contains(" - "),
+                        onTap: () async {
+                          final picked = await showDateRangePicker(
+                            context: context,
+                            firstDate: DateTime(2020),
+                            lastDate: today,
+                          );
+                          if (picked != null) {
+                            final label = "${DateFormat('dd/MM').format(picked.start)} - ${DateFormat('dd/MM').format(picked.end)}";
+                            _selectFilter(
+                              label,
+                              picked.start,
+                              picked.end,
+                            );
+                          }
+                        },
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildOption({
+    required String title,
+    required String subtitle,
+    required bool isSelected,
+    required VoidCallback onTap,
+  }) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
+    return ListTile(
+      title: Text(
+        title,
+        style: TextStyle(
+          fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+          color: isSelected ? colorScheme.primary : colorScheme.onSurface,
+        ),
+      ),
+      subtitle: Text(
+        subtitle,
+        style: TextStyle(
+          fontSize: 12,
+          color: colorScheme.onSurface.withOpacity(0.5),
+        ),
+      ),
+      trailing: isSelected
+          ? Icon(Icons.check, color: colorScheme.primary)
+          : null,
+      onTap: onTap,
+    );
+  }
 }

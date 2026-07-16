@@ -140,10 +140,15 @@ class SocketService {
 
   Future<void> _sendHandshake() async {
     if (_socket != null && _isConnected) {
-      String iMEI = _currentImei ?? await prefs.get(key: AppPreference.IMEI);
-      final handshake = {"type": "flutter", "imei": iMEI};
-      _socket!.write('${jsonEncode(handshake)}\n');
-      print('[SocketService] 📤 Handshake sent: $handshake');
+      try {
+        String iMEI = _currentImei ?? await prefs.get(key: AppPreference.IMEI);
+        final handshake = {"type": "flutter", "imei": iMEI};
+        _socket!.write('${jsonEncode(handshake)}\n');
+        print('[SocketService] 📤 Handshake sent: $handshake');
+      } catch (e) {
+        print('[SocketService] ❌ Error sending handshake: $e');
+        _handleDisconnect();
+      }
     }
   }
 

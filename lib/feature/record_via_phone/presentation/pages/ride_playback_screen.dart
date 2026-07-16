@@ -539,6 +539,7 @@ class _RidePlaybackScreenState extends State<RidePlaybackScreen> {
   }
   
   Widget _buildTopInfoBox(DateTime currentPlaybackTime) {
+    final l10n = AppLocalizations.of(context)!;
     bool isInitial = _currentProgress == 0.0 && !_isPlaying;
     String formattedTime = isInitial ? '0.0' : DateFormat('hh:mm:ss a').format(currentPlaybackTime);
     
@@ -565,7 +566,7 @@ class _RidePlaybackScreenState extends State<RidePlaybackScreen> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Icon(Icons.location_on, color: Theme.of(context).colorScheme.primary, size: 24),
-                  Text('TRACKIFY', style: TextStyle(color: Theme.of(context).colorScheme.primary, fontSize: 10, fontWeight: FontWeight.bold)),
+                  Text(l10n.trackifyBrandLabel, style: TextStyle(color: Theme.of(context).colorScheme.primary, fontSize: 10, fontWeight: FontWeight.bold)),
                 ],
               ),
               const SizedBox(width: 14),
@@ -586,7 +587,7 @@ class _RidePlaybackScreenState extends State<RidePlaybackScreen> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(AppLocalizations.of(context)!.timeLabel, style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onSurface)),
-                  Text('hr:min', style: TextStyle(fontSize: 9, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6))),
+                  Text(l10n.hrMinLabel, style: TextStyle(fontSize: 9, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6))),
                   Text(formattedTime, style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onSurface)),
                 ],
               ),
@@ -598,7 +599,7 @@ class _RidePlaybackScreenState extends State<RidePlaybackScreen> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(AppLocalizations.of(context)!.distanceLabel, style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onSurface)),
-                    Text('km', style: TextStyle(fontSize: 9, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6))),
+                    Text(l10n.kmLabel, style: TextStyle(fontSize: 9, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6))),
                     Text((widget.totalDistance * _currentProgress).toStringAsFixed(1), style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onSurface)),
                   ],
                 ),

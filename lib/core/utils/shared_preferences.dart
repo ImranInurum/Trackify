@@ -57,19 +57,32 @@ class AppPreference {
   static String KEY_FCM_TOKEN = "KEY_FCM_TOKEN";
   static String IMEI = "IMEI";
   static String KEY_DISTANCE_UNIT = "KEY_DISTANCE_UNIT";
+  static String KEY_EXPLORED_FEATURES = "KEY_EXPLORED_FEATURES";
+
   // --- Basic Getters/Setters ---
-  Future<String> get({required String key}) async => _prefs.getString(key) ?? "";
+  Future<String> get({required String key}) async =>
+      _prefs.getString(key) ?? "";
 
   String getSync({required String key}) => _prefs.getString(key) ?? "";
 
   Future<void> set({required String key, required String value}) async =>
       _prefs.setString(key, value);
 
-  Future<bool> getBool({required String key}) async => _prefs.getBool(key) ?? false;
-  
-  bool getBoolSync({required String key}) => _prefs.getBool(key) ?? false;
+  List<String> getStringList({required String key}) =>
+      _prefs.getStringList(key) ?? [];
 
+  Future<void> setStringList({
+    required String key,
+    required List<String> value,
+  }) async => _prefs.setStringList(key, value);
 
+  Future<bool> getBool({
+    required String key,
+    bool defaultValue = false,
+  }) async => _prefs.getBool(key) ?? defaultValue;
+
+  bool getBoolSync({required String key, bool defaultValue = false}) =>
+      _prefs.getBool(key) ?? defaultValue;
 
   Future<void> setBool({required String key, required bool value}) async =>
       _prefs.setBool(key, value);
@@ -79,7 +92,8 @@ class AppPreference {
   Future<void> setInt({required String key, required int value}) async =>
       _prefs.setInt(key, value);
 
-  Future<double> getDouble({required String key}) async => _prefs.getDouble(key) ?? 0.0;
+  Future<double> getDouble({required String key}) async =>
+      _prefs.getDouble(key) ?? 0.0;
 
   Future<void> setDouble({required String key, required double value}) async =>
       _prefs.setDouble(key, value);

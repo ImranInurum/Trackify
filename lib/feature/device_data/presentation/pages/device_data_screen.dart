@@ -9,6 +9,9 @@ import '../../domain/entity/recharge_plan_entity.dart';
 import '../cubit/device_data_cubit.dart';
 import '../cubit/device_data_state.dart';
 import 'package:trackify/core/widgets/trackify_loader.dart';
+import 'package:trackify/feature/service_logs/presentation/cubit/service_logs_cubit.dart';
+import 'package:trackify/feature/service_logs/presentation/cubit/service_logs_state.dart';
+import 'package:trackify/core/common/models/vehicle_list_model.dart';
 
 class DeviceDataScreen extends StatefulWidget {
   const DeviceDataScreen({super.key});
@@ -18,10 +21,13 @@ class DeviceDataScreen extends StatefulWidget {
 }
 
 class _DeviceDataScreenState extends State<DeviceDataScreen> {
+  String? _currentImei;
+
   @override
   void initState() {
     super.initState();
     context.read<DeviceDataCubit>().load();
+    context.read<ServiceLogsCubit>().loadVehicles();
   }
 
   @override
@@ -132,19 +138,19 @@ class _DeviceDataScreenState extends State<DeviceDataScreen> {
                   daysLeftStr = l10n.expired;
                 } else if (plan.daysLeft <= 15) {
                   dynamicSubColor = Colors.red;
-                  daysLeftStr = l10n.expiresInDays(plan.daysLeft.toString());
+                  daysLeftStr = l10n.expiresInDays(plan.daysLeft);
                 } else if (plan.daysLeft <= 60) {
                   dynamicSubColor = Colors.orange;
-                  daysLeftStr = l10n.expiresInDays(plan.daysLeft.toString());
+                  daysLeftStr = l10n.expiresInDays(plan.daysLeft);
                 } else if (plan.daysLeft <= 150) {
                   dynamicSubColor = Colors.amber; // Yellow
-                  daysLeftStr = l10n.expiresInDays(plan.daysLeft.toString());
+                  daysLeftStr = l10n.expiresInDays(plan.daysLeft);
                 } else if (plan.daysLeft <= 250) {
                   dynamicSubColor = Colors.lightGreen;
-                  daysLeftStr = l10n.expiresInDays(plan.daysLeft.toString());
+                  daysLeftStr = l10n.expiresInDays(plan.daysLeft);
                 } else {
                   dynamicSubColor = Colors.green;
-                  daysLeftStr = l10n.expiresInDays(plan.daysLeft.toString());
+                  daysLeftStr = l10n.expiresInDays(plan.daysLeft);
                 }
               }
 
@@ -166,18 +172,25 @@ class _DeviceDataScreenState extends State<DeviceDataScreen> {
                     const SizedBox(height: 4),
                     Row(
                       children: [
-                        Text(
-                          vehicleDisplayName,
-                          style: text.titleMedium?.copyWith(
-                            fontWeight: FontWeight.bold,
+                        Flexible(
+                          child: Text(
+                            vehicleDisplayName,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: text.titleMedium?.copyWith(
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
                         const SizedBox(width: 8),
-                        Text(
-                          l10n.switchLabel,
-                          style: text.bodySmall?.copyWith(
-                            color: color.primary,
-                            fontWeight: FontWeight.w500,
+                        GestureDetector(
+                          onTap: () => _showVehicleSelector(context),
+                          child: Text(
+                            l10n.switchLabel,
+                            style: text.bodySmall?.copyWith(
+                              color: color.primary,
+                              fontWeight: FontWeight.w500,
+                            ),
                           ),
                         ),
                       ],
@@ -671,6 +684,93 @@ class _DeviceDataScreenState extends State<DeviceDataScreen> {
           ),
         ],
       ),
+    );
+  }
+
+  void _showVehicleSelector(BuildContext context) {
+    final serviceState = context.read<ServiceLogsCubit>().state;
+    if (serviceState is! ServiceLogsLoaded) return;
+
+    final vehicles = serviceState.vehicles;
+
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (context) {
+        final theme = Theme.of(context);
+        return Container(
+          decoration: BoxDecoration(
+            color: theme.cardColor,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const SizedBox(height: 12),
+              Container(
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: theme.dividerColor,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              const SizedBox(height: 16),
+              ListView.builder(
+                shrinkWrap: true,
+                itemCount: vehicles.length,
+                itemBuilder: (context, index) {
+                  final vehicle = vehicles[index];
+                  // If _currentImei is set, use it. Otherwise use the globally selected vehicle.
+                  final isSelected = _currentImei != null 
+                      ? vehicle.imei == _currentImei
+                      : vehicle.id == serviceState.selectedVehicle?.id;
+
+                  return Container(
+                    color: isSelected
+                        ? theme.scaffoldBackgroundColor.withOpacity(1)
+                        : theme.cardColor,
+                    child: Material(
+                      type: MaterialType.transparency,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 4.0),
+                        child: ListTile(
+                          leading: Image.asset(
+                            'assets/icons/bike2.png',
+                            width: 50,
+                            height: 50,
+                          ),
+                          title: Text(
+                            "${vehicle.vehicleMaker ?? ""} ${vehicle.vehicleModel ?? ""}".trim(),
+                            style: theme.textTheme.bodyLarge?.copyWith(
+                              fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                              color: isSelected ? theme.colorScheme.primary : theme.colorScheme.onSurface,
+                            ),
+                          ),
+                          subtitle: Text(vehicle.vehicleNumber ?? ""),
+                          trailing: isSelected
+                              ? Icon(Icons.check_circle, color: theme.colorScheme.primary)
+                              : null,
+                          onTap: () {
+                            Navigator.pop(context);
+                            if (mounted) {
+                              setState(() {
+                                _currentImei = vehicle.imei;
+                              });
+                              context.read<DeviceDataCubit>().load(customImei: vehicle.imei);
+                            }
+                          },
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              ),
+              const SizedBox(height: 20),
+            ],
+          ),
+        );
+      },
     );
   }
 }

@@ -3,6 +3,8 @@ import 'package:trackify/l10n/app_localizations.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:trackify/app/cubit/app_cubit.dart';
 import 'package:trackify/app/cubit/app_state.dart';
+import 'package:trackify/feature/auth/presentation/pages/signin_screen.dart';
+import 'package:trackify/core/widgets/loading_screen_ol.dart';
 
 class DeleteAccountScreen extends StatelessWidget {
   const DeleteAccountScreen({super.key});
@@ -186,7 +188,7 @@ class DeleteAccountScreen extends StatelessWidget {
   void _showDeleteConfirmationDialog(BuildContext context, AppLocalizations l10n) {
     showDialog(
       context: context,
-      builder: (BuildContext context) {
+      builder: (BuildContext dialogContext) {
         return AlertDialog(
           backgroundColor: Theme.of(context).cardColor,
           shape: RoundedRectangleBorder(
@@ -205,7 +207,7 @@ class DeleteAccountScreen extends StatelessWidget {
           actions: [
             TextButton(
               onPressed: () {
-                Navigator.of(context).pop();
+                Navigator.of(dialogContext).pop();
               },
               child: Text(
                 l10n.cancel,
@@ -216,9 +218,52 @@ class DeleteAccountScreen extends StatelessWidget {
               ),
             ),
             TextButton(
-              onPressed: () {
-                // Confirm delete action
-                Navigator.of(context).pop();
+              onPressed: () async {
+                final scaffoldMessenger = ScaffoldMessenger.of(context);
+                final navigator = Navigator.of(context, rootNavigator: true);
+                final appCubit = context.read<AppCubit>();
+                final userId = appCubit.state.userData?.id;
+
+                Navigator.of(dialogContext).pop();
+
+                if (userId == null || userId.isEmpty) {
+                  scaffoldMessenger.showSnackBar(
+                    SnackBar(
+                      content: Text(l10n.deleteAccountFailedNoUser),
+                      backgroundColor: Colors.redAccent,
+                    ),
+                  );
+                  return;
+                }
+
+                LoadingScreenOL().show();
+                final result = await appCubit.deleteAccount(userId);
+                LoadingScreenOL().hide();
+
+                result.fold(
+                  (failure) {
+                    scaffoldMessenger.showSnackBar(
+                      SnackBar(
+                        content: Text(l10n.errorDeletingAccount(failure.message)),
+                        backgroundColor: Colors.redAccent,
+                      ),
+                    );
+                  },
+                  (_) {
+                    scaffoldMessenger.showSnackBar(
+                      SnackBar(
+                        content: Text(l10n.deleteAccountSuccess),
+                        backgroundColor: Colors.green,
+                      ),
+                    );
+                    navigator.pushAndRemoveUntil(
+                      MaterialPageRoute(
+                        builder: (context) => const SignInScreen(),
+                      ),
+                      (Route<dynamic> route) => false,
+                    );
+                  },
+                );
               },
               child: Text(
                 l10n.delete,

@@ -25,14 +25,16 @@ class DiscoverCubit extends Cubit<DiscoverState> {
     }
 
     if (cachedList.isNotEmpty) {
-      emit(DiscoverLoaded(cachedList));
+      // emit(DiscoverLoaded(cachedList)); // Temporarily disabled cache to debug API
+      emit(DiscoverLoading());
     } else {
       emit(DiscoverLoading());
     }
 
     try {
       final result = await getDiscoverUseCase();
-
+      
+      print("Discover API success. Result length: ${result.length}");
       try {
         final mapList = result.map((e) {
           if (e is DiscoverModel) {
@@ -48,10 +50,13 @@ class DiscoverCubit extends Cubit<DiscoverState> {
           }
         }).toList();
         box.put('discover_features', jsonEncode(mapList));
-      } catch (_) {}
+      } catch (e) {
+        print("Discover API cache error: $e");
+      }
 
       emit(DiscoverLoaded(result));
     } catch (e) {
+      print("Discover API fetch error: $e");
       if (state is! DiscoverLoaded) {
         emit(DiscoverError(e.toString()));
       }

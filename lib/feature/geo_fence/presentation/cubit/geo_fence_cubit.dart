@@ -156,12 +156,12 @@ class GeoFenceCubit extends Cubit<GeoFenceState> {
     }
   }
 
-  Future<void> toggleGeoFenceStatus(String imei, bool isActive) async {
+  Future<void> toggleGeoFenceStatus(String fenceId, bool isActive) async {
     // For testing: update local state
     if (state is GeoFenceLoaded) {
       final currentFences = (state as GeoFenceLoaded).geoFences;
       final updatedFences = currentFences.map((f) {
-        if (f.imei == imei) {
+        if (f.id == fenceId) {
           return f.copyWith(isActive: isActive);
         }
         return f;

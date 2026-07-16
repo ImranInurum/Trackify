@@ -142,17 +142,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 showIcon: true,
                 onTap: () => debugPrint("Backup & Restore tapped"),
               ),
-
-            if (_isVisible(l10n.appSettings))
-              SettingListTile(
-                icon: Icons.settings_outlined,
-                title: l10n.appSettings,
-                subtitle: l10n.appSettingsDesc,
-                showArrow: true,
-                showIcon: true,
-                onTap: () => debugPrint("App Settings tapped"),
-              ),
-
+            // if (_isVisible(l10n.appSettings))
+            //   SettingListTile(
+            //     icon: Icons.settings_outlined,
+            //     title: l10n.appSettings,
+            //     subtitle: l10n.appSettingsDesc,
+            //     showArrow: true,
+            //     showIcon: true,
+            //     onTap: () => debugPrint("App Settings tapped"),
+            //   ),
             if (_isVisible(l10n.notificationSettings))
               SettingListTile(
                 icon: Icons.notifications_none_outlined,

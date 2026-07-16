@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:trackify/l10n/app_localizations.dart';
 
 class UpperCaseTextFormatter extends TextInputFormatter {
   @override
@@ -74,6 +75,7 @@ class _VehicleNumberFieldState extends State<VehicleNumberField> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     final text = widget.controller.text;
     final isValid = _isValidVehicleNumber(text);
@@ -83,7 +85,7 @@ class _VehicleNumberFieldState extends State<VehicleNumberField> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          "Vehicle Registration Number",
+          l10n.vehicleRegistrationNumberLabel,
           style: theme.textTheme.titleSmall?.copyWith(
             fontWeight: FontWeight.w600,
             color: theme.colorScheme.onSurface,
@@ -111,10 +113,10 @@ class _VehicleNumberFieldState extends State<VehicleNumberField> {
           },
           validator: (val) {
             if (val == null || val.trim().isEmpty) {
-              return "Please enter a vehicle registration number.";
+              return l10n.pleaseEnterVehicleRegistrationNumber;
             }
             if (!_isValidVehicleNumber(val)) {
-              return "Please enter a valid vehicle registration number.";
+              return l10n.invalidVehicleRegistrationNumber;
             }
             if (widget.validator != null) {
               return widget.validator!(val);
@@ -123,7 +125,7 @@ class _VehicleNumberFieldState extends State<VehicleNumberField> {
           },
           decoration: InputDecoration(
             counterText: '',
-            hintText: "e.g. UP32AB1234",
+            hintText: l10n.vehicleNumberHintAlternative,
             hintStyle: theme.textTheme.bodyMedium?.copyWith(
               color: theme.hintColor,
             ),
@@ -166,7 +168,7 @@ class _VehicleNumberFieldState extends State<VehicleNumberField> {
         ),
         const SizedBox(height: 6),
         Text(
-          "Enter your vehicle registration number as printed on the RC.",
+          l10n.vehicleRegNoRcHelpText,
           style: theme.textTheme.bodySmall?.copyWith(
             color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
             fontSize: 12,

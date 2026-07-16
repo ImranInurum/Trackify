@@ -234,6 +234,18 @@ class _AddServiceLogScreenState extends State<AddServiceLogScreen> {
                           controller: _contactController,
                           label: l10n.serviceCenterContact,
                           keyboardType: TextInputType.phone,
+                          validator: (value) {
+                            if (value != null && value.trim().isNotEmpty) {
+                              final cleanValue = value.trim();
+                              if (!RegExp(r'^[0-9]+$').hasMatch(cleanValue)) {
+                                return l10n.invalidMobileNumber;
+                              }
+                              if (cleanValue.length != 10 || !RegExp(r'^[6-9][0-9]{9}$').hasMatch(cleanValue)) {
+                                return l10n.invalidMobileNumber;
+                              }
+                            }
+                            return null;
+                          },
                         ),
                         const SizedBox(height: 16),
 
@@ -323,6 +335,7 @@ class _AddServiceLogScreenState extends State<AddServiceLogScreen> {
     String? prefixText,
     TextInputType? keyboardType,
     int maxLines = 1,
+    String? Function(String?)? validator,
   }) {
     final theme = Theme.of(context);
 
@@ -358,7 +371,7 @@ class _AddServiceLogScreenState extends State<AddServiceLogScreen> {
               borderSide: BorderSide(color: theme.colorScheme.primary),
             ),
           ),
-          validator: (value) {
+          validator: validator ?? (value) {
             if (isRequired && (value == null || value.isEmpty)) {
               return AppLocalizations.of(context)!.fieldRequired;
             }

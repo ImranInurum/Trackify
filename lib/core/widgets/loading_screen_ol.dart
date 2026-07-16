@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -19,21 +20,24 @@ class LoadingScreenOL {
     _loadingCount++;
     if (_loadingCount == 1 && _overlayEntry == null) {
       _overlayEntry = OverlayEntry(
-        builder: (context) => const Material(
-          color: Colors.transparent,
-          child: Center(
-            child: TrackifyLoader(
-              animated: true,
+        builder: (context) => Stack(
+          children: [
+            Positioned.fill(
+              child: Container(color: Colors.black.withOpacity(0.6)),
             ),
-          ),
+            const Center(
+              child: Material(
+                color: Colors.transparent,
+                child: TrackifyLoader(size: 250, animated: true),
+              ),
+            ),
+          ],
         ),
       );
 
       rootNavigatorKey.currentState?.overlay?.insert(_overlayEntry!);
-
     }
   }
-
 
   void hide() {
     if (_loadingCount > 0) {

@@ -482,15 +482,15 @@ class AppLocalizationsAr extends AppLocalizations {
   String get warranty => 'الضمان';
 
   @override
-  String expiresInDays(String days) {
-    return 'تنتهي في $days أيام';
+  String expiresInDays(int days) {
+    return 'ينتهي في غضون $days يومًا';
   }
 
   @override
   String get rechargeNow => 'اشحن الآن';
 
   @override
-  String get renewNow => 'جدد الآن';
+  String get renewNow => 'تجديد الآن';
 
   @override
   String get secureYourVehicle => 'أمن مركبتك';
@@ -2051,6 +2051,12 @@ class AppLocalizationsAr extends AppLocalizations {
   String get oldestToRecent => 'من الأقدم إلى الأحدث';
 
   @override
+  String get longToShort => 'من الأطول إلى الأقصر';
+
+  @override
+  String get shortToLong => 'من الأقصر إلى الأطول';
+
+  @override
   String get date => 'التاريخ';
 
   @override
@@ -2879,7 +2885,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get hrminLabel => 'hr:min';
 
   @override
-  String get kmLabel => 'km';
+  String get kmLabel => 'كم';
 
   @override
   String get exportRideVideoDesc =>
@@ -3019,4 +3025,262 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get hoursShort => 'h';
+
+  @override
+  String get exploreProducts => 'استكشف المنتجات';
+
+  @override
+  String get decideBestProductText => 'غير قادر على تحديد أي منتج هو';
+
+  @override
+  String get bestForYou => 'الأفضل لك؟';
+
+  @override
+  String get callUs => 'اتصل بنا';
+
+  @override
+  String get happyTrackifyUsers => 'مستخدمو تراكيفاي السعداء';
+
+  @override
+  String get umeshDarwatkar => 'أوميش دارواتكار';
+
+  @override
+  String get umeshDarwatkarDuration => 'مستخدم تراكيفاي منذ عام واحد';
+
+  @override
+  String get umeshDarwatkarReview =>
+      'أوصي بشدة بجهاز تراكيفاي جي بي إس لأي شخص يبحث عن أداة ملاحة موثوقة ودقيقة للدراجات. يحتوي على ميزات رائعة مثل اكتشاف السرقة، وتنبيه الحوادث، ومشاركة الرحلة مباشرة، وتسجيل الرحلة وتتبع الوقود. إنه سهل التثبيت وتطبيقه سهل الاستخدام للغاية مع الكثير من الميزات.';
+
+  @override
+  String get rohitSharma => 'روهيت شارما';
+
+  @override
+  String get rohitSharmaDuration => 'مستخدم تراكيفاي منذ عامين';
+
+  @override
+  String get rohitSharmaReview =>
+      'باستخدام الجهاز، أود تسليط الضوء على مشاركة تتبع الحركة مع الآخرين بحيث يمكن لصديقي تتبعي بأسهل طريقة. التطبيق سريع الاستجابة ومفيد للغاية.';
+
+  @override
+  String get peopleSmartIntro => 'شخصًا جعلوا دراجاتهم ذكية.\nجرب الميزات ';
+
+  @override
+  String get smartText => 'الذكية ';
+
+  @override
+  String get featuresOfTrackify => 'لتراكيفاي 🏍️';
+
+  @override
+  String get accidentAlertCard => 'تنبيه الحوادث';
+
+  @override
+  String get antiTheftAlertCard => 'تنبيه ضد السرقة';
+
+  @override
+  String get liveGpsTrackingCard => 'تتبع مباشر لنظام تحديد المواقع';
+
+  @override
+  String get chooseDeviceSuitsYou => 'اختر الجهاز الذي يناسبك تمامًا';
+
+  @override
+  String get lite => 'لايت';
+
+  @override
+  String get pro => 'برو';
+
+  @override
+  String get go => 'جو';
+
+  @override
+  String get deviceSim => 'جهاز + شريحة إيرتل/في';
+
+  @override
+  String get ignitionOnOffAlert => 'تنبيه تشغيل/إيقاف التشغيل';
+
+  @override
+  String get tamperAlert => 'تنبيه العبث';
+
+  @override
+  String get portable => 'محمول';
+
+  @override
+  String get replacementWarrantyMonths => 'ضمان الاستبدال\n(أشهر)';
+
+  @override
+  String get trackifySmartGpsIot => 'تراكيفاي ذكي جي بي إس إنترنت الأشياء';
+
+  @override
+  String get monthAppSubscription => 'اشتراك تطبيق لمدة 12 شهرًا\n\n';
+
+  @override
+  String get simActivationCharges => 'رسوم تفعيل الشريحة';
+
+  @override
+  String get selectProduct => 'اختر المنتج';
+
+  @override
+  String usersBoughtProduct(String productName) {
+    return '*اشترى 31 مستخدمًا $productName بالأمس';
+  }
+
+  @override
+  String get outOfStock => 'نفذت الكمية';
+
+  @override
+  String get withText => 'مع ';
+
+  @override
+  String buyNowForPrice(String price) {
+    return 'اشترِ الآن مقابل $price روبية';
+  }
+
+  @override
+  String get liveTracking => 'متابعة مباشرة';
+
+  @override
+  String get googlePlay => 'جوجل بلاي';
+
+  @override
+  String get searchForItem => 'البحث عن عنصر...';
+
+  @override
+  String get completePersonalDetails => 'اكتملت التفاصيل الشخصية';
+
+  @override
+  String get personalDetailsDesc => 'يرجى تقديم هذه التفاصيل قبل تثبيت الجهاز.';
+
+  @override
+  String get lastNameLabel => 'الاسم الأخير';
+
+  @override
+  String get enterLastName => 'أدخل اسمك الأخير';
+
+  @override
+  String get requiredField => 'حقل مطلوب';
+
+  @override
+  String get enterMobileNumber => 'أدخل رقم هاتفك المحمول';
+
+  @override
+  String get saveAndContinue => 'حفظ ومتابعة';
+
+  @override
+  String get yourLocationLabel => 'موقعك';
+
+  @override
+  String get deviceWarrantyExpired => 'انتهت صلاحية ضمان الجهاز';
+
+  @override
+  String get receivedTrackifyDevicePrompt =>
+      'هل استلمت جهاز Trackify الخاص بك؟';
+
+  @override
+  String get fivePercentOffPromo => 'خصم 5% عند الشراء من تطبيق Trackify';
+
+  @override
+  String get activateNow => 'تفعيل الآن';
+
+  @override
+  String get exploreExclusiveDeal => 'اكتشف الصفقة الحصرية';
+
+  @override
+  String get rechargePlan => 'خطة الشحن';
+
+  @override
+  String get rechargeExpired => 'انتهت صلاحية الشحن';
+
+  @override
+  String get trackifyBrandLabel => 'تراكيفاي';
+
+  @override
+  String get hrMinLabel => 'ساعة:دقيقة';
+
+  @override
+  String get enterCustomTag => 'أدخل علامة مخصصة';
+
+  @override
+  String get locationNotAvailable => 'الموقع غير متوفر';
+
+  @override
+  String get deleteAccountFailedNoUser =>
+      'فشل حذف الحساب: لم يتم العثور على معرّف المستخدم.';
+
+  @override
+  String get deleteAccountSuccess => 'تم حذف الحساب بنجاح.';
+
+  @override
+  String errorDeletingAccount(String message) {
+    return 'خطأ أثناء حذف الحساب: $message';
+  }
+
+  @override
+  String get invalidVehicleRegistrationNumber =>
+      'يرجى إدخال رقم تسجيل مركبة صالح.';
+
+  @override
+  String get cropImageTitle => 'قص الصورة';
+
+  @override
+  String get pleaseEnterVehicleRegistrationNumber =>
+      'يرجى إدخال رقم تسجيل المركبة.';
+
+  @override
+  String get vehicleRegNoRcHelpText =>
+      'أدخل رقم تسجيل مركبتك كما هو مطبوع على رخصة السير (RC).';
+
+  @override
+  String get vehicleNumberHintAlternative => 'مثال: UP32AB1234';
+
+  @override
+  String get vehicleRegistrationNumberLabel => 'رقم تسجيل المركبة';
+
+  @override
+  String get notificationFallback => 'إشعار';
+
+  @override
+  String get dateHeader => 'التاريخ';
+
+  @override
+  String get timeHeader => 'الوقت';
+
+  @override
+  String get odometerHeader => 'عداد المسافات';
+
+  @override
+  String get locationHeader => 'الموقع';
+
+  @override
+  String get amountHeader => 'المبلغ';
+
+  @override
+  String get rateHeader => 'السعر';
+
+  @override
+  String get litersHeader => 'لترات';
+
+  @override
+  String get mileageHeader => 'مسافة المقطوعة';
+
+  @override
+  String get downloadingStatus => 'جارٍ التنزيل...';
+
+  @override
+  String get downloadCsvButton => 'تنزيل CSV';
+
+  @override
+  String get fileDownloadSuccess => 'تم تنزيل الملف بنجاح!';
+
+  @override
+  String errorDownloadingFile(String error) {
+    return 'خطأ أثناء تنزيل الملف: $error';
+  }
+
+  @override
+  String get couldNotOpenFaq => 'تعذر فتح الأسئلة الشائعة';
+
+  @override
+  String get couldNotOpenTerms => 'تعذر فتح الشروط والأحكام';
+
+  @override
+  String get couldNotOpenPrivacy => 'تعذر فتح سياسة الخصوصية';
 }

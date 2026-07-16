@@ -8,6 +8,8 @@ import 'package:trackify/feature/trips/presentation/view/widgets/all_rides/widge
 
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
+import 'package:hive/hive.dart';
+import 'dart:convert';
 
 import 'package:trackify/l10n/app_localizations.dart';
 import 'package:trackify/core/utils/distance_utils.dart';
@@ -30,10 +32,15 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> {
   bool _isFabExtended = true;
   late final Timer _fabTimer;
   File? _pickedImage;
+  
+  late String _currentTripName;
+  String _currentTripQuote = "";
 
   @override
   void initState() {
     super.initState();
+    _currentTripName = widget.tripName;
+    _loadTripData();
     // Periodic expansion: every 17 seconds
     _fabTimer = Timer.periodic(const Duration(seconds: 17), (timer) {
       if (mounted) {
@@ -48,6 +55,26 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> {
     Future.delayed(const Duration(seconds: 3), () {
       if (mounted) setState(() => _isFabExtended = false);
     });
+  }
+
+  Future<void> _loadTripData() async {
+    try {
+      final box = await Hive.openBox('saved_trips');
+      final trips = box.get('trips_list', defaultValue: []) as List<dynamic>;
+      for (var t in trips) {
+        final decoded = jsonDecode(t as String);
+        if (decoded['title'] == _currentTripName) {
+          if (mounted && decoded['quote'] != null) {
+            setState(() {
+              _currentTripQuote = decoded['quote'];
+            });
+          }
+          break;
+        }
+      }
+    } catch (e) {
+      debugPrint('Error loading trip details: $e');
+    }
   }
 
   @override
@@ -73,11 +100,10 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> {
     final goldColor = theme.colorScheme.primary;
     final l10n = AppLocalizations.of(context)!;
 
-    final nameController = TextEditingController(text: widget.tripName);
+    final nameController = TextEditingController(text: _currentTripName);
     final quoteController = TextEditingController(
-      text: l10n.tripQuoteDefault,
+      text: _currentTripQuote.isNotEmpty ? _currentTripQuote : l10n.tripQuoteDefault,
     );
-
 
     showDialog(
       context: context,
@@ -158,8 +184,38 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> {
                   ),
                   const SizedBox(width: 16),
                   TextButton(
-                    onPressed: () {
-                      Navigator.pop(context);
+                    onPressed: () async {
+                      final newName = nameController.text.trim();
+                      final newQuote = quoteController.text.trim();
+                      
+                      if (newName.isNotEmpty) {
+                        try {
+                          final box = await Hive.openBox('saved_trips');
+                          final trips = List<dynamic>.from(box.get('trips_list', defaultValue: []));
+                          
+                          for (int i = 0; i < trips.length; i++) {
+                            final decoded = jsonDecode(trips[i] as String);
+                            if (decoded['title'] == _currentTripName) {
+                              decoded['title'] = newName;
+                              decoded['quote'] = newQuote;
+                              trips[i] = jsonEncode(decoded);
+                              break;
+                            }
+                          }
+                          await box.put('trips_list', trips);
+                        } catch (e) {
+                          debugPrint('Error updating trip: $e');
+                        }
+
+                        if (mounted) {
+                          setState(() {
+                            _currentTripName = newName;
+                            _currentTripQuote = newQuote;
+                          });
+                        }
+                      }
+                      
+                      if (context.mounted) Navigator.pop(context);
                     },
                     child: Text(
                       l10n.save,
@@ -179,36 +235,65 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> {
   }
 
   void _showDeleteDialog() {
+    final parentContext = context;
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context)!;
+    
+    // Disable the delete button after first click to prevent multiple clicks
+    bool isDeleting = false;
+    
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
+      builder: (dialogContext) => AlertDialog(
         backgroundColor: theme.cardColor,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
         title: Text(
           l10n.deleteTrip,
-          style: TextStyle(fontWeight: FontWeight.bold),
+          style: const TextStyle(fontWeight: FontWeight.bold),
         ),
         content: Text(
           l10n.deleteTripConfirmation,
-          style: TextStyle(color: Colors.grey, fontSize: 14),
+          style: const TextStyle(color: Colors.grey, fontSize: 14),
         ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
+            onPressed: () => Navigator.pop(dialogContext),
             child: Text(l10n.cancel, style: const TextStyle(color: Colors.grey)),
           ),
           TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-              // TODO: Implement actual delete logic
-              Navigator.pop(context); // Go back to trips screen
+            onPressed: () async {
+              if (isDeleting) return;
+              isDeleting = true;
+              
+              // Actual delete logic from Hive
+              try {
+                final box = await Hive.openBox('saved_trips');
+                final trips = List<dynamic>.from(box.get('trips_list', defaultValue: []));
+                
+                // Find and remove the trip by title
+                trips.removeWhere((t) {
+                  try {
+                    final decoded = jsonDecode(t as String);
+                    return decoded['title'] == _currentTripName;
+                  } catch (_) {
+                    return false;
+                  }
+                });
+                
+                await box.put('trips_list', trips);
+              } catch (e) {
+                debugPrint('Error deleting trip: $e');
+              }
+              
+              if (parentContext.mounted) {
+                Navigator.pop(dialogContext); // Pop the dialog
+                Navigator.pop(parentContext); // Pop the screen
+              }
             },
             child: Text(
               l10n.yesImSure,
               style: TextStyle(
-                color: theme.colorScheme.primary,
+                color: theme.colorScheme.error,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -372,7 +457,7 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> {
                           CrossAxisAlignment.end, // Align text to bottom
                       children: [
                         Text(
-                          widget.tripName,
+                          _currentTripName,
                           style: TextStyle(
                             color: isDark ? Colors.white : Colors.black87,
                             fontSize: 22,
@@ -449,7 +534,7 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
               child: Text(
-                "\"${l10n.tripQuoteDefault}\"",
+                "\"${_currentTripQuote.isNotEmpty ? _currentTripQuote : l10n.tripQuoteDefault}\"",
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
@@ -526,7 +611,7 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> {
             context,
             MaterialPageRoute(
               builder: (context) => CreateTripScreen(
-                initialTitle: widget.tripName,
+                initialTitle: _currentTripName,
                 initialSelectedRides: widget.rides,
               ),
             ),

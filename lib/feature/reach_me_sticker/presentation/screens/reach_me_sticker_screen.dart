@@ -25,7 +25,10 @@ class _ReachMeStickerScreenState extends State<ReachMeStickerScreen> {
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios_new, color: theme.colorScheme.onSurface),
+          icon: Icon(
+            Icons.arrow_back_ios_new,
+            color: theme.colorScheme.onSurface,
+          ),
           onPressed: () => Navigator.pop(context),
         ),
       ),
@@ -77,9 +80,7 @@ class _ReachMeStickerScreenState extends State<ReachMeStickerScreen> {
               buyLabel: l10n.buyNewContactSticker,
               onActivate: () {
                 Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => const ScanQrScreen(),
-                  ),
+                  MaterialPageRoute(builder: (context) => const ScanQrScreen()),
                 );
               },
               onBuy: () {
@@ -184,9 +185,7 @@ class _ReachMeStickerScreenState extends State<ReachMeStickerScreen> {
               buyLabel: l10n.buyNewContactSticker,
               onActivate: () {
                 Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => const ScanQrScreen(),
-                  ),
+                  MaterialPageRoute(builder: (context) => const ScanQrScreen()),
                 );
               },
               onBuy: () {

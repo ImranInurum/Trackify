@@ -24,9 +24,6 @@ class DiscoverModel extends DiscoverEntity {
       map['bannerImage'] ?? "",
 
       id: map['_id']?? "",
-
-
-
     );
   }
 

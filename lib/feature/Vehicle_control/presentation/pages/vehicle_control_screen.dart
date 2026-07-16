@@ -633,7 +633,7 @@ class _VehicleControlViewState extends State<VehicleControlView> {
                                   cardColor: cardColor,
                                   onEdit: () => _showTankCapacityDialog(
                                     context,
-                                    vehicle.id,
+                                    vehicle.imei,
                                     vehicle.tankCapacity,
                                   ),
                                 ),
@@ -647,7 +647,7 @@ class _VehicleControlViewState extends State<VehicleControlView> {
                                   cardColor: cardColor,
                                   onEdit: () => _showMileageDialog(
                                     context,
-                                    vehicle.id,
+                                    vehicle.imei,
                                     vehicle.vehicleMileage,
                                   ),
                                 ),
@@ -1133,6 +1133,7 @@ class _VehicleControlViewState extends State<VehicleControlView> {
     ImageSource source,
     String id,
   ) async {
+    final l10n = AppLocalizations.of(context)!;
     final cubit = context.read<VehicleControlCubit>();
     try {
       final picker = ImagePicker();
@@ -1142,13 +1143,13 @@ class _VehicleControlViewState extends State<VehicleControlView> {
           sourcePath: pickedFile.path,
           uiSettings: [
             AndroidUiSettings(
-              toolbarTitle: 'Crop Image',
+              toolbarTitle: l10n.cropImageTitle,
               toolbarColor: Colors.black,
               toolbarWidgetColor: Colors.white,
               initAspectRatio: CropAspectRatioPreset.original,
               lockAspectRatio: false,
             ),
-            IOSUiSettings(title: 'Crop Image'),
+            IOSUiSettings(title: l10n.cropImageTitle),
           ],
         );
         if (croppedFile != null) {

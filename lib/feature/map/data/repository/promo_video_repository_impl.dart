@@ -11,15 +11,15 @@ class PromoVideoRepositoryImpl implements PromoVideoRepository {
   final NetworkApiService _apiService = NetworkApiService();
 
   @override
-  ResultFuture<List<PromoVideoModel>> getPromoVideos() async {
+  ResultFuture<List<PromoVideoModel>> getPromoVideos(String imei) async {
     try {
-      final result = await _apiService.getGetApiResponse(ApiURL.promoVideos);
+      final result = await _apiService.getGetApiResponse(ApiURL.promoVideos(imei));
 
       return result.fold(
         (exception) => Left(exception),
         (response) {
           try {
-            if (response is Map<String, dynamic> && response['success'] == true) {
+            if (response is Map<String, dynamic> && (response['status'] == true || response['success'] == true)) {
               final dataList = response['data'] as List<dynamic>?;
               if (dataList != null) {
                 final videos = dataList.map((e) => PromoVideoModel.fromJson(e as Map<String, dynamic>)).toList();

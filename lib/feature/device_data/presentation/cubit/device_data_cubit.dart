@@ -14,10 +14,10 @@ class DeviceDataCubit extends Cubit<DeviceDataState> {
     this._getCurrentDataPlanUseCase,
   ) : super(const DeviceDataLoading());
 
-  void load() async {
+  void load({String? customImei}) async {
     emit(const DeviceDataLoading());
 
-    final imei = AppPreference.instance.getSync(key: AppPreference.IMEI);
+    final imei = customImei ?? AppPreference.instance.getSync(key: AppPreference.IMEI);
 
     // Fetch recharge plans first (required)
     final plansResult = await _getRechargePlansUseCase();

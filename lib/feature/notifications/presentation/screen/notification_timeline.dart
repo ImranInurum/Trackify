@@ -313,7 +313,9 @@ class _NotificationTimelineViewState extends State<NotificationTimelineView> {
                   children: [
                     Expanded(
                       child: Text(
-                        item.title,
+                        item.title == 'Notification'
+                            ? AppLocalizations.of(context)!.notificationFallback
+                            : item.title,
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.w900,

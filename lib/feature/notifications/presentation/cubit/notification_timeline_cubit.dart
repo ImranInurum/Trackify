@@ -78,12 +78,20 @@ class NotificationTimelineCubit extends Cubit<NotificationTimelineState> {
   }
 
   String _deriveCategory(String title) {
-    title = title.toLowerCase();
-    if (title.contains('motion')) return 'Alerts';
-    if (title.contains('ignition')) return 'Vehicle Info';
-    if (title.contains('speed')) return 'Alerts';
-    if (title.contains('geo')) return 'Geofence';
-    if (title.contains('service')) return 'Maintenance';
+    final t = title.toLowerCase().trim();
+    if (t.startsWith('motion')) return 'Motion Sensed';
+    if (t.startsWith('ignition off')) return 'Ignition Off';
+    if (t.startsWith('ignition on')) return 'Ignition On';
+    if (t.startsWith('accident')) return 'Accident Detected';
+    if (t.startsWith('stationary fall')) return 'Stationary Fall Detected';
+    if (t.startsWith('power supply off')) return 'Power Supply Off';
+    if (t.startsWith('power supply on')) return 'Power Supply On';
+    if (t.startsWith('vehicle switched off')) return 'Vehicle Switched Off';
+    if (t.startsWith('vehicle switched on')) return 'Vehicle Switched On';
+    if (t.startsWith('vibration')) return 'Vibration Sensed';
+    if (t.contains('ignition')) return 'Ignition On';
+    if (t.contains('power supply')) return 'Power Supply On';
+    if (t.contains('vehicle switch')) return 'Vehicle Switched On';
     return 'General';
   }
 

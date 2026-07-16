@@ -76,7 +76,8 @@ class ApiURL {
       "$baseURL/api/device/deviceStatus/$imei";
 
   static const String journeyRideHistory = "$baseURL/api/journey/ride-history";
-  static const String promoVideos = "$baseURL/api/promo/all";
+  static String promoVideos(String imei) => "$baseURL/api/global-video/imei-videos/$imei";
+  static const String promoOffers = "$baseURL/api/banner/all";
 
   // -------------------------
   // LogoURL
@@ -211,6 +212,9 @@ class ApiURL {
 
   static String updateProfile(String userId) =>
       "$baseURL/api/auth/user-detail/$userId";
+
+  static String deleteAccount(String userId) =>
+      "$baseURL/user/delete/$userId";
 
   // -------------------------
   // Statistics

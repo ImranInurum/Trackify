@@ -52,42 +52,79 @@ class _LocationSharingScreenState extends State<LocationSharingScreen> {
           ),
           centerTitle: false,
         ),
-        body: BlocBuilder<LocationSharingCubit, LocationSharingState>(
-          builder: (context, state) {
-            if (state is LocationSharingLoading) {
-              return const Center(child: TrackifyLoader());
-            } else if (state is LocationSharingLoaded) {
-              return ListView.builder(
-                padding: const EdgeInsets.symmetric(vertical: 8),
-                itemCount: state.items.length,
-                itemBuilder: (context, index) {
-                  final item = state.items[index];
-                  return LocationSharingCard(
-                    item: item,
-                    onShareTap: () {
-                      context.read<LocationSharingCubit>().toggleSharing(
-                        item.id,
-                      );
-                    },
-                    onCardTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => BlocProvider.value(
-                            value: context.read<LocationSharingCubit>(),
-                            child: LocationSharingDetailScreen(item: item),
-                          ),
-                        ),
+        body: Stack(
+          children: [
+            BlocBuilder<LocationSharingCubit, LocationSharingState>(
+              builder: (context, state) {
+                if (state is LocationSharingLoading) {
+                  return const Center(child: TrackifyLoader());
+                } else if (state is LocationSharingLoaded) {
+                  return ListView.builder(
+                    padding: const EdgeInsets.symmetric(vertical: 8),
+                    itemCount: state.items.length,
+                    itemBuilder: (context, index) {
+                      final item = state.items[index];
+                      return LocationSharingCard(
+                        item: item,
+                        onShareTap: () {
+                          context.read<LocationSharingCubit>().toggleSharing(
+                            item.id,
+                          );
+                        },
+                        onCardTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => BlocProvider.value(
+                                value: context.read<LocationSharingCubit>(),
+                                child: LocationSharingDetailScreen(item: item),
+                              ),
+                            ),
+                          );
+                        },
                       );
                     },
                   );
-                },
-              );
-            } else if (state is LocationSharingError) {
-              return Center(child: Text(state.message));
-            }
-            return const SizedBox.shrink();
-          },
+                } else if (state is LocationSharingError) {
+                  return Center(child: Text(state.message));
+                }
+                return const SizedBox.shrink();
+              },
+            ),
+            Positioned.fill(
+              child: Container(
+                color: theme.scaffoldBackgroundColor.withOpacity(0.75),
+                child: Center(
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 24,
+                      vertical: 12,
+                    ),
+                    decoration: BoxDecoration(
+                      color: theme.colorScheme.primary,
+                      borderRadius: BorderRadius.circular(100),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.1),
+                          blurRadius: 10,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    child: Text(
+                      l10n.comingSoonOption,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                        letterSpacing: 1.2,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
