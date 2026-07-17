@@ -278,6 +278,7 @@ class _FullScreenMapState extends State<FullScreenMap>
       });
       if (_currentVehicle?.imei != null && _currentVehicle!.imei!.isNotEmpty) {
         _checkWarrantyStatus(_currentVehicle!.imei!);
+        _fetchDeviceStatus(_currentVehicle!.imei!);
       }
     }
   }

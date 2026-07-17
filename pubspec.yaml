@@ -61,7 +61,7 @@ dependencies:
   flutter_tts: ^4.2.5
   app_settings: ^7.0.0
   device_info_plus: ^12.4.0
-  lottie: ^3.5.1
+  lottie: ^3.3.3
 dev_dependencies:
   flutter_test:
     sdk: flutter
