@@ -2010,23 +2010,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
             IconData batteryIcon = Icons.battery_charging_full;
 
             if (batteryVal != null || voltageVal != null) {
-              if (voltageVal != null) {
-                final voltDouble = double.tryParse(
-                  voltageVal.toString().replaceAll(RegExp(r'[^0-9.]'), ''),
-                );
-                if (voltDouble != null) {
-                  final String status = voltDouble < 11.5 ? "Low" : "Normal";
-                  batteryText = "$status (${voltDouble.toStringAsFixed(1)}V)";
-                  batteryColor = voltDouble < 11.5
-                      ? Colors.red
-                      : AppColors.paletteGreen;
-                  batteryIcon = voltDouble < 11.5
-                      ? Icons.battery_alert
-                      : Icons.battery_charging_full;
-                } else {
-                  batteryText = "Normal (${voltageVal.toString()})";
-                }
-              } else if (batteryVal != null) {
+              if (batteryVal != null) {
                 final batDouble = double.tryParse(
                   batteryVal.toString().replaceAll(RegExp(r'[^0-9.]'), ''),
                 );
@@ -2043,9 +2027,25 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                       ? Icons.battery_alert
                       : Icons.battery_charging_full;
                 }
+              } else if (voltageVal != null) {
+                final voltDouble = double.tryParse(
+                  voltageVal.toString().replaceAll(RegExp(r'[^0-9.]'), ''),
+                );
+                if (voltDouble != null) {
+                  final String status = voltDouble < 11.5 ? "Low" : "Normal";
+                  batteryText = "$status (${voltDouble.toStringAsFixed(1)}V)";
+                  batteryColor = voltDouble < 11.5
+                      ? Colors.red
+                      : AppColors.paletteGreen;
+                  batteryIcon = voltDouble < 11.5
+                      ? Icons.battery_alert
+                      : Icons.battery_charging_full;
+                } else {
+                  batteryText = "Normal (${voltageVal.toString()})";
+                }
               }
             } else {
-              batteryText = "Normal (13.6V)";
+              batteryText = "--";
               batteryColor = AppColors.paletteGreen;
               batteryIcon = Icons.battery_charging_full;
             }
@@ -2206,6 +2206,8 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
               progressString = calculatedString;
               prefs.set(key: 'discover_progress_value', value: progressValue.toString());
               prefs.set(key: 'discover_progress_string', value: progressString);
+              prefs.set(key: 'discover_explored', value: explored.toString());
+              prefs.set(key: 'discover_total', value: total.toString());
             }
           }
         }

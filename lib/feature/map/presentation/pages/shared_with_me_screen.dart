@@ -24,13 +24,7 @@ class SharedWithMeScreen extends StatelessWidget {
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
-          l10n.locationSharedWithMe,
-          style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
-            color: theme.colorScheme.onSurface,
-          ),
-        ),
+          l10n.locationSharedWithMe, ),
       ),
       body: Center(
         child: Padding(

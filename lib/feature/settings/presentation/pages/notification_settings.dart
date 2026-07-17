@@ -25,9 +25,7 @@ class NotificationSettings extends StatelessWidget{
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: Text(
-          l10n.notificationSettings,
-          style: TextStyle(color: Theme.of(context).colorScheme.onSurface, fontWeight: FontWeight.bold),
-        ),
+          l10n.notificationSettings, ),
         surfaceTintColor: Colors.transparent,
       ),
       body: Column(

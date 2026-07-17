@@ -44,6 +44,51 @@ class CreateTripCubit extends Cubit<CreateTripState> {
     }
   }
 
+  Future<String> _getUniqueTitle(String baseTitle) async {
+    try {
+      final box = await Hive.openBox('saved_trips');
+      final tripsJson = box.get('trips_list', defaultValue: []) as List<dynamic>;
+      final Set<String> existingTitles = {};
+      for (var jsonStr in tripsJson) {
+        try {
+          final decoded = jsonDecode(jsonStr as String);
+          if (decoded['title'] != null) {
+            existingTitles.add(decoded['title'].toString().trim().toLowerCase());
+          }
+        } catch (_) {}
+      }
+
+      String proposedTitle = baseTitle.trim();
+      if (!existingTitles.contains(proposedTitle.toLowerCase())) {
+        return proposedTitle;
+      }
+
+      final tripNumberPattern = RegExp(r'^(.+?)\s*(?:(\d+)|\((\d+)\))$');
+      final match = tripNumberPattern.firstMatch(proposedTitle);
+      String prefix = proposedTitle;
+      int counter = 1;
+
+      if (match != null) {
+        prefix = match.group(1) ?? proposedTitle;
+        final numStr = match.group(2) ?? match.group(3);
+        if (numStr != null) {
+          counter = int.parse(numStr);
+        }
+      }
+
+      prefix = prefix.trim();
+      while (true) {
+        counter++;
+        final newTitle = "$prefix $counter";
+        if (!existingTitles.contains(newTitle.toLowerCase())) {
+          return newTitle;
+        }
+      }
+    } catch (_) {
+      return baseTitle;
+    }
+  }
+
   Future<void> saveTrip() async {
     if (state is CreateTripSuccess) {
       final currentSuccess = state as CreateTripSuccess;
@@ -54,7 +99,9 @@ class CreateTripCubit extends Cubit<CreateTripState> {
       
       emit(CreateTripLoading());
       
-      final tripTitle = currentSuccess.tripTitle ?? "Trip 1";
+      final baseTitle = currentSuccess.tripTitle ?? "Trip 1";
+      final tripTitle = await _getUniqueTitle(baseTitle);
+      
       final tripData = {
         'title': tripTitle,
         'rides': currentSuccess.selectedRides.map((e) => e.toJson()).toList(),

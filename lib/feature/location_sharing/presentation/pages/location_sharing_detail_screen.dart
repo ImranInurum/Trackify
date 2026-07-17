@@ -47,10 +47,7 @@ class _LocationSharingDetailScreenState
           ),
           onPressed: () => Navigator.of(context).pop(),
         ),
-        title: Text(
-          widget.item.name,
-          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-        ),
+        title: Text(widget.item.name),
         centerTitle: false,
       ),
       body: BlocBuilder<LocationSharingCubit, LocationSharingState>(

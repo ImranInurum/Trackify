@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:trackify/feature/settings/presentation/pages/current_sessions_screen.dart';
 import 'package:trackify/feature/settings/presentation/pages/delete_account_screen.dart';
 import 'package:trackify/feature/settings/presentation/widgets/setting_list_tile.dart';
@@ -25,10 +25,8 @@ class PrivacyScreen extends StatelessWidget {
         ),
         title: Text(
           l10n.privacy,
-          style: TextStyle(
-            color: Theme.of(context).colorScheme.onSurface,
+          style: TextStyle(fontSize: 20.0, color: Theme.of(context).colorScheme.onSurface,
             fontWeight: FontWeight.bold,
-            fontSize: 18,
           ),
         ),
         surfaceTintColor: Colors.transparent,
@@ -116,8 +114,7 @@ class PrivacyScreen extends StatelessWidget {
                   TextField(
                     controller: oldPasswordController,
                     obscureText: true,
-                    style: TextStyle(
-                      color: Theme.of(context).colorScheme.onSurface,
+                    style: TextStyle(color: Theme.of(context).colorScheme.onSurface,
                     ),
                     decoration: InputDecoration(
                       hintText: l10n.oldPassword,
@@ -148,8 +145,7 @@ class PrivacyScreen extends StatelessWidget {
                   TextField(
                     controller: newPasswordController,
                     obscureText: true,
-                    style: TextStyle(
-                      color: Theme.of(context).colorScheme.onSurface,
+                    style: TextStyle(color: Theme.of(context).colorScheme.onSurface,
                     ),
                     decoration: InputDecoration(
                       hintText: l10n.newPassword,
@@ -180,8 +176,7 @@ class PrivacyScreen extends StatelessWidget {
                   TextField(
                     controller: confirmPasswordController,
                     obscureText: true,
-                    style: TextStyle(
-                      color: Theme.of(context).colorScheme.onSurface,
+                    style: TextStyle(color: Theme.of(context).colorScheme.onSurface,
                     ),
                     decoration: InputDecoration(
                       hintText: l10n.confirmNewPasswordTitle,
@@ -261,8 +256,7 @@ class PrivacyScreen extends StatelessWidget {
                   },
                   child: Text(
                     l10n.cancel,
-                    style: TextStyle(
-                      color: Theme.of(context).colorScheme.onSurface,
+                    style: TextStyle(color: Theme.of(context).colorScheme.onSurface,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -284,8 +278,7 @@ class PrivacyScreen extends StatelessWidget {
                   },
                   child: Text(
                     l10n.save,
-                    style: TextStyle(
-                      color: Theme.of(context).colorScheme.primary,
+                    style: TextStyle(color: Theme.of(context).colorScheme.primary,
                       fontWeight: FontWeight.w600,
                     ),
                   ),

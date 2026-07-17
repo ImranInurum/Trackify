@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:trackify/core/config/font_manager.dart';
 import 'package:trackify/l10n/app_localizations_ar.dart';
@@ -45,13 +45,7 @@ class _UpdateScreenState extends State<UpdateScreen> {
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
-          l10n.appUpdates,
-          style: TextStyle(
-            fontSize: width * .05,
-            fontWeight: FontWeightManager.semibold,
-            color:Theme.of(context).colorScheme.onSurfaceVariant
-          ),
-        ),
+          l10n.appUpdates, ),
         centerTitle: false,
       ),
       body: SafeArea(
@@ -168,8 +162,7 @@ class _UpdateScreenState extends State<UpdateScreen> {
               return Center(
                 child: Text(
                   state.message,
-                  style: TextStyle(
-                    color:Theme.of(context). colorScheme.error
+                  style: TextStyle(color:Theme.of(context). colorScheme.error
                   ),
                 ),
               );

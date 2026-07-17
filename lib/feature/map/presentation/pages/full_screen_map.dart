@@ -2888,21 +2888,7 @@ class _FullScreenMapState extends State<FullScreenMap>
         IconData batteryIcon = Icons.battery_charging_full;
 
         if (batteryVal != null || voltageVal != null) {
-          if (voltageVal != null) {
-            final voltDouble = double.tryParse(
-              voltageVal.toString().replaceAll(RegExp(r'[^0-9.]'), ''),
-            );
-            if (voltDouble != null) {
-              final String status = voltDouble < 11.5 ? "Low" : "Normal";
-              batteryText = "$status (${voltDouble.toStringAsFixed(1)}V)";
-              batteryColor = voltDouble < 11.5 ? Colors.red : Colors.green;
-              batteryIcon = voltDouble < 11.5
-                  ? Icons.battery_alert
-                  : Icons.battery_charging_full;
-            } else {
-              batteryText = "Normal (${voltageVal.toString()})";
-            }
-          } else if (batteryVal != null) {
+          if (batteryVal != null) {
             final batDouble = double.tryParse(
               batteryVal.toString().replaceAll(RegExp(r'[^0-9.]'), ''),
             );
@@ -2918,6 +2904,20 @@ class _FullScreenMapState extends State<FullScreenMap>
                   : Icons.battery_charging_full;
             } else {
               batteryText = "Normal (${batteryVal.toString()})";
+            }
+          } else if (voltageVal != null) {
+            final voltDouble = double.tryParse(
+              voltageVal.toString().replaceAll(RegExp(r'[^0-9.]'), ''),
+            );
+            if (voltDouble != null) {
+              final String status = voltDouble < 11.5 ? "Low" : "Normal";
+              batteryText = "$status (${voltDouble.toStringAsFixed(1)}V)";
+              batteryColor = voltDouble < 11.5 ? Colors.red : Colors.green;
+              batteryIcon = voltDouble < 11.5
+                  ? Icons.battery_alert
+                  : Icons.battery_charging_full;
+            } else {
+              batteryText = "Normal (${voltageVal.toString()})";
             }
           }
         }

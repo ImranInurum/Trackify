@@ -51,17 +51,20 @@ jobs:
       - name: Build APK
         run: flutter build apk --release
 
+      - name: Rename APK
+        run: mv build/app/outputs/flutter-apk/app-release.apk build/app/outputs/flutter-apk/Trackify.apk
+
       # 7. Upload the signed APK as a GitHub Artifact
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: release-apk
-          path: build/app/outputs/flutter-apk/app-release.apk
+          name: Trackify
+          path: build/app/outputs/flutter-apk/Trackify.apk
 
       # 8. Upload to Firebase App Distribution
       - name: Upload to Firebase App Distribution
         uses: w9jds/firebase-action@v11.16.0
         with:
-          args: appdistribution:distribute build/app/outputs/flutter-apk/app-release.apk --app ${{ secrets.FIREBASE_APP_ID }} --groups "testers"
+          args: appdistribution:distribute build/app/outputs/flutter-apk/Trackify.apk --app ${{ secrets.FIREBASE_APP_ID }} --groups "testers"
         env:
           GCP_SA_KEY: ${{ secrets.FIREBASE_SERVICE_CREDENTIALS }}

@@ -29,7 +29,7 @@ void main() async {
     // Handshake based on socket_service.dart
     final handshake = {
       "type": "flutter",
-      "imei": "860710086022855",
+      "imei": "864662074414329",
     }; //864662074414329
     socket.write('${jsonEncode(handshake)}\n');
     print('Handshake sent: $handshake');

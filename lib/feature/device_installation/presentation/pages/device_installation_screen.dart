@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:trackify/feature/add_vehicle_and_device/add_vehicle/data/repository/add_vehicle_repository_impl.dart';
 import 'package:trackify/feature/add_vehicle_and_device/add_vehicle/domain/use_case/add_vehicle_use_case.dart';
@@ -253,13 +253,7 @@ class _DeviceInstallationScreenState extends State<DeviceInstallationScreen>
             onPressed: () => Navigator.pop(context),
           ),
           title: Text(
-            l10n.deviceInstallation,
-            style: TextStyle(
-              fontSize: 18,
-              color: theme.colorScheme.onSurface,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
+            l10n.deviceInstallation, ),
           actions: [
             Theme(
               data: Theme.of(context).copyWith(

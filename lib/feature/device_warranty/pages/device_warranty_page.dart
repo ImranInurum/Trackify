@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:trackify/core/config/font_manager.dart';
@@ -84,14 +84,7 @@ class _WarrantyScreenState extends State<WarrantyScreen> {
                 onPressed: () => Navigator.pop(context),
               )
             : null,
-        title: Text(
-          l10n.warranty_title,
-          style: theme.textTheme.titleMedium?.copyWith(
-            color: colorScheme.onSurface,
-            fontWeight: FontWeightManager.semibold,
-            fontSize: 18,
-          ),
-        ),
+        title: Text(l10n.warranty_title),
       ),
       body: BlocBuilder<DeviceWarrantyCubit, DeviceWarrantyState>(
         builder: (context, state) {
@@ -258,8 +251,7 @@ class _WarrantyScreenState extends State<WarrantyScreen> {
               Expanded(
                 child: Text(
                   offer?.title.isNotEmpty == true ? offer!.title : l10n.warranty_extend,
-                  style: TextStyle(
-                    color: colorScheme.onSurface.withValues(alpha: 0.9),
+                  style: TextStyle(color: colorScheme.onSurface.withValues(alpha: 0.9),
                     fontWeight: FontWeight.w400,
                     fontSize: 16,
                     height: 1.4,
@@ -283,8 +275,7 @@ class _WarrantyScreenState extends State<WarrantyScreen> {
                     children: [
                       Text(
                         l10n.warranty_vehicle,
-                        style: TextStyle(
-                          color: colorScheme.onSurface.withValues(alpha: 0.5),
+                        style: TextStyle(color: colorScheme.onSurface.withValues(alpha: 0.5),
                           fontSize: 12,
                         ),
                       ),
@@ -306,8 +297,7 @@ class _WarrantyScreenState extends State<WarrantyScreen> {
                     children: [
                       Text(
                         l10n.warranty_expiry,
-                        style: TextStyle(
-                          color: colorScheme.onSurface.withValues(alpha: 0.5),
+                        style: TextStyle(color: colorScheme.onSurface.withValues(alpha: 0.5),
                           fontSize: 12,
                         ),
                       ),
@@ -329,8 +319,7 @@ class _WarrantyScreenState extends State<WarrantyScreen> {
                                   : (warranty?.daysLeftText.isNotEmpty == true
                                       ? '(${warranty!.daysLeftText})'
                                       : ''),
-                              style: TextStyle(
-                                color: (warranty?.daysLeft ?? 0) <= 0
+                              style: TextStyle(color: (warranty?.daysLeft ?? 0) <= 0
                                     ? colorScheme.error
                                     : const Color(0xFF81C784),
                                 fontSize: 11,
@@ -391,15 +380,13 @@ class _WarrantyScreenState extends State<WarrantyScreen> {
                 children: [
                   TextSpan(
                     text: highlightText,
-                    style: TextStyle(
-                      color: colorScheme.tertiary,
+                    style: TextStyle(color: colorScheme.tertiary,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
                   TextSpan(
                     text: normalText,
-                    style: TextStyle(
-                      color: colorScheme.onSurface.withValues(alpha: 0.9),
+                    style: TextStyle(color: colorScheme.onSurface.withValues(alpha: 0.9),
                     ),
                   ),
                 ],
@@ -461,8 +448,7 @@ class _WarrantyScreenState extends State<WarrantyScreen> {
                   TextSpan(text: "Extend warranty now @ ${l10n.currencySymbol}${offer.offerPrice.toInt()} "),
                   TextSpan(
                     text: "${l10n.currencySymbol}${offer.originalPrice.toInt()}",
-                    style: TextStyle(
-                      decoration: TextDecoration.lineThrough,
+                    style: TextStyle(decoration: TextDecoration.lineThrough,
                       color: Colors.black.withValues(alpha: 0.5),
                       fontWeight: FontWeight.w400,
                       fontSize: 14,

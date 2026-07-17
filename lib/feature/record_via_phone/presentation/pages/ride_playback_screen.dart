@@ -1,4 +1,4 @@
-import 'dart:async';
+﻿import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:trackify/l10n/app_localizations.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -327,17 +327,7 @@ class _RidePlaybackScreenState extends State<RidePlaybackScreen> {
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
-          DateFormat('d MMM yy EEE').format(widget.startTime),
-          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-            fontWeight: FontWeight.bold,
-            color: Theme.of(context).colorScheme.onSurface,
-            fontSize: 18, // overriding size because it's a date, 24 might be too big
-          ) ?? TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            color: Theme.of(context).colorScheme.onSurface,
-          ),
-        ),
+          DateFormat('d MMM yy EEE').format(widget.startTime), ),
         actions: [
           IconButton(
             icon: Icon(Icons.video_library, color: Theme.of(context).colorScheme.onSurface),
@@ -787,8 +777,7 @@ class _RidePlaybackScreenState extends State<RidePlaybackScreen> {
               children: [
                 Text(
                   AppLocalizations.of(context)!.exportRide,
-                  style: TextStyle(
-                    color: Theme.of(context).colorScheme.onSurface,
+                  style: TextStyle(color: Theme.of(context).colorScheme.onSurface,
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
                   ),
@@ -796,8 +785,7 @@ class _RidePlaybackScreenState extends State<RidePlaybackScreen> {
                 const SizedBox(height: 24),
                 Text(
                   AppLocalizations.of(context)!.chooseNicknameHint,
-                  style: TextStyle(
-                    color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+                  style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
                     fontSize: 14,
                   ),
                 ),
@@ -828,8 +816,7 @@ class _RidePlaybackScreenState extends State<RidePlaybackScreen> {
                 const SizedBox(height: 16),
                 Text(
                   AppLocalizations.of(context)!.exportRideVideoDesc,
-                  style: TextStyle(
-                    color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+                  style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
                     fontSize: 12,
                     height: 1.4,
                   ),
@@ -842,8 +829,7 @@ class _RidePlaybackScreenState extends State<RidePlaybackScreen> {
                       onPressed: () => Navigator.pop(ctx),
                       child: Text(
                         AppLocalizations.of(context)!.cancelBtn,
-                        style: TextStyle(
-                          color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+                        style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
                           fontSize: 15,
                           fontWeight: FontWeight.bold,
                         ),
@@ -866,8 +852,7 @@ class _RidePlaybackScreenState extends State<RidePlaybackScreen> {
                       },
                       child: Text(
                         AppLocalizations.of(context)!.exportLabel,
-                        style: TextStyle(
-                          color: Theme.of(context).colorScheme.primary,
+                        style: TextStyle(color: Theme.of(context).colorScheme.primary,
                           fontSize: 15,
                           fontWeight: FontWeight.bold,
                         ),

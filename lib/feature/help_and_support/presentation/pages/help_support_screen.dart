@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:trackify/feature/app_updates/presentiation/pages/update_screen.dart';
 import 'package:trackify/core/config/font_manager.dart';
@@ -78,13 +78,7 @@ class _HelpSuggestionScreenState extends State<HelpSuggestionScreen> {
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: Text(
-          l10n.helpAndSuggestion,
-          style: TextStyle(
-            color: Theme.of(context).colorScheme.onSurface,
-            fontSize: 17,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
+          l10n.helpAndSuggestion, ),
       ),
       body: GestureDetector(
         behavior: HitTestBehavior.opaque,
@@ -171,8 +165,7 @@ class _HelpSuggestionScreenState extends State<HelpSuggestionScreen> {
                       ),
                       child: Text(
                         l10n.reportAnIssue,
-                        style: TextStyle(
-                          color: isReportIssue
+                        style: TextStyle(color: isReportIssue
                               ? Theme.of(context).colorScheme.primary
                               : Theme.of(context).colorScheme.onSurface,
                           fontWeight: FontWeight.bold,
@@ -204,8 +197,7 @@ class _HelpSuggestionScreenState extends State<HelpSuggestionScreen> {
                       ),
                       child: Text(
                         l10n.suggestion,
-                        style: TextStyle(
-                          color: !isReportIssue
+                        style: TextStyle(color: !isReportIssue
                               ? Theme.of(context).colorScheme.primary
                               : Theme.of(context).colorScheme.onSurface,
                           fontWeight: FontWeight.bold,
@@ -558,8 +550,7 @@ class _HelpSuggestionScreenState extends State<HelpSuggestionScreen> {
                                 ? l10n.selectCallSlot
                                 : l10n.send,
 
-                            style: TextStyle(
-                              color: Theme.of(context).colorScheme.primary,
+                            style: TextStyle(color: Theme.of(context).colorScheme.primary,
 
                               fontWeight: FontWeight.bold,
 
@@ -649,8 +640,7 @@ class _HelpSuggestionScreenState extends State<HelpSuggestionScreen> {
         const SizedBox(height: 12),
         Text(
           l10n.forceMigrateDesc1,
-          style: TextStyle(
-            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+          style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
             fontSize: 13,
             height: 1.4,
           ),
@@ -658,8 +648,7 @@ class _HelpSuggestionScreenState extends State<HelpSuggestionScreen> {
         const SizedBox(height: 8),
         Text(
           l10n.forceMigrateDesc2,
-          style: TextStyle(
-            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+          style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
             fontSize: 13,
             height: 1.4,
           ),
@@ -678,8 +667,7 @@ class _HelpSuggestionScreenState extends State<HelpSuggestionScreen> {
             ),
             child: Text(
               l10n.forceMigrate,
-              style: TextStyle(
-                color: Theme.of(context).colorScheme.onPrimary,
+              style: TextStyle(color: Theme.of(context).colorScheme.onPrimary,
                 fontWeight: FontWeight.bold,
                 fontSize: 15,
               ),
@@ -770,8 +758,7 @@ class _HelpSuggestionScreenState extends State<HelpSuggestionScreen> {
       alignment: Alignment.centerRight,
       child: Text(
         "B3000507.V19.7.1.J406",
-        style: TextStyle(
-          color: Theme.of(context).colorScheme.onSurface.withOpacity(0.4),
+        style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.4),
           fontSize: 11,
         ),
       ),

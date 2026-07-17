@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -115,13 +115,7 @@ class _IntroDetailsScreenState extends State<IntroDetailsScreen> {
           ),
         ),
         title: Text(
-          "${widget.title} Intro",
-          style: TextStyle(
-            color: colorScheme.onSurface,
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
+          "${widget.title} Intro", ),
         centerTitle: false,
       ),
 
@@ -199,8 +193,7 @@ class _IntroDetailsScreenState extends State<IntroDetailsScreen> {
 
                             Text(
                               slide.description,
-                              style: TextStyle(
-                                color: colorScheme.onSurface.withOpacity(0.7),
+                              style: TextStyle(color: colorScheme.onSurface.withOpacity(0.7),
                                 fontSize: 16,
                                 height: 1.6,
                               ),

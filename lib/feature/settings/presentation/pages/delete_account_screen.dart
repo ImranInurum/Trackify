@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:trackify/l10n/app_localizations.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:trackify/app/cubit/app_cubit.dart';
@@ -22,13 +22,7 @@ class DeleteAccountScreen extends StatelessWidget {
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: Text(
-          l10n.deleteAccountTitle,
-          style: TextStyle(
-            color: Theme.of(context).colorScheme.onSurface,
-            fontWeight: FontWeight.bold,
-            fontSize: 18,
-          ),
-        ),
+          l10n.deleteAccountTitle, ),
         surfaceTintColor: Colors.transparent,
       ),
       body: SingleChildScrollView(
@@ -50,8 +44,7 @@ class DeleteAccountScreen extends StatelessWidget {
                         TextSpan(text: '${l10n.hi} '),
                         TextSpan(
                           text: userName,
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
+                          style: TextStyle(fontWeight: FontWeight.bold,
                             color: Theme.of(context).colorScheme.onSurface,
                           ),
                         ),
@@ -211,8 +204,7 @@ class DeleteAccountScreen extends StatelessWidget {
               },
               child: Text(
                 l10n.cancel,
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.onSurface,
+                style: TextStyle(color: Theme.of(context).colorScheme.onSurface,
                   fontWeight: FontWeight.w600,
                 ),
               ),

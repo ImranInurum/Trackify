@@ -1,4 +1,4 @@
-import 'dart:async';
+﻿import 'dart:async';
 import 'dart:io' show Platform;
 import 'dart:ui' as ui;
 
@@ -492,9 +492,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
               backgroundColor: Theme.of(context).cardColor,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
               title: Text(
-                "Edit Tag",
-                style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
-              ),
+                "Edit Tag", ),
               content: Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -540,8 +538,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
                           ),
                           child: Text(
                             tag,
-                            style: TextStyle(
-                              color: isSelected
+                            style: TextStyle(color: isSelected
                                   ? Theme.of(context).colorScheme.primary
                                   : Theme.of(context).colorScheme.onSurface.withOpacity(0.8),
                               fontSize: 13,
@@ -646,8 +643,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
                       ),
                       child: Text(
                         tag,
-                        style: TextStyle(
-                          color: isSelected
+                        style: TextStyle(color: isSelected
                               ? Theme.of(context).colorScheme.primary
                               : Theme.of(context).colorScheme.onSurface.withOpacity(0.8),
                           fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
@@ -808,8 +804,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
               ),
               child: Text(
                 ride.tag,
-                style: TextStyle(
-                  color: isDark ? Colors.white.withOpacity(0.7) : Colors.black54,
+                style: TextStyle(color: isDark ? Colors.white.withOpacity(0.7) : Colors.black54,
                   fontSize: 11,
                   fontWeight: FontWeight.w500,
                 ),
@@ -961,8 +956,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
         const SizedBox(height: 4),
         Text(
           label,
-          style: TextStyle(
-            color: isDark ? Colors.white.withOpacity(0.5) : Colors.black45,
+          style: TextStyle(color: isDark ? Colors.white.withOpacity(0.5) : Colors.black45,
             fontSize: 12,
             fontWeight: FontWeight.w500,
           ),
@@ -1139,13 +1133,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
               ),
               onPressed: () => Navigator.pop(context),
             ),
-            title: Text(
-              AppLocalizations.of(context)!.recordViaPhoneTitle,
-              style: theme.textTheme.headlineSmall?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: Theme.of(context).colorScheme.onSurface,
-              ),
-            ),
+            title: Text(AppLocalizations.of(context)!.recordViaPhoneTitle),
             actions: [
               if (widget.imei.isEmpty || context.read<AppCubit>().state.devices.isEmpty)
                 PopupMenuButton<String>(
@@ -1181,8 +1169,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
                       value: 'Shared Locations',
                       child: Text(
                         'Shared Locations',
-                        style: TextStyle(
-                          color: Theme.of(context).colorScheme.onSurface,
+                        style: TextStyle(color: Theme.of(context).colorScheme.onSurface,
                         ),
                       ),
                     ),
@@ -1190,8 +1177,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
                       value: 'Shared Rides',
                       child: Text(
                         'Shared Rides',
-                        style: TextStyle(
-                          color: Theme.of(context).colorScheme.onSurface,
+                        style: TextStyle(color: Theme.of(context).colorScheme.onSurface,
                         ),
                       ),
                     ),
@@ -1508,8 +1494,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
                 alignment: Alignment.center,
                 child: Text(
                   userName.isNotEmpty ? userName[0].toUpperCase() : 'U',
-                  style: TextStyle(
-                    color: Colors.black.withOpacity(0.7),
+                  style: TextStyle(color: Colors.black.withOpacity(0.7),
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
                   ),
@@ -1766,8 +1751,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
               isRecording
                   ? AppLocalizations.of(context)!.stopRideRecording
                   : AppLocalizations.of(context)!.startRideRecording,
-              style: TextStyle(
-                color: Theme.of(context).colorScheme.primary,
+              style: TextStyle(color: Theme.of(context).colorScheme.primary,
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
               ),
@@ -1866,8 +1850,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
                               const SizedBox(width: 8),
                               Text(
                                 _selectedFilterTag != null ? 'Tag: $_selectedFilterTag' : 'Filter by tags',
-                                style: TextStyle(
-                                  color: _selectedFilterTag != null
+                                style: TextStyle(color: _selectedFilterTag != null
                                       ? Theme.of(context).colorScheme.primary
                                       : Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
                                   fontSize: 13,
@@ -1906,8 +1889,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
                               const SizedBox(width: 8),
                               Text(
                                 'Date: $_activeDateFilter',
-                                style: TextStyle(
-                                  color: _activeDateFilter != "Today"
+                                style: TextStyle(color: _activeDateFilter != "Today"
                                       ? Theme.of(context).colorScheme.primary
                                       : Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
                                   fontSize: 13,
@@ -1927,8 +1909,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
                       ? Center(
                           child: Text(
                             "No past rides found",
-                            style: TextStyle(
-                              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+                            style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
                             ),
                           ),
                         )
@@ -2193,8 +2174,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
                               const SizedBox(width: 8),
                               Text(
                                 _selectedFilterTag != null ? 'Tag: $_selectedFilterTag' : 'Filter by tags',
-                                style: TextStyle(
-                                  color: _selectedFilterTag != null
+                                style: TextStyle(color: _selectedFilterTag != null
                                       ? colorScheme.primary
                                       : colorScheme.onSurface.withValues(alpha: 0.6),
                                   fontSize: 13,
@@ -2378,8 +2358,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
           ),
           Text(
             label,
-            style: TextStyle(
-              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
+            style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
               fontSize: 13,
             ),
           ),
@@ -2943,8 +2922,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
                   children: [
                     Text(
                       AppLocalizations.of(context)!.selectRideMode,
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.onSurface,
+                      style: TextStyle(color: Theme.of(context).colorScheme.onSurface,
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
                       ),
@@ -2961,8 +2939,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
                               children: [
                                 Text(
                                   AppLocalizations.of(context)!.saveOnline,
-                                  style: TextStyle(
-                                    color: Theme.of(
+                                  style: TextStyle(color: Theme.of(
                                       context,
                                     ).colorScheme.onSurface,
                                     fontSize: 16,
@@ -2971,8 +2948,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
                                 const SizedBox(height: 4),
                                 Text(
                                   AppLocalizations.of(context)!.saveOnlineDesc,
-                                  style: TextStyle(
-                                    color: Theme.of(
+                                  style: TextStyle(color: Theme.of(
                                       context,
                                     ).colorScheme.onSurface.withOpacity(0.7),
                                     fontSize: 13,
@@ -3011,8 +2987,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
                               children: [
                                 Text(
                                   AppLocalizations.of(context)!.saveOffline,
-                                  style: TextStyle(
-                                    color: Theme.of(
+                                  style: TextStyle(color: Theme.of(
                                       context,
                                     ).colorScheme.onSurface,
                                     fontSize: 16,
@@ -3021,8 +2996,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
                                 const SizedBox(height: 4),
                                 Text(
                                   AppLocalizations.of(context)!.saveOfflineDesc,
-                                  style: TextStyle(
-                                    color: Theme.of(
+                                  style: TextStyle(color: Theme.of(
                                       context,
                                     ).colorScheme.onSurface.withOpacity(0.7),
                                     fontSize: 13,
@@ -3063,8 +3037,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
                         ),
                         Text(
                           AppLocalizations.of(context)!.askEveryTime,
-                          style: TextStyle(
-                            color: Theme.of(context).colorScheme.onSurface,
+                          style: TextStyle(color: Theme.of(context).colorScheme.onSurface,
                             fontSize: 14,
                           ),
                         ),
@@ -3078,8 +3051,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
                           onPressed: () => Navigator.pop(ctx),
                           child: Text(
                             AppLocalizations.of(context)!.cancelBtn,
-                            style: TextStyle(
-                              color: Theme.of(
+                            style: TextStyle(color: Theme.of(
                                 context,
                               ).colorScheme.onSurface.withOpacity(0.7),
                               fontSize: 16,
@@ -3097,8 +3069,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
                           },
                           child: Text(
                             AppLocalizations.of(context)!.startRide,
-                            style: TextStyle(
-                              color: Theme.of(context).colorScheme.primary,
+                            style: TextStyle(color: Theme.of(context).colorScheme.primary,
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
                             ),
@@ -3155,8 +3126,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
                   children: [
                     Text(
                       AppLocalizations.of(context)!.selectRideLabel,
-                      style: TextStyle(
-                        color: Theme.of(
+                      style: TextStyle(color: Theme.of(
                           context,
                         ).colorScheme.onSurface.withOpacity(0.7),
                         fontSize: 16,
@@ -3189,8 +3159,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
                             ),
                             child: Text(
                               label,
-                              style: TextStyle(
-                                color: isSelected
+                              style: TextStyle(color: isSelected
                                     ? Theme.of(context).colorScheme.primary
                                     : Theme.of(
                                         context,
@@ -3278,8 +3247,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
                           },
                           child: Text(
                             AppLocalizations.of(context)!.saveBtn,
-                            style: TextStyle(
-                              color: Theme.of(context).colorScheme.primary,
+                            style: TextStyle(color: Theme.of(context).colorScheme.primary,
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
                             ),
@@ -3632,19 +3600,9 @@ class _DateRangePickerBottomSheetState extends State<_DateRangePickerBottomSheet
 
     return ListTile(
       title: Text(
-        title,
-        style: TextStyle(
-          fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-          color: isSelected ? colorScheme.primary : colorScheme.onSurface,
-        ),
-      ),
+        title, ),
       subtitle: Text(
-        subtitle,
-        style: TextStyle(
-          fontSize: 12,
-          color: colorScheme.onSurface.withOpacity(0.5),
-        ),
-      ),
+        subtitle, ),
       trailing: isSelected
           ? Icon(Icons.check, color: colorScheme.primary)
           : null,

@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:app_settings/app_settings.dart';
 import 'package:trackify/feature/settings/presentation/widgets/setting_list_tile.dart';
@@ -82,9 +82,7 @@ class _NotificationSoundsScreenState extends State<NotificationSoundsScreen> {
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: Text(
-          l10n.notificationSettings,
-          style: TextStyle(color: Theme.of(context).colorScheme.onSurface, fontWeight: FontWeight.bold),
-        ),
+          l10n.notificationSettings, ),
         surfaceTintColor: Colors.transparent,
       ),
       body: _isLoading 

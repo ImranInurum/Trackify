@@ -79,13 +79,7 @@ class _CheckoutScreenState extends State<CheckoutScreen>
         backgroundColor: colorScheme.surface,
         elevation: 0,
         title: Text(
-          l10n.checkout,
-          style: TextStyle(
-            color: colorScheme.onSurface,
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
+          l10n.checkout, ),
         centerTitle: false,
         leading: IconButton(
           onPressed: () => Navigator.pop(context),

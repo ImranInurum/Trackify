@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../cubit/feature_cubit.dart';
@@ -74,14 +74,7 @@ class _FeatureDetailsScreenState
 
         title: Text(
 
-          widget.appBarTitle,
-
-          style: TextStyle(
-            color: colorScheme.onSurface,
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
+          widget.appBarTitle, ),
       ),
 
       /// ================= BODY =================
@@ -270,9 +263,7 @@ class _FeatureDetailsScreenState
 
                                 item.subtitle,
 
-                                style: TextStyle(
-
-                                  color: colorScheme
+                                style: TextStyle(color: colorScheme
                                       .onSurface
                                       .withOpacity(0.7),
 

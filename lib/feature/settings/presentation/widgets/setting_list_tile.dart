@@ -33,13 +33,7 @@ class SettingListTile extends StatelessWidget {
           ),
           leading: showIcon ? Icon(icon, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7), size: 28) : null,
           title: Text(
-            title,
-            style: TextStyle(
-              fontWeight: FontWeight.w500,
-              fontSize: 16,
-              color: Theme.of(context).colorScheme.onSurface,
-            ),
-          ),
+            title, ),
           subtitle: isSubtitle == true ? Padding(
             padding: const EdgeInsets.only(top: 4),
             child:Text(

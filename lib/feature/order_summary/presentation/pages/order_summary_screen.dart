@@ -54,13 +54,7 @@ class OrderSummaryScreen extends StatelessWidget {
               icon: Icon(Icons.arrow_back_ios_new, color: color.onSurface),
               onPressed: () => Navigator.pop(context),
             ),
-            title: Text(
-              l10n.orderSummary,
-              style: text.titleMedium?.copyWith(
-                fontWeight: FontWeightManager.bold,
-                color: color.onSurface,
-              ),
-            ),
+            title: Text(l10n.orderSummary),
             centerTitle: false,
           ),
           body: Stack(

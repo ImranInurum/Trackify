@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:trackify/core/config/font_manager.dart';
 import 'package:trackify/feature/health_insurance/presentation/cubit/health_insurance_cubit.dart';
@@ -51,13 +51,7 @@ class _HealthInsuranceScreenState extends State<HealthInsuranceScreen> {
           icon: Icon(Icons.arrow_back_ios_new, color: colorScheme.onSurface),
         ),
         title: Text(
-          l10n.healthInsurance,
-          style: TextStyle(
-            color: colorScheme.onSurface,
-            fontSize: 20,
-            fontWeight: FontWeightManager.semibold,
-          ),
-        ),
+          l10n.healthInsurance, ),
       ),
       body: BlocConsumer<HealthInsuranceCubit, HealthInsuranceState>(
         listenWhen: (previous, current) {

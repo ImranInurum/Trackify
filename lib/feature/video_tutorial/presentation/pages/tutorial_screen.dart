@@ -404,16 +404,7 @@ class _TutorialScreenState
         ),
 
         title: Text(
-          widget.title,
-
-          style: TextStyle(
-            color:
-            colorScheme.onSurface,
-
-            fontWeight:
-            FontWeightManager.medium,
-          ),
-        ),
+          widget.title, ),
 
         iconTheme: IconThemeData(
           color:

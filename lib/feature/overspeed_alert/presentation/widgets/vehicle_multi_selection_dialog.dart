@@ -69,26 +69,27 @@ class _VehicleMultiSelectionDialogState
                 ),
               )
             else
-              ListView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: widget.vehicles.length,
-                itemBuilder: (context, index) {
-                  final vehicle = widget.vehicles[index];
-                  final isSelected = _selected.any((v) => v.id == vehicle.id);
-                  return CheckboxListTile(
-                    contentPadding: EdgeInsets.zero,
-                    title: Text(
-                      '${vehicle.vehicleModel} — ${vehicle.vehicleNumber}',
-                      style: theme.textTheme.bodyMedium,
-                    ),
-                    value: isSelected,
-                    activeColor: theme.colorScheme.primary,
-                    checkColor: theme.colorScheme.onPrimary,
-                    side: BorderSide(color: theme.colorScheme.primary),
-                    onChanged: (_) => _toggle(vehicle),
-                  );
-                },
+              Flexible(
+                child: ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: widget.vehicles.length,
+                  itemBuilder: (context, index) {
+                    final vehicle = widget.vehicles[index];
+                    final isSelected = _selected.any((v) => v.id == vehicle.id);
+                    return CheckboxListTile(
+                      contentPadding: EdgeInsets.zero,
+                      title: Text(
+                        '${vehicle.vehicleModel} — ${vehicle.vehicleNumber}',
+                        style: theme.textTheme.bodyMedium,
+                      ),
+                      value: isSelected,
+                      activeColor: theme.colorScheme.primary,
+                      checkColor: theme.colorScheme.onPrimary,
+                      side: BorderSide(color: theme.colorScheme.primary),
+                      onChanged: (_) => _toggle(vehicle),
+                    );
+                  },
+                ),
               ),
             const SizedBox(height: 12),
             Align(
@@ -96,7 +97,7 @@ class _VehicleMultiSelectionDialogState
               child: TextButton(
                 onPressed: () => Navigator.pop(context, _selected),
                 child: Text(
-                  'Done',
+                  'Close',
                   style: TextStyle(
                     color: theme.colorScheme.primary,
                     fontWeight: FontWeight.bold,

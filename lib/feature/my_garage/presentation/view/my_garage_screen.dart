@@ -69,12 +69,8 @@ class _MyGarageScreenState extends State<MyGarageScreen> {
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
-          l10n.myGarage,
-          style: TextStyle(
-            fontSize: 18,
-            color: Theme.of(context).colorScheme.onSurface,
-            fontWeight: FontWeight.w600,
-          ),
+          l10n.myGarage, 
+          style: Theme.of(context).appBarTheme.titleTextStyle,
         ),
       ),
       body: BlocBuilder<MyGarageCubit, MyGarageState>(
@@ -111,8 +107,7 @@ class _MyGarageScreenState extends State<MyGarageScreen> {
               return Center(
                 child: Text(
                   l10n.noVehiclesInGarage,
-                  style: TextStyle(
-                    color: Theme.of(
+                  style: TextStyle(color: Theme.of(
                       context,
                     ).colorScheme.onSurface.withValues(alpha: 0.6),
                   ),

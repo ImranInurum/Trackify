@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:trackify/feature/trips/presentation/view/widgets/all_rides/all_rides_view.dart';
 import 'package:trackify/feature/trips/presentation/view/widgets/trips/trips_view.dart';
 import '../../../../l10n/app_localizations.dart';
@@ -42,8 +42,7 @@ class _TripScreenState extends State<TripScreen>
         backgroundColor: Theme.of(context).cardColor,
         title: Text(
           l10n.journey,
-          style: TextStyle(
-            color: Theme.of(context).colorScheme.onSurface,
+          style: TextStyle(fontSize: 20.0, color: Theme.of(context).colorScheme.onSurface,
             fontWeight: FontWeight.w600,
           ),
         ),
@@ -69,8 +68,7 @@ class _TripScreenState extends State<TripScreen>
                 value: l10n.sharedRides,
                 child: Text(
                   l10n.sharedRides,
-                  style: TextStyle(
-                    color: Theme.of(context).colorScheme.onSurface,
+                  style: TextStyle(color: Theme.of(context).colorScheme.onSurface,
                   ),
                 ),
               ),
@@ -78,8 +76,7 @@ class _TripScreenState extends State<TripScreen>
                 value: l10n.savedRides,
                 child: Text(
                   l10n.savedRides,
-                  style: TextStyle(
-                    color: Theme.of(context).colorScheme.onSurface,
+                  style: TextStyle(color: Theme.of(context).colorScheme.onSurface,
                   ),
                 ),
               ),
@@ -137,8 +134,7 @@ class _TripScreenState extends State<TripScreen>
           child: Center(
             child: Text(
               label,
-              style: TextStyle(
-                fontWeight: FontWeight.w700,
+              style: TextStyle(fontWeight: FontWeight.w700,
                 color: isSelected
                     ? theme.colorScheme.primary
                     : theme.colorScheme.onSurface.withOpacity(0.5),

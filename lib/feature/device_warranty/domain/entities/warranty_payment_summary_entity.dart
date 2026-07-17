@@ -4,15 +4,17 @@ class WarrantyPaymentSummaryEntity extends Equatable {
   final SelectedPlanEntity? selectedPlan;
   final PaymentSummaryEntity? paymentSummary;
   final String buttonText;
+  final String? orderId;
 
   const WarrantyPaymentSummaryEntity({
     this.selectedPlan,
     this.paymentSummary,
     required this.buttonText,
+    this.orderId,
   });
 
   @override
-  List<Object?> get props => [selectedPlan, paymentSummary, buttonText];
+  List<Object?> get props => [selectedPlan, paymentSummary, buttonText, orderId];
 }
 
 class SelectedPlanEntity extends Equatable {

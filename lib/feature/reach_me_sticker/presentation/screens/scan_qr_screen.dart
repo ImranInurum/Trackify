@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 
 class ScanQrScreen extends StatefulWidget {
@@ -59,13 +59,7 @@ class _ScanQrScreenState extends State<ScanQrScreen> with SingleTickerProviderSt
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
-          "Scan QR Code",
-          style: TextStyle(
-            color: theme.colorScheme.onSurface,
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
+          "Scan QR Code", ),
       ),
       body: Column(
         children: [
@@ -79,7 +73,7 @@ class _ScanQrScreenState extends State<ScanQrScreen> with SingleTickerProviderSt
                 "Scan QR code on the contact sticker",
                 style: TextStyle(
                   color: theme.colorScheme.onSurface,
-                  fontSize: 15,
+                  fontSize: 20.0,
                   fontWeight: FontWeight.w500,
                 ),
               ),

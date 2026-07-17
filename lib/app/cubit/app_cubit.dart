@@ -378,6 +378,33 @@ class AppCubit extends Cubit<AppState> with WidgetsBindingObserver {
     print("[AppCubit] 🔄 Data Received for IMEI: ${deviceData['imei']}");
 
     if (deviceId != null) {
+      // Handle persistent parking_date_time
+      final pDate = deviceData['parking_date_time']?.toString();
+      if (pDate != null && pDate.isNotEmpty && pDate != "null") {
+        AppPreference.instance.set(key: 'parking_date_time_$deviceId', value: pDate);
+      } else {
+        final savedPDate = AppPreference.instance.getSync(key: 'parking_date_time_$deviceId');
+        if (savedPDate.isNotEmpty) {
+          deviceData['parking_date_time'] = savedPDate;
+        }
+      }
+
+      // Handle persistent battery
+      final battery = deviceData['battery'] ??
+          deviceData['batteryLevel'] ??
+          deviceData['battery_level'] ??
+          deviceData['bat'];
+      if (battery != null && battery.toString().isNotEmpty && battery.toString() != "null") {
+        AppPreference.instance.set(key: 'battery_$deviceId', value: battery.toString());
+        deviceData['battery'] = battery;
+      } else {
+        final savedBattery = AppPreference.instance.getSync(key: 'battery_$deviceId');
+        if (savedBattery.isNotEmpty) {
+          deviceData['battery'] = savedBattery;
+        }
+      }
+
+
       // Check if device already exists
       final index = currentDevices.indexWhere(
         (d) =>

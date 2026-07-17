@@ -12,6 +12,7 @@ class ExtendWarrantyEntity extends Equatable {
   final int daysLeft;
   final double amountPaid;
   final String paymentStatus;
+  final String? razorpayOrderId;
 
   const ExtendWarrantyEntity({
     required this.id,
@@ -25,6 +26,7 @@ class ExtendWarrantyEntity extends Equatable {
     required this.daysLeft,
     required this.amountPaid,
     required this.paymentStatus,
+    this.razorpayOrderId,
   });
 
   @override
@@ -40,5 +42,6 @@ class ExtendWarrantyEntity extends Equatable {
         daysLeft,
         amountPaid,
         paymentStatus,
+        razorpayOrderId,
       ];
 }

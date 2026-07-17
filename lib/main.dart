@@ -72,6 +72,7 @@ import 'package:trackify/feature/device_warranty/domain/usecase/get_device_warra
 import 'package:trackify/feature/device_warranty/domain/usecases/get_device_warranty_status.dart';
 import 'package:trackify/feature/device_warranty/domain/usecase/get_warranty_payment_summary_usecase.dart';
 import 'package:trackify/feature/device_warranty/domain/usecase/extend_warranty_usecase.dart';
+import 'package:trackify/feature/device_warranty/domain/usecase/verify_payment_usecase.dart';
 import 'package:trackify/feature/device_warranty/data/repository/device_warranty_repository_impl.dart';
 import 'package:trackify/feature/device_warranty/data/data_source/device_warranty_data_source.dart';
 import 'package:trackify/feature/document_folder/presentation/pages/document_screen.dart';
@@ -319,6 +320,7 @@ List<BlocProvider> _buildBlocProviders() {
         );
         return ExtendWarrantyCubit(
           ExtendWarrantyUseCase(repository),
+          VerifyPaymentUseCase(repository),
         );
       },
     ),

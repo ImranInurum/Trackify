@@ -1100,9 +1100,7 @@ class _VehicleControlViewState extends State<VehicleControlView> {
             ListTile(
               leading: Icon(Icons.camera_alt, color: theme.colorScheme.primary),
               title: Text(
-                l10n.camera,
-                style: TextStyle(color: theme.colorScheme.onSurface),
-              ),
+                l10n.camera, ),
               onTap: () {
                 Navigator.pop(ctx);
                 _pickImage(context, ImageSource.camera, id);
@@ -1114,9 +1112,7 @@ class _VehicleControlViewState extends State<VehicleControlView> {
                 color: theme.colorScheme.primary,
               ),
               title: Text(
-                l10n.gallery,
-                style: TextStyle(color: theme.colorScheme.onSurface),
-              ),
+                l10n.gallery, ),
               onTap: () {
                 Navigator.pop(ctx);
                 _pickImage(context, ImageSource.gallery, id);
@@ -1530,11 +1526,7 @@ class _VehicleControlViewState extends State<VehicleControlView> {
           TextButton(
             onPressed: () => Navigator.pop(ctx),
             child: Text(
-              l10n.cancel,
-              style: TextStyle(
-                color: theme.colorScheme.onSurface.withOpacity(0.6),
-              ),
-            ),
+              l10n.cancel, ),
           ),
           TextButton(
             onPressed: () {

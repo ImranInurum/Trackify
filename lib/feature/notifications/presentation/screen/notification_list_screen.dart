@@ -32,13 +32,7 @@ class NotificationListScreen extends StatelessWidget {
             onPressed: () => Navigator.of(context).pop(),
           ),
           title: Text(
-            l10n.notifications,
-            style: TextStyle(
-              color: theme.appBarTheme.foregroundColor,
-              fontWeight: FontWeight.bold,
-              fontSize: 18,
-            ),
-          ),
+            l10n.notifications, ),
           centerTitle: false,
         ),
         body: BlocBuilder<NotificationCubit, NotificationState>(

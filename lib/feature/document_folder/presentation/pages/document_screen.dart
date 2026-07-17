@@ -962,16 +962,7 @@ class _VehicleSelectorSheet extends StatelessWidget {
                           ),
                         ),
                         title: Text(
-                          '${vehicle.vehicleMaker ?? ''} ${vehicle.vehicleModel ?? ''}'.trim(),
-                          style: TextStyle(
-                            color: isSelected
-                                ? colorScheme.primary
-                                : colorScheme.onSurface,
-                            fontWeight: isSelected
-                                ? FontWeight.w600
-                                : FontWeight.w500,
-                          ),
-                        ),
+                          '${vehicle.vehicleMaker ?? ''} ${vehicle.vehicleModel ?? ''}'.trim(), ),
                         subtitle: vehicle.vehicleNumber != null
                             ? Text(
                                 vehicle.vehicleNumber!,

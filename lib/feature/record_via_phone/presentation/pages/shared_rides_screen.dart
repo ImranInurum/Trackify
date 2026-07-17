@@ -38,13 +38,7 @@ class _SharedRidesScreenState extends State<SharedRidesScreen> {
           ),
           onPressed: () => Navigator.pop(context),
         ),
-        title: Text(
-          l10n.sharedRides,
-          style: theme.textTheme.titleLarge?.copyWith(
-            fontWeight: FontWeight.bold,
-            color: colorScheme.onSurface,
-          ),
-        ),
+        title: Text(l10n.sharedRides),
         centerTitle: false,
       ),
       body: Column(

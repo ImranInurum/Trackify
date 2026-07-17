@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -47,13 +47,7 @@ class ServiceDetailsScreen extends StatelessWidget {
           ? theme.scaffoldBackgroundColor
           : const Color(0xFFF5F5F5),
       appBar: AppBar(
-        title: Text(
-          l10n.serviceDetails,
-          style: theme.textTheme.titleLarge?.copyWith(
-            fontWeight: FontWeight.bold,
-            color: colorScheme.onSurface,
-          ),
-        ),
+        title: Text(l10n.serviceDetails),
         elevation: 0,
         backgroundColor: Colors.transparent,
         centerTitle: false,
@@ -86,12 +80,7 @@ class ServiceDetailsScreen extends StatelessWidget {
                         borderRadius: BorderRadius.circular(16),
                       ),
                       title: Text(
-                        l10n.delete,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 18,
-                        ),
-                      ),
+                        l10n.delete, ),
                       content: Text(
                         l10n.deleteServiceLogDesc,
                         style: const TextStyle(fontSize: 15),
@@ -101,8 +90,7 @@ class ServiceDetailsScreen extends StatelessWidget {
                           onPressed: () => Navigator.pop(dialogContext),
                           child: Text(
                             l10n.cancel,
-                            style: TextStyle(
-                              color: colorScheme.onSurface.withOpacity(0.6),
+                            style: TextStyle(color: colorScheme.onSurface.withOpacity(0.6),
                               fontWeight: FontWeight.w600,
                             ),
                           ),
@@ -119,8 +107,7 @@ class ServiceDetailsScreen extends StatelessWidget {
                           },
                           child: Text(
                             l10n.delete,
-                            style: TextStyle(
-                              color: colorScheme.primary,
+                            style: TextStyle(color: colorScheme.primary,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
