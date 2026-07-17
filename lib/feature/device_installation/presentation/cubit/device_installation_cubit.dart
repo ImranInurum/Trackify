@@ -78,7 +78,11 @@ class DeviceInstallationCubit extends Cubit<DeviceInstallationState> {
 
     result.fold(
       (exception) => emit(DeviceInstallationFailure(exception)),
-      (_) => emit(DeviceInstallationSuccess()),
+      (_) {
+        AppPreference.instance.set(key: AppPreference.IMEI, value: imei);
+        AppPreference.instance.set(key: AppPreference.KEY_SELECTED_UID, value: vehicleId);
+        emit(DeviceInstallationSuccess());
+      },
     );
   }
 }

@@ -174,6 +174,7 @@ class _DeviceInstallationScreenState extends State<DeviceInstallationScreen>
               backgroundColor: appColors?.success ?? Colors.green,
             ),
           );
+          context.read<MapCubit>().reset();
           Future.wait([
             context.read<ProfileCubit>().fetchVehicles(),
             context.read<MapCubit>().fetchVehicles(),
