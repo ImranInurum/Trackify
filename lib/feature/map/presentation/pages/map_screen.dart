@@ -1202,8 +1202,11 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                                 _buildMapSection(),
                               if (!_hidePromoBanner &&
                                   !isDeviceNotInstalledOrExpired &&
-                                  !_isWarrantyLoading)
+                                  !_isWarrantyLoading) ...[
+                                const SizedBox(height: 5 ),
                                 _buildPromoBanner(),
+                              ],
+                              SizedBox(height: 5),
                               _buildExploreMore(_selectedDevice),
                               _buildRecentRidesSection(
                                 _selectedDevice,
@@ -1501,20 +1504,22 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
       },
       child: Container(
         height: 400,
-        margin: const EdgeInsets.all(16),
+        margin: const EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 6),
         padding: EdgeInsets.all(6.0),
         decoration: BoxDecoration(
           gradient: LinearGradient(
             colors: [
-              Theme.of(context).colorScheme.primary.withValues(alpha: 0.02),
-              Theme.of(context).colorScheme.secondary.withValues(alpha: 0.005),
+              Theme.of(context).colorScheme.primary.withValues(alpha: 0.08),
+              Theme.of(context).colorScheme.secondary.withValues(alpha: 0.02),
             ],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
           borderRadius: const BorderRadius.all(Radius.circular(16)),
           border: Border.all(
-            color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.05),
+            color: Theme.of(
+              context,
+            ).colorScheme.primary.withValues(alpha: 0.05),
             width: 1,
           ),
           boxShadow: [
@@ -1872,8 +1877,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                 ),
               ),
             ),
-            if (showStats)
-              _buildStatsRow(),
+            if (showStats) _buildStatsRow(),
           ],
         );
       },
@@ -2077,7 +2081,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
             }
 
             return Padding(
-              padding: const EdgeInsets.only(top: 8, bottom: 4, left: 5, right: 5),
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
               child: Column(
                 children: [
                   Padding(
@@ -2281,7 +2285,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
           },
           child: Container(
             margin: const EdgeInsets.symmetric(horizontal: 16),
-            padding: const EdgeInsets.all(12),
+            padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [
@@ -3340,7 +3344,12 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
           }
           final lastRide = state.rides.last;
           return Container(
-            margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            margin: const EdgeInsets.only(
+              left: 16,
+              right: 16,
+              top: 8,
+              bottom: 0,
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -3351,7 +3360,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: 10),
                 RideCard(
                   ride: lastRide,
                   onTap: () {
@@ -3376,7 +3385,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
   Widget _buildVideosSection() {
     final l10n = AppLocalizations.of(context)!;
     return Padding(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.only(left: 16, right: 16, top: 4, bottom: 16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -3384,7 +3393,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
             l10n.videosYouMightLike,
             style: const TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 11),
           BlocBuilder<PromoVideoCubit, PromoVideoState>(
             builder: (context, state) {
               if (state is PromoVideoLoading) {
@@ -3417,6 +3426,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                   return Center(child: Text(l10n.noVideosFound));
                 }
                 return ListView.builder(
+                  padding: EdgeInsets.zero,
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
                   itemCount: state.videos.length + (state.hasMore ? 1 : 0),
