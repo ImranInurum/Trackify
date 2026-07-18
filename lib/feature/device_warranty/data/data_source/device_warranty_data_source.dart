@@ -5,6 +5,7 @@ import '../model/device_warranty_model.dart';
 import '../model/warranty_payment_summary_model.dart';
 import '../model/extend_warranty_model.dart';
 import '../model/warranty_status_model.dart';
+import '../model/verify_payment_model.dart';
 
 abstract class DeviceWarrantyRemoteDataSource {
   Future<DeviceWarrantyModel> getDeviceWarranty(String imei);
@@ -14,6 +15,7 @@ abstract class DeviceWarrantyRemoteDataSource {
   Future<ExtendWarrantyResponseModel> extendWarranty(
     ExtendWarrantyRequest request,
   );
+  Future<void> verifyPayment(VerifyPaymentRequest request);
   Future<WarrantyStatusModel> getDeviceWarrantyStatus(String imei);
 }
 
@@ -83,6 +85,18 @@ class DeviceWarrantyRemoteDataSourceImpl implements DeviceWarrantyRemoteDataSour
         final Map<String, dynamic> data = responseData['data'] as Map<String, dynamic>? ?? {};
         return ExtendWarrantyResponseModel.fromJson(data);
       },
+    );
+  }
+
+  @override
+  Future<void> verifyPayment(VerifyPaymentRequest request) async {
+    final response = await _apiServices.getPostApiResponse(
+      ApiURL.verifyPayment,
+      request.toJson(),
+    );
+    return response.fold(
+      (l) => throw l,
+      (r) => null,
     );
   }
 

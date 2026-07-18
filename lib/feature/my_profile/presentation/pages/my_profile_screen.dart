@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:trackify/app/cubit/app_cubit.dart';
 import 'package:trackify/app/cubit/app_state.dart';
@@ -94,13 +94,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
-          l10n.myProfile,
-          style: TextStyle(
-            color: Theme.of(context).colorScheme.onSurface,
-            fontSize: 18,
-            fontWeight: FontWeight.normal,
-          ),
-        ),
+          l10n.myProfile, ),
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         elevation: 0,
         surfaceTintColor: Colors.transparent,
@@ -308,8 +302,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                       children: [
                         Text(
                           l10n.profileCompleteness,
-                          style: TextStyle(
-                            color: Theme.of(
+                          style: TextStyle(color: Theme.of(
                               context,
                             ).colorScheme.onSurface.withValues(alpha: 0.6),
                             fontSize: 13,
@@ -605,8 +598,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                               const SizedBox(height: 8),
                               Text(
                                 l10n.addMedicalInsuranceInfo,
-                                style: TextStyle(
-                                  color: Theme.of(context).colorScheme.onSurface
+                                style: TextStyle(color: Theme.of(context).colorScheme.onSurface
                                       .withValues(alpha: 0.4),
                                   fontSize: 13,
                                 ),
@@ -637,8 +629,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                         const SizedBox(height: 4),
                         Text(
                           l10n.editViewVehicleInsuranceDesc,
-                          style: TextStyle(
-                            color: Theme.of(
+                          style: TextStyle(color: Theme.of(
                               context,
                             ).colorScheme.onSurface.withValues(alpha: 0.5),
                             fontSize: 13,
@@ -646,8 +637,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                         ),
                         Text(
                           l10n.myGarageVehiclePath,
-                          style: TextStyle(
-                            color: Theme.of(
+                          style: TextStyle(color: Theme.of(
                               context,
                             ).colorScheme.onSurface.withValues(alpha: 0.5),
                             fontSize: 13,
@@ -676,8 +666,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                         const SizedBox(height: 4),
                         Text(
                           l10n.addEditEmergencyContactDesc,
-                          style: TextStyle(
-                            color: Theme.of(
+                          style: TextStyle(color: Theme.of(
                               context,
                             ).colorScheme.onSurface.withValues(alpha: 0.5),
                             fontSize: 13,
@@ -685,8 +674,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                         ),
                         Text(
                           l10n.myGarageVehiclePath,
-                          style: TextStyle(
-                            color: Theme.of(
+                          style: TextStyle(color: Theme.of(
                               context,
                             ).colorScheme.onSurface.withValues(alpha: 0.5),
                             fontSize: 13,
@@ -735,8 +723,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
             flex: 2,
             child: Text(
               label,
-              style: TextStyle(
-                color: Theme.of(
+              style: TextStyle(color: Theme.of(
                   context,
                 ).colorScheme.onSurface.withValues(alpha: 0.5),
                 fontSize: 14,
@@ -747,8 +734,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
             flex: 3,
             child: Text(
               value,
-              style: TextStyle(
-                color: Theme.of(context).colorScheme.onSurface,
+              style: TextStyle(color: Theme.of(context).colorScheme.onSurface,
                 fontSize: 14,
                 fontWeight: FontWeight.normal,
               ),

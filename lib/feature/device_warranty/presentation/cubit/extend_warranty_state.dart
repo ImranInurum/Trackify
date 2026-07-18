@@ -26,6 +26,15 @@ class ExtendWarrantySuccess extends ExtendWarrantyState {
   List<Object?> get props => [extendedWarranty, message];
 }
 
+class VerifyPaymentSuccess extends ExtendWarrantyState {
+  final String message;
+
+  const VerifyPaymentSuccess(this.message);
+
+  @override
+  List<Object?> get props => [message];
+}
+
 class ExtendWarrantyError extends ExtendWarrantyState {
   final String message;
 

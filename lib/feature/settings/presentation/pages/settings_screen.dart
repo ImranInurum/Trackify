@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:trackify/feature/settings/presentation/pages/notification_settings.dart';
 import 'package:trackify/feature/settings/presentation/pages/privacy_screen.dart';
 import 'package:trackify/feature/settings/presentation/widgets/setting_list_tile.dart';
@@ -54,8 +54,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         ),
         title: Text(
           l10n.settings,
-          style: TextStyle(
-            color: Theme.of(context).colorScheme.onSurface,
+          style: TextStyle(fontSize: 20.0, color: Theme.of(context).colorScheme.onSurface,
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -88,8 +87,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       _searchQuery = value;
                     });
                   },
-                  style: TextStyle(
-                    color: Theme.of(context).colorScheme.onSurface,
+                  style: TextStyle(color: Theme.of(context).colorScheme.onSurface,
                   ),
                   decoration: InputDecoration(
                     filled: false,
@@ -317,8 +315,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       ),
                       title: Text(
                         lang['name'] as String,
-                        style: TextStyle(
-                          color: isSelected
+                        style: TextStyle(color: isSelected
                               ? Theme.of(context).colorScheme.primary
                               : null,
                           fontWeight: isSelected ? FontWeight.bold : null,

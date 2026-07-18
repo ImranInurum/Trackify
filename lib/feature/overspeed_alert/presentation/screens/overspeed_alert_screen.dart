@@ -35,12 +35,7 @@ class _OverSpeedAlertScreenState extends State<OverSpeedAlertScreen> {
       appBar: AppBar(
         backgroundColor: theme.scaffoldBackgroundColor,
         elevation: 0,
-        title: Text(
-          l10n.overspeedAlert,
-          style: theme.textTheme.titleMedium?.copyWith(
-            fontWeight: FontWeight.bold,
-          ),
-        ),
+        title: Text(l10n.overspeedAlert),
         leading: IconButton(
           onPressed: () {
             Navigator.pop(context);

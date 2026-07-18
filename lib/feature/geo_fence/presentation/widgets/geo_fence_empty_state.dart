@@ -30,13 +30,7 @@ class GeoFenceEmptyState extends StatelessWidget {
           ),
         ),
         title: Text(
-          AppLocalizations.of(context)!.geoFenceTitle,
-          style: TextStyle(
-            color: colorScheme.onSurface,
-            fontWeight: FontWeight.w600,
-            fontSize: 18,
-          ),
-        ),
+          AppLocalizations.of(context)!.geoFenceTitle, ),
         centerTitle: false,
       ),
       body: Padding(

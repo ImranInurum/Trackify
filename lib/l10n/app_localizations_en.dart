@@ -3298,4 +3298,44 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get couldNotOpenPrivacy => 'Could not open privacy policy';
+
+  @override
+  String get incorrectPin => 'Incorrect PIN';
+
+  @override
+  String get pinsDoNotMatch => 'PINs do not match. Try again.';
+
+  @override
+  String get resetPinTitle => 'Reset PIN';
+
+  @override
+  String get resetPinDescription =>
+      'Do you want to reset your PIN? This will clear the current PIN.';
+
+  @override
+  String get resetBtn => 'Reset';
+
+  @override
+  String get unlockVehiclePinTitle => 'Unlock Vehicle';
+
+  @override
+  String get lockVehiclePinTitle => 'Lock Vehicle';
+
+  @override
+  String get setNewPinTitle => 'Set New PIN';
+
+  @override
+  String get confirmNewPinTitle => 'Confirm New PIN';
+
+  @override
+  String get enterPinSubtitle => 'Enter your 4-digit PIN to proceed';
+
+  @override
+  String get createNewPinSubtitle => 'Create a 4-digit PIN for vehicle locking';
+
+  @override
+  String get confirmNewPinSubtitle => 'Re-enter your 4-digit PIN to confirm';
+
+  @override
+  String get forgotPin => 'Forgot PIN?';
 }

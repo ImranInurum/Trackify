@@ -4,8 +4,6 @@ import 'package:trackify/feature/trips/presentation/view/widgets/all_rides/widge
 import 'package:trackify/l10n/app_localizations.dart';
 import 'package:trackify/core/utils/distance_utils.dart';
 
-
-
 class RideCard extends StatelessWidget {
   final Ride ride;
   final VoidCallback? onTap;
@@ -14,7 +12,7 @@ class RideCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    
+
     String displayDate = ride.date;
     try {
       DateTime? parsedDate;
@@ -23,13 +21,16 @@ class RideCard extends StatelessWidget {
       }
       if (parsedDate != null) {
         final now = DateTime.now();
-        if (parsedDate.year == now.year && parsedDate.month == now.month && parsedDate.day == now.day) {
+        if (parsedDate.year == now.year &&
+            parsedDate.month == now.month &&
+            parsedDate.day == now.day) {
           displayDate = l10n.today;
         }
       } else {
         final now = DateTime.now();
         final format1 = "${now.day}/${now.month}/${now.year}";
-        final format2 = "${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}";
+        final format2 =
+            "${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}";
         if (ride.date == format1 || ride.date == format2) {
           displayDate = l10n.today;
         }
@@ -46,7 +47,7 @@ class RideCard extends StatelessWidget {
         onTap?.call();
       },
       child: Container(
-        margin: const EdgeInsets.only(bottom: 16),
+        margin: const EdgeInsets.only(bottom: 8),
         decoration: BoxDecoration(
           color: Theme.of(context).cardColor,
           borderRadius: BorderRadius.circular(16),
@@ -108,7 +109,7 @@ class RideCard extends StatelessWidget {
             ),
 
             Padding(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -160,56 +161,56 @@ class RideCard extends StatelessWidget {
                     ],
                   ),
                   Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    padding: const EdgeInsets.only(top: 8),
                     child: Divider(
                       height: 1,
                       color: Theme.of(context).dividerColor,
                     ),
                   ),
-                  Row(
-                    children: [
-                      const Icon(Icons.circle, size: 8, color: Colors.green),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: Text(
-                          ride.startLocation.replaceAll(' ', '') == '0.0000,0.0000' ? l10n.notAvailable : ride.startLocation,
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: Theme.of(
-                              context,
-                            ).colorScheme.onSurface.withValues(alpha: 0.7),
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                      ),
-                      const Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 8),
-                        child: Icon(
-                          Icons.arrow_forward,
-                          size: 12,
-                          color: Colors.grey,
-                        ),
-                      ),
-                      const Icon(
-                        Icons.location_on,
-                        size: 10,
-                        color: Colors.red,
-                      ),
-                      const SizedBox(width: 4),
-                      Expanded(
-                        child: Text(
-                          ride.endLocation.replaceAll(' ', '') == '0.0000,0.0000' ? l10n.notAvailable : ride.endLocation,
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: Theme.of(
-                              context,
-                            ).colorScheme.onSurface.withValues(alpha: 0.7),
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
+                  // Row(
+                  //   children: [
+                  //     const Icon(Icons.circle, size: 8, color: Colors.green),
+                  //     const SizedBox(width: 8),
+                  //     Expanded(
+                  //       child: Text(
+                  //         ride.startLocation.replaceAll(' ', '') == '0.0000,0.0000' ? l10n.notAvailable : ride.startLocation,
+                  //         style: TextStyle(
+                  //           fontSize: 12,
+                  //           color: Theme.of(
+                  //             context,
+                  //           ).colorScheme.onSurface.withValues(alpha: 0.7),
+                  //           overflow: TextOverflow.ellipsis,
+                  //         ),
+                  //       ),
+                  //     ),
+                  // const Padding(
+                  //   padding: EdgeInsets.symmetric(horizontal: 8),
+                  //   child: Icon(
+                  //     Icons.arrow_forward,
+                  //     size: 12,
+                  //     color: Colors.grey,
+                  //   ),
+                  // ),
+                  // const Icon(
+                  //   Icons.location_on,
+                  //   size: 10,
+                  //   color: Colors.red,
+                  // ),
+                  // const SizedBox(width: 4),
+                  // Expanded(
+                  //   child: Text(
+                  //     ride.endLocation.replaceAll(' ', '') == '0.0000,0.0000' ? l10n.notAvailable : ride.endLocation,
+                  //     style: TextStyle(
+                  //       fontSize: 12,
+                  //       color: Theme.of(
+                  //         context,
+                  //       ).colorScheme.onSurface.withValues(alpha: 0.7),
+                  //       overflow: TextOverflow.ellipsis,
+                  //     ),
+                  //   ),
+                  // ),
+                  //   ],
+                  // ),
                 ],
               ),
             ),

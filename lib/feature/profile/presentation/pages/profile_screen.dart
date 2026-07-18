@@ -7,6 +7,7 @@ import 'package:trackify/core/constants/app_images.dart';
 import 'package:trackify/core/utils/shared_preferences.dart';
 import 'package:trackify/feature/add_vehicle_and_device/choice_selector.dart';
 import 'package:trackify/feature/auth/presentation/pages/signin_screen.dart';
+import 'package:trackify/feature/get_more_out/presentation/cubit/disocver_state.dart';
 import 'package:trackify/feature/help_and_support/presentation/pages/help_support_screen.dart';
 import 'package:trackify/feature/my_garage/presentation/view/my_garage_screen.dart';
 import 'package:trackify/feature/my_profile/presentation/pages/my_profile_screen.dart';
@@ -23,8 +24,10 @@ import 'package:trackify/feature/my_profile/presentation/cubit/my_profile_cubit.
 import '../../../../core/common/widgets/vehicle_card.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../../Vehicle_control/presentation/pages/vehicle_control_screen.dart';
+import '../../../Vehicle_control/presentation/widgets/vehicle_pin_dialog.dart';
 import '../../../device_data/presentation/pages/device_data_screen.dart';
 import '../../../device_warranty/pages/device_warranty_page.dart';
+import '../../../get_more_out/presentation/cubit/discover_cubit.dart';
 import '../../../get_more_out/presentation/pages/disover_screen.dart';
 import '../../../upgrade_to_plus/presentation/pages/upgrade_to_plus.dart';
 import '../../../notifications/presentation/screen/notification_timeline.dart';
@@ -98,6 +101,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final targetLockState = !currentLockState;
 
     final l10n = AppLocalizations.of(context)!;
+
+    final success = await VehiclePinDialog.show(context, currentLockState);
+    if (!success) {
+      if (context.mounted) {
+        setState(() {
+          _vehicleCardRefreshCount++;
+        });
+      }
+      return;
+    }
 
     try {
       final repo = VehicleControlRepositoryImpl();
@@ -323,74 +336,157 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                     );
                   },
-                  child: Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 16),
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 14,
-                      vertical: 10,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).cardColor,
-                      borderRadius: BorderRadius.circular(16),
-                      border: Border.all(color: Theme.of(context).dividerColor),
-                    ),
-                    child: Row(
-                      children: [
-                        Stack(
-                          alignment: Alignment.center,
+                  child: BlocBuilder<DiscoverCubit, DiscoverState>(
+                    builder: (context, state) {
+                      double progressValue = double.tryParse(
+                            AppPreference.instance.getSync(key: 'discover_progress_value'),
+                          ) ?? 0.0;
+                      String progressString = AppPreference.instance.getSync(
+                            key: 'discover_progress_string',
+                          );
+                      if (progressString.isEmpty) {
+                        progressString = "0";
+                      }
+
+                      int currentExplored = 10;
+                      int currentTotal = 16;
+                      String exploredStr = AppPreference.instance.getSync(key: 'discover_explored');
+                      String totalStr = AppPreference.instance.getSync(key: 'discover_total');
+                      if (exploredStr.isNotEmpty) currentExplored = int.tryParse(exploredStr) ?? 10;
+                      if (totalStr.isNotEmpty) currentTotal = int.tryParse(totalStr) ?? 16;
+
+                      if (state is DiscoverLoaded) {
+                        int explored = 0;
+                        int total = 0;
+                        final regex = RegExp(r'\d+/(\d+)');
+                        final prefs = AppPreference.instance;
+                        final list = prefs.getStringList(key: AppPreference.KEY_EXPLORED_FEATURES);
+
+                        for (var item in state.discoverList) {
+                          final match = regex.firstMatch(item.exploredText);
+                          int catTotal = 0;
+                          if (match != null) {
+                            catTotal = int.tryParse(match.group(1) ?? '0') ?? 0;
+                          } else {
+                            catTotal = int.tryParse(item.exploredText) ?? 0;
+                          }
+                          
+                          if (catTotal > 0) {
+                            total += catTotal;
+                            
+                            final catExplored = list.where((id) => id.startsWith('${item.id}_')).length;
+                            explored += (catExplored > catTotal ? catTotal : catExplored);
+                          }
+                        }
+                        if (total > 0) {
+                          final calculatedValue = explored / total;
+                          final calculatedString = (calculatedValue * 100).toInt().toString();
+
+                          if (calculatedValue != progressValue || calculatedString != progressString) {
+                            progressValue = calculatedValue;
+                            progressString = calculatedString;
+                            prefs.set(key: 'discover_progress_value', value: progressValue.toString());
+                            prefs.set(key: 'discover_progress_string', value: progressString);
+                          }
+                          if (explored != currentExplored || total != currentTotal) {
+                            currentExplored = explored;
+                            currentTotal = total;
+                            prefs.set(key: 'discover_explored', value: currentExplored.toString());
+                            prefs.set(key: 'discover_total', value: currentTotal.toString());
+                          }
+                        }
+                      }
+
+                      return Container(
+                        margin: const EdgeInsets.symmetric(horizontal: 16),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 14,
+                          vertical: 10,
+                        ),
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: [
+                              Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
+                              Theme.of(context).colorScheme.secondary.withValues(alpha: 0.05),
+                            ],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                          ),
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(
+                            color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.2),
+                          ),
+                        ),
+                        child: Row(
                           children: [
-                            SizedBox(
-                              height: 44,
-                              width: 44,
-                              child: CircularProgressIndicator(
-                                value: 0.63,
-                                strokeWidth: 4,
-                                backgroundColor: Theme.of(context).dividerColor,
-                                color: Theme.of(context).colorScheme.primary,
+                            Stack(
+                              alignment: Alignment.center,
+                              children: [
+                                SizedBox(
+                                  height: 44,
+                                  width: 44,
+                                  child: CircularProgressIndicator(
+                                    value: progressValue,
+                                    strokeWidth: 4,
+                                    backgroundColor: Theme.of(context).dividerColor,
+                                    color: Theme.of(context).colorScheme.primary,
+                                  ),
+                                ),
+                                Text(
+                                  l10n.progressPercentage(progressString),
+                                  style: TextStyle(
+                                    color: Theme.of(context).colorScheme.onSurface,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 12,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  ShaderMask(
+                                    shaderCallback: (bounds) => LinearGradient(
+                                      colors: [
+                                        Theme.of(context).colorScheme.primary,
+                                        Theme.of(context).colorScheme.secondary,
+                                      ],
+                                      begin: Alignment.centerLeft,
+                                      end: Alignment.centerRight,
+                                    ).createShader(bounds),
+                                    child: Text(
+                                      l10n.getMoreOutOfTrackify,
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.w700,
+                                        color: Colors.white,
+                                        letterSpacing: 0.5,
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    l10n.featuresExploredCount(currentExplored, currentTotal),
+                                    style: TextStyle(
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.onSurface.withOpacity(0.6),
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
-                            Text(
-                              "63%",
-                              style: TextStyle(
-                                color: Theme.of(context).colorScheme.onSurface,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 12,
-                              ),
+                            Icon(
+                              Icons.chevron_right,
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.onSurface.withOpacity(0.3),
                             ),
                           ],
                         ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                l10n.getMoreOutOfTrackify,
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w600,
-                                  color: Theme.of(context).colorScheme.primary,
-                                ),
-                              ),
-                              const SizedBox(height: 4),
-                              Text(
-                                l10n.featuresExploredCount(10, 16),
-                                style: TextStyle(
-                                  color: Theme.of(
-                                    context,
-                                  ).colorScheme.onSurface.withOpacity(0.6),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        Icon(
-                          Icons.chevron_right,
-                          color: Theme.of(
-                            context,
-                          ).colorScheme.onSurface.withOpacity(0.3),
-                        ),
-                      ],
-                    ),
+                      );
+                    },
                   ),
                 ),
 

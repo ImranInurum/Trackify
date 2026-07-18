@@ -36,20 +36,31 @@ class _PolylineThumbnailState extends State<PolylineThumbnail> {
   BitmapDescriptor? _endIcon;
 
   static String? _globalDarkMapStyle;
+  Brightness? _currentBrightness;
 
   @override
   void initState() {
     super.initState();
-    _loadCachedSnapshot();
     _loadMapStyle();
     _createMarkers();
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final brightness = Theme.of(context).brightness;
+    if (_currentBrightness != brightness) {
+      _currentBrightness = brightness;
+      _loadCachedSnapshot();
+    }
+  }
+
+  @override
   void didUpdateWidget(covariant PolylineThumbnail oldWidget) {
     super.didUpdateWidget(oldWidget);
-    final oldSignature = "${oldWidget.points.length}_${oldWidget.points.isEmpty ? '' : oldWidget.points.first.latitude}_${oldWidget.points.isEmpty ? '' : oldWidget.points.last.latitude}";
-    final newSignature = "${widget.points.length}_${widget.points.isEmpty ? '' : widget.points.first.latitude}_${widget.points.isEmpty ? '' : widget.points.last.latitude}";
+    final themeKey = _currentBrightness == Brightness.dark ? 'dark' : 'light';
+    final oldSignature = "${oldWidget.points.length}_${oldWidget.points.isEmpty ? '' : oldWidget.points.first.latitude}_${oldWidget.points.isEmpty ? '' : oldWidget.points.last.latitude}_$themeKey";
+    final newSignature = "${widget.points.length}_${widget.points.isEmpty ? '' : widget.points.first.latitude}_${widget.points.isEmpty ? '' : widget.points.last.latitude}_$themeKey";
     
     if (widget.rideId != oldWidget.rideId || oldSignature != newSignature) {
       setState(() {
@@ -60,13 +71,14 @@ class _PolylineThumbnailState extends State<PolylineThumbnail> {
   }
 
   void _loadCachedSnapshot() {
-    if (widget.rideId != null) {
+    if (widget.rideId != null && _currentBrightness != null) {
       try {
         final box = Hive.box('map_cache');
-        final signature = "${widget.points.length}_${widget.points.isEmpty ? '' : widget.points.first.latitude}_${widget.points.isEmpty ? '' : widget.points.last.latitude}";
-        final cachedSignature = box.get('map_thumbnail_v2_sig_${widget.rideId}');
+        final themeKey = _currentBrightness == Brightness.dark ? 'dark' : 'light';
+        final signature = "${widget.points.length}_${widget.points.isEmpty ? '' : widget.points.first.latitude}_${widget.points.isEmpty ? '' : widget.points.last.latitude}_$themeKey";
+        final cachedSignature = box.get('map_thumbnail_v2_sig_${widget.rideId}_$themeKey');
         if (cachedSignature == signature) {
-          final data = box.get('map_thumbnail_v2_${widget.rideId}');
+          final data = box.get('map_thumbnail_v2_${widget.rideId}_$themeKey');
           if (data is Uint8List) {
             _cachedBytes = data;
             return;
@@ -307,6 +319,7 @@ class _PolylineThumbnailState extends State<PolylineThumbnail> {
                   
                   // Take a snapshot after a delay to allow markers/polylines/tiles to render
                   if (widget.rideId != null) {
+                    final currentThemeKey = Theme.of(context).brightness == Brightness.dark ? 'dark' : 'light';
                     Future.delayed(const Duration(milliseconds: 3000), () async {
                       if (mounted) {
                         try {
@@ -318,12 +331,14 @@ class _PolylineThumbnailState extends State<PolylineThumbnail> {
                           final bytes = await controller.takeSnapshot();
                           if (bytes != null && mounted) {
                             final box = Hive.box('map_cache');
-                            final signature = "${widget.points.length}_${widget.points.isEmpty ? '' : widget.points.first.latitude}_${widget.points.isEmpty ? '' : widget.points.last.latitude}";
-                            await box.put('map_thumbnail_v2_${widget.rideId}', bytes);
-                            await box.put('map_thumbnail_v2_sig_${widget.rideId}', signature);
-                            setState(() {
-                              _cachedBytes = bytes;
-                            });
+                            final signature = "${widget.points.length}_${widget.points.isEmpty ? '' : widget.points.first.latitude}_${widget.points.isEmpty ? '' : widget.points.last.latitude}_$currentThemeKey";
+                            await box.put('map_thumbnail_v2_${widget.rideId}_$currentThemeKey', bytes);
+                            await box.put('map_thumbnail_v2_sig_${widget.rideId}_$currentThemeKey', signature);
+                            if (_currentBrightness == (currentThemeKey == 'dark' ? Brightness.dark : Brightness.light)) {
+                              setState(() {
+                                _cachedBytes = bytes;
+                              });
+                            }
                           }
                         } catch (e) {
                           debugPrint('Error taking map snapshot: $e');

@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 
@@ -60,12 +60,7 @@ class _MyIssueScreenState
           ),
           onPressed: () => Navigator.pop(context),
         ),
-        title: Text(
-          widget.isSuggestion ? l10n.mySuggestions : l10n.myIssues,
-          style: theme.textTheme.titleMedium?.copyWith(
-            fontWeight: FontWeight.bold,
-          ),
-        ),
+        title: Text(widget.isSuggestion ? l10n.mySuggestions : l10n.myIssues),
       ),
 
       body: BlocBuilder<
@@ -233,9 +228,7 @@ class _MyIssueScreenState
                         Text(
                           issue.description,
 
-                          style:
-                          TextStyle(
-                            color: theme
+                          style: TextStyle(color: theme
                                 .colorScheme
                                 .onSurface
                                 .withOpacity(
@@ -327,9 +320,7 @@ class _MyIssueScreenState
                           issue.createdAt,
                         ),
 
-                        style:
-                        TextStyle(
-                          color: theme
+                        style: TextStyle(color: theme
                               .colorScheme
                               .onSurface
                               .withOpacity(

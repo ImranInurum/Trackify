@@ -1,1 +1,0 @@
-import 'dart:io'; import 'dart:convert'; void main() async { try { print('Connecting to WS...'); var ws = await WebSocket.connect('ws://139.59.1.109:4000'); print('WS Connected!'); ws.listen((data) { print('WS Received: $data'); }); ws.add(jsonEncode({'type':'flutter','imei':'860710086022855'})); } catch(e) { print('WS Error: $e'); } }

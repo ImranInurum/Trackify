@@ -1,5 +1,7 @@
+﻿import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hive/hive.dart';
 import 'package:trackify/feature/trips/data/entity/ride_model.dart';
 import 'package:trackify/feature/trips/presentation/cubit/ride_history_cubit.dart';
 import 'package:trackify/feature/trips/presentation/cubit/ride_history_state.dart';
@@ -22,6 +24,48 @@ class TripSearchScreen extends StatefulWidget {
 class _TripSearchScreenState extends State<TripSearchScreen> {
   final TextEditingController _searchController = TextEditingController();
   String _query = '';
+  List<Map<String, dynamic>> _savedTrips = [];
+  bool _isLoadingTrips = false;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.isTripSearch) {
+      _loadSavedTrips();
+    }
+  }
+
+  Future<void> _loadSavedTrips() async {
+    setState(() {
+      _isLoadingTrips = true;
+    });
+    try {
+      final box = await Hive.openBox('saved_trips');
+      final tripsJson = box.get('trips_list', defaultValue: []) as List<dynamic>;
+      
+      final List<Map<String, dynamic>> trips = [];
+      for (var jsonStr in tripsJson) {
+        try {
+          final decoded = jsonDecode(jsonStr as String);
+          trips.add(decoded);
+        } catch (_) {}
+      }
+      
+      if (mounted) {
+        setState(() {
+          _savedTrips = trips.reversed.toList(); // Newest first
+          _isLoadingTrips = false;
+        });
+      }
+    } catch (e) {
+      debugPrint('Error loading saved trips: $e');
+      if (mounted) {
+        setState(() {
+          _isLoadingTrips = false;
+        });
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -40,13 +84,7 @@ class _TripSearchScreenState extends State<TripSearchScreen> {
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
-          widget.isTripSearch ? l10n.searchTrips : l10n.searchRides,
-          style: TextStyle(
-            color: theme.colorScheme.onSurface,
-            fontWeight: FontWeight.bold,
-            fontSize: 18,
-          ),
-        ),
+          widget.isTripSearch ? l10n.searchTrips : l10n.searchRides, ),
         centerTitle: false,
       ),
       body: Column(
@@ -91,11 +129,19 @@ class _TripSearchScreenState extends State<TripSearchScreen> {
           Expanded(
             child: BlocBuilder<RideHistoryCubit, RideHistoryState>(
               builder: (context, state) {
-                if (state is RideHistoryLoading) {
+                if (state is RideHistoryLoading || _isLoadingTrips) {
                   return const Center(child: TrackifyLoader());
                 }
                 if (state is RideHistorySuccess) {
-                  if (state.rides.isEmpty) {
+                  if (widget.isTripSearch && _savedTrips.isEmpty && _query.isNotEmpty) {
+                    return Center(
+                      child: Text(
+                        l10n.noTripsFound(_query),
+                        style: TextStyle(color: theme.colorScheme.onSurface.withValues(alpha: 0.5)),
+                      ),
+                    );
+                  }
+                  if (!widget.isTripSearch && state.rides.isEmpty) {
                     return Center(
                       child: Text(
                         l10n.noDataAvailable,
@@ -104,12 +150,23 @@ class _TripSearchScreenState extends State<TripSearchScreen> {
                     );
                   }
                   if (_query.isEmpty) {
+                    if (state.rides.isEmpty) {
+                      return Center(
+                        child: Text(
+                          l10n.noDataAvailable,
+                          style: TextStyle(color: theme.colorScheme.onSurface.withValues(alpha: 0.5)),
+                        ),
+                      );
+                    }
                     return _buildExtraordinarySection(context, state.rides);
                   } else {
                     return _buildSearchResults(context, state.rides);
                   }
                 }
                 if (state is RideHistoryFailure) {
+                  if (widget.isTripSearch && _savedTrips.isNotEmpty && _query.isNotEmpty) {
+                    return _buildSearchResults(context, []);
+                  }
                   return Center(
                     child: Text(
                       l10n.noDataAvailable,
@@ -145,8 +202,7 @@ class _TripSearchScreenState extends State<TripSearchScreen> {
           children: [
             Text(
               l10n.extraordinaryTrips,
-              style: TextStyle(
-                color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+              style: TextStyle(color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
               ),
@@ -248,16 +304,14 @@ class _TripSearchScreenState extends State<TripSearchScreen> {
                   const SizedBox(height: 4),
                   Text(
                     dateRange,
-                    style: TextStyle(
-                      color: theme.colorScheme.onSurface.withValues(alpha: 0.4),
+                    style: TextStyle(color: theme.colorScheme.onSurface.withValues(alpha: 0.4),
                       fontSize: 12,
                     ),
                   ),
                   const SizedBox(height: 12),
                   RichText(
                     text: TextSpan(
-                      style: TextStyle(
-                        color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                      style: TextStyle(color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                         fontSize: 12,
                       ),
                       children: [
@@ -285,8 +339,7 @@ class _TripSearchScreenState extends State<TripSearchScreen> {
         TextSpan(text: "${parts[0]}- "),
         TextSpan(
           text: parts[1],
-          style: TextStyle(
-            color: highlightColor ?? Colors.white.withValues(alpha: 0.9),
+          style: TextStyle(color: highlightColor ?? Colors.white.withValues(alpha: 0.9),
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -297,50 +350,82 @@ class _TripSearchScreenState extends State<TripSearchScreen> {
   Widget _buildSearchResults(BuildContext context, List<Ride> rides) {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context)!;
-    final results = rides.where((r) {
-      if (widget.isTripSearch) {
-        final title = "Trip ${rides.indexOf(r) + 1}".toLowerCase();
-        final start = r.startLocation.toLowerCase();
-        final end = r.endLocation.toLowerCase();
-        return title.contains(_query) || start.contains(_query) || end.contains(_query);
-      } else {
-        final start = r.startLocation.toLowerCase();
-        final end = r.endLocation.toLowerCase();
-        return start.contains(_query) || end.contains(_query);
+
+    if (widget.isTripSearch) {
+      final results = _savedTrips.where((trip) {
+        final title = (trip['title'] as String? ?? '').toLowerCase();
+        final ridesData = trip['rides'] as List<dynamic>? ?? [];
+        bool matchesRide = false;
+        for (var r in ridesData) {
+          try {
+            final start = (r['start_location'] ?? r['startLocation'] ?? '').toString().toLowerCase();
+            final end = (r['end_location'] ?? r['endLocation'] ?? '').toString().toLowerCase();
+            if (start.contains(_query) || end.contains(_query)) {
+              matchesRide = true;
+              break;
+            }
+          } catch (_) {}
+        }
+        return title.contains(_query) || matchesRide;
+      }).toList();
+
+      if (results.isEmpty) {
+        return Center(
+          child: Text(
+            l10n.noTripsFound(_query),
+            style: TextStyle(color: theme.colorScheme.onSurface.withValues(alpha: 0.5)),
+          ),
+        );
       }
-    }).toList();
 
-    if (results.isEmpty) {
-      return Center(
-        child: Text(
-          widget.isTripSearch ? l10n.noTripsFound(_query) : l10n.noRidesFound(_query),
-          style: TextStyle(color: theme.colorScheme.onSurface.withValues(alpha: 0.5)),
-        ),
-      );
-    }
+      return ListView.builder(
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        itemCount: results.length,
+        itemBuilder: (context, index) {
+          final trip = results[index];
+          final ridesData = trip['rides'] as List<dynamic>;
+          final tripRides = ridesData.map((e) => Ride.fromJson(e as Map<String, dynamic>)).toList();
+          final displayTitle = _getLocalizedTripTitle(trip['title'] ?? l10n.tripLabel('${index + 1}'), l10n);
 
-    return ListView.builder(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      itemCount: results.length,
-      itemBuilder: (context, index) {
-        final ride = results[index];
-        if (widget.isTripSearch) {
           return TripCard(
-            title: l10n.tripLabel((rides.indexOf(ride) + 1).toString()),
-            rides: [ride],
+            title: displayTitle,
+            rides: tripRides,
+            imagePath: trip['imagePath'] as String?,
             onTap: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(
                   builder: (context) => TripDetailsScreen(
-                    tripName: l10n.tripLabel((rides.indexOf(ride) + 1).toString()),
-                    rides: [ride],
+                    tripName: displayTitle,
+                    rides: tripRides,
                   ),
                 ),
               );
             },
           );
-        } else {
+        },
+      );
+    } else {
+      final results = rides.where((r) {
+        final start = r.startLocation.toLowerCase();
+        final end = r.endLocation.toLowerCase();
+        return start.contains(_query) || end.contains(_query);
+      }).toList();
+
+      if (results.isEmpty) {
+        return Center(
+          child: Text(
+            l10n.noRidesFound(_query),
+            style: TextStyle(color: theme.colorScheme.onSurface.withValues(alpha: 0.5)),
+          ),
+        );
+      }
+
+      return ListView.builder(
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        itemCount: results.length,
+        itemBuilder: (context, index) {
+          final ride = results[index];
           return RideCard(
             ride: ride,
             onTap: () {
@@ -352,8 +437,18 @@ class _TripSearchScreenState extends State<TripSearchScreen> {
               );
             },
           );
-        }
-      },
-    );
+        },
+      );
+    }
+  }
+
+  String _getLocalizedTripTitle(String title, AppLocalizations l10n) {
+    final regex = RegExp(r'^Trip\s+(\d+)$', caseSensitive: false);
+    final match = regex.firstMatch(title);
+    if (match != null) {
+      final number = match.group(1)!;
+      return l10n.tripLabel(number);
+    }
+    return title;
   }
 }

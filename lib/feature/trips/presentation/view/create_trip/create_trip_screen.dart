@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:trackify/feature/trips/presentation/cubit/create_trip_cubit.dart';
@@ -75,7 +75,7 @@ class _CreateTripScreenState extends State<CreateTripScreen> {
               context,
               MaterialPageRoute(
                 builder: (context) => TripDetailsScreen(
-                  tripName: state.title == 'Trip 1' ? l10n.tripLabel('1') : state.title,
+                  tripName: _getLocalizedTripTitle(state.title, l10n),
                   rides: state.rides,
                 ),
               ),
@@ -93,13 +93,7 @@ class _CreateTripScreenState extends State<CreateTripScreen> {
             onPressed: () => Navigator.pop(context),
           ),
           title: Text(
-            l10n.selectRides,
-            style: TextStyle(
-              color: theme.colorScheme.onSurface,
-              fontWeight: FontWeight.bold,
-              fontSize: 18,
-            ),
-          ),
+            l10n.selectRides, ),
         ),
         body: Stack(
           children: [
@@ -248,6 +242,16 @@ class _CreateTripScreenState extends State<CreateTripScreen> {
       groups[ride.date]!.add(ride);
     }
     return groups;
+  }
+
+  String _getLocalizedTripTitle(String title, AppLocalizations l10n) {
+    final regex = RegExp(r'^Trip\s+(\d+)$', caseSensitive: false);
+    final match = regex.firstMatch(title);
+    if (match != null) {
+      final number = match.group(1)!;
+      return l10n.tripLabel(number);
+    }
+    return title;
   }
 }
 
@@ -405,8 +409,7 @@ class _SelectionGroupCardState extends State<_SelectionGroupCard> {
               children: [
                 Text(
                   "${ride.startTime} - ${ride.endTime}",
-                  style: TextStyle(
-                    color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
+                  style: TextStyle(color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
                     fontSize: 13,
                     fontWeight: FontWeight.w500,
                   ),
@@ -427,8 +430,7 @@ class _SelectionGroupCardState extends State<_SelectionGroupCard> {
                     const SizedBox(width: 4),
                     Text(
                       context.displayKms,
-                      style: TextStyle(
-                        color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+                      style: TextStyle(color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                         fontSize: 14,
                       ),
                     ),
@@ -476,8 +478,7 @@ class _SelectionGroupCardState extends State<_SelectionGroupCard> {
         const SizedBox(height: 4),
         Text(
           label,
-          style: TextStyle(
-            color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
+          style: TextStyle(color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
             fontSize: 11,
           ),
         ),
@@ -501,8 +502,7 @@ class _SelectionGroupCardState extends State<_SelectionGroupCard> {
         const SizedBox(height: 6),
         Text(
           label,
-          style: TextStyle(
-            color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
+          style: TextStyle(color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
             fontSize: 11,
             fontWeight: FontWeight.w500,
           ),
@@ -558,8 +558,7 @@ class _SelectionTooltip extends StatelessWidget {
               const SizedBox(height: 8),
               Text(
                 l10n.selectionTooltipMessage,
-                style: TextStyle(
-                  color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+                style: TextStyle(color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                   fontSize: 13,
                   fontWeight: FontWeight.w500,
                   height: 1.4,

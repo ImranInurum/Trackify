@@ -18,6 +18,7 @@ import '../cubit/vehicle_control_cubit.dart';
 import '../state/vehicle_control_state.dart';
 import '../widgets/metric_card.dart';
 import '../widgets/lock_card.dart';
+import '../widgets/vehicle_pin_dialog.dart';
 import '../widgets/vehicle_on_map_card.dart';
 import '../widgets/journey_card.dart';
 import '../widgets/documents_card.dart';
@@ -663,13 +664,25 @@ class _VehicleControlViewState extends State<VehicleControlView> {
                           primaryTextColor: primaryTextColor,
                           secondaryTextColor: secondaryTextColor,
                           isLocked: vehicle.vehicleLock,
-                          onLock: () {
-                            context
-                                .read<VehicleControlCubit>()
-                                .updateVehicleLock(
-                                  vehicle.id,
-                                  !vehicle.vehicleLock,
-                                );
+                          onLock: () async {
+                            final success = await VehiclePinDialog.show(context, vehicle.vehicleLock);
+                            if (success) {
+                              if (context.mounted) {
+                                context
+                                    .read<VehicleControlCubit>()
+                                    .updateVehicleLock(
+                                      vehicle.id,
+                                      !vehicle.vehicleLock,
+                                    );
+                              }
+                            } else {
+                              // Force a fake state update in cubit to reset the button state
+                              // since we canceled. The quickest way is to just let the user tap the X, 
+                              // or we can refresh the list. We will just load current vehicle details to refresh.
+                              if (context.mounted) {
+                                context.read<VehicleControlCubit>().loadVehicleDetails(vehicle.imei);
+                              }
+                            }
                           },
                           onInfoTap: () => _showSleepModeDialog(context),
                         ),
@@ -1100,9 +1113,7 @@ class _VehicleControlViewState extends State<VehicleControlView> {
             ListTile(
               leading: Icon(Icons.camera_alt, color: theme.colorScheme.primary),
               title: Text(
-                l10n.camera,
-                style: TextStyle(color: theme.colorScheme.onSurface),
-              ),
+                l10n.camera, ),
               onTap: () {
                 Navigator.pop(ctx);
                 _pickImage(context, ImageSource.camera, id);
@@ -1114,9 +1125,7 @@ class _VehicleControlViewState extends State<VehicleControlView> {
                 color: theme.colorScheme.primary,
               ),
               title: Text(
-                l10n.gallery,
-                style: TextStyle(color: theme.colorScheme.onSurface),
-              ),
+                l10n.gallery, ),
               onTap: () {
                 Navigator.pop(ctx);
                 _pickImage(context, ImageSource.gallery, id);
@@ -1530,11 +1539,7 @@ class _VehicleControlViewState extends State<VehicleControlView> {
           TextButton(
             onPressed: () => Navigator.pop(ctx),
             child: Text(
-              l10n.cancel,
-              style: TextStyle(
-                color: theme.colorScheme.onSurface.withOpacity(0.6),
-              ),
-            ),
+              l10n.cancel, ),
           ),
           TextButton(
             onPressed: () {

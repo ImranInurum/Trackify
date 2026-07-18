@@ -14,7 +14,13 @@ class DeviceInstallationLoading extends DeviceInstallationState {}
 
 class DeviceInstallationSuccess extends DeviceInstallationState {}
 
-class DeviceInstallationImeiAlreadyAssigned extends DeviceInstallationState {}
+class DeviceInstallationImeiAlreadyAssigned extends DeviceInstallationState {
+  final String? message;
+  const DeviceInstallationImeiAlreadyAssigned([this.message]);
+
+  @override
+  List<Object?> get props => [message];
+}
 
 class DeviceInstallationFailure extends DeviceInstallationState {
   final AppException exception;

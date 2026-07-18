@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:trackify/feature/trips/data/entity/ride_model.dart';
 import 'package:trackify/feature/trips/presentation/view/widgets/all_rides/widgets/polyline_thumbnail.dart';
@@ -9,12 +10,14 @@ class TripCard extends StatelessWidget {
   final String title;
   final List<Ride> rides;
   final VoidCallback onTap;
+  final String? imagePath;
 
   const TripCard({
     super.key,
     required this.title,
     required this.rides,
     required this.onTap,
+    this.imagePath,
   });
 
   @override
@@ -47,10 +50,15 @@ class TripCard extends StatelessWidget {
               child: SizedBox(
                 width: 100,
                 height: 70,
-                child: Image.asset(
-                  'assets/images/explore_app_image.jpg',
-                  fit: BoxFit.cover,
-                ),
+                child: imagePath != null && File(imagePath!).existsSync()
+                    ? Image.file(
+                        File(imagePath!),
+                        fit: BoxFit.cover,
+                      )
+                    : Image.asset(
+                        'assets/images/explore_app_image.jpg',
+                        fit: BoxFit.cover,
+                      ),
               ),
             ),
             const SizedBox(width: 16),

@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:trackify/core/constants/app_images.dart';
 import 'package:trackify/feature/my_garage/presentation/view/checkout_screen.dart';
 import 'package:trackify/l10n/app_localizations.dart';
@@ -12,9 +12,7 @@ class ProductOverviewScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          l10n?.products ?? "Products",
-          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-        ),
+          l10n?.products ?? "Products", ),
         centerTitle: false,
         elevation: 0,
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
@@ -178,24 +176,21 @@ class ProductOverviewScreen extends StatelessWidget {
             padding: const EdgeInsets.all(16.0),
             child: RichText(
               text: TextSpan(
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.onSurface,
+                style: TextStyle(color: Theme.of(context).colorScheme.onSurface,
                   fontSize: 14,
                   height: 1.4,
                 ),
                 children:  [
                   TextSpan(
                     text: '35000+ ',
-                    style: TextStyle(
-                      color: Theme.of(context).colorScheme.primary,
+                    style: TextStyle(color: Theme.of(context).colorScheme.primary,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                   TextSpan(text: l10n?.peopleSmartIntro ?? 'people made their bike smart.\nExperience '),
                   TextSpan(
                     text: l10n?.smartText ?? 'Smart ',
-                    style: TextStyle(
-                      color: Theme.of(context).colorScheme.primary,
+                    style: TextStyle(color: Theme.of(context).colorScheme.primary,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -478,8 +473,7 @@ class ProductOverviewScreen extends StatelessWidget {
                     children: [
                       Text(
                         l10n?.trackifySmartGpsIot ?? "Trackify Smart GPS IoT",
-                        style: TextStyle(
-                          color: Theme.of(context).colorScheme.primary,
+                        style: TextStyle(color: Theme.of(context).colorScheme.primary,
                           fontWeight: FontWeight.bold,
                           fontSize: 12,
                         ),
@@ -487,8 +481,7 @@ class ProductOverviewScreen extends StatelessWidget {
                       const SizedBox(height: 4),
                       RichText(
                         text: TextSpan(
-                          style: TextStyle(
-                            color: Theme.of(context).colorScheme.onSurfaceVariant,
+                          style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant,
                             fontSize: 10,
                           ),
                           children: [
@@ -816,8 +809,7 @@ class _ProductSelectionBottomSheetState extends State<ProductSelectionBottomShee
         alignment: Alignment.center,
         child: Text(
           title,
-          style: TextStyle(
-            color: isSelected ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.onSurfaceVariant,
+          style: TextStyle(color: isSelected ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.onSurfaceVariant,
             fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
             fontSize: 13,
           ),

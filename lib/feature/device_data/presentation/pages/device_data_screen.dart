@@ -95,10 +95,7 @@ class _DeviceDataScreenState extends State<DeviceDataScreen> {
       appBar: AppBar(
         backgroundColor: theme.scaffoldBackgroundColor,
         elevation: 0,
-        title: Text(
-          l10n.deviceDataPlanLabel,
-          style: text.titleMedium?.copyWith(fontWeight: FontWeight.bold),
-        ),
+        title: Text(l10n.deviceDataPlanLabel),
         leading: IconButton(
           icon: Icon(
             Icons.arrow_back_ios_new,

@@ -2643,90 +2643,88 @@ class AppLocalizationsMr extends AppLocalizations {
   String get noAlertsCreated => 'या वाहनासाठी कोणतेही अलर्ट तयार केलेले नाहीत.';
 
   @override
-  String get changePasswordTitle => 'Change Password';
+  String get changePasswordTitle => 'पासवर्ड बदला';
 
   @override
   String get changePasswordSubtitle =>
-      'Change password & logout from all phones';
+      'पासवर्ड बदला आणि सर्व फोनवरून लॉगआउट करा';
 
   @override
-  String get currentSessions => 'Current sessions';
+  String get currentSessions => 'सध्याची सत्रे';
 
   @override
-  String get manageLoggedInDevices => 'Manage logged-in devices';
+  String get manageLoggedInDevices => 'लॉग इन केलेली उपकरणे व्यवस्थापित करा';
 
   @override
-  String get deleteAccountTitle => 'Delete Account';
+  String get deleteAccountTitle => 'खाते हटवा';
 
   @override
-  String get deleteAccountSubtitle => 'Delete your account permanently';
+  String get deleteAccountSubtitle => 'तुमचे खाते कायमचे हटवा';
 
   @override
-  String get oldPassword => 'Old Password';
+  String get oldPassword => 'जुना पासवर्ड';
 
   @override
-  String get confirmNewPasswordTitle => 'Confirm New Password';
+  String get confirmNewPasswordTitle => 'नवीन पासवर्डची पुष्टी करा';
 
   @override
-  String get logoutOfAllDevices => 'Logout of all devices';
+  String get logoutOfAllDevices => 'सर्व उपकरणांवरून लॉगआउट करा';
 
   @override
-  String get otherDevices => 'Other devices';
+  String get otherDevices => 'इतर उपकरणे';
 
   @override
-  String get activeOnThisDevice => 'Active on this device';
+  String get activeOnThisDevice => 'या उपकरणावर सक्रिय';
 
   @override
-  String get lastUsed => 'Last used -';
+  String get lastUsed => 'शेवटचा वापर -';
 
   @override
   String get osLabel => 'OS -';
 
   @override
-  String get chromeNotificationDisabled => 'Chrome notification - disabled';
+  String get chromeNotificationDisabled => 'क्रोम सूचना - अक्षम';
 
   @override
-  String get logOut => 'Log out';
+  String get logOut => 'लॉग आउट करा';
 
   @override
-  String get hi => 'Hi';
+  String get hi => 'नमस्कार';
 
   @override
-  String get sorryToSeeYouGo => 'We\'re sorry to see you go.';
+  String get sorryToSeeYouGo => 'आम्हाला तुम्हाला जाताना पाहून वाईट वाटत आहे.';
 
   @override
-  String get note => 'Note:';
+  String get note => 'टीप:';
 
   @override
   String get deleteAccountNote1 =>
-      'After 30 days, your account will be deleted permanently.';
+      '30 दिवसांनंतर, तुमचे खाते कायमचे हटवले जाईल.';
 
   @override
   String get deleteAccountNote2 =>
-      'You can reactivate the account within 30 Days by signing back.';
+      'तुम्ही पुन्हा साइन इन करून 30 दिवसांच्या आत खाते पुन्हा सक्रिय करू शकता.';
 
   @override
   String get deleteAccountExplanationPrompt =>
-      'We would love to know why you are deleting your account, as we may be able to help with common issues. You can also just continue.';
+      'तुम्ही तुमचे खाते का हटवत आहात हे आम्हाला जाणून घ्यायला आवडेल, कारण आम्ही कदाचित सामान्य समस्या सोडवण्यात मदत करू शकू. तुम्ही फक्त पुढे जाणे देखील निवडू शकता.';
 
   @override
-  String get explanationOptionalHint =>
-      'Your explanation is completely optional';
+  String get explanationOptionalHint => 'तुमचे स्पष्टीकरण पूर्णपणे ऐच्छिक आहे';
 
   @override
-  String get deleteWarningPart1 =>
-      'Your device will be unmapped, subscription will be ';
+  String get deleteWarningPart1 => 'तुमचे डिव्हाइस अनमॅप केले जाईल, सदस्यता ';
 
   @override
-  String get terminated => 'terminated';
+  String get terminated => 'रद्द';
 
   @override
   String get deleteWarningPart2 =>
-      ' and your all data will be lost from the server after 30 days of account deletion.';
+      ' केली जाईल आणि खाते हटवल्याच्या 30 दिवसांनंतर सर्व्हरवरून तुमचा सर्व डेटा गमावला जाईल.';
 
   @override
   String get confirmDeleteAccount =>
-      'Are you sure you want to delete your account?';
+      'तुम्हाला नक्की तुमचे खाते हटवायचे आहे का?';
 
   @override
   String get expired => 'कालबाह्य झाले';
@@ -3301,4 +3299,45 @@ class AppLocalizationsMr extends AppLocalizations {
 
   @override
   String get couldNotOpenPrivacy => 'गोपनीयता धोरण उघडता आले नाही';
+
+  @override
+  String get incorrectPin => 'चुकीचा पिन';
+
+  @override
+  String get pinsDoNotMatch => 'पिन जुळत नाहीत. पुन्हा प्रयत्न करा.';
+
+  @override
+  String get resetPinTitle => 'पिन रीसेट करा';
+
+  @override
+  String get resetPinDescription =>
+      'तुम्हाला तुमचा पिन रीसेट करायचा आहे का? यामुळे सध्याचा पिन साफ होईल.';
+
+  @override
+  String get resetBtn => 'रीसेट करा';
+
+  @override
+  String get unlockVehiclePinTitle => 'वाहन अनलॉक करा';
+
+  @override
+  String get lockVehiclePinTitle => 'वाहन लॉक करा';
+
+  @override
+  String get setNewPinTitle => 'नवीन पिन सेट करा';
+
+  @override
+  String get confirmNewPinTitle => 'नवीन पिनची पुष्टी करा';
+
+  @override
+  String get enterPinSubtitle => 'पुढे जाण्यासाठी तुमचा 4-अंकी पिन एंटर करा';
+
+  @override
+  String get createNewPinSubtitle => 'वाहन लॉक करण्यासाठी 4-अंकी पिन तयार करा';
+
+  @override
+  String get confirmNewPinSubtitle =>
+      'पुष्टी करण्यासाठी तुमचा 4-अंकी पिन पुन्हा एंटर करा';
+
+  @override
+  String get forgotPin => 'पिन विसरलात?';
 }

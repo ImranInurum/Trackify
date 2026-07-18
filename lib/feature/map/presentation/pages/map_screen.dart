@@ -158,6 +158,22 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
     super.dispose();
   }
 
+  Brightness? _currentBrightness;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final brightness = Theme.of(context).brightness;
+    if (_currentBrightness != brightness) {
+      _currentBrightness = brightness;
+      if (_mapController != null && mounted) {
+        final appState = context.read<AppCubit>().state;
+        final style = _getMapStyle(appState, context);
+        MapUtils.setStyle(_mapController!, style);
+      }
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -458,16 +474,13 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
         state.mapStyle == l10n?.satelliteStyle) {
       return null;
     }
-    if (state.mapStyle == 'Dark' || state.mapStyle == l10n?.darkStyle) {
-      return _darkMapStyle;
-    }
-    if (state.mapStyle == 'Light' || state.mapStyle == l10n?.lightStyle) {
-      return _lightMapStyle;
-    }
+
+    final isDarkTheme = Theme.of(context).brightness == Brightness.dark;
+
     if (state.mapStyle == 'Simple' || state.mapStyle == l10n?.simpleStyle) {
       return _lightMapStyle;
     }
-    final isDarkTheme = Theme.of(context).brightness == Brightness.dark;
+
     return isDarkTheme ? _darkMapStyle : _lightMapStyle;
   }
 
@@ -1189,8 +1202,11 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                                 _buildMapSection(),
                               if (!_hidePromoBanner &&
                                   !isDeviceNotInstalledOrExpired &&
-                                  !_isWarrantyLoading)
+                                  !_isWarrantyLoading) ...[
+                                const SizedBox(height: 5 ),
                                 _buildPromoBanner(),
+                              ],
+                              SizedBox(height: 5),
                               _buildExploreMore(_selectedDevice),
                               _buildRecentRidesSection(
                                 _selectedDevice,
@@ -1264,9 +1280,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
     if (_isLoadingOffers) {
       return const Padding(
         padding: EdgeInsets.symmetric(vertical: 20),
-        child: Center(
-          child: TrackifyLoader(size: 150, animated: true),
-        ),
+        child: Center(child: TrackifyLoader(size: 150, animated: true)),
       );
     }
     if (_promoOffers.isEmpty) return const SizedBox.shrink();
@@ -1490,16 +1504,29 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
       },
       child: Container(
         height: 400,
-        margin: const EdgeInsets.all(16),
+        margin: const EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 6),
         padding: EdgeInsets.all(6.0),
         decoration: BoxDecoration(
-          color: Theme.of(context).cardColor,
-          borderRadius: const BorderRadius.all(Radius.circular(5)),
+          gradient: LinearGradient(
+            colors: [
+              Theme.of(context).colorScheme.primary.withValues(alpha: 0.08),
+              Theme.of(context).colorScheme.secondary.withValues(alpha: 0.02),
+            ],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          borderRadius: const BorderRadius.all(Radius.circular(16)),
+          border: Border.all(
+            color: Theme.of(
+              context,
+            ).colorScheme.primary.withValues(alpha: 0.05),
+            width: 1,
+          ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.1),
-              blurRadius: 2,
-              offset: const Offset(0, 1),
+              color: Colors.black.withOpacity(0.03),
+              blurRadius: 4,
+              offset: const Offset(0, 2),
             ),
           ],
         ),
@@ -1850,11 +1877,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                 ),
               ),
             ),
-            if (showStats)
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                child: _buildStatsRow(),
-              ),
+            if (showStats) _buildStatsRow(),
           ],
         );
       },
@@ -2010,23 +2033,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
             IconData batteryIcon = Icons.battery_charging_full;
 
             if (batteryVal != null || voltageVal != null) {
-              if (voltageVal != null) {
-                final voltDouble = double.tryParse(
-                  voltageVal.toString().replaceAll(RegExp(r'[^0-9.]'), ''),
-                );
-                if (voltDouble != null) {
-                  final String status = voltDouble < 11.5 ? "Low" : "Normal";
-                  batteryText = "$status (${voltDouble.toStringAsFixed(1)}V)";
-                  batteryColor = voltDouble < 11.5
-                      ? Colors.red
-                      : AppColors.paletteGreen;
-                  batteryIcon = voltDouble < 11.5
-                      ? Icons.battery_alert
-                      : Icons.battery_charging_full;
-                } else {
-                  batteryText = "Normal (${voltageVal.toString()})";
-                }
-              } else if (batteryVal != null) {
+              if (batteryVal != null) {
                 final batDouble = double.tryParse(
                   batteryVal.toString().replaceAll(RegExp(r'[^0-9.]'), ''),
                 );
@@ -2043,6 +2050,22 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                       ? Icons.battery_alert
                       : Icons.battery_charging_full;
                 }
+              } else if (voltageVal != null) {
+                final voltDouble = double.tryParse(
+                  voltageVal.toString().replaceAll(RegExp(r'[^0-9.]'), ''),
+                );
+                if (voltDouble != null) {
+                  final String status = voltDouble < 11.5 ? "Low" : "Normal";
+                  batteryText = "$status (${voltDouble.toStringAsFixed(1)}V)";
+                  batteryColor = voltDouble < 11.5
+                      ? Colors.red
+                      : AppColors.paletteGreen;
+                  batteryIcon = voltDouble < 11.5
+                      ? Icons.battery_alert
+                      : Icons.battery_charging_full;
+                } else {
+                  batteryText = "Normal (${voltageVal.toString()})";
+                }
               }
             } else {
               batteryText = "Normal (13.6V)";
@@ -2057,74 +2080,94 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
               headerText += " | $startTimeStr";
             }
 
-            return Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        headerText,
-                        style: getBoldStyle(
-                          color: AppColors.paletteGreen,
-                          fontSize: 10,
+            return Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+              child: Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 12.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.calendar_today_rounded,
+                              size: 12,
+                              color: Theme.of(context).colorScheme.primary,
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              headerText,
+                              style: getBoldStyle(
+                                color: Theme.of(context).colorScheme.primary,
+                                fontSize: 11,
+                              ),
+                            ),
+                          ],
                         ),
-                      ),
-                      if (batteryText.isNotEmpty)
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 8,
-                            vertical: 2,
-                          ),
-                          decoration: BoxDecoration(
-                            color: batteryColor.withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(4),
-                            border: Border.all(
-                              color: batteryColor.withOpacity(0.3),
-                              width: 1,
+                        if (batteryText.isNotEmpty)
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 3,
+                            ),
+                            decoration: BoxDecoration(
+                              color: batteryColor.withValues(alpha: 0.1),
+                              borderRadius: BorderRadius.circular(6),
+                              border: Border.all(
+                                color: batteryColor.withValues(alpha: 0.3),
+                                width: 1,
+                              ),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  batteryIcon,
+                                  color: batteryColor,
+                                  size: 10,
+                                ),
+                                const SizedBox(width: 4),
+                                Text(
+                                  batteryText,
+                                  style: getBoldStyle(
+                                    color: batteryColor,
+                                    fontSize: 10,
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(batteryIcon, color: batteryColor, size: 10),
-                              const SizedBox(width: 4),
-                              Text(
-                                batteryText,
-                                style: getBoldStyle(
-                                  color: batteryColor,
-                                  fontSize: 10,
-                                ),
-                              ),
-                            ],
-                          ),
+                      ],
+                    ),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        child: Column(
+                          children: [
+                            _buildStatItem(l10n.distanceLabel, distance),
+                            const SizedBox(height: 6),
+                            _buildStatItem(l10n.rideDuration, durationStr),
+                          ],
                         ),
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: Column(
+                          children: [
+                            _buildStatItem(l10n.speedLabel, speed),
+                            const SizedBox(height: 6),
+                            _buildStatItem(l10n.topSpeed, topSpeed),
+                          ],
+                        ),
+                      ),
                     ],
                   ),
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Expanded(
-                      child: Column(
-                        children: [
-                          _buildStatItem(l10n.distanceLabel, distance),
-                          _buildStatItem(l10n.rideDuration, durationStr),
-                        ],
-                      ),
-                    ),
-                    Expanded(
-                      child: Column(
-                        children: [
-                          _buildStatItem(l10n.speedLabel, speed),
-                          _buildStatItem(l10n.topSpeed, topSpeed),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ],
+                ],
+              ),
             );
           },
         );
@@ -2164,12 +2207,14 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
     final l10n = AppLocalizations.of(context)!;
     return BlocBuilder<DiscoverCubit, DiscoverState>(
       builder: (context, state) {
-        double progressValue = double.tryParse(
+        double progressValue =
+            double.tryParse(
               AppPreference.instance.getSync(key: 'discover_progress_value'),
-            ) ?? 0.0;
+            ) ??
+            0.0;
         String progressString = AppPreference.instance.getSync(
-              key: 'discover_progress_string',
-            );
+          key: 'discover_progress_string',
+        );
         if (progressString.isEmpty) {
           progressString = "0";
         }
@@ -2179,7 +2224,9 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
           int total = 0;
           final regex = RegExp(r'\d+/(\d+)');
           final prefs = AppPreference.instance;
-          final list = prefs.getStringList(key: AppPreference.KEY_EXPLORED_FEATURES);
+          final list = prefs.getStringList(
+            key: AppPreference.KEY_EXPLORED_FEATURES,
+          );
 
           for (var item in state.discoverList) {
             final match = regex.firstMatch(item.exploredText);
@@ -2189,11 +2236,13 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
             } else {
               catTotal = int.tryParse(item.exploredText) ?? 0;
             }
-            
+
             if (catTotal > 0) {
               total += catTotal;
-              
-              final catExplored = list.where((id) => id.startsWith('${item.id}_')).length;
+
+              final catExplored = list
+                  .where((id) => id.startsWith('${item.id}_'))
+                  .length;
               explored += (catExplored > catTotal ? catTotal : catExplored);
             }
           }
@@ -2201,11 +2250,17 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
             final calculatedValue = explored / total;
             final calculatedString = (calculatedValue * 100).toInt().toString();
 
-            if (calculatedValue != progressValue || calculatedString != progressString) {
+            if (calculatedValue != progressValue ||
+                calculatedString != progressString) {
               progressValue = calculatedValue;
               progressString = calculatedString;
-              prefs.set(key: 'discover_progress_value', value: progressValue.toString());
+              prefs.set(
+                key: 'discover_progress_value',
+                value: progressValue.toString(),
+              );
               prefs.set(key: 'discover_progress_string', value: progressString);
+              prefs.set(key: 'discover_explored', value: explored.toString());
+              prefs.set(key: 'discover_total', value: total.toString());
             }
           }
         }
@@ -2221,19 +2276,32 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
               ),
             ).then((_) {
               if (mounted) {
-                setState(() {}); // Force rebuild to recalculate progress from updated local list
+                setState(
+                  () {},
+                ); // Force rebuild to recalculate progress from updated local list
                 context.read<DiscoverCubit>().fetchDiscoverFeatures();
               }
             });
           },
           child: Container(
             margin: const EdgeInsets.symmetric(horizontal: 16),
-            padding: const EdgeInsets.all(12),
+            padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: Theme.of(context).cardColor,
+              gradient: LinearGradient(
+                colors: [
+                  Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
+                  Theme.of(
+                    context,
+                  ).colorScheme.secondary.withValues(alpha: 0.05),
+                ],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
-                color: Theme.of(context).dividerColor.withOpacity(0.5),
+                color: Theme.of(
+                  context,
+                ).colorScheme.primary.withValues(alpha: 0.2),
               ),
             ),
             child: Row(
@@ -2247,17 +2315,14 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                       CircularProgressIndicator(
                         value: progressValue,
                         strokeWidth: 3.5,
-                        backgroundColor: Theme.of(context).dividerColor,
+                        backgroundColor: progressColor.withValues(alpha: 0.2),
                         valueColor: AlwaysStoppedAnimation<Color>(
                           progressColor,
                         ),
                       ),
                       Text(
                         l10n.progressPercentage(progressString),
-                        style: getBoldStyle(
-                          color: progressColor,
-                          fontSize: 10,
-                        ),
+                        style: getBoldStyle(color: progressColor, fontSize: 10),
                       ),
                     ],
                   ),
@@ -2269,17 +2334,37 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                     children: [
                       Row(
                         children: [
-                          Text(
-                            l10n.getMoreOutOfTrackify,
-                            style: getBoldStyle(
-                              color: progressColor,
-                              fontSize: 14,
+                          ShaderMask(
+                            shaderCallback: (bounds) => LinearGradient(
+                              colors: [
+                                Theme.of(context).colorScheme.primary,
+                                Theme.of(context).colorScheme.secondary,
+                              ],
+                              begin: Alignment.centerLeft,
+                              end: Alignment.centerRight,
+                            ).createShader(bounds),
+                            child: Text(
+                              l10n.getMoreOutOfTrackify,
+                              style: getBoldStyle(
+                                color: Colors.white,
+                                fontSize: 14,
+                              ),
                             ),
                           ),
-                          Icon(
-                            Icons.chevron_right,
-                            color: progressColor,
-                            size: 18,
+                          ShaderMask(
+                            shaderCallback: (bounds) => LinearGradient(
+                              colors: [
+                                Theme.of(context).colorScheme.primary,
+                                Theme.of(context).colorScheme.secondary,
+                              ],
+                              begin: Alignment.centerLeft,
+                              end: Alignment.centerRight,
+                            ).createShader(bounds),
+                            child: const Icon(
+                              Icons.chevron_right,
+                              color: Colors.white,
+                              size: 18,
+                            ),
                           ),
                         ],
                       ),
@@ -2309,7 +2394,9 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                     padding: const EdgeInsets.all(4.0),
                     child: Icon(
                       Icons.close,
-                      color: Theme.of(context).dividerColor,
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.onSurface.withValues(alpha: 0.6),
                       size: 20,
                     ),
                   ),
@@ -3257,7 +3344,12 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
           }
           final lastRide = state.rides.last;
           return Container(
-            margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            margin: const EdgeInsets.only(
+              left: 16,
+              right: 16,
+              top: 8,
+              bottom: 0,
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -3268,7 +3360,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: 10),
                 RideCard(
                   ride: lastRide,
                   onTap: () {
@@ -3293,7 +3385,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
   Widget _buildVideosSection() {
     final l10n = AppLocalizations.of(context)!;
     return Padding(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.only(left: 16, right: 16, top: 4, bottom: 16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -3301,7 +3393,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
             l10n.videosYouMightLike,
             style: const TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 11),
           BlocBuilder<PromoVideoCubit, PromoVideoState>(
             builder: (context, state) {
               if (state is PromoVideoLoading) {
@@ -3334,6 +3426,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                   return Center(child: Text(l10n.noVideosFound));
                 }
                 return ListView.builder(
+                  padding: EdgeInsets.zero,
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
                   itemCount: state.videos.length + (state.hasMore ? 1 : 0),

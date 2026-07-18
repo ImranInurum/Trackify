@@ -114,13 +114,7 @@ class _NotificationTimelineViewState extends State<NotificationTimelineView> {
         ),
         titleSpacing: 0,
         title: Text(
-          AppLocalizations.of(context)!.notifications,
-          style: TextStyle(
-            color: primaryTextColor,
-            fontSize: 20,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
+          AppLocalizations.of(context)!.notifications, ),
         actions: [
           IconButton(
             icon: Icon(Icons.filter_alt_rounded, color: primaryTextColor, size: 26),

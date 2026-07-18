@@ -513,7 +513,7 @@ class _RefuelHistoryTabViewState extends State<RefuelHistoryTabView> {
                 },
               );
             },
-            child: Text(l10n.delete, style: const TextStyle(color: Colors.red)),
+            child: Text(l10n.delete, ),
           ),
         ],
       ),

@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../l10n/app_localizations.dart';
@@ -302,13 +302,7 @@ class _EditVehicleViewState extends State<_EditVehicleView> {
           icon: Icon(Icons.arrow_back_ios_new, color: theme.colorScheme.onSurface),
           onPressed: () => Navigator.pop(context),
         ),
-        title: Text(
-          l10n.editVehicle,
-          style: theme.textTheme.titleLarge?.copyWith(
-            fontWeight: FontWeight.bold,
-            color: theme.colorScheme.onSurface,
-          ),
-        ),
+        title: Text(l10n.editVehicle),
       ),
       body: BlocConsumer<AddVehicleCubit, AddVehicleState>(
         listener: (context, state) {
@@ -669,8 +663,7 @@ class _EditVehicleViewState extends State<_EditVehicleView> {
                 Icon(Icons.arrow_drop_down, color: theme.colorScheme.primary),
             hint: Text(
               hint,
-              style: TextStyle(
-                color: theme.colorScheme.onSurface.withOpacity(0.5),
+              style: TextStyle(color: theme.colorScheme.onSurface.withOpacity(0.5),
                 fontSize: 14,
               ),
             ),

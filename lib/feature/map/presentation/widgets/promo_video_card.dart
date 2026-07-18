@@ -9,10 +9,7 @@ import 'package:trackify/core/widgets/trackify_loader.dart';
 class PromoVideoCard extends StatefulWidget {
   final PromoVideoModel video;
 
-  const PromoVideoCard({
-    Key? key,
-    required this.video,
-  }) : super(key: key);
+  const PromoVideoCard({Key? key, required this.video}) : super(key: key);
 
   @override
   State<PromoVideoCard> createState() => _PromoVideoCardState();
@@ -141,9 +138,7 @@ class _PromoVideoCardState extends State<PromoVideoCard> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           ClipRRect(
-            borderRadius: const BorderRadius.vertical(
-              top: Radius.circular(12),
-            ),
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
             child: AspectRatio(
               aspectRatio: 16 / 9,
               child: GestureDetector(
@@ -152,12 +147,8 @@ class _PromoVideoCardState extends State<PromoVideoCard> {
                   alignment: Alignment.center,
                   children: [
                     // VIDEO
-                    if (_isInitialized &&
-                        _chewieController != null)
-                      Chewie(
-                        controller: _chewieController!,
-                      )
-
+                    if (_isInitialized && _chewieController != null)
+                      Chewie(controller: _chewieController!)
                     // THUMBNAIL
                     else
                       CachedNetworkImage(
@@ -167,8 +158,7 @@ class _PromoVideoCardState extends State<PromoVideoCard> {
                         height: double.infinity,
                         placeholder: (context, url) =>
                             const Center(child: TrackifyLoader()),
-                        errorWidget: (context, url, error) =>
-                            Container(
+                        errorWidget: (context, url, error) => Container(
                           color: Colors.grey[300],
                           child: const Icon(
                             Icons.broken_image,
@@ -205,10 +195,7 @@ class _PromoVideoCardState extends State<PromoVideoCard> {
             padding: const EdgeInsets.all(12),
             child: Text(
               widget.video.title,
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
             ),

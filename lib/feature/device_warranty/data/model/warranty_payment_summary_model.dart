@@ -20,6 +20,7 @@ class WarrantyPaymentSummaryModel extends WarrantyPaymentSummaryEntity {
     super.selectedPlan,
     super.paymentSummary,
     required super.buttonText,
+    super.orderId,
   });
 
   factory WarrantyPaymentSummaryModel.fromJson(Map<String, dynamic> json) {
@@ -35,6 +36,7 @@ class WarrantyPaymentSummaryModel extends WarrantyPaymentSummaryEntity {
           ? PaymentSummaryModel.fromJson(paymentSummaryJson as Map<String, dynamic>)
           : null,
       buttonText: buttonText,
+      orderId: json['orderId']?.toString() ?? json['order_id']?.toString(),
     );
   }
 }

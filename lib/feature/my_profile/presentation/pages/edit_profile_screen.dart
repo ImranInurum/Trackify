@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:trackify/app/cubit/app_cubit.dart';
 import 'package:trackify/app/cubit/app_state.dart';
@@ -222,9 +222,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         titlePadding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
         contentPadding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
         title: Text(
-          l10n.editEmailAddress,
-          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-        ),
+          l10n.editEmailAddress, ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -262,8 +260,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             onPressed: () => Navigator.pop(dialogCtx),
             child: Text(
               l10n.cancel,
-              style: TextStyle(
-                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
+              style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
               ),
             ),
           ),
@@ -274,8 +271,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             },
             child: Text(
               l10n.saveAndVerify,
-              style: TextStyle(
-                color: Theme.of(context).colorScheme.primary,
+              style: TextStyle(color: Theme.of(context).colorScheme.primary,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -313,9 +309,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             titlePadding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
             contentPadding: const EdgeInsets.fromLTRB(20, 20, 20, 10),
             title: Text(
-              l10n.editMobileNumber,
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
+              l10n.editMobileNumber, ),
             content: Form(
               key: dialogFormKey,
               child: Column(
@@ -441,8 +435,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 onPressed: () => Navigator.pop(dialogCtx),
                 child: Text(
                   l10n.cancel,
-                  style: TextStyle(
-                    color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
+                  style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
                   ),
                 ),
               ),
@@ -455,8 +448,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 },
                 child: Text(
                   l10n.save,
-                  style: TextStyle(
-                    color: Theme.of(context).colorScheme.primary,
+                  style: TextStyle(color: Theme.of(context).colorScheme.primary,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -561,13 +553,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               onPressed: () => Navigator.pop(context),
             ),
             title: Text(
-              l10n.personalDetails,
-              style: TextStyle(
-                color: onSurface,
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
+              l10n.personalDetails, ),
             centerTitle: false,
           ),
           body: Form(

@@ -111,11 +111,7 @@ class _AddOverspeedAlertScreenState extends State<AddOverspeedAlertScreen> {
               color: theme.colorScheme.onSurface, size: 20),
           onPressed: () => Navigator.pop(context),
         ),
-        title: Text(
-          l10n.speedAlertInput,
-          style: theme.textTheme.titleMedium
-              ?.copyWith(fontWeight: FontWeight.bold),
-        ),
+        title: Text(l10n.speedAlertInput),
         centerTitle: false,
       ),
       body: BlocConsumer<OverspeedAlertCubit, OverspeedAlertState>(
@@ -306,69 +302,60 @@ class _AddOverspeedAlertScreenState extends State<AddOverspeedAlertScreen> {
     final allVehicles = _allVehicles;
 
     return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Padding(
-          padding: const EdgeInsets.only(top: 12.0),
-          child: Icon(Icons.directions_car_filled_outlined,
-              color: theme.colorScheme.onSurface.withOpacity(0.6), size: 20),
-        ),
+        Icon(Icons.directions_car_filled_outlined,
+            color: theme.colorScheme.onSurface.withOpacity(0.6), size: 20),
         const SizedBox(width: 16),
         Expanded(
           flex: 2,
-          child: Padding(
-            padding: const EdgeInsets.only(top: 12.0),
-            child: Text(
-              l10n.selectYourVehicle,
-              style: theme.textTheme.bodyMedium?.copyWith(
-                  color: theme.colorScheme.onSurface.withOpacity(0.8)),
-            ),
+          child: Text(
+            l10n.selectYourVehicle,
+            style: theme.textTheme.bodyMedium?.copyWith(
+                color: theme.colorScheme.onSurface.withOpacity(0.8)),
           ),
         ),
         Expanded(
           flex: 3,
-          child: allVehicles.isEmpty
-              ? Padding(
-                  padding: const EdgeInsets.only(top: 12.0),
-                  child: Text(
-                    'No vehicles available.',
+          child: GestureDetector(
+            onTap: () async {
+              if (allVehicles.isEmpty) return;
+              final result = await showDialog<List<Vehicle>>(
+                context: context,
+                builder: (context) => VehicleMultiSelectionDialog(
+                  vehicles: allVehicles,
+                  initialSelection: _selectedVehicles,
+                ),
+              );
+              if (result != null) {
+                setState(() {
+                  _selectedVehicles = result;
+                });
+              }
+            },
+            child: Container(
+              padding: const EdgeInsets.only(bottom: 8),
+              decoration: BoxDecoration(
+                border: Border(
+                  bottom: BorderSide(color: theme.dividerColor),
+                ),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    '${_selectedVehicles.length} Selected',
                     style: theme.textTheme.bodyMedium,
                   ),
-                )
-              : ListView.builder(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  padding: EdgeInsets.zero,
-                  itemCount: allVehicles.length,
-                  itemBuilder: (context, index) {
-                    final vehicle = allVehicles[index];
-                    final isSelected =
-                        _selectedVehicles.any((v) => v.id == vehicle.id);
-                    return CheckboxListTile(
-                      contentPadding: EdgeInsets.zero,
-                      controlAffinity: ListTileControlAffinity.leading,
-                      dense: true,
-                      title: Text(
-                        '${vehicle.vehicleModel} — ${vehicle.vehicleNumber}',
-                        style: theme.textTheme.bodyMedium,
-                      ),
-                      value: isSelected,
-                      activeColor: theme.colorScheme.primary,
-                      checkColor: theme.colorScheme.onPrimary,
-                      side: BorderSide(color: theme.colorScheme.primary),
-                      onChanged: (bool? checked) {
-                        setState(() {
-                          if (checked == true) {
-                            _selectedVehicles.add(vehicle);
-                          } else {
-                            _selectedVehicles.removeWhere(
-                                (v) => v.id == vehicle.id);
-                          }
-                        });
-                      },
-                    );
-                  },
-                ),
+                  Icon(
+                    Icons.open_in_new,
+                    color: theme.colorScheme.onSurface.withOpacity(0.6),
+                    size: 16,
+                  ),
+                ],
+              ),
+            ),
+          ),
         ),
       ],
     );

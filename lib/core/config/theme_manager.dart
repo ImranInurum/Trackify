@@ -87,8 +87,13 @@ class ThemeManager {
         centerTitle: false,
         elevation: 0,
         backgroundColor: config.appBar.background,
-        foregroundColor: config.appBar.textColor,
+        foregroundColor: brightness == Brightness.light ? Colors.black : Colors.white,
         surfaceTintColor: Colors.transparent,
+        titleTextStyle: TextStyle(
+          fontSize: 20.0,
+          fontWeight: FontWeight.w600,
+          color: brightness == Brightness.light ? Colors.black : Colors.white,
+        ),
       ),
       
       cardTheme: CardThemeData(
@@ -173,8 +178,13 @@ class ThemeManager {
       centerTitle: false,
       elevation: 0,
       backgroundColor: Colors.white,
-      foregroundColor: AppColors.textPrimaryLight,
+      foregroundColor: Colors.black,
       surfaceTintColor: Colors.transparent,
+      titleTextStyle: TextStyle(
+        fontSize: 20.0,
+        fontWeight: FontWeight.w600,
+        color: Colors.black,
+      ),
     ),
     cardTheme: CardThemeData(
       color: AppColors.cardLight,
@@ -231,8 +241,13 @@ class ThemeManager {
       centerTitle: false,
       elevation: 0,
       backgroundColor: AppColors.backgroundDark,
-      foregroundColor: AppColors.textPrimaryDark,
+      foregroundColor: Colors.white,
       surfaceTintColor: Colors.transparent,
+      titleTextStyle: TextStyle(
+        fontSize: 20.0,
+        fontWeight: FontWeight.w600,
+        color: Colors.white,
+      ),
     ),
     cardTheme: CardThemeData(
       color: AppColors.cardDark,

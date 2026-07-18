@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../cubit/notification_timeline_cubit.dart';
@@ -72,9 +72,7 @@ class _NotificationFilterScreenState extends State<NotificationFilterScreen> {
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
-          l10n.filters,
-          style: TextStyle(color: textColor, fontSize: 18, fontWeight: FontWeight.bold),
-        ),
+          l10n.filters, ),
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -87,7 +85,7 @@ class _NotificationFilterScreenState extends State<NotificationFilterScreen> {
                 children: [
                   Text(
                     l10n.selectDateRange,
-                    style: TextStyle(color: subTextColor, fontSize: 13),
+                    style: TextStyle(color: subTextColor, fontSize: 20.0),
                   ),
                   const SizedBox(height: 16),
                   PopupMenuButton<String>(

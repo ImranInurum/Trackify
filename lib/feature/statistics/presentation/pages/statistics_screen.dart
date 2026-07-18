@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:trackify/core/common/models/vehicle_list_model.dart';
@@ -64,13 +64,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
             appBar: AppBar(
               automaticallyImplyLeading: false,
               title: Text(
-                l10n.statistics,
-                style: TextStyle(
-                  color: theme.colorScheme.onSurface,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 20,
-                ),
-              ),
+                l10n.statistics, ),
               backgroundColor: Colors.transparent,
               elevation: 0,
               centerTitle: false,
@@ -85,13 +79,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
             appBar: AppBar(
               automaticallyImplyLeading: false,
               title: Text(
-                l10n.statistics,
-                style: TextStyle(
-                  color: theme.colorScheme.onSurface,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 20,
-                ),
-              ),
+                l10n.statistics, ),
               backgroundColor: Colors.transparent,
               elevation: 0,
               centerTitle: false,
@@ -576,8 +564,7 @@ class _RidingBehaviourCard extends StatelessWidget {
                                 ),
                                 TextSpan(
                                   text: trendLabel,
-                                  style: TextStyle(
-                                    color: theme.colorScheme.onSurface
+                                  style: TextStyle(color: theme.colorScheme.onSurface
                                         .withOpacity(0.6),
                                     fontSize: 13,
                                   ),

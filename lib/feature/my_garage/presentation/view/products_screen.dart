@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:trackify/l10n/app_localizations.dart';
 
@@ -44,7 +44,7 @@ class _ProductScreenState extends State<ProductScreen> {
         iconTheme: IconThemeData(color: colorScheme.onSurface),
         titleTextStyle: TextStyle(
           color: colorScheme.onSurface,
-          fontSize: 20,
+          fontSize: 20.0,
           fontWeight: FontWeight.w600,
         ),
         centerTitle: false,

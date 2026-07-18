@@ -125,8 +125,15 @@ class CurrentLocation {
   final double? lng;
   final double? speed;
   final String? time;
+  final dynamic battery;
 
-  CurrentLocation({this.lat, this.lng, this.speed, this.time});
+  CurrentLocation({
+    this.lat,
+    this.lng,
+    this.speed,
+    this.time,
+    this.battery,
+  });
 
   factory CurrentLocation.fromJson(Map<String, dynamic> json) {
     return CurrentLocation(
@@ -136,6 +143,7 @@ class CurrentLocation {
           ? double.tryParse(json['speed'].toString())
           : null,
       time: json['time'],
+      battery: json['battery'] ?? json['batteryLevel'] ?? json['battery_level'] ?? json['bat'],
     );
   }
 
@@ -145,6 +153,7 @@ class CurrentLocation {
       'lng': lng?.toString(),
       'speed': speed,
       'time': time,
+      'battery': battery,
     };
   }
 }

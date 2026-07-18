@@ -1,4 +1,4 @@
-import 'dart:io';
+﻿import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -378,14 +378,7 @@ class _AccessoryBillScreenState extends State<AccessoryBillScreen> {
           ),
           onPressed: () => Navigator.pop(context),
         ),
-        title: Text(
-          AppLocalizations.of(context)!.addAccessoryBill,
-          style: theme.textTheme.titleMedium?.copyWith(
-            color: colorScheme.onSurface,
-            fontWeight: FontWeightManager.semibold,
-            fontSize: 18,
-          ),
-        ),
+        title: Text(AppLocalizations.of(context)!.addAccessoryBill),
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -582,8 +575,7 @@ class _AccessoryBillScreenState extends State<AccessoryBillScreen> {
                 child: Center(
                   child: Text(
                     AppLocalizations.of(context)!.addDocument,
-                    style: TextStyle(
-                      color: colorScheme.onPrimary,
+                    style: TextStyle(color: colorScheme.onPrimary,
                       fontWeight: FontWeight.bold,
                     ),
                   ),

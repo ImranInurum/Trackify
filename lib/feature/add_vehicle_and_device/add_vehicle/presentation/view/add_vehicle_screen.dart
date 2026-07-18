@@ -1,4 +1,4 @@
-import 'package:cached_network_image/cached_network_image.dart';
+﻿import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:trackify/feature/add_vehicle_and_device/add_vehicle/data/models/vehicle_config_models.dart';
@@ -239,8 +239,7 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
                   elevation: 4,
                   hint: Text(
                     hint ?? label,
-                    style: TextStyle(
-                      color: theme.colorScheme.onSurface.withOpacity(0.5),
+                    style: TextStyle(color: theme.colorScheme.onSurface.withOpacity(0.5),
                       fontSize: 14,
                     ),
                   ),
@@ -391,13 +390,7 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: Text(
-          l10n.addVehicle,
-          style: TextStyle(
-            color: theme.colorScheme.onSurface,
-            fontSize: 17,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
+          l10n.addVehicle, ),
       ),
       body: BlocListener<AddVehicleCubit, AddVehicleState>(
         listenWhen: (previous, current) =>
@@ -541,8 +534,7 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
                                     padding: const EdgeInsets.only(bottom: 4),
                                     child: Text(
                                       l10n.selectVehicleTypeForFuel,
-                                      style: TextStyle(
-                                        color: theme.hintColor.withOpacity(0.7),
+                                      style: TextStyle(color: theme.hintColor.withOpacity(0.7),
                                         fontSize: 12,
                                         fontStyle: FontStyle.italic,
                                       ),

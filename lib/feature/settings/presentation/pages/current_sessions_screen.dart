@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:trackify/l10n/app_localizations.dart';
 
 class CurrentSessionsScreen extends StatelessWidget {
@@ -13,15 +13,15 @@ class CurrentSessionsScreen extends StatelessWidget {
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Theme.of(context).colorScheme.onSurface),
+          icon: Icon(
+            Icons.arrow_back,
+            color: Theme.of(context).colorScheme.onSurface,
+          ),
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: Text(
           l10n.currentSessions,
-          style: TextStyle(
-            color: Theme.of(context).colorScheme.onSurface,
-            fontWeight: FontWeight.bold,
-            fontSize: 18,
+          style: TextStyle(fontSize: 20.0, color: Theme.of(context).colorScheme.onSurface,
           ),
         ),
         surfaceTintColor: Colors.transparent,
@@ -37,8 +37,7 @@ class CurrentSessionsScreen extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               child: Text(
                 l10n.otherDevices,
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.onSurface,
+                style: TextStyle(color: Theme.of(context).colorScheme.onSurface,
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
                 ),
@@ -92,7 +91,11 @@ class CurrentSessionsScreen extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(Icons.android, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6), size: 30),
+          Icon(
+            Icons.android,
+            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+            size: 30,
+          ),
           const SizedBox(width: 16),
           Expanded(
             child: Column(
@@ -104,8 +107,7 @@ class CurrentSessionsScreen extends StatelessWidget {
                     Expanded(
                       child: Text(
                         'samsung SM-M346B',
-                        style: TextStyle(
-                          color: Theme.of(context).colorScheme.onSurface,
+                        style: TextStyle(color: Theme.of(context).colorScheme.onSurface,
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
                         ),
@@ -115,8 +117,9 @@ class CurrentSessionsScreen extends StatelessWidget {
                     ),
                     Text(
                       '2 months',
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
+                      style: TextStyle(color: Theme.of(
+                          context,
+                        ).colorScheme.onSurface.withOpacity(0.5),
                         fontSize: 12,
                       ),
                     ),
@@ -134,28 +137,37 @@ class CurrentSessionsScreen extends StatelessWidget {
                 const SizedBox(height: 4),
                 Text(
                   '${l10n.lastUsed} 3 Jul 2026 at 10:37:25 AM.',
-                  style: TextStyle(
-                    color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
+                  style: TextStyle(color: Theme.of(
+                      context,
+                    ).colorScheme.onSurface.withOpacity(0.5),
                     fontSize: 12,
                   ),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   '${l10n.osLabel} Android 16',
-                  style: TextStyle(
-                    color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
+                  style: TextStyle(color: Theme.of(
+                      context,
+                    ).colorScheme.onSurface.withOpacity(0.5),
                     fontSize: 12,
                   ),
                 ),
                 const SizedBox(height: 8),
                 Row(
                   children: [
-                    Icon(Icons.public, size: 18, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6)),
+                    Icon(
+                      Icons.public,
+                      size: 18,
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.onSurface.withOpacity(0.6),
+                    ),
                     const SizedBox(width: 6),
                     Text(
                       l10n.chromeNotificationDisabled,
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.onSurface.withOpacity(0.8),
+                      style: TextStyle(color: Theme.of(
+                          context,
+                        ).colorScheme.onSurface.withOpacity(0.8),
                         fontSize: 13,
                       ),
                     ),
@@ -182,7 +194,11 @@ class CurrentSessionsScreen extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(Icons.android, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6), size: 30),
+          Icon(
+            Icons.android,
+            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+            size: 30,
+          ),
           const SizedBox(width: 16),
           Expanded(
             child: Column(
@@ -194,8 +210,7 @@ class CurrentSessionsScreen extends StatelessWidget {
                     Expanded(
                       child: Text(
                         deviceName,
-                        style: TextStyle(
-                          color: Theme.of(context).colorScheme.onSurface,
+                        style: TextStyle(color: Theme.of(context).colorScheme.onSurface,
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
                         ),
@@ -205,8 +220,9 @@ class CurrentSessionsScreen extends StatelessWidget {
                     ),
                     Text(
                       timeAgo,
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
+                      style: TextStyle(color: Theme.of(
+                          context,
+                        ).colorScheme.onSurface.withOpacity(0.5),
                         fontSize: 12,
                       ),
                     ),
@@ -215,16 +231,18 @@ class CurrentSessionsScreen extends StatelessWidget {
                 const SizedBox(height: 4),
                 Text(
                   lastUsed,
-                  style: TextStyle(
-                    color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
+                  style: TextStyle(color: Theme.of(
+                      context,
+                    ).colorScheme.onSurface.withOpacity(0.5),
                     fontSize: 12,
                   ),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   osVersion,
-                  style: TextStyle(
-                    color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
+                  style: TextStyle(color: Theme.of(
+                      context,
+                    ).colorScheme.onSurface.withOpacity(0.5),
                     fontSize: 12,
                   ),
                 ),
@@ -235,12 +253,19 @@ class CurrentSessionsScreen extends StatelessWidget {
                   children: [
                     Row(
                       children: [
-                        Icon(Icons.public, size: 18, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6)),
+                        Icon(
+                          Icons.public,
+                          size: 18,
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.onSurface.withOpacity(0.6),
+                        ),
                         const SizedBox(width: 6),
                         Text(
                           l10n.chromeNotificationDisabled,
-                          style: TextStyle(
-                            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.8),
+                          style: TextStyle(color: Theme.of(
+                              context,
+                            ).colorScheme.onSurface.withOpacity(0.8),
                             fontSize: 13,
                           ),
                         ),
@@ -251,7 +276,9 @@ class CurrentSessionsScreen extends StatelessWidget {
                       child: OutlinedButton(
                         onPressed: () {},
                         style: OutlinedButton.styleFrom(
-                          side: BorderSide(color: Theme.of(context).colorScheme.primary),
+                          side: BorderSide(
+                            color: Theme.of(context).colorScheme.primary,
+                          ),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(4),
                           ),
@@ -259,8 +286,7 @@ class CurrentSessionsScreen extends StatelessWidget {
                         ),
                         child: Text(
                           l10n.logOut,
-                          style: TextStyle(
-                            color: Theme.of(context).colorScheme.primary,
+                          style: TextStyle(color: Theme.of(context).colorScheme.primary,
                             fontWeight: FontWeight.bold,
                           ),
                         ),

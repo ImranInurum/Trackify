@@ -1272,5 +1272,18 @@
   },
   "couldNotOpenFaq": "Could not open FAQ",
   "couldNotOpenTerms": "Could not open Terms & Conditions",
-  "couldNotOpenPrivacy": "Could not open privacy policy"
+  "couldNotOpenPrivacy": "Could not open privacy policy",
+  "incorrectPin": "Incorrect PIN",
+  "pinsDoNotMatch": "PINs do not match. Try again.",
+  "resetPinTitle": "Reset PIN",
+  "resetPinDescription": "Do you want to reset your PIN? This will clear the current PIN.",
+  "resetBtn": "Reset",
+  "unlockVehiclePinTitle": "Unlock Vehicle",
+  "lockVehiclePinTitle": "Lock Vehicle",
+  "setNewPinTitle": "Set New PIN",
+  "confirmNewPinTitle": "Confirm New PIN",
+  "enterPinSubtitle": "Enter your 4-digit PIN to proceed",
+  "createNewPinSubtitle": "Create a 4-digit PIN for vehicle locking",
+  "confirmNewPinSubtitle": "Re-enter your 4-digit PIN to confirm",
+  "forgotPin": "Forgot PIN?"
 }

@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:trackify/feature/get_more_out/presentation/pages/feature_details_screen.dart';
 
@@ -151,13 +151,7 @@ class _DiscoverFeaturesScreenState extends State<DiscoverFeaturesScreen> {
           ),
         ),
         title: Text(
-          l10n.discoverTrackifyFeatures,
-          style: TextStyle(
-            color: colorScheme.onSurface,
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
+          l10n.discoverTrackifyFeatures, ),
       ),
 
       /// ================= BODY =================
@@ -228,8 +222,7 @@ class _DiscoverFeaturesScreenState extends State<DiscoverFeaturesScreen> {
                                       localText.toLowerCase().contains('feature') 
                                           ? localText 
                                           : '$localText Features explored',
-                                      style: TextStyle(
-                                        color: _getStatusColor(
+                                      style: TextStyle(color: _getStatusColor(
                                           localText,
                                           colorScheme,
                                         ),
@@ -275,8 +268,7 @@ class _DiscoverFeaturesScreenState extends State<DiscoverFeaturesScreen> {
                           /// ================= SUBTITLE =================
                           Text(
                             feature.subtitle,
-                            style: TextStyle(
-                              color: colorScheme.onSurface.withOpacity(0.7),
+                            style: TextStyle(color: colorScheme.onSurface.withOpacity(0.7),
                               fontSize: 14,
                               height: 1.4,
                             ),

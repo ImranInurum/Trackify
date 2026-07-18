@@ -3,16 +3,12 @@ import '../../domain/entities/extend_warranty_entity.dart';
 class ExtendWarrantyRequest {
   final String imei;
   final String planId;
-  final String paymentStatus;
-  final String transactionId;
   final String paymentMethod;
   final double amountPaid;
 
   const ExtendWarrantyRequest({
     required this.imei,
     required this.planId,
-    required this.paymentStatus,
-    required this.transactionId,
     required this.paymentMethod,
     required this.amountPaid,
   });
@@ -21,8 +17,6 @@ class ExtendWarrantyRequest {
     return {
       'imei': imei,
       'planId': planId,
-      'paymentStatus': paymentStatus,
-      'transactionId': transactionId,
       'paymentMethod': paymentMethod,
       'amountPaid': amountPaid,
     };
@@ -42,6 +36,7 @@ class ExtendWarrantyResponseModel extends ExtendWarrantyEntity {
     required super.daysLeft,
     required super.amountPaid,
     required super.paymentStatus,
+    super.razorpayOrderId,
   });
 
   factory ExtendWarrantyResponseModel.fromJson(Map<String, dynamic> json) {
@@ -57,6 +52,7 @@ class ExtendWarrantyResponseModel extends ExtendWarrantyEntity {
       daysLeft: (json['daysLeft'] as num?)?.toInt() ?? 0,
       amountPaid: (json['amountPaid'] as num?)?.toDouble() ?? 0.0,
       paymentStatus: json['paymentStatus'] as String? ?? '',
+      razorpayOrderId: json['razorpayOrderId'] as String?,
     );
   }
 }

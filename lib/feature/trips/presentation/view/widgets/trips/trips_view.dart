@@ -269,21 +269,23 @@ class _TripsState extends State<Trips> {
                             }
                           }
                           
-                          return TripCard(
-                            title: trip['title'] ?? l10n.tripLabel('${index + 1}'),
-                            rides: rides,
-                            onTap: () async {
-                              await Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => TripDetailsScreen(
-                                    tripName: trip['title'] ?? l10n.tripLabel('${index + 1}'),
-                                    rides: rides,
-                                  ),
-                                ),
-                              );
-                            },
-                          );
+                           final displayTitle = _getLocalizedTripTitle(trip['title'] ?? l10n.tripLabel('${index + 1}'), l10n);
+                           return TripCard(
+                             title: displayTitle,
+                             rides: rides,
+                             imagePath: trip['imagePath'] as String?,
+                             onTap: () async {
+                               await Navigator.push(
+                                 context,
+                                 MaterialPageRoute(
+                                   builder: (context) => TripDetailsScreen(
+                                     tripName: displayTitle,
+                                     rides: rides,
+                                   ),
+                                 ),
+                               );
+                             },
+                           );
                         },
                       ),
               ),
@@ -356,5 +358,15 @@ class _TripsState extends State<Trips> {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
       ),
     );
+  }
+
+  String _getLocalizedTripTitle(String title, AppLocalizations l10n) {
+    final regex = RegExp(r'^Trip\s+(\d+)$', caseSensitive: false);
+    final match = regex.firstMatch(title);
+    if (match != null) {
+      final number = match.group(1)!;
+      return l10n.tripLabel(number);
+    }
+    return title;
   }
 }

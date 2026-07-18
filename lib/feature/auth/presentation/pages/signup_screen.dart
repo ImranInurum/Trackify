@@ -1,4 +1,4 @@
-import 'package:cached_network_image/cached_network_image.dart';
+﻿import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -229,8 +229,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           children: [
                             Text(
                               l10n.alreadyHaveAccount,
-                              style: TextStyle(
-                                color: Theme.of(context).colorScheme.onSurface,
+                              style: TextStyle(color: Theme.of(context).colorScheme.onSurface,
                               ),
                             ),
                             TextButton(
@@ -239,8 +238,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               },
                               child: Text(
                                 l10n.signIn,
-                                style: TextStyle(
-                                  color: Theme.of(context).colorScheme.primary,
+                                style: TextStyle(color: Theme.of(context).colorScheme.primary,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),

@@ -207,33 +207,114 @@ class _DeviceInstallationScreenState extends State<DeviceInstallationScreen>
           showDialog(
             context: context,
             barrierDismissible: true,
-            builder: (ctx) => AlertDialog(
-              backgroundColor: theme.scaffoldBackgroundColor,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-              title: Row(
-                children: [
-                  const Icon(Icons.warning_amber_rounded, color: Colors.orange),
-                  const SizedBox(width: 8),
-                  Text(
-                    'Device Already Installed',
-                    style: TextStyle(color: theme.colorScheme.onSurface),
+            builder: (ctx) => Dialog(
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+              child: Container(
+                padding: const EdgeInsets.all(24),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      theme.colorScheme.surface,
+                      theme.colorScheme.surface.withValues(alpha: 0.95),
+                    ],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
                   ),
-                ],
-              ),
-              content: Text(
-                'This device/IMEI is already assigned to a vehicle. '
-                'Please contact support if you need to replace or reassign a device.',
-                style: TextStyle(color: theme.colorScheme.onSurface),
-              ),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.of(ctx).pop(),
-                  child: Text(
-                    'OK',
-                    style: TextStyle(color: theme.colorScheme.primary),
+                  borderRadius: BorderRadius.circular(24),
+                  border: Border.all(
+                    color: Colors.redAccent.withValues(alpha: 0.2),
+                    width: 1.5,
                   ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.redAccent.withValues(alpha: 0.1),
+                      blurRadius: 24,
+                      offset: const Offset(0, 8),
+                    ),
+                  ],
                 ),
-              ],
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [
+                            Colors.redAccent.withValues(alpha: 0.2),
+                            Colors.orangeAccent.withValues(alpha: 0.1),
+                          ],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(
+                        Icons.warning_rounded,
+                        color: Colors.redAccent,
+                        size: 42,
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+                    Text(
+                      state.message ?? 'This device/IMEI is not available.',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: theme.colorScheme.onSurface,
+                        height: 1.4,
+                      ),
+                    ),
+                    const SizedBox(height: 28),
+                    Container(
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [
+                            theme.colorScheme.primary,
+                            theme.colorScheme.secondary,
+                          ],
+                          begin: Alignment.centerLeft,
+                          end: Alignment.centerRight,
+                        ),
+                        borderRadius: BorderRadius.circular(14),
+                        boxShadow: [
+                          BoxShadow(
+                            color: theme.colorScheme.primary.withValues(
+                              alpha: 0.3,
+                            ),
+                            blurRadius: 12,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
+                      ),
+                      child: Material(
+                        color: Colors.transparent,
+                        child: InkWell(
+                          borderRadius: BorderRadius.circular(14),
+                          onTap: () => Navigator.of(ctx).pop(),
+                          child: const Padding(
+                            padding: EdgeInsets.symmetric(vertical: 14),
+                            child: Center(
+                              child: Text(
+                                'OK',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  letterSpacing: 1.2,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ),
           );
         }
@@ -252,14 +333,7 @@ class _DeviceInstallationScreenState extends State<DeviceInstallationScreen>
             ),
             onPressed: () => Navigator.pop(context),
           ),
-          title: Text(
-            l10n.deviceInstallation,
-            style: TextStyle(
-              fontSize: 18,
-              color: theme.colorScheme.onSurface,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
+          title: Text(l10n.deviceInstallation),
           actions: [
             Theme(
               data: Theme.of(context).copyWith(
@@ -419,7 +493,9 @@ class _DeviceInstallationScreenState extends State<DeviceInstallationScreen>
                                                             color: theme
                                                                 .colorScheme
                                                                 .secondary
-                                                                .withOpacity(0.6),
+                                                                .withOpacity(
+                                                                  0.6,
+                                                                ),
                                                             blurRadius: 12,
                                                             spreadRadius: 3,
                                                           ),
@@ -437,26 +513,42 @@ class _DeviceInstallationScreenState extends State<DeviceInstallationScreen>
                                     // Success overlay after scanning
                                     if (_hasScanned && _scannedImei != null)
                                       Container(
-                                        color: Colors.black54, // Darken the grey camera feed
+                                        color: Colors
+                                            .black54, // Darken the grey camera feed
                                         child: Center(
                                           child: Column(
                                             mainAxisSize: MainAxisSize.min,
                                             children: [
                                               Container(
-                                                padding: const EdgeInsets.all(16),
+                                                padding: const EdgeInsets.all(
+                                                  16,
+                                                ),
                                                 decoration: BoxDecoration(
-                                                  color: Colors.green.withValues(alpha: 0.2),
+                                                  color: Colors.green
+                                                      .withValues(alpha: 0.2),
                                                   shape: BoxShape.circle,
                                                 ),
-                                                child: const Icon(Icons.check_circle_rounded, color: Colors.green, size: 56),
+                                                child: const Icon(
+                                                  Icons.check_circle_rounded,
+                                                  color: Colors.green,
+                                                  size: 56,
+                                                ),
                                               ),
                                               const SizedBox(height: 16),
                                               Container(
-                                                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                      horizontal: 16,
+                                                      vertical: 8,
+                                                    ),
                                                 decoration: BoxDecoration(
-                                                  color: Colors.white.withValues(alpha: 0.1),
-                                                  borderRadius: BorderRadius.circular(20),
-                                                  border: Border.all(color: Colors.white24),
+                                                  color: Colors.white
+                                                      .withValues(alpha: 0.1),
+                                                  borderRadius:
+                                                      BorderRadius.circular(20),
+                                                  border: Border.all(
+                                                    color: Colors.white24,
+                                                  ),
                                                 ),
                                                 child: Text(
                                                   _scannedImei!,
@@ -467,7 +559,6 @@ class _DeviceInstallationScreenState extends State<DeviceInstallationScreen>
                                                   ),
                                                 ),
                                               ),
-
                                             ],
                                           ),
                                         ),
@@ -593,10 +684,13 @@ class _DeviceInstallationScreenState extends State<DeviceInstallationScreen>
     final targetImei = _scannedImei!;
 
     if (!mounted) return;
-    
+
     // First, verify the IMEI is not already assigned
-    final isFree = await context.read<DeviceInstallationCubit>().checkImeiOnly(targetImei);
-    if (!isFree) return; // Flow stops here if assigned, cubit emits AlreadyAssigned state
+    final isFree = await context.read<DeviceInstallationCubit>().checkImeiOnly(
+      targetImei,
+    );
+    if (!isFree)
+      return; // Flow stops here if assigned, cubit emits AlreadyAssigned state
 
     if (!mounted) return;
     // Fetch fresh vehicles to ensure we don't use stale cached data from a previous user

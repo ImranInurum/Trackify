@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../l10n/app_localizations.dart';
 
@@ -67,12 +67,7 @@ class _GeoFenceScreenState extends State<GeoFenceScreen> {
                   onPressed: () => Navigator.pop(context),
                 ),
                 title: Text(
-                  AppLocalizations.of(context)!.geoFenceTitle,
-                  style: TextStyle(
-                    color: colorScheme.onSurface,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
+                  AppLocalizations.of(context)!.geoFenceTitle, ),
               ),
               body: ListView.builder(
                 padding: const EdgeInsets.symmetric(
@@ -125,8 +120,7 @@ class _GeoFenceScreenState extends State<GeoFenceScreen> {
                                 AppLocalizations.of(context)!.geoFenceRadius(
                                   fence.radius.toInt().toString(),
                                 ),
-                                style: TextStyle(
-                                  color: colorScheme.onSurface.withValues(
+                                style: TextStyle(color: colorScheme.onSurface.withValues(
                                     alpha: 0.6,
                                   ),
                                   fontSize: 13,
@@ -136,8 +130,7 @@ class _GeoFenceScreenState extends State<GeoFenceScreen> {
                                 const SizedBox(height: 2),
                                 Text(
                                   fence.vehicleName!,
-                                  style: TextStyle(
-                                    color: colorScheme.onSurface.withValues(
+                                  style: TextStyle(color: colorScheme.onSurface.withValues(
                                       alpha: 0.6,
                                     ),
                                     fontSize: 13,
@@ -253,8 +246,7 @@ class _GeoFenceScreenState extends State<GeoFenceScreen> {
             onPressed: () => Navigator.pop(dialogContext),
             child: Text(
               l10n.cancel,
-              style: TextStyle(
-                color: colorScheme.onSurface.withValues(alpha: 0.6),
+              style: TextStyle(color: colorScheme.onSurface.withValues(alpha: 0.6),
               ),
             ),
           ),
@@ -265,8 +257,7 @@ class _GeoFenceScreenState extends State<GeoFenceScreen> {
             },
             child: Text(
               l10n.delete,
-              style: TextStyle(
-                color: colorScheme.primary,
+              style: TextStyle(color: colorScheme.primary,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -299,8 +290,7 @@ class _GeoFenceScreenState extends State<GeoFenceScreen> {
             onPressed: () => Navigator.pop(dialogContext),
             child: Text(
               l10n.cancel,
-              style: TextStyle(
-                color: colorScheme.onSurface.withValues(alpha: 0.6),
+              style: TextStyle(color: colorScheme.onSurface.withValues(alpha: 0.6),
               ),
             ),
           ),
@@ -311,8 +301,7 @@ class _GeoFenceScreenState extends State<GeoFenceScreen> {
             },
             child: Text(
               l10n.turnOff,
-              style: TextStyle(
-                color: colorScheme.primary,
+              style: TextStyle(color: colorScheme.primary,
                 fontWeight: FontWeight.bold,
               ),
             ),

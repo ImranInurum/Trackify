@@ -1,4 +1,4 @@
-import 'package:cached_network_image/cached_network_image.dart';
+﻿import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:trackify/core/constants/app_images.dart';
@@ -180,8 +180,7 @@ class _ChoiceSelectorState extends State<ChoiceSelector> {
                 ),
                 label: Text(
                   l10n.logout,
-                  style: TextStyle(
-                    color: Theme.of(
+                  style: TextStyle(color: Theme.of(
                       context,
                     ).colorScheme.onSurface.withOpacity(0.5),
                     fontSize: 15,
@@ -255,8 +254,7 @@ class _ChoiceSelectorState extends State<ChoiceSelector> {
                         children: [
                           Text(
                             title,
-                            style: TextStyle(
-                              color: Theme.of(context).colorScheme.onSurface,
+                            style: TextStyle(color: Theme.of(context).colorScheme.onSurface,
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
                             ),
@@ -264,8 +262,7 @@ class _ChoiceSelectorState extends State<ChoiceSelector> {
                           const SizedBox(height: 8),
                           Text(
                             subtitle,
-                            style: TextStyle(
-                              color: Theme.of(
+                            style: TextStyle(color: Theme.of(
                                 context,
                               ).colorScheme.onSurface.withOpacity(0.6),
                               fontSize: 13,

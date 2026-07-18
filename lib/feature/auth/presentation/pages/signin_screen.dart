@@ -1,4 +1,4 @@
-import 'package:cached_network_image/cached_network_image.dart';
+﻿import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:trackify/feature/add_vehicle_and_device/choice_selector.dart';
@@ -257,8 +257,7 @@ class _SignInScreenState extends State<SignInScreen> {
                               },
                               child: Text(
                                 l10n.forgotPassword,
-                                style: TextStyle(
-                                  color: colorScheme.primary,
+                                style: TextStyle(color: colorScheme.primary,
                                   fontWeight: FontWeight.w600,
                                 ),
                               ),
@@ -283,8 +282,7 @@ class _SignInScreenState extends State<SignInScreen> {
                                 ),
                                 child: Text(
                                   l10n.or,
-                                  style: TextStyle(
-                                    color: Theme.of(
+                                  style: TextStyle(color: Theme.of(
                                       context,
                                     ).colorScheme.onSurface.withOpacity(0.5),
                                   ),
@@ -300,8 +298,7 @@ class _SignInScreenState extends State<SignInScreen> {
                             child: Center(
                               child: Text(
                                 'Login with Google',
-                                style: TextStyle(
-                                  color: colorScheme.primary,
+                                style: TextStyle(color: colorScheme.primary,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
@@ -313,8 +310,7 @@ class _SignInScreenState extends State<SignInScreen> {
                               children: [
                                 Text(
                                   l10n.dontHaveAccount,
-                                  style: TextStyle(
-                                    color: Theme.of(
+                                  style: TextStyle(color: Theme.of(
                                       context,
                                     ).colorScheme.onSurface,
                                   ),
@@ -330,8 +326,7 @@ class _SignInScreenState extends State<SignInScreen> {
                                   },
                                   child: Text(
                                     l10n.signUp,
-                                    style: TextStyle(
-                                      color: colorScheme.primary,
+                                    style: TextStyle(color: colorScheme.primary,
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),

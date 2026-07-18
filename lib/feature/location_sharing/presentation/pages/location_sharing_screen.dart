@@ -43,13 +43,7 @@ class _LocationSharingScreenState extends State<LocationSharingScreen> {
             onPressed: () => Navigator.of(context).pop(),
           ),
           title: Text(
-            l10n.locationSharing,
-            style: TextStyle(
-              color: theme.appBarTheme.foregroundColor,
-              fontWeight: FontWeight.bold,
-              fontSize: 18,
-            ),
-          ),
+            l10n.locationSharing, ),
           centerTitle: false,
         ),
         body: Stack(

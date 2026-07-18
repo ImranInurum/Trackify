@@ -64,9 +64,14 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> {
       for (var t in trips) {
         final decoded = jsonDecode(t as String);
         if (decoded['title'] == _currentTripName) {
-          if (mounted && decoded['quote'] != null) {
+          if (mounted) {
             setState(() {
-              _currentTripQuote = decoded['quote'];
+              if (decoded['quote'] != null) {
+                _currentTripQuote = decoded['quote'];
+              }
+              if (decoded['imagePath'] != null) {
+                _pickedImage = File(decoded['imagePath'] as String);
+              }
             });
           }
           break;
@@ -90,7 +95,23 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> {
       setState(() {
         _pickedImage = File(pickedFile.path);
       });
-      // Handle the picked image (e.g., upload to server or show in UI)
+      
+      try {
+        final box = await Hive.openBox('saved_trips');
+        final trips = List<dynamic>.from(box.get('trips_list', defaultValue: []));
+        for (int i = 0; i < trips.length; i++) {
+          final decoded = jsonDecode(trips[i] as String);
+          if (decoded['title'] == _currentTripName) {
+            decoded['imagePath'] = pickedFile.path;
+            trips[i] = jsonEncode(decoded);
+            break;
+          }
+        }
+        await box.put('trips_list', trips);
+      } catch (e) {
+        debugPrint('Error saving trip image: $e');
+      }
+
       if (mounted) Navigator.pop(context);
     }
   }
@@ -248,9 +269,7 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> {
         backgroundColor: theme.cardColor,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
         title: Text(
-          l10n.deleteTrip,
-          style: const TextStyle(fontWeight: FontWeight.bold),
-        ),
+          l10n.deleteTrip, ),
         content: Text(
           l10n.deleteTripConfirmation,
           style: const TextStyle(color: Colors.grey, fontSize: 14),
@@ -420,9 +439,11 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> {
                 Container(
                   height: 280, // Slightly taller for full width look
                   width: double.infinity,
-                  decoration: const BoxDecoration(
+                  decoration: BoxDecoration(
                     image: DecorationImage(
-                      image: AssetImage('assets/images/explore_app_image.jpg'),
+                      image: _pickedImage != null && _pickedImage!.existsSync()
+                          ? FileImage(_pickedImage!) as ImageProvider
+                          : const AssetImage('assets/images/explore_app_image.jpg'),
                       fit: BoxFit.cover,
                     ),
                   ),
