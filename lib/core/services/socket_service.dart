@@ -30,6 +30,7 @@ class SocketService {
   final Duration _minReconnectDelay = const Duration(seconds: 2);
   final Duration _maxReconnectDelay = const Duration(minutes: 1);
   Timer? _heartbeatTimer;
+  Timer? _reconnectTimer;
 
   Stream<Map<String, dynamic>> get deviceDataStream =>
       _deviceDataController.stream;
@@ -164,18 +165,26 @@ class SocketService {
   }
 
   void _handleDisconnect() {
+    if (!_shouldReconnect && !_isConnected && !_isConnecting) return;
+    
     _isConnected = false;
     _isConnecting = false;
     _heartbeatTimer?.cancel();
+    _reconnectTimer?.cancel();
     _socketSubscription?.cancel();
     _socket?.destroy();
     _socket = null;
 
     if (_shouldReconnect && _host != null) {
-      _reconnectAttempts++;
+      if (_reconnectAttempts < _maxReconnectAttempts) {
+        _reconnectAttempts++;
+      }
       
-      // Exponential backoff: 2, 4, 8, 16, 32, 60...
-      int delaySeconds = (_minReconnectDelay.inSeconds * (1 << (_reconnectAttempts - 1)));
+      // Exponential backoff
+      int shift = _reconnectAttempts - 1;
+      if (shift > 10) shift = 10; // Prevent overflow
+      
+      int delaySeconds = _minReconnectDelay.inSeconds * (1 << shift);
       if (delaySeconds > _maxReconnectDelay.inSeconds) {
         delaySeconds = _maxReconnectDelay.inSeconds;
       }
@@ -185,7 +194,8 @@ class SocketService {
        print(
         '[SocketService] Reconnecting in ${delay.inSeconds}s (Attempt $_reconnectAttempts)...',
       );
-      Future.delayed(delay, () {
+      
+      _reconnectTimer = Timer(delay, () {
         if (_shouldReconnect && !_isConnected && !_isConnecting) {
           _connectInternal();
         }
@@ -198,6 +208,7 @@ class SocketService {
     _isConnected = false;
     _isConnecting = false;
     _heartbeatTimer?.cancel();
+    _reconnectTimer?.cancel();
     _socketSubscription?.cancel();
     _socket?.destroy();
     _socket = null;
@@ -209,6 +220,7 @@ class SocketService {
     _isConnected = false;
     _isConnecting = false;
     _heartbeatTimer?.cancel();
+    _reconnectTimer?.cancel();
     _socketSubscription?.cancel();
     _socket?.destroy();
     _deviceDataController.close();
