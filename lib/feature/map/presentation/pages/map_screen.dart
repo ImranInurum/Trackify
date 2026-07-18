@@ -158,6 +158,22 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
     super.dispose();
   }
 
+  Brightness? _currentBrightness;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final brightness = Theme.of(context).brightness;
+    if (_currentBrightness != brightness) {
+      _currentBrightness = brightness;
+      if (_mapController != null && mounted) {
+        final appState = context.read<AppCubit>().state;
+        final style = _getMapStyle(appState, context);
+        MapUtils.setStyle(_mapController!, style);
+      }
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -458,16 +474,13 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
         state.mapStyle == l10n?.satelliteStyle) {
       return null;
     }
-    if (state.mapStyle == 'Dark' || state.mapStyle == l10n?.darkStyle) {
-      return _darkMapStyle;
-    }
-    if (state.mapStyle == 'Light' || state.mapStyle == l10n?.lightStyle) {
-      return _lightMapStyle;
-    }
+
+    final isDarkTheme = Theme.of(context).brightness == Brightness.dark;
+
     if (state.mapStyle == 'Simple' || state.mapStyle == l10n?.simpleStyle) {
       return _lightMapStyle;
     }
-    final isDarkTheme = Theme.of(context).brightness == Brightness.dark;
+
     return isDarkTheme ? _darkMapStyle : _lightMapStyle;
   }
 
@@ -1264,9 +1277,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
     if (_isLoadingOffers) {
       return const Padding(
         padding: EdgeInsets.symmetric(vertical: 20),
-        child: Center(
-          child: TrackifyLoader(size: 150, animated: true),
-        ),
+        child: Center(child: TrackifyLoader(size: 150, animated: true)),
       );
     }
     if (_promoOffers.isEmpty) return const SizedBox.shrink();
@@ -2164,12 +2175,14 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
     final l10n = AppLocalizations.of(context)!;
     return BlocBuilder<DiscoverCubit, DiscoverState>(
       builder: (context, state) {
-        double progressValue = double.tryParse(
+        double progressValue =
+            double.tryParse(
               AppPreference.instance.getSync(key: 'discover_progress_value'),
-            ) ?? 0.0;
+            ) ??
+            0.0;
         String progressString = AppPreference.instance.getSync(
-              key: 'discover_progress_string',
-            );
+          key: 'discover_progress_string',
+        );
         if (progressString.isEmpty) {
           progressString = "0";
         }
@@ -2179,7 +2192,9 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
           int total = 0;
           final regex = RegExp(r'\d+/(\d+)');
           final prefs = AppPreference.instance;
-          final list = prefs.getStringList(key: AppPreference.KEY_EXPLORED_FEATURES);
+          final list = prefs.getStringList(
+            key: AppPreference.KEY_EXPLORED_FEATURES,
+          );
 
           for (var item in state.discoverList) {
             final match = regex.firstMatch(item.exploredText);
@@ -2189,11 +2204,13 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
             } else {
               catTotal = int.tryParse(item.exploredText) ?? 0;
             }
-            
+
             if (catTotal > 0) {
               total += catTotal;
-              
-              final catExplored = list.where((id) => id.startsWith('${item.id}_')).length;
+
+              final catExplored = list
+                  .where((id) => id.startsWith('${item.id}_'))
+                  .length;
               explored += (catExplored > catTotal ? catTotal : catExplored);
             }
           }
@@ -2201,10 +2218,14 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
             final calculatedValue = explored / total;
             final calculatedString = (calculatedValue * 100).toInt().toString();
 
-            if (calculatedValue != progressValue || calculatedString != progressString) {
+            if (calculatedValue != progressValue ||
+                calculatedString != progressString) {
               progressValue = calculatedValue;
               progressString = calculatedString;
-              prefs.set(key: 'discover_progress_value', value: progressValue.toString());
+              prefs.set(
+                key: 'discover_progress_value',
+                value: progressValue.toString(),
+              );
               prefs.set(key: 'discover_progress_string', value: progressString);
               prefs.set(key: 'discover_explored', value: explored.toString());
               prefs.set(key: 'discover_total', value: total.toString());
@@ -2223,7 +2244,9 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
               ),
             ).then((_) {
               if (mounted) {
-                setState(() {}); // Force rebuild to recalculate progress from updated local list
+                setState(
+                  () {},
+                ); // Force rebuild to recalculate progress from updated local list
                 context.read<DiscoverCubit>().fetchDiscoverFeatures();
               }
             });
@@ -2232,10 +2255,21 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
             margin: const EdgeInsets.symmetric(horizontal: 16),
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: Theme.of(context).cardColor,
+              gradient: LinearGradient(
+                colors: [
+                  Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
+                  Theme.of(
+                    context,
+                  ).colorScheme.secondary.withValues(alpha: 0.05),
+                ],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
-                color: Theme.of(context).dividerColor.withOpacity(0.5),
+                color: Theme.of(
+                  context,
+                ).colorScheme.primary.withValues(alpha: 0.2),
               ),
             ),
             child: Row(
@@ -2256,10 +2290,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                       ),
                       Text(
                         l10n.progressPercentage(progressString),
-                        style: getBoldStyle(
-                          color: progressColor,
-                          fontSize: 10,
-                        ),
+                        style: getBoldStyle(color: progressColor, fontSize: 10),
                       ),
                     ],
                   ),
@@ -2271,17 +2302,37 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                     children: [
                       Row(
                         children: [
-                          Text(
-                            l10n.getMoreOutOfTrackify,
-                            style: getBoldStyle(
-                              color: progressColor,
-                              fontSize: 14,
+                          ShaderMask(
+                            shaderCallback: (bounds) => LinearGradient(
+                              colors: [
+                                Theme.of(context).colorScheme.primary,
+                                Theme.of(context).colorScheme.secondary,
+                              ],
+                              begin: Alignment.centerLeft,
+                              end: Alignment.centerRight,
+                            ).createShader(bounds),
+                            child: Text(
+                              l10n.getMoreOutOfTrackify,
+                              style: getBoldStyle(
+                                color: Colors.white,
+                                fontSize: 14,
+                              ),
                             ),
                           ),
-                          Icon(
-                            Icons.chevron_right,
-                            color: progressColor,
-                            size: 18,
+                          ShaderMask(
+                            shaderCallback: (bounds) => LinearGradient(
+                              colors: [
+                                Theme.of(context).colorScheme.primary,
+                                Theme.of(context).colorScheme.secondary,
+                              ],
+                              begin: Alignment.centerLeft,
+                              end: Alignment.centerRight,
+                            ).createShader(bounds),
+                            child: const Icon(
+                              Icons.chevron_right,
+                              color: Colors.white,
+                              size: 18,
+                            ),
                           ),
                         ],
                       ),
@@ -2311,7 +2362,9 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                     padding: const EdgeInsets.all(4.0),
                     child: Icon(
                       Icons.close,
-                      color: Theme.of(context).dividerColor,
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.onSurface.withValues(alpha: 0.6),
                       size: 20,
                     ),
                   ),

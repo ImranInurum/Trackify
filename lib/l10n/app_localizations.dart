@@ -6345,6 +6345,84 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Could not open privacy policy'**
   String get couldNotOpenPrivacy;
+
+  /// No description provided for @incorrectPin.
+  ///
+  /// In en, this message translates to:
+  /// **'Incorrect PIN'**
+  String get incorrectPin;
+
+  /// No description provided for @pinsDoNotMatch.
+  ///
+  /// In en, this message translates to:
+  /// **'PINs do not match. Try again.'**
+  String get pinsDoNotMatch;
+
+  /// No description provided for @resetPinTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset PIN'**
+  String get resetPinTitle;
+
+  /// No description provided for @resetPinDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Do you want to reset your PIN? This will clear the current PIN.'**
+  String get resetPinDescription;
+
+  /// No description provided for @resetBtn.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset'**
+  String get resetBtn;
+
+  /// No description provided for @unlockVehiclePinTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlock Vehicle'**
+  String get unlockVehiclePinTitle;
+
+  /// No description provided for @lockVehiclePinTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Lock Vehicle'**
+  String get lockVehiclePinTitle;
+
+  /// No description provided for @setNewPinTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Set New PIN'**
+  String get setNewPinTitle;
+
+  /// No description provided for @confirmNewPinTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm New PIN'**
+  String get confirmNewPinTitle;
+
+  /// No description provided for @enterPinSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your 4-digit PIN to proceed'**
+  String get enterPinSubtitle;
+
+  /// No description provided for @createNewPinSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Create a 4-digit PIN for vehicle locking'**
+  String get createNewPinSubtitle;
+
+  /// No description provided for @confirmNewPinSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Re-enter your 4-digit PIN to confirm'**
+  String get confirmNewPinSubtitle;
+
+  /// No description provided for @forgotPin.
+  ///
+  /// In en, this message translates to:
+  /// **'Forgot PIN?'**
+  String get forgotPin;
 }
 
 class _AppLocalizationsDelegate

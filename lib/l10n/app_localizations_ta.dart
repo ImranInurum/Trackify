@@ -2660,90 +2660,89 @@ class AppLocalizationsTa extends AppLocalizations {
       'இந்த வாகனத்திற்கு விழிப்பூட்டல்கள் எதுவும் உருவாக்கப்படவில்லை.';
 
   @override
-  String get changePasswordTitle => 'Change Password';
+  String get changePasswordTitle => 'கடவுச்சொல்லை மாற்றவும்';
 
   @override
   String get changePasswordSubtitle =>
-      'Change password & logout from all phones';
+      'கடவுச்சொல்லை மாற்றி அனைத்து போன்களிலிருந்தும் வெளியேறவும்';
 
   @override
-  String get currentSessions => 'Current sessions';
+  String get currentSessions => 'தற்போதைய அமர்வுகள்';
 
   @override
-  String get manageLoggedInDevices => 'Manage logged-in devices';
+  String get manageLoggedInDevices => 'உள்நுழைந்துள்ள சாதனங்களை நிர்வகிக்கவும்';
 
   @override
-  String get deleteAccountTitle => 'Delete Account';
+  String get deleteAccountTitle => 'கணக்கை நீக்கு';
 
   @override
-  String get deleteAccountSubtitle => 'Delete your account permanently';
+  String get deleteAccountSubtitle => 'உங்கள் கணக்கை நிரந்தரமாக நீக்கவும்';
 
   @override
-  String get oldPassword => 'Old Password';
+  String get oldPassword => 'பழைய கடவுச்சொல்';
 
   @override
-  String get confirmNewPasswordTitle => 'Confirm New Password';
+  String get confirmNewPasswordTitle => 'புதிய கடவுச்சொல்லை உறுதிப்படுத்தவும்';
 
   @override
-  String get logoutOfAllDevices => 'Logout of all devices';
+  String get logoutOfAllDevices => 'அனைத்து சாதனங்களிலிருந்தும் வெளியேறவும்';
 
   @override
-  String get otherDevices => 'Other devices';
+  String get otherDevices => 'பிற சாதனங்கள்';
 
   @override
-  String get activeOnThisDevice => 'Active on this device';
+  String get activeOnThisDevice => 'இந்த சாதனத்தில் செயலில் உள்ளது';
 
   @override
-  String get lastUsed => 'Last used -';
+  String get lastUsed => 'கடைசியாக பயன்படுத்தியது -';
 
   @override
   String get osLabel => 'OS -';
 
   @override
-  String get chromeNotificationDisabled => 'Chrome notification - disabled';
+  String get chromeNotificationDisabled => 'குரோம் அறிவிப்பு - முடக்கப்பட்டது';
 
   @override
-  String get logOut => 'Log out';
+  String get logOut => 'வெளியேறு';
 
   @override
-  String get hi => 'Hi';
+  String get hi => 'வணக்கம்';
 
   @override
-  String get sorryToSeeYouGo => 'We\'re sorry to see you go.';
+  String get sorryToSeeYouGo =>
+      'நீங்கள் செல்வதைப் பார்த்து நாங்கள் வருந்துகிறோம்.';
 
   @override
-  String get note => 'Note:';
+  String get note => 'குறிப்பு:';
 
   @override
   String get deleteAccountNote1 =>
-      'After 30 days, your account will be deleted permanently.';
+      '30 நாட்களுக்குப் பிறகு, உங்கள் கணக்கு நிரந்தரமாக நீக்கப்படும்.';
 
   @override
   String get deleteAccountNote2 =>
-      'You can reactivate the account within 30 Days by signing back.';
+      'மீண்டும் உள்நுழைவதன் மூலம் 30 நாட்களுக்குள் கணக்கை மீண்டும் செயல்படுத்தலாம்.';
 
   @override
   String get deleteAccountExplanationPrompt =>
-      'We would love to know why you are deleting your account, as we may be able to help with common issues. You can also just continue.';
+      'நீங்கள் ஏன் உங்கள் கணக்கை நீக்குகிறீர்கள் என்பதை அறிய விரும்புகிறோம், ஏனெனில் பொதுவான பிரச்சனைகளுக்கு நாங்கள் உதவலாம். நீங்கள் தொடர்ந்து செல்லவும் முடியும்.';
 
   @override
   String get explanationOptionalHint =>
-      'Your explanation is completely optional';
+      'உங்கள் விளக்கம் முற்றிலும் விருப்பத்திற்குரியது';
 
   @override
-  String get deleteWarningPart1 =>
-      'Your device will be unmapped, subscription will be ';
+  String get deleteWarningPart1 => 'உங்கள் சாதனம் மேப் செய்யப்படாது, சந்தா ';
 
   @override
-  String get terminated => 'terminated';
+  String get terminated => 'ரத்து செய்யப்படும்';
 
   @override
   String get deleteWarningPart2 =>
-      ' and your all data will be lost from the server after 30 days of account deletion.';
+      ' மற்றும் கணக்கு நீக்கப்பட்ட 30 நாட்களுக்குப் பிறகு சர்வவிலிருந்து உங்கள் எல்லா தரவும் இழக்கப்படும்.';
 
   @override
-  String get confirmDeleteAccount =>
-      'Are you sure you want to delete your account?';
+  String get confirmDeleteAccount => 'உங்கள் கணக்கை நீக்க விரும்புகிறீர்களா?';
 
   @override
   String get expired => 'காலாவதியானது';
@@ -3321,4 +3320,47 @@ class AppLocalizationsTa extends AppLocalizations {
 
   @override
   String get couldNotOpenPrivacy => 'தனியுரிமைக் கொள்கையைத் திறக்க முடியவில்லை';
+
+  @override
+  String get incorrectPin => 'தவறான பின்';
+
+  @override
+  String get pinsDoNotMatch =>
+      'பின்கள் பொருந்தவில்லை. மீண்டும் முயற்சிக்கவும்.';
+
+  @override
+  String get resetPinTitle => 'பின்னை மீட்டமை';
+
+  @override
+  String get resetPinDescription =>
+      'உங்கள் பின்னை மீட்டமைக்க விரும்புகிறீர்களா? இது தற்போதைய பின்னை அழிக்கும்.';
+
+  @override
+  String get resetBtn => 'மீட்டமை';
+
+  @override
+  String get unlockVehiclePinTitle => 'வாகனத்தைத் திறக்கவும்';
+
+  @override
+  String get lockVehiclePinTitle => 'வாகனத்தைப் பூட்டவும்';
+
+  @override
+  String get setNewPinTitle => 'புதிய பின்னை அமைக்கவும்';
+
+  @override
+  String get confirmNewPinTitle => 'புதிய பின்னை உறுதிப்படுத்தவும்';
+
+  @override
+  String get enterPinSubtitle => 'தொடர உங்கள் 4-இலக்க பின்னை உள்ளிடவும்';
+
+  @override
+  String get createNewPinSubtitle =>
+      'வாகனத்தை பூட்ட 4-இலக்க பின்னை உருவாக்கவும்';
+
+  @override
+  String get confirmNewPinSubtitle =>
+      'உறுதிப்படுத்த உங்கள் 4-இலக்க பின்னை மீண்டும் உள்ளிடவும்';
+
+  @override
+  String get forgotPin => 'பின் மறந்துவிட்டதா?';
 }

@@ -30,59 +30,42 @@ class DeviceInstallationRepositoryImpl implements DeviceInstallationRepository {
   }
 
   @override
-  ResultFuture<bool> checkImeiAssigned(String imei) async {
+  ResultFuture<String?> checkImeiAssigned(String imei) async {
     try {
       debugPrint('Checking IMEI: $imei');
       final response = await _apiService.getGetApiResponse(
         ApiURL.checkImei(imei),
       );
       debugPrint('Check IMEI response: $response');
-      // The API returns true or false, but it might be wrapped in a success/data object depending on backend.
-      // Wait, "agar isme responce true ho" implies it's returning true directly or inside data.
-      // Let's assume it returns true/false directly or { "status": true } maybe?
-      // I will check if the response is boolean or if response['data'] is boolean.
-      bool isAssigned = false;
+      
+      String? errorMessage;
       
       response.fold(
         (error) {
           debugPrint('API Error: $error');
-          // If error occurs, we check if it's a 400 with 'assigned' message
-          if (error.message.toLowerCase().contains('assigned') ||
-              error.message.toLowerCase().contains('already') ||
-              error.message.toLowerCase().contains('vehicle')) {
-            isAssigned = true;
-          }
+          errorMessage = error.message;
         },
         (data) {
-          if (data is bool) {
-            isAssigned = data;
-          } else if (data is Map) {
-            // First check message just to be absolutely sure
-            final message = data['message']?.toString().toLowerCase() ?? '';
-            if (message.contains('assigned') || message.contains('already') || message.contains('vehicle')) {
-              isAssigned = true;
-            } else if (data.containsKey('data') && data['data'] is bool) {
-              isAssigned = data['data'] as bool;
-            } else if (data.containsKey('isAssigned') && data['isAssigned'] is bool) {
-              isAssigned = data['isAssigned'] as bool;
-            } else if (data.containsKey('status')) {
-              isAssigned = data['status'] == true || data['status'] == 'true';
-            } else if (data['success'] == true || data['success'] == 'true') {
-              isAssigned = true; 
+          if (data is Map) {
+            // New logic: if status is true, it's available (no error message)
+            // if status is false, it's unavailable or assigned (has error message)
+            if (data['status'] == true || data['status'] == 'true' || data['success'] == true) {
+              errorMessage = null; // proceed
+            } else {
+              errorMessage = data['message']?.toString() ?? "";
             }
+          } else if (data is bool) {
+            // Fallback for boolean response
+            errorMessage = data ? "Already assigned" : null;
           }
         }
       );
 
-      if (isAssigned) {
-        return const Right(true);
-      }
-
-      if (response.isLeft()) {
+      if (response.isLeft() && errorMessage == null) {
         return Left(response.getLeft().toNullable()!);
       }
       
-      return Right(isAssigned);
+      return Right(errorMessage);
     } on AppException catch (e) {
       return Left(e);
     } catch (e) {

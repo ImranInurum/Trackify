@@ -11,6 +11,7 @@ import 'package:trackify/core/common/models/vehicle_list_model.dart';
 
 import '../../../../core/common/widgets/vehicle_card.dart';
 import '../../../Vehicle_control/presentation/pages/vehicle_control_screen.dart';
+import '../../../Vehicle_control/presentation/widgets/vehicle_pin_dialog.dart';
 import '../../../Vehicle_control/data/repositories/vehicle_control_repository_impl.dart';
 import 'package:trackify/core/widgets/trackify_loader.dart';
 
@@ -232,6 +233,16 @@ class _MyGarageScreenState extends State<MyGarageScreen> {
     final imei = vehicle.imei!;
     final currentLockState = _vehicleLockStates[imei] ?? false;
     final targetLockState = !currentLockState;
+
+    final success = await VehiclePinDialog.show(context, currentLockState);
+    if (!success) {
+      if (context.mounted) {
+        setState(() {
+          _vehicleCardRefreshCount++;
+        });
+      }
+      return;
+    }
 
     try {
       final repo = VehicleControlRepositoryImpl();

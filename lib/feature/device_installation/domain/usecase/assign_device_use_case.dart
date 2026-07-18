@@ -11,7 +11,7 @@ class AssignDeviceUseCase {
     return _repository.assignDevice(request);
   }
 
-  ResultFuture<bool> checkImeiAssigned(String imei) {
+  ResultFuture<String?> checkImeiAssigned(String imei) {
     return _repository.checkImeiAssigned(imei);
   }
 }

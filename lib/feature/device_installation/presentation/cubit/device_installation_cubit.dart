@@ -14,14 +14,14 @@ class DeviceInstallationCubit extends Cubit<DeviceInstallationState> {
     emit(DeviceInstallationLoading());
     final checkResult = await _assignDeviceUseCase.checkImeiAssigned(imei.trim());
     
-    bool isAssigned = false;
+    String? apiErrorMessage;
     Exception? caughtError;
     checkResult.fold(
       (l) {
         debugPrint('Error checking IMEI: $l');
         caughtError = l;
       },
-      (r) => isAssigned = r,
+      (r) => apiErrorMessage = r,
     );
 
     if (caughtError != null) {
@@ -29,8 +29,8 @@ class DeviceInstallationCubit extends Cubit<DeviceInstallationState> {
       return false;
     }
 
-    if (isAssigned) {
-      emit(DeviceInstallationImeiAlreadyAssigned());
+    if (apiErrorMessage != null) {
+      emit(DeviceInstallationImeiAlreadyAssigned(apiErrorMessage));
       return false; // Stop further flow
     } else {
       emit(DeviceInstallationInitial()); // Remove loader, IMEI is free
@@ -48,14 +48,14 @@ class DeviceInstallationCubit extends Cubit<DeviceInstallationState> {
 
     final checkResult = await _assignDeviceUseCase.checkImeiAssigned(imei.trim());
 
-    bool isAssigned = false;
+    String? apiErrorMessage;
     Exception? caughtError;
     checkResult.fold(
       (l) {
         debugPrint('Error checking IMEI: $l');
         caughtError = l;
       },
-      (r) => isAssigned = r,
+      (r) => apiErrorMessage = r,
     );
 
     if (caughtError != null) {
@@ -63,8 +63,8 @@ class DeviceInstallationCubit extends Cubit<DeviceInstallationState> {
       return;
     }
 
-    if (isAssigned) {
-      emit(DeviceInstallationImeiAlreadyAssigned());
+    if (apiErrorMessage != null) {
+      emit(DeviceInstallationImeiAlreadyAssigned(apiErrorMessage));
       return;
     }
 

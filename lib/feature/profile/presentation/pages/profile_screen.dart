@@ -24,6 +24,7 @@ import 'package:trackify/feature/my_profile/presentation/cubit/my_profile_cubit.
 import '../../../../core/common/widgets/vehicle_card.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../../Vehicle_control/presentation/pages/vehicle_control_screen.dart';
+import '../../../Vehicle_control/presentation/widgets/vehicle_pin_dialog.dart';
 import '../../../device_data/presentation/pages/device_data_screen.dart';
 import '../../../device_warranty/pages/device_warranty_page.dart';
 import '../../../get_more_out/presentation/cubit/discover_cubit.dart';
@@ -100,6 +101,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final targetLockState = !currentLockState;
 
     final l10n = AppLocalizations.of(context)!;
+
+    final success = await VehiclePinDialog.show(context, currentLockState);
+    if (!success) {
+      if (context.mounted) {
+        setState(() {
+          _vehicleCardRefreshCount++;
+        });
+      }
+      return;
+    }
 
     try {
       final repo = VehicleControlRepositoryImpl();
@@ -393,9 +404,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           vertical: 10,
                         ),
                         decoration: BoxDecoration(
-                          color: Theme.of(context).cardColor,
+                          gradient: LinearGradient(
+                            colors: [
+                              Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
+                              Theme.of(context).colorScheme.secondary.withValues(alpha: 0.05),
+                            ],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                          ),
                           borderRadius: BorderRadius.circular(16),
-                          border: Border.all(color: Theme.of(context).dividerColor),
+                          border: Border.all(
+                            color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.2),
+                          ),
                         ),
                         child: Row(
                           children: [
@@ -427,11 +447,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(
-                                    l10n.getMoreOutOfTrackify,
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.w600,
-                                      color: Theme.of(context).colorScheme.primary,
+                                  ShaderMask(
+                                    shaderCallback: (bounds) => LinearGradient(
+                                      colors: [
+                                        Theme.of(context).colorScheme.primary,
+                                        Theme.of(context).colorScheme.secondary,
+                                      ],
+                                      begin: Alignment.centerLeft,
+                                      end: Alignment.centerRight,
+                                    ).createShader(bounds),
+                                    child: Text(
+                                      l10n.getMoreOutOfTrackify,
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.w700,
+                                        color: Colors.white,
+                                        letterSpacing: 0.5,
+                                      ),
                                     ),
                                   ),
                                   const SizedBox(height: 4),

@@ -2657,90 +2657,90 @@ class AppLocalizationsKn extends AppLocalizations {
   String get noAlertsCreated => 'ಈ ವಾಹನಕ್ಕೆ ಯಾವುದೇ ಎಚ್ಚರಿಕೆಗಳನ್ನು ರಚಿಸಲಾಗಿಲ್ಲ.';
 
   @override
-  String get changePasswordTitle => 'Change Password';
+  String get changePasswordTitle => 'ಪಾಸ್ವರ್ಡ್ ಬದಲಾಯಿಸಿ';
 
   @override
   String get changePasswordSubtitle =>
-      'Change password & logout from all phones';
+      'ಪಾಸ್ವರ್ಡ್ ಬದಲಾಯಿಸಿ ಮತ್ತು ಎಲ್ಲಾ ಫೋನ್‌ಗಳಿಂದ ಲಾಗ್‌ಔಟ್ ಮಾಡಿ';
 
   @override
-  String get currentSessions => 'Current sessions';
+  String get currentSessions => 'ಪ್ರಸ್ತುತ ಸೆಷನ್‌ಗಳು';
 
   @override
-  String get manageLoggedInDevices => 'Manage logged-in devices';
+  String get manageLoggedInDevices => 'ಲಾಗಿನ್ ಆದ ಸಾಧನಗಳನ್ನು ನಿರ್ವಹಿಸಿ';
 
   @override
-  String get deleteAccountTitle => 'Delete Account';
+  String get deleteAccountTitle => 'ಖಾತೆಯನ್ನು ಅಳಿಸಿ';
 
   @override
-  String get deleteAccountSubtitle => 'Delete your account permanently';
+  String get deleteAccountSubtitle => 'ನಿಮ್ಮ ಖಾತೆಯನ್ನು ಶಾಶ್ವತವಾಗಿ ಅಳಿಸಿ';
 
   @override
-  String get oldPassword => 'Old Password';
+  String get oldPassword => 'ಹಳೆಯ ಪಾಸ್ವರ್ಡ್';
 
   @override
-  String get confirmNewPasswordTitle => 'Confirm New Password';
+  String get confirmNewPasswordTitle => 'ಹೊಸ ಪಾಸ್ವರ್ಡ್ ಅನ್ನು ಖಚಿತಪಡಿಸಿ';
 
   @override
-  String get logoutOfAllDevices => 'Logout of all devices';
+  String get logoutOfAllDevices => 'ಎಲ್ಲಾ ಸಾಧನಗಳಿಂದ ಲಾಗ್‌ಔಟ್ ಮಾಡಿ';
 
   @override
-  String get otherDevices => 'Other devices';
+  String get otherDevices => 'ಇತರ ಸಾಧನಗಳು';
 
   @override
-  String get activeOnThisDevice => 'Active on this device';
+  String get activeOnThisDevice => 'ಈ ಸಾಧನದಲ್ಲಿ ಸಕ್ರಿಯವಾಗಿದೆ';
 
   @override
-  String get lastUsed => 'Last used -';
+  String get lastUsed => 'ಕೊನೆಯದಾಗಿ ಬಳಸಿದ್ದು -';
 
   @override
   String get osLabel => 'OS -';
 
   @override
-  String get chromeNotificationDisabled => 'Chrome notification - disabled';
+  String get chromeNotificationDisabled =>
+      'ಕ್ರೋಮ್ ಅಧಿಸೂಚನೆ - ನಿಷ್ಕ್ರಿಯಗೊಳಿಸಲಾಗಿದೆ';
 
   @override
-  String get logOut => 'Log out';
+  String get logOut => 'ಲಾಗ್ ಔಟ್';
 
   @override
-  String get hi => 'Hi';
+  String get hi => 'ನಮಸ್ಕಾರ';
 
   @override
-  String get sorryToSeeYouGo => 'We\'re sorry to see you go.';
+  String get sorryToSeeYouGo => 'ನೀವು ಹೋಗುವುದನ್ನು ನೋಡಿ ನಮಗೆ ಬೇಸರವಾಗಿದೆ.';
 
   @override
-  String get note => 'Note:';
+  String get note => 'ಗಮನಿಸಿ:';
 
   @override
   String get deleteAccountNote1 =>
-      'After 30 days, your account will be deleted permanently.';
+      '30 ದಿನಗಳ ನಂತರ, ನಿಮ್ಮ ಖಾತೆಯನ್ನು ಶಾಶ್ವತವಾಗಿ ಅಳಿಸಲಾಗುತ್ತದೆ.';
 
   @override
   String get deleteAccountNote2 =>
-      'You can reactivate the account within 30 Days by signing back.';
+      'ಮರಳಿ ಸೈನ್ ಇನ್ ಮಾಡುವ ಮೂಲಕ ನೀವು 30 ದಿನಗಳ ಒಳಗೆ ಖಾತೆಯನ್ನು ಮರುಸಕ್ರಿಯಗೊಳಿಸಬಹುದು.';
 
   @override
   String get deleteAccountExplanationPrompt =>
-      'We would love to know why you are deleting your account, as we may be able to help with common issues. You can also just continue.';
+      'ನೀವು ನಿಮ್ಮ ಖಾತೆಯನ್ನು ಏಕೆ ಅಳಿಸುತ್ತಿದ್ದೀರಿ ಎಂದು ತಿಳಿಯಲು ನಾವು ಇಷ್ಟಪಡುತ್ತೇವೆ, ಏಕೆಂದರೆ ನಾವು ಸಾಮಾನ್ಯ ಸಮಸ್ಯೆಗಳಿಗೆ ಸಹಾಯ ಮಾಡಬಹುದು. ನೀವು ಕೇವಲ ಮುಂದುವರಿಸಬಹುದು.';
 
   @override
-  String get explanationOptionalHint =>
-      'Your explanation is completely optional';
+  String get explanationOptionalHint => 'ನಿಮ್ಮ ವಿವರಣೆ ಸಂಪೂರ್ಣವಾಗಿ ಐಚ್ಛಿಕವಾಗಿದೆ';
 
   @override
   String get deleteWarningPart1 =>
-      'Your device will be unmapped, subscription will be ';
+      'ನಿಮ್ಮ ಸಾಧನವನ್ನು ಅನ್‌ಮ್ಯಾಪ್ ಮಾಡಲಾಗುತ್ತದೆ, ಚಂದಾದಾರಿಕೆಯನ್ನು ';
 
   @override
-  String get terminated => 'terminated';
+  String get terminated => 'ರದ್ದುಗೊಳಿಸಲಾಗುತ್ತದೆ';
 
   @override
   String get deleteWarningPart2 =>
-      ' and your all data will be lost from the server after 30 days of account deletion.';
+      ' ಮತ್ತು ಖಾತೆಯನ್ನು ಅಳಿಸಿದ 30 ದಿನಗಳ ನಂತರ ಸರ್ವರ್‌ನಿಂದ ನಿಮ್ಮ ಎಲ್ಲಾ ಡೇಟಾ ಕಳೆದುಹೋಗುತ್ತದೆ.';
 
   @override
   String get confirmDeleteAccount =>
-      'Are you sure you want to delete your account?';
+      'ನಿಮ್ಮ ಖಾತೆಯನ್ನು ಅಳಿಸಲು ನೀವು ಖಚಿತವಾಗಿರುವಿರಾ?';
 
   @override
   String get expired => 'ಮುಕ್ತಾಯವಾಗಿದೆ';
@@ -3315,4 +3315,45 @@ class AppLocalizationsKn extends AppLocalizations {
 
   @override
   String get couldNotOpenPrivacy => 'ಗೌಪ್ಯತಾ ನೀತಿಯನ್ನು ತೆರೆಯಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ';
+
+  @override
+  String get incorrectPin => 'ತಪ್ಪಾದ ಪಿನ್';
+
+  @override
+  String get pinsDoNotMatch => 'ಪಿನ್‌ಗಳು ಹೊಂದಿಕೆಯಾಗುತ್ತಿಲ್ಲ. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.';
+
+  @override
+  String get resetPinTitle => 'ಪಿನ್ ಮರುಹೊಂದಿಸಿ';
+
+  @override
+  String get resetPinDescription =>
+      'ನಿಮ್ಮ ಪಿನ್ ಅನ್ನು ಮರುಹೊಂದಿಸಲು ನೀವು ಬಯಸುವಿರಾ? ಇದು ಪ್ರಸ್ತುತ ಪಿನ್ ಅನ್ನು ತೆರವುಗೊಳಿಸುತ್ತದೆ.';
+
+  @override
+  String get resetBtn => 'ಮರುಹೊಂದಿಸಿ';
+
+  @override
+  String get unlockVehiclePinTitle => 'ವಾಹನವನ್ನು ಅನ್‌ಲಾಕ್ ಮಾಡಿ';
+
+  @override
+  String get lockVehiclePinTitle => 'ವಾಹನವನ್ನು ಲಾಕ್ ಮಾಡಿ';
+
+  @override
+  String get setNewPinTitle => 'ಹೊಸ ಪಿನ್ ಹೊಂದಿಸಿ';
+
+  @override
+  String get confirmNewPinTitle => 'ಹೊಸ ಪಿನ್ ಅನ್ನು ಖಚಿತಪಡಿಸಿ';
+
+  @override
+  String get enterPinSubtitle => 'ಮುಂದುವರಿಯಲು ನಿಮ್ಮ 4-ಅಂಕಿಯ ಪಿನ್ ನಮೂದಿಸಿ';
+
+  @override
+  String get createNewPinSubtitle => 'ವಾಹನ ಲಾಕ್ ಮಾಡಲು 4-ಅಂಕಿಯ ಪಿನ್ ರಚಿಸಿ';
+
+  @override
+  String get confirmNewPinSubtitle =>
+      'ಖಚಿತಪಡಿಸಲು ನಿಮ್ಮ 4-ಅಂಕಿಯ ಪಿನ್ ಅನ್ನು ಮರು-ನಮೂದಿಸಿ';
+
+  @override
+  String get forgotPin => 'ಪಿನ್ ಮರೆತಿರಾ?';
 }

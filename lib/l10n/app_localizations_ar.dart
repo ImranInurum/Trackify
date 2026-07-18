@@ -2628,90 +2628,87 @@ class AppLocalizationsAr extends AppLocalizations {
   String get noAlertsCreated => 'لا توجد تنبيهات لهذه المركبة.';
 
   @override
-  String get changePasswordTitle => 'Change Password';
+  String get changePasswordTitle => 'تغيير كلمة المرور';
 
   @override
   String get changePasswordSubtitle =>
-      'Change password & logout from all phones';
+      'تغيير كلمة المرور وتسجيل الخروج من جميع الهواتف';
 
   @override
-  String get currentSessions => 'Current sessions';
+  String get currentSessions => 'الجلسات الحالية';
 
   @override
-  String get manageLoggedInDevices => 'Manage logged-in devices';
+  String get manageLoggedInDevices => 'إدارة الأجهزة المسجلة';
 
   @override
-  String get deleteAccountTitle => 'Delete Account';
+  String get deleteAccountTitle => 'حذف الحساب';
 
   @override
-  String get deleteAccountSubtitle => 'Delete your account permanently';
+  String get deleteAccountSubtitle => 'حذف حسابك نهائيًا';
 
   @override
-  String get oldPassword => 'Old Password';
+  String get oldPassword => 'كلمة المرور القديمة';
 
   @override
-  String get confirmNewPasswordTitle => 'Confirm New Password';
+  String get confirmNewPasswordTitle => 'تأكيد كلمة المرور الجديدة';
 
   @override
-  String get logoutOfAllDevices => 'Logout of all devices';
+  String get logoutOfAllDevices => 'تسجيل الخروج من جميع الأجهزة';
 
   @override
-  String get otherDevices => 'Other devices';
+  String get otherDevices => 'أجهزة أخرى';
 
   @override
-  String get activeOnThisDevice => 'Active on this device';
+  String get activeOnThisDevice => 'نشط على هذا الجهاز';
 
   @override
-  String get lastUsed => 'Last used -';
+  String get lastUsed => 'آخر استخدام -';
 
   @override
-  String get osLabel => 'OS -';
+  String get osLabel => 'نظام التشغيل -';
 
   @override
-  String get chromeNotificationDisabled => 'Chrome notification - disabled';
+  String get chromeNotificationDisabled => 'إشعارات كروم - معطلة';
 
   @override
-  String get logOut => 'Log out';
+  String get logOut => 'تسجيل الخروج';
 
   @override
-  String get hi => 'Hi';
+  String get hi => 'أهلاً';
 
   @override
-  String get sorryToSeeYouGo => 'We\'re sorry to see you go.';
+  String get sorryToSeeYouGo => 'نحن نأسف لرؤيتك ترحل.';
 
   @override
-  String get note => 'Note:';
+  String get note => 'ملاحظة:';
 
   @override
-  String get deleteAccountNote1 =>
-      'After 30 days, your account will be deleted permanently.';
+  String get deleteAccountNote1 => 'بعد 30 يومًا، سيتم حذف حسابك نهائيًا.';
 
   @override
   String get deleteAccountNote2 =>
-      'You can reactivate the account within 30 Days by signing back.';
+      'يمكنك إعادة تنشيط الحساب خلال 30 يومًا عن طريق تسجيل الدخول مرة أخرى.';
 
   @override
   String get deleteAccountExplanationPrompt =>
-      'We would love to know why you are deleting your account, as we may be able to help with common issues. You can also just continue.';
+      'نود أن نعرف سبب حذفك لحسابك، حيث قد نتمكن من المساعدة في المشكلات الشائعة. يمكنك أيضًا المتابعة ببساطة.';
 
   @override
-  String get explanationOptionalHint =>
-      'Your explanation is completely optional';
+  String get explanationOptionalHint => 'شرحك اختياري تمامًا';
 
   @override
   String get deleteWarningPart1 =>
-      'Your device will be unmapped, subscription will be ';
+      'سيتم إلغاء تعيين جهازك، وسوف تكون الاشتراكات ';
 
   @override
-  String get terminated => 'terminated';
+  String get terminated => 'ملغاة';
 
   @override
   String get deleteWarningPart2 =>
-      ' and your all data will be lost from the server after 30 days of account deletion.';
+      ' وسيتم فقدان جميع بياناتك من الخادم بعد 30 يومًا من حذف الحساب.';
 
   @override
-  String get confirmDeleteAccount =>
-      'Are you sure you want to delete your account?';
+  String get confirmDeleteAccount => 'هل أنت متأكد أنك تريد حذف حسابك؟';
 
   @override
   String get expired => 'منتهية الصلاحية';
@@ -3283,4 +3280,47 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get couldNotOpenPrivacy => 'تعذر فتح سياسة الخصوصية';
+
+  @override
+  String get incorrectPin => 'رقم تعريف شخصي غير صحيح';
+
+  @override
+  String get pinsDoNotMatch =>
+      'أرقام التعريف الشخصية غير متطابقة. حاول مرة أخرى.';
+
+  @override
+  String get resetPinTitle => 'إعادة تعيين رمز PIN';
+
+  @override
+  String get resetPinDescription =>
+      'هل تريد إعادة تعيين رمز PIN الخاص بك؟ سيؤدي هذا إلى مسح الرمز الحالي.';
+
+  @override
+  String get resetBtn => 'إعادة تعيين';
+
+  @override
+  String get unlockVehiclePinTitle => 'إلغاء قفل المركبة';
+
+  @override
+  String get lockVehiclePinTitle => 'قفل المركبة';
+
+  @override
+  String get setNewPinTitle => 'تعيين رمز PIN جديد';
+
+  @override
+  String get confirmNewPinTitle => 'تأكيد رمز PIN الجديد';
+
+  @override
+  String get enterPinSubtitle => 'أدخل رمز PIN المكون من 4 أرقام للمتابعة';
+
+  @override
+  String get createNewPinSubtitle =>
+      'قم بإنشاء رمز PIN مكون من 4 أرقام لقفل المركبة';
+
+  @override
+  String get confirmNewPinSubtitle =>
+      'أعد إدخال رمز PIN المكون من 4 أرقام للتأكيد';
+
+  @override
+  String get forgotPin => 'نسيت رمز PIN؟';
 }

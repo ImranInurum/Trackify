@@ -9,7 +9,8 @@ class TrackifySplash extends StatefulWidget {
   State<TrackifySplash> createState() => _TrackifySplashState();
 }
 
-class _TrackifySplashState extends State<TrackifySplash> with SingleTickerProviderStateMixin {
+class _TrackifySplashState extends State<TrackifySplash>
+    with SingleTickerProviderStateMixin {
   late final AnimationController _controller;
 
   @override
