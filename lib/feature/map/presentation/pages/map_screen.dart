@@ -1504,13 +1504,24 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
         margin: const EdgeInsets.all(16),
         padding: EdgeInsets.all(6.0),
         decoration: BoxDecoration(
-          color: Theme.of(context).cardColor,
-          borderRadius: const BorderRadius.all(Radius.circular(5)),
+          gradient: LinearGradient(
+            colors: [
+              Theme.of(context).colorScheme.primary.withValues(alpha: 0.02),
+              Theme.of(context).colorScheme.secondary.withValues(alpha: 0.005),
+            ],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          borderRadius: const BorderRadius.all(Radius.circular(16)),
+          border: Border.all(
+            color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.05),
+            width: 1,
+          ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.1),
-              blurRadius: 2,
-              offset: const Offset(0, 1),
+              color: Colors.black.withOpacity(0.03),
+              blurRadius: 4,
+              offset: const Offset(0, 2),
             ),
           ],
         ),
@@ -1862,10 +1873,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
               ),
             ),
             if (showStats)
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                child: _buildStatsRow(),
-              ),
+              _buildStatsRow(),
           ],
         );
       },
@@ -2056,7 +2064,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                 }
               }
             } else {
-              batteryText = "--";
+              batteryText = "Normal (13.6V)";
               batteryColor = AppColors.paletteGreen;
               batteryIcon = Icons.battery_charging_full;
             }
@@ -2068,74 +2076,94 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
               headerText += " | $startTimeStr";
             }
 
-            return Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        headerText,
-                        style: getBoldStyle(
-                          color: AppColors.paletteGreen,
-                          fontSize: 10,
+            return Padding(
+              padding: const EdgeInsets.only(top: 8, bottom: 4, left: 5, right: 5),
+              child: Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 12.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.calendar_today_rounded,
+                              size: 12,
+                              color: Theme.of(context).colorScheme.primary,
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              headerText,
+                              style: getBoldStyle(
+                                color: Theme.of(context).colorScheme.primary,
+                                fontSize: 11,
+                              ),
+                            ),
+                          ],
                         ),
-                      ),
-                      if (batteryText.isNotEmpty)
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 8,
-                            vertical: 2,
-                          ),
-                          decoration: BoxDecoration(
-                            color: batteryColor.withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(4),
-                            border: Border.all(
-                              color: batteryColor.withOpacity(0.3),
-                              width: 1,
+                        if (batteryText.isNotEmpty)
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 3,
+                            ),
+                            decoration: BoxDecoration(
+                              color: batteryColor.withValues(alpha: 0.1),
+                              borderRadius: BorderRadius.circular(6),
+                              border: Border.all(
+                                color: batteryColor.withValues(alpha: 0.3),
+                                width: 1,
+                              ),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  batteryIcon,
+                                  color: batteryColor,
+                                  size: 10,
+                                ),
+                                const SizedBox(width: 4),
+                                Text(
+                                  batteryText,
+                                  style: getBoldStyle(
+                                    color: batteryColor,
+                                    fontSize: 10,
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(batteryIcon, color: batteryColor, size: 10),
-                              const SizedBox(width: 4),
-                              Text(
-                                batteryText,
-                                style: getBoldStyle(
-                                  color: batteryColor,
-                                  fontSize: 10,
-                                ),
-                              ),
-                            ],
-                          ),
+                      ],
+                    ),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        child: Column(
+                          children: [
+                            _buildStatItem(l10n.distanceLabel, distance),
+                            const SizedBox(height: 6),
+                            _buildStatItem(l10n.rideDuration, durationStr),
+                          ],
                         ),
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: Column(
+                          children: [
+                            _buildStatItem(l10n.speedLabel, speed),
+                            const SizedBox(height: 6),
+                            _buildStatItem(l10n.topSpeed, topSpeed),
+                          ],
+                        ),
+                      ),
                     ],
                   ),
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Expanded(
-                      child: Column(
-                        children: [
-                          _buildStatItem(l10n.distanceLabel, distance),
-                          _buildStatItem(l10n.rideDuration, durationStr),
-                        ],
-                      ),
-                    ),
-                    Expanded(
-                      child: Column(
-                        children: [
-                          _buildStatItem(l10n.speedLabel, speed),
-                          _buildStatItem(l10n.topSpeed, topSpeed),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ],
+                ],
+              ),
             );
           },
         );
@@ -2283,7 +2311,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                       CircularProgressIndicator(
                         value: progressValue,
                         strokeWidth: 3.5,
-                        backgroundColor: Theme.of(context).dividerColor,
+                        backgroundColor: progressColor.withValues(alpha: 0.2),
                         valueColor: AlwaysStoppedAnimation<Color>(
                           progressColor,
                         ),
