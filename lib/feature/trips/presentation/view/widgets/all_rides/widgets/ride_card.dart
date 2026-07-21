@@ -94,7 +94,7 @@ class RideCard extends StatelessWidget {
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Text(
-                          "${ride.distance} ${context.displayKm}",
+                          "${ride.distance.toStringAsFixed(1)} ${context.displayKm}",
                           style: TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.bold,
@@ -140,23 +140,29 @@ class RideCard extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      _buildStat(
-                        context,
-                        Icons.route_outlined,
-                        "${ride.distance} ${context.displayKm}",
-                        l10n.distanceLabel,
+                      Expanded(
+                        child: _buildStat(
+                          context,
+                          Icons.route_outlined,
+                          "${ride.distance.toStringAsFixed(1)} ${context.displayKm}",
+                          l10n.distanceLabel,
+                        ),
                       ),
-                      _buildStat(
-                        context,
-                        Icons.timer_outlined,
-                        ride.duration,
-                        l10n.durationLabel,
+                      Expanded(
+                        child: _buildStat(
+                          context,
+                          Icons.timer_outlined,
+                          ride.duration,
+                          l10n.durationLabel,
+                        ),
                       ),
-                      _buildStat(
-                        context,
-                        Icons.speed,
-                        "${ride.avgSpeed} ${context.displayKmh}",
-                        l10n.averageSpeed,
+                      Expanded(
+                        child: _buildStat(
+                          context,
+                          Icons.speed,
+                          "${ride.avgSpeed.toStringAsFixed(1)} ${context.displayKmh}",
+                          l10n.averageSpeed,
+                        ),
                       ),
                     ],
                   ),
@@ -233,12 +239,15 @@ class RideCard extends StatelessWidget {
           children: [
             Icon(icon, size: 14, color: Theme.of(context).colorScheme.primary),
             const SizedBox(width: 4),
-            Text(
-              value,
-              style: TextStyle(
-                fontWeight: FontWeight.w700,
-                fontSize: 13,
-                color: Theme.of(context).colorScheme.onSurface,
+            Expanded(
+              child: Text(
+                value,
+                style: TextStyle(
+                  fontWeight: FontWeight.w700,
+                  fontSize: 13,
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
+                overflow: TextOverflow.ellipsis,
               ),
             ),
           ],

@@ -1,10 +1,26 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:trackify/core/constants/app_images.dart';
 import 'package:trackify/feature/my_garage/presentation/view/checkout_screen.dart';
 import 'package:trackify/l10n/app_localizations.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
-class ProductOverviewScreen extends StatelessWidget {
+class ProductOverviewScreen extends StatefulWidget {
   const ProductOverviewScreen({super.key});
+
+  @override
+  State<ProductOverviewScreen> createState() => _ProductOverviewScreenState();
+}
+
+class _ProductOverviewScreenState extends State<ProductOverviewScreen> {
+  YoutubePlayerController? _topYoutubeController;
+  bool _isTopPlaying = false;
+
+  @override
+  void dispose() {
+    _topYoutubeController?.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -87,17 +103,29 @@ class ProductOverviewScreen extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 16),
-                  OutlinedButton(
-                    onPressed: () {},
+                  OutlinedButton.icon(
+                    onPressed: () async { 
+                      final Uri telUri = Uri(scheme: 'tel', path: '07314275761');
+                      try {
+                        if (await canLaunchUrl(telUri)) {
+                          await launchUrl(telUri);
+                        } else {
+                          await launchUrl(telUri, mode: LaunchMode.externalApplication);
+                        }
+                      } catch (e) {
+                        debugPrint("Could not launch call: $e");
+                      }
+                    },
+                    icon: const Icon(Icons.phone_in_talk, size: 18),
                     style: OutlinedButton.styleFrom(
                       foregroundColor: Theme.of(context).colorScheme.primary,
                       side: BorderSide(color: Theme.of(context).colorScheme.primary),
-                      padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 12),
+                      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(24),
                       ),
                     ),
-                    child: Text(
+                    label: Text(
                       l10n?.callUs ?? "Call Us",
                       style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
@@ -199,39 +227,76 @@ class ProductOverviewScreen extends StatelessWidget {
               ),
             ),
           ),
-          Stack(
-            alignment: Alignment.center,
-            children: [
-              ClipRRect(
+          GestureDetector(
+            onTap: () {
+              if (_topYoutubeController == null) {
+                _topYoutubeController = YoutubePlayerController(
+                  initialVideoId: 'l_q_4N59tN8',
+                  flags: const YoutubePlayerFlags(
+                    autoPlay: true,
+                    mute: false,
+                  ),
+                );
+              }
+              setState(() {
+                _isTopPlaying = !_isTopPlaying;
+                if (_isTopPlaying) {
+                  _topYoutubeController?.play();
+                } else {
+                  _topYoutubeController?.pause();
+                }
+              });
+            },
+            child: Container(
+              height: 200,
+              width: double.infinity,
+              decoration: const BoxDecoration(
+                borderRadius: BorderRadius.only(
+                  bottomLeft: Radius.circular(16),
+                  bottomRight: Radius.circular(16),
+                ),
+              ),
+              child: ClipRRect(
                 borderRadius: const BorderRadius.only(
                   bottomLeft: Radius.circular(16),
                   bottomRight: Radius.circular(16),
                 ),
-                child: Image.asset(
-                  AppImages.bikeInfoImage,
-                  width: double.infinity,
-                  height: 180,
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) => Container(
-                    width: double.infinity,
-                    height: 180,
-                    color: Colors.grey[300],
-                  ),
-                ),
+                child: _isTopPlaying && _topYoutubeController != null
+                    ? YoutubePlayer(
+                        controller: _topYoutubeController!,
+                        showVideoProgressIndicator: true,
+                        progressIndicatorColor: Theme.of(context).colorScheme.primary,
+                      )
+                    : Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          Image.asset(
+                            AppImages.bikeInfoImage,
+                            width: double.infinity,
+                            height: 200,
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) => Container(
+                              width: double.infinity,
+                              height: 200,
+                              color: Colors.grey[300],
+                            ),
+                          ),
+                          Container(
+                            padding: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              color: Colors.black.withOpacity(0.5),
+                              shape: BoxShape.circle,
+                            ),
+                            child: const Icon(
+                              Icons.play_arrow,
+                              color: Colors.white,
+                              size: 32,
+                            ),
+                          ),
+                        ],
+                      ),
               ),
-              Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: Colors.black.withOpacity(0.5),
-                  shape: BoxShape.circle,
-                ),
-                child: const Icon(
-                  Icons.play_arrow,
-                  color: Colors.white,
-                  size: 32,
-                ),
-              ),
-            ],
+            ),
           ),
         ],
       ),
@@ -259,18 +324,21 @@ class ProductOverviewScreen extends StatelessWidget {
                 context,
                 title: l10n?.accidentAlertCard ?? "Accident alert",
                 imageAsset: AppImages.roadImage,
+                videoId: 'l_q_4N59tN8',
               ),
               const SizedBox(width: 12),
               _buildFeatureItem(
                 context,
                 title: l10n?.antiTheftAlertCard ?? "Anti-Theft alert",
                 imageAsset: AppImages.safeParking,
+                videoId: 'dQw4w9WgXcQ',
               ),
               const SizedBox(width: 12),
               _buildFeatureItem(
                 context,
                 title: l10n?.liveGpsTrackingCard ?? "Live GPS Tracking",
                 imageAsset: AppImages.exploreApp,
+                videoId: 'l_q_4N59tN8',
               ),
             ],
           ),
@@ -279,47 +347,65 @@ class ProductOverviewScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildFeatureItem(BuildContext context,
-      {required String title, required String imageAsset}) {
-    return Column(
-      children: [
-        Stack(
-          alignment: Alignment.center,
-          children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(16),
-              child: Image.asset(
-                imageAsset,
-                width: 130,
-                height: 140,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) => Container(
+  Widget _buildFeatureItem(
+    BuildContext context, {
+    required String title,
+    required String imageAsset,
+    required String videoId,
+  }) {
+    return InkWell(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => FeatureVideoScreen(
+              title: title,
+              videoId: videoId,
+            ),
+          ),
+        );
+      },
+      borderRadius: BorderRadius.circular(16),
+      child: Column(
+        children: [
+          Stack(
+            alignment: Alignment.center,
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(16),
+                child: Image.asset(
+                  imageAsset,
                   width: 130,
                   height: 140,
-                  color: Colors.grey[300],
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) => Container(
+                    width: 130,
+                    height: 140,
+                    color: Colors.grey[300],
+                  ),
                 ),
               ),
-            ),
-            Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: Colors.black.withOpacity(0.4),
-                shape: BoxShape.circle,
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: Colors.black.withOpacity(0.4),
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(
+                  Icons.play_arrow,
+                  color: Colors.white,
+                  size: 24,
+                ),
               ),
-              child: const Icon(
-                Icons.play_arrow,
-                color: Colors.white,
-                size: 24,
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 8),
-        Text(
-          title,
-          style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
-        ),
-      ],
+            ],
+          ),
+          const SizedBox(height: 8),
+          Text(
+            title,
+            style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
+          ),
+        ],
+      ),
     );
   }
 
@@ -817,3 +903,65 @@ class _ProductSelectionBottomSheetState extends State<ProductSelectionBottomShee
     );
   }
 }
+
+class FeatureVideoScreen extends StatefulWidget {
+  final String title;
+  final String videoId;
+
+  const FeatureVideoScreen({
+    super.key,
+    required this.title,
+    required this.videoId,
+  });
+
+  @override
+  State<FeatureVideoScreen> createState() => _FeatureVideoScreenState();
+}
+
+class _FeatureVideoScreenState extends State<FeatureVideoScreen> {
+  late YoutubePlayerController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = YoutubePlayerController(
+      initialVideoId: widget.videoId,
+      flags: const YoutubePlayerFlags(
+        autoPlay: true,
+        mute: false,
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Scaffold(
+      backgroundColor: Colors.black,
+      appBar: AppBar(
+        title: Text(widget.title),
+        backgroundColor: Colors.black,
+        foregroundColor: Colors.white,
+        elevation: 0,
+      ),
+      body: Center(
+        child: YoutubePlayer(
+          controller: _controller,
+          showVideoProgressIndicator: true,
+          progressIndicatorColor: theme.colorScheme.primary,
+          progressColors: ProgressBarColors(
+            playedColor: theme.colorScheme.primary,
+            handleColor: theme.colorScheme.secondary,
+          ),
+        ),
+      ),
+    );
+  }
+}
+

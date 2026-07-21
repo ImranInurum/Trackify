@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:trackify/feature/trips/presentation/cubit/create_trip_cubit.dart';
@@ -207,12 +207,14 @@ class _CreateTripScreenState extends State<CreateTripScreen> {
               int totalMinutes = 0;
               for (var r in selectedRides) {
                 totalDist += r.distance;
-                totalMinutes += int.tryParse(r.duration.replaceAll('m', '')) ?? 0;
+                totalMinutes += Ride.parseDurationToMinutes(r.duration);
               }
 
               final hr = totalMinutes ~/ 60;
               final min = totalMinutes % 60;
-              final durationStr = "${hr} ${l10n.hrLabel} ${min} ${l10n.minLabel}";
+              final durationStr = hr > 0 
+                ? "$hr ${l10n.hrLabel} $min ${l10n.minLabel}" 
+                : "$min ${l10n.minLabel}";
 
               return _SelectionSummarySheet(
                 summary: l10n.ridesSelectedSummary(
@@ -301,7 +303,7 @@ class _SelectionGroupCardState extends State<_SelectionGroupCard> {
 
     for (var r in widget.rides) {
       totalDist += r.distance;
-      totalMinutes += int.tryParse(r.duration.replaceAll('m', '')) ?? 0;
+      totalMinutes += Ride.parseDurationToMinutes(r.duration);
       avgSpeed += r.avgSpeed;
     }
     if (widget.rides.isNotEmpty) avgSpeed /= widget.rides.length;
@@ -351,9 +353,13 @@ class _SelectionGroupCardState extends State<_SelectionGroupCard> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  _buildStatItem("${totalDist.toStringAsFixed(1)}${context.displayKms}", l10n.distanceLabel),
-                  _buildStatItem("${totalMinutes}${l10n.minLabel} ${widget.rides.isNotEmpty ? '00${l10n.secLabel}' : ''}", l10n.rideDurationLabel),
-                  _buildStatItem("${avgSpeed.toStringAsFixed(1)}${context.displayKmh}", l10n.averageSpeed),
+                  Expanded(child: _buildStatItem("${totalDist.toStringAsFixed(1)}${context.displayKms}", l10n.distanceLabel)),
+                  Expanded(child: _buildStatItem(
+                    totalMinutes >= 60 
+                      ? "${totalMinutes ~/ 60} ${l10n.hrLabel} ${totalMinutes % 60} ${l10n.minLabel}" 
+                      : "${totalMinutes} ${l10n.minLabel} ${widget.rides.isNotEmpty ? '00 ${l10n.secLabel}' : ''}", 
+                    l10n.rideDurationLabel)),
+                  Expanded(child: _buildStatItem("${avgSpeed.toStringAsFixed(1)}${context.displayKmh}", l10n.averageSpeed)),
                 ],
               ),
               const SizedBox(height: 20),
@@ -439,9 +445,9 @@ class _SelectionGroupCardState extends State<_SelectionGroupCard> {
                 const SizedBox(height: 16),
                 Row(
                   children: [
-                    _buildSmallStat("${ride.duration}", l10n.rideDurationLabel),
-                    const SizedBox(width: 24),
-                    _buildSmallStat("${ride.avgSpeed.toStringAsFixed(1)} ${context.displayKmh}", l10n.averageSpeed),
+                    Expanded(child: _buildSmallStat("${ride.duration}", l10n.rideDurationLabel)),
+                    const SizedBox(width: 8),
+                    Expanded(child: _buildSmallStat("${ride.avgSpeed.toStringAsFixed(1)} ${context.displayKmh}", l10n.averageSpeed)),
                   ],
                 ),
               ],

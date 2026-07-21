@@ -3363,4 +3363,44 @@ class AppLocalizationsTa extends AppLocalizations {
 
   @override
   String get forgotPin => 'பின் மறந்துவிட்டதா?';
+
+  @override
+  String get noSavedRidesYet =>
+      'No saved rides yet! Mark a ride as saved to add it here.';
+
+  @override
+  String welcomeUser(String name) {
+    return 'நல்வரவு, $name!';
+  }
+
+  @override
+  String get welcomeToTrackify => 'டிராக்கிஃபைக்கு நல்வரவு!';
+
+  @override
+  String get thankYouForRegisteringDesc =>
+      'பதிவு செய்தமைக்கு நன்றி! உங்கள் கணக்கு வெற்றிகரமாக உருவாக்கப்பட்டது. உங்கள் டாஷ்போர்டை அணுகவும் வாகனங்களை நிர்வகிக்கவும் உள்நுழையவும்.';
+
+  @override
+  String get continueToSignIn => 'உள்நுழையத் தொடரவும்';
+
+  @override
+  String get deviceNotInstalled => 'சாதனம் நிறுவப்படவில்லை';
+
+  @override
+  String deviceNotInstalledDesc(String vehicleName) {
+    return '$vehicleName இல் டிராக்கிங் சாதனம் நிறுவப்படவில்லை. அறிவிப்பு கட்டுப்பாடுகளை உள்ளமைக்க சாதனத்தை நிறுவவும்.';
+  }
+
+  @override
+  String get noDevice => 'சாதனம் இல்லை';
+
+  @override
+  String get noDeviceNotificationBanner =>
+      'இந்த வாகனத்துடன் எந்த டிராக்கிங் சாதனமும் இணைக்கப்படவில்லை. அறிவிப்பு கட்டுப்பாடுகள் முடுக்கப்பட்டுள்ளன.';
+
+  @override
+  String get ok => 'சரி';
+
+  @override
+  String get profile100PercentComplete => 'உங்கள் சுயவிவரம் 100% முடிந்தது!';
 }

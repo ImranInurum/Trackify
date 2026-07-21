@@ -2,6 +2,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:hive/hive.dart';
+import 'package:shared_preferences/shared_preferences.dart'
+    show SharedPreferences;
 import 'package:trackify/feature/trips/data/entity/ride_model.dart';
 import 'package:trackify/feature/trips/presentation/view/trip_details/trip_details_screen.dart';
 import 'package:trackify/feature/trips/presentation/view/widgets/trips/widgets/trip_card.dart';
@@ -15,7 +17,7 @@ import '../../../cubit/ride_history_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../create_trip/create_trip_screen.dart';
 import '../../trip_search_screen.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:trackify/core/widgets/trackify_loader.dart';
 
 class Trips extends StatefulWidget {
   const Trips({super.key});
@@ -69,13 +71,13 @@ class _TripsState extends State<Trips> {
   Future<void> _loadSavedTrips() async {
     try {
       final box = await Hive.openBox('saved_trips');
-      
+
       if (_boxSubscription == null) {
         _boxSubscription = box.watch().listen((_) {
           _updateTripsFromBox(box);
         });
       }
-      
+
       _updateTripsFromBox(box);
     } catch (e) {
       debugPrint('Error loading saved trips: $e');
@@ -89,7 +91,7 @@ class _TripsState extends State<Trips> {
 
   void _updateTripsFromBox(Box box) {
     final tripsJson = box.get('trips_list', defaultValue: []) as List<dynamic>;
-    
+
     final List<Map<String, dynamic>> trips = [];
     for (var jsonStr in tripsJson) {
       try {
@@ -97,7 +99,7 @@ class _TripsState extends State<Trips> {
         trips.add(decoded);
       } catch (_) {}
     }
-    
+
     if (mounted) {
       setState(() {
         _savedTrips = trips.reversed.toList(); // Newest first
@@ -215,7 +217,8 @@ class _TripsState extends State<Trips> {
                             final cubit = context.read<RideHistoryCubit>();
                             return SortingBottomSheet(
                               initialSortBy: cubit.currentSortBy,
-                              initialIsRecentToOldest: cubit.currentIsRecentToOldest,
+                              initialIsRecentToOldest:
+                                  cubit.currentIsRecentToOldest,
                               onApply: (sortBy, isRecentToOldest) {
                                 cubit.sortRides(sortBy, isRecentToOldest);
                               },
@@ -249,9 +252,9 @@ class _TripsState extends State<Trips> {
               ),
               const SizedBox(height: 12),
               Expanded(
-                child: _isLoadingTrips 
-                  ? const Center(child: CircularProgressIndicator()) 
-                  : _savedTrips.isEmpty 
+                child: _isLoadingTrips
+                    ? const Center(child: TrackifyLoader())
+                    : _savedTrips.isEmpty
                     ? const TripEmptyState()
                     : ListView.builder(
                         padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -259,33 +262,42 @@ class _TripsState extends State<Trips> {
                         itemBuilder: (context, index) {
                           final trip = _savedTrips[index];
                           final ridesData = trip['rides'] as List<dynamic>;
-                          final rides = ridesData.map((e) => Ride.fromJson(e as Map<String, dynamic>)).toList();
-                          
+                          final rides = ridesData
+                              .map(
+                                (e) => Ride.fromJson(e as Map<String, dynamic>),
+                              )
+                              .toList();
+
                           // Optional: Apply filter logic based on _searchQuery
                           if (_searchQuery.isNotEmpty) {
                             final title = (trip['title'] as String?) ?? '';
-                            if (!title.toLowerCase().contains(_searchQuery.toLowerCase())) {
+                            if (!title.toLowerCase().contains(
+                              _searchQuery.toLowerCase(),
+                            )) {
                               return const SizedBox.shrink();
                             }
                           }
-                          
-                           final displayTitle = _getLocalizedTripTitle(trip['title'] ?? l10n.tripLabel('${index + 1}'), l10n);
-                           return TripCard(
-                             title: displayTitle,
-                             rides: rides,
-                             imagePath: trip['imagePath'] as String?,
-                             onTap: () async {
-                               await Navigator.push(
-                                 context,
-                                 MaterialPageRoute(
-                                   builder: (context) => TripDetailsScreen(
-                                     tripName: displayTitle,
-                                     rides: rides,
-                                   ),
-                                 ),
-                               );
-                             },
-                           );
+
+                          final displayTitle = _getLocalizedTripTitle(
+                            trip['title'] ?? l10n.tripLabel('${index + 1}'),
+                            l10n,
+                          );
+                          return TripCard(
+                            title: displayTitle,
+                            rides: rides,
+                            imagePath: trip['imagePath'] as String?,
+                            onTap: () async {
+                              await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => TripDetailsScreen(
+                                    tripName: displayTitle,
+                                    rides: rides,
+                                  ),
+                                ),
+                              );
+                            },
+                          );
                         },
                       ),
               ),

@@ -1,4 +1,3 @@
-﻿import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:trackify/feature/add_vehicle_and_device/add_vehicle/data/models/vehicle_config_models.dart';
@@ -9,8 +8,6 @@ import '../../../../profile/presentation/cubit/profile_cubit.dart';
 import '../../../../../core/theme/app_theme_extension.dart';
 import '../../../../../core/widgets/custom_form_field.dart';
 import '../../../../../l10n/app_localizations.dart';
-import '../../../../onboarding/presentation/cubit/splash_cubit.dart';
-import '../../../../onboarding/presentation/cubit/splash_state.dart';
 import '../cubit/add_vehicle_cubit.dart';
 import '../cubit/add_vehicle_state.dart';
 import '../widgets/vehicle_number_field.dart';
@@ -41,34 +38,6 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
   void dispose() {
     _vehicleNumberController.dispose();
     super.dispose();
-  }
-
-  // ─── Logo (same SplashCubit pattern as all auth screens) ───────────────────
-  Widget _buildLogo(SplashState state, ColorScheme colorScheme) {
-    return Center(
-      child:
-          (state is SplashLoaded &&
-              state.logo.path != null &&
-              state.logo.path!.isNotEmpty)
-          ? CachedNetworkImage(
-              imageUrl: state.logo.path!,
-              height:
-                  100, // Reduced from 220 to minimize top/bottom empty space in the image container
-              fit: BoxFit.contain,
-              placeholder: (context, url) =>
-                  const Center(child: TrackifyLoader()),
-              errorWidget: (context, url, error) => Icon(
-                Icons.track_changes_rounded,
-                size: 88,
-                color: colorScheme.primary,
-              ),
-            )
-          : Icon(
-              Icons.track_changes_rounded,
-              size: 88,
-              color: colorScheme.primary,
-            ),
-    );
   }
 
   // ─── Vehicle-type circular chip ────────────────────────────────────────────
@@ -463,13 +432,7 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
                         return Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            // ── Logo ─────────────────────────────────────────────────
-                            BlocBuilder<SplashCubit, SplashState>(
-                              builder: (context, splashState) =>
-                                  _buildLogo(splashState, colorScheme),
-                            ),
-
-                            const SizedBox(height: 8),
+                            const SizedBox(height: 16),
 
                             // ── Vehicle Type ──────────────────────────────────────────
                             _sectionLabel(l10n.vehicleType, theme),
@@ -631,55 +594,58 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
                 ),
 
                 // ── Submit Button ─────────────────────────────────────────────────
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(20, 0, 20, 28),
-                  child: SizedBox(
-                    width: double.infinity,
-                    height: 42,
-                    child: BlocBuilder<AddVehicleCubit, AddVehicleState>(
-                      builder: (context, state) {
-                        return ElevatedButton(
-                          onPressed: state.isSubmitting
-                              ? null
-                              : () {
-                                  if (_formKey.currentState?.validate() ??
-                                      false) {
-                                    context.read<AddVehicleCubit>().addVehicle(
-                                      vehicleNumber: _vehicleNumberController
-                                          .text
-                                          .trim(),
-                                    );
-                                  }
-                                },
-                          style: ElevatedButton.styleFrom(
-                            padding: const EdgeInsets.symmetric(vertical: 0),
-                            backgroundColor: theme.colorScheme.secondary,
-                            foregroundColor: theme.colorScheme.onSecondary,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
+                SafeArea(
+                  top: false,
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(20, 8, 20, 16),
+                    child: SizedBox(
+                      width: double.infinity,
+                      height: 42,
+                      child: BlocBuilder<AddVehicleCubit, AddVehicleState>(
+                        builder: (context, state) {
+                          return ElevatedButton(
+                            onPressed: state.isSubmitting
+                                ? null
+                                : () {
+                                    if (_formKey.currentState?.validate() ??
+                                        false) {
+                                      context.read<AddVehicleCubit>().addVehicle(
+                                        vehicleNumber: _vehicleNumberController
+                                            .text
+                                            .trim(),
+                                      );
+                                    }
+                                  },
+                            style: ElevatedButton.styleFrom(
+                              padding: const EdgeInsets.symmetric(vertical: 0),
+                              backgroundColor: theme.colorScheme.secondary,
+                              foregroundColor: theme.colorScheme.onSecondary,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              elevation: 0,
+                              disabledBackgroundColor: theme.colorScheme.secondary
+                                  .withOpacity(0.6),
                             ),
-                            elevation: 0,
-                            disabledBackgroundColor: theme.colorScheme.secondary
-                                .withOpacity(0.6),
-                          ),
-                          child: state.isSubmitting
-                              ? const SizedBox(
-                                  height: 20,
-                                  width: 20,
-                                  child: CircularProgressIndicator(
-                                    color: Colors.white,
-                                    strokeWidth: 2,
+                            child: state.isSubmitting
+                                ? const SizedBox(
+                                    height: 20,
+                                    width: 20,
+                                    child: CircularProgressIndicator(
+                                      color: Colors.white,
+                                      strokeWidth: 2,
+                                    ),
+                                  )
+                                : Text(
+                                    l10n.addVehicle,
+                                    style: const TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w600,
+                                    ),
                                   ),
-                                )
-                              : Text(
-                                  l10n.addVehicle,
-                                  style: const TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                        );
-                      },
+                          );
+                        },
+                      ),
                     ),
                   ),
                 ),

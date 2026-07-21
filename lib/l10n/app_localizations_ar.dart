@@ -3323,4 +3323,44 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get forgotPin => 'نسيت رمز PIN؟';
+
+  @override
+  String get noSavedRidesYet =>
+      'No saved rides yet! Mark a ride as saved to add it here.';
+
+  @override
+  String welcomeUser(String name) {
+    return 'أهلاً بك، $name!';
+  }
+
+  @override
+  String get welcomeToTrackify => 'مرحباً بك في تراكيفاي!';
+
+  @override
+  String get thankYouForRegisteringDesc =>
+      'شكراً لتسجيلك! تم إنشاء حسابك بنجاح. يرجى تسجيل الدخول للوصول إلى لوحة التحكم وإدارة مركباتك.';
+
+  @override
+  String get continueToSignIn => 'المتابعة لتسجيل الدخول';
+
+  @override
+  String get deviceNotInstalled => 'الجهاز غير مثبت';
+
+  @override
+  String deviceNotInstalledDesc(String vehicleName) {
+    return 'جهاز التتبع غير مثبت على $vehicleName. يرجى تثبيت جهاز لتهيئة عناصر التحكم في الإشعارات.';
+  }
+
+  @override
+  String get noDevice => 'لا يوجد جهاز';
+
+  @override
+  String get noDeviceNotificationBanner =>
+      'لا يوجد جهاز تتبع مرتبط بهذة المركبة. عناصر التحكم في الإشعارات معطلة.';
+
+  @override
+  String get ok => 'موافق';
+
+  @override
+  String get profile100PercentComplete => 'ملفك الشخصي مكتمل بنسبة 100٪!';
 }

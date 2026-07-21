@@ -110,6 +110,7 @@ class _FullScreenMapState extends State<FullScreenMap>
   final ValueNotifier<double> _sheetExtent = ValueNotifier<double>(0.14);
   String _currentMarkerLetter = '';
   Timer? _statusTimer;
+  Timer? _autoFollowResumeTimer;
 
   late final FullScreenMapUiCubit _uiCubit;
 
@@ -187,10 +188,11 @@ class _FullScreenMapState extends State<FullScreenMap>
         }
 
         // Drone-style camera tracking (throttled to 20fps for performance)
-        if (hasMoved &&
-            _uiCubit.state.isAutoFollowing &&
+        if (_uiCubit.state.isAutoFollowing &&
+            _animatedMarkerPos != null &&
             mounted &&
-            _mapController != null) {
+            _mapController != null &&
+            !(_cameraAnimationController?.isAnimating ?? false)) {
           final appState = context.read<AppCubit>().state;
           if (!(_uiCubit.state.showCurrentLocation &&
               appState.currentLocation != null)) {
@@ -369,6 +371,7 @@ class _FullScreenMapState extends State<FullScreenMap>
   void dispose() {
     _statusTimer?.cancel();
     _demoTimer?.cancel();
+    _autoFollowResumeTimer?.cancel();
     _uiCubit.close();
     _mapRebuildNotifier.dispose();
     _cameraAnimationController?.dispose();
@@ -664,7 +667,21 @@ class _FullScreenMapState extends State<FullScreenMap>
     });
   }
 
+  void _onUserMapInteraction() {
+    _cameraAnimationController?.stop();
+    if (_uiCubit.state.isAutoFollowing) {
+      _uiCubit.setAutoFollowing(false);
+    }
+    _autoFollowResumeTimer?.cancel();
+    _autoFollowResumeTimer = Timer(const Duration(seconds: 5), () {
+      if (mounted && !_uiCubit.state.isAutoFollowing) {
+        _recenterCamera();
+      }
+    });
+  }
+
   void _recenterCamera() {
+    _autoFollowResumeTimer?.cancel();
     _uiCubit.setAutoFollowing(true);
     _applyCameraForCurrentMode();
   }
@@ -842,7 +859,7 @@ class _FullScreenMapState extends State<FullScreenMap>
     } else {
       _animateCameraTo(
         target: _animatedMarkerPos ?? vehiclePos,
-        zoom: 18.0,
+        zoom: _cameraZoom > 0 ? _cameraZoom : 18.0,
         tilt: 0.0,
         bearing: animBearing,
         duration: const Duration(milliseconds: 1200),
@@ -1477,11 +1494,8 @@ class _FullScreenMapState extends State<FullScreenMap>
                   bloc: _uiCubit,
                   builder: (context, uiState) {
                     return Listener(
-                      onPointerMove: (_) {
-                        if (_uiCubit.state.isAutoFollowing) {
-                          _uiCubit.setAutoFollowing(false);
-                        }
-                      },
+                      onPointerDown: (_) => _onUserMapInteraction(),
+                      onPointerMove: (_) => _onUserMapInteraction(),
                       child: GoogleMap(
                         initialCameraPosition: CameraPosition(
                           target: bestPos!,
@@ -1793,6 +1807,105 @@ class _FullScreenMapState extends State<FullScreenMap>
       return Icons.directions_car;
     }
     return Icons.motorcycle;
+  }
+
+  Widget _buildVehicleImageOrIcon(BuildContext context, Vehicles? vehicle) {
+    if (vehicle == null) {
+      return Image.asset(
+        AppImages.bikeImage,
+        height: 48,
+        width: 48,
+        fit: BoxFit.contain,
+      );
+    }
+
+    String? selectedIcon;
+    final imei = vehicle.imei;
+    if (imei != null && imei.isNotEmpty) {
+      try {
+        final box = Hive.box('map_cache');
+        final cacheData = box.get('vehicle_control_$imei');
+        if (cacheData != null) {
+          final cachedMap = jsonDecode(cacheData.toString());
+          selectedIcon = cachedMap['selectedIcon']?.toString();
+        }
+      } catch (_) {}
+    }
+
+    final type = (selectedIcon ?? vehicle.vehicleType).toLowerCase();
+
+    if (type.contains('car') || type.contains('four')) {
+      return Container(
+        height: 48,
+        width: 48,
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+          shape: BoxShape.circle,
+        ),
+        child: Center(
+          child: Icon(
+            Icons.directions_car,
+            size: 28,
+            color: Theme.of(context).colorScheme.primary,
+          ),
+        ),
+      );
+    } else if (type.contains('truck')) {
+      return Container(
+        height: 48,
+        width: 48,
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+          shape: BoxShape.circle,
+        ),
+        child: Center(
+          child: Icon(
+            Icons.local_shipping,
+            size: 28,
+            color: Theme.of(context).colorScheme.primary,
+          ),
+        ),
+      );
+    } else if (type.contains('bus')) {
+      return Container(
+        height: 48,
+        width: 48,
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+          shape: BoxShape.circle,
+        ),
+        child: Center(
+          child: Icon(
+            Icons.directions_bus,
+            size: 28,
+            color: Theme.of(context).colorScheme.primary,
+          ),
+        ),
+      );
+    } else if (type.contains('scoot') || type.contains('moped')) {
+      return Container(
+        height: 48,
+        width: 48,
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+          shape: BoxShape.circle,
+        ),
+        child: Center(
+          child: Icon(
+            Icons.moped,
+            size: 28,
+            color: Theme.of(context).colorScheme.primary,
+          ),
+        ),
+      );
+    } else {
+      return Image.asset(
+        AppImages.bikeImage,
+        height: 48,
+        width: 48,
+        fit: BoxFit.contain,
+      );
+    }
   }
 
   Widget _buildRightSideActions() {
@@ -2382,24 +2495,8 @@ class _FullScreenMapState extends State<FullScreenMap>
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    // Vehicle Icon
-                    Container(
-                      height: 48,
-                      width: 48,
-                      decoration: BoxDecoration(
-                        color: Theme.of(
-                          context,
-                        ).colorScheme.primary.withOpacity(0.1),
-                        shape: BoxShape.circle,
-                      ),
-                      child: Center(
-                        child: Icon(
-                          _getVehicleIcon(_currentVehicle),
-                          color: Theme.of(context).colorScheme.primary,
-                          size: 28,
-                        ),
-                      ),
-                    ),
+                    // Vehicle Icon/Image from Assets
+                    _buildVehicleImageOrIcon(context, _currentVehicle),
                     const SizedBox(width: 12),
                     // Vehicle Name and Number
                     Expanded(

@@ -1,4 +1,4 @@
-﻿import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:trackify/feature/add_vehicle_and_device/choice_selector.dart';
@@ -20,6 +20,8 @@ import '../../../onboarding/presentation/pages/select_language_screen.dart';
 import '../cubit/auth_cubit.dart';
 import '../cubit/auth_state.dart';
 import 'forgot_password_screen.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:trackify/core/constants/app_images.dart';
 import 'package:trackify/core/widgets/trackify_loader.dart';
 
 class SignInScreen extends StatefulWidget {
@@ -35,6 +37,32 @@ class _SignInScreenState extends State<SignInScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _isNavigating = false;
+  bool _rememberMe = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadSavedCredentials();
+  }
+
+  void _loadSavedCredentials() {
+    final remember = AppPreference.instance.getBoolSync(
+      key: AppPreference.KEY_REMEMBER_ME,
+    );
+    if (remember) {
+      final savedEmail = AppPreference.instance.getSync(
+        key: AppPreference.KEY_SAVED_EMAIL,
+      );
+      final savedPassword = AppPreference.instance.getSync(
+        key: AppPreference.KEY_SAVED_PASSWORD,
+      );
+      setState(() {
+        _rememberMe = true;
+        if (savedEmail.isNotEmpty) _emailController.text = savedEmail;
+        if (savedPassword.isNotEmpty) _passwordController.text = savedPassword;
+      });
+    }
+  }
 
   @override
   void dispose() {
@@ -45,6 +73,27 @@ class _SignInScreenState extends State<SignInScreen> {
 
   void _onLoginPressed(BuildContext context) {
     if (_formKey.currentState?.validate() ?? false) {
+      if (_rememberMe) {
+        AppPreference.instance.setBool(
+          key: AppPreference.KEY_REMEMBER_ME,
+          value: true,
+        );
+        AppPreference.instance.set(
+          key: AppPreference.KEY_SAVED_EMAIL,
+          value: _emailController.text.trim(),
+        );
+        AppPreference.instance.set(
+          key: AppPreference.KEY_SAVED_PASSWORD,
+          value: _passwordController.text.trim(),
+        );
+      } else {
+        AppPreference.instance.setBool(
+          key: AppPreference.KEY_REMEMBER_ME,
+          value: false,
+        );
+        AppPreference.instance.clearByKey(key: AppPreference.KEY_SAVED_EMAIL);
+        AppPreference.instance.clearByKey(key: AppPreference.KEY_SAVED_PASSWORD);
+      }
       final body = {
         'email': _emailController.text.trim(),
         'password': _passwordController.text.trim(),
@@ -67,29 +116,26 @@ class _SignInScreenState extends State<SignInScreen> {
 
   Widget _buildLogo(SplashState state, ColorScheme colorScheme) {
     return Center(
-      child: Padding(
-        padding: const EdgeInsets.only(top: 10.0, bottom: 20.0),
-        child:
-            (state is SplashLoaded &&
-                state.logo.path != null &&
-                state.logo.path!.isNotEmpty)
-            ? CachedNetworkImage(
-                imageUrl: state.logo.path!,
-                height: 220,
-                fit: BoxFit.contain,
-                placeholder: (context, url) => const Center(child: TrackifyLoader()),
-                errorWidget: (context, url, error) => Icon(
-                  Icons.track_changes_rounded,
-                  size: 88,
-                  color: colorScheme.primary,
-                ),
-              )
-            : Icon(
+      child:
+          (state is SplashLoaded &&
+              state.logo.path != null &&
+              state.logo.path!.isNotEmpty)
+          ? CachedNetworkImage(
+              imageUrl: state.logo.path!,
+              height: MediaQuery.of(context).size.height < 700 ? 100 : 130,
+              fit: BoxFit.contain,
+              placeholder: (context, url) => const Center(child: TrackifyLoader()),
+              errorWidget: (context, url, error) => Icon(
                 Icons.track_changes_rounded,
-                size: 88,
+                size: 64,
                 color: colorScheme.primary,
               ),
-      ),
+            )
+          : Icon(
+              Icons.track_changes_rounded,
+              size: 64,
+              color: colorScheme.primary,
+            ),
     );
   }
 
@@ -186,6 +232,7 @@ class _SignInScreenState extends State<SignInScreen> {
               builder: (context, splashState) {
                 return SafeArea(
                   child: SingleChildScrollView(
+                    physics: const BouncingScrollPhysics(),
                     padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
                     child: Form(
                       key: _formKey,
@@ -194,7 +241,7 @@ class _SignInScreenState extends State<SignInScreen> {
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
                           _buildLogo(splashState, colorScheme),
-                          const SizedBox(height: 20),
+                          const SizedBox(height: 12),
                           Align(
                             alignment: Alignment.centerLeft,
                             child: Text(
@@ -212,6 +259,8 @@ class _SignInScreenState extends State<SignInScreen> {
                             header: '',
                             hint: l10n.emailHint,
                             value: _emailController,
+                            keyboardType: TextInputType.emailAddress,
+                            textInputAction: TextInputAction.next,
                             validator: (value) => Validators.validateEmail(
                               value,
                               l10n.emailRequired,
@@ -237,6 +286,8 @@ class _SignInScreenState extends State<SignInScreen> {
                             hint: l10n.passwordHint,
                             value: _passwordController,
                             isPassword: true,
+                            textInputAction: TextInputAction.done,
+                            onFieldSubmitted: (_) => FocusScope.of(context).unfocus(),
                             validator: (value) => Validators.validatePassword(
                               value,
                               l10n.passwordRequired,
@@ -244,24 +295,66 @@ class _SignInScreenState extends State<SignInScreen> {
                               minLength: 6,
                             ),
                           ),
-                          Align(
-                            alignment: Alignment.centerRight,
-                            child: TextButton(
-                              onPressed: () {
-                                Navigator.of(context).push(
-                                  MaterialPageRoute(
-                                    builder: (context) =>
-                                        const ForgotPasswordScreen(),
+                          const SizedBox(height: 8),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  SizedBox(
+                                    height: 24,
+                                    width: 24,
+                                    child: Checkbox(
+                                      value: _rememberMe,
+                                      activeColor: colorScheme.primary,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(4),
+                                      ),
+                                      onChanged: (val) {
+                                        setState(() {
+                                          _rememberMe = val ?? false;
+                                        });
+                                      },
+                                    ),
                                   ),
-                                );
-                              },
-                              child: Text(
-                                l10n.forgotPassword,
-                                style: TextStyle(color: colorScheme.primary,
-                                  fontWeight: FontWeight.w600,
+                                  const SizedBox(width: 8),
+                                  GestureDetector(
+                                    onTap: () {
+                                      setState(() {
+                                        _rememberMe = !_rememberMe;
+                                      });
+                                    },
+                                    child: Text(
+                                      'Remember Me',
+                                      style: textTheme.bodySmall?.copyWith(
+                                        fontWeight: FontWeight.w600,
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .onSurface,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          const ForgotPasswordScreen(),
+                                    ),
+                                  );
+                                },
+                                child: Text(
+                                  l10n.forgotPassword,
+                                  style: TextStyle(
+                                    color: colorScheme.primary,
+                                    fontWeight: FontWeight.w600,
+                                  ),
                                 ),
                               ),
-                            ),
+                            ],
                           ),
                           const SizedBox(height: 32),
                           CommonButton(
@@ -291,19 +384,52 @@ class _SignInScreenState extends State<SignInScreen> {
                               const Expanded(child: Divider()),
                             ],
                           ),
-                          const SizedBox(height: 15),
-                          InkWell(
-                            onTap: () =>
-                                context.read<AuthCubit>().loginWithGoogle(),
-                            child: Center(
-                              child: Text(
-                                'Login with Google',
-                                style: TextStyle(color: colorScheme.primary,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                          const SizedBox(height: 20),
+                          OutlinedButton(
+                            onPressed: (state is AuthLoading || _isNavigating)
+                                ? null
+                                : () =>
+                                    context.read<AuthCubit>().loginWithGoogle(),
+                            style: OutlinedButton.styleFrom(
+                              minimumSize: const Size(double.infinity, 50),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
                               ),
+                              side: BorderSide(
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .onSurface
+                                    .withOpacity(0.15),
+                                width: 1.2,
+                              ),
+                              backgroundColor: Theme.of(context)
+                                  .colorScheme
+                                  .surface,
+                              elevation: 0,
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                SvgPicture.asset(
+                                  AppImages.googleIcon,
+                                  height: 22,
+                                  width: 22,
+                                ),
+                                const SizedBox(width: 12),
+                                Text(
+                                  'Continue with Google',
+                                  style: TextStyle(
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w600,
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .onSurface,
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
+                          const SizedBox(height: 20),
                           Center(
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,

@@ -1286,5 +1286,30 @@
   "enterPinSubtitle": "أدخل رمز PIN المكون من 4 أرقام للمتابعة",
   "createNewPinSubtitle": "قم بإنشاء رمز PIN مكون من 4 أرقام لقفل المركبة",
   "confirmNewPinSubtitle": "أعد إدخال رمز PIN المكون من 4 أرقام للتأكيد",
-  "forgotPin": "نسيت رمز PIN؟"
+  "forgotPin": "نسيت رمز PIN؟",
+  "noSavedRidesYet": "No saved rides yet! Mark a ride as saved to add it here.",
+  "welcomeUser": "أهلاً بك، {name}!",
+  "@welcomeUser": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "welcomeToTrackify": "مرحباً بك في تراكيفاي!",
+  "thankYouForRegisteringDesc": "شكراً لتسجيلك! تم إنشاء حسابك بنجاح. يرجى تسجيل الدخول للوصول إلى لوحة التحكم وإدارة مركباتك.",
+  "continueToSignIn": "المتابعة لتسجيل الدخول",
+  "deviceNotInstalled": "الجهاز غير مثبت",
+  "deviceNotInstalledDesc": "جهاز التتبع غير مثبت على {vehicleName}. يرجى تثبيت جهاز لتهيئة عناصر التحكم في الإشعارات.",
+  "@deviceNotInstalledDesc": {
+    "placeholders": {
+      "vehicleName": {
+        "type": "String"
+      }
+    }
+  },
+  "noDevice": "لا يوجد جهاز",
+  "noDeviceNotificationBanner": "لا يوجد جهاز تتبع مرتبط بهذة المركبة. عناصر التحكم في الإشعارات معطلة.",
+  "ok": "موافق",
+  "profile100PercentComplete": "ملفك الشخصي مكتمل بنسبة 100٪!"
 }

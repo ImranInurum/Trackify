@@ -39,6 +39,8 @@ class CustomFormField extends StatefulWidget {
   final bool? hasClearIcon;
   final TextCapitalization textCapitalization;
   final Color? textColor;
+  final TextInputAction? textInputAction;
+  final FocusNode? focusNode;
 
   const CustomFormField({
     super.key,
@@ -77,6 +79,8 @@ class CustomFormField extends StatefulWidget {
     this.hasClearIcon,
     this.textCapitalization = TextCapitalization.none,
     this.textColor,
+    this.textInputAction,
+    this.focusNode,
   });
 
   @override
@@ -84,7 +88,9 @@ class CustomFormField extends StatefulWidget {
 }
 
 class _CustomFormFieldState extends State<CustomFormField> {
-  FocusNode node = FocusNode();
+  late FocusNode _internalFocusNode;
+  FocusNode get _effectiveFocusNode => widget.focusNode ?? _internalFocusNode;
+
   bool showLabel = true;
   late bool _isObscured;
 
@@ -92,11 +98,32 @@ class _CustomFormFieldState extends State<CustomFormField> {
   void initState() {
     super.initState();
     _isObscured = widget.isPassword;
-    node.addListener(() {
+    _internalFocusNode = FocusNode();
+    _effectiveFocusNode.addListener(_onFocusChange);
+  }
+
+  @override
+  void didUpdateWidget(CustomFormField oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.focusNode != oldWidget.focusNode) {
+      (oldWidget.focusNode ?? _internalFocusNode).removeListener(_onFocusChange);
+      _effectiveFocusNode.addListener(_onFocusChange);
+    }
+  }
+
+  @override
+  void dispose() {
+    _effectiveFocusNode.removeListener(_onFocusChange);
+    _internalFocusNode.dispose();
+    super.dispose();
+  }
+
+  void _onFocusChange() {
+    if (mounted) {
       setState(() {
-        showLabel = !node.hasFocus;
+        showLabel = !_effectiveFocusNode.hasFocus;
       });
-    });
+    }
   }
 
   void _handleTextChanged(String text) {
@@ -158,12 +185,12 @@ class _CustomFormFieldState extends State<CustomFormField> {
           decoration: BoxDecoration(
             boxShadow: [
               BoxShadow(
-                color: node.hasFocus 
+                color: _effectiveFocusNode.hasFocus 
                     ? primaryColor.withOpacity(0.15) 
                     : Colors.black.withOpacity(0.05),
-                blurRadius: node.hasFocus ? 12 : 8,
+                blurRadius: _effectiveFocusNode.hasFocus ? 12 : 8,
                 offset: const Offset(0, 4),
-                spreadRadius: node.hasFocus ? 1 : 0,
+                spreadRadius: _effectiveFocusNode.hasFocus ? 1 : 0,
               ),
             ],
           ),
@@ -177,7 +204,7 @@ class _CustomFormFieldState extends State<CustomFormField> {
               fontWeight: widget.textColor != null ? FontWeight.w600 : FontWeight.w400,
             ),
             onFieldSubmitted: widget.onFieldSubmitted,
-            focusNode: node,
+            focusNode: _effectiveFocusNode,
             inputFormatters: widget.inputFormatters,
             autofillHints: widget.autofillHints,
             maxLength: widget.maxLength,
@@ -193,6 +220,7 @@ class _CustomFormFieldState extends State<CustomFormField> {
             minLines: widget.minLines,
             maxLines: widget.maxLines,
             keyboardType: widget.keyboardType,
+            textInputAction: widget.textInputAction,
             decoration: InputDecoration(
               hintText: widget.hint,
               hintStyle: TextStyle(

@@ -1,6 +1,8 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:trackify/feature/trips/presentation/view/widgets/all_rides/all_rides_view.dart';
 import 'package:trackify/feature/trips/presentation/view/widgets/trips/trips_view.dart';
+import 'package:trackify/feature/trips/presentation/view/saved_rides_screen.dart';
+import 'package:trackify/feature/record_via_phone/presentation/pages/shared_rides_screen.dart' as trackify_shared;
 import '../../../../l10n/app_localizations.dart';
 
 class TripScreen extends StatefulWidget {
@@ -52,9 +54,21 @@ class _TripScreenState extends State<TripScreen>
             color: Theme.of(context).cardColor,
             surfaceTintColor: Colors.transparent,
             onSelected: (value) {
-              ScaffoldMessenger.of(
-                context,
-              ).showSnackBar(SnackBar(content: Text(l10n.clicked(value))));
+              if (value == l10n.savedRides) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const SavedRidesScreen()),
+                );
+              } else if (value == l10n.sharedRides) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const trackify_shared.SharedRidesScreen()),
+                );
+              } else {
+                ScaffoldMessenger.of(
+                  context,
+                ).showSnackBar(SnackBar(content: Text(l10n.clicked(value))));
+              }
             },
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),

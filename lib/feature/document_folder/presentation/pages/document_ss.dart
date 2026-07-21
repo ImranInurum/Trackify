@@ -408,7 +408,7 @@ class _DocumentSubScreenState extends State<DocumentSubScreen> {
                       onTap: _pickDate,
                       child: Container(
                         height: screenHeight * 0.055,
-                        width: screenWidth * 0.45,
+                        width: double.infinity,
                         padding: const EdgeInsets.symmetric(horizontal: 14),
                         decoration: BoxDecoration(
                           color: Theme.of(context).cardColor,

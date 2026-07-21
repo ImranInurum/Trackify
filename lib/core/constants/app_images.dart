@@ -8,6 +8,7 @@ class AppImages {
   static const String appLogo = '$icons/appLogo.png';
 
   static const String kingIcon = "$icons/king.png";
+  static const String googleIcon = "$icons/google.svg";
   //DashBoard Icons
   static const String homeIcon = "$icons/homeIcon.png";
   static const String tripsIcon = "$icons/tripIcon.png";

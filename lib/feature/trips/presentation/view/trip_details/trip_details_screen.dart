@@ -1034,7 +1034,7 @@ class _MapCard extends StatelessWidget {
               ],
             ),
           ),
-          // Address Footer
+          // Date/Time Footer
           Container(
             padding: const EdgeInsets.all(16),
             color: theme.cardColor,
@@ -1044,18 +1044,6 @@ class _MapCard extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        firstRide.startLocation,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          color: theme.colorScheme.onSurface.withValues(
-                            alpha: 0.7,
-                          ),
-                          fontSize: 12,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
                       Text(
                         "${firstRide.date} ${firstRide.startTime}",
                         style: TextStyle(color: goldColor, fontSize: 11),
@@ -1068,18 +1056,6 @@ class _MapCard extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
-                      Text(
-                        lastRide.endLocation,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          color: theme.colorScheme.onSurface.withValues(
-                            alpha: 0.7,
-                          ),
-                          fontSize: 12,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
                       Text(
                         "${lastRide.date} ${lastRide.endTime}",
                         style: TextStyle(color: goldColor, fontSize: 11),

@@ -173,13 +173,10 @@ class Ride {
     final avgSpeed =
         rides.fold(0.0, (sum, r) => sum + r.avgSpeed) / rides.length;
 
-    // Calculate total duration from duration strings (e.g. "20 min")
+    // Calculate total duration from duration strings (e.g. "20 min", "1 hr 6 min")
     int totalMinutes = 0;
     for (var r in rides) {
-      final parts = r.duration.split(' ');
-      if (parts.isNotEmpty) {
-        totalMinutes += int.tryParse(parts[0]) ?? 0;
-      }
+      totalMinutes += parseDurationToMinutes(r.duration);
     }
 
     final allPolylinePoints = rides.expand((r) => r.polylinePoints).toList();
@@ -201,6 +198,35 @@ class Ride {
       points: allPoints,
       rawStartTime: rides.first.rawStartTime,
     );
+  }
+
+  static int parseDurationToMinutes(String durationStr) {
+    if (durationStr.trim().isEmpty) return 0;
+    int totalMin = 0;
+    final str = durationStr.toLowerCase();
+    
+    if (str.contains(':')) {
+       final parts = str.split(':');
+       if (parts.length >= 2) {
+         totalMin += (int.tryParse(parts[0]) ?? 0) * 60;
+         totalMin += (int.tryParse(parts[1]) ?? 0);
+       }
+    } else if (str.contains('h')) { // Matches hr, h, hour
+      final hrMatch = RegExp(r'(\d+)\s*(h)').firstMatch(str);
+      if (hrMatch != null) {
+        totalMin += (int.tryParse(hrMatch.group(1)!) ?? 0) * 60;
+      }
+      final minMatch = RegExp(r'(\d+)\s*(m)').firstMatch(str);
+      if (minMatch != null) {
+        totalMin += (int.tryParse(minMatch.group(1)!) ?? 0);
+      }
+    } else {
+      final match = RegExp(r'\d+').firstMatch(str);
+      if (match != null) {
+        totalMin += int.tryParse(match.group(0)!) ?? 0;
+      }
+    }
+    return totalMin;
   }
 
   factory Ride.fromTripModel(String id, RideTripModel trip) {

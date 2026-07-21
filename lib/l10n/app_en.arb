@@ -1285,5 +1285,30 @@
   "enterPinSubtitle": "Enter your 4-digit PIN to proceed",
   "createNewPinSubtitle": "Create a 4-digit PIN for vehicle locking",
   "confirmNewPinSubtitle": "Re-enter your 4-digit PIN to confirm",
-  "forgotPin": "Forgot PIN?"
+  "forgotPin": "Forgot PIN?",
+  "noSavedRidesYet": "No saved rides yet! Mark a ride as saved to add it here.",
+  "welcomeUser": "Welcome, {name}!",
+  "@welcomeUser": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "welcomeToTrackify": "Welcome to Trackify!",
+  "thankYouForRegisteringDesc": "Thank you for registering! Your account has been successfully created. Please sign in to access your dashboard and manage your vehicles.",
+  "continueToSignIn": "Continue to Sign In",
+  "deviceNotInstalled": "Device Not Installed",
+  "deviceNotInstalledDesc": "Tracking device is not installed on {vehicleName}. Please install a device to configure notification controls.",
+  "@deviceNotInstalledDesc": {
+    "placeholders": {
+      "vehicleName": {
+        "type": "String"
+      }
+    }
+  },
+  "noDevice": "No Device",
+  "noDeviceNotificationBanner": "No tracking device linked with this vehicle. Notification controls are disabled.",
+  "ok": "OK",
+  "profile100PercentComplete": "Your profile is 100% complete!"
 }

@@ -3340,4 +3340,44 @@ class AppLocalizationsMr extends AppLocalizations {
 
   @override
   String get forgotPin => 'पिन विसरलात?';
+
+  @override
+  String get noSavedRidesYet =>
+      'No saved rides yet! Mark a ride as saved to add it here.';
+
+  @override
+  String welcomeUser(String name) {
+    return 'स्वागत आहे, $name!';
+  }
+
+  @override
+  String get welcomeToTrackify => 'ट्रॅकिफायमध्ये आपले स्वागत आहे!';
+
+  @override
+  String get thankYouForRegisteringDesc =>
+      'नोंदणी केल्याबद्दल धन्यवाद! तुमचे खाते यशस्वीरित्या तयार केले गेले आहे. तुमच्या डॅशबोर्डवर जाण्यासाठी आणि वाहने व्यवस्थापित करण्यासाठी कृपया साइन इन करा.';
+
+  @override
+  String get continueToSignIn => 'साइन इन करण्यासाठी पुढे जा';
+
+  @override
+  String get deviceNotInstalled => 'डिव्हाइस इन्स्टॉल नाही';
+
+  @override
+  String deviceNotInstalledDesc(String vehicleName) {
+    return '$vehicleName वर ट्रॅकिंग डिव्हाइस इन्स्टॉल केलेले नाही. सूचना नियंत्रणे कॉन्फिगर करण्यासाठी कृपया डिव्हाइस इन्स्टॉल करा.';
+  }
+
+  @override
+  String get noDevice => 'डिव्हाइस नाही';
+
+  @override
+  String get noDeviceNotificationBanner =>
+      'या वाहनाशी कोणतेही ट्रॅकिंग डिव्हाइस जोडलेले नाही. सूचना नियंत्रणे अक्षम केली आहेत.';
+
+  @override
+  String get ok => 'ठीक आहे';
+
+  @override
+  String get profile100PercentComplete => 'तुमची प्रोफाइल १००% पूर्ण आहे!';
 }

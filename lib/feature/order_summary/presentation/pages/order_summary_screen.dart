@@ -346,7 +346,6 @@ class OrderSummaryScreen extends StatelessWidget {
           style: text.bodyMedium?.copyWith(
             color: valueColor ?? color.onSurface,
             fontWeight: isBold ? FontWeight.bold : FontWeightManager.semibold,
-            fontFamily: 'Montserrat',
           ),
         ),
       ],

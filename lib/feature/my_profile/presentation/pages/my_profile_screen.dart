@@ -1,8 +1,7 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:trackify/app/cubit/app_cubit.dart';
 import 'package:trackify/app/cubit/app_state.dart';
-import 'package:trackify/feature/health_insurance/presentation/pages/health_insurance_screen.dart';
 import 'package:trackify/l10n/app_localizations.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -14,6 +13,12 @@ import 'package:trackify/feature/auth/data/entity/login_response_model.dart';
 
 import 'edit_profile_screen.dart';
 import 'package:trackify/core/widgets/trackify_loader.dart';
+import 'package:trackify/feature/document_folder/presentation/pages/document_screen.dart';
+import 'package:trackify/feature/Vehicle_control/presentation/pages/vehicle_control_screen.dart';
+import 'package:trackify/feature/profile/presentation/cubit/profile_cubit.dart';
+import 'package:trackify/feature/profile/presentation/cubit/profile_state.dart';
+import 'package:trackify/core/utils/shared_preferences.dart';
+import 'package:trackify/core/common/models/vehicle_list_model.dart';
 
 class MyProfileScreen extends StatefulWidget {
   const MyProfileScreen({super.key});
@@ -384,7 +389,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                                     Text(
                                       (user?.userProfile == null || user!.userProfile!.trim().isEmpty)
                                           ? l10n.addProfilePicture
-                                          : "Complete your personal details",
+                                          : l10n.completePersonalDetails,
                                       style: TextStyle(
                                         fontSize: 14,
                                         fontWeight: FontWeight.normal,
@@ -470,7 +475,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      "Your profile is 100% complete!",
+                                      l10n.profile100PercentComplete,
                                       style: TextStyle(
                                         fontSize: 14,
                                         fontWeight: FontWeight.normal,
@@ -517,14 +522,14 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                               },
 
                               child: Container(
-                                padding: const EdgeInsets.all(4),
+                                padding: const EdgeInsets.all(6),
                                 decoration: BoxDecoration(
                                   shape: BoxShape.circle,
                                   color: Theme.of(context).colorScheme.primary,
                                 ),
                                 child: Icon(
                                   Icons.edit,
-                                  size: 14,
+                                  size: 18,
                                   color: Theme.of(
                                     context,
                                   ).colorScheme.onPrimary,
@@ -546,85 +551,39 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
 
                   const SizedBox(height: 12),
 
-                  /// 🔹 MEDICAL INSURANCE CARD
+
+
+                  /// 🔹 VEHICLE INSURANCE CARD
                   _buildCard(
                     context: context,
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const DocumentFolderScreen(),
+                        ),
+                      );
+                    },
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          l10n.medicalInsuranceInfo,
-                          style: TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.bold,
-                            color: Theme.of(context).colorScheme.onSurface,
-                          ),
-                        ),
-                        const SizedBox(height: 16),
-                        Center(
-                          child: Column(
-                            children: [
-                              GestureDetector(
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) =>
-                                          HealthInsuranceScreen(),
-                                    ),
-                                  );
-                                },
-                                child: Container(
-                                  height: 50,
-                                  width: 50,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(8),
-                                    border: Border.all(
-                                      color: Theme.of(
-                                        context,
-                                      ).colorScheme.primary,
-                                      width: 1,
-                                    ),
-                                  ),
-                                  child: Icon(
-                                    Icons.add,
-                                    color: Theme.of(
-                                      context,
-                                    ).colorScheme.primary,
-                                    size: 30,
-                                  ),
-                                ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              l10n.vehicleInsuranceInfo,
+                              style: TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.bold,
+                                color: Theme.of(context).colorScheme.onSurface,
                               ),
-                              const SizedBox(height: 8),
-                              Text(
-                                l10n.addMedicalInsuranceInfo,
-                                style: TextStyle(color: Theme.of(context).colorScheme.onSurface
-                                      .withValues(alpha: 0.4),
-                                  fontSize: 13,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-
-                  const SizedBox(height: 12),
-
-                  /// 🔹 VEHICLE INSURANCE CARD (Informational)
-                  _buildCard(
-                    context: context,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          l10n.vehicleInsuranceInfo,
-                          style: TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.bold,
-                            color: Theme.of(context).colorScheme.onSurface,
-                          ),
+                            ),
+                            Icon(
+                              Icons.arrow_forward_ios,
+                              size: 14,
+                              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.4),
+                            ),
+                          ],
                         ),
                         const SizedBox(height: 4),
                         Text(
@@ -649,19 +608,57 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
 
                   const SizedBox(height: 12),
 
-                  /// 🔹 EMERGENCY CONTACTS CARD (Informational)
+                  /// 🔹 EMERGENCY CONTACTS CARD
                   _buildCard(
                     context: context,
+                    onTap: () {
+                      final profileState = context.read<ProfileCubit>().state;
+                      Vehicle? selectedVehicle;
+                      if (profileState is VehiclesLoaded && profileState.vehicles.isNotEmpty) {
+                        final selectedImei = AppPreference.instance.getSync(
+                          key: AppPreference.IMEI,
+                        );
+                        final selectedUid = AppPreference.instance.getSync(
+                          key: AppPreference.KEY_SELECTED_UID,
+                        );
+                        selectedVehicle = profileState.vehicles.firstWhere(
+                          (v) =>
+                              (selectedUid.isNotEmpty && v.id == selectedUid) ||
+                              (selectedImei.isNotEmpty && v.imei == selectedImei),
+                          orElse: () => profileState.vehicles.first,
+                        );
+                      }
+                      final bool isDeviceInstalled = selectedVehicle?.imei != null && selectedVehicle!.imei!.isNotEmpty;
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => VehicleControlScreen(
+                            isFromGarage: isDeviceInstalled ? false : true,
+                            passedVehicle: selectedVehicle,
+                          ),
+                        ),
+                      );
+                    },
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          l10n.emergencyContacts,
-                          style: TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.bold,
-                            color: Theme.of(context).colorScheme.onSurface,
-                          ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              l10n.emergencyContacts,
+                              style: TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.bold,
+                                color: Theme.of(context).colorScheme.onSurface,
+                              ),
+                            ),
+                            Icon(
+                              Icons.arrow_forward_ios,
+                              size: 14,
+                              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.4),
+                            ),
+                          ],
                         ),
                         const SizedBox(height: 4),
                         Text(
@@ -693,23 +690,31 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
     );
   }
 
-  Widget _buildCard({required Widget child, required BuildContext context}) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: Theme.of(context).cardColor,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Theme.of(context).dividerColor),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.02),
-            blurRadius: 8,
-            offset: const Offset(0, 4),
-          ),
-        ],
+  Widget _buildCard({
+    required Widget child,
+    required BuildContext context,
+    VoidCallback? onTap,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(12),
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: Theme.of(context).cardColor,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: Theme.of(context).dividerColor),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.02),
+              blurRadius: 8,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: child,
       ),
-      child: child,
     );
   }
 

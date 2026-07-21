@@ -32,8 +32,9 @@ class _LocationSharingScreenState extends State<LocationSharingScreen> {
       create: (context) => LocationSharingCubit()..loadLocations(),
       child: Scaffold(
         appBar: AppBar(
-          backgroundColor: theme.appBarTheme.backgroundColor,
-          elevation: 0,
+          backgroundColor: theme.cardColor,
+          elevation: 1,
+          shadowColor: Colors.black.withOpacity(0.1),
           leading: IconButton(
             icon: Icon(
               Icons.arrow_back_ios_new,
@@ -43,7 +44,13 @@ class _LocationSharingScreenState extends State<LocationSharingScreen> {
             onPressed: () => Navigator.of(context).pop(),
           ),
           title: Text(
-            l10n.locationSharing, ),
+            l10n.locationSharing,
+            style: TextStyle(
+              color: theme.colorScheme.onSurface,
+              fontWeight: FontWeight.w600,
+              fontSize: 20,
+            ),
+          ),
           centerTitle: false,
         ),
         body: Stack(

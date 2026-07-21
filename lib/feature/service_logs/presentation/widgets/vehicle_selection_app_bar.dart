@@ -10,6 +10,7 @@ class VehicleSelectionAppBar extends StatelessWidget {
   final Function(Vehicle) onVehicleSelected;
   final bool isMinimal;
   final bool showBackButton;
+  final bool requireDevice;
 
   const VehicleSelectionAppBar({
     super.key,
@@ -20,6 +21,7 @@ class VehicleSelectionAppBar extends StatelessWidget {
     required this.onVehicleSelected,
     this.isMinimal = false,
     this.showBackButton = true,
+    this.requireDevice = false,
   });
 
   @override
@@ -118,6 +120,7 @@ class VehicleSelectionAppBar extends StatelessWidget {
       builder: (context) => _VehicleSelectorSheet(
         vehicles: vehicles,
         selectedVehicle: selectedVehicle,
+        requireDevice: requireDevice,
         onSelected: (vehicle) {
           onVehicleSelected(vehicle);
           Navigator.pop(context);
@@ -127,15 +130,97 @@ class VehicleSelectionAppBar extends StatelessWidget {
   }
 }
 
+void showDeviceNotInstalledDialog(BuildContext context, Vehicle vehicle) {
+  final theme = Theme.of(context);
+  final isDark = theme.brightness == Brightness.dark;
+  final vehicleName =
+      "${vehicle.vehicleMaker ?? ""} ${vehicle.vehicleModel ?? ""}".trim();
+  final displayTitle = vehicleName.isNotEmpty
+      ? vehicleName
+      : (vehicle.vehicleNumber != null && vehicle.vehicleNumber!.isNotEmpty
+          ? vehicle.vehicleNumber!
+          : "This vehicle");
+
+  showDialog(
+    context: context,
+    builder: (context) => Dialog(
+      backgroundColor: isDark ? const Color(0xFF2C2C2C) : theme.cardColor,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.orange.withOpacity(0.15),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(
+                Icons.sensors_off_rounded,
+                color: Colors.orange,
+                size: 36,
+              ),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              "Device Not Installed",
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: theme.colorScheme.onSurface,
+              ),
+            ),
+            const SizedBox(height: 12),
+            Text(
+              "Tracking device is not installed on $displayTitle. Please install a device to configure notification controls.",
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 14,
+                color: theme.colorScheme.onSurface.withOpacity(0.7),
+                height: 1.4,
+              ),
+            ),
+            const SizedBox(height: 24),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: () => Navigator.pop(context),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: theme.colorScheme.primary,
+                  foregroundColor: theme.colorScheme.onPrimary,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                ),
+                child: const Text(
+                  "OK",
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    ),
+  );
+}
+
 class _VehicleSelectorSheet extends StatelessWidget {
   final List<Vehicle> vehicles;
   final Vehicle? selectedVehicle;
   final Function(Vehicle) onSelected;
+  final bool requireDevice;
 
   const _VehicleSelectorSheet({
     required this.vehicles,
     required this.selectedVehicle,
     required this.onSelected,
+    this.requireDevice = false,
   });
 
   @override
@@ -166,6 +251,8 @@ class _VehicleSelectorSheet extends StatelessWidget {
             itemBuilder: (context, index) {
               final vehicle = vehicles[index];
               final isSelected = vehicle.id == selectedVehicle?.id;
+              final hasDevice =
+                  vehicle.imei != null && vehicle.imei!.trim().isNotEmpty;
 
               return Container(
                 color: isSelected
@@ -193,14 +280,46 @@ class _VehicleSelectorSheet extends StatelessWidget {
                               : theme.colorScheme.onSurface,
                         ),
                       ),
-                      subtitle: Text(vehicle.vehicleNumber ?? ""),
+                      subtitle: Row(
+                        children: [
+                          Text(vehicle.vehicleNumber ?? ""),
+                          if (requireDevice && !hasDevice) ...[
+                            const SizedBox(width: 8),
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 6,
+                                vertical: 2,
+                              ),
+                              decoration: BoxDecoration(
+                                color: Colors.orange.withOpacity(0.15),
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                              child: const Text(
+                                "No Device",
+                                style: TextStyle(
+                                  color: Colors.orange,
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ],
+                      ),
                       trailing: isSelected
                           ? Icon(
                               Icons.check_circle,
                               color: theme.colorScheme.primary,
                             )
                           : null,
-                      onTap: () => onSelected(vehicle),
+                      onTap: () {
+                        if (requireDevice && !hasDevice) {
+                          Navigator.pop(context);
+                          showDeviceNotInstalledDialog(context, vehicle);
+                          return;
+                        }
+                        onSelected(vehicle);
+                      },
                     ),
                   ),
                 ),

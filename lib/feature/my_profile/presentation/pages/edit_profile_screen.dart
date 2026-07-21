@@ -1,4 +1,5 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:trackify/app/cubit/app_cubit.dart';
 import 'package:trackify/app/cubit/app_state.dart';
@@ -10,6 +11,7 @@ import 'package:trackify/feature/my_profile/presentation/cubit/my_profile_state.
 import 'package:trackify/feature/my_profile/data/models/update_profile_request.dart';
 import 'package:intl/intl.dart';
 import 'package:country_state_city/country_state_city.dart' as csc;
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:trackify/core/widgets/searchable_dropdown.dart';
 
 class EditProfileScreen extends StatefulWidget {
@@ -211,221 +213,280 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     );
   }
 
-  /// Show a simple dialog to edit read-only field
-  void _showEditEmailDialog() {
-    final ctrl = TextEditingController(text: _email);
-    showDialog(
-      context: context,
-      builder: (dialogCtx) => AlertDialog(
-        backgroundColor: Theme.of(context).cardColor,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        titlePadding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
-        contentPadding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
-        title: Text(
-          l10n.editEmailAddress, ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(height: 10),
-            TextFormField(
-              controller: ctrl,
-              style: const TextStyle(fontSize: 16),
-              decoration: InputDecoration(
-                labelText: l10n.emailAddress,
-                labelStyle: TextStyle(
-                  fontSize: 12.5,
-                  color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
-                ),
-                floatingLabelBehavior: FloatingLabelBehavior.auto,
-                isDense: true,
-                contentPadding: const EdgeInsets.only(bottom: 8),
-                enabledBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: Theme.of(context).dividerColor),
-                ),
-                focusedBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: Theme.of(context).colorScheme.primary),
-                ),
-              ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              l10n.emailNotVerified,
-              style: const TextStyle(color: Colors.red, fontSize: 13),
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(dialogCtx),
-            child: Text(
-              l10n.cancel,
-              style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
-              ),
-            ),
-          ),
-          TextButton(
-            onPressed: () {
-              setState(() => _email = ctrl.text.trim());
-              Navigator.pop(dialogCtx);
-            },
-            child: Text(
-              l10n.saveAndVerify,
-              style: TextStyle(color: Theme.of(context).colorScheme.primary,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
   void _showEditMobileDialog() {
     String tempPhoneCode = '+91';
-    String tempPhoneNumber = _mobile;
+    String rawMobile = _mobile.trim();
 
-    for (final c in _countries) {
-      if (c.phoneCode.isNotEmpty) {
-        final code = c.phoneCode.startsWith('+') ? c.phoneCode : '+${c.phoneCode}';
-        if (_mobile.startsWith(code)) {
-          tempPhoneCode = code;
-          tempPhoneNumber = _mobile.substring(code.length);
-          break;
+    // Extract country code and clean 10-digit number
+    if (rawMobile.startsWith('+')) {
+      for (final c in _countries) {
+        if (c.phoneCode.isNotEmpty) {
+          final code = c.phoneCode.startsWith('+') ? c.phoneCode : '+${c.phoneCode}';
+          if (rawMobile.startsWith(code)) {
+            tempPhoneCode = code;
+            rawMobile = rawMobile.substring(code.length);
+            break;
+          }
         }
       }
+      if (rawMobile.startsWith('+91')) {
+        tempPhoneCode = '+91';
+        rawMobile = rawMobile.substring(3);
+      }
+    } else if (rawMobile.startsWith('91') && rawMobile.length > 10) {
+      tempPhoneCode = '+91';
+      rawMobile = rawMobile.substring(2);
+    }
+
+    String tempPhoneNumber = rawMobile.replaceAll(RegExp(r'\D'), '');
+    if (tempPhoneCode == '+91' && tempPhoneNumber.length > 10) {
+      tempPhoneNumber = tempPhoneNumber.substring(tempPhoneNumber.length - 10);
     }
 
     final dialogFormKey = GlobalKey<FormState>();
     final ctrl = TextEditingController(text: tempPhoneNumber);
+    final searchCtrl = TextEditingController();
+    final phoneCodeNotifier = ValueNotifier<String>(tempPhoneCode);
+
+    final codeToCountryMap = <String, csc.Country>{};
+    final seenCodes = <String>{};
+    final uniqueCodes = <String>[];
+
+    final countriesSource = _countries.isNotEmpty
+        ? _countries
+        : [
+            csc.Country(name: 'India', isoCode: 'IN', phoneCode: '91', flag: '🇮🇳', currency: 'INR', latitude: '', longitude: ''),
+            csc.Country(name: 'United States', isoCode: 'US', phoneCode: '1', flag: '🇺🇸', currency: 'USD', latitude: '', longitude: ''),
+            csc.Country(name: 'United Kingdom', isoCode: 'GB', phoneCode: '44', flag: '🇬🇧', currency: 'GBP', latitude: '', longitude: ''),
+          ];
+
+    for (final c in countriesSource) {
+      if (c.phoneCode.isEmpty) continue;
+      final code = c.phoneCode.startsWith('+') ? c.phoneCode : '+${c.phoneCode}';
+      if (!seenCodes.contains(code)) {
+        seenCodes.add(code);
+        uniqueCodes.add(code);
+        codeToCountryMap[code] = c;
+      }
+    }
+
+    if (!seenCodes.contains(tempPhoneCode)) {
+      uniqueCodes.insert(0, tempPhoneCode);
+      seenCodes.add(tempPhoneCode);
+    }
 
     showDialog(
       context: context,
       builder: (dialogCtx) => StatefulBuilder(
         builder: (context, setDialogState) {
           return AlertDialog(
+            insetPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
             backgroundColor: Theme.of(context).cardColor,
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
             titlePadding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
-            contentPadding: const EdgeInsets.fromLTRB(20, 20, 20, 10),
-            title: Text(
-              l10n.editMobileNumber, ),
+            contentPadding: const EdgeInsets.fromLTRB(16, 20, 16, 10),
+            title: Text(l10n.editMobileNumber),
             content: Form(
               key: dialogFormKey,
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                        decoration: BoxDecoration(
-                          border: Border.all(color: Theme.of(context).dividerColor),
-                          borderRadius: BorderRadius.circular(4),
-                        ),
-                        child: DropdownButtonHideUnderline(
-                          child: DropdownButton<String>(
-                            value: tempPhoneCode,
-                            isDense: true,
-                            items: (() {
-                              final seenCodes = <String>{};
-                              final uniqueItems = <DropdownMenuItem<String>>[];
-                              for (final c in _countries) {
-                                if (c.phoneCode.isEmpty) continue;
-                                final code = c.phoneCode.startsWith('+') ? c.phoneCode : '+${c.phoneCode}';
-                                if (!seenCodes.contains(code)) {
-                                  seenCodes.add(code);
-                                  uniqueItems.add(
-                                    DropdownMenuItem<String>(
-                                      value: code,
-                                      child: Text(
-                                        c.flag.isNotEmpty ? "${c.flag} $code" : code,
-                                        style: const TextStyle(fontSize: 14),
+                  const SizedBox(height: 8),
+                  FormField<String>(
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                    validator: (_) {
+                      final val = ctrl.text;
+                      if (val.trim().isEmpty) return l10n.required;
+                      final cleanValue = val.trim();
+                      if (!RegExp(r'^[0-9]+$').hasMatch(cleanValue)) return l10n.invalidMobileNumber;
+                      if (tempPhoneCode == '+91') {
+                        if (cleanValue.length != 10) return l10n.invalidMobileNumber;
+                        if (!RegExp(r'^[6-9][0-9]{9}$').hasMatch(cleanValue)) return l10n.invalidMobileNumber;
+                      } else {
+                        if (cleanValue.length < 7 || cleanValue.length > 15) return l10n.invalidMobileNumber;
+                      }
+                      return null;
+                    },
+                    builder: (fieldState) {
+                      final hasError = fieldState.hasError;
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Container(
+                            height: 50,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              border: Border.all(
+                                color: hasError
+                                    ? Theme.of(context).colorScheme.error
+                                    : Theme.of(context).dividerColor,
+                                width: hasError ? 1.5 : 1.0,
+                              ),
+                            ),
+                            child: Row(
+                              children: [
+                                // Searchable Country Code Dropdown
+                                SizedBox(
+                                  width: 85,
+                                  child: DropdownButtonHideUnderline(
+                                    child: DropdownButton2<String>(
+                                      isExpanded: true,
+                                      valueListenable: phoneCodeNotifier,
+                                      items: uniqueCodes.map((code) {
+                                        final country = codeToCountryMap[code];
+                                        final flag = country?.flag ?? '';
+                                        final name = country?.name ?? '';
+                                        final displayText = name.isNotEmpty
+                                            ? "$flag $name ($code)".trim()
+                                            : code;
+                                        return DropdownItem<String>(
+                                          value: code,
+                                          child: Text(
+                                            displayText,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: const TextStyle(fontSize: 13),
+                                          ),
+                                        );
+                                      }).toList(),
+                                      selectedItemBuilder: (context) {
+                                        return uniqueCodes.map((code) {
+                                          final country = codeToCountryMap[code];
+                                          final flag = country?.flag ?? '';
+                                          final displayText = flag.isNotEmpty ? "$flag $code" : code;
+                                          return Align(
+                                            alignment: Alignment.center,
+                                            child: Text(
+                                              displayText,
+                                              overflow: TextOverflow.ellipsis,
+                                              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+                                            ),
+                                          );
+                                        }).toList();
+                                      },
+                                      onChanged: (val) {
+                                        if (val != null) {
+                                          phoneCodeNotifier.value = val;
+                                          setDialogState(() {
+                                            tempPhoneCode = val;
+                                          });
+                                          fieldState.validate();
+                                          try {
+                                            final country = codeToCountryMap[val];
+                                            if (country != null) {
+                                              setState(() {
+                                                _selectedCountry = country.name;
+                                              });
+                                              _loadStates(country.isoCode);
+                                            }
+                                          } catch (_) {}
+                                        }
+                                      },
+                                      buttonStyleData: const ButtonStyleData(
+                                        padding: EdgeInsets.zero,
+                                        height: 50,
+                                        width: double.infinity,
+                                      ),
+                                      iconStyleData: IconStyleData(
+                                        icon: Icon(Icons.arrow_drop_down, color: Theme.of(context).colorScheme.primary, size: 20),
+                                      ),
+                                      dropdownStyleData: DropdownStyleData(
+                                        maxHeight: 300,
+                                        width: 250,
+                                        decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.circular(12),
+                                          color: Theme.of(context).scaffoldBackgroundColor,
+                                        ),
+                                        elevation: 4,
+                                      ),
+                                      dropdownSearchData: DropdownSearchData(
+                                        searchController: searchCtrl,
+                                        searchBarWidgetHeight: 48,
+                                        searchBarWidget: Container(
+                                          height: 48,
+                                          padding: const EdgeInsets.only(top: 6, bottom: 4, right: 8, left: 8),
+                                          child: TextFormField(
+                                            expands: true,
+                                            maxLines: null,
+                                            controller: searchCtrl,
+                                            style: const TextStyle(fontSize: 13),
+                                            decoration: InputDecoration(
+                                              isDense: true,
+                                              contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                                              hintText: l10n.searchForItem,
+                                              hintStyle: const TextStyle(fontSize: 12),
+                                              prefixIcon: const Icon(Icons.search, size: 18),
+                                              border: OutlineInputBorder(
+                                                borderRadius: BorderRadius.circular(8),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        searchMatchFn: (item, searchValue) {
+                                          final code = item.value ?? '';
+                                          final country = codeToCountryMap[code];
+                                          final name = country?.name ?? '';
+                                          final q = searchValue.toLowerCase();
+                                          return name.toLowerCase().contains(q) || code.toLowerCase().contains(q);
+                                        },
                                       ),
                                     ),
-                                  );
-                                }
-                              }
-                              if (!seenCodes.contains(tempPhoneCode)) {
-                                uniqueItems.insert(
-                                  0,
-                                  DropdownMenuItem<String>(
-                                    value: tempPhoneCode,
-                                    child: Text(tempPhoneCode, style: const TextStyle(fontSize: 14)),
                                   ),
-                                );
-                              }
-                              return uniqueItems;
-                            })(),
-                            onChanged: (val) {
-                              if (val != null) {
-                                setDialogState(() {
-                                  tempPhoneCode = val;
-                                });
-                                try {
-                                  final cleanCode = val.replaceAll('+', '');
-                                  final matchingCountry = _countries.firstWhere(
-                                    (c) => c.phoneCode == cleanCode || c.phoneCode == val,
-                                  );
-                                  setState(() {
-                                    _selectedCountry = matchingCountry.name;
-                                  });
-                                  _loadStates(matchingCountry.isoCode);
-                                } catch (_) {}
-                              }
-                            },
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: TextFormField(
-                          controller: ctrl,
-                          keyboardType: TextInputType.phone,
-                          style: const TextStyle(fontSize: 16),
-                          decoration: InputDecoration(
-                            labelText: l10n.mobileNumber,
-                            labelStyle: TextStyle(
-                              fontSize: 12.5,
-                              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
-                            ),
-                            floatingLabelBehavior: FloatingLabelBehavior.auto,
-                            isDense: true,
-                            contentPadding: const EdgeInsets.only(bottom: 8),
-                            enabledBorder: UnderlineInputBorder(
-                              borderSide: BorderSide(color: Theme.of(context).dividerColor),
-                            ),
-                            focusedBorder: UnderlineInputBorder(
-                              borderSide: BorderSide(color: Theme.of(context).colorScheme.primary),
+                                ),
+                                // Inner Vertical Divider
+                                Container(
+                                  width: 1,
+                                  height: 24,
+                                  color: Theme.of(context).dividerColor,
+                                ),
+                                const SizedBox(width: 4),
+                                // Mobile Input Field
+                                Expanded(
+                                  child: TextFormField(
+                                    controller: ctrl,
+                                    keyboardType: TextInputType.phone,
+                                    onChanged: (val) {
+                                      fieldState.didChange(val);
+                                      fieldState.validate();
+                                    },
+                                    inputFormatters: [
+                                      FilteringTextInputFormatter.digitsOnly,
+                                      LengthLimitingTextInputFormatter(tempPhoneCode == '+91' ? 10 : 15),
+                                    ],
+                                    style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
+                                    decoration: InputDecoration(
+                                      hintText: l10n.mobileNumber,
+                                      hintStyle: TextStyle(
+                                        fontSize: 14,
+                                        color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.4),
+                                      ),
+                                      isDense: true,
+                                      contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 14),
+                                      border: InputBorder.none,
+                                      enabledBorder: InputBorder.none,
+                                      focusedBorder: InputBorder.none,
+                                      errorBorder: InputBorder.none,
+                                      focusedErrorBorder: InputBorder.none,
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
-                          validator: (val) {
-                            if (val == null || val.trim().isEmpty) {
-                              return l10n.required;
-                            }
-                            final cleanValue = val.trim();
-                            if (!RegExp(r'^[0-9]+$').hasMatch(cleanValue)) {
-                              return l10n.invalidMobileNumber;
-                            }
-
-                            if (tempPhoneCode == '+91') {
-                              if (cleanValue.length != 10) {
-                                return l10n.invalidMobileNumber;
-                              }
-                              if (!RegExp(r'^[6-9][0-9]{9}$').hasMatch(cleanValue)) {
-                                return l10n.invalidMobileNumber;
-                              }
-                            } else {
-                              if (cleanValue.length < 7 || cleanValue.length > 15) {
-                                return l10n.invalidMobileNumber;
-                              }
-                            }
-                            return null;
-                          },
-                        ),
-                      ),
-                    ],
+                          if (hasError)
+                            Padding(
+                              padding: const EdgeInsets.only(top: 6, left: 4),
+                              child: Text(
+                                fieldState.errorText ?? '',
+                                style: TextStyle(
+                                  color: Theme.of(context).colorScheme.error,
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ),
+                        ],
+                      );
+                    },
                   ),
                 ],
               ),
@@ -435,7 +496,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 onPressed: () => Navigator.pop(dialogCtx),
                 child: Text(
                   l10n.cancel,
-                  style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
                   ),
                 ),
               ),
@@ -448,7 +510,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 },
                 child: Text(
                   l10n.save,
-                  style: TextStyle(color: Theme.of(context).colorScheme.primary,
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.primary,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -456,6 +519,104 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             ],
           );
         },
+      ),
+    );
+  }
+
+  /// Show a simple dialog to edit read-only field
+  void _showEditEmailDialog() {
+    final dialogFormKey = GlobalKey<FormState>();
+    final ctrl = TextEditingController(text: _email);
+
+    showDialog(
+      context: context,
+      builder: (dialogCtx) => AlertDialog(
+        backgroundColor: Theme.of(context).cardColor,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        titlePadding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+        contentPadding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
+        title: Text(
+          l10n.editEmailAddress,
+        ),
+        content: Form(
+          key: dialogFormKey,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 10),
+              TextFormField(
+                controller: ctrl,
+                keyboardType: TextInputType.emailAddress,
+                autovalidateMode: AutovalidateMode.onUserInteraction,
+                style: const TextStyle(fontSize: 16),
+                decoration: InputDecoration(
+                  labelText: l10n.emailAddress,
+                  labelStyle: TextStyle(
+                    fontSize: 12.5,
+                    color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+                  ),
+                  floatingLabelBehavior: FloatingLabelBehavior.auto,
+                  isDense: true,
+                  contentPadding: const EdgeInsets.only(bottom: 8),
+                  enabledBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: Theme.of(context).dividerColor),
+                  ),
+                  focusedBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: Theme.of(context).colorScheme.primary),
+                  ),
+                  errorBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: Theme.of(context).colorScheme.error),
+                  ),
+                  focusedErrorBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: Theme.of(context).colorScheme.error),
+                  ),
+                ),
+                validator: (val) {
+                  if (val == null || val.trim().isEmpty) {
+                    return l10n.required;
+                  }
+                  final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+                  if (!emailRegex.hasMatch(val.trim())) {
+                    return l10n.invalidEmail;
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 8),
+              Text(
+                l10n.emailNotVerified,
+                style: const TextStyle(color: Colors.red, fontSize: 13),
+              ),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogCtx),
+            child: Text(
+              l10n.cancel,
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
+              ),
+            ),
+          ),
+          TextButton(
+            onPressed: () {
+              if (dialogFormKey.currentState?.validate() ?? false) {
+                setState(() => _email = ctrl.text.trim());
+                Navigator.pop(dialogCtx);
+              }
+            },
+            child: Text(
+              l10n.saveAndVerify,
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.primary,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

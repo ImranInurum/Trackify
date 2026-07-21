@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class FontFamilyManager {
-  static const String fontFamily = '';
+  static const String fontFamily = 'Roboto';
 }
 
 class FontWeightManager {

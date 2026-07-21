@@ -10,6 +10,7 @@ import 'package:trackify/feature/trips/presentation/cubit/ride_history_details_c
 import 'package:trackify/feature/trips/presentation/cubit/ride_history_details_state.dart';
 import 'package:trackify/l10n/app_localizations.dart';
 import 'package:trackify/core/utils/distance_utils.dart';
+import 'package:trackify/core/widgets/trackify_loader.dart';
 
 class RideHistoryDetailsScreen extends StatefulWidget {
   final Ride ride;
@@ -1421,6 +1422,19 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
                   ),
                 ),
               ),
+            ),
+            BlocBuilder<RideHistoryDetailsCubit, RideHistoryDetailsState>(
+              buildWhen: (previous, current) =>
+                  previous.isDataProcessing != current.isDataProcessing,
+              builder: (context, state) {
+                if (state.isDataProcessing) {
+                  return Container(
+                    color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.7),
+                    child: const Center(child: TrackifyLoader()),
+                  );
+                }
+                return const SizedBox.shrink();
+              },
             ),
           ],
         ),

@@ -6423,6 +6423,72 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Forgot PIN?'**
   String get forgotPin;
+
+  /// No description provided for @noSavedRidesYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No saved rides yet! Mark a ride as saved to add it here.'**
+  String get noSavedRidesYet;
+
+  /// No description provided for @welcomeUser.
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome, {name}!'**
+  String welcomeUser(String name);
+
+  /// No description provided for @welcomeToTrackify.
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome to Trackify!'**
+  String get welcomeToTrackify;
+
+  /// No description provided for @thankYouForRegisteringDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Thank you for registering! Your account has been successfully created. Please sign in to access your dashboard and manage your vehicles.'**
+  String get thankYouForRegisteringDesc;
+
+  /// No description provided for @continueToSignIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue to Sign In'**
+  String get continueToSignIn;
+
+  /// No description provided for @deviceNotInstalled.
+  ///
+  /// In en, this message translates to:
+  /// **'Device Not Installed'**
+  String get deviceNotInstalled;
+
+  /// No description provided for @deviceNotInstalledDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Tracking device is not installed on {vehicleName}. Please install a device to configure notification controls.'**
+  String deviceNotInstalledDesc(String vehicleName);
+
+  /// No description provided for @noDevice.
+  ///
+  /// In en, this message translates to:
+  /// **'No Device'**
+  String get noDevice;
+
+  /// No description provided for @noDeviceNotificationBanner.
+  ///
+  /// In en, this message translates to:
+  /// **'No tracking device linked with this vehicle. Notification controls are disabled.'**
+  String get noDeviceNotificationBanner;
+
+  /// No description provided for @ok.
+  ///
+  /// In en, this message translates to:
+  /// **'OK'**
+  String get ok;
+
+  /// No description provided for @profile100PercentComplete.
+  ///
+  /// In en, this message translates to:
+  /// **'Your profile is 100% complete!'**
+  String get profile100PercentComplete;
 }
 
 class _AppLocalizationsDelegate

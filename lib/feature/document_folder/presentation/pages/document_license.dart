@@ -424,7 +424,7 @@ class _DocumentLicenseState extends State<DocumentLicense> {
                         onTap: _pickDate,
                         child: Container(
                           height: screenHeight * 0.055,
-                          width: screenWidth * 0.42,
+                          width: double.infinity,
                           padding: const EdgeInsets.symmetric(horizontal: 14),
                           decoration: BoxDecoration(
                             color: Theme.of(context).cardColor,

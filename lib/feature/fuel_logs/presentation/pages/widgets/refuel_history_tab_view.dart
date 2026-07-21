@@ -14,6 +14,7 @@ import '../../cubit/refuel_history_state.dart';
 import 'refuel_history/refuel_log_list_item.dart';
 import 'refuel_history/refuel_summary_grid.dart';
 import 'package:trackify/core/widgets/trackify_loader.dart';
+import 'package:trackify/feature/add_fuel/presentation/pages/add_fuel_screen.dart' as trackify_add_fuel;
 
 class RefuelHistoryTabView extends StatefulWidget {
   final String imei;
@@ -461,6 +462,26 @@ class _RefuelHistoryTabViewState extends State<RefuelHistoryTabView> {
             liters: log.liters,
             mileage: log.mileage,
             showDetails: index == 0,
+            onEdit: () async {
+              final fuelLogsCubit = context.read<FuelLogsCubit>();
+              await Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => BlocProvider.value(
+                    value: fuelLogsCubit,
+                    child: trackify_add_fuel.AddFuelScreen(
+                      isEditMode: true,
+                      initialLog: log,
+                    ),
+                  ),
+                ),
+              );
+              
+              if (context.mounted) {
+                context.read<FuelLogsCubit>().reloadFuelLogs();
+                context.read<RefuelHistoryCubit>().loadRefuelHistory(widget.imei);
+              }
+            },
             onDelete: () {
               _confirmDelete(context, l10n, log.id);
             },
