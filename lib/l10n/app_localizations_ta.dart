@@ -3363,4 +3363,23 @@ class AppLocalizationsTa extends AppLocalizations {
 
   @override
   String get forgotPin => 'பின் மறந்துவிட்டதா?';
+
+  @override
+  String get noSavedRidesYet =>
+      'No saved rides yet! Mark a ride as saved to add it here.';
+
+  @override
+  String welcomeUser(String name) {
+    return 'நல்வரவு, $name!';
+  }
+
+  @override
+  String get welcomeToTrackify => 'டிராக்கிஃபைக்கு நல்வரவு!';
+
+  @override
+  String get thankYouForRegisteringDesc =>
+      'பதிவு செய்தமைக்கு நன்றி! உங்கள் கணக்கு வெற்றிகரமாக உருவாக்கப்பட்டது. உங்கள் டாஷ்போர்டை அணுகவும் வாகனங்களை நிர்வகிக்கவும் உள்நுழையவும்.';
+
+  @override
+  String get continueToSignIn => 'உள்நுழையத் தொடரவும்';
 }

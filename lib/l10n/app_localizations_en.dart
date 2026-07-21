@@ -3338,4 +3338,23 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get forgotPin => 'Forgot PIN?';
+
+  @override
+  String get noSavedRidesYet =>
+      'No saved rides yet! Mark a ride as saved to add it here.';
+
+  @override
+  String welcomeUser(String name) {
+    return 'Welcome, $name!';
+  }
+
+  @override
+  String get welcomeToTrackify => 'Welcome to Trackify!';
+
+  @override
+  String get thankYouForRegisteringDesc =>
+      'Thank you for registering! Your account has been successfully created. Please sign in to access your dashboard and manage your vehicles.';
+
+  @override
+  String get continueToSignIn => 'Continue to Sign In';
 }

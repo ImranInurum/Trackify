@@ -288,6 +288,9 @@ class _PolylineThumbnailState extends State<PolylineThumbnail> {
                     ),
                 },
                 onMapCreated: (GoogleMapController controller) async {
+                  final isDarkTheme = Theme.of(context).brightness == Brightness.dark;
+                  final currentThemeKey = isDarkTheme ? 'dark' : 'light';
+
                   if (!_controller.isCompleted) {
                     _controller.complete(controller);
                   }
@@ -295,54 +298,53 @@ class _PolylineThumbnailState extends State<PolylineThumbnail> {
                   if (_darkMapStyle == null) {
                     await _loadMapStyle();
                   }
+                  if (!mounted) return;
+
                   // Set the style again on controller to be absolutely safe
-                  if (mounted) {
-                    try {
-                      if (Theme.of(context).brightness == Brightness.dark && _darkMapStyle != null) {
-                        await controller.setMapStyle(_darkMapStyle);
-                      } else {
-                        await controller.setMapStyle(null);
-                      }
-                    } catch (e) {
-                      debugPrint('Error setting map style: $e');
+                  try {
+                    if (isDarkTheme && _darkMapStyle != null) {
+                      await controller.setMapStyle(_darkMapStyle);
+                    } else {
+                      await controller.setMapStyle(null);
                     }
+                  } catch (e) {
+                    debugPrint('Error setting map style: $e');
                   }
+
                   // Delay slightly to allow layout to complete
                   await Future.delayed(const Duration(milliseconds: 150));
-                  if (mounted) {
-                    try {
-                      await controller.moveCamera(CameraUpdate.newLatLngBounds(bounds, 20.0));
-                    } catch (e) {
-                      debugPrint('Error moving camera: $e');
-                    }
+                  if (!mounted) return;
+
+                  try {
+                    await controller.moveCamera(CameraUpdate.newLatLngBounds(bounds, 20.0));
+                  } catch (e) {
+                    debugPrint('Error moving camera: $e');
                   }
                   
                   // Take a snapshot after a delay to allow markers/polylines/tiles to render
                   if (widget.rideId != null) {
-                    final currentThemeKey = Theme.of(context).brightness == Brightness.dark ? 'dark' : 'light';
                     Future.delayed(const Duration(milliseconds: 3000), () async {
-                      if (mounted) {
-                        try {
-                          final isConnected = await ConnectivityService().checkConnectivity();
-                          if (!isConnected) {
-                            debugPrint('Device is offline, skipping caching of blank map thumbnail.');
-                            return;
-                          }
-                          final bytes = await controller.takeSnapshot();
-                          if (bytes != null && mounted) {
-                            final box = Hive.box('map_cache');
-                            final signature = "${widget.points.length}_${widget.points.isEmpty ? '' : widget.points.first.latitude}_${widget.points.isEmpty ? '' : widget.points.last.latitude}_$currentThemeKey";
-                            await box.put('map_thumbnail_v2_${widget.rideId}_$currentThemeKey', bytes);
-                            await box.put('map_thumbnail_v2_sig_${widget.rideId}_$currentThemeKey', signature);
-                            if (_currentBrightness == (currentThemeKey == 'dark' ? Brightness.dark : Brightness.light)) {
-                              setState(() {
-                                _cachedBytes = bytes;
-                              });
-                            }
-                          }
-                        } catch (e) {
-                          debugPrint('Error taking map snapshot: $e');
+                      if (!mounted) return;
+                      try {
+                        final isConnected = await ConnectivityService().checkConnectivity();
+                        if (!isConnected || !mounted) {
+                          debugPrint('Device is offline, skipping caching of blank map thumbnail.');
+                          return;
                         }
+                        final bytes = await controller.takeSnapshot();
+                        if (bytes != null && mounted) {
+                          final box = Hive.box('map_cache');
+                          final signature = "${widget.points.length}_${widget.points.isEmpty ? '' : widget.points.first.latitude}_${widget.points.isEmpty ? '' : widget.points.last.latitude}_$currentThemeKey";
+                          await box.put('map_thumbnail_v2_${widget.rideId}_$currentThemeKey', bytes);
+                          await box.put('map_thumbnail_v2_sig_${widget.rideId}_$currentThemeKey', signature);
+                          if (mounted && _currentBrightness == (currentThemeKey == 'dark' ? Brightness.dark : Brightness.light)) {
+                            setState(() {
+                              _cachedBytes = bytes;
+                            });
+                          }
+                        }
+                      } catch (e) {
+                        debugPrint('Error taking map snapshot: $e');
                       }
                     });
                   }

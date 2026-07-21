@@ -1286,5 +1286,17 @@
   "enterPinSubtitle": "पुढे जाण्यासाठी तुमचा 4-अंकी पिन एंटर करा",
   "createNewPinSubtitle": "वाहन लॉक करण्यासाठी 4-अंकी पिन तयार करा",
   "confirmNewPinSubtitle": "पुष्टी करण्यासाठी तुमचा 4-अंकी पिन पुन्हा एंटर करा",
-  "forgotPin": "पिन विसरलात?"
+  "forgotPin": "पिन विसरलात?",
+  "noSavedRidesYet": "No saved rides yet! Mark a ride as saved to add it here.",
+  "welcomeUser": "स्वागत आहे, {name}!",
+  "@welcomeUser": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "welcomeToTrackify": "ट्रॅकिफायमध्ये आपले स्वागत आहे!",
+  "thankYouForRegisteringDesc": "नोंदणी केल्याबद्दल धन्यवाद! तुमचे खाते यशस्वीरित्या तयार केले गेले आहे. तुमच्या डॅशबोर्डवर जाण्यासाठी आणि वाहने व्यवस्थापित करण्यासाठी कृपया साइन इन करा.",
+  "continueToSignIn": "साइन इन करण्यासाठी पुढे जा"
 }

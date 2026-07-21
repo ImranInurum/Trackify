@@ -3323,4 +3323,23 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get forgotPin => 'نسيت رمز PIN؟';
+
+  @override
+  String get noSavedRidesYet =>
+      'No saved rides yet! Mark a ride as saved to add it here.';
+
+  @override
+  String welcomeUser(String name) {
+    return 'أهلاً بك، $name!';
+  }
+
+  @override
+  String get welcomeToTrackify => 'مرحباً بك في تراكيفاي!';
+
+  @override
+  String get thankYouForRegisteringDesc =>
+      'شكراً لتسجيلك! تم إنشاء حسابك بنجاح. يرجى تسجيل الدخول للوصول إلى لوحة التحكم وإدارة مركباتك.';
+
+  @override
+  String get continueToSignIn => 'المتابعة لتسجيل الدخول';
 }

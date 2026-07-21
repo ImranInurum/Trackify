@@ -3356,4 +3356,23 @@ class AppLocalizationsKn extends AppLocalizations {
 
   @override
   String get forgotPin => 'ಪಿನ್ ಮರೆತಿರಾ?';
+
+  @override
+  String get noSavedRidesYet =>
+      'No saved rides yet! Mark a ride as saved to add it here.';
+
+  @override
+  String welcomeUser(String name) {
+    return 'ಸ್ವಾಗತ, $name!';
+  }
+
+  @override
+  String get welcomeToTrackify => 'ಟ್ರ್ಯಾಕಿಫೈಗೆ ಸುಸ್ವಾಗತ!';
+
+  @override
+  String get thankYouForRegisteringDesc =>
+      'ನೋಂದಾಯಿಸಿದ್ದಕ್ಕಾಗಿ ಧನ್ಯವಾದಗಳು! ನಿಮ್ಮ ಖಾತೆಯನ್ನು ಯಶಸ್ವಿಯಾಗಿ ರಚಿಸಲಾಗಿದೆ. ನಿಮ್ಮ ಡ್ಯಾಶ್‌ಬೋರ್ಡ್ ಪ್ರವೇಶಿಸಲು ಮತ್ತು ನಿಮ್ಮ ವಾಹನಗಳನ್ನು ನಿರ್ವಹಿಸಲು ದಯವಿಟ್ಟು ಸೈನ್ ಇನ್ ಮಾಡಿ.';
+
+  @override
+  String get continueToSignIn => 'ಸೈನ್ ಇನ್ ಮಾಡಲು ಮುಂದುವರಿಯಿರಿ';
 }

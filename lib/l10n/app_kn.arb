@@ -1286,5 +1286,17 @@
   "enterPinSubtitle": "ಮುಂದುವರಿಯಲು ನಿಮ್ಮ 4-ಅಂಕಿಯ ಪಿನ್ ನಮೂದಿಸಿ",
   "createNewPinSubtitle": "ವಾಹನ ಲಾಕ್ ಮಾಡಲು 4-ಅಂಕಿಯ ಪಿನ್ ರಚಿಸಿ",
   "confirmNewPinSubtitle": "ಖಚಿತಪಡಿಸಲು ನಿಮ್ಮ 4-ಅಂಕಿಯ ಪಿನ್ ಅನ್ನು ಮರು-ನಮೂದಿಸಿ",
-  "forgotPin": "ಪಿನ್ ಮರೆತಿರಾ?"
+  "forgotPin": "ಪಿನ್ ಮರೆತಿರಾ?",
+  "noSavedRidesYet": "No saved rides yet! Mark a ride as saved to add it here.",
+  "welcomeUser": "ಸ್ವಾಗತ, {name}!",
+  "@welcomeUser": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "welcomeToTrackify": "ಟ್ರ್ಯಾಕಿಫೈಗೆ ಸುಸ್ವಾಗತ!",
+  "thankYouForRegisteringDesc": "ನೋಂದಾಯಿಸಿದ್ದಕ್ಕಾಗಿ ಧನ್ಯವಾದಗಳು! ನಿಮ್ಮ ಖಾತೆಯನ್ನು ಯಶಸ್ವಿಯಾಗಿ ರಚಿಸಲಾಗಿದೆ. ನಿಮ್ಮ ಡ್ಯಾಶ್‌ಬೋರ್ಡ್ ಪ್ರವೇಶಿಸಲು ಮತ್ತು ನಿಮ್ಮ ವಾಹನಗಳನ್ನು ನಿರ್ವಹಿಸಲು ದಯವಿಟ್ಟು ಸೈನ್ ಇನ್ ಮಾಡಿ.",
+  "continueToSignIn": "ಸೈನ್ ಇನ್ ಮಾಡಲು ಮುಂದುವರಿಯಿರಿ"
 }

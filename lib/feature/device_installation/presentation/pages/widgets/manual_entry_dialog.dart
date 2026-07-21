@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../../l10n/app_localizations.dart';
 import '../../cubit/device_installation_cubit.dart';
@@ -48,6 +49,10 @@ class _ManualEntryDialogState extends State<ManualEntryDialog> {
                     controller: _imeiController,
                     hintText: l10n.enterIMEINumber,
                     keyboardType: TextInputType.number,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.digitsOnly,
+                      LengthLimitingTextInputFormatter(15),
+                    ],
                     validator: (v) {
                       if (v == null || v.isEmpty) return l10n.imeiRequired;
                       if (v.length != 15) return l10n.invalidImeiError;
@@ -99,6 +104,7 @@ class _ManualEntryDialogState extends State<ManualEntryDialog> {
     required TextEditingController controller,
     required String hintText,
     TextInputType keyboardType = TextInputType.text,
+    List<TextInputFormatter>? inputFormatters,
     String? Function(String?)? validator,
   }) {
     final theme = Theme.of(context);
@@ -107,6 +113,7 @@ class _ManualEntryDialogState extends State<ManualEntryDialog> {
       validator: validator,
       autovalidateMode: AutovalidateMode.onUserInteraction,
       keyboardType: keyboardType,
+      inputFormatters: inputFormatters,
       style: theme.textTheme.bodyLarge,
       decoration: InputDecoration(
         hintText: hintText,

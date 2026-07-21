@@ -1953,9 +1953,25 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
             String startTimeStr = "";
             if (lastUpdateRaw != null && lastUpdateRaw.isNotEmpty) {
               try {
-                final date = DateTime.parse(lastUpdateRaw).toLocal();
-                startTimeStr =
-                    "${date.hour > 12 ? date.hour - 12 : (date.hour == 0 ? 12 : date.hour)}:${date.minute.toString().padLeft(2, '0')} ${date.hour >= 12 ? 'PM' : 'AM'}";
+                DateTime updateDate;
+                int? unixTime = int.tryParse(lastUpdateRaw);
+                if (unixTime != null && unixTime > 1000000000) {
+                  if (unixTime > 1000000000000) {
+                    updateDate = DateTime.fromMillisecondsSinceEpoch(unixTime).toLocal();
+                  } else {
+                    updateDate = DateTime.fromMillisecondsSinceEpoch(unixTime * 1000).toLocal();
+                  }
+                } else {
+                  updateDate = DateTime.parse(lastUpdateRaw).toLocal();
+                }
+
+                final now = DateTime.now();
+                if (updateDate.year == now.year &&
+                    updateDate.month == now.month &&
+                    updateDate.day == now.day) {
+                  startTimeStr =
+                      "${updateDate.hour > 12 ? updateDate.hour - 12 : (updateDate.hour == 0 ? 12 : updateDate.hour)}:${updateDate.minute.toString().padLeft(2, '0')} ${updateDate.hour >= 12 ? 'PM' : 'AM'}";
+                }
               } catch (_) {}
             }
 
@@ -2078,6 +2094,8 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
             String headerText = l10n.todayText;
             if (startTimeStr.isNotEmpty && startTimeStr != "--:--") {
               headerText += " | $startTimeStr";
+            } else {
+              headerText += " | --";
             }
 
             return Padding(

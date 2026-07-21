@@ -58,6 +58,9 @@ class AppPreference {
   static String IMEI = "IMEI";
   static String KEY_DISTANCE_UNIT = "KEY_DISTANCE_UNIT";
   static String KEY_EXPLORED_FEATURES = "KEY_EXPLORED_FEATURES";
+  static String KEY_REMEMBER_ME = "KEY_REMEMBER_ME";
+  static String KEY_SAVED_EMAIL = "KEY_SAVED_EMAIL";
+  static String KEY_SAVED_PASSWORD = "KEY_SAVED_PASSWORD";
 
   // --- Basic Getters/Setters ---
   Future<String> get({required String key}) async =>
@@ -101,9 +104,19 @@ class AppPreference {
   // --- Clear / Remove ---
   Future<void> clearAll() async {
     final lang = _prefs.getString(KEY_SELECTED_LANGUAGE);
+    final remember = _prefs.getBool(KEY_REMEMBER_ME) ?? false;
+    final savedEmail = _prefs.getString(KEY_SAVED_EMAIL);
+    final savedPassword = _prefs.getString(KEY_SAVED_PASSWORD);
+
     await _prefs.clear();
+
     if (lang != null) {
       await _prefs.setString(KEY_SELECTED_LANGUAGE, lang);
+    }
+    if (remember) {
+      await _prefs.setBool(KEY_REMEMBER_ME, true);
+      if (savedEmail != null) await _prefs.setString(KEY_SAVED_EMAIL, savedEmail);
+      if (savedPassword != null) await _prefs.setString(KEY_SAVED_PASSWORD, savedPassword);
     }
   }
 

@@ -657,35 +657,38 @@ class _VehicleControlViewState extends State<VehicleControlView> {
                           ),
                         ),
 
-                        const SizedBox(height: 12),
-
-                        LockCard(
-                          cardColor: cardColor,
-                          primaryTextColor: primaryTextColor,
-                          secondaryTextColor: secondaryTextColor,
-                          isLocked: vehicle.vehicleLock,
-                          onLock: () async {
-                            final success = await VehiclePinDialog.show(context, vehicle.vehicleLock);
-                            if (success) {
-                              if (context.mounted) {
-                                context
-                                    .read<VehicleControlCubit>()
-                                    .updateVehicleLock(
-                                      vehicle.id,
-                                      !vehicle.vehicleLock,
-                                    );
+                        if (!widget.isFromGarage && vehicle.imei.isNotEmpty) ...[
+                          const SizedBox(height: 12),
+                          LockCard(
+                            cardColor: cardColor,
+                            primaryTextColor: primaryTextColor,
+                            secondaryTextColor: secondaryTextColor,
+                            isLocked: vehicle.vehicleLock,
+                            onLock: () async {
+                              final brandAndModel = [vehicle.vehicleMaker, vehicle.vehicleModel].where((s) => s.isNotEmpty).join(' ');
+                              
+                              final success = await VehiclePinDialog.show(context, vehicle.vehicleLock, brandAndModel.isNotEmpty ? brandAndModel : 'Vehicle', vehicle.imei);
+                              if (success) {
+                                if (context.mounted) {
+                                  context
+                                      .read<VehicleControlCubit>()
+                                      .updateVehicleLock(
+                                        vehicle.id,
+                                        !vehicle.vehicleLock,
+                                      );
+                                }
+                              } else {
+                                // Force a fake state update in cubit to reset the button state
+                                // since we canceled. The quickest way is to just let the user tap the X, 
+                                // or we can refresh the list. We will just load current vehicle details to refresh.
+                                if (context.mounted) {
+                                  context.read<VehicleControlCubit>().loadVehicleDetails(vehicle.imei);
+                                }
                               }
-                            } else {
-                              // Force a fake state update in cubit to reset the button state
-                              // since we canceled. The quickest way is to just let the user tap the X, 
-                              // or we can refresh the list. We will just load current vehicle details to refresh.
-                              if (context.mounted) {
-                                context.read<VehicleControlCubit>().loadVehicleDetails(vehicle.imei);
-                              }
-                            }
-                          },
-                          onInfoTap: () => _showSleepModeDialog(context),
-                        ),
+                            },
+                            onInfoTap: () => _showSleepModeDialog(context),
+                          ),
+                        ],
 
                         const SizedBox(height: 12),
 

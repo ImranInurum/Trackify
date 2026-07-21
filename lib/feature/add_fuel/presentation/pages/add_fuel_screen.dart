@@ -19,7 +19,9 @@ import 'package:trackify/app/cubit/app_state.dart';
 import 'package:trackify/core/common/models/vehicle_list_model.dart';
 
 class AddFuelScreen extends StatefulWidget {
-  const AddFuelScreen({super.key});
+  final bool isEditMode;
+  final RefuelLog? initialLog;
+  const AddFuelScreen({super.key, this.isEditMode = false, this.initialLog});
 
   @override
   State<AddFuelScreen> createState() => _AddFuelScreenState();
@@ -142,7 +144,20 @@ class _AddFuelScreenState extends State<AddFuelScreen> with TickerProviderStateM
   void initState() {
     super.initState();
     _tabController = TabController(length: 3, vsync: this);
-    _loadNearestFuelStation();
+    
+    if (widget.isEditMode && widget.initialLog != null) {
+      final log = widget.initialLog!;
+      odometerController.text = log.odometer;
+      amountController.text = log.amount;
+      priceController.text = log.rate;
+      _selectedDate = log.dateTime;
+      _selectedTime = TimeOfDay.fromDateTime(log.dateTime);
+      selectedFuelStationName = log.location;
+      isFullTankSelected = true; // Default since not in log model
+    } else {
+      _loadNearestFuelStation();
+    }
+    
     odometerController.addListener(_validateForm);
     amountController.addListener(_validateForm);
     priceController.addListener(_validateForm);
@@ -150,9 +165,11 @@ class _AddFuelScreenState extends State<AddFuelScreen> with TickerProviderStateM
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
-      final serviceState = context.read<ServiceLogsCubit>().state;
-      if (serviceState is ServiceLogsLoaded && serviceState.selectedVehicle != null) {
-        _autofillOdometer(serviceState.selectedVehicle);
+      if (!widget.isEditMode) {
+        final serviceState = context.read<ServiceLogsCubit>().state;
+        if (serviceState is ServiceLogsLoaded && serviceState.selectedVehicle != null) {
+          _autofillOdometer(serviceState.selectedVehicle);
+        }
       }
     });
   }
@@ -232,6 +249,13 @@ class _AddFuelScreenState extends State<AddFuelScreen> with TickerProviderStateM
             ),
             onPressed: _isFormValid
                 ? () async {
+                    // if (widget.isEditMode) {
+                    //   ScaffoldMessenger.of(context).showSnackBar(
+                    //     const SnackBar(content: Text('Update API is currently unavailable')),
+                    //   );
+                    //   return;
+                    // }
+
                     final combinedDateTime = DateTime(
                       _selectedDate.year,
                       _selectedDate.month,

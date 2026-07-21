@@ -1,23 +1,11 @@
-﻿import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:trackify/core/constants/app_images.dart';
-import 'package:trackify/core/utils/shared_preferences.dart';
-import 'package:trackify/feature/auth/presentation/pages/signin_screen.dart';
 import 'package:trackify/l10n/app_localizations.dart';
 
-import '../../core/theme/app_colors.dart';
-import '../../app/cubit/app_cubit.dart';
-import '../profile/presentation/cubit/profile_cubit.dart';
-import '../my_profile/presentation/cubit/my_profile_cubit.dart';
-import '../map/presentation/cubit/map_cubit.dart';
-import '../my_garage/presentation/cubit/my_garage_cubit.dart';
-import '../onboarding/presentation/cubit/splash_cubit.dart';
-import '../onboarding/presentation/cubit/splash_state.dart';
 import 'add_vehicle/presentation/view/add_vehicle_screen.dart';
 import '../device_installation/presentation/pages/device_installation_screen.dart';
 import '../reach_me_sticker/presentation/screens/scan_qr_screen.dart';
-import 'package:trackify/core/widgets/trackify_loader.dart';
+import 'package:trackify/core/widgets/logout_confirmation_dialog.dart';
 
 class ChoiceSelector extends StatefulWidget {
   const ChoiceSelector({super.key});
@@ -27,34 +15,6 @@ class ChoiceSelector extends StatefulWidget {
 }
 
 class _ChoiceSelectorState extends State<ChoiceSelector> {
-  Widget _buildLogo(SplashState state, ColorScheme colorScheme) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 0.0),
-        child:
-            (state is SplashLoaded &&
-                state.logo.path != null &&
-                state.logo.path!.isNotEmpty)
-            ? CachedNetworkImage(
-                imageUrl: state.logo.path!,
-                height: 100,
-                fit: BoxFit.contain,
-                placeholder: (context, url) => const Center(child: TrackifyLoader()),
-                errorWidget: (context, url, error) => Icon(
-                  Icons.track_changes_rounded,
-                  size: 64,
-                  color: colorScheme.primary,
-                ),
-              )
-            : Icon(
-                Icons.track_changes_rounded,
-                size: 64,
-                color: colorScheme.primary,
-              ),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
@@ -82,17 +42,7 @@ class _ChoiceSelectorState extends State<ChoiceSelector> {
               child: SingleChildScrollView(
                 child: Column(
                   children: [
-                    const SizedBox(height: 10),
-                    // Logo — dynamic via SplashCubit (same pattern as SignInScreen)
-                    BlocBuilder<SplashCubit, SplashState>(
-                      builder: (context, splashState) {
-                        return _buildLogo(
-                          splashState,
-                          Theme.of(context).colorScheme,
-                        );
-                      },
-                    ),
-                    const SizedBox(height: 10),
+                    const SizedBox(height: 16),
 
                     // Cards
                     _buildChoiceCard(
@@ -153,24 +103,7 @@ class _ChoiceSelectorState extends State<ChoiceSelector> {
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 20),
               child: TextButton.icon(
-                onPressed: () async {
-                  await context.read<AppCubit>().logout();
-                  if (context.mounted) {
-                    context.read<ProfileCubit>().reset();
-                    context.read<MyProfileCubit>().reset();
-                    context.read<MapCubit>().reset();
-                    context.read<MyGarageCubit>().reset();
-                    Navigator.of(
-                      context,
-                      rootNavigator: true,
-                    ).pushAndRemoveUntil(
-                      MaterialPageRoute(
-                        builder: (context) => const SignInScreen(),
-                      ),
-                      (Route<dynamic> route) => false,
-                    );
-                  }
-                },
+                onPressed: () => LogoutConfirmationDialog.show(context),
                 icon: Icon(
                   Icons.logout,
                   color: Theme.of(

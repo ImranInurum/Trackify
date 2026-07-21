@@ -6423,6 +6423,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Forgot PIN?'**
   String get forgotPin;
+
+  /// No description provided for @noSavedRidesYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No saved rides yet! Mark a ride as saved to add it here.'**
+  String get noSavedRidesYet;
+
+  /// No description provided for @welcomeUser.
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome, {name}!'**
+  String welcomeUser(String name);
+
+  /// No description provided for @welcomeToTrackify.
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome to Trackify!'**
+  String get welcomeToTrackify;
+
+  /// No description provided for @thankYouForRegisteringDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Thank you for registering! Your account has been successfully created. Please sign in to access your dashboard and manage your vehicles.'**
+  String get thankYouForRegisteringDesc;
+
+  /// No description provided for @continueToSignIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue to Sign In'**
+  String get continueToSignIn;
 }
 
 class _AppLocalizationsDelegate

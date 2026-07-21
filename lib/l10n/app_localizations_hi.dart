@@ -3345,4 +3345,23 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get forgotPin => 'पिन भूल गए?';
+
+  @override
+  String get noSavedRidesYet =>
+      'No saved rides yet! Mark a ride as saved to add it here.';
+
+  @override
+  String welcomeUser(String name) {
+    return 'स्वागत है, $name!';
+  }
+
+  @override
+  String get welcomeToTrackify => 'ट्रैकिफाई में आपका स्वागत है!';
+
+  @override
+  String get thankYouForRegisteringDesc =>
+      'पंजीकरण करने के लिए धन्यवाद! आपका खाता सफलतापूर्वक बन गया है। कृपया अपने डैशबोर्ड तक पहुंचने और अपने वाहनों को प्रबंधित करने के लिए साइन इन करें।';
+
+  @override
+  String get continueToSignIn => 'साइन इन करने के लिए आगे बढ़ें';
 }

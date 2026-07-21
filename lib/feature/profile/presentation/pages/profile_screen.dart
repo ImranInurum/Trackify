@@ -35,6 +35,7 @@ import 'package:trackify/core/common/models/vehicle_list_model.dart';
 import '../../../Vehicle_control/data/repositories/vehicle_control_repository_impl.dart';
 import 'package:trackify/core/utils/distance_utils.dart';
 import 'package:trackify/core/widgets/trackify_loader.dart';
+import 'package:trackify/core/widgets/logout_confirmation_dialog.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -102,7 +103,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     final l10n = AppLocalizations.of(context)!;
 
-    final success = await VehiclePinDialog.show(context, currentLockState);
+    final brandAndModel = [vehicle.vehicleMaker ?? '', vehicle.vehicleModel ?? ''].where((s) => s.isNotEmpty).join(' ');
+    
+    final success = await VehiclePinDialog.show(context, currentLockState, brandAndModel.isNotEmpty ? brandAndModel : 'Vehicle', vehicle.imei!);
     if (!success) {
       if (context.mounted) {
         setState(() {
@@ -327,7 +330,30 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                 const SizedBox(height: 16),
 
-                InkWell(
+                BlocBuilder<ProfileCubit, ProfileState>(
+                  builder: (context, profileState) {
+                    bool hasDeviceInstalled = false;
+                    if (profileState is VehiclesLoaded && profileState.vehicles.isNotEmpty) {
+                      final selectedImei = AppPreference.instance.getSync(
+                        key: AppPreference.IMEI,
+                      );
+                      final selectedUid = AppPreference.instance.getSync(
+                        key: AppPreference.KEY_SELECTED_UID,
+                      );
+                      final vehicle = profileState.vehicles.firstWhere(
+                        (v) =>
+                            (selectedUid.isNotEmpty && v.id == selectedUid) ||
+                            (selectedImei.isNotEmpty && v.imei == selectedImei),
+                        orElse: () => profileState.vehicles.first,
+                      );
+                      hasDeviceInstalled = vehicle.imei != null && vehicle.imei!.isNotEmpty;
+                    }
+                    
+                    if (profileState is VehiclesLoaded && !hasDeviceInstalled) {
+                      return const SizedBox.shrink();
+                    }
+                    
+                    return InkWell(
                   onTap: () {
                     Navigator.push(
                       context,
@@ -488,6 +514,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       );
                     },
                   ),
+                    );
+                  },
                 ),
 
                 const SizedBox(height: 16),
@@ -850,19 +878,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget _logoutButton(AppLocalizations l10n) {
     return Center(
       child: TextButton.icon(
-        onPressed: () async {
-          await context.read<AppCubit>().logout();
-          if (mounted) {
-            context.read<ProfileCubit>().reset();
-            context.read<MyProfileCubit>().reset();
-            context.read<MapCubit>().reset();
-            context.read<MyGarageCubit>().reset();
-            Navigator.of(context, rootNavigator: true).pushAndRemoveUntil(
-              MaterialPageRoute(builder: (context) => const SignInScreen()),
-              (Route<dynamic> route) => false,
-            );
-          }
-        },
+        onPressed: () => LogoutConfirmationDialog.show(context),
         icon: Icon(Icons.logout, color: Theme.of(context).colorScheme.error),
         label: Text(
           l10n.logout,

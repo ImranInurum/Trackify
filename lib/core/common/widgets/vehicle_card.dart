@@ -254,6 +254,31 @@ class _VehicleCardState extends State<VehicleCard> {
                     onSwipe: widget.onLock,
                     isLocked: widget.isLocked,
                   ),
+                  const SizedBox(height: 6),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Icon(
+                          Icons.info_outline,
+                          size: 13,
+                          color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
+                        ),
+                        const SizedBox(width: 4),
+                        Expanded(
+                          child: Text(
+                            "Swipe to lock or unlock the vehicle using your secure PIN.",
+                            style: TextStyle(
+                              fontSize: 11,
+                              height: 1.2,
+                              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                   const SizedBox(height: 8),
                   FutureBuilder<List<dynamic>>(
                     future: _combinedFuture,

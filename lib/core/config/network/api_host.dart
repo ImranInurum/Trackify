@@ -52,6 +52,13 @@ class ApiURL {
       "$baseURL/api/vehicle/vehicle/$id";
   static String checkImei(String imei) =>
       "$baseURL/api/vehicle/check-imei/$imei";
+  static String devicePinStatus(String imei) =>
+      "$baseURL/api/device-pin/status/$imei";
+  static const String setDevicePin = "$baseURL/api/device-pin/set-pin";
+  static const String resetDevicePin = "$baseURL/api/device-pin/reset-pin";
+  static const String verifyDevicePin = "$baseURL/api/device-pin/verify-pin";
+  static const String changePinOtp = "$baseURL/api/device-pin/change-pin-otp";
+  static const String verifyChangePinOtp = "$baseURL/api/device-pin/verify-change-pin";
 
   static String getVehiclesByUserId(String userId) =>
       "$baseURL/api/vehicle/get-vehicles?userId=$userId";

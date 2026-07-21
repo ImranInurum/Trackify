@@ -14,6 +14,7 @@ class RefuelLogListItem extends StatelessWidget {
   final String? mileage;
   final bool showDetails;
   final VoidCallback? onDelete;
+  final VoidCallback? onEdit;
 
   const RefuelLogListItem({
     super.key,
@@ -28,6 +29,7 @@ class RefuelLogListItem extends StatelessWidget {
     this.mileage,
     this.showDetails = false,
     this.onDelete,
+    this.onEdit,
   });
 
   @override
@@ -93,7 +95,7 @@ class RefuelLogListItem extends StatelessWidget {
                         icon: Icon(Icons.more_vert, color: theme.hintColor),
                         onSelected: (value) {
                           if (value == 'edit') {
-                            // TODO: Handle edit
+                            if (onEdit != null) onEdit!();
                           } else if (value == 'delete') {
                             if (onDelete != null) onDelete!();
                           }
