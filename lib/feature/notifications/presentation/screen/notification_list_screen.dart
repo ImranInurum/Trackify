@@ -21,18 +21,20 @@ class NotificationListScreen extends StatelessWidget {
       child: Scaffold(
         backgroundColor: theme.scaffoldBackgroundColor,
         appBar: AppBar(
-          backgroundColor: theme.appBarTheme.backgroundColor,
+          backgroundColor: theme.scaffoldBackgroundColor,
+          surfaceTintColor: Colors.transparent,
           elevation: 0,
+          titleSpacing: 0,
           leading: IconButton(
             icon: Icon(
               Icons.arrow_back_ios_new,
               color: theme.colorScheme.onSurface,
-              size: 20,
             ),
             onPressed: () => Navigator.of(context).pop(),
           ),
           title: Text(
-            l10n.notifications, ),
+            l10n.notifications,
+          ),
           centerTitle: false,
         ),
         body: BlocBuilder<NotificationCubit, NotificationState>(

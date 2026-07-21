@@ -287,7 +287,7 @@ class _SignInScreenState extends State<SignInScreen> {
                             value: _passwordController,
                             isPassword: true,
                             textInputAction: TextInputAction.done,
-                            onFieldSubmitted: (_) => _onLoginPressed(context),
+                            onFieldSubmitted: (_) => FocusScope.of(context).unfocus(),
                             validator: (value) => Validators.validatePassword(
                               value,
                               l10n.passwordRequired,

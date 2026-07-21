@@ -36,7 +36,8 @@ class _VehiclePinDialogState extends State<VehiclePinDialog> {
   
   String _newPin = "";
   
-  bool _isLoading = true;
+  bool _isInitialLoading = true;
+  bool _isSubmitting = false;
   bool _isResettingPin = false;
   String _errorText = "";
   PinDialogState _currentState = PinDialogState.enterPin;
@@ -76,7 +77,7 @@ class _VehiclePinDialogState extends State<VehiclePinDialog> {
 
       if (mounted) {
         setState(() {
-          _isLoading = false;
+          _isInitialLoading = false;
           if (isSetOnServer) {
             _currentState = PinDialogState.enterPin;
           } else {
@@ -87,7 +88,7 @@ class _VehiclePinDialogState extends State<VehiclePinDialog> {
     } catch (e) {
       if (mounted) {
         setState(() {
-          _isLoading = false;
+          _isInitialLoading = false;
           _errorText = "Failed to load PIN status";
         });
       }
@@ -133,7 +134,7 @@ class _VehiclePinDialogState extends State<VehiclePinDialog> {
 
   Future<void> _verifyPinAndProceed(String pin) async {
     setState(() {
-      _isLoading = true;
+      _isSubmitting = true;
     });
     
     try {
@@ -147,7 +148,7 @@ class _VehiclePinDialogState extends State<VehiclePinDialog> {
         (failure) {
           if (mounted) {
             setState(() {
-              _isLoading = false;
+              _isSubmitting = false;
               _errorText = failure.message;
               _pinController.clear();
             });
@@ -161,7 +162,7 @@ class _VehiclePinDialogState extends State<VehiclePinDialog> {
           } else {
             if (mounted) {
               setState(() {
-                _isLoading = false;
+                _isSubmitting = false;
                 _errorText = data['message']?.toString() ?? AppLocalizations.of(context)!.incorrectPin;
                 _pinController.clear();
               });
@@ -172,7 +173,7 @@ class _VehiclePinDialogState extends State<VehiclePinDialog> {
     } catch (e) {
       if (mounted) {
         setState(() {
-          _isLoading = false;
+          _isSubmitting = false;
           _errorText = AppLocalizations.of(context)!.incorrectPin;
           _pinController.clear();
         });
@@ -182,7 +183,7 @@ class _VehiclePinDialogState extends State<VehiclePinDialog> {
 
   Future<void> _savePinAndProceed(String pin) async {
     setState(() {
-      _isLoading = true;
+      _isSubmitting = true;
     });
     
     try {
@@ -198,7 +199,7 @@ class _VehiclePinDialogState extends State<VehiclePinDialog> {
         (failure) {
           if (mounted) {
             setState(() {
-              _isLoading = false;
+              _isSubmitting = false;
               _errorText = failure.message;
             });
             ScaffoldMessenger.of(context).showSnackBar(
@@ -222,7 +223,7 @@ class _VehiclePinDialogState extends State<VehiclePinDialog> {
             if (mounted) {
               final errorMsg = data['message']?.toString() ?? "Failed to update PIN";
               setState(() {
-                _isLoading = false;
+                _isSubmitting = false;
                 _errorText = errorMsg;
               });
               ScaffoldMessenger.of(context).showSnackBar(
@@ -235,7 +236,7 @@ class _VehiclePinDialogState extends State<VehiclePinDialog> {
     } catch (e) {
       if (mounted) {
         setState(() {
-          _isLoading = false;
+          _isSubmitting = false;
           _errorText = "An error occurred";
         });
         ScaffoldMessenger.of(context).showSnackBar(
@@ -481,13 +482,21 @@ class _VehiclePinDialogState extends State<VehiclePinDialog> {
       backgroundColor: theme.colorScheme.surface,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       elevation: 10,
-      child: _isLoading 
-        ? const Padding(
-            padding: EdgeInsets.all(32.0),
-            child: SizedBox(
-              width: 40,
-              height: 40,
-              child: CircularProgressIndicator(),
+      child: _isInitialLoading 
+        ? Padding(
+            padding: const EdgeInsets.symmetric(vertical: 40.0, horizontal: 32.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                SizedBox(
+                  width: 24,
+                  height: 24,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2.5,
+                    color: theme.colorScheme.primary,
+                  ),
+                ),
+              ],
             ),
           )
         : Container(
@@ -537,6 +546,7 @@ class _VehiclePinDialogState extends State<VehiclePinDialog> {
                     SizedBox(
                       width: 200,
                       child: TextField(
+                        enabled: !_isSubmitting,
                         controller: _pinController,
                         focusNode: _focusNode,
                         keyboardType: TextInputType.number,
@@ -589,7 +599,7 @@ class _VehiclePinDialogState extends State<VehiclePinDialog> {
                         width: double.infinity,
                         height: 48,
                         child: ElevatedButton(
-                          onPressed: () => _processPin(_pinController.text),
+                          onPressed: _isSubmitting ? null : () => _processPin(_pinController.text),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: theme.colorScheme.primary,
                             foregroundColor: theme.colorScheme.onPrimary,
@@ -597,10 +607,19 @@ class _VehiclePinDialogState extends State<VehiclePinDialog> {
                               borderRadius: BorderRadius.circular(12),
                             ),
                           ),
-                          child: Text(
-                            'Submit',
-                            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                          ),
+                          child: _isSubmitting
+                              ? SizedBox(
+                                  height: 20,
+                                  width: 20,
+                                  child: CircularProgressIndicator(
+                                    color: theme.colorScheme.onPrimary,
+                                    strokeWidth: 2,
+                                  ),
+                                )
+                              : const Text(
+                                  'Submit',
+                                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                                ),
                         ),
                       ),
                     
@@ -608,7 +627,7 @@ class _VehiclePinDialogState extends State<VehiclePinDialog> {
                       Padding(
                         padding: const EdgeInsets.only(top: 8.0),
                         child: TextButton(
-                          onPressed: _onForgotPin,
+                          onPressed: _isSubmitting ? null : _onForgotPin,
                           style: TextButton.styleFrom(
                             foregroundColor: theme.colorScheme.primary,
                           ),

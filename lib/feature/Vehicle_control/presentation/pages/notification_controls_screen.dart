@@ -56,6 +56,10 @@ class _NotificationControlsScreenState extends State<NotificationControlsScreen>
               ? state
               : (context.read<ServiceLogsCubit>().state as ServiceLogsLoaded);
 
+          final selectedVehicle = currentState.selectedVehicle;
+          final hasDevice = selectedVehicle?.imei != null &&
+              selectedVehicle!.imei!.trim().isNotEmpty;
+
           return Column(
             children: [
               /// 🔹 SHARED VEHICLE SELECTION APP BAR
@@ -63,8 +67,15 @@ class _NotificationControlsScreenState extends State<NotificationControlsScreen>
                 title: l10n.notificationControlsTitle,
                 selectedVehicle: currentState.selectedVehicle,
                 vehicles: currentState.vehicles,
+                requireDevice: true,
                 onBack: () => Navigator.pop(context),
                 onVehicleSelected: (vehicle) {
+                  final vHasDevice = vehicle.imei != null &&
+                      vehicle.imei!.trim().isNotEmpty;
+                  if (!vHasDevice) {
+                    showDeviceNotInstalledDialog(context, vehicle);
+                    return;
+                  }
                   context.read<ServiceLogsCubit>().selectVehicle(vehicle.id ?? "");
                 },
               ),
@@ -75,13 +86,73 @@ class _NotificationControlsScreenState extends State<NotificationControlsScreen>
                     children: [
                       const SizedBox(height: 8),
 
+                      if (!hasDevice)
+                        Container(
+                          margin: const EdgeInsets.symmetric(
+                              horizontal: 24, vertical: 12),
+                          padding: const EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            color: Colors.orange.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(16),
+                            border: Border.all(
+                                color: Colors.orange.withOpacity(0.3)),
+                          ),
+                          child: Row(
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.all(8),
+                                decoration: BoxDecoration(
+                                  color: Colors.orange.withOpacity(0.15),
+                                  shape: BoxShape.circle,
+                                ),
+                                child: const Icon(
+                                  Icons.sensors_off_rounded,
+                                  color: Colors.orange,
+                                  size: 24,
+                                ),
+                              ),
+                              const SizedBox(width: 14),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      "Device Not Installed",
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.bold,
+                                        color: theme.colorScheme.onSurface,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      "No tracking device linked with this vehicle. Notification controls are disabled.",
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        color: theme.colorScheme.onSurface
+                                            .withOpacity(0.7),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+
                       /// 🔹 NOTIFICATION SECTIONS
                       _buildNotificationSection(
                         context,
                         title: l10n.ignitionOnOffTitle,
                         subtitle: l10n.ignitionOnOffDesc,
-                        value: _ignitionNotification,
-                        onChanged: (val) => setState(() => _ignitionNotification = val!),
+                        value: hasDevice ? _ignitionNotification : false,
+                        onChanged: (val) {
+                          if (!hasDevice && selectedVehicle != null) {
+                            showDeviceNotInstalledDialog(context, selectedVehicle);
+                            return;
+                          }
+                          setState(() => _ignitionNotification = val!);
+                        },
                       ),
                       
                       _buildDivider(theme),
@@ -90,8 +161,14 @@ class _NotificationControlsScreenState extends State<NotificationControlsScreen>
                         context,
                         title: l10n.motionWithIgnitionOffTitle,
                         subtitle: l10n.motionWithIgnitionOffDesc,
-                        value: _motionNotification,
-                        onChanged: (val) => setState(() => _motionNotification = val!),
+                        value: hasDevice ? _motionNotification : false,
+                        onChanged: (val) {
+                          if (!hasDevice && selectedVehicle != null) {
+                            showDeviceNotInstalledDialog(context, selectedVehicle);
+                            return;
+                          }
+                          setState(() => _motionNotification = val!);
+                        },
                       ),
 
                       _buildDivider(theme),
@@ -100,8 +177,14 @@ class _NotificationControlsScreenState extends State<NotificationControlsScreen>
                         context,
                         title: l10n.powerSupplyOffTitle,
                         subtitle: l10n.powerSupplyOffDesc,
-                        value: _powerSupplyNotification,
-                        onChanged: (val) => setState(() => _powerSupplyNotification = val!),
+                        value: hasDevice ? _powerSupplyNotification : false,
+                        onChanged: (val) {
+                          if (!hasDevice && selectedVehicle != null) {
+                            showDeviceNotInstalledDialog(context, selectedVehicle);
+                            return;
+                          }
+                          setState(() => _powerSupplyNotification = val!);
+                        },
                       ),
                       
                       const SizedBox(height: 40),

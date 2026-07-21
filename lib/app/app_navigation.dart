@@ -151,11 +151,9 @@ class _AppNavigationState extends State<AppNavigation> {
   }
 
   void _onTabTap(int index) {
+    final navKey = _getNavigatorKey(index);
+    navKey.currentState?.popUntil((route) => route.isFirst);
     if (_currentIndex == index) {
-      // If tapping the same tab, pop to root of that tab
-      _getNavigatorKey(index).currentState?.popUntil(
-        (route) => route.isFirst,
-      );
       return;
     }
     setState(() {

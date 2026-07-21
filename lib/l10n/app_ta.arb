@@ -1298,5 +1298,18 @@
   },
   "welcomeToTrackify": "டிராக்கிஃபைக்கு நல்வரவு!",
   "thankYouForRegisteringDesc": "பதிவு செய்தமைக்கு நன்றி! உங்கள் கணக்கு வெற்றிகரமாக உருவாக்கப்பட்டது. உங்கள் டாஷ்போர்டை அணுகவும் வாகனங்களை நிர்வகிக்கவும் உள்நுழையவும்.",
-  "continueToSignIn": "உள்நுழையத் தொடரவும்"
+  "continueToSignIn": "உள்நுழையத் தொடரவும்",
+  "deviceNotInstalled": "சாதனம் நிறுவப்படவில்லை",
+  "deviceNotInstalledDesc": "{vehicleName} இல் டிராக்கிங் சாதனம் நிறுவப்படவில்லை. அறிவிப்பு கட்டுப்பாடுகளை உள்ளமைக்க சாதனத்தை நிறுவவும்.",
+  "@deviceNotInstalledDesc": {
+    "placeholders": {
+      "vehicleName": {
+        "type": "String"
+      }
+    }
+  },
+  "noDevice": "சாதனம் இல்லை",
+  "noDeviceNotificationBanner": "இந்த வாகனத்துடன் எந்த டிராக்கிங் சாதனமும் இணைக்கப்படவில்லை. அறிவிப்பு கட்டுப்பாடுகள் முடுக்கப்பட்டுள்ளன.",
+  "ok": "சரி",
+  "profile100PercentComplete": "உங்கள் சுயவிவரம் 100% முடிந்தது!"
 }

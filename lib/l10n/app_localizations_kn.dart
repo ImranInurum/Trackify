@@ -3375,4 +3375,25 @@ class AppLocalizationsKn extends AppLocalizations {
 
   @override
   String get continueToSignIn => 'ಸೈನ್ ಇನ್ ಮಾಡಲು ಮುಂದುವರಿಯಿರಿ';
+
+  @override
+  String get deviceNotInstalled => 'ಸಾಧನ ಸ್ಥಾಪಿಸಲಾಗಿಲ್ಲ';
+
+  @override
+  String deviceNotInstalledDesc(String vehicleName) {
+    return '$vehicleName ನಲ್ಲಿ ಟ್ರ್ಯಾಕಿಂಗ್ ಸಾಧನ ಸ್ಥಾಪಿಸಲಾಗಿಲ್ಲ. ಅಧಿಸೂಚನೆ ನಿಯಂತ್ರಣಗಳನ್ನು ಕಾನ್ಫಿಗರ್ ಮಾಡಲು ದಯವಿಟ್ಟು ಸಾಧನವನ್ನು ಸ್ಥಾಪಿಸಿ.';
+  }
+
+  @override
+  String get noDevice => 'ಸಾಧನವಿಲ್ಲ';
+
+  @override
+  String get noDeviceNotificationBanner =>
+      'ಈ ವಾಹನಕ್ಕೆ ಯಾವುದೇ ಟ್ರ್ಯಾಕಿಂಗ್ ಸಾಧನ ಸಂಪರ್ಕಗೊಂಡಿಲ್ಲ. ಅಧಿಸೂಚನೆ ನಿಯಂತ್ರಣಗಳನ್ನು ನಿಷ್ಕ್ರಿಯಗೊಳಿಸಲಾಗಿದೆ.';
+
+  @override
+  String get ok => 'ಸರಿ';
+
+  @override
+  String get profile100PercentComplete => 'ನಿಮ್ಮ ಪ್ರೊಫೈಲ್ 100% ಪೂರ್ಣವಾಗಿದೆ!';
 }

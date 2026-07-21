@@ -326,7 +326,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         focusNode: _confirmPasswordFocusNode,
                         isPassword: true,
                         textInputAction: TextInputAction.done,
-                        onFieldSubmitted: (_) => _onSignUpPressed(context),
+                        onFieldSubmitted: (_) => FocusScope.of(context).unfocus(),
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return "Please confirm your password";

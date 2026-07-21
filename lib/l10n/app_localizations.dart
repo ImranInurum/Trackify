@@ -6453,6 +6453,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Continue to Sign In'**
   String get continueToSignIn;
+
+  /// No description provided for @deviceNotInstalled.
+  ///
+  /// In en, this message translates to:
+  /// **'Device Not Installed'**
+  String get deviceNotInstalled;
+
+  /// No description provided for @deviceNotInstalledDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Tracking device is not installed on {vehicleName}. Please install a device to configure notification controls.'**
+  String deviceNotInstalledDesc(String vehicleName);
+
+  /// No description provided for @noDevice.
+  ///
+  /// In en, this message translates to:
+  /// **'No Device'**
+  String get noDevice;
+
+  /// No description provided for @noDeviceNotificationBanner.
+  ///
+  /// In en, this message translates to:
+  /// **'No tracking device linked with this vehicle. Notification controls are disabled.'**
+  String get noDeviceNotificationBanner;
+
+  /// No description provided for @ok.
+  ///
+  /// In en, this message translates to:
+  /// **'OK'**
+  String get ok;
+
+  /// No description provided for @profile100PercentComplete.
+  ///
+  /// In en, this message translates to:
+  /// **'Your profile is 100% complete!'**
+  String get profile100PercentComplete;
 }
 
 class _AppLocalizationsDelegate

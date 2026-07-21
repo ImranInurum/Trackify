@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:country_state_city/country_state_city.dart' as csc;
 import 'package:trackify/core/utils/shared_preferences.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -146,15 +147,38 @@ class _VehicleControlViewState extends State<VehicleControlView> {
     );
   }
 
-  void _showAddContactDialog(BuildContext context, String keyId) {
+  void _showAddContactDialog(
+    BuildContext context,
+    String keyId, {
+    Map<String, String>? initialContact,
+    int? editIndex,
+  }) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
     final l10n = AppLocalizations.of(context)!;
 
-    final nameController = TextEditingController();
-    final phoneController = TextEditingController();
-    final formKey = GlobalKey<FormState>();
     String selectedPhoneCode = '+91';
+    String rawPhone = initialContact?['phone'] ?? '';
+    if (rawPhone.startsWith('+')) {
+      for (final c in _countries) {
+        if (c.phoneCode.isNotEmpty) {
+          final code = c.phoneCode.startsWith('+') ? c.phoneCode : '+${c.phoneCode}';
+          if (rawPhone.startsWith(code)) {
+            selectedPhoneCode = code;
+            rawPhone = rawPhone.substring(code.length).trim();
+            break;
+          }
+        }
+      }
+      if (rawPhone.startsWith('+91')) {
+        selectedPhoneCode = '+91';
+        rawPhone = rawPhone.substring(3).trim();
+      }
+    }
+
+    final nameController = TextEditingController(text: initialContact?['name'] ?? '');
+    final phoneController = TextEditingController(text: rawPhone);
+    final formKey = GlobalKey<FormState>();
 
     showDialog(
       context: context,
@@ -173,7 +197,9 @@ class _VehicleControlViewState extends State<VehicleControlView> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "Add Emergency Contact",
+                    editIndex != null
+                        ? l10n.emergencyContacts
+                        : "Add Emergency Contact",
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
@@ -187,6 +213,10 @@ class _VehicleControlViewState extends State<VehicleControlView> {
                     textCapitalization: TextCapitalization.words,
                     autovalidateMode: AutovalidateMode.onUserInteraction,
                     style: TextStyle(color: theme.colorScheme.onSurface),
+                    onChanged: (_) {
+                      setStateDialog(() {});
+                      formKey.currentState?.validate();
+                    },
                     decoration: InputDecoration(
                       labelText: l10n.name,
                       labelStyle: TextStyle(
@@ -214,8 +244,18 @@ class _VehicleControlViewState extends State<VehicleControlView> {
                   TextFormField(
                     controller: phoneController,
                     keyboardType: TextInputType.phone,
+                    maxLength: 10,
+                    buildCounter: (context, {required int currentLength, required bool isFocused, required int? maxLength}) => null,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.digitsOnly,
+                      LengthLimitingTextInputFormatter(10),
+                    ],
                     autovalidateMode: AutovalidateMode.onUserInteraction,
                     style: TextStyle(color: theme.colorScheme.onSurface),
+                    onChanged: (_) {
+                      setStateDialog(() {});
+                      formKey.currentState?.validate();
+                    },
                     decoration: InputDecoration(
                       labelText: l10n.mobileNumber,
                       labelStyle: TextStyle(
@@ -295,6 +335,7 @@ class _VehicleControlViewState extends State<VehicleControlView> {
                                   setStateDialog(() {
                                     selectedPhoneCode = value;
                                   });
+                                  formKey.currentState?.validate();
                                 }
                               },
                             ),
@@ -343,12 +384,17 @@ class _VehicleControlViewState extends State<VehicleControlView> {
                       ElevatedButton(
                         onPressed: () {
                           if (formKey.currentState?.validate() ?? false) {
+                            final newContact = {
+                              'name': nameController.text.trim(),
+                              'phone':
+                                  '$selectedPhoneCode ${phoneController.text.trim()}',
+                            };
                             setState(() {
-                              _contacts.add({
-                                'name': nameController.text.trim(),
-                                'phone':
-                                    '$selectedPhoneCode ${phoneController.text.trim()}',
-                              });
+                              if (editIndex != null && editIndex < _contacts.length) {
+                                _contacts[editIndex] = newContact;
+                              } else {
+                                _contacts.add(newContact);
+                              }
                             });
                             _saveEmergencyContacts(keyId);
                             Navigator.pop(context);
@@ -506,31 +552,37 @@ class _VehicleControlViewState extends State<VehicleControlView> {
                                   ),
                                 ),
                               ),
-                              Positioned(
-                                bottom: size.height * 0.01,
-                                right: 20,
-                                child: GestureDetector(
-                                  onTap: () => _showImageSourceDialog(
-                                    context,
-                                    vehicle.id,
-                                  ),
-                                  child: Container(
-                                    padding: const EdgeInsets.all(12),
-                                    decoration: BoxDecoration(
-                                      color: Colors.black.withOpacity(0.5),
-                                      shape: BoxShape.circle,
-                                      border: Border.all(
-                                        color: Colors.white.withOpacity(0.2),
-                                      ),
+                              if ((widget.passedVehicle?.imei
+                                          ?.trim()
+                                          .isNotEmpty ??
+                                      false) ||
+                                  (vehicle.imei.isNotEmpty &&
+                                      vehicle.imei != vehicle.id))
+                                Positioned(
+                                  bottom: size.height * 0.04,
+                                  right: 20,
+                                  child: GestureDetector(
+                                    onTap: () => _showImageSourceDialog(
+                                      context,
+                                      vehicle.id,
                                     ),
-                                    child: const Icon(
-                                      Icons.camera_alt_outlined,
-                                      color: Colors.white,
-                                      size: 28,
+                                    child: Container(
+                                      padding: const EdgeInsets.all(12),
+                                      decoration: BoxDecoration(
+                                        color: Colors.black.withOpacity(0.5),
+                                        shape: BoxShape.circle,
+                                        border: Border.all(
+                                          color: Colors.white.withOpacity(0.2),
+                                        ),
+                                      ),
+                                      child: const Icon(
+                                        Icons.camera_alt_outlined,
+                                        color: Colors.white,
+                                        size: 28,
+                                      ),
                                     ),
                                   ),
                                 ),
-                              ),
                             ],
                           ),
                         );
@@ -657,7 +709,8 @@ class _VehicleControlViewState extends State<VehicleControlView> {
                           ),
                         ),
 
-                        if (!widget.isFromGarage && vehicle.imei.isNotEmpty) ...[
+                        if (!widget.isFromGarage &&
+                            vehicle.imei.isNotEmpty) ...[
                           const SizedBox(height: 12),
                           LockCard(
                             cardColor: cardColor,
@@ -665,9 +718,19 @@ class _VehicleControlViewState extends State<VehicleControlView> {
                             secondaryTextColor: secondaryTextColor,
                             isLocked: vehicle.vehicleLock,
                             onLock: () async {
-                              final brandAndModel = [vehicle.vehicleMaker, vehicle.vehicleModel].where((s) => s.isNotEmpty).join(' ');
-                              
-                              final success = await VehiclePinDialog.show(context, vehicle.vehicleLock, brandAndModel.isNotEmpty ? brandAndModel : 'Vehicle', vehicle.imei);
+                              final brandAndModel = [
+                                vehicle.vehicleMaker,
+                                vehicle.vehicleModel,
+                              ].where((s) => s.isNotEmpty).join(' ');
+
+                              final success = await VehiclePinDialog.show(
+                                context,
+                                vehicle.vehicleLock,
+                                brandAndModel.isNotEmpty
+                                    ? brandAndModel
+                                    : 'Vehicle',
+                                vehicle.imei,
+                              );
                               if (success) {
                                 if (context.mounted) {
                                   context
@@ -679,10 +742,12 @@ class _VehicleControlViewState extends State<VehicleControlView> {
                                 }
                               } else {
                                 // Force a fake state update in cubit to reset the button state
-                                // since we canceled. The quickest way is to just let the user tap the X, 
+                                // since we canceled. The quickest way is to just let the user tap the X,
                                 // or we can refresh the list. We will just load current vehicle details to refresh.
                                 if (context.mounted) {
-                                  context.read<VehicleControlCubit>().loadVehicleDetails(vehicle.imei);
+                                  context
+                                      .read<VehicleControlCubit>()
+                                      .loadVehicleDetails(vehicle.imei);
                                 }
                               }
                             },
@@ -728,48 +793,51 @@ class _VehicleControlViewState extends State<VehicleControlView> {
                               state.tempColor != vehicle.selectedColor,
                         ),
 
-                        const SizedBox(height: 12),
+                        if ((widget.passedVehicle?.imei?.trim().isNotEmpty ?? false) ||
+                            (vehicle.imei.isNotEmpty && vehicle.imei != vehicle.id)) ...[
+                          const SizedBox(height: 12),
 
-                        BlocBuilder<AppCubit, AppState>(
-                          builder: (context, appState) {
-                            final matchingDevice = appState.devices.firstWhere(
-                              (d) =>
-                                  d['imei']?.toString() == vehicle.imei ||
-                                  d['_id']?.toString() == vehicle.id ||
-                                  d['id']?.toString() == vehicle.id,
-                              orElse: () => <String, dynamic>{},
-                            );
-                            String distanceTravelled = "0.0";
-                            if (matchingDevice.isNotEmpty) {
-                              final odometerRaw = matchingDevice['odometer'];
-                              if (odometerRaw != null) {
-                                final double? val = double.tryParse(
-                                  odometerRaw.toString(),
-                                );
-                                if (val != null) {
-                                  distanceTravelled = val.toStringAsFixed(1);
-                                } else {
-                                  distanceTravelled = odometerRaw.toString();
+                          BlocBuilder<AppCubit, AppState>(
+                            builder: (context, appState) {
+                              final matchingDevice = appState.devices.firstWhere(
+                                (d) =>
+                                    d['imei']?.toString() == vehicle.imei ||
+                                    d['_id']?.toString() == vehicle.id ||
+                                    d['id']?.toString() == vehicle.id,
+                                orElse: () => <String, dynamic>{},
+                              );
+                              String distanceTravelled = "0.0";
+                              if (matchingDevice.isNotEmpty) {
+                                final odometerRaw = matchingDevice['odometer'];
+                                if (odometerRaw != null) {
+                                  final double? val = double.tryParse(
+                                    odometerRaw.toString(),
+                                  );
+                                  if (val != null) {
+                                    distanceTravelled = val.toStringAsFixed(1);
+                                  } else {
+                                    distanceTravelled = odometerRaw.toString();
+                                  }
                                 }
                               }
-                            }
-                            return JourneyCard(
-                              cardColor: cardColor,
-                              primaryTextColor: primaryTextColor,
-                              secondaryTextColor: secondaryTextColor,
-                              distance: distanceTravelled,
-                              hours: "0",
-                              minutes: "0",
-                              onTap: () {
-                                Navigator.popUntil(
-                                  context,
-                                  (route) => route.isFirst,
-                                );
-                                AppNavigation.setIndex(2);
-                              },
-                            );
-                          },
-                        ),
+                              return JourneyCard(
+                                cardColor: cardColor,
+                                primaryTextColor: primaryTextColor,
+                                secondaryTextColor: secondaryTextColor,
+                                distance: distanceTravelled,
+                                hours: "0",
+                                minutes: "0",
+                                onTap: () {
+                                  Navigator.popUntil(
+                                    context,
+                                    (route) => route.isFirst,
+                                  );
+                                  AppNavigation.setIndex(2);
+                                },
+                              );
+                            },
+                          ),
+                        ],
 
                         const SizedBox(height: 12),
 
@@ -925,94 +993,111 @@ class _VehicleControlViewState extends State<VehicleControlView> {
                                 ),
                                 if (_contacts.isNotEmpty) ...[
                                   const SizedBox(height: 12),
-                                  ..._contacts.map((contact) {
+                                  ..._contacts.asMap().entries.map((entry) {
+                                    final index = entry.key;
+                                    final contact = entry.value;
                                     final name = contact['name'] ?? '';
                                     final phone = contact['phone'] ?? '';
-                                    return Container(
-                                      margin: const EdgeInsets.only(
-                                        left: 32,
-                                        bottom: 8,
-                                      ),
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 12,
-                                        vertical: 8,
-                                      ),
-                                      decoration: BoxDecoration(
-                                        color: cardColor,
-                                        borderRadius: BorderRadius.circular(12),
-                                        border: Border.all(
-                                          color: theme.colorScheme.onSurface
-                                              .withOpacity(0.08),
+                                    return GestureDetector(
+                                      onTap: () {
+                                        final keyId = vehicle.id.isNotEmpty
+                                            ? vehicle.id
+                                            : (vehicle.vehicleNumber.isNotEmpty
+                                                  ? vehicle.vehicleNumber
+                                                  : 'default');
+                                        _showAddContactDialog(
+                                          context,
+                                          keyId,
+                                          initialContact: contact,
+                                          editIndex: index,
+                                        );
+                                      },
+                                      child: Container(
+                                        margin: const EdgeInsets.only(
+                                          left: 32,
+                                          bottom: 8,
                                         ),
-                                      ),
-                                      child: Row(
-                                        children: [
-                                          CircleAvatar(
-                                            radius: 16,
-                                            backgroundColor: theme
-                                                .colorScheme
-                                                .primary
-                                                .withOpacity(0.1),
-                                            child: Text(
-                                              name.isNotEmpty
-                                                  ? name[0].toUpperCase()
-                                                  : '?',
-                                              style: TextStyle(
-                                                color:
-                                                    theme.colorScheme.primary,
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 12,
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 12,
+                                          vertical: 8,
+                                        ),
+                                        decoration: BoxDecoration(
+                                          color: cardColor,
+                                          borderRadius: BorderRadius.circular(12),
+                                          border: Border.all(
+                                            color: theme.colorScheme.onSurface
+                                                .withOpacity(0.08),
+                                          ),
+                                        ),
+                                        child: Row(
+                                          children: [
+                                            CircleAvatar(
+                                              radius: 16,
+                                              backgroundColor: theme
+                                                  .colorScheme
+                                                  .primary
+                                                  .withOpacity(0.1),
+                                              child: Text(
+                                                name.isNotEmpty
+                                                    ? name[0].toUpperCase()
+                                                    : '?',
+                                                style: TextStyle(
+                                                  color:
+                                                      theme.colorScheme.primary,
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 12,
+                                                ),
                                               ),
                                             ),
-                                          ),
-                                          const SizedBox(width: 12),
-                                          Expanded(
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Text(
-                                                  name,
-                                                  style: TextStyle(
-                                                    fontSize: 14,
-                                                    fontWeight: FontWeight.w600,
-                                                    color: primaryTextColor,
+                                            const SizedBox(width: 12),
+                                            Expanded(
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                    name,
+                                                    style: TextStyle(
+                                                      fontSize: 14,
+                                                      fontWeight: FontWeight.w600,
+                                                      color: primaryTextColor,
+                                                    ),
                                                   ),
-                                                ),
-                                                const SizedBox(height: 2),
-                                                Text(
-                                                  phone,
-                                                  style: TextStyle(
-                                                    fontSize: 12,
-                                                    color: secondaryTextColor,
+                                                  const SizedBox(height: 2),
+                                                  Text(
+                                                    phone,
+                                                    style: TextStyle(
+                                                      fontSize: 12,
+                                                      color: secondaryTextColor,
+                                                    ),
                                                   ),
-                                                ),
-                                              ],
+                                                ],
+                                              ),
                                             ),
-                                          ),
-                                          IconButton(
-                                            icon: Icon(
-                                              Icons.delete_outline,
-                                              color: theme.colorScheme.error
-                                                  .withOpacity(0.8),
-                                              size: 20,
+                                            IconButton(
+                                              icon: Icon(
+                                                Icons.delete_outline,
+                                                color: theme.colorScheme.error
+                                                    .withOpacity(0.8),
+                                                size: 20,
+                                              ),
+                                              onPressed: () {
+                                                setState(() {
+                                                  _contacts.remove(contact);
+                                                });
+                                                final keyId =
+                                                    vehicle.id.isNotEmpty
+                                                    ? vehicle.id
+                                                    : (vehicle
+                                                              .vehicleNumber
+                                                              .isNotEmpty
+                                                          ? vehicle.vehicleNumber
+                                                          : 'default');
+                                                _saveEmergencyContacts(keyId);
+                                              },
                                             ),
-                                            onPressed: () {
-                                              setState(() {
-                                                _contacts.remove(contact);
-                                              });
-                                              final keyId =
-                                                  vehicle.id.isNotEmpty
-                                                  ? vehicle.id
-                                                  : (vehicle
-                                                            .vehicleNumber
-                                                            .isNotEmpty
-                                                        ? vehicle.vehicleNumber
-                                                        : 'default');
-                                              _saveEmergencyContacts(keyId);
-                                            },
-                                          ),
-                                        ],
+                                          ],
+                                        ),
                                       ),
                                     );
                                   }),
@@ -1115,8 +1200,7 @@ class _VehicleControlViewState extends State<VehicleControlView> {
           children: [
             ListTile(
               leading: Icon(Icons.camera_alt, color: theme.colorScheme.primary),
-              title: Text(
-                l10n.camera, ),
+              title: Text(l10n.camera),
               onTap: () {
                 Navigator.pop(ctx);
                 _pickImage(context, ImageSource.camera, id);
@@ -1127,8 +1211,7 @@ class _VehicleControlViewState extends State<VehicleControlView> {
                 Icons.photo_library,
                 color: theme.colorScheme.primary,
               ),
-              title: Text(
-                l10n.gallery, ),
+              title: Text(l10n.gallery),
               onTap: () {
                 Navigator.pop(ctx);
                 _pickImage(context, ImageSource.gallery, id);
@@ -1541,8 +1624,7 @@ class _VehicleControlViewState extends State<VehicleControlView> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: Text(
-              l10n.cancel, ),
+            child: Text(l10n.cancel),
           ),
           TextButton(
             onPressed: () {

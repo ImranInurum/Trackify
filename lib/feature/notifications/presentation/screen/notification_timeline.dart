@@ -106,6 +106,7 @@ class _NotificationTimelineViewState extends State<NotificationTimelineView> {
       backgroundColor: bgColor,
       appBar: AppBar(
         backgroundColor: bgColor,
+        surfaceTintColor: Colors.transparent,
         elevation: 0,
         centerTitle: false,
         leading: IconButton(

@@ -3342,4 +3342,25 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get continueToSignIn => 'المتابعة لتسجيل الدخول';
+
+  @override
+  String get deviceNotInstalled => 'الجهاز غير مثبت';
+
+  @override
+  String deviceNotInstalledDesc(String vehicleName) {
+    return 'جهاز التتبع غير مثبت على $vehicleName. يرجى تثبيت جهاز لتهيئة عناصر التحكم في الإشعارات.';
+  }
+
+  @override
+  String get noDevice => 'لا يوجد جهاز';
+
+  @override
+  String get noDeviceNotificationBanner =>
+      'لا يوجد جهاز تتبع مرتبط بهذة المركبة. عناصر التحكم في الإشعارات معطلة.';
+
+  @override
+  String get ok => 'موافق';
+
+  @override
+  String get profile100PercentComplete => 'ملفك الشخصي مكتمل بنسبة 100٪!';
 }

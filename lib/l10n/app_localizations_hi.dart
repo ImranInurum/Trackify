@@ -3364,4 +3364,25 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get continueToSignIn => 'साइन इन करने के लिए आगे बढ़ें';
+
+  @override
+  String get deviceNotInstalled => 'डिवाइस इंस्टॉल नहीं है';
+
+  @override
+  String deviceNotInstalledDesc(String vehicleName) {
+    return '$vehicleName पर ट्रैकिंग डिवाइस इंस्टॉल नहीं है। नोटिफिकेशन कंट्रोल कॉन्फ़िगर करने के लिए कृपया एक डिवाइस इंस्टॉल करें।';
+  }
+
+  @override
+  String get noDevice => 'कोई डिवाइस नहीं';
+
+  @override
+  String get noDeviceNotificationBanner =>
+      'इस वाहन के साथ कोई ट्रैकिंग डिवाइस लिंक नहीं है। नोटिफिकेशन कंट्रोल अक्षम हैं।';
+
+  @override
+  String get ok => 'ठीक है';
+
+  @override
+  String get profile100PercentComplete => 'आपकी प्रोफ़ाइल 100% पूर्ण है!';
 }

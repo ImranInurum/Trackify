@@ -1,4 +1,4 @@
-﻿import 'dart:async';
+import 'dart:async';
 import 'dart:io' show Platform;
 import 'dart:ui' as ui;
 
@@ -57,6 +57,8 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
   final Set<int> _favoriteRides = {};
   BitmapDescriptor? _startMarkerIcon;
   BitmapDescriptor? _endMarkerIcon;
+  bool _isFullScreen = false;
+  DateTime? _recordingStartDateTime;
 
   @override
   void initState() {
@@ -72,12 +74,6 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
     // Pre-fetch today's history
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _initCustomMarker();
-      final today = DateFormat('yyyy-MM-dd').format(now);
-      context.read<RecordViaPhoneCubit>().fetchDeviceDataByDate(
-        imei: widget.imei,
-        startDate: today,
-        endDate: today,
-      );
     });
   }
 
@@ -165,13 +161,6 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
         _activeDateFilter = DateFormat('dd/MM').format(newDate);
       }
     });
-
-    final dateStr = DateFormat('yyyy-MM-dd').format(newDate);
-    context.read<RecordViaPhoneCubit>().fetchDeviceDataByDate(
-      imei: widget.imei,
-      startDate: dateStr,
-      endDate: dateStr,
-    );
   }
 
   Future<void> _initStartEndMarkers() async {
@@ -681,11 +670,6 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
               _statsEndDate = end;
               _selectedStatsDate = start;
             });
-            context.read<RecordViaPhoneCubit>().fetchDeviceDataByDate(
-              imei: widget.imei,
-              startDate: DateFormat('yyyy-MM-dd').format(start),
-              endDate: DateFormat('yyyy-MM-dd').format(end),
-            );
           },
         );
       },
@@ -1122,9 +1106,11 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
         length: 3,
         child: Scaffold(
           backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-          appBar: AppBar(
-            elevation: 0,
-            backgroundColor: Colors.transparent,
+          appBar: _isFullScreen
+              ? null
+              : AppBar(
+                  elevation: 0,
+                  backgroundColor: Colors.transparent,
             leading: IconButton(
               icon: Icon(
                 Icons.arrow_back_ios_new,
@@ -1231,7 +1217,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
         return Stack(
           children: [
             Positioned.fill(
-              bottom: 80,
+              bottom: _isFullScreen ? 0 : 80,
               child: _buildMap(
                 controller: _rideMapController,
                 markers: markers,
@@ -1391,28 +1377,15 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
                               heroTag: 'btnFullscreen',
                               mini: true,
                               backgroundColor: Theme.of(context).cardColor,
-                              onPressed: () async {
-                                final appState = context.read<AppCubit>().state;
-                                var pos = appState.currentLocation;
-                                if (pos == null) {
-                                  try {
-                                    pos =
-                                        await Geolocator.getLastKnownPosition();
-                                  } catch (_) {}
-                                }
-                                if (pos != null) {
-                                  _rideMapController.future.then((c) {
-                                    c.animateCamera(
-                                      CameraUpdate.newLatLngZoom(
-                                        LatLng(pos!.latitude, pos.longitude),
-                                        16,
-                                      ),
-                                    );
-                                  });
-                                }
+                              onPressed: () {
+                                setState(() {
+                                  _isFullScreen = !_isFullScreen;
+                                });
                               },
                               child: Icon(
-                                Icons.fullscreen,
+                                _isFullScreen
+                                    ? Icons.fullscreen_exit
+                                    : Icons.fullscreen,
                                 color:
                                     Theme.of(context).iconTheme.color ??
                                     Colors.grey,
@@ -1423,10 +1396,30 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
                       ],
                     ),
                   ),
-                  _buildBottomSheet(state),
+                  if (!_isFullScreen) _buildBottomSheet(state),
                 ],
               ),
             ),
+            if (_isFullScreen)
+              Positioned(
+                top: MediaQuery.of(context).padding.top + 10,
+                left: 16,
+                child: FloatingActionButton(
+                  heroTag: 'btnFullscreenBack',
+                  mini: true,
+                  backgroundColor: Theme.of(context).cardColor,
+                  onPressed: () {
+                    setState(() {
+                      _isFullScreen = false;
+                    });
+                  },
+                  child: Icon(
+                    Icons.arrow_back_ios_new,
+                    size: 18,
+                    color: Theme.of(context).colorScheme.onSurface,
+                  ),
+                ),
+              ),
           ],
         );
       },
@@ -1439,12 +1432,18 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
 
     String lastUpdatedText =
         "${AppLocalizations.of(context)!.lastUpdated} ${AppLocalizations.of(context)!.justNow}";
-    final currentLoc = appState.currentLocation;
-    if (currentLoc != null) {
-      final timeFormat = DateFormat('h:mm a');
-      final formattedTime = timeFormat.format(currentLoc.timestamp);
+    if (_recordingStartDateTime != null) {
+      final formattedTime = DateFormat('h:mm a, dd MMM yyyy').format(_recordingStartDateTime!);
       lastUpdatedText =
-          "${AppLocalizations.of(context)!.lastUpdated} $formattedTime, ${AppLocalizations.of(context)!.today}";
+          "${AppLocalizations.of(context)!.lastUpdated} $formattedTime";
+    } else {
+      final currentLoc = appState.currentLocation;
+      if (currentLoc != null) {
+        final timeFormat = DateFormat('h:mm a');
+        final formattedTime = timeFormat.format(currentLoc.timestamp);
+        lastUpdatedText =
+            "${AppLocalizations.of(context)!.lastUpdated} $formattedTime, ${AppLocalizations.of(context)!.today}";
+      }
     }
 
     final bool showStats =
@@ -1801,10 +1800,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
               );
             }).toList();
 
-            List<PastRide> rides = _groupDataIntoRides(state.data);
-            
-            // Merge both offline and online rides
-            rides = [...offlineRides, ...rides];
+            List<PastRide> rides = List.from(offlineRides);
 
             // Sort by date Str descending so newest rides are always at the top
             rides.sort((a, b) {
@@ -1947,10 +1943,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
              rideDate.isBefore(endOfDay.add(const Duration(milliseconds: 1)));
     }).toList();
 
-    List<PastRide> rides = _groupDataIntoRides(state.data);
-    
-    // Merge both offline and online rides
-    rides = [...filteredOfflineRides, ...rides];
+    List<PastRide> rides = List.from(filteredOfflineRides);
 
     if (_selectedFilterTag != null) {
       rides = rides.where((r) => r.tag.toLowerCase() == _selectedFilterTag!.toLowerCase()).toList();
@@ -3063,6 +3056,11 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
                         TextButton(
                           onPressed: () {
                             Navigator.pop(ctx);
+                            if (mounted) {
+                              setState(() {
+                                _recordingStartDateTime = DateTime.now();
+                              });
+                            }
                             screenContext
                                 .read<RecordViaPhoneCubit>()
                                 .startRecording(mode: selectedMode);

@@ -3382,4 +3382,25 @@ class AppLocalizationsTa extends AppLocalizations {
 
   @override
   String get continueToSignIn => 'உள்நுழையத் தொடரவும்';
+
+  @override
+  String get deviceNotInstalled => 'சாதனம் நிறுவப்படவில்லை';
+
+  @override
+  String deviceNotInstalledDesc(String vehicleName) {
+    return '$vehicleName இல் டிராக்கிங் சாதனம் நிறுவப்படவில்லை. அறிவிப்பு கட்டுப்பாடுகளை உள்ளமைக்க சாதனத்தை நிறுவவும்.';
+  }
+
+  @override
+  String get noDevice => 'சாதனம் இல்லை';
+
+  @override
+  String get noDeviceNotificationBanner =>
+      'இந்த வாகனத்துடன் எந்த டிராக்கிங் சாதனமும் இணைக்கப்படவில்லை. அறிவிப்பு கட்டுப்பாடுகள் முடுக்கப்பட்டுள்ளன.';
+
+  @override
+  String get ok => 'சரி';
+
+  @override
+  String get profile100PercentComplete => 'உங்கள் சுயவிவரம் 100% முடிந்தது!';
 }

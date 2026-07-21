@@ -1298,5 +1298,18 @@
   },
   "welcomeToTrackify": "ट्रैकिफाई में आपका स्वागत है!",
   "thankYouForRegisteringDesc": "पंजीकरण करने के लिए धन्यवाद! आपका खाता सफलतापूर्वक बन गया है। कृपया अपने डैशबोर्ड तक पहुंचने और अपने वाहनों को प्रबंधित करने के लिए साइन इन करें।",
-  "continueToSignIn": "साइन इन करने के लिए आगे बढ़ें"
+  "continueToSignIn": "साइन इन करने के लिए आगे बढ़ें",
+  "deviceNotInstalled": "डिवाइस इंस्टॉल नहीं है",
+  "deviceNotInstalledDesc": "{vehicleName} पर ट्रैकिंग डिवाइस इंस्टॉल नहीं है। नोटिफिकेशन कंट्रोल कॉन्फ़िगर करने के लिए कृपया एक डिवाइस इंस्टॉल करें।",
+  "@deviceNotInstalledDesc": {
+    "placeholders": {
+      "vehicleName": {
+        "type": "String"
+      }
+    }
+  },
+  "noDevice": "कोई डिवाइस नहीं",
+  "noDeviceNotificationBanner": "इस वाहन के साथ कोई ट्रैकिंग डिवाइस लिंक नहीं है। नोटिफिकेशन कंट्रोल अक्षम हैं।",
+  "ok": "ठीक है",
+  "profile100PercentComplete": "आपकी प्रोफ़ाइल 100% पूर्ण है!"
 }
