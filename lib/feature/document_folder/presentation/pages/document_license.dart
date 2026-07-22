@@ -13,9 +13,9 @@ import 'package:trackify/feature/document_folder/data/data_sources/document_loca
 
 class DocumentLicense extends StatefulWidget {
   final String title;
-  final String imei;
+  final String vehicleId;
 
-  const DocumentLicense({super.key, required this.title, required this.imei});
+  const DocumentLicense({super.key, required this.title, required this.vehicleId});
 
   @override
   State<DocumentLicense> createState() =>
@@ -302,6 +302,13 @@ class _DocumentLicenseState extends State<DocumentLicense> {
       return;
     }
 
+    if (_selectedDate == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please select date')),
+      );
+      return;
+    }
+
     setState(() {
       _isLoading = true;
       _error = null;
@@ -319,7 +326,7 @@ class _DocumentLicenseState extends State<DocumentLicense> {
       }
 
       final request = DocumentUploadRequest(
-        imei: widget.imei,
+        vehicleId: widget.vehicleId,
         type: 'personal',
         subtype: 'driving_license',
         expiryDate: _selectedDate != null

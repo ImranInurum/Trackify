@@ -1,12 +1,12 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:trackify/feature/app_updates/presentiation/pages/update_screen.dart';
 import 'package:trackify/core/config/font_manager.dart';
 import 'package:trackify/core/utils/shared_preferences.dart';
+import 'package:trackify/feature/help_and_support/presentation/pages/app_web_view_screen.dart';
 import 'package:trackify/feature/help_and_support/presentation/pages/my_issue_screen.dart';
 import 'package:trackify/feature/help_and_support/presentation/pages/time_slot_screen.dart';
 import 'package:trackify/l10n/app_localizations.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import 'package:trackify/feature/help_and_support/data/repository_impl/help_repository_impl.dart';
 import 'package:trackify/feature/help_and_support/presentation/cubit/help_cubit.dart';
@@ -49,15 +49,12 @@ class _HelpSuggestionScreenState extends State<HelpSuggestionScreen> {
     super.initState();
     isReportIssue = widget.isReportIssue;
 
-    // Ensure vehicles are loaded and synchronize initial selection
-    final serviceCubit = context.read<ServiceLogsCubit>();
-    if (serviceCubit.state is ServiceLogsLoaded) {
-      final state = serviceCubit.state as ServiceLogsLoaded;
-      selectedVehicleId = state.selectedVehicle?.id;
-      selectedVehicleImei = state.selectedVehicle?.imei;
-    } else {
-      serviceCubit.loadVehicles();
-    }
+    // Load fresh vehicles for current user session
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        context.read<ServiceLogsCubit>().loadVehicles();
+      }
+    });
   }
 
   @override
@@ -123,6 +120,72 @@ class _HelpSuggestionScreenState extends State<HelpSuggestionScreen> {
           ),
         ),
       ),
+    );
+  }
+
+  void _showSuggestionTypeSelector(BuildContext context, AppLocalizations l10n) {
+    FocusScope.of(context).unfocus(); // Close keyboard before showing sheet
+    
+    final types = [
+      {"value": "design", "label": l10n.designOption},
+      {"value": "functionality", "label": l10n.functionalityOption},
+      {"value": "other", "label": l10n.otherOption},
+    ];
+
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (context) {
+        final theme = Theme.of(context);
+        return Container(
+          decoration: BoxDecoration(
+            color: theme.cardColor,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const SizedBox(height: 12),
+              Container(
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: theme.dividerColor,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              const SizedBox(height: 16),
+              ListView.builder(
+                shrinkWrap: true,
+                itemCount: types.length,
+                itemBuilder: (context, index) {
+                  final type = types[index];
+                  final isSelected = selectedSuggestionType == type["value"];
+                  return ListTile(
+                    title: Text(
+                      type["label"]!,
+                      style: theme.textTheme.bodyLarge?.copyWith(
+                        fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                        color: isSelected ? theme.colorScheme.primary : theme.colorScheme.onSurface,
+                      ),
+                    ),
+                    trailing: isSelected
+                        ? Icon(Icons.check_circle, color: theme.colorScheme.primary)
+                        : null,
+                    onTap: () {
+                      setState(() {
+                        selectedSuggestionType = type["value"];
+                      });
+                      Navigator.pop(context);
+                    },
+                  );
+                },
+              ),
+              const SizedBox(height: 20),
+            ],
+          ),
+        );
+      },
     );
   }
 
@@ -240,8 +303,8 @@ class _HelpSuggestionScreenState extends State<HelpSuggestionScreen> {
               ? BlocBuilder<ServiceLogsCubit, ServiceLogsState>(
                   builder: (context, serviceState) {
                     if (serviceState is ServiceLogsLoaded) {
-                      if (selectedVehicleId == null &&
-                          serviceState.selectedVehicle != null) {
+                      final bool vehicleExists = serviceState.vehicles.any((v) => v.id == selectedVehicleId);
+                      if (!vehicleExists || selectedVehicleId == null) {
                         selectedVehicleId = serviceState.selectedVehicle?.id;
                         selectedVehicleImei = serviceState.selectedVehicle?.imei;
                       }
@@ -290,69 +353,38 @@ class _HelpSuggestionScreenState extends State<HelpSuggestionScreen> {
                     );
                   },
                 )
-              : SizedBox(
-                  height: 54,
-            child: DropdownButtonFormField<String>(
-              value: selectedSuggestionType,
-              dropdownColor: Theme.of(context).scaffoldBackgroundColor,
-              decoration: InputDecoration(
-                contentPadding: const EdgeInsets.symmetric(horizontal: 14),
-                hintText: l10n.selectType,
-                hintStyle: TextStyle(
-                  fontSize: 14,
-                  color: Theme.of(context)
-                      .colorScheme
-                      .onSurface
-                      .withOpacity(0.5),
-                ),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
-                  borderSide:
-                  BorderSide(color: Theme.of(context).dividerColor),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
-                  borderSide:
-                  BorderSide(color: Theme.of(context).dividerColor),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
-                  borderSide: BorderSide(
-                    color: Theme.of(context).colorScheme.primary,
+              : GestureDetector(
+                  onTap: () => _showSuggestionTypeSelector(context, l10n),
+                  child: Container(
+                    height: 54,
+                    padding: const EdgeInsets.symmetric(horizontal: 14),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: Theme.of(context).dividerColor),
+                    ),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            selectedSuggestionType == "design" ? l10n.designOption :
+                            selectedSuggestionType == "functionality" ? l10n.functionalityOption :
+                            selectedSuggestionType == "other" ? l10n.otherOption :
+                            l10n.selectType,
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: selectedSuggestionType == null 
+                                  ? Theme.of(context).colorScheme.onSurface.withOpacity(0.5)
+                                  : Theme.of(context).colorScheme.onSurface,
+                            ),
+                          ),
+                        ),
+                        Icon(
+                          Icons.keyboard_arrow_down,
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-              ),
-              style: TextStyle(
-                fontSize: 14,
-                color: Theme.of(context).colorScheme.onSurface,
-              ),
-
-              items: [
-                 DropdownMenuItem(
-                  value: "design",
-                  child: Text(l10n.designOption),
-                ),
-                 DropdownMenuItem(
-                  value: "functionality",
-                  child: Text(l10n.functionalityOption),
-                ),
-                 DropdownMenuItem(
-                  value: "other",
-                  child: Text(l10n.otherOption),
-                ),
-              ],
-
-              onChanged: (String? newValue) {
-                setState(() {
-                  selectedSuggestionType = newValue;
-                });
-              },
-
-              icon: Icon(
-                Icons.keyboard_arrow_down,
-                color: Theme.of(context).colorScheme.primary,
-              ),
-            ),
                 ),
 
           const SizedBox(height: 26),
@@ -360,6 +392,8 @@ class _HelpSuggestionScreenState extends State<HelpSuggestionScreen> {
           /// SUBJECT FIELD
           TextField(
             controller: issueController,
+            textInputAction: TextInputAction.next,
+            onEditingComplete: () => FocusScope.of(context).nextFocus(),
             style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
             decoration: InputDecoration(
               hintText: isReportIssue
@@ -385,8 +419,11 @@ class _HelpSuggestionScreenState extends State<HelpSuggestionScreen> {
           /// DESCRIPTION FIELD
           TextField(
             controller: descriptionController,
-            maxLines: isReportIssue ? 1 : 2,
-            maxLength: isReportIssue ? null : 200,
+            minLines: 1,
+            maxLines: 5,
+            keyboardType: TextInputType.multiline,
+            textInputAction: TextInputAction.done,
+            onEditingComplete: () => FocusScope.of(context).unfocus(),
             style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
             decoration: InputDecoration(
               counterText: "",
@@ -681,39 +718,38 @@ class _HelpSuggestionScreenState extends State<HelpSuggestionScreen> {
   Widget _buildBottomMenu(AppLocalizations l10n) {
     return Column(
       children: [
-        _buildSimplifiedMenuRow(l10n.faq, onTap: () async {
-          final url = Uri.parse('http://139.59.1.109/faq.html');
-          if (await canLaunchUrl(url)) {
-            await launchUrl(url, mode: LaunchMode.externalApplication);
-          } else {
-            if (mounted) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(l10n.couldNotOpenFaq)),
-              );
-            }
-          }
+        _buildSimplifiedMenuRow(l10n.faq, onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => AppWebViewScreen(
+                title: l10n.faq,
+                url: 'http://139.59.1.109/faq.html',
+              ),
+            ),
+          );
         }),
-        _buildSimplifiedMenuRow(l10n.termsConditions, onTap: () async {
-          final url = Uri.parse('http://139.59.1.109/terms.html');
-          if (await canLaunchUrl(url)) {
-            await launchUrl(url, mode: LaunchMode.externalApplication);
-          } else {
-            if (mounted) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(l10n.couldNotOpenTerms)),
-              );
-            }
-          }
+        _buildSimplifiedMenuRow(l10n.termsConditions, onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => AppWebViewScreen(
+                title: l10n.termsConditions,
+                url: 'http://139.59.1.109/terms.html',
+              ),
+            ),
+          );
         }),
-        _buildSimplifiedMenuRow(l10n.privacyPolicy, onTap: () async {
-          final url = Uri.parse('http://139.59.1.109/privacy_policy.html');
-          if (await canLaunchUrl(url)) {
-            await launchUrl(url, mode: LaunchMode.externalApplication);
-          } else {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(l10n.couldNotOpenPrivacy)),
-            );
-          }
+        _buildSimplifiedMenuRow(l10n.privacyPolicy, onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => AppWebViewScreen(
+                title: l10n.privacyPolicy,
+                url: 'http://139.59.1.109/privacy_policy.html',
+              ),
+            ),
+          );
         }),
         _buildSimplifiedMenuRow(l10n.changeLog, onTap: () {
           Navigator.push(
@@ -728,10 +764,13 @@ class _HelpSuggestionScreenState extends State<HelpSuggestionScreen> {
   }
 
   Widget _buildSimplifiedMenuRow(String title, {VoidCallback? onTap}) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 14),
-      child: InkWell(
-        onTap: onTap ?? () {},
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(8),
+      child: Container(
+        width: double.infinity,
+        color: Colors.transparent,
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [

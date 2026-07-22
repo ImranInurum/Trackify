@@ -72,7 +72,7 @@ class DocumentsCard extends StatelessWidget {
                   Navigator.push(context, MaterialPageRoute(
                     builder: (_) => DocumentVehicleRCScreen(
                       title: l10n.vehicleRCTitle,
-                      imei: imei,
+                      vehicleId: imei,
                     ),
                   ));
                 }),
@@ -87,7 +87,7 @@ class DocumentsCard extends StatelessWidget {
                   Navigator.push(context, MaterialPageRoute(
                     builder: (_) => DocumentSubScreen(
                       title: l10n.insuranceTitle,
-                      imei: imei,
+                      vehicleId: imei,
                       subtype: 'insurance',
                     ),
                   ));
@@ -103,7 +103,7 @@ class DocumentsCard extends StatelessWidget {
                   Navigator.push(context, MaterialPageRoute(
                     builder: (_) => DocumentSubScreen(
                       title: l10n.pucTitle,
-                      imei: imei,
+                      vehicleId: imei,
                       subtype: 'puc',
                     ),
                   ));

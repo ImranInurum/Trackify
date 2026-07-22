@@ -165,6 +165,25 @@ class RecordViaPhoneCubit extends Cubit<RecordViaPhoneState> {
     }
   }
 
+  /// Updates tag of a specific offline ride by its id key.
+  Future<bool> updateOfflineRideTag(String id, String newTag) async {
+    try {
+      final box = await _getOfflineRidesBox();
+      final rawData = box.get(id);
+      if (rawData != null) {
+        final rideMap = jsonDecode(rawData as String) as Map<String, dynamic>;
+        rideMap['tag'] = newTag;
+        await box.put(id, jsonEncode(rideMap));
+        debugPrint('🏷️ Offline ride tag updated. Key: $id | Tag: $newTag');
+        return true;
+      }
+      return false;
+    } catch (e) {
+      debugPrint('❌ Error updating offline ride tag: $e');
+      return false;
+    }
+  }
+
   void updateRecordingData(Position position) {
     if (!state.isRecording) return;
 

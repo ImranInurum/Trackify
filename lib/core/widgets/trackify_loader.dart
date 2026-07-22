@@ -14,7 +14,7 @@ class TrackifyLoader extends StatefulWidget {
     this.size = 260,
     this.message,
     this.showPercentage = false,
-    this.animated = false,
+    this.animated = true,
     this.transitionDuration = const Duration(milliseconds: 400),
   });
 

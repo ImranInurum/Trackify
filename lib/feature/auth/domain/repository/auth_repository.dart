@@ -10,4 +10,5 @@ abstract interface class AuthRepository {
   ResultFuture<dynamic> resetPassword(Map<String, dynamic> body);
   ResultFuture<LoginResponseModel> socialLogin(Map<String, dynamic> body);
   ResultFuture<dynamic> saveFcmToken(Map<String, dynamic> body);
+  ResultFuture<dynamic> changePassword(Map<String, dynamic> body);
 }

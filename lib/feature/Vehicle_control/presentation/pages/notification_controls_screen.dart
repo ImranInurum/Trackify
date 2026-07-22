@@ -7,8 +7,12 @@ import 'package:trackify/feature/service_logs/presentation/cubit/service_logs_cu
 import 'package:trackify/feature/service_logs/presentation/cubit/service_logs_state.dart';
 import 'package:trackify/core/widgets/trackify_loader.dart';
 
+import 'package:trackify/core/config/network/api_host.dart';
+import 'package:trackify/core/config/network/network_api_service.dart';
+
 class NotificationControlsScreen extends StatefulWidget {
-  const NotificationControlsScreen({super.key});
+  final String? passedImei;
+  const NotificationControlsScreen({super.key, this.passedImei});
 
   @override
   State<NotificationControlsScreen> createState() => _NotificationControlsScreenState();
@@ -18,11 +22,94 @@ class _NotificationControlsScreenState extends State<NotificationControlsScreen>
   bool _ignitionNotification = true;
   bool _motionNotification = true;
   bool _powerSupplyNotification = true;
+  bool _isLoadingControls = false;
+  String? _lastFetchedImei;
 
   @override
   void initState() {
     super.initState();
     context.read<ServiceLogsCubit>().loadVehicles();
+  }
+
+  Future<void> _fetchNotificationControls(String imei) async {
+    if (imei.isEmpty || _lastFetchedImei == imei) return;
+    _lastFetchedImei = imei;
+
+    if (mounted) {
+      setState(() {
+        _isLoadingControls = true;
+      });
+    }
+
+    final url = ApiURL.notificationControl(imei);
+    final apiService = NetworkApiService();
+    final result = await apiService.getGetApiResponse(url);
+
+    result.fold(
+      (failure) {
+        debugPrint("Error fetching notification controls: ${failure.message}");
+        if (mounted) {
+          setState(() {
+            _isLoadingControls = false;
+          });
+        }
+      },
+      (response) {
+        try {
+          Map<String, dynamic>? dataMap;
+          if (response is Map<String, dynamic>) {
+            final data = response['data'];
+            if (data is Map<String, dynamic>) {
+              dataMap = data;
+            } else if (response['success'] == true && response['data'] != null) {
+              dataMap = Map<String, dynamic>.from(response['data']);
+            } else {
+              dataMap = response;
+            }
+          }
+
+          if (dataMap != null && mounted) {
+            setState(() {
+              _ignitionNotification = dataMap!['ignition'] == true;
+              _motionNotification = dataMap!['motionWithIgnitionOff'] == true;
+              _powerSupplyNotification = dataMap!['powerSupply'] == true;
+              _isLoadingControls = false;
+            });
+          } else if (mounted) {
+            setState(() {
+              _isLoadingControls = false;
+            });
+          }
+        } catch (e) {
+          debugPrint("Error parsing notification controls: $e");
+          if (mounted) {
+            setState(() {
+              _isLoadingControls = false;
+            });
+          }
+        }
+      },
+    );
+  }
+
+  Future<void> _updateNotificationControls(String imei) async {
+    final url = ApiURL.updateNotificationControl;
+    final apiService = NetworkApiService();
+    final body = {
+      "imei": imei,
+      "ignition": _ignitionNotification,
+      "motionWithIgnitionOff": _motionNotification,
+      "powerSupply": _powerSupplyNotification,
+    };
+    final result = await apiService.getPostApiResponse(url, body);
+    result.fold(
+      (failure) {
+        debugPrint("Error updating notification controls: ${failure.message}");
+      },
+      (data) {
+        debugPrint("Notification controls updated successfully");
+      },
+    );
   }
 
   @override
@@ -57,8 +144,18 @@ class _NotificationControlsScreenState extends State<NotificationControlsScreen>
               : (context.read<ServiceLogsCubit>().state as ServiceLogsLoaded);
 
           final selectedVehicle = currentState.selectedVehicle;
-          final hasDevice = selectedVehicle?.imei != null &&
-              selectedVehicle!.imei!.trim().isNotEmpty;
+          final selectedImei = selectedVehicle?.imei;
+          final currentImei = (selectedImei != null && selectedImei.trim().isNotEmpty)
+              ? selectedImei.trim()
+              : (widget.passedImei ?? '');
+
+          if (currentImei.isNotEmpty && _lastFetchedImei != currentImei) {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              _fetchNotificationControls(currentImei);
+            });
+          }
+
+          final hasDevice = currentImei.isNotEmpty;
 
           return Column(
             children: [
@@ -152,6 +249,9 @@ class _NotificationControlsScreenState extends State<NotificationControlsScreen>
                             return;
                           }
                           setState(() => _ignitionNotification = val!);
+                          if (currentImei.isNotEmpty) {
+                            _updateNotificationControls(currentImei);
+                          }
                         },
                       ),
                       
@@ -168,6 +268,9 @@ class _NotificationControlsScreenState extends State<NotificationControlsScreen>
                             return;
                           }
                           setState(() => _motionNotification = val!);
+                          if (currentImei.isNotEmpty) {
+                            _updateNotificationControls(currentImei);
+                          }
                         },
                       ),
 
@@ -184,6 +287,9 @@ class _NotificationControlsScreenState extends State<NotificationControlsScreen>
                             return;
                           }
                           setState(() => _powerSupplyNotification = val!);
+                          if (currentImei.isNotEmpty) {
+                            _updateNotificationControls(currentImei);
+                          }
                         },
                       ),
                       

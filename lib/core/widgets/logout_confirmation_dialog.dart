@@ -6,6 +6,7 @@ import 'package:trackify/feature/map/presentation/cubit/map_cubit.dart';
 import 'package:trackify/feature/my_garage/presentation/cubit/my_garage_cubit.dart';
 import 'package:trackify/feature/my_profile/presentation/cubit/my_profile_cubit.dart';
 import 'package:trackify/feature/profile/presentation/cubit/profile_cubit.dart';
+import 'package:trackify/feature/service_logs/presentation/cubit/service_logs_cubit.dart';
 import 'package:trackify/l10n/app_localizations.dart';
 
 class LogoutConfirmationDialog {
@@ -107,6 +108,7 @@ class LogoutConfirmationDialog {
                             context.read<MyProfileCubit>().reset();
                             context.read<MapCubit>().reset();
                             context.read<MyGarageCubit>().reset();
+                            context.read<ServiceLogsCubit>().reset();
                             Navigator.of(
                               context,
                               rootNavigator: true,

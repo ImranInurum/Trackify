@@ -58,6 +58,9 @@ class MyGarageCubit extends Cubit<MyGarageState> {
   }
 
   void reset() {
+    try {
+      Hive.box('map_cache').delete('common_vehicles_data');
+    } catch (_) {}
     emit(MyGarageInitial());
   }
 }

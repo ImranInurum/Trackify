@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:trackify/feature/settings/presentation/pages/notification_settings.dart';
 import 'package:trackify/feature/settings/presentation/pages/privacy_screen.dart';
+import 'package:trackify/feature/settings/presentation/pages/manage_access_screen.dart';
 import 'package:trackify/feature/settings/presentation/widgets/setting_list_tile.dart';
 import 'package:trackify/l10n/app_localizations.dart';
 
@@ -235,6 +236,23 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     context,
                     MaterialPageRoute(
                       builder: (context) => const PrivacyScreen(),
+                    ),
+                  );
+                },
+              ),
+
+            if (_isVisible('Manage Access'))
+              SettingListTile(
+                icon: Icons.manage_accounts_outlined,
+                title: 'Manage Access',
+                subtitle: 'Share your vehicle access with others',
+                showArrow: true,
+                showIcon: true,
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const ManageAccessScreen(),
                     ),
                   );
                 },

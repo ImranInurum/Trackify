@@ -13,9 +13,9 @@ import 'package:trackify/feature/document_folder/data/data_sources/document_loca
 
 class DocumentOtherdocumentScreen extends StatefulWidget {
   final String title;
-  final String imei;
+  final String vehicleId;
 
-  const DocumentOtherdocumentScreen({super.key, required this.title, required this.imei});
+  const DocumentOtherdocumentScreen({super.key, required this.title, required this.vehicleId});
 
   @override
   State<DocumentOtherdocumentScreen> createState() =>
@@ -316,6 +316,13 @@ class _DocumentOtherdocumentScreenState extends State<DocumentOtherdocumentScree
       return;
     }
 
+    if (_selectedDate == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please select date')),
+      );
+      return;
+    }
+
     setState(() {
       _isLoading = true;
       _error = null;
@@ -333,7 +340,7 @@ class _DocumentOtherdocumentScreenState extends State<DocumentOtherdocumentScree
       }
 
       final request = DocumentUploadRequest(
-        imei: widget.imei,
+        vehicleId: widget.vehicleId,
         type: 'personal',
         subtype: 'other_document',
         expiryDate: _selectedDate != null

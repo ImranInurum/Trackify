@@ -14,10 +14,10 @@ import 'package:trackify/feature/document_folder/data/data_sources/document_loca
 /// Pass the [title] that should appear in the header.
 class DocumentSubScreen extends StatefulWidget {
   final String title;
-  final String imei;
+  final String vehicleId;
   final String subtype;
 
-  const DocumentSubScreen({super.key, required this.title, required this.imei, required this.subtype});
+  const DocumentSubScreen({super.key, required this.title, required this.vehicleId, required this.subtype});
 
   @override
   State<DocumentSubScreen> createState() => _DocumentSubScreenState();
@@ -287,6 +287,13 @@ class _DocumentSubScreenState extends State<DocumentSubScreen> {
       return;
     }
 
+    if (_selectedDate == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please select date')),
+      );
+      return;
+    }
+
     setState(() {
       _isLoading = true;
       _error = null;
@@ -304,7 +311,7 @@ class _DocumentSubScreenState extends State<DocumentSubScreen> {
       }
 
       final request = DocumentUploadRequest(
-        imei: widget.imei,
+        vehicleId: widget.vehicleId,
         type: 'personal',
         subtype: widget.subtype,
         expiryDate: _selectedDate != null

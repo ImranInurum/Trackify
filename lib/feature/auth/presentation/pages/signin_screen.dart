@@ -182,15 +182,59 @@ class _SignInScreenState extends State<SignInScreen> {
             if (state is AuthSuccess) {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text(l10n.welcome(state.user.user?.email ?? '')),
+                  behavior: SnackBarBehavior.floating,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  backgroundColor: Theme.of(context).colorScheme.primary,
+                  content: Row(
+                    children: [
+                      Icon(Icons.check_circle_outline, color: Theme.of(context).colorScheme.onPrimary),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Text(
+                          l10n.welcome(state.user.user?.email ?? ''),
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.onPrimary,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  margin: const EdgeInsets.all(16),
                 ),
               );
 
               final userId = state.user.user?.id ?? "";
               if (userId.isEmpty) {
-                ScaffoldMessenger.of(
-                  context,
-                ).showSnackBar(SnackBar(content: Text(l10n.loginFailed)));
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    behavior: SnackBarBehavior.floating,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    backgroundColor: Theme.of(context).colorScheme.error,
+                    content: Row(
+                      children: [
+                        Icon(Icons.error_outline, color: Theme.of(context).colorScheme.onError),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Text(
+                            l10n.loginFailed,
+                            style: TextStyle(
+                              color: Theme.of(context).colorScheme.onError,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    margin: const EdgeInsets.all(16),
+                  ),
+                );
                 await AppPreference.instance.clearAll();
                 return;
               }
@@ -221,9 +265,32 @@ class _SignInScreenState extends State<SignInScreen> {
                 );
               }
             } else if (state is AuthFailure) {
-              ScaffoldMessenger.of(
-                context,
-              ).showSnackBar(SnackBar(content: Text(state.error.message)));
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  behavior: SnackBarBehavior.floating,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  backgroundColor: Theme.of(context).colorScheme.error,
+                  content: Row(
+                    children: [
+                      Icon(Icons.error_outline, color: Theme.of(context).colorScheme.onError),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Text(
+                          state.error.message,
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.onError,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  margin: const EdgeInsets.all(16),
+                ),
+              );
             }
           },
           builder: (context, state) {

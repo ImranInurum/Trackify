@@ -55,6 +55,9 @@ class MapCubit extends Cubit<MapState> {
   }
 
   void reset() {
+    try {
+      Hive.box('map_cache').delete('vehicles_data');
+    } catch (_) {}
     emit(MapInitial());
   }
 }

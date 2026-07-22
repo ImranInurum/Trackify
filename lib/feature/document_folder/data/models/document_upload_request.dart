@@ -1,5 +1,5 @@
 class DocumentUploadRequest {
-  final String imei;
+  final String vehicleId;
   final String type;
   final String subtype;
   final String? title;
@@ -11,7 +11,7 @@ class DocumentUploadRequest {
   final String? warrantyExpiry;
 
   const DocumentUploadRequest({
-    required this.imei,
+    required this.vehicleId,
     required this.type,
     required this.subtype,
     this.title,
@@ -25,7 +25,7 @@ class DocumentUploadRequest {
 
   Map<String, String> toFields() {
     final fields = <String, String>{
-      'imei': imei,
+      'vehicleId': vehicleId,
       'type': type,
       'subtype': subtype,
     };

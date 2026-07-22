@@ -211,6 +211,10 @@ class AppCubit extends Cubit<AppState> with WidgetsBindingObserver {
       _locationSubscription = _locationService.locationStream.listen(
         (position) {
           print("Positions : ${position.latitude}_${position.longitude}");
+          AppPreference.instance.set(
+            key: 'last_phone_update_time',
+            value: position.timestamp.toIso8601String(),
+          );
           emit(state.copyWith(currentLocation: position));
         },
         onError: (error) {
