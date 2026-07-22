@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:country_state_city/country_state_city.dart' as csc;
+import 'package:trackify/core/config/network/api_host.dart';
+import 'package:trackify/core/config/network/network_api_service.dart';
 import 'package:trackify/core/utils/shared_preferences.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -10,7 +12,7 @@ import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:trackify/app/app_navigation.dart';
 import 'package:trackify/core/constants/app_images.dart';
-import 'package:trackify/feature/Vehicle_control/domain/entities/vehicle_control_entity.dart';
+import '../../domain/entities/vehicle_control_entity.dart';
 import 'package:trackify/l10n/app_localizations.dart';
 import '../../../document_folder/presentation/pages/document_screen.dart';
 import '../../../upgrade_to_plus/presentation/pages/upgrade_to_plus.dart';
@@ -109,34 +111,111 @@ class _VehicleControlViewState extends State<VehicleControlView> {
     }
   }
 
-  void _ensureContactsLoaded(VehicleControlEntity vehicle) async {
+  void _ensureContactsLoaded(VehicleControlEntity vehicle) {
     final keyId = vehicle.id.isNotEmpty
         ? vehicle.id
         : (vehicle.vehicleNumber.isNotEmpty
               ? vehicle.vehicleNumber
               : 'default');
     if (_lastLoadedVehicleId != keyId) {
-      _lastLoadedVehicleId = keyId;
-      final raw = await AppPreference.instance.get(
-        key: "emergency_contacts_$keyId",
-      );
-      if (raw.isNotEmpty) {
-        try {
-          final decoded = jsonDecode(raw) as List;
+      _fetchEmergencyContacts(vehicle);
+    }
+  }
+
+  Future<void> _fetchEmergencyContacts(VehicleControlEntity vehicle) async {
+    final keyId = vehicle.id.isNotEmpty
+        ? vehicle.id
+        : (vehicle.vehicleNumber.isNotEmpty
+              ? vehicle.vehicleNumber
+              : 'default');
+    _lastLoadedVehicleId = keyId;
+
+    final raw = await AppPreference.instance.get(
+      key: "emergency_contacts_$keyId",
+    );
+    if (raw.isNotEmpty) {
+      try {
+        final decoded = jsonDecode(raw) as List;
+        if (mounted) {
           setState(() {
             _contacts = decoded
                 .map((item) => Map<String, String>.from(item))
                 .toList();
           });
-        } catch (e) {
-          debugPrint("Error parsing emergency contacts: $e");
         }
-      } else {
-        setState(() {
-          _contacts = [];
-        });
+      } catch (e) {
+        debugPrint("Error parsing emergency contacts: $e");
       }
     }
+
+    final userId = await AppPreference.instance.get(
+      key: AppPreference.KEY_USER_ID,
+    );
+    final targetVehicleId = vehicle.id.isNotEmpty ? vehicle.id : keyId;
+
+    final url = "${ApiURL.addEmergencyNumber}?userId=$userId&vehicleId=$targetVehicleId";
+    final apiService = NetworkApiService();
+    final result = await apiService.getGetApiResponse(url);
+
+    result.fold(
+      (failure) {
+        debugPrint("Error fetching emergency contacts: ${failure.message}");
+      },
+      (data) {
+        try {
+          List dynamicList = [];
+          if (data is List) {
+            dynamicList = data;
+          } else if (data is Map) {
+            if (data['data'] is List) {
+              dynamicList = data['data'];
+            } else if (data['emergencyNumbers'] is List) {
+              dynamicList = data['emergencyNumbers'];
+            } else if (data['contacts'] is List) {
+              dynamicList = data['contacts'];
+            } else if (data['result'] is List) {
+              dynamicList = data['result'];
+            }
+          }
+
+          final List<Map<String, String>> fetchedContacts = [];
+          for (final item in dynamicList) {
+            if (item is Map) {
+              final itemVehicleId = item['vehicleId']?.toString() ?? '';
+              if (itemVehicleId.isEmpty || itemVehicleId == vehicle.id || itemVehicleId == keyId) {
+                final name = item['name']?.toString() ?? '';
+                final countryCode = item['countryCode']?.toString() ?? '+91';
+                final mobileNumber = item['mobileNumber']?.toString() ?? item['phone']?.toString() ?? '';
+
+                String phoneStr = mobileNumber;
+                if (countryCode.isNotEmpty && !mobileNumber.startsWith('+')) {
+                  phoneStr = '$countryCode $mobileNumber';
+                }
+
+                if (name.isNotEmpty || mobileNumber.isNotEmpty) {
+                  fetchedContacts.add({
+                    'id': item['_id']?.toString() ?? item['id']?.toString() ?? '',
+                    'name': name,
+                    'phone': phoneStr,
+                    'countryCode': countryCode,
+                    'mobileNumber': mobileNumber,
+                  });
+                }
+              }
+            }
+          }
+
+          if (mounted) {
+            setState(() {
+              _contacts = fetchedContacts;
+            });
+            _saveEmergencyContacts(keyId);
+          }
+        } catch (e) {
+          debugPrint("Error parsing emergency contacts API response: $e");
+        }
+      },
+    );
   }
 
   Future<void> _saveEmergencyContacts(String keyId) async {
@@ -147,11 +226,133 @@ class _VehicleControlViewState extends State<VehicleControlView> {
     );
   }
 
+  void _confirmAndDeleteContact(
+    BuildContext context,
+    Map<String, String> contact,
+    VehicleControlEntity vehicle,
+  ) {
+    final theme = Theme.of(context);
+    final contactId = contact['id'] ?? '';
+
+    showDialog(
+      context: context,
+      builder: (dialogContext) {
+        bool isDeleting = false;
+        return StatefulBuilder(
+          builder: (dialogContext, setDialogState) {
+            return AlertDialog(
+              backgroundColor: theme.dialogBackgroundColor,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+              title: const Text(
+                'Delete Emergency Contact',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              content: Text(
+                'Are you sure you want to delete ${contact['name'] ?? 'this contact'}?',
+              ),
+              actions: [
+                TextButton(
+                  onPressed: isDeleting
+                      ? null
+                      : () => Navigator.pop(dialogContext),
+                  child: const Text('Cancel'),
+                ),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: theme.colorScheme.error,
+                    foregroundColor: theme.colorScheme.onError,
+                  ),
+                  onPressed: isDeleting
+                      ? null
+                      : () async {
+                          setDialogState(() {
+                            isDeleting = true;
+                          });
+
+                          final keyId = vehicle.id.isNotEmpty
+                              ? vehicle.id
+                              : (vehicle.vehicleNumber.isNotEmpty
+                                    ? vehicle.vehicleNumber
+                                    : 'default');
+
+                          if (contactId.isNotEmpty) {
+                            final url = "${ApiURL.addEmergencyNumber}/$contactId";
+                            final apiService = NetworkApiService();
+                            final result = await apiService.getDeleteApiResponse(url, {});
+
+                            result.fold(
+                              (failure) {
+                                setDialogState(() {
+                                  isDeleting = false;
+                                });
+                                if (context.mounted) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(failure.message),
+                                      backgroundColor: theme.colorScheme.error,
+                                    ),
+                                  );
+                                }
+                              },
+                              (data) {
+                                if (mounted) {
+                                  setState(() {
+                                    _contacts.remove(contact);
+                                  });
+                                  _saveEmergencyContacts(keyId);
+                                  _fetchEmergencyContacts(vehicle);
+                                }
+                                if (dialogContext.mounted) {
+                                  Navigator.pop(dialogContext);
+                                }
+                              },
+                            );
+                          } else {
+                            if (mounted) {
+                              setState(() {
+                                _contacts.remove(contact);
+                              });
+                              _saveEmergencyContacts(keyId);
+                            }
+                            if (dialogContext.mounted) {
+                              Navigator.pop(dialogContext);
+                            }
+                          }
+                        },
+                  child: isDeleting
+                      ? const SizedBox(
+                          width: 48,
+                          height: 20,
+                          child: Center(
+                            child: SizedBox(
+                              height: 16,
+                              width: 16,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                              ),
+                            ),
+                          ),
+                        )
+                      : const Text('Delete'),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
   void _showAddContactDialog(
     BuildContext context,
     String keyId, {
     Map<String, String>? initialContact,
     int? editIndex,
+    String? vehicleId,
+    VehicleControlEntity? currentVehicle,
   }) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
@@ -178,11 +379,14 @@ class _VehicleControlViewState extends State<VehicleControlView> {
 
     final nameController = TextEditingController(text: initialContact?['name'] ?? '');
     final phoneController = TextEditingController(text: rawPhone);
+    final phoneFocusNode = FocusNode();
     final formKey = GlobalKey<FormState>();
 
     showDialog(
       context: context,
-      builder: (context) => StatefulBuilder(
+      builder: (context) {
+        bool isSaving = false;
+        return StatefulBuilder(
         builder: (context, setStateDialog) => Dialog(
           backgroundColor: isDark ? const Color(0xFF2C2C2C) : theme.cardColor,
           shape: RoundedRectangleBorder(
@@ -211,11 +415,13 @@ class _VehicleControlViewState extends State<VehicleControlView> {
                     controller: nameController,
                     keyboardType: TextInputType.name,
                     textCapitalization: TextCapitalization.words,
-                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                    textInputAction: TextInputAction.next,
+                    onFieldSubmitted: (_) {
+                      phoneFocusNode.requestFocus();
+                    },
                     style: TextStyle(color: theme.colorScheme.onSurface),
                     onChanged: (_) {
                       setStateDialog(() {});
-                      formKey.currentState?.validate();
                     },
                     decoration: InputDecoration(
                       labelText: l10n.name,
@@ -243,18 +449,18 @@ class _VehicleControlViewState extends State<VehicleControlView> {
                   const SizedBox(height: 16),
                   TextFormField(
                     controller: phoneController,
+                    focusNode: phoneFocusNode,
                     keyboardType: TextInputType.phone,
+                    textInputAction: TextInputAction.done,
                     maxLength: 10,
                     buildCounter: (context, {required int currentLength, required bool isFocused, required int? maxLength}) => null,
                     inputFormatters: [
                       FilteringTextInputFormatter.digitsOnly,
                       LengthLimitingTextInputFormatter(10),
                     ],
-                    autovalidateMode: AutovalidateMode.onUserInteraction,
                     style: TextStyle(color: theme.colorScheme.onSurface),
                     onChanged: (_) {
                       setStateDialog(() {});
-                      formKey.currentState?.validate();
                     },
                     decoration: InputDecoration(
                       labelText: l10n.mobileNumber,
@@ -382,24 +588,75 @@ class _VehicleControlViewState extends State<VehicleControlView> {
                       ),
                       const SizedBox(width: 16),
                       ElevatedButton(
-                        onPressed: () {
-                          if (formKey.currentState?.validate() ?? false) {
-                            final newContact = {
-                              'name': nameController.text.trim(),
-                              'phone':
-                                  '$selectedPhoneCode ${phoneController.text.trim()}',
-                            };
-                            setState(() {
-                              if (editIndex != null && editIndex < _contacts.length) {
-                                _contacts[editIndex] = newContact;
-                              } else {
-                                _contacts.add(newContact);
-                              }
-                            });
-                            _saveEmergencyContacts(keyId);
-                            Navigator.pop(context);
-                          }
-                        },
+                        onPressed: isSaving
+                            ? null
+                            : () async {
+                                if (formKey.currentState?.validate() ?? false) {
+                                  setStateDialog(() {
+                                    isSaving = true;
+                                  });
+
+                                  final name = nameController.text.trim();
+                                  final mobileNumber = phoneController.text.trim();
+                                  final countryCode = selectedPhoneCode;
+                                  final userId = await AppPreference.instance.get(
+                                    key: AppPreference.KEY_USER_ID,
+                                  );
+                                  final targetVehicleId =
+                                      (vehicleId != null && vehicleId.isNotEmpty)
+                                          ? vehicleId
+                                          : keyId;
+
+                                  final apiService = NetworkApiService();
+                                  final result = await apiService.getPostApiResponse(
+                                    ApiURL.addEmergencyNumber,
+                                    {
+                                      "userId": userId,
+                                      "vehicleId": targetVehicleId,
+                                      "name": name,
+                                      "countryCode": countryCode,
+                                      "mobileNumber": mobileNumber,
+                                    },
+                                  );
+
+                                  result.fold(
+                                    (failure) {
+                                      setStateDialog(() {
+                                        isSaving = false;
+                                      });
+                                      if (context.mounted) {
+                                        ScaffoldMessenger.of(context).showSnackBar(
+                                          SnackBar(
+                                            content: Text(failure.message),
+                                            backgroundColor: theme.colorScheme.error,
+                                          ),
+                                        );
+                                      }
+                                    },
+                                    (data) {
+                                      final newContact = {
+                                        'name': name,
+                                        'phone': '$countryCode $mobileNumber',
+                                      };
+                                      setState(() {
+                                        if (editIndex != null &&
+                                            editIndex < _contacts.length) {
+                                          _contacts[editIndex] = newContact;
+                                        } else {
+                                          _contacts.add(newContact);
+                                        }
+                                      });
+                                      _saveEmergencyContacts(keyId);
+                                      if (currentVehicle != null) {
+                                        _fetchEmergencyContacts(currentVehicle);
+                                      }
+                                      if (context.mounted) {
+                                        Navigator.pop(context);
+                                      }
+                                    },
+                                  );
+                                }
+                              },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: theme.colorScheme.primary,
                           foregroundColor: theme.colorScheme.onPrimary,
@@ -407,10 +664,19 @@ class _VehicleControlViewState extends State<VehicleControlView> {
                             borderRadius: BorderRadius.circular(8),
                           ),
                         ),
-                        child: Text(
-                          l10n.save,
-                          style: const TextStyle(fontWeight: FontWeight.bold),
-                        ),
+                        child: isSaving
+                            ? const SizedBox(
+                                height: 18,
+                                width: 18,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  color: Colors.white,
+                                ),
+                              )
+                            : Text(
+                                l10n.save,
+                                style: const TextStyle(fontWeight: FontWeight.bold),
+                              ),
                       ),
                     ],
                   ),
@@ -419,9 +685,10 @@ class _VehicleControlViewState extends State<VehicleControlView> {
             ),
           ),
         ),
-      ),
-    );
-  }
+      );
+    },
+  );
+}
 
   @override
   Widget build(BuildContext context) {
@@ -872,7 +1139,11 @@ class _VehicleControlViewState extends State<VehicleControlView> {
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) =>
-                                      const NotificationControlsScreen(),
+                                      NotificationControlsScreen(
+                                    passedImei: vehicle.imei.isNotEmpty
+                                        ? vehicle.imei
+                                        : null,
+                                  ),
                                 ),
                               );
                             },
@@ -1010,6 +1281,8 @@ class _VehicleControlViewState extends State<VehicleControlView> {
                                           keyId,
                                           initialContact: contact,
                                           editIndex: index,
+                                          vehicleId: vehicle.id,
+                                          currentVehicle: vehicle,
                                         );
                                       },
                                       child: Container(
@@ -1082,18 +1355,11 @@ class _VehicleControlViewState extends State<VehicleControlView> {
                                                 size: 20,
                                               ),
                                               onPressed: () {
-                                                setState(() {
-                                                  _contacts.remove(contact);
-                                                });
-                                                final keyId =
-                                                    vehicle.id.isNotEmpty
-                                                    ? vehicle.id
-                                                    : (vehicle
-                                                              .vehicleNumber
-                                                              .isNotEmpty
-                                                          ? vehicle.vehicleNumber
-                                                          : 'default');
-                                                _saveEmergencyContacts(keyId);
+                                                _confirmAndDeleteContact(
+                                                  context,
+                                                  contact,
+                                                  vehicle,
+                                                );
                                               },
                                             ),
                                           ],
@@ -1112,7 +1378,12 @@ class _VehicleControlViewState extends State<VehicleControlView> {
                                           : (vehicle.vehicleNumber.isNotEmpty
                                                 ? vehicle.vehicleNumber
                                                 : 'default');
-                                      _showAddContactDialog(context, keyId);
+                                      _showAddContactDialog(
+                                        context,
+                                        keyId,
+                                        vehicleId: vehicle.id,
+                                        currentVehicle: vehicle,
+                                      );
                                     },
                                     borderRadius: BorderRadius.circular(4),
                                     child: Padding(

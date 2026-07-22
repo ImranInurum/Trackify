@@ -1,4 +1,4 @@
-﻿import 'dart:async';
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:trackify/l10n/app_localizations.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -7,6 +7,10 @@ import 'package:geolocator/geolocator.dart';
 import 'package:flutter/services.dart';
 import 'dart:ui' as ui;
 import 'package:permission_handler/permission_handler.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:trackify/app/cubit/app_cubit.dart';
+import 'package:trackify/app/cubit/app_state.dart';
+import 'package:trackify/core/constants/app_images.dart';
 
 import 'widgets/share_ride_bottom_sheet.dart';
 
@@ -329,10 +333,10 @@ class _RidePlaybackScreenState extends State<RidePlaybackScreen> {
         title: Text(
           DateFormat('d MMM yy EEE').format(widget.startTime), ),
         actions: [
-          IconButton(
-            icon: Icon(Icons.video_library, color: Theme.of(context).colorScheme.onSurface),
-            onPressed: () => _showExportDialog(context),
-          ),
+//           IconButton(
+//             icon: Icon(Icons.video_library, color: Theme.of(context).colorScheme.onSurface),
+//             onPressed: () => _showExportDialog(context),
+//           ),
           IconButton(
             icon: Icon(Icons.share, color: Theme.of(context).colorScheme.onSurface),
             onPressed: () {
@@ -377,15 +381,15 @@ class _RidePlaybackScreenState extends State<RidePlaybackScreen> {
                   mini: true,
                   backgroundColor: Theme.of(context).cardColor,
                   child: Icon(Icons.map, color: Theme.of(context).iconTheme.color ?? Colors.grey),
-                  onPressed: () {},
+                  onPressed: _showMapStyleBottomSheet,
                 ),
                 const SizedBox(height: 8),
                 FloatingActionButton(
                   heroTag: 'myLocation',
                   mini: true,
                   backgroundColor: Theme.of(context).cardColor,
-                  child: Icon(Icons.my_location, color: Theme.of(context).iconTheme.color ?? Colors.grey),
-                  onPressed: () {},
+                  child: Icon(Icons.my_location, color: Theme.of(context).colorScheme.primary),
+                  onPressed: _moveToCurrentLocation,
                 ),
               ],
             ),
@@ -456,74 +460,319 @@ class _RidePlaybackScreenState extends State<RidePlaybackScreen> {
     );
   }
   
-  Widget _buildMap() {
-    Set<Marker> markers = {};
-    if (widget.points.isNotEmpty) {
-      markers.add(
-        Marker(
-          markerId: const MarkerId('start'),
-          position: widget.points.first,
-          icon: _startIcon ?? BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen),
-        )
-      );
-      markers.add(
-        Marker(
-          markerId: const MarkerId('end'),
-          position: widget.points.last,
-          icon: _endIcon ?? BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
-        )
-      );
-    }
-    
-    if (_currentPosition != null) {
-      markers.add(
-        Marker(
-          markerId: const MarkerId('current'),
-          position: _currentPosition!,
-          icon: _currentIcon ?? BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue),
-          anchor: const Offset(0.5, 0.5),
-          rotation: _currentRotation,
-          flat: true,
-        )
-      );
-    }
-    
-    Set<Polyline> polylines = {
-      if (widget.points.length > 1)
-        Polyline(
-          polylineId: const PolylineId('route'),
-          points: widget.points,
-          color: Theme.of(context).colorScheme.primary, // Green
-          width: 5,
-        )
-    };
-
-    LatLng initialTarget = widget.points.isNotEmpty ? widget.points.first : const LatLng(20, 78);
-
-    final style = (Theme.of(context).brightness == Brightness.dark) ? _darkMapStyle : _lightMapStyle;
-    
-    _mapController.future.then((c) {
-      if (style != null) {
-        c.setMapStyle(style);
-      } else {
-        c.setMapStyle(null);
+  Future<void> _moveToCurrentLocation() async {
+    try {
+      if (_isPlaying) {
+        setState(() {
+          _isPlaying = false;
+          _playbackTimer?.cancel();
+        });
       }
-    });
 
-    return GoogleMap(
-      initialCameraPosition: CameraPosition(target: initialTarget, zoom: 15),
-      markers: markers,
-      polylines: polylines,
-      zoomControlsEnabled: false,
-      myLocationButtonEnabled: false,
-      style: style,
-      onMapCreated: (controller) {
-        if (!_mapController.isCompleted) {
-          _mapController.complete(controller);
+      LatLng? target = _currentPosition;
+      if (target == null && widget.points.isNotEmpty) {
+        target = widget.points.first;
+      }
+
+      if (target == null) {
+        final status = await Permission.location.status;
+        if (!status.isGranted) {
+          await Permission.location.request();
         }
-        if (style != null) {
-          controller.setMapStyle(style);
+        Position position = await Geolocator.getCurrentPosition(
+          desiredAccuracy: LocationAccuracy.high,
+        );
+        target = LatLng(position.latitude, position.longitude);
+      }
+
+      final controller = await _mapController.future;
+      await controller.animateCamera(
+        CameraUpdate.newCameraPosition(
+          CameraPosition(
+            target: target,
+            zoom: 17.0,
+            tilt: 0.0,
+            bearing: 0.0,
+          ),
+        ),
+      );
+    } catch (e) {
+      debugPrint("Error moving to current location: $e");
+    }
+  }
+
+  void _showMapStyleBottomSheet() {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      barrierColor: Colors.black45,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(36)),
+      ),
+      builder: (ctx) {
+        return BlocBuilder<AppCubit, AppState>(
+          builder: (context, appState) {
+            final l10n = AppLocalizations.of(context)!;
+            return Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Center(
+                    child: Container(
+                      width: 44,
+                      height: 5,
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).dividerColor,
+                        borderRadius: BorderRadius.circular(3),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  Text(
+                    l10n.mapStyleLabel,
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                      color: Theme.of(context).colorScheme.onSurface,
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      _buildStyleOption(l10n.darkStyle, AppImages.darkMapStyle, appState),
+                      _buildStyleOption(l10n.lightStyle, AppImages.lightMapStyle, appState),
+                      _buildStyleOption(l10n.simpleStyle, AppImages.simpleMapStyle, appState),
+                      _buildStyleOption(l10n.satelliteStyle, AppImages.sateLiteMapStyle, appState),
+                    ],
+                  ),
+                  const SizedBox(height: 32),
+                  Text(
+                    l10n.mapOptionsLabel,
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                      color: Theme.of(context).colorScheme.onSurface,
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  Row(
+                    children: [
+                      _buildMapOption(
+                        l10n.trafficLabel,
+                        AppImages.trafficMapStyle,
+                        appState.isTrafficEnabled,
+                        (val) => context.read<AppCubit>().updateMapConfig(
+                          isTrafficEnabled: val,
+                        ),
+                      ),
+                      const SizedBox(width: 24),
+                      _buildMapOption(
+                        l10n.labelsLabel,
+                        AppImages.darkMapStyle,
+                        appState.isLabelsEnabled,
+                        (val) => context.read<AppCubit>().updateMapConfig(
+                          isLabelsEnabled: val,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 24),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  Widget _buildStyleOption(String name, String imagePath, AppState appState) {
+    final bool isSelected =
+        appState.mapStyle == name ||
+        (appState.mapType == 'satellite' && name == "Satellite");
+    return GestureDetector(
+      onTap: () {
+        if (name == "Satellite") {
+          context.read<AppCubit>().updateMapConfig(
+            mapType: 'satellite',
+            mapStyle: 'Satellite',
+          );
+        } else {
+          context.read<AppCubit>().updateMapConfig(
+            mapType: 'normal',
+            mapStyle: name,
+          );
         }
+      },
+      child: Column(
+        children: [
+          Container(
+            width: 70,
+            height: 70,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(
+                color: isSelected
+                    ? Theme.of(context).colorScheme.primary
+                    : Colors.transparent,
+                width: 2,
+              ),
+              image: DecorationImage(
+                image: AssetImage(imagePath),
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            name,
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+              color: isSelected
+                  ? Theme.of(context).colorScheme.primary
+                  : Theme.of(context).colorScheme.onSurface,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMapOption(
+    String name,
+    String imagePath,
+    bool isEnabled,
+    Function(bool) onChanged,
+  ) {
+    return GestureDetector(
+      onTap: () => onChanged(!isEnabled),
+      child: Column(
+        children: [
+          Container(
+            width: 60,
+            height: 60,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(
+                color: isEnabled
+                    ? Theme.of(context).colorScheme.primary
+                    : Colors.transparent,
+                width: 2,
+              ),
+              image: DecorationImage(
+                image: AssetImage(imagePath),
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            name,
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: isEnabled ? FontWeight.bold : FontWeight.normal,
+              color: isEnabled
+                  ? Theme.of(context).colorScheme.primary
+                  : Theme.of(context).colorScheme.onSurface,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMap() {
+    return BlocBuilder<AppCubit, AppState>(
+      builder: (context, appState) {
+        final String? mapTypePref = appState.mapType;
+        MapType resolvedMapType = MapType.normal;
+        if (mapTypePref == 'satellite' || appState.mapStyle == 'Satellite') {
+          resolvedMapType = MapType.satellite;
+        }
+
+        String? style;
+        if (resolvedMapType != MapType.satellite) {
+          if (appState.mapStyle == 'Dark') {
+            style = _darkMapStyle;
+          } else if (appState.mapStyle == 'Light') {
+            style = _lightMapStyle;
+          } else if (appState.mapStyle == 'Simple') {
+            style = null;
+          } else {
+            style = (Theme.of(context).brightness == Brightness.dark)
+                ? _darkMapStyle
+                : _lightMapStyle;
+          }
+        }
+
+        Set<Marker> markers = {};
+        if (widget.points.isNotEmpty) {
+          markers.add(
+            Marker(
+              markerId: const MarkerId('start'),
+              position: widget.points.first,
+              icon: _startIcon ?? BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen),
+            )
+          );
+          markers.add(
+            Marker(
+              markerId: const MarkerId('end'),
+              position: widget.points.last,
+              icon: _endIcon ?? BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
+            )
+          );
+        }
+        
+        if (_currentPosition != null) {
+          markers.add(
+            Marker(
+              markerId: const MarkerId('current'),
+              position: _currentPosition!,
+              icon: _currentIcon ?? BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue),
+              anchor: const Offset(0.5, 0.5),
+              rotation: _currentRotation,
+              flat: true,
+            )
+          );
+        }
+        
+        Set<Polyline> polylines = {
+          if (widget.points.length > 1)
+            Polyline(
+              polylineId: const PolylineId('route'),
+              points: widget.points,
+              color: Theme.of(context).colorScheme.primary,
+              width: 5,
+            )
+        };
+
+        LatLng initialTarget = widget.points.isNotEmpty ? widget.points.first : const LatLng(20, 78);
+
+        _mapController.future.then((c) {
+          c.setMapStyle(style);
+        });
+
+        return GoogleMap(
+          initialCameraPosition: CameraPosition(target: initialTarget, zoom: 15),
+          markers: markers,
+          polylines: polylines,
+          mapType: resolvedMapType,
+          trafficEnabled: appState.isTrafficEnabled,
+          zoomControlsEnabled: false,
+          myLocationEnabled: true,
+          myLocationButtonEnabled: false,
+          style: style,
+          onMapCreated: (controller) {
+            if (!_mapController.isCompleted) {
+              _mapController.complete(controller);
+            }
+            controller.setMapStyle(style);
+          },
+        );
       },
     );
   }

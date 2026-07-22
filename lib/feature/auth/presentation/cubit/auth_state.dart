@@ -37,3 +37,15 @@ class ForgotPasswordOtpSent extends AuthState {}
 class ForgotPasswordOtpVerified extends AuthState {}
 
 class ForgotPasswordResetSuccess extends AuthState {}
+
+class ChangePasswordLoading extends AuthState {}
+
+class ChangePasswordSuccess extends AuthState {}
+
+class ChangePasswordFailure extends AuthState {
+  final AppException error;
+  const ChangePasswordFailure(this.error);
+
+  @override
+  List<Object?> get props => [error];
+}

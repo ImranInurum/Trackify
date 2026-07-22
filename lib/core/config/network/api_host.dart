@@ -36,6 +36,7 @@ class ApiURL {
   static const String resetPassword = "$baseURL/api/auth/reset-password";
   static const String sendOtp = "$baseURL/api/auth/send-otp";
   static const String saveFcmToken = "$baseURL/user/save-fcm-token";
+  static const String changePassword = "$baseURL/api/auth/change-password";
 
   // -------------------------
   // Vehicle
@@ -226,6 +227,23 @@ class ApiURL {
 
   static String deleteAccount(String userId) =>
       "$baseURL/user/delete/$userId";
+
+  // -------------------------
+  // Emergency Contact
+  // -------------------------
+  static const String addEmergencyNumber = "$baseURL/api/emergency-number";
+
+  // -------------------------
+  // Notification Controls
+  // -------------------------
+  static String notificationControl(String imei) => "$baseURL/api/notification-control/$imei";
+  static const String updateNotificationControl = "$baseURL/api/notification-control/update";
+
+  // -------------------------
+  // Sessions
+  // -------------------------
+  static String getSessions(String userId) => "$baseURL/api/sessions/$userId";
+  static String logoutSession(String sessionId) => "$baseURL/api/sessions/logout/$sessionId";
 
   // -------------------------
   // Statistics

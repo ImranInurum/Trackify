@@ -1,4 +1,4 @@
-﻿import 'dart:io';
+import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -13,9 +13,9 @@ import 'package:trackify/feature/document_folder/data/repository/document_reposi
 import 'package:trackify/feature/document_folder/data/data_sources/document_local_datasources.dart';
 
 class AccessoryBillScreen extends StatefulWidget {
-  final String imei;
+  final String vehicleId;
 
-  const AccessoryBillScreen({super.key, required this.imei});
+  const AccessoryBillScreen({super.key, required this.vehicleId});
 
   @override
   State<AccessoryBillScreen> createState() => _AccessoryBillScreenState();
@@ -300,7 +300,7 @@ class _AccessoryBillScreenState extends State<AccessoryBillScreen> {
       }
 
       final request = DocumentUploadRequest(
-        imei: widget.imei,
+        vehicleId: widget.vehicleId,
         type: 'personal',
         subtype: 'accessory_bill',
         title: _nameController.text.trim(),

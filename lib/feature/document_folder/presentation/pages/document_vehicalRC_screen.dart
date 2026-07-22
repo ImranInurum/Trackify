@@ -12,9 +12,13 @@ import 'package:trackify/feature/document_folder/data/data_sources/document_loca
 
 class DocumentVehicleRCScreen extends StatefulWidget {
   final String title;
-  final String imei;
+  final String vehicleId;
 
-  const DocumentVehicleRCScreen({super.key, required this.title, required this.imei});
+  const DocumentVehicleRCScreen({
+    super.key,
+    required this.title,
+    required this.vehicleId,
+  });
 
   @override
   State<DocumentVehicleRCScreen> createState() =>
@@ -38,9 +42,9 @@ class _DocumentVehicleRCScreenState extends State<DocumentVehicleRCScreen> {
   void _setLoading(bool v) => setState(() => _isLoading = v);
 
   void _setError(String msg) => setState(() {
-        _error = msg;
-        _isLoading = false;
-      });
+    _error = msg;
+    _isLoading = false;
+  });
 
   // ── DATE PICKER ──────────────────────────────────────────────
 
@@ -69,8 +73,7 @@ class _DocumentVehicleRCScreenState extends State<DocumentVehicleRCScreen> {
     });
 
     try {
-      final picked =
-          await _picker.pickImage(source: source, imageQuality: 50);
+      final picked = await _picker.pickImage(source: source, imageQuality: 50);
       if (picked == null) {
         _setLoading(false);
         return;
@@ -112,9 +115,7 @@ class _DocumentVehicleRCScreenState extends State<DocumentVehicleRCScreen> {
           initAspectRatio: CropAspectRatioPreset.original,
           lockAspectRatio: false,
         ),
-        IOSUiSettings(
-          title: l10n.cropDocument,
-        ),
+        IOSUiSettings(title: l10n.cropDocument),
       ],
     );
     return croppedFile != null ? File(croppedFile.path) : null;
@@ -282,9 +283,16 @@ class _DocumentVehicleRCScreenState extends State<DocumentVehicleRCScreen> {
   void _submit() async {
     final l10n = AppLocalizations.of(context)!;
     if (_frontFile == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n.frontRequired)),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(l10n.frontRequired)));
+      return;
+    }
+
+    if (_selectedDate == null) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Please select date')));
       return;
     }
 
@@ -305,7 +313,7 @@ class _DocumentVehicleRCScreenState extends State<DocumentVehicleRCScreen> {
       }
 
       final request = DocumentUploadRequest(
-        imei: widget.imei,
+        vehicleId: widget.vehicleId,
         type: 'personal',
         subtype: 'rc',
         expiryDate: _selectedDate != null
@@ -313,7 +321,9 @@ class _DocumentVehicleRCScreenState extends State<DocumentVehicleRCScreen> {
             : null,
       );
 
-      final repo = DocumentRepositoryImpl(DocumentLocalDataSource(ImagePicker()));
+      final repo = DocumentRepositoryImpl(
+        DocumentLocalDataSource(ImagePicker()),
+      );
       final result = await repo.uploadDocument(
         request: request,
         frontImageBytes: frontBytes,
@@ -374,7 +384,10 @@ class _DocumentVehicleRCScreenState extends State<DocumentVehicleRCScreen> {
                 children: [
                   GestureDetector(
                     onTap: () => Navigator.pop(context),
-                    child: Icon(Icons.arrow_back_ios_new, color: colorScheme.onSurface),
+                    child: Icon(
+                      Icons.arrow_back_ios_new,
+                      color: colorScheme.onSurface,
+                    ),
                   ),
                   Expanded(
                     child: Center(
@@ -400,84 +413,102 @@ class _DocumentVehicleRCScreenState extends State<DocumentVehicleRCScreen> {
                     children: [
                       const SizedBox(height: 24),
 
-              if (_isLoading) const LinearProgressIndicator(),
-              if (_error != null)
-                Text(_error!,
-                    style: const TextStyle(color: Colors.red)),
+                      if (_isLoading) const LinearProgressIndicator(),
+                      if (_error != null)
+                        Text(
+                          _error!,
+                          style: const TextStyle(color: Colors.red),
+                        ),
 
-              const SizedBox(height: 20),
+                      const SizedBox(height: 20),
 
-              // ── Expiry Date ──────────────────────────────────
-              GestureDetector(
-                onTap: _pickDate,
-                child: Container(
-                  height: screenHeight * 0.055,
-                  width: double.infinity,
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 14),
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).cardColor,
-                    borderRadius: BorderRadius.circular(10),
-                    border:
-                        Border.all(color: colorScheme.outlineVariant.withOpacity(0.2)),
-                  ),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Text(
-                          dateLabel,
-                          style: TextStyle(
-                            color: _selectedDate == null
-                                ? colorScheme.onSurfaceVariant
-                                : colorScheme.onSurface,
-                            fontSize: 13,
+                      // ── Expiry Date ──────────────────────────────────
+                      GestureDetector(
+                        onTap: _pickDate,
+                        child: Container(
+                          height: screenHeight * 0.055,
+                          width: double.infinity,
+                          padding: const EdgeInsets.symmetric(horizontal: 14),
+                          decoration: BoxDecoration(
+                            color: Theme.of(context).cardColor,
+                            borderRadius: BorderRadius.circular(10),
+                            border: Border.all(
+                              color: colorScheme.outlineVariant.withOpacity(
+                                0.2,
+                              ),
+                            ),
                           ),
-                          overflow: TextOverflow.ellipsis,
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  dateLabel,
+                                  style: TextStyle(
+                                    color: _selectedDate == null
+                                        ? colorScheme.onSurfaceVariant
+                                        : colorScheme.onSurface,
+                                    fontSize: 13,
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              Icon(
+                                Icons.calendar_today_outlined,
+                                size: 18,
+                                color: colorScheme.onSurfaceVariant,
+                              ),
+                            ],
+                          ),
                         ),
                       ),
-                      const SizedBox(width: 8),
-                      Icon(Icons.calendar_today_outlined,
-                          size: 18,
-                          color: colorScheme.onSurfaceVariant),
-                    ],
-                  ),
-                ),
-              ),
 
-              const SizedBox(height: 20),
+                      const SizedBox(height: 20),
 
-              Text(l10n.uploadDocuments,
-                  style: TextStyle(color: colorScheme.onSurface)),
+                      Text(
+                        l10n.uploadDocuments,
+                        style: TextStyle(color: colorScheme.onSurface),
+                      ),
 
-              const SizedBox(height: 20),
+                      const SizedBox(height: 20),
 
-              Row(
-                children: [
-                  _uploadBox(true, _frontFile, l10n.frontSide),
-                  const SizedBox(width: 12),
-                  _uploadBox(false, _backFile, l10n.backSide),
-                ],
-              ),
+                      Row(
+                        children: [
+                          _uploadBox(true, _frontFile, l10n.frontSide),
+                          const SizedBox(width: 12),
+                          _uploadBox(false, _backFile, l10n.backSide),
+                        ],
+                      ),
 
-              const SizedBox(height: 20),
+                      const SizedBox(height: 20),
 
-              Text(
-                l10n.commitmentText,
-                style: TextStyle(
-                    color: colorScheme.onSurface.withOpacity(0.5),
-                    fontSize: 14),
-              ),
+                      Text(
+                        l10n.commitmentText,
+                        style: TextStyle(
+                          color: colorScheme.onSurface.withOpacity(0.5),
+                          fontSize: 14,
+                        ),
+                      ),
 
-              SizedBox(height: screenHeight * 0.03),
+                      SizedBox(height: screenHeight * 0.03),
 
-              Row(
-                children: [
-                  const Icon(Icons.shield, color: Colors.green, size: 20),
-                  const SizedBox(width: 6),
-                  Text(l10n.documentsSafe,
-                      style: TextStyle(fontSize: 14,color: colorScheme.onSurface)),
-                ],
-              ),
+                      Row(
+                        children: [
+                          const Icon(
+                            Icons.shield,
+                            color: Colors.green,
+                            size: 20,
+                          ),
+                          const SizedBox(width: 6),
+                          Text(
+                            l10n.documentsSafe,
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: colorScheme.onSurface,
+                            ),
+                          ),
+                        ],
+                      ),
 
                       const SizedBox(height: 40),
                     ],
@@ -492,7 +523,9 @@ class _DocumentVehicleRCScreenState extends State<DocumentVehicleRCScreen> {
                         if (_frontFile == null) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
-                              content: Text(AppLocalizations.of(context)!.frontRequired),
+                              content: Text(
+                                AppLocalizations.of(context)!.frontRequired,
+                              ),
                             ),
                           );
                           return;
@@ -541,19 +574,28 @@ class _DocumentVehicleRCScreenState extends State<DocumentVehicleRCScreen> {
         decoration: BoxDecoration(
           color: Theme.of(context).cardColor,
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: colorScheme.outlineVariant.withOpacity(0.2)),
+          border: Border.all(
+            color: colorScheme.outlineVariant.withOpacity(0.2),
+          ),
         ),
         child: file == null
             ? Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.camera_alt_outlined,
-                      color: colorScheme.onSurfaceVariant, size: 28),
+                  Icon(
+                    Icons.camera_alt_outlined,
+                    color: colorScheme.onSurfaceVariant,
+                    size: 28,
+                  ),
                   const SizedBox(height: 8),
-                  Text(label,
-                      style: TextStyle(
-                          color: colorScheme.onSurfaceVariant, fontSize: 12),
-                      textAlign: TextAlign.center),
+                  Text(
+                    label,
+                    style: TextStyle(
+                      color: colorScheme.onSurfaceVariant,
+                      fontSize: 12,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
                 ],
               )
             : ClipRRect(
@@ -562,17 +604,20 @@ class _DocumentVehicleRCScreenState extends State<DocumentVehicleRCScreen> {
                     ? Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const Icon(Icons.picture_as_pdf,
-                              color: Colors.red, size: 32),
+                          const Icon(
+                            Icons.picture_as_pdf,
+                            color: Colors.red,
+                            size: 32,
+                          ),
                           const SizedBox(height: 6),
                           Padding(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 6),
+                            padding: const EdgeInsets.symmetric(horizontal: 6),
                             child: Text(
                               file.path.split('/').last,
                               style: TextStyle(
-                                  color: colorScheme.onSurfaceVariant,
-                                  fontSize: 10),
+                                color: colorScheme.onSurfaceVariant,
+                                fontSize: 10,
+                              ),
                               textAlign: TextAlign.center,
                               maxLines: 2,
                               overflow: TextOverflow.ellipsis,
@@ -580,10 +625,12 @@ class _DocumentVehicleRCScreenState extends State<DocumentVehicleRCScreen> {
                           ),
                         ],
                       )
-                    : Image.file(file,
+                    : Image.file(
+                        file,
                         fit: BoxFit.cover,
                         width: double.infinity,
-                        height: double.infinity),
+                        height: double.infinity,
+                      ),
               ),
       ),
     );

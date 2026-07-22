@@ -65,7 +65,10 @@ class _DocumentFolderScreenState extends State<DocumentFolderScreen> {
     if (!mounted) return;
     setState(() => _isUploading = true);
     try {
-      await VehicleControlRepositoryImpl().updateVehicleImage(imei, imageFile.path);
+      await VehicleControlRepositoryImpl().updateVehicleImage(
+        imei,
+        imageFile.path,
+      );
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -319,7 +322,7 @@ class _DocumentFolderScreenState extends State<DocumentFolderScreen> {
                                 MaterialPageRoute(
                                   builder: (_) => DocumentLicense(
                                     title: l10n.drivingLicenseTitle,
-                                    imei: vehicle.imei ?? '',
+                                    vehicleId: vehicle.id ?? '',
                                   ),
                                 ),
                               );
@@ -343,7 +346,7 @@ class _DocumentFolderScreenState extends State<DocumentFolderScreen> {
                                 MaterialPageRoute(
                                   builder: (_) => DocumentOtherdocumentScreen(
                                     title: l10n.otherDocumentTitle,
-                                    imei: vehicle.imei ?? '',
+                                    vehicleId: vehicle.id ?? vehicle.imei ?? '',
                                   ),
                                 ),
                               );
@@ -404,34 +407,36 @@ class _DocumentFolderScreenState extends State<DocumentFolderScreen> {
                               child: SizedBox(
                                 width: 20,
                                 height: 20,
-                                child: CircularProgressIndicator(strokeWidth: 2),
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                ),
                               ),
                             )
                           : _vehicleImage == null
-                              ? Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(
-                                      Icons.camera_alt,
-                                      color: colorScheme.onSurfaceVariant,
-                                      size: 20,
-                                    ),
-                                    const SizedBox(height: 4),
-                                    Text(
-                                      l10n.vehicleImage,
-                                      style: theme.textTheme.labelSmall?.copyWith(
-                                        color: colorScheme.onSurfaceVariant,
-                                      ),
-                                    ),
-                                  ],
-                                )
-                              : ClipRRect(
-                                  borderRadius: BorderRadius.circular(12),
-                                  child: Image.file(
-                                    _vehicleImage!,
-                                    fit: BoxFit.cover,
+                          ? Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.camera_alt,
+                                  color: colorScheme.onSurfaceVariant,
+                                  size: 20,
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  l10n.vehicleImage,
+                                  style: theme.textTheme.labelSmall?.copyWith(
+                                    color: colorScheme.onSurfaceVariant,
                                   ),
                                 ),
+                              ],
+                            )
+                          : ClipRRect(
+                              borderRadius: BorderRadius.circular(12),
+                              child: Image.file(
+                                _vehicleImage!,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
                     ),
                   ),
 
@@ -559,7 +564,7 @@ class _DocumentFolderScreenState extends State<DocumentFolderScreen> {
                                 MaterialPageRoute(
                                   builder: (_) => DocumentVehicleRCScreen(
                                     title: l10n.vehicleRCTitle,
-                                    imei: vehicle.imei ?? '',
+                                    vehicleId: vehicle.id ?? vehicle.imei ?? '',
                                   ),
                                 ),
                               );
@@ -583,7 +588,7 @@ class _DocumentFolderScreenState extends State<DocumentFolderScreen> {
                                 MaterialPageRoute(
                                   builder: (_) => DocumentSubScreen(
                                     title: l10n.insuranceTitle,
-                                    imei: vehicle.imei ?? '',
+                                    vehicleId: vehicle.id ?? vehicle.imei ?? '',
                                     subtype: 'insurance',
                                   ),
                                 ),
@@ -608,7 +613,7 @@ class _DocumentFolderScreenState extends State<DocumentFolderScreen> {
                                 MaterialPageRoute(
                                   builder: (_) => DocumentSubScreen(
                                     title: l10n.pucTitle,
-                                    imei: vehicle.imei ?? '',
+                                    vehicleId: vehicle.id ?? vehicle.imei ?? '',
                                     subtype: 'puc',
                                   ),
                                 ),
@@ -746,10 +751,9 @@ class _DocumentFolderScreenState extends State<DocumentFolderScreen> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) =>
-                                      AccessoryBillScreen(
-                                        imei: vehicle.imei ?? '',
-                                      ),
+                                  builder: (context) => AccessoryBillScreen(
+                                    vehicleId: vehicle.id ?? vehicle.imei ?? '',
+                                  ),
                                 ),
                               );
                             },
@@ -932,7 +936,10 @@ class _VehicleSelectorSheet extends StatelessWidget {
                   final vehicle = vehicles[index];
                   final isSelected = selectedVehicle?.id == vehicle.id;
                   return Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                    margin: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 6,
+                    ),
                     decoration: BoxDecoration(
                       color: isSelected
                           ? colorScheme.primaryContainer.withOpacity(0.15)
@@ -948,7 +955,10 @@ class _VehicleSelectorSheet extends StatelessWidget {
                     child: Material(
                       type: MaterialType.transparency,
                       child: ListTile(
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 4,
+                        ),
                         leading: Container(
                           padding: const EdgeInsets.all(6),
                           decoration: BoxDecoration(
@@ -962,7 +972,9 @@ class _VehicleSelectorSheet extends StatelessWidget {
                           ),
                         ),
                         title: Text(
-                          '${vehicle.vehicleMaker ?? ''} ${vehicle.vehicleModel ?? ''}'.trim(), ),
+                          '${vehicle.vehicleMaker ?? ''} ${vehicle.vehicleModel ?? ''}'
+                              .trim(),
+                        ),
                         subtitle: vehicle.vehicleNumber != null
                             ? Text(
                                 vehicle.vehicleNumber!,

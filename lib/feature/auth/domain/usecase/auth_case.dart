@@ -35,4 +35,8 @@ class AuthCase {
   ResultFuture<dynamic> saveFcmTokenCall(Map<String, dynamic> body) {
     return authRepository.saveFcmToken(body);
   }
+
+  ResultFuture<dynamic> changePasswordCall(Map<String, dynamic> body) {
+    return authRepository.changePassword(body);
+  }
 }

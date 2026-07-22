@@ -6,6 +6,7 @@ import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
@@ -54,7 +55,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
   DateTime _selectedStatsDate = DateTime.now();
   late DateTime _statsStartDate;
   late DateTime _statsEndDate;
-  final Set<int> _favoriteRides = {};
+  final Set<String> _favoriteRides = {};
   BitmapDescriptor? _startMarkerIcon;
   BitmapDescriptor? _endMarkerIcon;
   bool _isFullScreen = false;
@@ -66,6 +67,8 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
     _loadMapStyles();
     _fetchMobileDeviceName();
     _initStartEndMarkers();
+    _loadLastRecordingTime();
+    _loadFavoriteRides();
 
     final now = DateTime.now();
     _statsStartDate = DateTime(now.year, now.month, now.day);
@@ -75,6 +78,73 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _initCustomMarker();
     });
+  }
+
+  Future<void> _loadLastRecordingTime() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final savedTimeStr = prefs.getString('record_via_phone_last_recording_time');
+      if (savedTimeStr != null && savedTimeStr.isNotEmpty) {
+        final parsedTime = DateTime.tryParse(savedTimeStr);
+        if (parsedTime != null && mounted) {
+          setState(() {
+            _recordingStartDateTime = parsedTime;
+          });
+        }
+      }
+    } catch (e) {
+      debugPrint("Error loading last recording time: $e");
+    }
+  }
+
+  Future<void> _saveLastRecordingTime(DateTime dateTime) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('record_via_phone_last_recording_time', dateTime.toIso8601String());
+    } catch (e) {
+      debugPrint("Error saving last recording time: $e");
+    }
+  }
+
+  Future<void> _loadFavoriteRides() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final list = prefs.getStringList('record_via_phone_favorite_rides') ?? [];
+      if (mounted) {
+        setState(() {
+          _favoriteRides.clear();
+          _favoriteRides.addAll(list);
+        });
+      }
+    } catch (e) {
+      debugPrint("Error loading favorite rides: $e");
+    }
+  }
+
+  Future<void> _saveFavoriteRides() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setStringList('record_via_phone_favorite_rides', _favoriteRides.toList());
+    } catch (e) {
+      debugPrint("Error saving favorite rides: $e");
+    }
+  }
+
+  String _formatRideDateTime(DateTime dt) {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final yesterday = today.subtract(const Duration(days: 1));
+    final checkDate = DateTime(dt.year, dt.month, dt.day);
+
+    final timeStr = DateFormat('h:mm a').format(dt);
+
+    if (checkDate == today) {
+      return "Today, $timeStr";
+    } else if (checkDate == yesterday) {
+      return "Yesterday, $timeStr";
+    } else {
+      return "${DateFormat('dd MMM yyyy').format(dt)}, $timeStr";
+    }
   }
 
   Future<void> _fetchMobileDeviceName() async {
@@ -399,21 +469,16 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
 
       String dateLabel = "Today";
       if (firstTime != null) {
-        final now = DateTime.now();
-        if (firstTime.year == now.year &&
-            firstTime.month == now.month &&
-            firstTime.day == now.day) {
-          dateLabel = "Today";
-        } else {
-          dateLabel = DateFormat('dd MMM yyyy').format(firstTime);
-        }
+        dateLabel = _formatRideDateTime(firstTime);
       }
 
+      final rideKey = firstTime?.toIso8601String() ?? dateLabel;
       final tag = _rideTags[index] ?? "Walk";
-      final isFavorite = _favoriteRides.contains(index);
+      final isFavorite = _favoriteRides.contains(rideKey);
 
       ridesList.add(PastRide(
         dateStr: dateLabel,
+        rawDate: firstTime,
         tag: tag,
         isFavorite: isFavorite,
         distanceKm: totalDist,
@@ -428,6 +493,8 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
 
   List<PastRide> _getMockRides(LatLng? userLocation) {
     final center = userLocation ?? const LatLng(28.6139, 77.2090);
+    final now = DateTime.now();
+    final yesterday = now.subtract(const Duration(days: 1));
     
     final mockPoints1 = [
       LatLng(center.latitude - 0.002, center.longitude - 0.001),
@@ -447,18 +514,20 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
 
     return [
       PastRide(
-        dateStr: "Today",
+        dateStr: _formatRideDateTime(now),
+        rawDate: now,
         tag: _rideTags[0] ?? "Walk",
-        isFavorite: _favoriteRides.contains(0),
+        isFavorite: _favoriteRides.contains(now.toIso8601String()),
         distanceKm: 0.0,
         duration: const Duration(seconds: 6),
         avgSpeed: 2.4,
         points: mockPoints1,
       ),
       PastRide(
-        dateStr: "Yesterday",
+        dateStr: _formatRideDateTime(yesterday),
+        rawDate: yesterday,
         tag: _rideTags[1] ?? "Car",
-        isFavorite: _favoriteRides.contains(1),
+        isFavorite: _favoriteRides.contains(yesterday.toIso8601String()),
         distanceKm: 12.4,
         duration: const Duration(hours: 0, minutes: 24, seconds: 12),
         avgSpeed: 31.0,
@@ -467,7 +536,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
     ];
   }
 
-  void _showEditTagDialog(int index, String currentTag) {
+  void _showEditTagDialog(PastRide ride, int index, String currentTag) {
     final l10n = AppLocalizations.of(context)!;
     final textController = TextEditingController(text: currentTag);
     final tags = ["Walk", "Car", "Bike", "Train", "Bus", "Auto", "Cab", "Cycle", "Others"];
@@ -548,11 +617,17 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
                   ),
                 ),
                 TextButton(
-                  onPressed: () {
-                    setState(() {
-                      _rideTags[index] = textController.text.trim();
-                    });
-                    Navigator.pop(ctx);
+                  onPressed: () async {
+                    final newTag = textController.text.trim();
+                    if (newTag.isNotEmpty) {
+                      if (ride.id != null && ride.id!.isNotEmpty) {
+                        await context.read<RecordViaPhoneCubit>().updateOfflineRideTag(ride.id!, newTag);
+                      } else {
+                        _rideTags[index] = newTag;
+                      }
+                      if (mounted) setState(() {});
+                    }
+                    if (mounted) Navigator.pop(ctx);
                   },
                   child: Text(
                     "Save",
@@ -679,6 +754,8 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
   Widget _buildRideCard(PastRide ride, int index) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
+    final rideKey = ride.rawDate?.toIso8601String() ?? ride.dateStr;
+    final isFav = ride.isFavorite || _favoriteRides.contains(rideKey);
     
     final Set<Polyline> polylines = {
       Polyline(
@@ -743,7 +820,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
                 ),
                 const SizedBox(width: 8),
                 GestureDetector(
-                  onTap: () => _showEditTagDialog(index, ride.tag),
+                  onTap: () => _showEditTagDialog(ride, index, ride.tag),
                   child: Container(
                     padding: const EdgeInsets.all(4),
                     decoration: const BoxDecoration(
@@ -761,16 +838,17 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
                 GestureDetector(
                   onTap: () {
                     setState(() {
-                      if (_favoriteRides.contains(index)) {
-                        _favoriteRides.remove(index);
+                      if (_favoriteRides.contains(rideKey)) {
+                        _favoriteRides.remove(rideKey);
                       } else {
-                        _favoriteRides.add(index);
+                        _favoriteRides.add(rideKey);
                       }
                     });
+                    _saveFavoriteRides();
                   },
                   child: Icon(
-                    ride.isFavorite ? Icons.favorite : Icons.favorite_border,
-                    color: ride.isFavorite ? Colors.red : (isDark ? Colors.white.withOpacity(0.6) : Colors.black54),
+                    isFav ? Icons.favorite : Icons.favorite_border,
+                    color: isFav ? Colors.red : (isDark ? Colors.white.withOpacity(0.6) : Colors.black54),
                     size: 20,
                   ),
                 ),
@@ -843,7 +921,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
                               totalDuration: ride.duration,
                               topSpeed: ride.avgSpeed * 1.5,
                               avgSpeed: ride.avgSpeed,
-                              startTime: DateTime.now().subtract(ride.duration),
+                              startTime: ride.rawDate ?? DateTime.now().subtract(ride.duration),
                             ),
                           ),
                         );
@@ -1778,17 +1856,21 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
                       ))
                   .toList();
 
-              // Parse dateStr to a nice format
+              // Parse dateStr to a nice format with AM/PM
               String displayDate = r['dateStr'] ?? '';
+              DateTime? parsedDt;
               if (displayDate.isNotEmpty) {
                 try {
-                  final dt = DateTime.parse(displayDate);
-                  displayDate = "${dt.year}-${dt.month.toString().padLeft(2, '0')}-${dt.day.toString().padLeft(2, '0')} ${dt.hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')}";
+                  parsedDt = DateTime.parse(displayDate);
+                  displayDate = _formatRideDateTime(parsedDt);
                 } catch (_) {}
               }
 
+              final rideId = r['id']?.toString();
               return PastRide(
+                id: rideId,
                 dateStr: displayDate,
+                rawDate: parsedDt,
                 tag: r['tag'] ?? 'Offline',
                 isFavorite: false,
                 distanceKm: (r['distanceKm'] as num?)?.toDouble() ?? 0.0,
@@ -1802,10 +1884,10 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
 
             List<PastRide> rides = List.from(offlineRides);
 
-            // Sort by date Str descending so newest rides are always at the top
+            // Sort by rawDate / dateStr descending so newest rides are always at the top
             rides.sort((a, b) {
-              final aDate = DateTime.tryParse(a.dateStr) ?? DateTime(0);
-              final bDate = DateTime.tryParse(b.dateStr) ?? DateTime(0);
+              final aDate = a.rawDate ?? DateTime.tryParse(a.dateStr) ?? DateTime(0);
+              final bDate = b.rawDate ?? DateTime.tryParse(b.dateStr) ?? DateTime(0);
               return bDate.compareTo(aDate);
             });
             
@@ -1937,7 +2019,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
     final endOfDay = DateTime(_statsEndDate.year, _statsEndDate.month, _statsEndDate.day, 23, 59, 59, 999);
 
     final filteredOfflineRides = offlineRides.where((r) {
-      final rideDate = DateTime.tryParse(r.dateStr);
+      final rideDate = r.rawDate ?? DateTime.tryParse(r.dateStr);
       if (rideDate == null) return false;
       return rideDate.isAfter(startOfDay.subtract(const Duration(milliseconds: 1))) &&
              rideDate.isBefore(endOfDay.add(const Duration(milliseconds: 1)));
@@ -2029,15 +2111,19 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
                   .toList();
 
               String displayDate = r['dateStr'] ?? '';
+              DateTime? parsedDt;
               if (displayDate.isNotEmpty) {
                 try {
-                  final dt = DateTime.parse(displayDate);
-                  displayDate = "${dt.year}-${dt.month.toString().padLeft(2, '0')}-${dt.day.toString().padLeft(2, '0')} ${dt.hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')}";
+                  parsedDt = DateTime.parse(displayDate);
+                  displayDate = _formatRideDateTime(parsedDt);
                 } catch (_) {}
               }
 
+              final rideId = r['id']?.toString();
               return PastRide(
+                id: rideId,
                 dateStr: displayDate,
+                rawDate: parsedDt,
                 tag: r['tag'] ?? 'Offline',
                 isFavorite: false,
                 distanceKm: (r['distanceKm'] as num?)?.toDouble() ?? 0.0,
@@ -3056,11 +3142,13 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
                         TextButton(
                           onPressed: () {
                             Navigator.pop(ctx);
+                            final now = DateTime.now();
                             if (mounted) {
                               setState(() {
-                                _recordingStartDateTime = DateTime.now();
+                                _recordingStartDateTime = now;
                               });
                             }
+                            _saveLastRecordingTime(now);
                             screenContext
                                 .read<RecordViaPhoneCubit>()
                                 .startRecording(mode: selectedMode);
@@ -3285,6 +3373,7 @@ class _KeepAliveWrapperState extends State<_KeepAliveWrapper>
 }
 
 class PastRide {
+  final String? id;
   final String dateStr;
   final String tag;
   final bool isFavorite;
@@ -3292,8 +3381,10 @@ class PastRide {
   final Duration duration;
   final double avgSpeed;
   final List<LatLng> points;
+  final DateTime? rawDate;
   
   PastRide({
+    this.id,
     required this.dateStr,
     required this.tag,
     required this.isFavorite,
@@ -3301,6 +3392,7 @@ class PastRide {
     required this.duration,
     required this.avgSpeed,
     required this.points,
+    this.rawDate,
   });
 }
 

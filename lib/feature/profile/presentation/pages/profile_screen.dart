@@ -498,6 +498,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       color: Theme.of(
                                         context,
                                       ).colorScheme.onSurface.withOpacity(0.6),
+                                      fontSize: 12,
                                     ),
                                   ),
                                 ],

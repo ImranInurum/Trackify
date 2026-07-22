@@ -23,6 +23,10 @@ class ServiceLogsCubit extends Cubit<ServiceLogsState> {
     this._deleteServiceLogUsecase,
   ) : super(ServiceLogsInitial());
 
+  void reset() {
+    emit(ServiceLogsInitial());
+  }
+
   Future<void> loadVehicles() async {
     emit(ServiceLogsLoading());
 

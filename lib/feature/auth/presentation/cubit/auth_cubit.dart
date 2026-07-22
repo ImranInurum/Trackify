@@ -1,5 +1,8 @@
 import 'dart:convert';
+import 'dart:io';
 
+import 'package:device_info_plus/device_info_plus.dart';
+import 'package:flutter/foundation.dart';
 import 'package:trackify/core/config/network/api_host.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -15,10 +18,48 @@ class AuthCubit extends Cubit<AuthState> {
 
   AuthCubit(this._authCase) : super(AuthInitial());
 
+  Future<Map<String, String>> _getDeviceInfo() async {
+    final deviceInfo = DeviceInfoPlugin();
+    String deviceModel = 'Unknown Device';
+    String osVersion = 'Unknown OS';
+
+    try {
+      if (!kIsWeb) {
+        if (Platform.isAndroid) {
+          final androidInfo = await deviceInfo.androidInfo;
+          final manufacturer = androidInfo.manufacturer.isNotEmpty ? androidInfo.manufacturer : '';
+          final model = androidInfo.model.isNotEmpty ? androidInfo.model : '';
+          deviceModel = '$manufacturer $model'.trim();
+          if (deviceModel.isEmpty) deviceModel = 'Android Device';
+          osVersion = 'Android ${androidInfo.version.release}';
+        } else if (Platform.isIOS) {
+          final iosInfo = await deviceInfo.iosInfo;
+          deviceModel = iosInfo.name.isNotEmpty ? iosInfo.name : (iosInfo.model.isNotEmpty ? iosInfo.model : 'iPhone');
+          osVersion = 'iOS ${iosInfo.systemVersion}';
+        } else if (Platform.isWindows) {
+          final windowsInfo = await deviceInfo.windowsInfo;
+          deviceModel = windowsInfo.computerName.isNotEmpty ? windowsInfo.computerName : 'Windows PC';
+          osVersion = 'Windows ${windowsInfo.majorVersion}.${windowsInfo.minorVersion}';
+        }
+      }
+    } catch (e) {
+      debugPrint('Error getting device info: $e');
+    }
+
+    return {
+      'deviceModel': deviceModel,
+      'osVersion': osVersion,
+    };
+  }
+
   Future<void> loginUser(Map<String, dynamic> body) async {
     LoadingScreenOL().show();
     emit(AuthLoading());
     try {
+      final devInfo = await _getDeviceInfo();
+      body['deviceModel'] = devInfo['deviceModel'];
+      body['osVersion'] = devInfo['osVersion'];
+
       final result = await _authCase.loginCall(body);
       await result.fold(
         (failure) async {
@@ -119,10 +160,13 @@ class AuthCubit extends Cubit<AuthState> {
       if (userCredential != null && userCredential.user != null) {
         final firebaseUser = userCredential.user!;
 
+        final devInfo = await _getDeviceInfo();
         final body = {
           "name": firebaseUser.displayName ?? "Google User",
           "email": firebaseUser.email,
           "socialId": firebaseUser.uid,
+          "deviceModel": devInfo['deviceModel'],
+          "osVersion": devInfo['osVersion'],
         };
 
         final result = await _authCase.socialLoginCall(body);
@@ -177,6 +221,24 @@ class AuthCubit extends Cubit<AuthState> {
       }
     } catch (e) {
       print('Error saving FCM token: $e');
+    }
+  }
+
+  Future<void> changePassword(Map<String, dynamic> body) async {
+    LoadingScreenOL().show();
+    emit(ChangePasswordLoading());
+    try {
+      final result = await _authCase.changePasswordCall(body);
+      result.fold(
+        (failure) {
+          emit(ChangePasswordFailure(failure));
+        },
+        (data) {
+          emit(ChangePasswordSuccess());
+        },
+      );
+    } finally {
+      LoadingScreenOL().hide();
     }
   }
 }
