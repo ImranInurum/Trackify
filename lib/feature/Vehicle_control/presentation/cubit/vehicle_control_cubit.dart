@@ -286,10 +286,26 @@ class VehicleControlCubit extends Cubit<VehicleControlState> {
       
       final box = Hive.box('map_cache');
       await box.delete('vehicle_control_$vehicleIMEI');
+      await box.delete('vehicles_data');
+      await box.delete('common_vehicles_data');
       
-      final lastViewedIMEI = await AppPreference.instance.get(key: "last_vehicle_control_imei");
+      final prefs = AppPreference.instance;
+      final userId = await prefs.get(key: AppPreference.KEY_USER_ID);
+      if (userId.isNotEmpty) {
+        await box.delete('profile_vehicles_$userId');
+      }
+
+      final lastViewedIMEI = await prefs.get(key: "last_vehicle_control_imei");
       if (lastViewedIMEI == vehicleIMEI) {
-        await AppPreference.instance.clearByKey(key: "last_vehicle_control_imei");
+        await prefs.clearByKey(key: "last_vehicle_control_imei");
+      }
+
+      // If the deleted vehicle was the currently selected one, clear selected preferences
+      final currentSelectedUid = await prefs.get(key: AppPreference.KEY_SELECTED_UID);
+      final currentSelectedImei = await prefs.get(key: AppPreference.IMEI);
+      if (currentSelectedUid == vehicleId || (vehicleIMEI.isNotEmpty && currentSelectedImei == vehicleIMEI)) {
+        await prefs.set(key: AppPreference.KEY_SELECTED_UID, value: '');
+        await prefs.set(key: AppPreference.IMEI, value: '');
       }
 
       emit(const VehicleControlDeleted());

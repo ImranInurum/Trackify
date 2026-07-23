@@ -4,6 +4,7 @@ import 'package:trackify/feature/settings/presentation/pages/privacy_screen.dart
 import 'package:trackify/feature/settings/presentation/pages/manage_access_screen.dart';
 import 'package:trackify/feature/settings/presentation/widgets/setting_list_tile.dart';
 import 'package:trackify/l10n/app_localizations.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../app/cubit/app_cubit.dart';
@@ -241,6 +242,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 },
               ),
 
+/*
             if (_isVisible('Manage Access'))
               SettingListTile(
                 icon: Icons.manage_accounts_outlined,
@@ -257,7 +259,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   );
                 },
               ),
-
+*/
             if (_isVisible(l10n.rateUsOnPlayStore))
               SettingListTile(
                 icon: Icons.play_arrow_outlined,
@@ -265,7 +267,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 subtitle: l10n.rateUsOnPlayStoreDesc,
                 showArrow: false,
                 showIcon: true,
-                onTap: () => debugPrint("Rate us tapped"),
+                onTap: () async {
+                  final url = Uri.parse('https://play.google.com/store/apps/details?id=com.trackify.mytrackmate.trackify');
+                  if (await canLaunchUrl(url)) {
+                    await launchUrl(url, mode: LaunchMode.externalApplication);
+                  } else {
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Could not open the Play Store')),
+                      );
+                    }
+                  }
+                },
               ),
 
             if (_isVisible(l10n.logout))

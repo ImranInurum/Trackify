@@ -29,7 +29,7 @@ class VehicleSelectorSheet extends StatelessWidget {
         bottom: 20,
       ),
       decoration: BoxDecoration(
-        color: theme.cardColor.withOpacity(0.8),
+        color: theme.cardColor.withValues(alpha: 0.8),
         borderRadius: const BorderRadius.only(
           bottomLeft: Radius.circular(30),
           bottomRight: Radius.circular(30),
@@ -84,7 +84,7 @@ class VehicleSelectorSheet extends StatelessWidget {
                   ),
                   Icon(
                     Icons.keyboard_arrow_down,
-                    color: theme.colorScheme.onSurface.withOpacity(0.6),
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                   ),
                 ],
               ),
@@ -153,7 +153,7 @@ class _VehicleSelectorSheet extends StatelessWidget {
 
               return Container(
                 color: isSelected
-                    ? theme.scaffoldBackgroundColor.withOpacity(1)
+                    ? theme.scaffoldBackgroundColor
                     : theme.cardColor,
                 child: Material(
                   type: MaterialType.transparency,

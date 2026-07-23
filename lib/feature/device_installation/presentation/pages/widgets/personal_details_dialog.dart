@@ -1,18 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:trackify/app/cubit/app_cubit.dart';
-import 'package:trackify/app/cubit/app_state.dart';
 import 'package:trackify/core/widgets/custom_form_field.dart';
 import 'package:trackify/feature/my_profile/data/models/update_profile_request.dart';
 import 'package:trackify/feature/my_profile/presentation/cubit/my_profile_cubit.dart';
 import 'package:trackify/feature/my_profile/presentation/cubit/my_profile_state.dart';
 import 'package:trackify/l10n/app_localizations.dart';
-import 'package:trackify/core/theme/app_theme_extension.dart';
 import 'package:country_state_city/country_state_city.dart' as csc;
 import 'package:trackify/core/widgets/searchable_dropdown.dart';
 
 class PersonalDetailsDialog extends StatefulWidget {
-  const PersonalDetailsDialog({Key? key}) : super(key: key);
+  const PersonalDetailsDialog({super.key});
 
   @override
   State<PersonalDetailsDialog> createState() => _PersonalDetailsDialogState();
@@ -134,7 +132,6 @@ class _PersonalDetailsDialogState extends State<PersonalDetailsDialog> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
-    final appColors = theme.extension<AppColorsExtension>();
 
     return BlocListener<MyProfileCubit, MyProfileState>(
       listener: (context, state) {
@@ -184,7 +181,7 @@ class _PersonalDetailsDialogState extends State<PersonalDetailsDialog> {
                             Text(
                               l10n.personalDetailsDesc,
                               style: theme.textTheme.bodyMedium?.copyWith(
-                                color: theme.colorScheme.onSurface.withOpacity(0.6),
+                                color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                               ),
                             ),
                           ],

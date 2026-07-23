@@ -1,11 +1,9 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:trackify/core/widgets/searchable_dropdown.dart';
 import 'package:trackify/feature/add_vehicle_and_device/add_vehicle/data/models/vehicle_config_models.dart';
 
 import 'package:trackify/core/theme/app_theme_extension.dart';
-import 'package:trackify/core/widgets/custom_form_field.dart';
 import 'package:trackify/l10n/app_localizations.dart';
 import 'package:trackify/feature/add_vehicle_and_device/add_vehicle/presentation/cubit/add_vehicle_cubit.dart';
 import 'package:trackify/feature/add_vehicle_and_device/add_vehicle/presentation/cubit/add_vehicle_state.dart';
@@ -45,7 +43,7 @@ class _AddVehicleDialogState extends State<AddVehicleDialog> {
   }) {
     final theme = Theme.of(context);
     final Color active = theme.colorScheme.secondary;
-    final Color inactive = theme.colorScheme.onSurface.withOpacity(0.5);
+    final Color inactive = theme.colorScheme.onSurface.withValues(alpha: 0.5);
 
     return GestureDetector(
       onTap: () => context.read<AddVehicleCubit>().selectVehicleType(config),
@@ -91,7 +89,7 @@ class _AddVehicleDialogState extends State<AddVehicleDialog> {
   }) {
     final theme = Theme.of(context);
     final Color active = theme.colorScheme.secondary;
-    final Color inactive = theme.colorScheme.onSurface.withOpacity(0.5);
+    final Color inactive = theme.colorScheme.onSurface.withValues(alpha: 0.5);
 
     return GestureDetector(
       onTap: () => context.read<AddVehicleCubit>().selectFuelType(type),
@@ -299,7 +297,7 @@ class _AddVehicleDialogState extends State<AddVehicleDialog> {
                             if (state.isLoadingConfig && state.configs.isEmpty) {
                               return const Padding(
                                 padding: EdgeInsets.only(top: 100),
-                                child: const Center(child: TrackifyLoader()),
+                                child: Center(child: TrackifyLoader()),
                               );
                             }
 
@@ -355,7 +353,7 @@ class _AddVehicleDialogState extends State<AddVehicleDialog> {
                                         child: Text(
                                           l10n.selectVehicleTypeForFuel,
                                           style: TextStyle(
-                                            color: theme.hintColor.withOpacity(0.7),
+                                            color: theme.hintColor.withValues(alpha: 0.7),
                                             fontSize: 12,
                                             fontStyle: FontStyle.italic,
                                           ),

@@ -1,0 +1,170 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:trackify/core/config/network/api_host.dart';
+import 'package:trackify/feature/document_folder/domain/entities/doucment_entity.dart';
+import 'package:trackify/feature/document_folder/presentation/cubit/document_folder_cubit.dart';
+import 'package:trackify/feature/document_folder/presentation/cubit/document_folder_state.dart';
+import 'package:trackify/feature/document_folder/presentation/pages/accessory_bill_screen.dart';
+import 'package:trackify/feature/document_folder/presentation/pages/accessory_bill_details_screen.dart';
+
+class AccessoryBillListScreen extends StatelessWidget {
+  final String vehicleId;
+  final List<DocumentEntity> bills;
+
+  const AccessoryBillListScreen({
+    super.key,
+    required this.vehicleId,
+    required this.bills,
+  });
+
+  String _getImageUrl(String? path) {
+    if (path == null || path.isEmpty) return '';
+    return path.startsWith('http') ? path : '${ApiURL.baseURL}/$path';
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
+    return Scaffold(
+      backgroundColor: colorScheme.surface,
+      appBar: AppBar(
+        title: Text(
+          'View Bills', // Fallback, could localize if we want
+          style: theme.textTheme.titleLarge?.copyWith(
+            fontWeight: FontWeight.w600,
+            color: colorScheme.onSurface,
+          ),
+        ),
+      ),
+      body: BlocBuilder<DocumentFolderCubit, DocumentFolderState>(
+        builder: (context, state) {
+          List<DocumentEntity> currentBills = bills;
+          if (state is DocumentFolderLoaded) {
+            currentBills = state.documents.where((d) => d.subtype == 'accessory_bill').toList();
+          }
+
+          if (currentBills.isEmpty) {
+            return Center(
+              child: Text(
+                'No bills available',
+                style: TextStyle(color: colorScheme.onSurfaceVariant),
+              ),
+            );
+          }
+
+          return ListView.builder(
+            padding: const EdgeInsets.all(16),
+            itemCount: currentBills.length,
+            itemBuilder: (context, index) {
+              final bill = currentBills[index];
+              final imageUrl = _getImageUrl(bill.fontpath ?? bill.backpath);
+
+              return GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => AccessoryBillDetailsScreen(
+                        bill: bill,
+                        vehicleId: vehicleId,
+                      ),
+                    ),
+                  );
+                },
+                child: Container(
+                  margin: const EdgeInsets.only(bottom: 12),
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: theme.cardColor,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Row(
+                    children: [
+                      // Thumbnail
+                      Container(
+                        width: 60,
+                        height: 60,
+                        decoration: BoxDecoration(
+                          color: colorScheme.surface,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: imageUrl.isNotEmpty
+                            ? ClipRRect(
+                                borderRadius: BorderRadius.circular(8),
+                                child: Image.network(
+                                  imageUrl,
+                                  fit: BoxFit.cover,
+                                  errorBuilder: (_, __, ___) => const Icon(Icons.broken_image),
+                                ),
+                              )
+                            : Icon(Icons.receipt_long, color: colorScheme.onSurfaceVariant),
+                      ),
+                      const SizedBox(width: 16),
+                      // Details
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              bill.title ?? 'Accessory Bill',
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                              ),
+                            ),
+                            const SizedBox(height: 6),
+                            Row(
+                              children: [
+                                Icon(
+                                  Icons.edit_calendar,
+                                  size: 14,
+                                  color: colorScheme.onSurfaceVariant,
+                                ),
+                                const SizedBox(width: 4),
+                                Expanded(
+                                  child: Text(
+                                    'Bill Date: ${bill.billingDate ?? 'N/A'}',
+                                    style: TextStyle(
+                                      color: colorScheme.onSurfaceVariant,
+                                      fontSize: 12,
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                      // Trailing icon
+                      Icon(
+                        Icons.chevron_right,
+                        color: colorScheme.onSurfaceVariant,
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            },
+          );
+        },
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => AccessoryBillScreen(
+                vehicleId: vehicleId,
+              ),
+            ),
+          );
+        },
+        backgroundColor: Colors.lightBlue, // Matching screenshot
+        child: const Icon(Icons.add, color: Colors.black),
+      ),
+    );
+  }
+}

@@ -60,84 +60,78 @@ class LocationSharingCard extends StatelessWidget {
               ),
 
               child: Column(
-
-                crossAxisAlignment:
-                CrossAxisAlignment.start,
-
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-
+                  if (item.isSharing) ...[
+                    Row(
+                      children: [
+                        const Icon(
+                          Icons.location_on_outlined,
+                          size: 14,
+                          color: Colors.green,
+                        ),
+                        const SizedBox(width: 6),
+                        Text(
+                          l10n.sharingActive,
+                          style: theme.textTheme.labelMedium?.copyWith(
+                            color: Colors.green,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                  ],
                   Row(
-
-                    mainAxisAlignment:
-                    MainAxisAlignment.spaceBetween,
-
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-
                       Expanded(
                         child: Text(
-
-                          item.isPhone
-                              ? l10n.yourPhoneLocation
-                              : item.name,
-
-                          style: theme.textTheme.titleMedium
-                              ?.copyWith(
-
-                            fontWeight:
-                            FontWeight.bold,
-
-                            fontSize: 17,
-
-                            color: theme.brightness ==
-                                Brightness.dark
+                          item.isPhone ? l10n.yourPhoneLocation : item.name,
+                          style: theme.textTheme.titleMedium?.copyWith(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                            color: theme.brightness == Brightness.dark
                                 ? AppColors.textPrimaryDark
                                 : AppColors.textPrimaryLight,
                           ),
                         ),
                       ),
-
                       Icon(
                         Icons.arrow_forward_ios_rounded,
                         size: 16,
-                        color: theme.hintColor
-                            .withOpacity(0.5),
+                        color: theme.hintColor.withOpacity(0.5),
                       ),
                     ],
                   ),
-
                   const SizedBox(height: 12),
-
                   Row(
-
                     children: [
-
                       Icon(
-
-                        item.isPhone
-                            ? Icons.phone_android_rounded
-                            : Icons.share_rounded,
-
-                        size: 18,
-
-                        color: theme.hintColor
-                            .withOpacity(0.6),
+                        Icons.share_rounded,
+                        size: 14,
+                        color: theme.colorScheme.primary,
                       ),
-
-                      const SizedBox(width: 10),
-
+                      const SizedBox(width: 4),
                       Text(
-
-                        item.isSharing
-                            ? l10n.sharingActive
-                            : l10n.noActiveSharing,
-
-                        style: theme.textTheme.bodyMedium
-                            ?.copyWith(
-
-                          color: theme.hintColor
-                              .withOpacity(0.8),
-
-                          fontSize: 15,
+                        item.isSharing ? '1 active sharing' : '0 active sharing',
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          color: theme.colorScheme.primary,
+                          fontSize: 13,
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      Icon(
+                        Icons.visibility,
+                        size: 14,
+                        color: theme.colorScheme.primary,
+                      ),
+                      const SizedBox(width: 4),
+                      Text(
+                        '0 Viewers',
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          color: theme.colorScheme.primary,
+                          fontSize: 13,
                         ),
                       ),
                     ],
@@ -191,34 +185,16 @@ class LocationSharingCard extends StatelessWidget {
                     children: [
 
                       Icon(
-
                         Icons.share_rounded,
-
                         size: 20,
-
-                        color: item.isSharing
-                            ? colorScheme.error
-                            : colorScheme.primary,
+                        color: colorScheme.primary,
                       ),
-
                       const SizedBox(width: 10),
-
                       Text(
-
-                        item.isSharing
-                            ? l10n.stopSharing
-                            : l10n.shareLocation,
-
-                        style: theme.textTheme.labelLarge
-                            ?.copyWith(
-
-                          color: item.isSharing
-                              ? colorScheme.error
-                              : colorScheme.primary,
-
-                          fontWeight:
-                          FontWeight.bold,
-
+                        l10n.shareLocation,
+                        style: theme.textTheme.labelLarge?.copyWith(
+                          color: colorScheme.primary,
+                          fontWeight: FontWeight.bold,
                           fontSize: 16,
                         ),
                       ),

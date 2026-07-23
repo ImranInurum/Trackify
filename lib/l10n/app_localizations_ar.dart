@@ -2752,7 +2752,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get months => 'أشهر';
 
   @override
-  String get deleteAlertTitle => 'حذف التنبيه';
+  String get deleteAlertTitle => 'حذف';
 
   @override
   String get deleteAlertDesc =>
@@ -2900,7 +2900,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get goToSettingsAndSelectAllowAllTheTime =>
-      'Go to settings and select “Allow all the time”';
+      'Go to settings and select \"Allow all the time\"';
 
   @override
   String get locationPermissions => 'Location Permissions';
@@ -3363,4 +3363,73 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get profile100PercentComplete => 'ملفك الشخصي مكتمل بنسبة 100٪!';
+
+  @override
+  String get locationPermissionWarning =>
+      'Sharing your phone\'s location works correctly only if it can access your location \"all the time\"';
+
+  @override
+  String get trackifyApp => 'Trackify';
+
+  @override
+  String get locationText => 'Location';
+
+  @override
+  String get tapIntoLocation => 'Tap into Location';
+
+  @override
+  String get goToSettingsBtn => 'Go to Settings';
+
+  @override
+  String get shareLiveLocationFor => 'Share your live location for';
+
+  @override
+  String get twoHours => '2 hours';
+
+  @override
+  String get fourHours => '4 hours';
+
+  @override
+  String get eightHours => '8 hours';
+
+  @override
+  String get untilStopped => 'Until Stopped';
+
+  @override
+  String get shareLocationLink => 'Share location link';
+
+  @override
+  String get documentNameText => 'اسم المستند';
+
+  @override
+  String get expiryDateText => 'تاريخ الانتهاء';
+
+  @override
+  String get documentImagesText => 'صور المستند';
+
+  @override
+  String get noImagesAvailableText => 'لا توجد صور متاحة';
+
+  @override
+  String get pdfDocumentText => 'مستند PDF';
+
+  @override
+  String get deleteAlertDescription => 'هل أنت متأكد أنك تريد حذف هذا المستند؟';
+
+  @override
+  String get deleteRideTitle => 'حذف الرحلة';
+
+  @override
+  String get deleteRideConfirmMessage =>
+      'هل أنت متأكد من أنك تريد حذف سجل الرحلة هذا؟';
+
+  @override
+  String get rideDeletedSuccess => 'تم حذف الرحلة بنجاح';
+
+  @override
+  String get onlineRideDeleteNotSupported =>
+      'حذف الرحلة عبر الإنترنت غير مدعوم في وضع عدم الاتصال';
+
+  @override
+  String get rideDeleteFailedInvalidId => 'فشل حذف الرحلة: معرف غير صالح';
 }

@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:equatable/equatable.dart';
 import '../../../../core/common/models/vehicle_list_model.dart';
 

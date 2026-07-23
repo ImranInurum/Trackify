@@ -1,7 +1,7 @@
 import 'package:trackify/core/utils/typedefs.dart';
 
 abstract class BaseApiServices {
-  ResultFuture<dynamic> getGetApiResponse(String url);
+  ResultFuture<dynamic> getGetApiResponse(String url, {Map<String, dynamic>? body});
   ResultFuture<dynamic> getPostApiResponse(String url, Map<String, dynamic> body);
   ResultFuture<dynamic> patchApiResponse(String url, Map<String, dynamic> body);
   ResultFuture<dynamic> getPutApiResponse(String url, Map<String, dynamic> body);

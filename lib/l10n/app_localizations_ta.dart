@@ -2786,7 +2786,7 @@ class AppLocalizationsTa extends AppLocalizations {
   String get months => 'மாதங்கள்';
 
   @override
-  String get deleteAlertTitle => 'எச்சரிக்கையை நீக்கு';
+  String get deleteAlertTitle => 'அழி';
 
   @override
   String get deleteAlertDesc =>
@@ -2934,7 +2934,7 @@ class AppLocalizationsTa extends AppLocalizations {
 
   @override
   String get goToSettingsAndSelectAllowAllTheTime =>
-      'Go to settings and select “Allow all the time”';
+      'Go to settings and select \"Allow all the time\"';
 
   @override
   String get locationPermissions => 'Location Permissions';
@@ -3403,4 +3403,75 @@ class AppLocalizationsTa extends AppLocalizations {
 
   @override
   String get profile100PercentComplete => 'உங்கள் சுயவிவரம் 100% முடிந்தது!';
+
+  @override
+  String get locationPermissionWarning =>
+      'Sharing your phone\'s location works correctly only if it can access your location \"all the time\"';
+
+  @override
+  String get trackifyApp => 'Trackify';
+
+  @override
+  String get locationText => 'Location';
+
+  @override
+  String get tapIntoLocation => 'Tap into Location';
+
+  @override
+  String get goToSettingsBtn => 'Go to Settings';
+
+  @override
+  String get shareLiveLocationFor => 'Share your live location for';
+
+  @override
+  String get twoHours => '2 hours';
+
+  @override
+  String get fourHours => '4 hours';
+
+  @override
+  String get eightHours => '8 hours';
+
+  @override
+  String get untilStopped => 'Until Stopped';
+
+  @override
+  String get shareLocationLink => 'Share location link';
+
+  @override
+  String get documentNameText => 'ஆவணத்தின் பெயர்';
+
+  @override
+  String get expiryDateText => 'காலாவதி தேதி';
+
+  @override
+  String get documentImagesText => 'ஆவணப் படங்கள்';
+
+  @override
+  String get noImagesAvailableText => 'படங்கள் எதுவும் இல்லை';
+
+  @override
+  String get pdfDocumentText => 'பி.டி.எஃப் ஆவணம்';
+
+  @override
+  String get deleteAlertDescription =>
+      'இந்த ஆவணத்தை அழிக்க உறுதியாக உள்ளீர்களா?';
+
+  @override
+  String get deleteRideTitle => 'பயணத்தை நீக்கு';
+
+  @override
+  String get deleteRideConfirmMessage =>
+      'இந்த பயணப் பதிவை நீக்க விரும்புகிறீர்களா?';
+
+  @override
+  String get rideDeletedSuccess => 'பயணம் வெற்றிகரமாக நீக்கப்பட்டது';
+
+  @override
+  String get onlineRideDeleteNotSupported =>
+      'ஆன்லைன் பயணத்தை ஆஃப்லைனில் நீக்க முடியாது';
+
+  @override
+  String get rideDeleteFailedInvalidId =>
+      'பயணத்தை நீக்க முடியவில்லை: தவறான ஐடி';
 }

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../../l10n/app_localizations.dart';
+
 
 class TextFieldWidgets extends StatelessWidget {
   final TextEditingController controller;
@@ -21,8 +21,6 @@ class TextFieldWidgets extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    final size = MediaQuery.of(context).size;
-    final screenHeight = size.height;
     return TextFormField(
       controller: controller,
       keyboardType: keyboardType,
@@ -53,13 +51,13 @@ class TextFieldWidgets extends StatelessWidget {
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
           borderSide: BorderSide(
-            color: colorScheme.outlineVariant.withOpacity(0.2),
+            color: colorScheme.outlineVariant.withValues(alpha: 0.2),
           ),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
           borderSide: BorderSide(
-            color: colorScheme.outlineVariant.withOpacity(0.2),
+            color: colorScheme.outlineVariant.withValues(alpha: 0.2),
           ),
         ),
         focusedBorder: OutlineInputBorder(

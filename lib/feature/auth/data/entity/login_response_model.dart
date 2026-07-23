@@ -7,12 +7,31 @@ class LoginResponseModel {
   LoginResponseModel({this.status, this.message, this.token, this.user});
 
   LoginResponseModel.fromJson(Map<String, dynamic> json) {
-    status = json['status'] is bool
-        ? json['status']
-        : json['status']?.toString().toLowerCase() == 'true';
+    dynamic statusValue = json['status'] ?? json['success'];
+    if (statusValue is String) {
+      status = statusValue.toLowerCase() == 'true';
+    } else if (statusValue is bool) {
+      status = statusValue;
+    } else {
+      status = false;
+    }
+    
     message = json['message'];
-    token = json['token'];
-    user = json['user'] != null ? new User.fromJson(json['user']) : null;
+    
+    // Check if token is in 'data'
+    if (json['data'] != null && json['data'] is Map<String, dynamic>) {
+      token = json['data']['token'] ?? json['token'];
+      
+      // If user is not present but userId is in data, create a partial user
+      if (json['user'] != null) {
+        user = User.fromJson(json['user']);
+      } else if (json['data']['userId'] != null) {
+        user = User(id: json['data']['userId']);
+      }
+    } else {
+      token = json['token'];
+      user = json['user'] != null ? User.fromJson(json['user']) : null;
+    }
   }
 
   Map<String, dynamic> toJson() {

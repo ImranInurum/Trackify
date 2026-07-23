@@ -5335,7 +5335,7 @@ abstract class AppLocalizations {
   /// No description provided for @deleteAlertTitle.
   ///
   /// In en, this message translates to:
-  /// **'Delete Alert'**
+  /// **'Delete'**
   String get deleteAlertTitle;
 
   /// No description provided for @deleteAlertDesc.
@@ -5617,7 +5617,7 @@ abstract class AppLocalizations {
   /// No description provided for @goToSettingsAndSelectAllowAllTheTime.
   ///
   /// In en, this message translates to:
-  /// **'Go to settings and select “Allow all the time”'**
+  /// **'Go to settings and select \"Allow all the time\"'**
   String get goToSettingsAndSelectAllowAllTheTime;
 
   /// No description provided for @locationPermissions.
@@ -6489,6 +6489,138 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Your profile is 100% complete!'**
   String get profile100PercentComplete;
+
+  /// No description provided for @locationPermissionWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'Sharing your phone\'s location works correctly only if it can access your location \"all the time\"'**
+  String get locationPermissionWarning;
+
+  /// No description provided for @trackifyApp.
+  ///
+  /// In en, this message translates to:
+  /// **'Trackify'**
+  String get trackifyApp;
+
+  /// No description provided for @locationText.
+  ///
+  /// In en, this message translates to:
+  /// **'Location'**
+  String get locationText;
+
+  /// No description provided for @tapIntoLocation.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap into Location'**
+  String get tapIntoLocation;
+
+  /// No description provided for @goToSettingsBtn.
+  ///
+  /// In en, this message translates to:
+  /// **'Go to Settings'**
+  String get goToSettingsBtn;
+
+  /// No description provided for @shareLiveLocationFor.
+  ///
+  /// In en, this message translates to:
+  /// **'Share your live location for'**
+  String get shareLiveLocationFor;
+
+  /// No description provided for @twoHours.
+  ///
+  /// In en, this message translates to:
+  /// **'2 hours'**
+  String get twoHours;
+
+  /// No description provided for @fourHours.
+  ///
+  /// In en, this message translates to:
+  /// **'4 hours'**
+  String get fourHours;
+
+  /// No description provided for @eightHours.
+  ///
+  /// In en, this message translates to:
+  /// **'8 hours'**
+  String get eightHours;
+
+  /// No description provided for @untilStopped.
+  ///
+  /// In en, this message translates to:
+  /// **'Until Stopped'**
+  String get untilStopped;
+
+  /// No description provided for @shareLocationLink.
+  ///
+  /// In en, this message translates to:
+  /// **'Share location link'**
+  String get shareLocationLink;
+
+  /// No description provided for @documentNameText.
+  ///
+  /// In en, this message translates to:
+  /// **'Document Name'**
+  String get documentNameText;
+
+  /// No description provided for @expiryDateText.
+  ///
+  /// In en, this message translates to:
+  /// **'Expiry Date'**
+  String get expiryDateText;
+
+  /// No description provided for @documentImagesText.
+  ///
+  /// In en, this message translates to:
+  /// **'Document Images'**
+  String get documentImagesText;
+
+  /// No description provided for @noImagesAvailableText.
+  ///
+  /// In en, this message translates to:
+  /// **'No images available'**
+  String get noImagesAvailableText;
+
+  /// No description provided for @pdfDocumentText.
+  ///
+  /// In en, this message translates to:
+  /// **'PDF Document'**
+  String get pdfDocumentText;
+
+  /// No description provided for @deleteAlertDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete this document?'**
+  String get deleteAlertDescription;
+
+  /// No description provided for @deleteRideTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Ride'**
+  String get deleteRideTitle;
+
+  /// No description provided for @deleteRideConfirmMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete this ride record?'**
+  String get deleteRideConfirmMessage;
+
+  /// No description provided for @rideDeletedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Ride deleted successfully'**
+  String get rideDeletedSuccess;
+
+  /// No description provided for @onlineRideDeleteNotSupported.
+  ///
+  /// In en, this message translates to:
+  /// **'Online ride deletion not supported offline'**
+  String get onlineRideDeleteNotSupported;
+
+  /// No description provided for @rideDeleteFailedInvalidId.
+  ///
+  /// In en, this message translates to:
+  /// **'Ride deletion failed: Invalid ID'**
+  String get rideDeleteFailedInvalidId;
 }
 
 class _AppLocalizationsDelegate

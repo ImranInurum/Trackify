@@ -35,6 +35,7 @@ class LocationSharingItem extends Equatable {
   final String? subtitle;
   final bool isSharing;
   final bool isPhone;
+  final String imei;
 
   const LocationSharingItem({
     required this.id,
@@ -42,6 +43,7 @@ class LocationSharingItem extends Equatable {
     this.subtitle,
     this.isSharing = false,
     this.isPhone = false,
+    this.imei = '',
   });
 
   LocationSharingItem copyWith({
@@ -50,6 +52,7 @@ class LocationSharingItem extends Equatable {
     String? subtitle,
     bool? isSharing,
     bool? isPhone,
+    String? imei,
   }) {
     return LocationSharingItem(
       id: id ?? this.id,
@@ -57,9 +60,10 @@ class LocationSharingItem extends Equatable {
       subtitle: subtitle ?? this.subtitle,
       isSharing: isSharing ?? this.isSharing,
       isPhone: isPhone ?? this.isPhone,
+      imei: imei ?? this.imei,
     );
   }
 
   @override
-  List<Object?> get props => [id, name, subtitle, isSharing, isPhone];
+  List<Object?> get props => [id, name, subtitle, isSharing, isPhone, imei];
 }

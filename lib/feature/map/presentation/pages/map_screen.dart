@@ -97,6 +97,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
   bool _isExploreExpanded = false; // For Expandable Explore More section
   final ScrollController _scrollController = ScrollController();
   bool _showScrollToTop = false;
+  bool _hasNavigatedToInstallation = false;
 
   // Animation controller for cinematic camera movements
   AnimationController? _cameraAnimationController;
@@ -990,6 +991,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                     _isWarrantyExpired = true;
                     _isWarrantyLoading = false;
                     _hasShownWarrantyPopup = false;
+                    _hasNavigatedToInstallation = false;
                   });
                   debugPrint(
                     '[MapScreen] Logout detected — warranty & device state reset.',
@@ -1002,125 +1004,93 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                 if (state is MapLoaded) {
                   final vehicles = state.vehicleList.vehicles ?? [];
                   if (vehicles.isNotEmpty) {
-                    // Re-select device on login or when device list refreshes
-                    final currentImei = _selectedDevice?.imei;
-                    if (_selectedDevice == null ||
-                        !vehicles.any((v) => v.imei == currentImei)) {
-                      final savedUid = prefs.getSync(
-                        key: AppPreference.KEY_SELECTED_UID,
-                      );
+                    // Check if current selection is still valid in the new vehicles list
+                    final bool isCurrentSelectedValid = _selectedDevice != null &&
+                        vehicles.any((v) => v.id == _selectedDevice!.id);
+
+                    if (!isCurrentSelectedValid) {
+                      // Selection is invalid (deleted or null). Reset selection.
+                      final savedUid = prefs.getSync(key: AppPreference.KEY_SELECTED_UID);
                       final savedImei = prefs.getSync(key: AppPreference.IMEI);
 
-                      // Try to find the previously selected vehicle by UID first,
-                      // then by IMEI. If neither matches, fall back to first vehicle.
                       Vehicles? matchedVehicle;
                       if (savedUid.isNotEmpty) {
                         try {
-                          matchedVehicle = vehicles.firstWhere(
-                            (v) => v.id == savedUid,
-                          );
+                          matchedVehicle = vehicles.firstWhere((v) => v.id == savedUid);
                         } catch (_) {}
                       }
                       if (matchedVehicle == null && savedImei.isNotEmpty) {
                         try {
-                          matchedVehicle = vehicles.firstWhere(
-                            (v) => v.imei == savedImei,
-                          );
+                          matchedVehicle = vehicles.firstWhere((v) => v.imei == savedImei);
                         } catch (_) {}
                       }
 
-                      final bool foundSavedVehicle = matchedVehicle != null;
                       final savedVehicle = matchedVehicle ?? vehicles.first;
 
                       setState(() {
                         _selectedDevice = savedVehicle;
                       });
 
-                      // Only overwrite preferences if we actually found the saved
-                      // vehicle, or if there was nothing saved yet (fresh install).
-                      if (foundSavedVehicle || savedUid.isEmpty) {
-                        prefs.set(
-                          key: AppPreference.KEY_SELECTED_UID,
-                          value: savedVehicle.id,
-                        );
-                        prefs.set(
-                          key: AppPreference.IMEI,
-                          value: savedVehicle.imei ?? '',
-                        );
-                        AppNavigation.refreshNavigationState();
-                      } else {
-                        // The saved vehicle was not found in the current vehicle
-                        // list (e.g. stale cache). Still refresh nav state so the
-                        // tab count matches the saved IMEI (which may be empty).
-                        AppNavigation.refreshNavigationState();
-                      }
+                      prefs.set(key: AppPreference.KEY_SELECTED_UID, value: savedVehicle.id);
+                      prefs.set(key: AppPreference.IMEI, value: savedVehicle.imei ?? '');
+                      AppNavigation.refreshNavigationState();
 
-                      // Refresh rides for the initially selected vehicle
+                      // Refresh rides and initialize socket for the new vehicle
                       context.read<RideHistoryCubit>().getRideHistoryData();
+                      context.read<AppCubit>().initializeSocket(imei: savedVehicle.imei);
 
-                      // Ensure socket is connected for the selected vehicle (fixes issue after login/re-opening)
-                      context.read<AppCubit>().initializeSocket(
-                        imei: savedVehicle.imei,
-                      );
-
-                      if (savedVehicle.imei != null &&
-                          savedVehicle.imei!.isNotEmpty) {
-                        context.read<GeoFenceCubit>().fetchGeoFences(
-                          savedVehicle.imei!,
-                        );
+                      if (savedVehicle.imei != null && savedVehicle.imei!.isNotEmpty) {
+                        context.read<GeoFenceCubit>().fetchGeoFences(savedVehicle.imei!);
                         _checkWarrantyStatus(savedVehicle.imei!);
-                        context.read<PromoVideoCubit>().fetchPromoVideos(
-                          savedVehicle.imei!,
-                        );
+                        context.read<PromoVideoCubit>().fetchPromoVideos(savedVehicle.imei!);
                       } else {
                         setState(() {
-                          _isWarrantyExpired = AppPreference.instance
-                              .getBoolSync(
-                                key: 'KEY_WARRANTY_EXPIRED',
-                                defaultValue: true,
-                              );
+                          _isWarrantyExpired = AppPreference.instance.getBoolSync(
+                            key: 'KEY_WARRANTY_EXPIRED',
+                            defaultValue: true,
+                          );
                           _isWarrantyLoading = false;
                         });
                       }
                     } else {
-                      // Update existing selected device data if the vehicle list
-                      // was refreshed. Match strictly by ID to avoid confusing
-                      // multiple vehicles that all have a null/empty IMEI.
-                      final updatedDevice = vehicles.firstWhere(
-                        (v) => v.id == _selectedDevice!.id,
-                        orElse: () => _selectedDevice!,
-                      );
-                      if (updatedDevice != _selectedDevice) {
+                      // Current selection is still valid, just update the data (strictly by ID)
+                      final updatedDevice = vehicles.firstWhere((v) => v.id == _selectedDevice!.id);
+                      setState(() {
+                        _selectedDevice = updatedDevice;
+                      });
+                      if (updatedDevice.imei != null && updatedDevice.imei!.isNotEmpty) {
+                        context.read<GeoFenceCubit>().fetchGeoFences(updatedDevice.imei!);
+                        _checkWarrantyStatus(updatedDevice.imei!);
+                        context.read<PromoVideoCubit>().fetchPromoVideos(updatedDevice.imei!);
+                      } else {
                         setState(() {
-                          _selectedDevice = updatedDevice;
+                          _isWarrantyExpired = AppPreference.instance.getBoolSync(
+                            key: 'KEY_WARRANTY_EXPIRED',
+                            defaultValue: true,
+                          );
+                          _isWarrantyLoading = false;
                         });
-                        if (updatedDevice.imei != null &&
-                            updatedDevice.imei!.isNotEmpty) {
-                          context.read<GeoFenceCubit>().fetchGeoFences(
-                            updatedDevice.imei!,
-                          );
-                          _checkWarrantyStatus(updatedDevice.imei!);
-                          context.read<PromoVideoCubit>().fetchPromoVideos(
-                            updatedDevice.imei!,
-                          );
-                        } else {
-                          setState(() {
-                            _isWarrantyExpired = AppPreference.instance
-                                .getBoolSync(
-                                  key: 'KEY_WARRANTY_EXPIRED',
-                                  defaultValue: true,
-                                );
-                            _isWarrantyLoading = false;
-                          });
-                        }
                       }
                     }
                   } else {
                     // No vehicles available
-                    if (mounted) {
-                      setState(() {
-                        _isWarrantyLoading = false;
-                      });
+                    final bool wasSelectedDeviceActive = _selectedDevice != null;
+                    setState(() {
+                      _selectedDevice = null;
+                      _isWarrantyLoading = false;
+                      _isWarrantyExpired = true;
+                    });
+                    prefs.set(key: AppPreference.KEY_SELECTED_UID, value: '');
+                    prefs.set(key: AppPreference.IMEI, value: '');
+                    AppNavigation.refreshNavigationState();
+
+                    if (wasSelectedDeviceActive || !_hasNavigatedToInstallation) {
+                      _hasNavigatedToInstallation = true;
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => const DeviceInstallationScreen(),
+                        ),
+                      );
                     }
                   }
                 }
@@ -2845,7 +2815,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
       {
         "icon": Icons.share_outlined,
         "label": l10n.locationSharing,
-        "badge": l10n.comingSoonOption,
+        "badge": null,
       },
       {
         "icon": Icons.local_parking_rounded,

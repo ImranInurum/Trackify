@@ -2770,7 +2770,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get months => 'Months';
 
   @override
-  String get deleteAlertTitle => 'Delete Alert';
+  String get deleteAlertTitle => 'Delete';
 
   @override
   String get deleteAlertDesc =>
@@ -2918,7 +2918,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get goToSettingsAndSelectAllowAllTheTime =>
-      'Go to settings and select “Allow all the time”';
+      'Go to settings and select \"Allow all the time\"';
 
   @override
   String get locationPermissions => 'Location Permissions';
@@ -3378,4 +3378,74 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get profile100PercentComplete => 'Your profile is 100% complete!';
+
+  @override
+  String get locationPermissionWarning =>
+      'Sharing your phone\'s location works correctly only if it can access your location \"all the time\"';
+
+  @override
+  String get trackifyApp => 'Trackify';
+
+  @override
+  String get locationText => 'Location';
+
+  @override
+  String get tapIntoLocation => 'Tap into Location';
+
+  @override
+  String get goToSettingsBtn => 'Go to Settings';
+
+  @override
+  String get shareLiveLocationFor => 'Share your live location for';
+
+  @override
+  String get twoHours => '2 hours';
+
+  @override
+  String get fourHours => '4 hours';
+
+  @override
+  String get eightHours => '8 hours';
+
+  @override
+  String get untilStopped => 'Until Stopped';
+
+  @override
+  String get shareLocationLink => 'Share location link';
+
+  @override
+  String get documentNameText => 'Document Name';
+
+  @override
+  String get expiryDateText => 'Expiry Date';
+
+  @override
+  String get documentImagesText => 'Document Images';
+
+  @override
+  String get noImagesAvailableText => 'No images available';
+
+  @override
+  String get pdfDocumentText => 'PDF Document';
+
+  @override
+  String get deleteAlertDescription =>
+      'Are you sure you want to delete this document?';
+
+  @override
+  String get deleteRideTitle => 'Delete Ride';
+
+  @override
+  String get deleteRideConfirmMessage =>
+      'Are you sure you want to delete this ride record?';
+
+  @override
+  String get rideDeletedSuccess => 'Ride deleted successfully';
+
+  @override
+  String get onlineRideDeleteNotSupported =>
+      'Online ride deletion not supported offline';
+
+  @override
+  String get rideDeleteFailedInvalidId => 'Ride deletion failed: Invalid ID';
 }

@@ -10,6 +10,7 @@ abstract class DocumentRepository {
   Future<String?> pickFile(PickerType type);
   Future<void> saveDocument(DocumentEntity doc);
   Future<List<DocumentEntity>> getDocuments();
+  ResultFuture<List<DocumentEntity>> getDocumentsByVehicleId(String vehicleId);
 
   ResultFuture<DocumentUploadResponse> uploadDocument({
     required DocumentUploadRequest request,

@@ -76,6 +76,10 @@ import 'package:trackify/feature/device_warranty/domain/usecase/verify_payment_u
 import 'package:trackify/feature/device_warranty/data/repository/device_warranty_repository_impl.dart';
 import 'package:trackify/feature/device_warranty/data/data_source/device_warranty_data_source.dart';
 import 'package:trackify/feature/document_folder/presentation/pages/document_screen.dart';
+import 'package:trackify/feature/document_folder/data/data_sources/document_local_datasources.dart';
+import 'package:trackify/feature/document_folder/data/repository/document_repository_impl.dart';
+import 'package:trackify/feature/document_folder/presentation/cubit/document_folder_cubit.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:trackify/feature/emergency_sos/data/data_source/emergency_alert_remote_data.dart';
 import 'package:trackify/feature/emergency_sos/data/repository/emergency_alert_repository_impl.dart';
 import 'package:trackify/feature/emergency_sos/domain/usecase/emergency_alert_usecase.dart';
@@ -256,6 +260,11 @@ List<BlocProvider> _buildBlocProviders() {
             ServiceLogsRemoteDataSource(NetworkApiService()),
           ),
         ),
+      ),
+    ),
+    BlocProvider<DocumentFolderCubit>(
+      create: (_) => DocumentFolderCubit(
+        DocumentRepositoryImpl(DocumentLocalDataSource(ImagePicker())),
       ),
     ),
     BlocProvider<OverspeedAlertCubit>(

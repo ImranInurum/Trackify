@@ -34,4 +34,43 @@ class RecordViaPhoneRepositoryImpl implements RecordViaPhoneRepository {
       return Left(e);
     }
   }
+  @override
+  ResultFuture<void> saveRideModeOnline(Map<String, dynamic> body) async {
+    try {
+      final token = await AppPreference.instance.get(key: AppPreference.KEY_TOKEN);
+      final Map<String, dynamic> requestBody = Map.from(body);
+      
+      // Some endpoints expect auth token in body if headers aren't used for it
+      // though usually it's in headers. Since it's done for getDeviceDataByDate, we'll keep it consistent.
+      // The curl showed Authorization header. Our BaseApiService typically adds the Bearer token automatically if it's stored.
+      // But let's follow the existing pattern if needed, or simply pass the body.
+      // For safety, pass body as is. NetworkApiService usually attaches the token in headers.
+      // Wait, getDeviceDataByDate does requestBody['auth'] = token;
+      // We'll just pass the body directly.
+      
+      final res = await _apiServices.getPostApiResponse(
+        ApiURL.createRideMode,
+        requestBody,
+      );
+      return res.fold(
+        (error) => Left(error),
+        (data) => const Right(null),
+      );
+    } on AppException catch (e) {
+      return Left(e);
+    }
+  }
+
+  @override
+  ResultFuture<dynamic> getOnlinePastRides(String userId) async {
+    try {
+      final res = await _apiServices.getGetApiResponse(ApiURL.onlinePastRides(userId));
+      return res.fold(
+        (error) => Left(error),
+        (data) => Right(data),
+      );
+    } on AppException catch (e) {
+      return Left(e);
+    }
+  }
 }

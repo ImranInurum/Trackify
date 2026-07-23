@@ -28,7 +28,7 @@ class _DocumentOtherdocumentScreenState extends State<DocumentOtherdocumentScree
   File? _backFile;
   DateTime? _selectedDate;
   bool _isLoading = false;
-  String? _error = null;
+  String? _error;
   bool _isPickerActive = false;
 
   static const int _maxBytes = 5 * 1024 * 1024;
@@ -53,8 +53,6 @@ class _DocumentOtherdocumentScreenState extends State<DocumentOtherdocumentScree
   // ── DATE PICKER ─────────────────────────────────────────────
 
   Future<void> _pickDate() async {
-    final l10n = AppLocalizations.of(context)!;
-
     final now = DateTime.now();
     final picked = await showDatePicker(
       context: context,
@@ -87,7 +85,7 @@ class _DocumentOtherdocumentScreenState extends State<DocumentOtherdocumentScree
       }
 
       // ✅ CLOSE bottom sheet HERE (correct timing)
-      if (Navigator.canPop(context)) {
+      if (mounted && Navigator.canPop(context)) {
         Navigator.pop(context);
       }
 
@@ -99,6 +97,7 @@ class _DocumentOtherdocumentScreenState extends State<DocumentOtherdocumentScree
         return;
       }
 
+      if (!mounted) return;
       if (!_isValidSize(croppedFile)) {
         _setError(l10n.fileTooLarge);
         return;
@@ -387,9 +386,9 @@ class _DocumentOtherdocumentScreenState extends State<DocumentOtherdocumentScree
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final colorScheme = Theme.of(context).colorScheme;
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
     final size = MediaQuery.of(context).size;
-    final screenWidth = size.width;
     final screenHeight = size.height;
     final dateLabel = _selectedDate == null
         ? l10n.selectExpiryDate
@@ -397,33 +396,32 @@ class _DocumentOtherdocumentScreenState extends State<DocumentOtherdocumentScree
 
     return Scaffold(
       backgroundColor: colorScheme.surface,
+      appBar: AppBar(
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back_ios_new,
+            color: colorScheme.onSurface,
+          ),
+          onPressed: () => Navigator.pop(context),
+        ),
+        title: Text(
+          widget.title,
+          style: theme.textTheme.titleMedium?.copyWith(
+            fontWeight: FontWeight.w600,
+            color: colorScheme.onSurface,
+          ),
+        ),
+        backgroundColor: colorScheme.surface,
+        elevation: 0,
+        surfaceTintColor: Colors.transparent,
+        centerTitle: true,
+      ),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SizedBox(height: 14),
-
-              Row(
-                // mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  GestureDetector(
-                    onTap: () => Navigator.pop(context),
-                    child:
-                    Icon(Icons.arrow_back_ios_new, color: colorScheme.onSurface),
-                  ),
-                  const SizedBox(width: 90),
-                  Text(
-                    widget.title,
-                    style: TextStyle(
-                      color: colorScheme.onSurface,
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ],
-              ),
 
               const SizedBox(height: 24),
 
@@ -459,13 +457,13 @@ class _DocumentOtherdocumentScreenState extends State<DocumentOtherdocumentScree
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(10),
                             borderSide: BorderSide(
-                              color: colorScheme.outlineVariant.withOpacity(0.2),
+                              color: colorScheme.outlineVariant.withValues(alpha: 0.2),
                             ),
                           ),
                           enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(10),
                             borderSide: BorderSide(
-                              color: colorScheme.outlineVariant.withOpacity(0.2),
+                              color: colorScheme.outlineVariant.withValues(alpha: 0.2),
                             ),
                           ),
                           focusedBorder: OutlineInputBorder(
@@ -492,7 +490,7 @@ class _DocumentOtherdocumentScreenState extends State<DocumentOtherdocumentScree
                           decoration: BoxDecoration(
                             color: Colors.white,
                             borderRadius: BorderRadius.circular(10),
-                            border: Border.all(color: colorScheme.outlineVariant.withOpacity(0.2)),
+                            border: Border.all(color: colorScheme.outlineVariant.withValues(alpha: 0.2)),
                           ),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -541,7 +539,7 @@ class _DocumentOtherdocumentScreenState extends State<DocumentOtherdocumentScree
                         l10n.fileSizeNote,style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeightManager.medium,
-                        color: colorScheme.onSurface.withOpacity(0.7),
+                        color: colorScheme.onSurface.withValues(alpha: 0.7),
                       ),
                       ),
 
@@ -552,7 +550,7 @@ class _DocumentOtherdocumentScreenState extends State<DocumentOtherdocumentScree
                       Text(
                         l10n.commitmentText,
                         style: TextStyle(
-                            color: colorScheme.onSurface.withOpacity(0.5),
+                            color: colorScheme.onSurface.withValues(alpha: 0.5),
                             fontSize: 14),
                       ),
 
@@ -631,7 +629,7 @@ class _DocumentOtherdocumentScreenState extends State<DocumentOtherdocumentScree
         decoration: BoxDecoration(
           color: Theme.of(context).cardColor,
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: colorScheme.outlineVariant.withOpacity(0.2)),
+          border: Border.all(color: colorScheme.outlineVariant.withValues(alpha: 0.2)),
         ),
         child: file == null
             ? Column(

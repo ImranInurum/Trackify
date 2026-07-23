@@ -6,6 +6,7 @@ import '../cubit/location_sharing_state.dart';
 import 'location_sharing_detail_screen.dart';
 import 'widgets/location_sharing_card.dart';
 import 'package:trackify/core/widgets/trackify_loader.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class LocationSharingScreen extends StatefulWidget {
   const LocationSharingScreen({super.key});
@@ -21,6 +22,259 @@ class _LocationSharingScreenState extends State<LocationSharingScreen> {
     // Use addPostFrameCallback to ensure the Cubit is available if it was provided higher up
     // or just call it here if we're creating it here.
     // In this case, I'll assume it's provided via BlocProvider in the parent or I'll wrap it.
+  }
+
+  void _showPermissionDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        final l10n = AppLocalizations.of(context)!;
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          contentPadding: const EdgeInsets.all(24),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(
+                Icons.warning_rounded,
+                color: Colors.redAccent,
+                size: 48,
+              ),
+              const SizedBox(height: 16),
+              Text(
+                l10n.locationPermissionWarning,
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+              ),
+              const SizedBox(height: 12),
+              Text(
+                l10n.goToSettingsAndSelectAllowAllTheTime,
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 14, color: Colors.grey),
+              ),
+              const SizedBox(height: 24),
+              // Simulated Phone UI
+              Container(
+                height: 150,
+                width: 110,
+                decoration: BoxDecoration(
+                  color: const Color(0xFF2E2E2E),
+                  borderRadius: BorderRadius.circular(18),
+                  border: Border.all(color: Colors.grey.shade800, width: 4),
+                ),
+                child: Column(
+                  children: [
+                    const SizedBox(height: 12),
+                    const Icon(
+                      Icons.location_on,
+                      color: Colors.amber,
+                      size: 24,
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      l10n.trackifyApp,
+                      style: const TextStyle(color: Colors.white, fontSize: 9),
+                    ),
+                    const SizedBox(height: 16),
+                    Container(
+                      margin: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 2,
+                      ),
+                      height: 16,
+                      decoration: BoxDecoration(
+                        color: Colors.white10,
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                    ),
+                    Container(
+                      margin: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 2,
+                      ),
+                      height: 16,
+                      decoration: BoxDecoration(
+                        color: Colors.white10,
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                    ),
+                    Container(
+                      margin: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 2,
+                      ),
+                      height: 18,
+                      decoration: BoxDecoration(
+                        color: Colors.white24,
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      child: Center(
+                        child: Text(
+                          l10n.locationText,
+                          style: const TextStyle(
+                            color: Colors.amber,
+                            fontSize: 9,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 12),
+              Text(
+                l10n.tapIntoLocation,
+                style: TextStyle(fontSize: 12, color: Colors.grey),
+              ),
+              const SizedBox(height: 24),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                    openAppSettings();
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.lightBlue,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                  child: Text(
+                    l10n.goToSettingsBtn,
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  void _showDurationDialog(
+    BuildContext context,
+    LocationSharingItem item,
+    LocationSharingCubit cubit,
+  ) {
+    int selectedOption = 2; // Default 2 hours
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        final l10n = AppLocalizations.of(context)!;
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 24,
+                vertical: 24,
+              ),
+              title: Text(
+                l10n.shareLiveLocationFor,
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+              ),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  RadioListTile<int>(
+                    title: Text(l10n.twoHours),
+                    value: 2,
+                    groupValue: selectedOption,
+                    onChanged: (value) {
+                      setState(() => selectedOption = value!);
+                    },
+                    contentPadding: EdgeInsets.zero,
+                    visualDensity: const VisualDensity(
+                      horizontal: -4,
+                      vertical: -4,
+                    ),
+                  ),
+                  RadioListTile<int>(
+                    title: Text(l10n.fourHours),
+                    value: 4,
+                    groupValue: selectedOption,
+                    onChanged: (value) {
+                      setState(() => selectedOption = value!);
+                    },
+                    contentPadding: EdgeInsets.zero,
+                    visualDensity: const VisualDensity(
+                      horizontal: -4,
+                      vertical: -4,
+                    ),
+                  ),
+                  RadioListTile<int>(
+                    title: Text(l10n.eightHours),
+                    value: 8,
+                    groupValue: selectedOption,
+                    onChanged: (value) {
+                      setState(() => selectedOption = value!);
+                    },
+                    contentPadding: EdgeInsets.zero,
+                    visualDensity: const VisualDensity(
+                      horizontal: -4,
+                      vertical: -4,
+                    ),
+                  ),
+                  RadioListTile<int>(
+                    title: Text(l10n.untilStopped),
+                    value: 0,
+                    groupValue: selectedOption,
+                    onChanged: (value) {
+                      setState(() => selectedOption = value!);
+                    },
+                    contentPadding: EdgeInsets.zero,
+                    visualDensity: const VisualDensity(
+                      horizontal: -4,
+                      vertical: -4,
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton.icon(
+                      onPressed: () {
+                        Navigator.pop(context);
+                        cubit.shareLiveLocation(context, item.id, selectedOption);
+                      },
+                      icon: const Icon(
+                        Icons.share,
+                        color: Colors.white,
+                        size: 20,
+                      ),
+                      label: Text(
+                        l10n.shareLocationLink,
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.lightBlue,
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
   }
 
   @override
@@ -67,10 +321,23 @@ class _LocationSharingScreenState extends State<LocationSharingScreen> {
                       final item = state.items[index];
                       return LocationSharingCard(
                         item: item,
-                        onShareTap: () {
-                          context.read<LocationSharingCubit>().toggleSharing(
-                            item.id,
-                          );
+                        onShareTap: () async {
+                          final cubit = context.read<LocationSharingCubit>();
+                          if (!item.isSharing) {
+                            if (item.isPhone) {
+                              var status =
+                                  await Permission.locationAlways.status;
+                              if (!status.isGranted) {
+                                _showPermissionDialog(context);
+                                return;
+                              }
+                            }
+                            // Show the duration dialog
+                            _showDurationDialog(context, item, cubit);
+                          } else {
+                            // If already sharing, just stop it
+                            cubit.toggleSharing(item.id);
+                          }
                         },
                         onCardTap: () {
                           Navigator.push(
@@ -91,39 +358,6 @@ class _LocationSharingScreenState extends State<LocationSharingScreen> {
                 }
                 return const SizedBox.shrink();
               },
-            ),
-            Positioned.fill(
-              child: Container(
-                color: theme.scaffoldBackgroundColor.withOpacity(0.75),
-                child: Center(
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 24,
-                      vertical: 12,
-                    ),
-                    decoration: BoxDecoration(
-                      color: theme.colorScheme.primary,
-                      borderRadius: BorderRadius.circular(100),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.1),
-                          blurRadius: 10,
-                          offset: const Offset(0, 4),
-                        ),
-                      ],
-                    ),
-                    child: Text(
-                      l10n.comingSoonOption,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                        letterSpacing: 1.2,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
             ),
           ],
         ),

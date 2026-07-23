@@ -12,4 +12,12 @@ class RecordViaPhoneUseCase {
   ) {
     return recordViaPhoneRepository.getDeviceDataByDate(body);
   }
+
+  ResultFuture<void> saveRideModeOnline(Map<String, dynamic> body) {
+    return recordViaPhoneRepository.saveRideModeOnline(body);
+  }
+
+  ResultFuture<dynamic> getOnlinePastRides(String userId) {
+    return recordViaPhoneRepository.getOnlinePastRides(userId);
+  }
 }

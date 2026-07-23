@@ -27,7 +27,7 @@ class _DocumentLicenseState extends State<DocumentLicense> {
   File? _backFile;
   DateTime? _selectedDate;
   bool _isLoading = false;
-  String? _error = null;
+  String? _error;
   bool _isPickerActive = false;
 
   static const int _maxBytes = 5 * 1024 * 1024;
@@ -46,8 +46,6 @@ class _DocumentLicenseState extends State<DocumentLicense> {
   // ── DATE PICKER ─────────────────────────────────────────────
 
   Future<void> _pickDate() async {
-    final l10n = AppLocalizations.of(context)!;
-
     final now = DateTime.now();
     final picked = await showDatePicker(
       context: context,
@@ -373,9 +371,9 @@ class _DocumentLicenseState extends State<DocumentLicense> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final colorScheme = Theme.of(context).colorScheme;
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
     final size = MediaQuery.of(context).size;
-    final screenWidth = size.width;
     final screenHeight = size.height;
 
     final dateLabel = _selectedDate == null
@@ -384,34 +382,32 @@ class _DocumentLicenseState extends State<DocumentLicense> {
 
     return Scaffold(
       backgroundColor: colorScheme.surface,
+      appBar: AppBar(
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back_ios_new,
+            color: colorScheme.onSurface,
+          ),
+          onPressed: () => Navigator.pop(context),
+        ),
+        title: Text(
+          widget.title,
+          style: theme.textTheme.titleMedium?.copyWith(
+            fontWeight: FontWeightManager.semibold,
+            color: colorScheme.onSurface,
+          ),
+        ),
+        backgroundColor: colorScheme.surface,
+        elevation: 0,
+        surfaceTintColor: Colors.transparent,
+        centerTitle: true,
+      ),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SizedBox(height: 14),
-
-              Row(
-                children: [
-                  GestureDetector(
-                    onTap: () => Navigator.pop(context),
-                    child: Icon(Icons.arrow_back_ios_new, color: colorScheme.onSurface),
-                  ),
-                  Expanded(
-                    child: Center(
-                      child: Text(
-                        widget.title,
-                        style: TextStyle(
-                          color: colorScheme.onSurface,
-                          fontSize: 18,
-                          fontWeight: FontWeightManager.semibold,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
 
               Expanded(
                 child: SingleChildScrollView(
@@ -436,7 +432,7 @@ class _DocumentLicenseState extends State<DocumentLicense> {
                           decoration: BoxDecoration(
                             color: Theme.of(context).cardColor,
                             borderRadius: BorderRadius.circular(10),
-                            border: Border.all(color: colorScheme.outlineVariant.withOpacity(0.2)),
+                            border: Border.all(color: colorScheme.outlineVariant.withValues(alpha: 0.2)),
                           ),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -470,7 +466,7 @@ class _DocumentLicenseState extends State<DocumentLicense> {
                         style: TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeightManager.medium,
-                          color: colorScheme.onSurface.withOpacity(0.5),
+                          color: colorScheme.onSurface.withValues(alpha: 0.5),
                         ),),
 
                       const SizedBox(height: 20),
@@ -491,7 +487,7 @@ class _DocumentLicenseState extends State<DocumentLicense> {
                         l10n.fileSizeNote,style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeightManager.medium,
-                        color: colorScheme.onSurface.withOpacity(0.7),
+                        color: colorScheme.onSurface.withValues(alpha: 0.7),
                       ),
                       ),
 
@@ -500,7 +496,7 @@ class _DocumentLicenseState extends State<DocumentLicense> {
                       Text(
                         l10n.commitmentText,
                         style: TextStyle(
-                            color: colorScheme.onSurface.withOpacity(0.3),
+                            color: colorScheme.onSurface.withValues(alpha: 0.3),
                             fontSize: 18,
                             fontWeight: FontWeightManager.medium),
                       ),
@@ -583,7 +579,7 @@ class _DocumentLicenseState extends State<DocumentLicense> {
         decoration: BoxDecoration(
           color: Theme.of(context).cardColor,
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: colorScheme.outlineVariant.withOpacity(0.2)),
+          border: Border.all(color: colorScheme.outlineVariant.withValues(alpha: 0.2)),
         ),
         child: file == null
             ? Column(

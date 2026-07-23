@@ -8,6 +8,7 @@ import 'package:trackify/feature/document_folder/data/data_sources/document_loca
 import 'package:trackify/feature/document_folder/data/models/document_upload_request.dart';
 import 'package:trackify/feature/document_folder/data/models/document_upload_response.dart';
 import 'package:trackify/feature/document_folder/domain/entities/doucment_entity.dart';
+import 'package:trackify/feature/document_folder/data/models/document_list_response.dart';
 import 'package:trackify/feature/document_folder/domain/repository/document_repository.dart';
 
 class DocumentRepositoryImpl implements DocumentRepository {
@@ -19,6 +20,32 @@ class DocumentRepositoryImpl implements DocumentRepository {
   @override
   Future<List<DocumentEntity>> getDocuments() {
     return dataSource.getAll();
+  }
+
+  @override
+  ResultFuture<List<DocumentEntity>> getDocumentsByVehicleId(String vehicleId) async {
+    try {
+      final url = ApiURL.getDocuments;
+      final result = await _apiServices.getGetApiResponse(url, body: {
+        'vehicleId': vehicleId,
+      });
+      
+      return result.fold(
+        (failure) => Left(failure),
+        (data) {
+          try {
+            final response = DocumentListResponse.fromJson(data);
+            return Right(response.documents);
+          } catch (e) {
+            return Right(<DocumentEntity>[]);
+          }
+        },
+      );
+    } on AppException catch (e) {
+      return Left(e);
+    } catch (e) {
+      return Left(FetchDataException('Unexpected repository error: $e'));
+    }
   }
 
   @override

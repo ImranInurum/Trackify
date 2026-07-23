@@ -7,6 +7,8 @@ import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:hive/hive.dart';
 import 'package:trackify/core/widgets/loading_screen_ol.dart';
+import 'package:trackify/core/utils/shared_preferences.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:trackify/feature/record_via_phone/domain/usecase/record_via_phone_use_case.dart';
 import 'package:trackify/feature/record_via_phone/presentation/cubit/record_via_phone_state.dart';
 
@@ -134,6 +136,47 @@ class RecordViaPhoneCubit extends Cubit<RecordViaPhoneState> {
     }
   }
 
+  /// Saves the completed ride online to the backend.
+  Future<bool> saveRideOnline({
+    required String tag,
+    required List<LatLng> points,
+    required double distanceKm,
+    required Duration duration,
+    required double avgSpeed,
+    required double topSpeed,
+  }) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final userId = prefs.getString(AppPreference.KEY_USER_ID) ?? '';
+      
+      final body = {
+        "userId": userId,
+        "tag": tag,
+        "date_time": DateTime.now().toIso8601String(),
+        "distance_km": distanceKm,
+        "duration_seconds": duration.inSeconds,
+        "avg_speed": avgSpeed,
+        "top_speed": topSpeed,
+        "points": points.map((p) => {"lat": p.latitude, "lng": p.longitude}).toList(),
+      };
+      
+      final res = await _recordViaPhoneUseCase.saveRideModeOnline(body);
+      return res.fold(
+        (failure) {
+          debugPrint('❌ Error saving online ride: ${failure.message}');
+          return false;
+        },
+        (_) {
+          debugPrint('✅ Online ride saved to backend.');
+          return true;
+        },
+      );
+    } catch (e) {
+      debugPrint('❌ Exception saving online ride: $e');
+      return false;
+    }
+  }
+
   /// Returns all locally saved offline rides from Hive, newest first.
   Future<List<Map<String, dynamic>>> getOfflineRides() async {
     try {
@@ -152,6 +195,63 @@ class RecordViaPhoneCubit extends Cubit<RecordViaPhoneState> {
       debugPrint('❌ Error fetching offline rides: $e');
       return [];
     }
+  }
+
+  /// Returns all saved offline rides from Hive and online rides from backend, newest first.
+  Future<List<Map<String, dynamic>>> getAllPastRides() async {
+    List<Map<String, dynamic>> allRides = [];
+
+    // 1. Fetch Offline Rides
+    try {
+      final offlineRides = await getOfflineRides();
+      allRides.addAll(offlineRides);
+    } catch (e) {
+      debugPrint('❌ Error fetching offline rides in getAllPastRides: $e');
+    }
+
+    // 2. Fetch Online Rides
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final userId = prefs.getString(AppPreference.KEY_USER_ID) ?? '';
+      
+      if (userId.isNotEmpty) {
+        final res = await _recordViaPhoneUseCase.getOnlinePastRides(userId);
+        res.fold(
+          (failure) => debugPrint('❌ Error fetching online rides: ${failure.message}'),
+          (data) {
+            if (data is Map && data['data'] is List) {
+              final onlineList = data['data'] as List;
+              for (var r in onlineList) {
+                if (r is Map) {
+                  final mappedRide = {
+                    'id': r['_id'],
+                    'dateStr': r['date_time'],
+                    'tag': r['tag'] ?? 'Commute',
+                    'isFavorite': false,
+                    'distanceKm': (r['distance_km'] as num?)?.toDouble() ?? 0.0,
+                    'durationSeconds': r['duration_seconds'] as int? ?? 0,
+                    'avgSpeed': (r['avg_speed'] as num?)?.toDouble() ?? 0.0,
+                    'points': r['points'] ?? [],
+                  };
+                  allRides.add(mappedRide);
+                }
+              }
+            }
+          },
+        );
+      }
+    } catch (e) {
+      debugPrint('❌ Exception fetching online rides: $e');
+    }
+
+    // 3. Sort newest first
+    allRides.sort((a, b) {
+      final aDate = DateTime.tryParse(a['dateStr'] ?? '') ?? DateTime(0);
+      final bDate = DateTime.tryParse(b['dateStr'] ?? '') ?? DateTime(0);
+      return bDate.compareTo(aDate);
+    });
+
+    return allRides;
   }
 
   /// Deletes a specific offline ride by its id key.
@@ -206,19 +306,20 @@ class RecordViaPhoneCubit extends Cubit<RecordViaPhoneState> {
     double newCurrentSpeed = position.speed * 3.6; // m/s to km/h
     double newTopSpeed = newCurrentSpeed > state.topSpeed ? newCurrentSpeed : state.topSpeed;
 
+    final newDistance = state.rideDistance + (addedDistance / 1000);
     emit(
       MapRecordingUpdate(
         isRecording: true,
         currentRidePoints: updatedPoints,
         rideDuration: state.rideDuration,
-        rideDistance:
-            state.rideDistance + (addedDistance / 1000), // Convert to km
+        rideDistance: newDistance, // Convert to km
         currentSpeed: newCurrentSpeed,
         topSpeed: newTopSpeed,
         data: state.data,
         polylines: state.polylines,
       ),
     );
+
   }
 
   Future<void> fetchDeviceDataByDate({

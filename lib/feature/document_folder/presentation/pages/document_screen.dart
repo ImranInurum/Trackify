@@ -1,15 +1,15 @@
 import 'dart:io';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:trackify/feature/document_folder/presentation/pages/accessory_bill_list_screen.dart';
 
 import '../../../../core/common/models/vehicle_list_model.dart';
 import '../../../../l10n/app_localizations.dart';
 import 'accessory_bill_screen.dart';
 import 'document_license.dart';
 import 'document_otherdocument_screen.dart';
-import 'document_vehicalRC_screen.dart';
+import 'document_vehicle_rc_screen.dart';
 import 'document_ss.dart';
 import 'package:image_cropper/image_cropper.dart';
 import '../../../service_logs/presentation/screens/service_logs_screen.dart';
@@ -17,6 +17,11 @@ import '../../../service_logs/presentation/cubit/service_logs_cubit.dart';
 import '../../../service_logs/presentation/cubit/service_logs_state.dart';
 import '../../../Vehicle_control/data/repositories/vehicle_control_repository_impl.dart';
 import 'package:trackify/core/widgets/trackify_loader.dart';
+import 'package:trackify/feature/document_folder/presentation/cubit/document_folder_cubit.dart';
+import 'package:trackify/feature/document_folder/presentation/cubit/document_folder_state.dart';
+import 'package:trackify/feature/document_folder/domain/entities/doucment_entity.dart';
+import 'package:trackify/feature/document_folder/presentation/pages/document_details_screen.dart';
+import 'package:trackify/core/config/network/api_host.dart';
 
 class DocumentFolderScreen extends StatefulWidget {
   const DocumentFolderScreen({super.key});
@@ -30,10 +35,50 @@ class _DocumentFolderScreenState extends State<DocumentFolderScreen> {
   bool _isPickerActive = false;
   bool _isUploading = false;
 
+  String? _vehicleImageUrl;
+  String? _lastFetchedImei;
+
   @override
   void initState() {
     super.initState();
     context.read<ServiceLogsCubit>().loadVehicles();
+  }
+
+  void _fetchVehicleImageIfNeeded(Vehicle? vehicle) {
+    final imei = vehicle?.imei;
+    final vehicleId = vehicle?.id;
+    if (_lastFetchedImei == imei) return;
+    _lastFetchedImei = imei;
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        setState(() {
+          _vehicleImage = null;
+          _vehicleImageUrl = null;
+        });
+      }
+    });
+
+    if (imei == null || imei.isEmpty) return;
+
+    VehicleControlRepositoryImpl()
+        .getVehicleControlDetails(imei)
+        .then((details) {
+          if (mounted &&
+              details.bikeImage != null &&
+              details.bikeImage!.isNotEmpty) {
+            setState(() {
+              _vehicleImageUrl = details.bikeImage;
+            });
+          }
+        })
+        .catchError((e) {
+          // ignore
+        });
+
+    if (vehicleId != null && vehicleId.isNotEmpty) {
+      context.read<DocumentFolderCubit>().fetchDocuments(vehicleId);
+    }
   }
 
   Future<void> _pickImage(ImageSource source, String? imei) async {
@@ -229,45 +274,93 @@ class _DocumentFolderScreenState extends State<DocumentFolderScreen> {
     final screenHeight = size.height;
 
     Vehicle? selectedVehicle;
-    List<Vehicle> vehicles = [];
 
     if (state is ServiceLogsLoaded) {
       selectedVehicle = state.selectedVehicle;
-      vehicles = state.vehicles;
+
+      _fetchVehicleImageIfNeeded(selectedVehicle);
+    }
+
+    final docState = context.watch<DocumentFolderCubit>().state;
+    List<DocumentEntity> uploadedDocs = [];
+    if (docState is DocumentFolderLoaded) {
+      uploadedDocs = docState.documents;
+    }
+
+    DocumentEntity? findDoc(String subtype) {
+      try {
+        return uploadedDocs.firstWhere((d) => d.subtype == subtype);
+      } catch (_) {
+        return null;
+      }
+    }
+
+    List<DocumentEntity> findAllDocs(String subtype) {
+      return uploadedDocs.where((d) => d.subtype == subtype).toList();
+    }
+
+    void handleDocTap(
+      String title,
+      String subtype,
+      Widget Function() buildUploadScreen,
+    ) {
+      final doc = findDoc(subtype);
+      if (doc != null) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => DocumentDetailsScreen(
+              title: title,
+              document: doc,
+              onEdit: () {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => buildUploadScreen()),
+                );
+              },
+              onDelete: () {
+                // Future enhancement: call delete API
+              },
+            ),
+          ),
+        );
+      } else {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => buildUploadScreen()),
+        );
+      }
     }
 
     return Scaffold(
       backgroundColor: colorScheme.surface,
+      appBar: AppBar(
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back_ios_new,
+            color: colorScheme.onSurface,
+          ),
+          onPressed: () => Navigator.pop(context),
+        ),
+        title: Text(
+          l10n.documentFolder,
+          style: theme.textTheme.titleLarge?.copyWith(
+            fontWeight: FontWeight.w600,
+            color: colorScheme.onSurface,
+          ),
+        ),
+        backgroundColor: colorScheme.surface,
+        elevation: 0,
+        surfaceTintColor: Colors.transparent,
+        centerTitle: false,
+      ),
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // ── HEADER ─────────────────────────────
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  GestureDetector(
-                    onTap: () => Navigator.pop(context),
-                    child: Icon(
-                      Icons.arrow_back_ios_new,
-                      color: colorScheme.onSurface,
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  Text(
-                    l10n.documentFolder,
-                    style: theme.textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.w600,
-                      color: colorScheme.onSurface,
-                    ),
-                  ),
-                ],
-              ),
-
-              const SizedBox(height: 10),
-
               Row(
                 children: [
                   const Icon(Icons.shield, color: Colors.green, size: 16),
@@ -279,7 +372,7 @@ class _DocumentFolderScreenState extends State<DocumentFolderScreen> {
                 ],
               ),
 
-              const SizedBox(height: 50),
+              const SizedBox(height: 20),
 
               // ── PERSONAL SECTION ─────────────────────────────
               Container(
@@ -289,7 +382,7 @@ class _DocumentFolderScreenState extends State<DocumentFolderScreen> {
                   color: Theme.of(context).cardColor,
                   borderRadius: BorderRadius.circular(16),
                   border: Border.all(
-                    color: colorScheme.outlineVariant.withOpacity(0.2),
+                    color: colorScheme.outlineVariant.withValues(alpha: 0.2),
                   ),
                 ),
                 child: Column(
@@ -308,7 +401,8 @@ class _DocumentFolderScreenState extends State<DocumentFolderScreen> {
                           _docTile(
                             context,
                             colorScheme,
-                            title: l10n.drivingLicense,
+                            title: l10n.drivingLicenseTitle,
+                            document: findDoc('driving_license'),
                             onTap: () {
                               final vehicle = selectedVehicle;
                               if (vehicle == null) {
@@ -317,13 +411,12 @@ class _DocumentFolderScreenState extends State<DocumentFolderScreen> {
                                 );
                                 return;
                               }
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (_) => DocumentLicense(
-                                    title: l10n.drivingLicenseTitle,
-                                    vehicleId: vehicle.id ?? '',
-                                  ),
+                              handleDocTap(
+                                l10n.drivingLicenseTitle,
+                                'driving_license',
+                                () => DocumentLicense(
+                                  title: l10n.drivingLicenseTitle,
+                                  vehicleId: vehicle.id ?? '',
                                 ),
                               );
                             },
@@ -333,6 +426,7 @@ class _DocumentFolderScreenState extends State<DocumentFolderScreen> {
                             context,
                             colorScheme,
                             title: l10n.otherDocuments,
+                            document: findDoc('other_document'),
                             onTap: () {
                               final vehicle = selectedVehicle;
                               if (vehicle == null) {
@@ -341,13 +435,12 @@ class _DocumentFolderScreenState extends State<DocumentFolderScreen> {
                                 );
                                 return;
                               }
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (_) => DocumentOtherdocumentScreen(
-                                    title: l10n.otherDocumentTitle,
-                                    vehicleId: vehicle.id ?? vehicle.imei ?? '',
-                                  ),
+                              handleDocTap(
+                                l10n.otherDocumentTitle,
+                                'other_document',
+                                () => DocumentOtherdocumentScreen(
+                                  title: l10n.otherDocumentTitle,
+                                  vehicleId: vehicle.id ?? vehicle.imei ?? '',
                                 ),
                               );
                             },
@@ -376,7 +469,7 @@ class _DocumentFolderScreenState extends State<DocumentFolderScreen> {
                         height: dashHeight,
                         child: DecoratedBox(
                           decoration: BoxDecoration(
-                            color: colorScheme.outlineVariant.withOpacity(0.5),
+                            color: colorScheme.outlineVariant.withValues(alpha: 0.5),
                           ),
                         ),
                       );
@@ -399,7 +492,7 @@ class _DocumentFolderScreenState extends State<DocumentFolderScreen> {
                         color: Theme.of(context).cardColor,
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(
-                          color: colorScheme.outlineVariant.withOpacity(0.5),
+                          color: colorScheme.outlineVariant.withValues(alpha: 0.5),
                         ),
                       ),
                       child: _isUploading
@@ -413,23 +506,53 @@ class _DocumentFolderScreenState extends State<DocumentFolderScreen> {
                               ),
                             )
                           : _vehicleImage == null
-                          ? Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(
-                                  Icons.camera_alt,
-                                  color: colorScheme.onSurfaceVariant,
-                                  size: 20,
-                                ),
-                                const SizedBox(height: 4),
-                                Text(
-                                  l10n.vehicleImage,
-                                  style: theme.textTheme.labelSmall?.copyWith(
-                                    color: colorScheme.onSurfaceVariant,
-                                  ),
-                                ),
-                              ],
-                            )
+                          ? (_vehicleImageUrl != null
+                                ? ClipRRect(
+                                    borderRadius: BorderRadius.circular(12),
+                                    child: Image.network(
+                                      _vehicleImageUrl!,
+                                      fit: BoxFit.cover,
+                                      errorBuilder: (_, __, ___) => Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Icon(
+                                            Icons.camera_alt,
+                                            color: colorScheme.onSurfaceVariant,
+                                            size: 20,
+                                          ),
+                                          const SizedBox(height: 4),
+                                          Text(
+                                            l10n.vehicleImage,
+                                            style: theme.textTheme.labelSmall
+                                                ?.copyWith(
+                                                  color: colorScheme
+                                                      .onSurfaceVariant,
+                                                ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  )
+                                : Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Icon(
+                                        Icons.camera_alt,
+                                        color: colorScheme.onSurfaceVariant,
+                                        size: 20,
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        l10n.vehicleImage,
+                                        style: theme.textTheme.labelSmall
+                                            ?.copyWith(
+                                              color:
+                                                  colorScheme.onSurfaceVariant,
+                                            ),
+                                      ),
+                                    ],
+                                  ))
                           : ClipRRect(
                               borderRadius: BorderRadius.circular(12),
                               child: Image.file(
@@ -494,7 +617,7 @@ class _DocumentFolderScreenState extends State<DocumentFolderScreen> {
                           color: Theme.of(context).cardColor,
                           borderRadius: BorderRadius.circular(12),
                           border: Border.all(
-                            color: colorScheme.outlineVariant.withOpacity(0.5),
+                            color: colorScheme.outlineVariant.withValues(alpha: 0.5),
                           ),
                         ),
                         child: Row(
@@ -531,7 +654,7 @@ class _DocumentFolderScreenState extends State<DocumentFolderScreen> {
                   color: Theme.of(context).cardColor,
                   borderRadius: BorderRadius.circular(16),
                   border: Border.all(
-                    color: colorScheme.outlineVariant.withOpacity(0.5),
+                    color: colorScheme.outlineVariant.withValues(alpha: 0.5),
                   ),
                 ),
                 child: Column(
@@ -551,6 +674,7 @@ class _DocumentFolderScreenState extends State<DocumentFolderScreen> {
                             context,
                             colorScheme,
                             title: l10n.vehicleRC,
+                            document: findDoc('rc'),
                             onTap: () {
                               final vehicle = selectedVehicle;
                               if (vehicle == null) {
@@ -559,13 +683,12 @@ class _DocumentFolderScreenState extends State<DocumentFolderScreen> {
                                 );
                                 return;
                               }
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (_) => DocumentVehicleRCScreen(
-                                    title: l10n.vehicleRCTitle,
-                                    vehicleId: vehicle.id ?? vehicle.imei ?? '',
-                                  ),
+                              handleDocTap(
+                                l10n.vehicleRCTitle,
+                                'rc',
+                                () => DocumentVehicleRCScreen(
+                                  title: l10n.vehicleRCTitle,
+                                  vehicleId: vehicle.id ?? vehicle.imei ?? '',
                                 ),
                               );
                             },
@@ -575,6 +698,7 @@ class _DocumentFolderScreenState extends State<DocumentFolderScreen> {
                             context,
                             colorScheme,
                             title: l10n.insurance,
+                            document: findDoc('insurance'),
                             onTap: () {
                               final vehicle = selectedVehicle;
                               if (vehicle == null) {
@@ -583,14 +707,13 @@ class _DocumentFolderScreenState extends State<DocumentFolderScreen> {
                                 );
                                 return;
                               }
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (_) => DocumentSubScreen(
-                                    title: l10n.insuranceTitle,
-                                    vehicleId: vehicle.id ?? vehicle.imei ?? '',
-                                    subtype: 'insurance',
-                                  ),
+                              handleDocTap(
+                                l10n.insuranceTitle,
+                                'insurance',
+                                () => DocumentSubScreen(
+                                  title: l10n.insuranceTitle,
+                                  vehicleId: vehicle.id ?? vehicle.imei ?? '',
+                                  subtype: 'insurance',
                                 ),
                               );
                             },
@@ -600,6 +723,7 @@ class _DocumentFolderScreenState extends State<DocumentFolderScreen> {
                             context,
                             colorScheme,
                             title: l10n.puc,
+                            document: findDoc('puc'),
                             onTap: () {
                               final vehicle = selectedVehicle;
                               if (vehicle == null) {
@@ -608,14 +732,13 @@ class _DocumentFolderScreenState extends State<DocumentFolderScreen> {
                                 );
                                 return;
                               }
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (_) => DocumentSubScreen(
-                                    title: l10n.pucTitle,
-                                    vehicleId: vehicle.id ?? vehicle.imei ?? '',
-                                    subtype: 'puc',
-                                  ),
+                              handleDocTap(
+                                l10n.pucTitle,
+                                'puc',
+                                () => DocumentSubScreen(
+                                  title: l10n.pucTitle,
+                                  vehicleId: vehicle.id ?? vehicle.imei ?? '',
+                                  subtype: 'puc',
                                 ),
                               );
                             },
@@ -637,7 +760,7 @@ class _DocumentFolderScreenState extends State<DocumentFolderScreen> {
                   color: Theme.of(context).cardColor,
                   borderRadius: BorderRadius.circular(16),
                   border: Border.all(
-                    color: colorScheme.outlineVariant.withOpacity(0.5),
+                    color: colorScheme.outlineVariant.withValues(alpha: 0.5),
                   ),
                 ),
                 child: Column(
@@ -675,7 +798,7 @@ class _DocumentFolderScreenState extends State<DocumentFolderScreen> {
                             },
                             customContent: Container(
                               decoration: BoxDecoration(
-                                color: Colors.black.withOpacity(0.3),
+                                color: Colors.black.withValues(alpha: 0.3),
                                 borderRadius: BorderRadius.circular(12),
                               ),
                               child: Column(
@@ -740,6 +863,10 @@ class _DocumentFolderScreenState extends State<DocumentFolderScreen> {
                             context,
                             colorScheme,
                             title: l10n.accessoryBills,
+                            document: findAllDocs('accessory_bill').isNotEmpty
+                                ? findAllDocs('accessory_bill').first
+                                : null,
+                            badgeCount: findAllDocs('accessory_bill').length,
                             onTap: () {
                               final vehicle = selectedVehicle;
                               if (vehicle == null) {
@@ -748,14 +875,30 @@ class _DocumentFolderScreenState extends State<DocumentFolderScreen> {
                                 );
                                 return;
                               }
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => AccessoryBillScreen(
-                                    vehicleId: vehicle.id ?? vehicle.imei ?? '',
+                              final bills = findAllDocs('accessory_bill');
+                              if (bills.isNotEmpty) {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        AccessoryBillListScreen(
+                                          vehicleId:
+                                              vehicle.id ?? vehicle.imei ?? '',
+                                          bills: bills,
+                                        ),
                                   ),
-                                ),
-                              );
+                                );
+                              } else {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => AccessoryBillScreen(
+                                      vehicleId:
+                                          vehicle.id ?? vehicle.imei ?? '',
+                                    ),
+                                  ),
+                                );
+                              }
                             },
                           ),
                         ],
@@ -803,9 +946,76 @@ class _DocumentFolderScreenState extends State<DocumentFolderScreen> {
     required String title,
     required VoidCallback onTap,
     Widget? customContent,
+    DocumentEntity? document,
+    int badgeCount = 0,
   }) {
     final theme = Theme.of(context);
     final screenWidth = MediaQuery.of(context).size.width;
+
+    Widget content;
+    if (customContent != null) {
+      content = customContent;
+    } else if (document != null &&
+        (document.fontpath != null || document.backpath != null)) {
+      String? imgPath = document.fontpath ?? document.backpath;
+      String imageUrl = '';
+      if (imgPath != null) {
+        imageUrl = imgPath.startsWith('http')
+            ? imgPath
+            : '${ApiURL.baseURL}/$imgPath';
+      }
+      if (imageUrl.toLowerCase().endsWith('.pdf')) {
+        content = const Center(
+          child: Icon(Icons.picture_as_pdf, color: Colors.red, size: 28),
+        );
+      } else {
+        content = ClipRRect(
+          borderRadius: BorderRadius.circular(12),
+          child: Image.network(
+            imageUrl,
+            fit: BoxFit.cover,
+            errorBuilder: (c, e, s) =>
+                const Center(child: Icon(Icons.error_outline)),
+          ),
+        );
+      }
+
+      if (badgeCount > 1) {
+        content = Stack(
+          fit: StackFit.expand,
+          children: [
+            content,
+            Positioned(
+              top: 6,
+              right: 6,
+              child: Container(
+                padding: const EdgeInsets.all(6),
+                decoration: const BoxDecoration(
+                  color: Colors.white,
+                  shape: BoxShape.circle,
+                ),
+                child: Text(
+                  '$badgeCount',
+                  style: TextStyle(
+                    color: colorScheme.primary,
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        );
+      }
+    } else {
+      content = Center(
+        child: Icon(
+          Icons.note_add_outlined,
+          color: colorScheme.onSurfaceVariant,
+          size: 28,
+        ),
+      );
+    }
     return GestureDetector(
       onTap: onTap,
       child: Column(
@@ -817,18 +1027,10 @@ class _DocumentFolderScreenState extends State<DocumentFolderScreen> {
               color: Theme.of(context).cardColor,
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: colorScheme.outlineVariant.withOpacity(0.5),
+                color: colorScheme.outlineVariant.withValues(alpha: 0.5),
               ),
             ),
-            child:
-                customContent ??
-                Center(
-                  child: Icon(
-                    Icons.note_add_outlined,
-                    color: colorScheme.onSurfaceVariant,
-                    size: 28,
-                  ),
-                ),
+            child: content,
           ),
           const SizedBox(height: 8),
           Text(
@@ -904,7 +1106,7 @@ class _VehicleSelectorSheet extends StatelessWidget {
           if (isLoading)
             const Padding(
               padding: EdgeInsets.symmetric(vertical: 24),
-              child: const Center(child: TrackifyLoader()),
+              child: Center(child: TrackifyLoader()),
             )
           else if (errorMessage != null)
             Padding(
@@ -942,13 +1144,13 @@ class _VehicleSelectorSheet extends StatelessWidget {
                     ),
                     decoration: BoxDecoration(
                       color: isSelected
-                          ? colorScheme.primaryContainer.withOpacity(0.15)
+                          ? colorScheme.primaryContainer.withValues(alpha: 0.15)
                           : theme.cardColor,
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(
                         color: isSelected
                             ? colorScheme.primary
-                            : colorScheme.outlineVariant.withOpacity(0.4),
+                            : colorScheme.outlineVariant.withValues(alpha: 0.4),
                         width: isSelected ? 1.5 : 1,
                       ),
                     ),

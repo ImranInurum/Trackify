@@ -608,16 +608,26 @@ class _VehicleControlViewState extends State<VehicleControlView> {
                                           : keyId;
 
                                   final apiService = NetworkApiService();
-                                  final result = await apiService.getPostApiResponse(
-                                    ApiURL.addEmergencyNumber,
-                                    {
-                                      "userId": userId,
-                                      "vehicleId": targetVehicleId,
-                                      "name": name,
-                                      "countryCode": countryCode,
-                                      "mobileNumber": mobileNumber,
-                                    },
-                                  );
+                                  final contactId = initialContact?['id'] ?? '';
+                                  final isEdit = contactId.isNotEmpty;
+                                  
+                                  final payload = {
+                                    "userId": userId,
+                                    "vehicleId": targetVehicleId,
+                                    "name": name,
+                                    "countryCode": countryCode,
+                                    "mobileNumber": mobileNumber,
+                                  };
+
+                                  final result = isEdit 
+                                      ? await apiService.getPutApiResponse(
+                                          "${ApiURL.addEmergencyNumber}/$contactId",
+                                          payload,
+                                        )
+                                      : await apiService.getPostApiResponse(
+                                          ApiURL.addEmergencyNumber,
+                                          payload,
+                                        );
 
                                   result.fold(
                                     (failure) {
@@ -637,7 +647,12 @@ class _VehicleControlViewState extends State<VehicleControlView> {
                                       final newContact = {
                                         'name': name,
                                         'phone': '$countryCode $mobileNumber',
+                                        'countryCode': countryCode,
+                                        'mobileNumber': mobileNumber,
                                       };
+                                      if (isEdit) {
+                                        newContact['id'] = contactId;
+                                      }
                                       setState(() {
                                         if (editIndex != null &&
                                             editIndex < _contacts.length) {
@@ -1236,7 +1251,6 @@ class _VehicleControlViewState extends State<VehicleControlView> {
                             ),
                           ),
 
-                        if (widget.isFromGarage) ...[
                           const SizedBox(height: 20),
                           Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -1441,7 +1455,6 @@ class _VehicleControlViewState extends State<VehicleControlView> {
                             ),
                           ),
                           const SizedBox(height: 30),
-                        ],
                       ],
                     ),
                   ),

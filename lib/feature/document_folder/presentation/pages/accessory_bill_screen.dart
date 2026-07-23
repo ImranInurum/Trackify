@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:file_picker/file_picker.dart';
+
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:image_cropper/image_cropper.dart';
@@ -31,7 +31,7 @@ class _AccessoryBillScreenState extends State<AccessoryBillScreen> {
   DateTime? _billingDate;
   DateTime? _warrantyExpiryDate;
   bool _isLoading = false;
-  String? _error = null;
+  String? _error;
   bool _isPickerActive = false;
 
   static const int _maxBytes = 5 * 1024 * 1024;
@@ -101,7 +101,7 @@ class _AccessoryBillScreenState extends State<AccessoryBillScreen> {
       }
 
       // ✅ CLOSE bottom sheet HERE (correct timing)
-      if (Navigator.canPop(context)) {
+      if (mounted && Navigator.canPop(context)) {
         Navigator.pop(context);
       }
 
@@ -113,6 +113,7 @@ class _AccessoryBillScreenState extends State<AccessoryBillScreen> {
         return;
       }
 
+      if (!mounted) return;
       if (!_isValidSize(croppedFile)) {
         _setError(AppLocalizations.of(context)!.fileTooLarge);
         return;
@@ -128,7 +129,9 @@ class _AccessoryBillScreenState extends State<AccessoryBillScreen> {
       });
     } catch (e) {
       debugPrint("Pick error: $e");
-      _setError(AppLocalizations.of(context)!.errorPickingImage);
+      if (mounted) {
+        _setError(AppLocalizations.of(context)!.errorPickingImage);
+      }
     } finally {
       if (mounted) {
         setState(() => _isPickerActive = false);
@@ -137,17 +140,18 @@ class _AccessoryBillScreenState extends State<AccessoryBillScreen> {
   }
 
   Future<File?> _cropImage(File imageFile) async {
-
+    if (!mounted) return null;
+    final l10n = AppLocalizations.of(context)!;
     try {
       final croppedFile = await ImageCropper().cropImage(
         sourcePath: imageFile.path,
         uiSettings: [
           AndroidUiSettings(
-            toolbarTitle: AppLocalizations.of(context)!.cropDocument,
+            toolbarTitle: l10n.cropDocument,
             toolbarColor: Colors.black,
             toolbarWidgetColor: Colors.white,
           ),
-          IOSUiSettings(title: AppLocalizations.of(context)!.cropDocument),
+          IOSUiSettings(title: l10n.cropDocument),
         ],
       );
 
@@ -274,12 +278,12 @@ class _AccessoryBillScreenState extends State<AccessoryBillScreen> {
     }
 
     if (_nameController.text.trim().isEmpty) {
-      setState(() => _error = l10n.accessoryName + " is required");
+      setState(() => _error = "${l10n.accessoryName} is required");
       return;
     }
 
     if (_billingDate == null) {
-      setState(() => _error = l10n.billingDate + " is required");
+      setState(() => _error = "${l10n.billingDate} is required");
       return;
     }
 
@@ -420,7 +424,7 @@ class _AccessoryBillScreenState extends State<AccessoryBillScreen> {
                                 color: Theme.of(context).cardColor,
                                 borderRadius: BorderRadius.circular(10),
                                 border: Border.all(
-                                  color: colorScheme.outlineVariant.withOpacity(0.2),
+                                  color: colorScheme.outlineVariant.withValues(alpha: 0.2),
                                 ),
                               ),
                               child: Row(
@@ -501,7 +505,9 @@ class _AccessoryBillScreenState extends State<AccessoryBillScreen> {
                           color: Theme.of(context).cardColor,
                           borderRadius: BorderRadius.circular(10),
                           border: Border.all(
-                            color: colorScheme.outlineVariant.withOpacity(0.2),
+                            color: colorScheme.outlineVariant.withValues(
+                            alpha: 0.2,
+                          ),
                           ),
                         ),
                         child: Row(
@@ -550,7 +556,7 @@ class _AccessoryBillScreenState extends State<AccessoryBillScreen> {
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeightManager.medium,
-                        color: colorScheme.onSurface.withOpacity(0.7),
+                        color: colorScheme.onSurface.withValues(alpha: 0.7),
                       ),
                     ),
 
@@ -604,7 +610,7 @@ class _AccessoryBillScreenState extends State<AccessoryBillScreen> {
           color: Theme.of(context).cardColor,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: colorScheme.outlineVariant.withOpacity(0.2),
+            color: colorScheme.outlineVariant.withValues(alpha: 0.2),
           ),
         ),
         child: file == null

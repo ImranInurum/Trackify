@@ -1,4 +1,7 @@
+import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:intl/intl.dart';
 import 'package:trackify/core/config/network/api_host.dart';
 import 'package:trackify/core/config/network/network_api_service.dart';
@@ -17,11 +20,61 @@ class _CurrentSessionsScreenState extends State<CurrentSessionsScreen> {
   bool _isLoading = true;
   List<Map<String, dynamic>> _sessions = [];
   String? _deletingSessionId;
+  String? _currentDeviceModel;
+  String? _currentOsVersion;
+  String? _currentToken;
 
   @override
   void initState() {
     super.initState();
+    _initDeviceInfo();
     _fetchSessions();
+  }
+
+  Future<void> _initDeviceInfo() async {
+    final devInfo = await _getDeviceInfo();
+    final token = await AppPreference.instance.get(key: AppPreference.KEY_TOKEN);
+    if (mounted) {
+      setState(() {
+        _currentDeviceModel = devInfo['deviceModel'];
+        _currentOsVersion = devInfo['osVersion'];
+        _currentToken = token;
+      });
+    }
+  }
+
+  Future<Map<String, String>> _getDeviceInfo() async {
+    final deviceInfo = DeviceInfoPlugin();
+    String deviceModel = 'Unknown Device';
+    String osVersion = 'Unknown OS';
+
+    try {
+      if (!kIsWeb) {
+        if (Platform.isAndroid) {
+          final androidInfo = await deviceInfo.androidInfo;
+          final manufacturer = androidInfo.manufacturer.isNotEmpty ? androidInfo.manufacturer : '';
+          final model = androidInfo.model.isNotEmpty ? androidInfo.model : '';
+          deviceModel = '$manufacturer $model'.trim();
+          if (deviceModel.isEmpty) deviceModel = 'Android Device';
+          osVersion = 'Android ${androidInfo.version.release}';
+        } else if (Platform.isIOS) {
+          final iosInfo = await deviceInfo.iosInfo;
+          deviceModel = iosInfo.name.isNotEmpty ? iosInfo.name : (iosInfo.model.isNotEmpty ? iosInfo.model : 'iPhone');
+          osVersion = 'iOS ${iosInfo.systemVersion}';
+        } else if (Platform.isWindows) {
+          final windowsInfo = await deviceInfo.windowsInfo;
+          deviceModel = windowsInfo.computerName.isNotEmpty ? windowsInfo.computerName : 'Windows PC';
+          osVersion = 'Windows ${windowsInfo.majorVersion}.${windowsInfo.minorVersion}';
+        }
+      }
+    } catch (e) {
+      debugPrint('Error getting device info: $e');
+    }
+
+    return {
+      'deviceModel': deviceModel,
+      'osVersion': osVersion,
+    };
   }
 
   Future<void> _fetchSessions() async {
@@ -215,8 +268,31 @@ class _CurrentSessionsScreenState extends State<CurrentSessionsScreen> {
     final theme = Theme.of(context);
 
     // Split active vs other sessions
-    final activeSessions = _sessions.where((s) => s['isActive'] == true).toList();
-    final otherSessions = _sessions.where((s) => s['isActive'] != true).toList();
+    // Find the single current device session
+    Map<String, dynamic>? currentSession;
+    final otherActive = <Map<String, dynamic>>[];
+    final inactiveSessions = <Map<String, dynamic>>[];
+
+    for (final s in _sessions) {
+      if (s['isActive'] == true) {
+        bool isThisDevice = false;
+        if (_currentToken != null && _currentToken!.isNotEmpty && s['token'] == _currentToken) {
+          isThisDevice = true;
+        } else if (s['deviceModel'] == _currentDeviceModel && s['osVersion'] == _currentOsVersion) {
+          isThisDevice = true;
+        }
+
+        if (isThisDevice && currentSession == null) {
+          currentSession = s;
+        } else {
+          otherActive.add(s);
+        }
+      } else {
+        inactiveSessions.add(s);
+      }
+    }
+
+    final otherSessions = [...otherActive, ...inactiveSessions];
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
@@ -272,7 +348,7 @@ class _CurrentSessionsScreenState extends State<CurrentSessionsScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        if (activeSessions.isNotEmpty) ...[
+                        if (currentSession != null) ...[
                           Container(
                             width: double.infinity,
                             color: theme.dividerColor.withOpacity(0.3),
@@ -288,16 +364,14 @@ class _CurrentSessionsScreenState extends State<CurrentSessionsScreen> {
                               ),
                             ),
                           ),
-                          ...activeSessions.map((session) {
-                            return _buildSessionItem(
-                              context: context,
-                              l10n: l10n,
-                              session: session,
-                              isActiveDevice: true,
-                            );
-                          }),
+                          _buildSessionItem(
+                            context: context,
+                            l10n: l10n,
+                            session: currentSession,
+                            isActiveDevice: true,
+                          ),
                         ],
-                        if (otherSessions.isNotEmpty || activeSessions.isEmpty) ...[
+                        if (otherSessions.isNotEmpty || currentSession == null) ...[
                           Container(
                             width: double.infinity,
                             color: theme.dividerColor.withOpacity(0.3),
@@ -421,26 +495,9 @@ class _CurrentSessionsScreenState extends State<CurrentSessionsScreen> {
                 ],
                 const SizedBox(height: 8),
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  mainAxisAlignment: MainAxisAlignment.end,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.public,
-                          size: 18,
-                          color: theme.colorScheme.onSurface.withOpacity(0.6),
-                        ),
-                        const SizedBox(width: 6),
-                        Text(
-                          l10n.chromeNotificationDisabled,
-                          style: TextStyle(
-                            color: theme.colorScheme.onSurface.withOpacity(0.8),
-                            fontSize: 13,
-                          ),
-                        ),
-                      ],
-                    ),
                     if (sessionId.isNotEmpty)
                       SizedBox(
                         height: 36,

@@ -2772,7 +2772,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get months => 'महीने';
 
   @override
-  String get deleteAlertTitle => 'अलर्ट हटाएं';
+  String get deleteAlertTitle => 'हटाएं';
 
   @override
   String get deleteAlertDesc =>
@@ -2920,7 +2920,7 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get goToSettingsAndSelectAllowAllTheTime =>
-      'सेटिंग्स में जाएं और \'हर समय अनुमति दें\' चुनें';
+      'Go to settings and select \"Allow all the time\"';
 
   @override
   String get locationPermissions => 'लोकेशन परमिशन';
@@ -3385,4 +3385,74 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get profile100PercentComplete => 'आपकी प्रोफ़ाइल 100% पूर्ण है!';
+
+  @override
+  String get locationPermissionWarning =>
+      'Sharing your phone\'s location works correctly only if it can access your location \"all the time\"';
+
+  @override
+  String get trackifyApp => 'Trackify';
+
+  @override
+  String get locationText => 'Location';
+
+  @override
+  String get tapIntoLocation => 'Tap into Location';
+
+  @override
+  String get goToSettingsBtn => 'Go to Settings';
+
+  @override
+  String get shareLiveLocationFor => 'Share your live location for';
+
+  @override
+  String get twoHours => '2 hours';
+
+  @override
+  String get fourHours => '4 hours';
+
+  @override
+  String get eightHours => '8 hours';
+
+  @override
+  String get untilStopped => 'Until Stopped';
+
+  @override
+  String get shareLocationLink => 'Share location link';
+
+  @override
+  String get documentNameText => 'दस्तावेज़ का नाम';
+
+  @override
+  String get expiryDateText => 'समाप्ति तिथि';
+
+  @override
+  String get documentImagesText => 'दस्तावेज़ की छवियाँ';
+
+  @override
+  String get noImagesAvailableText => 'कोई चित्र उपलब्ध नहीं';
+
+  @override
+  String get pdfDocumentText => 'पीडीएफ दस्तावेज़';
+
+  @override
+  String get deleteAlertDescription =>
+      'क्या आप वाकई इस दस्तावेज़ को हटाना चाहते हैं?';
+
+  @override
+  String get deleteRideTitle => 'यात्रा हटाएं';
+
+  @override
+  String get deleteRideConfirmMessage =>
+      'क्या आप वाकई इस यात्रा रिकॉर्ड को हटाना चाहते हैं?';
+
+  @override
+  String get rideDeletedSuccess => 'यात्रा सफलतापूर्वक हटा दी गई';
+
+  @override
+  String get onlineRideDeleteNotSupported =>
+      'ऑनलाइन यात्रा को ऑफ़लाइन हटाने की सुविधा उपलब्ध नहीं है';
+
+  @override
+  String get rideDeleteFailedInvalidId => 'यात्रा हटाना विफल रहा: अमान्य आईडी';
 }

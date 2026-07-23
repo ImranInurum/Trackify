@@ -87,6 +87,8 @@ class ApiURL {
       "$baseURL/api/device/deviceStatus/$imei";
 
   static const String journeyRideHistory = "$baseURL/api/journey/ride-history";
+  static const String createRideMode = "$baseURL/api/ride-mode/create";
+  static String onlinePastRides(String userId) => "$baseURL/api/ride-mode/user/$userId";
   static String promoVideos(String imei) => "$baseURL/api/global-video/imei-videos/$imei";
   static const String promoOffers = "$baseURL/api/banner/all";
 
@@ -118,6 +120,7 @@ class ApiURL {
   // Documents / Upload
   // -------------------------
   static const String uploadDocument = "$baseURL/api/documents/document";
+  static const String getDocuments = "$baseURL/api/documents/document";
 
   // -------------------------
   // Service Logs

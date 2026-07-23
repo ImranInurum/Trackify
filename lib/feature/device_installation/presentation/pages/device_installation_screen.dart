@@ -43,7 +43,7 @@ class _DeviceInstallationScreenState extends State<DeviceInstallationScreen>
       BarcodeFormat.code93,
       BarcodeFormat.ean13,
       BarcodeFormat.ean8,
-      BarcodeFormat.itf,
+      BarcodeFormat.itf14,
       BarcodeFormat.upcA,
       BarcodeFormat.upcE,
       BarcodeFormat.dataMatrix,
@@ -124,7 +124,7 @@ class _DeviceInstallationScreenState extends State<DeviceInstallationScreen>
       child: Container(
         width: double.infinity,
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        color: isSelected ? Colors.cyan.withOpacity(0.3) : Colors.transparent,
+        color: isSelected ? Colors.cyan.withValues(alpha: 0.3) : Colors.transparent,
         child: Text(
           title,
           style: TextStyle(color: theme.colorScheme.onSurface, fontSize: 14),
@@ -154,6 +154,7 @@ class _DeviceInstallationScreenState extends State<DeviceInstallationScreen>
           _hasScanned = true;
           _scannedImei = rawValue.trim();
         });
+        _handleContinue();
         break;
       }
     }
@@ -203,7 +204,6 @@ class _DeviceInstallationScreenState extends State<DeviceInstallationScreen>
             _hasScanned = false;
             _scannedImei = null;
           });
-          _cameraController.start();
           showDialog(
             context: context,
             barrierDismissible: true,
@@ -258,7 +258,9 @@ class _DeviceInstallationScreenState extends State<DeviceInstallationScreen>
                     ),
                     const SizedBox(height: 24),
                     Text(
-                      state.message ?? 'This device/IMEI is not available.',
+                      (state.message == null || state.message!.trim().isEmpty)
+                          ? 'This device/IMEI is already assigned.'
+                          : state.message!,
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: 16,
@@ -316,7 +318,9 @@ class _DeviceInstallationScreenState extends State<DeviceInstallationScreen>
                 ),
               ),
             ),
-          );
+          ).then((_) {
+            _cameraController.start();
+          });
         }
       },
       child: Scaffold(
@@ -493,9 +497,9 @@ class _DeviceInstallationScreenState extends State<DeviceInstallationScreen>
                                                             color: theme
                                                                 .colorScheme
                                                                 .secondary
-                                                                .withOpacity(
-                                                                  0.6,
-                                                                ),
+                                                                .withValues(
+                                                                alpha: 0.6,
+                                                              ),
                                                             blurRadius: 12,
                                                             spreadRadius: 3,
                                                           ),
@@ -663,7 +667,7 @@ class _DeviceInstallationScreenState extends State<DeviceInstallationScreen>
                     CommonButton(
                       text: l10n.continueText,
                       backgroundColor: theme.colorScheme.secondary,
-                      disabledBackgroundColor: theme.hintColor.withOpacity(0.3),
+                      disabledBackgroundColor: theme.hintColor.withValues(alpha: 0.3),
                       disabledForegroundColor: Colors.white54,
                       foregroundColor: theme.colorScheme.onSecondary,
                       borderRadius: 8,
@@ -689,8 +693,9 @@ class _DeviceInstallationScreenState extends State<DeviceInstallationScreen>
     final isFree = await context.read<DeviceInstallationCubit>().checkImeiOnly(
       targetImei,
     );
-    if (!isFree)
+    if (!isFree) {
       return; // Flow stops here if assigned, cubit emits AlreadyAssigned state
+    }
 
     if (!mounted) return;
     // Fetch fresh vehicles to ensure we don't use stale cached data from a previous user
@@ -712,6 +717,7 @@ class _DeviceInstallationScreenState extends State<DeviceInstallationScreen>
       }
     }
 
+    bool addedNewVehicle = false;
     if (!hasVehicle) {
       final added = await showDialog<bool>(
         context: context,
@@ -729,6 +735,7 @@ class _DeviceInstallationScreenState extends State<DeviceInstallationScreen>
 
       // Await fetch to ensure state is updated
       await context.read<ProfileCubit>().fetchVehicles();
+      addedNewVehicle = true;
     }
 
     if (!mounted) return;
@@ -758,17 +765,34 @@ class _DeviceInstallationScreenState extends State<DeviceInstallationScreen>
 
     if (!mounted) return;
     String vId = '';
+    
+    final state = context.read<ProfileCubit>().state;
+    List<Vehicle> userVehicles = [];
+    if (state is VehiclesLoaded) {
+      userVehicles = state.vehicles;
+    }
+
     final prefsId = await AppPreference.instance.get(
       key: AppPreference.KEY_SELECTED_UID,
     );
-    if (prefsId.isNotEmpty) {
+
+    if (addedNewVehicle && userVehicles.isNotEmpty) {
+      vId = userVehicles.first.id ?? '';
+      await AppPreference.instance.set(
+        key: AppPreference.KEY_SELECTED_UID,
+        value: vId,
+      );
+    } else if (prefsId.isNotEmpty && userVehicles.any((v) => v.id == prefsId)) {
       vId = prefsId;
-    } else if (widget.vehicleId != null && widget.vehicleId!.isNotEmpty) {
+    } else if (widget.vehicleId != null && widget.vehicleId!.isNotEmpty && userVehicles.any((v) => v.id == widget.vehicleId)) {
       vId = widget.vehicleId!;
     } else {
-      final state = context.read<ProfileCubit>().state;
-      if (state is VehiclesLoaded && state.vehicles.isNotEmpty) {
-        vId = state.vehicles.first.id ?? '';
+      if (userVehicles.isNotEmpty) {
+        vId = userVehicles.first.id ?? '';
+        await AppPreference.instance.set(
+          key: AppPreference.KEY_SELECTED_UID,
+          value: vId,
+        );
       }
     }
 

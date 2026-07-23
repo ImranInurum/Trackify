@@ -40,14 +40,25 @@ class _LocationSharingDetailScreenState
 
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: theme.scaffoldBackgroundColor,
+        elevation: 1,
+        shadowColor: Colors.black.withOpacity(0.1),
         leading: IconButton(
           icon: Icon(
             Icons.arrow_back_ios_new,
             color: colorScheme.onSurface,
+            size: 20,
           ),
           onPressed: () => Navigator.of(context).pop(),
         ),
-        title: Text(widget.item.name),
+        title: Text(
+          widget.item.name,
+          style: TextStyle(
+            color: colorScheme.onSurface,
+            fontWeight: FontWeight.w600,
+            fontSize: 20,
+          ),
+        ),
         centerTitle: false,
       ),
       body: BlocBuilder<LocationSharingCubit, LocationSharingState>(
@@ -135,6 +146,25 @@ class _LocationSharingDetailScreenState
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context)!;
 
+    if (item.isSharing) {
+      return ListView(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+        children: const [
+          LiveSharingLinkCard(
+            title: '2 hours link',
+            expiresIn: 'Expires in 1 hr 52 min',
+            viewers: 0,
+          ),
+          SizedBox(height: 16),
+          LiveSharingLinkCard(
+            title: '2 hours link',
+            expiresIn: 'Expires in 1 hr 51 min',
+            viewers: 0,
+          ),
+        ],
+      );
+    }
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 40),
       child: Column(
@@ -159,7 +189,7 @@ class _LocationSharingDetailScreenState
           ),
           const SizedBox(height: 20),
           Text(
-            item.isSharing ? l10n.liveLocationSharingActive : l10n.noLiveLocationShared,
+            l10n.noLiveLocationShared,
             textAlign: TextAlign.center,
             style: theme.textTheme.titleMedium?.copyWith(
               fontWeight: FontWeight.bold,
@@ -171,9 +201,7 @@ class _LocationSharingDetailScreenState
           ),
           const SizedBox(height: 12),
           Text(
-            item.isSharing 
-                ? l10n.realTimeSharingDesc
-                : l10n.startSharingPhoneDesc,
+            l10n.startSharingPhoneDesc,
             textAlign: TextAlign.center,
             style: theme.textTheme.bodyMedium?.copyWith(
               color: theme.hintColor.withOpacity(0.7),
@@ -181,7 +209,6 @@ class _LocationSharingDetailScreenState
               height: 1.5,
             ),
           ),
-
         ],
       ),
     );
@@ -214,6 +241,156 @@ class _LocationSharingDetailScreenState
             textAlign: TextAlign.center,
             style: theme.textTheme.bodyMedium?.copyWith(
               color: theme.hintColor.withOpacity(0.6),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class LiveSharingLinkCard extends StatelessWidget {
+  final String title;
+  final String expiresIn;
+  final int viewers;
+
+  const LiveSharingLinkCard({
+    super.key,
+    required this.title,
+    required this.expiresIn,
+    required this.viewers,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    
+    return Container(
+      decoration: BoxDecoration(
+        color: theme.cardColor,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: theme.dividerColor.withOpacity(0.5),
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: theme.textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      expiresIn,
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        color: theme.hintColor.withOpacity(0.7),
+                      ),
+                    ),
+                  ],
+                ),
+                Row(
+                  children: [
+                    Icon(
+                      Icons.visibility,
+                      size: 16,
+                      color: colorScheme.primary,
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      '$viewers',
+                      style: TextStyle(
+                        color: colorScheme.primary,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          Container(
+            padding: const EdgeInsets.symmetric(vertical: 12),
+            decoration: BoxDecoration(
+              color: theme.brightness == Brightness.dark
+                  ? const Color(0xFF1E1E1E)
+                  : const Color(0xFFF5F5F5),
+              borderRadius: const BorderRadius.only(
+                bottomLeft: Radius.circular(12),
+                bottomRight: Radius.circular(12),
+              ),
+            ),
+            child: Row(
+              children: [
+                Expanded(
+                  child: InkWell(
+                    onTap: () {
+                      // Stop sharing logic
+                    },
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.cancel_outlined, // Better matching icon for stop sharing if available
+                          color: colorScheme.error,
+                          size: 18,
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          'Stop Sharing',
+                          style: TextStyle(
+                            color: colorScheme.error,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                Container(
+                  height: 20,
+                  width: 1,
+                  color: theme.dividerColor,
+                ),
+                Expanded(
+                  child: InkWell(
+                    onTap: () {
+                      // Share link logic
+                    },
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.share_rounded,
+                          color: colorScheme.primary,
+                          size: 18,
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          'Share location link',
+                          style: TextStyle(
+                            color: colorScheme.primary,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
         ],

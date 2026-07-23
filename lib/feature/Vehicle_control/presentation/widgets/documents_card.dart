@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../../document_folder/presentation/pages/document_ss.dart';
-import '../../../document_folder/presentation/pages/document_vehicalRC_screen.dart';
+import '../../../document_folder/presentation/pages/document_vehicle_rc_screen.dart';
 
 // Note: These screens need to be imported once they are created/available
 // import 'package:trackify/feature/documents/presentation/pages/document_vehicle_rc_screen.dart';
@@ -35,7 +35,7 @@ class DocumentsCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: colorScheme.outlineVariant.withOpacity(0.5), width: 0.5),
+        border: Border.all(color: colorScheme.outlineVariant.withValues(alpha: 0.5), width: 0.5),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -147,12 +147,12 @@ class DocumentsCard extends StatelessWidget {
             decoration: BoxDecoration(
               color: Theme.of(context).cardColor,
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: colorScheme.outlineVariant.withOpacity(0.5)),
+              border: Border.all(color: colorScheme.outlineVariant.withValues(alpha: 0.5)),
             ),
             child: customContent ??
                 Center(
                   child: Icon(Icons.note_add_outlined,
-                      color: colorScheme.onSurfaceVariant.withOpacity(0.5), size: 24),
+                      color: colorScheme.onSurfaceVariant.withValues(alpha: 0.5), size: 24),
                 ),
           ),
           const SizedBox(height: 8),

@@ -43,7 +43,9 @@ class DeviceInstallationRepositoryImpl implements DeviceInstallationRepository {
       response.fold(
         (error) {
           debugPrint('API Error: $error');
-          errorMessage = error.message;
+          if (error is BadRequestException) {
+            errorMessage = error.message;
+          }
         },
         (data) {
           if (data is Map) {

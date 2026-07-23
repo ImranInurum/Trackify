@@ -60,6 +60,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
   BitmapDescriptor? _endMarkerIcon;
   bool _isFullScreen = false;
   DateTime? _recordingStartDateTime;
+  Future<List<Map<String, dynamic>>>? _pastRidesFuture;
 
   @override
   void initState() {
@@ -77,6 +78,14 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
     // Pre-fetch today's history
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _initCustomMarker();
+    });
+
+    _refreshPastRides();
+  }
+
+  void _refreshPastRides() {
+    setState(() {
+      _pastRidesFuture = context.read<RecordViaPhoneCubit>().getAllPastRides();
     });
   }
 
@@ -642,6 +651,117 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
     );
   }
 
+  void _showDeleteRideConfirmDialog(PastRide ride) {
+    final l10n = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
+    showDialog(
+      context: context,
+      builder: (ctx) {
+        return AlertDialog(
+          backgroundColor: theme.cardColor,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(24),
+          ),
+          title: Row(
+            children: [
+              const Icon(
+                Icons.delete_outline,
+                color: Colors.redAccent,
+                size: 28,
+              ),
+              const SizedBox(width: 12),
+              Text(
+                l10n.deleteRideTitle,
+                style: TextStyle(
+                  color: isDark ? Colors.white : Colors.black87,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20,
+                ),
+              ),
+            ],
+          ),
+          content: Text(
+            l10n.deleteRideConfirmMessage,
+            style: TextStyle(
+              color: isDark ? Colors.white70 : Colors.black54,
+              fontSize: 16,
+            ),
+          ),
+          actionsPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx),
+              style: TextButton.styleFrom(
+                foregroundColor: isDark ? Colors.white70 : Colors.black54,
+              ),
+              child: Text(
+                l10n.cancel,
+                style: const TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                Navigator.pop(ctx);
+                if (ride.id != null) {
+                  if (ride.id!.startsWith('ride_')) {
+                    await context.read<RecordViaPhoneCubit>().deleteOfflineRide(ride.id!);
+                    _refreshPastRides();
+                    if (mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(l10n.rideDeletedSuccess),
+                          duration: const Duration(seconds: 2),
+                        ),
+                      );
+                    }
+                  } else {
+                    if (mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(l10n.onlineRideDeleteNotSupported),
+                          duration: const Duration(seconds: 2),
+                        ),
+                      );
+                    }
+                  }
+                } else {
+                  if (mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(l10n.rideDeleteFailedInvalidId),
+                        duration: const Duration(seconds: 2),
+                      ),
+                    );
+                  }
+                }
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.redAccent,
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+              ),
+              child: Text(
+                l10n.delete,
+                style: const TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   void _showTagFilterBottomSheet() {
     final tags = ["All", "Walk", "Car", "Bike", "Train", "Bus", "Auto", "Cab", "Cycle", "Others"];
     
@@ -849,6 +969,15 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
                   child: Icon(
                     isFav ? Icons.favorite : Icons.favorite_border,
                     color: isFav ? Colors.red : (isDark ? Colors.white.withOpacity(0.6) : Colors.black54),
+                    size: 20,
+                  ),
+                ),
+                const SizedBox(width: 16),
+                GestureDetector(
+                  onTap: () => _showDeleteRideConfirmDialog(ride),
+                  child: Icon(
+                    Icons.delete_outline,
+                    color: Colors.redAccent,
                     size: 20,
                   ),
                 ),
@@ -1511,7 +1640,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
     String lastUpdatedText =
         "${AppLocalizations.of(context)!.lastUpdated} ${AppLocalizations.of(context)!.justNow}";
     if (_recordingStartDateTime != null) {
-      final formattedTime = DateFormat('h:mm a, dd MMM yyyy').format(_recordingStartDateTime!);
+      final formattedTime = DateFormat('dd MMM yyyy, h:mm a').format(_recordingStartDateTime!);
       lastUpdatedText =
           "${AppLocalizations.of(context)!.lastUpdated} $formattedTime";
     } else {
@@ -1520,7 +1649,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
         final timeFormat = DateFormat('h:mm a');
         final formattedTime = timeFormat.format(currentLoc.timestamp);
         lastUpdatedText =
-            "${AppLocalizations.of(context)!.lastUpdated} $formattedTime, ${AppLocalizations.of(context)!.today}";
+            "${AppLocalizations.of(context)!.lastUpdated} ${AppLocalizations.of(context)!.today}, $formattedTime";
       }
     }
 
@@ -1839,12 +1968,11 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
     );
   }
 
-  // --- History View ---
   Widget _buildHistoryView() {
     return BlocBuilder<RecordViaPhoneCubit, RecordViaPhoneState>(
       builder: (context, state) {
         return FutureBuilder<List<Map<String, dynamic>>>(
-          future: context.read<RecordViaPhoneCubit>().getOfflineRides(),
+          future: _pastRidesFuture,
           builder: (context, snapshot) {
             final offlineRidesRaw = snapshot.data ?? [];
             final List<PastRide> offlineRides = offlineRidesRaw.map((r) {
@@ -2098,7 +2226,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
     return BlocBuilder<RecordViaPhoneCubit, RecordViaPhoneState>(
       builder: (context, state) {
         return FutureBuilder<List<Map<String, dynamic>>>(
-          future: context.read<RecordViaPhoneCubit>().getOfflineRides(),
+          future: _pastRidesFuture,
           builder: (context, snapshot) {
             final offlineRidesRaw = snapshot.data ?? [];
             final List<PastRide> offlineRides = offlineRidesRaw.map((r) {
@@ -3303,32 +3431,45 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
                                 );
                               }
 
+                              _refreshPastRides();
                               cubit.stopRecording();
                               return;
                             }
 
-                            // ── ONLINE MODE — open playback then stop ──
-                            Navigator.push(
-                              screenContext,
-                              MaterialPageRoute(
-                                builder: (_) => RidePlaybackScreen(
-                                  points: points,
-                                  totalDistance: distance,
-                                  totalDuration: duration,
-                                  topSpeed: topSpd > 0
-                                      ? topSpd
-                                      : (duration.inSeconds > 0
-                                            ? (distance /
-                                                  (duration.inSeconds / 3600))
-                                            : 0.0),
-                                  avgSpeed: avgSpd,
-                                  startTime: DateTime.now().subtract(
-                                    duration,
-                                  ),
-                                ),
-                              ),
+                            // ── ONLINE MODE — save to API, open playback, then stop ──
+                            final onlineSuccess = await cubit.saveRideOnline(
+                              tag: selectedLabel,
+                              points: points,
+                              distanceKm: distance,
+                              duration: duration,
+                              avgSpeed: avgSpd,
+                              topSpeed: topSpd,
                             );
 
+                            if (onlineSuccess && screenContext.mounted) {
+                              Navigator.push(
+                                screenContext,
+                                MaterialPageRoute(
+                                  builder: (_) => RidePlaybackScreen(
+                                    points: points,
+                                    totalDistance: distance,
+                                    totalDuration: duration,
+                                    topSpeed: topSpd > 0
+                                        ? topSpd
+                                        : (duration.inSeconds > 0
+                                              ? (distance /
+                                                    (duration.inSeconds / 3600))
+                                              : 0.0),
+                                    avgSpeed: avgSpd,
+                                    startTime: DateTime.now().subtract(
+                                      duration,
+                                    ),
+                                  ),
+                                ),
+                              );
+                            }
+
+                            _refreshPastRides();
                             cubit.stopRecording();
                           },
                           child: Text(
