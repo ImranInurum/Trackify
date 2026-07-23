@@ -58,11 +58,11 @@ class VehicleControlCubit extends Cubit<VehicleControlState> {
     }
   }
 
-  void _refreshGlobalVehicleLists() {
+  void _refreshGlobalVehicleLists({bool forceRefresh = false}) {
     final context = rootNavigatorKey.currentContext;
     if (context != null) {
       try {
-        context.read<MapCubit>().fetchVehicles();
+        context.read<MapCubit>().fetchVehicles(forceRefresh: forceRefresh);
         context.read<MyGarageCubit>().fetchVehicles();
         context.read<ProfileCubit>().fetchVehicles();
       } catch (e) {
@@ -309,7 +309,7 @@ class VehicleControlCubit extends Cubit<VehicleControlState> {
       }
 
       emit(const VehicleControlDeleted());
-      _refreshGlobalVehicleLists();
+      _refreshGlobalVehicleLists(forceRefresh: true);
     } catch (e) {
       if (currentState is VehicleControlLoaded) {
         emit(currentState.copyWith(actionError: e.toString()));

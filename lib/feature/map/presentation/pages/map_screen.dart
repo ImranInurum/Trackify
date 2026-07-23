@@ -1004,6 +1004,10 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                 if (state is MapLoaded) {
                   final vehicles = state.vehicleList.vehicles ?? [];
                   if (vehicles.isNotEmpty) {
+                    // Vehicles exist — reset the navigation flag so that a future
+                    // deletion will navigate again even if the flag was previously set.
+                    _hasNavigatedToInstallation = false;
+
                     // Check if current selection is still valid in the new vehicles list
                     final bool isCurrentSelectedValid = _selectedDevice != null &&
                         vehicles.any((v) => v.id == _selectedDevice!.id);
@@ -1073,8 +1077,8 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                       }
                     }
                   } else {
-                    // No vehicles available
-                    final bool wasSelectedDeviceActive = _selectedDevice != null;
+                    // ── Garage is EMPTY ──────────────────────────────────────────
+                    // Clear stale in-memory & persistent vehicle references
                     setState(() {
                       _selectedDevice = null;
                       _isWarrantyLoading = false;
@@ -1084,12 +1088,19 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                     prefs.set(key: AppPreference.IMEI, value: '');
                     AppNavigation.refreshNavigationState();
 
-                    if (wasSelectedDeviceActive || !_hasNavigatedToInstallation) {
+                    // Guard: only navigate once per empty-garage event to prevent
+                    // duplicate pushes if MapLoaded(empty) is emitted multiple times.
+                    if (!_hasNavigatedToInstallation) {
                       _hasNavigatedToInstallation = true;
-                      Navigator.of(context).push(
+                      // Use pushAndRemoveUntil so the user cannot press Back and
+                      // land on a stale Map screen that still shows the old vehicle.
+                      Navigator.of(context).pushAndRemoveUntil(
                         MaterialPageRoute(
                           builder: (context) => const DeviceInstallationScreen(),
                         ),
+                        // Keep all routes below MapScreen intact (e.g. BottomNav)
+                        // by only popping routes that are on top of the first route.
+                        (route) => route.isFirst,
                       );
                     }
                   }
