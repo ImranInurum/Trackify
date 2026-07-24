@@ -5,7 +5,7 @@
   },
   {
     "elementType": "labels.icon",
-    "stylers": [{"visibility": "off"}]
+    "stylers": [{"visibility": "on"}]
   },
   {
     "elementType": "labels.text.fill",
@@ -18,7 +18,7 @@
   {
     "featureType": "administrative",
     "elementType": "geometry",
-    "stylers": [{"visibility": "off"}]
+    "stylers": [{"visibility": "on"}]
   },
   {
     "featureType": "landscape.man_made",
@@ -32,7 +32,7 @@
   },
   {
     "featureType": "poi",
-    "stylers": [{"visibility": "off"}]
+    "stylers": [{"visibility": "on"}]
   },
   {
     "featureType": "road",
@@ -71,7 +71,7 @@
   },
   {
     "featureType": "transit",
-    "stylers": [{"visibility": "off"}]
+    "stylers": [{"visibility": "on"}]
   },
   {
     "featureType": "water",

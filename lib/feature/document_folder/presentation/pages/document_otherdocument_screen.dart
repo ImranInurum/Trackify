@@ -6,6 +6,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:intl/intl.dart';
 import 'package:trackify/core/config/font_manager.dart';
+import 'package:trackify/core/config/network/api_host.dart';
+import 'package:trackify/feature/document_folder/domain/entities/doucment_entity.dart';
 import 'package:trackify/l10n/app_localizations.dart';
 import 'package:trackify/feature/document_folder/data/models/document_upload_request.dart';
 import 'package:trackify/feature/document_folder/data/repository/document_repository_impl.dart';
@@ -14,8 +16,14 @@ import 'package:trackify/feature/document_folder/data/data_sources/document_loca
 class DocumentOtherdocumentScreen extends StatefulWidget {
   final String title;
   final String vehicleId;
+  final DocumentEntity? initialDocument;
 
-  const DocumentOtherdocumentScreen({super.key, required this.title, required this.vehicleId});
+  const DocumentOtherdocumentScreen({
+    super.key,
+    required this.title,
+    required this.vehicleId,
+    this.initialDocument,
+  });
 
   @override
   State<DocumentOtherdocumentScreen> createState() =>
@@ -30,6 +38,20 @@ class _DocumentOtherdocumentScreenState extends State<DocumentOtherdocumentScree
   bool _isLoading = false;
   String? _error;
   bool _isPickerActive = false;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.initialDocument != null) {
+      _nameController.text = widget.initialDocument!.title ?? '';
+      if (widget.initialDocument!.expiryDate != null &&
+          widget.initialDocument!.expiryDate!.isNotEmpty) {
+        try {
+          _selectedDate = DateTime.tryParse(widget.initialDocument!.expiryDate!);
+        } catch (_) {}
+      }
+    }
+  }
 
   static const int _maxBytes = 5 * 1024 * 1024;
   final ImagePicker _picker = ImagePicker();
@@ -54,10 +76,17 @@ class _DocumentOtherdocumentScreenState extends State<DocumentOtherdocumentScree
 
   Future<void> _pickDate() async {
     final now = DateTime.now();
+    final firstAllowedDate = DateTime(now.year, now.month, now.day);
+    
+    DateTime initDate = _selectedDate ?? firstAllowedDate;
+    if (initDate.isBefore(firstAllowedDate)) {
+      initDate = firstAllowedDate;
+    }
+
     final picked = await showDatePicker(
       context: context,
-      initialDate: _selectedDate ?? now.add(const Duration(days: 365)),
-      firstDate: now,
+      initialDate: initDate,
+      firstDate: firstAllowedDate,
       lastDate: DateTime(2100),
     );
 
@@ -308,7 +337,8 @@ class _DocumentOtherdocumentScreenState extends State<DocumentOtherdocumentScree
   void _submit() async {
     final l10n = AppLocalizations.of(context)!;
 
-    if (_frontFile == null) {
+    final hasFront = widget.initialDocument != null;
+    if (_frontFile == null && !hasFront) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(l10n.frontRequired)),
       );
@@ -328,8 +358,12 @@ class _DocumentOtherdocumentScreenState extends State<DocumentOtherdocumentScree
     });
 
     try {
-      final frontBytes = await _frontFile!.readAsBytes();
-      final frontName = _frontFile!.path.split('/').last;
+      List<int>? frontBytes;
+      String? frontName;
+      if (_frontFile != null) {
+        frontBytes = await _frontFile!.readAsBytes();
+        frontName = _frontFile!.path.split('/').last;
+      }
 
       List<int>? backBytes;
       String? backName;
@@ -342,19 +376,31 @@ class _DocumentOtherdocumentScreenState extends State<DocumentOtherdocumentScree
         vehicleId: widget.vehicleId,
         type: 'personal',
         subtype: 'other_document',
+        title: _nameController.text.trim().isNotEmpty ? _nameController.text.trim() : null,
         expiryDate: _selectedDate != null
             ? DateFormat('yyyy-MM-dd').format(_selectedDate!)
             : null,
       );
 
       final repo = DocumentRepositoryImpl(DocumentLocalDataSource(ImagePicker()));
-      final result = await repo.uploadDocument(
-        request: request,
-        frontImageBytes: frontBytes,
-        frontImageName: frontName,
-        backImageBytes: backBytes,
-        backImageName: backName,
-      );
+      final isEdit = widget.initialDocument != null && widget.initialDocument!.id.isNotEmpty;
+
+      final result = isEdit
+          ? await repo.updateDocument(
+              documentId: widget.initialDocument!.id,
+              request: request,
+              frontImageBytes: frontBytes,
+              frontImageName: frontName,
+              backImageBytes: backBytes,
+              backImageName: backName,
+            )
+          : await repo.uploadDocument(
+              request: request,
+              frontImageBytes: frontBytes,
+              frontImageName: frontName,
+              backImageBytes: backBytes,
+              backImageName: backName,
+            );
 
       result.fold(
         (failure) {
@@ -370,7 +416,7 @@ class _DocumentOtherdocumentScreenState extends State<DocumentOtherdocumentScree
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text(response.message ?? l10n.successMessage)),
           );
-          Navigator.pop(context);
+          Navigator.pop(context, true);
         },
       );
     } catch (e) {
@@ -573,39 +619,50 @@ class _DocumentOtherdocumentScreenState extends State<DocumentOtherdocumentScree
                 ),
               ),
 
-              GestureDetector(
-                onTap: _isLoading
-                    ? null
-                    : () {
-                        if (_frontFile == null) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(AppLocalizations.of(context)!.frontRequired),
-                            ),
-                          );
-                          return;
-                        }
-                        _submit();
-                      },
-                child: Container(
-                  height: screenHeight * 0.055,
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    color: (_frontFile == null || _isLoading)
-                        ? colorScheme.outline
-                        : colorScheme.primary,
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Center(
-                    child: Text(
-                      l10n.addDocument,
-                      style: TextStyle(
-                        color: colorScheme.onPrimary,
-                        fontWeight: FontWeight.bold,
+              Builder(
+                builder: (context) {
+                  final hasFront = _frontFile != null ||
+                      (widget.initialDocument?.fontpath != null &&
+                          widget.initialDocument!.fontpath!.isNotEmpty);
+                  return GestureDetector(
+                    onTap: _isLoading
+                        ? null
+                        : () {
+                            if (!hasFront) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                    AppLocalizations.of(context)!.frontRequired,
+                                  ),
+                                ),
+                              );
+                              return;
+                            }
+                            _submit();
+                          },
+                    child: Container(
+                      height: screenHeight * 0.055,
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        color: (!hasFront || _isLoading)
+                            ? colorScheme.outline
+                            : colorScheme.primary,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Center(
+                        child: Text(
+                          widget.initialDocument != null
+                              ? l10n.update
+                              : l10n.addDocument,
+                          style: TextStyle(
+                            color: colorScheme.onPrimary,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                       ),
                     ),
-                  ),
-                ),
+                  );
+                },
               ),
 
               SizedBox(height: screenHeight * 0.02),
@@ -618,9 +675,19 @@ class _DocumentOtherdocumentScreenState extends State<DocumentOtherdocumentScree
 
   // ── UPLOAD BOX ─────────────────────────────────────────────
 
+  String _getImageUrl(String? path) {
+    if (path == null || path.isEmpty) return '';
+    return path.startsWith('http') ? path : '${ApiURL.baseURL}/$path';
+  }
+
   Widget _uploadBox(bool isFront, File? file, String label) {
     final colorScheme = Theme.of(context).colorScheme;
     final size = MediaQuery.of(context).size;
+    final existingPath = isFront
+        ? widget.initialDocument?.fontpath
+        : widget.initialDocument?.backpath;
+    final existingUrl = _getImageUrl(existingPath);
+
     return GestureDetector(
       onTap: () => _showPicker(isFront),
       child: Container(
@@ -629,59 +696,94 @@ class _DocumentOtherdocumentScreenState extends State<DocumentOtherdocumentScree
         decoration: BoxDecoration(
           color: Theme.of(context).cardColor,
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: colorScheme.outlineVariant.withValues(alpha: 0.2)),
-        ),
-        child: file == null
-            ? Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.camera_alt_outlined,
-              color: colorScheme.onSurfaceVariant,
-              size: 28,
-            ),
-            const SizedBox(height: 8),
-            Text(
-              label,
-              style: TextStyle(
-                color: colorScheme.onSurfaceVariant,
-                fontSize: 12,
-              ),
-              textAlign: TextAlign.center,
-            ),
-          ],
-        )
-            : ClipRRect(
-          borderRadius: BorderRadius.circular(12),
-          child: _isPdf(file)
-              ? Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(Icons.picture_as_pdf,
-                  color: Colors.red, size: 32),
-              const SizedBox(height: 6),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 6),
-                child: Text(
-                  file.path.split('/').last,
-                  style: TextStyle(
-                      color: colorScheme.onSurfaceVariant, fontSize: 10),
-                  textAlign: TextAlign.center,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-            ],
-          )
-              : Image.file(
-            file,
-            fit: BoxFit.cover,
-            width: double.infinity,
-            height: double.infinity,
+          border: Border.all(
+            color: colorScheme.outlineVariant.withValues(alpha: 0.2),
           ),
         ),
+        child: file == null
+            ? (existingUrl.isNotEmpty
+                ? ClipRRect(
+                    borderRadius: BorderRadius.circular(12),
+                    child: Image.network(
+                      existingUrl,
+                      fit: BoxFit.cover,
+                      width: double.infinity,
+                      height: double.infinity,
+                      errorBuilder: (_, __, ___) => Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.camera_alt_outlined,
+                            color: colorScheme.onSurfaceVariant,
+                            size: 28,
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            label,
+                            style: TextStyle(
+                              color: colorScheme.onSurfaceVariant,
+                              fontSize: 12,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ],
+                      ),
+                    ),
+                  )
+                : Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.camera_alt_outlined,
+                        color: colorScheme.onSurfaceVariant,
+                        size: 28,
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        label,
+                        style: TextStyle(
+                          color: colorScheme.onSurfaceVariant,
+                          fontSize: 12,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
+                  ))
+            : ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: _isPdf(file)
+                    ? Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(
+                            Icons.picture_as_pdf,
+                            color: Colors.red,
+                            size: 32,
+                          ),
+                          const SizedBox(height: 6),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 6),
+                            child: Text(
+                              file.path.split('/').last,
+                              style: TextStyle(
+                                color: colorScheme.onSurfaceVariant,
+                                fontSize: 10,
+                              ),
+                              textAlign: TextAlign.center,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
+                      )
+                    : Image.file(
+                        file,
+                        fit: BoxFit.cover,
+                        width: double.infinity,
+                        height: double.infinity,
+                      ),
+              ),
       ),
     );
-
   }
 }

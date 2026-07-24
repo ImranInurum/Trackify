@@ -538,7 +538,9 @@ class _HelpSuggestionScreenState extends State<HelpSuggestionScreen> {
                                     userId: AppPreference.instance.getSync(
                                       key: AppPreference.KEY_USER_ID,
                                     ) ?? "",
-                                    imei: selectedVehicleImei ?? "",
+                                    vehicleId: (selectedVehicleId != null && selectedVehicleId!.isNotEmpty)
+                                        ? selectedVehicleId!
+                                        : (selectedVehicleImei ?? ""),
                                     issueType: "report_issue",
                                     issueRelatedTo: issueController.text,
                                     description: descriptionController.text,

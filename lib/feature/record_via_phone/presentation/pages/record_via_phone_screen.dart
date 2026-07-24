@@ -49,7 +49,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
   BitmapDescriptor? _customMarkerIcon;
   String? _mobileDeviceName;
 
-  String _activeDateFilter = "Today";
+  String _activeDateFilter = "All";
   String? _selectedFilterTag;
   final Map<int, String> _rideTags = {};
   DateTime _selectedStatsDate = DateTime.now();
@@ -199,7 +199,9 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
   }
 
   String _getStatsDateText() {
-    if (_activeDateFilter == "Today") {
+    if (_activeDateFilter == "All") {
+      return "All Time";
+    } else if (_activeDateFilter == "Today") {
       return "${DateFormat('MMMM d').format(DateTime.now())} (Today)";
     } else if (_activeDateFilter == "Yesterday") {
       final yesterday = DateTime.now().subtract(const Duration(days: 1));
@@ -881,7 +883,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
       Polyline(
         polylineId: PolylineId("preview_polyline_$index"),
         points: ride.points,
-        color: Colors.amber,
+        color: Colors.yellow,
         width: 4,
         jointType: JointType.round,
         startCap: Cap.roundCap,
@@ -1434,7 +1436,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
                     Polyline(
                       polylineId: const PolylineId("live_ride"),
                       points: state.currentRidePoints,
-                      color: Theme.of(context).colorScheme.primary,
+                      color: Colors.yellow,
                       width: 5,
                       jointType: JointType.round,
                       startCap: Cap.roundCap,
@@ -2018,11 +2020,42 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
               final bDate = b.rawDate ?? DateTime.tryParse(b.dateStr) ?? DateTime(0);
               return bDate.compareTo(aDate);
             });
-            
+
+            // Apply date range filter (skip if "All")
+            if (_activeDateFilter != "All") {
+              final startOfDay = DateTime(
+                _statsStartDate.year,
+                _statsStartDate.month,
+                _statsStartDate.day,
+              );
+              final endOfDay = DateTime(
+                _statsEndDate.year,
+                _statsEndDate.month,
+                _statsEndDate.day,
+                23, 59, 59, 999,
+              );
+              rides = rides.where((r) {
+                final rideDate = r.rawDate ?? DateTime.tryParse(r.dateStr);
+                if (rideDate == null) return false;
+                return rideDate.isAfter(
+                      startOfDay.subtract(const Duration(milliseconds: 1)),
+                    ) &&
+                    rideDate.isBefore(
+                      endOfDay.add(const Duration(milliseconds: 1)),
+                    );
+              }).toList();
+            }
+
+            // Apply tag filter
             if (_selectedFilterTag != null) {
-              rides = rides.where((r) => r.tag.toLowerCase() == _selectedFilterTag!.toLowerCase()).toList();
+              rides = rides
+                  .where((r) =>
+                      r.tag.toLowerCase() ==
+                      _selectedFilterTag!.toLowerCase())
+                  .toList();
             }
             
+
             return Column(
               children: [
                 Padding(
@@ -2076,7 +2109,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
                             color: Theme.of(context).cardColor,
                             borderRadius: BorderRadius.circular(10),
                             border: Border.all(
-                              color: _activeDateFilter != "Today"
+                              color: _activeDateFilter != "All"
                                   ? Theme.of(context).colorScheme.primary
                                   : Theme.of(context).dividerColor,
                               width: 1.5,
@@ -2088,14 +2121,15 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
                               Icon(
                                 Icons.calendar_today,
                                 size: 14,
-                                color: _activeDateFilter != "Today"
+                                color: _activeDateFilter != "All"
                                     ? Theme.of(context).colorScheme.primary
                                     : Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
                               ),
                               const SizedBox(width: 8),
                               Text(
                                 'Date: $_activeDateFilter',
-                                style: TextStyle(color: _activeDateFilter != "Today"
+                                style: TextStyle(
+                                  color: _activeDateFilter != "All"
                                       ? Theme.of(context).colorScheme.primary
                                       : Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
                                   fontSize: 13,
@@ -2114,7 +2148,9 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
                   child: rides.isEmpty
                       ? Center(
                           child: Text(
-                            "No past rides found",
+                            _activeDateFilter == "All"
+                                ? "No past rides found"
+                                : "No rides found for '$_activeDateFilter'",
                             style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
                             ),
                           ),
@@ -3563,16 +3599,18 @@ class _DateRangePickerBottomSheetState extends State<_DateRangePickerBottomSheet
     super.initState();
     _activeFilter = widget.initialActiveFilter;
     
-    int initialIndex = 0; // "Day" tab
-    if (_activeFilter == "This week" || _activeFilter == "Last week" || _activeFilter == "Last 7 days") {
-      initialIndex = 1; // "Week" tab
+    int initialIndex = 0; // "All" tab
+    if (_activeFilter == "Today" || _activeFilter == "Yesterday" || _activeFilter.contains("/")) {
+      initialIndex = 1; // "Day" tab
+    } else if (_activeFilter == "This week" || _activeFilter == "Last week" || _activeFilter == "Last 7 days") {
+      initialIndex = 2; // "Week" tab
     } else if (_activeFilter == "This month" || _activeFilter == "Last month" || _activeFilter == "Last 30 days") {
-      initialIndex = 2; // "Month" tab
+      initialIndex = 3; // "Month" tab
     } else if (_activeFilter.contains(" - ") || _activeFilter == "Custom") {
-      initialIndex = 3; // "Other" tab
+      initialIndex = 4; // "Other" tab
     }
     
-    _tabController = TabController(length: 4, vsync: this, initialIndex: initialIndex);
+    _tabController = TabController(length: 5, vsync: this, initialIndex: initialIndex);
   }
 
   @override
@@ -3644,6 +3682,7 @@ class _DateRangePickerBottomSheetState extends State<_DateRangePickerBottomSheet
               indicatorSize: TabBarIndicatorSize.tab,
               dividerColor: Colors.transparent,
               tabs: const [
+                Tab(text: "All"),
                 Tab(text: "Day"),
                 Tab(text: "Week"),
                 Tab(text: "Month"),
@@ -3656,6 +3695,23 @@ class _DateRangePickerBottomSheetState extends State<_DateRangePickerBottomSheet
               child: TabBarView(
                 controller: _tabController,
                 children: [
+                  // All Tab
+                  ListView(
+                    shrinkWrap: true,
+                    physics: const ClampingScrollPhysics(),
+                    children: [
+                      _buildOption(
+                        title: "All Rides",
+                        subtitle: "Show all rides regardless of date",
+                        isSelected: _activeFilter == "All",
+                        onTap: () {
+                          final bigBang = DateTime(2020);
+                          final farFuture = DateTime(2100, 12, 31, 23, 59, 59);
+                          _selectFilter("All", bigBang, farFuture);
+                        },
+                      ),
+                    ],
+                  ),
                   // Day Tab
                   ListView(
                     shrinkWrap: true,

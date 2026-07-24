@@ -44,7 +44,7 @@ class MyIssueModel {
 
     return MyIssueModel(
       id: json['_id'] ?? '',
-      imei: json['imei'] ?? '',
+      imei: json['vehicleId'] ?? json['imei'] ?? '',
       vehicleNumber: json['vehicleNumber'] ?? '',
       issueType: json['issueType'] ?? '',
       issueRelatedTo: json['issueRelatedTo'] ?? '',

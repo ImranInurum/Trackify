@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:trackify/core/config/network/api_host.dart';
+import 'package:trackify/core/widgets/trackify_loader.dart';
 import 'package:trackify/feature/document_folder/domain/entities/doucment_entity.dart';
 import 'package:trackify/feature/document_folder/presentation/cubit/document_folder_cubit.dart';
 import 'package:trackify/feature/document_folder/presentation/cubit/document_folder_state.dart';
@@ -30,19 +31,34 @@ class AccessoryBillListScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: colorScheme.surface,
       appBar: AppBar(
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back_ios_new,
+            color: colorScheme.onSurface,
+          ),
+          onPressed: () => Navigator.pop(context),
+        ),
         title: Text(
-          'View Bills', // Fallback, could localize if we want
-          style: theme.textTheme.titleLarge?.copyWith(
+          'View Bills',
+          style: theme.textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.w600,
             color: colorScheme.onSurface,
           ),
         ),
+        backgroundColor: colorScheme.surface,
+        elevation: 0,
+        surfaceTintColor: Colors.transparent,
+        centerTitle: true,
       ),
       body: BlocBuilder<DocumentFolderCubit, DocumentFolderState>(
         builder: (context, state) {
           List<DocumentEntity> currentBills = bills;
           if (state is DocumentFolderLoaded) {
             currentBills = state.documents.where((d) => d.subtype == 'accessory_bill').toList();
+          }
+
+          if (state is DocumentFolderLoading && currentBills.isEmpty) {
+            return const Center(child: TrackifyLoader());
           }
 
           if (currentBills.isEmpty) {
@@ -62,8 +78,8 @@ class AccessoryBillListScreen extends StatelessWidget {
               final imageUrl = _getImageUrl(bill.fontpath ?? bill.backpath);
 
               return GestureDetector(
-                onTap: () {
-                  Navigator.push(
+                onTap: () async {
+                  final res = await Navigator.push<bool>(
                     context,
                     MaterialPageRoute(
                       builder: (_) => AccessoryBillDetailsScreen(
@@ -72,6 +88,9 @@ class AccessoryBillListScreen extends StatelessWidget {
                       ),
                     ),
                   );
+                  if (res == true && context.mounted) {
+                    context.read<DocumentFolderCubit>().fetchDocuments(vehicleId);
+                  }
                 },
                 child: Container(
                   margin: const EdgeInsets.only(bottom: 12),
@@ -152,8 +171,8 @@ class AccessoryBillListScreen extends StatelessWidget {
         },
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.push(
+        onPressed: () async {
+          final res = await Navigator.push<bool>(
             context,
             MaterialPageRoute(
               builder: (context) => AccessoryBillScreen(
@@ -161,9 +180,12 @@ class AccessoryBillListScreen extends StatelessWidget {
               ),
             ),
           );
+          if (res == true && context.mounted) {
+            context.read<DocumentFolderCubit>().fetchDocuments(vehicleId);
+          }
         },
-        backgroundColor: Colors.lightBlue, // Matching screenshot
-        child: const Icon(Icons.add, color: Colors.black),
+        backgroundColor: colorScheme.primary,
+        child: Icon(Icons.add, color: colorScheme.onPrimary),
       ),
     );
   }

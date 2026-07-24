@@ -55,6 +55,10 @@ import 'package:trackify/feature/map/data/repository/promo_video_repository_impl
 import 'package:trackify/feature/map/presentation/cubit/promo_video_cubit.dart';
 import 'package:trackify/feature/map/presentation/cubit/promo_video_state.dart';
 import 'package:trackify/feature/map/presentation/widgets/promo_video_card.dart';
+import 'package:trackify/feature/map/presentation/cubit/product_feature_cubit.dart';
+import 'package:trackify/feature/map/presentation/cubit/product_feature_state.dart';
+import 'package:trackify/feature/map/data/entity/product_feature_model.dart';
+import 'package:trackify/feature/map/data/entity/promo_video_model.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:http/http.dart' as http;
 import 'package:trackify/feature/map/data/entity/promo_offer_model.dart';
@@ -237,10 +241,10 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
           _mapRebuildNotifier.value++;
         }
 
-        if (hasMoved &&
-            _isInitialFocusDone &&
+        if (_isInitialFocusDone &&
             mounted &&
-            _mapController != null) {
+            _mapController != null &&
+            !(_cameraAnimationController?.isAnimating ?? false)) {
           if (now - _lastCameraUpdateMs >= 50) {
             _lastCameraUpdateMs = now;
 
@@ -300,6 +304,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
       if (mounted) {
         final appState = context.read<AppCubit>().state;
         context.read<MapCubit>().fetchVehicles();
+        context.read<PromoVideoCubit>().fetchPromoVideos(_selectedDevice?.imei ?? 'null');
         final name = appState.userData?.name ?? 'Me';
         final letter = name.isNotEmpty ? name[0].toUpperCase() : 'Me';
         final primaryColor = Theme.of(context).colorScheme.primary;
@@ -974,9 +979,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
       defaultValue: true,
     );
     final l10n = AppLocalizations.of(context)!;
-    return BlocProvider(
-      create: (context) => PromoVideoCubit(PromoVideoRepositoryImpl()),
-      child: Scaffold(
+    return Scaffold(
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         body: MultiBlocListener(
           listeners: [
@@ -1048,6 +1051,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                         _checkWarrantyStatus(savedVehicle.imei!);
                         context.read<PromoVideoCubit>().fetchPromoVideos(savedVehicle.imei!);
                       } else {
+                        context.read<PromoVideoCubit>().fetchPromoVideos("null");
                         setState(() {
                           _isWarrantyExpired = AppPreference.instance.getBoolSync(
                             key: 'KEY_WARRANTY_EXPIRED',
@@ -1067,6 +1071,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                         _checkWarrantyStatus(updatedDevice.imei!);
                         context.read<PromoVideoCubit>().fetchPromoVideos(updatedDevice.imei!);
                       } else {
+                        context.read<PromoVideoCubit>().fetchPromoVideos("null");
                         setState(() {
                           _isWarrantyExpired = AppPreference.instance.getBoolSync(
                             key: 'KEY_WARRANTY_EXPIRED',
@@ -1092,15 +1097,11 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                     // duplicate pushes if MapLoaded(empty) is emitted multiple times.
                     if (!_hasNavigatedToInstallation) {
                       _hasNavigatedToInstallation = true;
-                      // Use pushAndRemoveUntil so the user cannot press Back and
-                      // land on a stale Map screen that still shows the old vehicle.
                       Navigator.of(context).pushAndRemoveUntil(
                         MaterialPageRoute(
-                          builder: (context) => const DeviceInstallationScreen(),
+                          builder: (context) => const ChoiceSelector(),
                         ),
-                        // Keep all routes below MapScreen intact (e.g. BottomNav)
-                        // by only popping routes that are on top of the first route.
-                        (route) => route.isFirst,
+                        (route) => false,
                       );
                     }
                   }
@@ -1191,8 +1192,8 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                               _buildExploreMore(_selectedDevice),
                               _buildRecentRidesSection(
                                 _selectedDevice,
-                              ), // Actual RideCard here
-                              _buildVideosSection(), // Vertical videos
+                              ),
+                              _buildVideosSection(),
                               const SizedBox(height: 100),
                             ],
                           ),
@@ -1253,7 +1254,6 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                 ),
               )
             : null,
-      ),
     );
   }
 
@@ -1613,6 +1613,15 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
         if (_animatedMarkerPos == null) {
           _animatedMarkerPos = bestPos;
           _animatedMarkerBearing = bearing;
+          _animStartMarkerTarget = bestPos;
+          _animStartMarkerBearing = bearing;
+          _animEndMarkerTarget = bestPos;
+          _animEndMarkerBearing = bearing;
+          _lastDataReceivedMs = DateTime.now().millisecondsSinceEpoch;
+          
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (mounted) _mapRebuildNotifier.value++;
+          });
 
           // First ping, set camera instantly
           if (_mapController != null) {
@@ -1624,23 +1633,43 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
           }
         } else {
           if (_animEndMarkerTarget != bestPos) {
-            _animStartMarkerTarget = _animatedMarkerPos;
-            _animStartMarkerBearing = _animatedMarkerBearing;
-
-            _animEndMarkerTarget = bestPos;
-
-            _animStartMarkerBearing = _normalizeBearing(
-              _animStartMarkerBearing,
+            int nowMs = DateTime.now().millisecondsSinceEpoch;
+            double distToNew = Geolocator.distanceBetween(
+              _animatedMarkerPos!.latitude,
+              _animatedMarkerPos!.longitude,
+              bestPos.latitude,
+              bestPos.longitude,
             );
-            double endB = _normalizeBearing(bearing);
-            double diff = endB - _animStartMarkerBearing;
-            if (diff > 180)
-              diff -= 360;
-            else if (diff < -180)
-              diff += 360;
-            _animEndMarkerBearing = _animStartMarkerBearing + diff;
 
-            _lastDataReceivedMs = DateTime.now().millisecondsSinceEpoch;
+            if (distToNew > 500) {
+              _animatedMarkerPos = bestPos;
+              _animatedMarkerBearing = bearing;
+              _animStartMarkerTarget = bestPos;
+              _animStartMarkerBearing = bearing;
+              _animEndMarkerTarget = bestPos;
+              _animEndMarkerBearing = bearing;
+              _lastDataReceivedMs = nowMs;
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                if (mounted) _mapRebuildNotifier.value++;
+              });
+            } else {
+              _animStartMarkerTarget = _animatedMarkerPos;
+              _animStartMarkerBearing = _animatedMarkerBearing;
+              _animEndMarkerTarget = bestPos;
+
+              _animStartMarkerBearing = _normalizeBearing(
+                _animStartMarkerBearing,
+              );
+              double endB = _normalizeBearing(bearing);
+              double diff = endB - _animStartMarkerBearing;
+              if (diff > 180)
+                diff -= 360;
+              else if (diff < -180)
+                diff += 360;
+              _animEndMarkerBearing = _animStartMarkerBearing + diff;
+
+              _lastDataReceivedMs = nowMs;
+            }
           }
         }
 
@@ -2016,21 +2045,83 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                 liveDevice['battery'] ??
                 liveDevice['batteryLevel'] ??
                 liveDevice['battery_level'] ??
-                liveDevice['bat'];
+                liveDevice['bat'] ??
+                liveDevice['voltageLevel'] ??
+                liveDevice['voltage_level'] ??
+                (attrs is Map
+                    ? (attrs['battery'] ??
+                        attrs['batteryLevel'] ??
+                        attrs['voltageLevel'] ??
+                        attrs['battery_level'] ??
+                        attrs['voltage_level'])
+                    : null);
 
             final voltageVal =
                 liveDevice['voltage'] ??
                 liveDevice['volts'] ??
                 liveDevice['battery_voltage'] ??
                 liveDevice['v_bat'] ??
-                liveDevice['power'];
+                liveDevice['power'] ??
+                (attrs is Map
+                    ? (attrs['voltage'] ??
+                        attrs['battery_voltage'] ??
+                        attrs['v_bat'])
+                    : null);
 
             String batteryText = "";
             Color batteryColor = AppColors.paletteGreen;
             IconData batteryIcon = Icons.battery_charging_full;
 
-            if (batteryVal != null || voltageVal != null) {
-              if (batteryVal != null) {
+            final rawVal = batteryVal ?? voltageVal;
+            if (rawVal != null) {
+              final rawStr = rawVal.toString().trim();
+              int? intLevel;
+
+              if (rawStr.toLowerCase().startsWith('0x')) {
+                intLevel = int.tryParse(rawStr.substring(2), radix: 16);
+              } else if (RegExp(r'^\d+$').hasMatch(rawStr)) {
+                intLevel = int.tryParse(rawStr);
+              }
+
+              if (intLevel != null && intLevel >= 0 && intLevel <= 6) {
+                switch (intLevel) {
+                  case 0:
+                    batteryText = "No Power";
+                    batteryColor = Colors.red;
+                    batteryIcon = Icons.battery_0_bar;
+                    break;
+                  case 1:
+                    batteryText = "Extremely Low";
+                    batteryColor = Colors.red;
+                    batteryIcon = Icons.battery_1_bar;
+                    break;
+                  case 2:
+                    batteryText = "Very Low";
+                    batteryColor = Colors.redAccent;
+                    batteryIcon = Icons.battery_2_bar;
+                    break;
+                  case 3:
+                    batteryText = "Low";
+                    batteryColor = Colors.orange;
+                    batteryIcon = Icons.battery_3_bar;
+                    break;
+                  case 4:
+                    batteryText = "Medium";
+                    batteryColor = Colors.amber.shade700;
+                    batteryIcon = Icons.battery_4_bar;
+                    break;
+                  case 5:
+                    batteryText = "High";
+                    batteryColor = AppColors.paletteGreen;
+                    batteryIcon = Icons.battery_5_bar;
+                    break;
+                  case 6:
+                    batteryText = "Very High";
+                    batteryColor = AppColors.paletteGreen;
+                    batteryIcon = Icons.battery_full;
+                    break;
+                }
+              } else if (batteryVal != null) {
                 final batDouble = double.tryParse(
                   batteryVal.toString().replaceAll(RegExp(r'[^0-9.]'), ''),
                 );
@@ -2064,7 +2155,9 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                   batteryText = "Normal (${voltageVal.toString()})";
                 }
               }
-            } else {
+            }
+
+            if (batteryText.isEmpty) {
               batteryText = "Normal (13.6V)";
               batteryColor = AppColors.paletteGreen;
               batteryIcon = Icons.battery_charging_full;
@@ -3015,12 +3108,18 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
             option["label"] == l10n.geoFenceAlert ||
             option["label"] == l10n.fuelLogs ||
             option["label"] == l10n.serviceLogs ||
+            option["label"] == l10n.recordViaPhone ||
+            option["label"] == l10n.deviceDataPlanLabel ||
             (option["label"] == l10n.deviceWarrantyLabel &&
                 isDeviceNotInstalled));
 
     return InkWell(
       onTap: () {
-        if (isLocked || option["badge"] == l10n.comingSoonOption) return;
+        if (isLocked) {
+          _showUnlockDeviceDialog(context, option["label"] as String);
+          return;
+        }
+        if (option["badge"] == l10n.comingSoonOption) return;
         _handleExploreTap(option, selectedDevice, l10n);
       },
       child: Column(
@@ -3041,6 +3140,114 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
           ),
         ],
       ),
+    );
+  }
+
+  void _showUnlockDeviceDialog(BuildContext context, String featureTitle) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final isDark = theme.brightness == Brightness.dark;
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(24),
+          ),
+          backgroundColor: isDark ? colorScheme.surfaceContainerHigh : Colors.white,
+          elevation: 8,
+          child: Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const SizedBox(height: 8),
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(16),
+                  child: Image.asset(
+                    'assets/images/device_image.png',
+                    height: 140,
+                    fit: BoxFit.contain,
+                    errorBuilder: (context, error, stackTrace) => Container(
+                      height: 120,
+                      width: 120,
+                      decoration: BoxDecoration(
+                        color: colorScheme.primary.withOpacity(0.1),
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(
+                        Icons.phonelink_setup_rounded,
+                        size: 60,
+                        color: colorScheme.primary,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                Text(
+                  "To unlock $featureTitle you'll have to get Trackify device installed in your vehicle",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: colorScheme.onSurface,
+                    height: 1.35,
+                  ),
+                ),
+                const SizedBox(height: 24),
+                InkWell(
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const ProductScreen(),
+                      ),
+                    );
+                  },
+                  borderRadius: BorderRadius.circular(14),
+                  child: Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    decoration: BoxDecoration(
+                      color: isDark
+                          ? colorScheme.surfaceContainerHighest
+                          : const Color(0xFFF9F7F2),
+                      borderRadius: BorderRadius.circular(14),
+                      border: Border.all(
+                        color: colorScheme.outline.withOpacity(0.3),
+                        width: 1.5,
+                      ),
+                    ),
+                    child: Center(
+                      child: Text(
+                        "Unlock $featureTitle",
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: colorScheme.primary,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 14),
+                Text(
+                  "50 users bought Trackify device yesterday",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 12.5,
+                    fontWeight: FontWeight.w500,
+                    color: colorScheme.onSurfaceVariant.withOpacity(0.7),
+                  ),
+                ),
+                const SizedBox(height: 4),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 
@@ -3149,12 +3356,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
     final label = option["label"];
     if (label == l10n.recordViaPhone) {
       if (selectedDevice?.imei == null || _isWarrantyExpired) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(l10n.noDeviceFound),
-            backgroundColor: Colors.red,
-          ),
-        );
+        _showUnlockDeviceDialog(context, label as String);
       } else {
         Navigator.push(
           context,
@@ -3408,11 +3610,9 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                       ),
                       TextButton(
                         onPressed: () {
-                          if (_selectedDevice?.imei != null) {
-                            context.read<PromoVideoCubit>().fetchPromoVideos(
-                              _selectedDevice!.imei!,
-                            );
-                          }
+                          context.read<PromoVideoCubit>().fetchPromoVideos(
+                            _selectedDevice?.imei ?? 'null',
+                          );
                         },
                         child: Text(l10n.retry),
                       ),
@@ -3440,7 +3640,10 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
 
                     final video = state.videos[index];
 
-                    return PromoVideoCard(video: video);
+                    return PromoVideoCard(
+                      key: ValueKey(video.id),
+                      video: video,
+                    );
                   },
                 );
               }
@@ -3451,6 +3654,8 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
       ),
     );
   }
+
+
 
   Widget _buildDraggableAppBar(List<Vehicles> vehicles) {
     return DraggableAppBar(
@@ -3501,6 +3706,9 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
         context.read<RideHistoryCubit>().getRideHistoryData();
         if (device.imei != null && device.imei!.isNotEmpty) {
           context.read<GeoFenceCubit>().fetchGeoFences(device.imei!);
+          context.read<PromoVideoCubit>().fetchPromoVideos(device.imei!);
+        } else {
+          context.read<PromoVideoCubit>().fetchPromoVideos('null');
         }
         if (_mapController != null &&
             device.currentLocation?.lat != null &&

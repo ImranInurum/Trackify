@@ -41,13 +41,24 @@ class _DocumentFolderScreenState extends State<DocumentFolderScreen> {
   @override
   void initState() {
     super.initState();
-    context.read<ServiceLogsCubit>().loadVehicles();
+    final serviceCubit = context.read<ServiceLogsCubit>();
+    serviceCubit.loadVehicles();
+    final state = serviceCubit.state;
+    if (state is ServiceLogsLoaded && state.selectedVehicle != null) {
+      _fetchVehicleImageIfNeeded(state.selectedVehicle);
+    }
   }
 
   void _fetchVehicleImageIfNeeded(Vehicle? vehicle) {
     final imei = vehicle?.imei;
-    final vehicleId = vehicle?.id;
-    if (_lastFetchedImei == imei) return;
+    final vehicleId = (vehicle?.id != null && vehicle!.id!.isNotEmpty)
+        ? vehicle.id
+        : vehicle?.imei;
+
+    final docCubit = context.read<DocumentFolderCubit>();
+    final isDocInitial = docCubit.state is DocumentFolderInitial;
+
+    if (_lastFetchedImei == imei && !isDocInitial) return;
     _lastFetchedImei = imei;
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -59,25 +70,25 @@ class _DocumentFolderScreenState extends State<DocumentFolderScreen> {
       }
     });
 
-    if (imei == null || imei.isEmpty) return;
-
-    VehicleControlRepositoryImpl()
-        .getVehicleControlDetails(imei)
-        .then((details) {
-          if (mounted &&
-              details.bikeImage != null &&
-              details.bikeImage!.isNotEmpty) {
-            setState(() {
-              _vehicleImageUrl = details.bikeImage;
-            });
-          }
-        })
-        .catchError((e) {
-          // ignore
-        });
+    if (imei != null && imei.isNotEmpty) { 
+      VehicleControlRepositoryImpl()
+          .getVehicleControlDetails(vehicleId ?? '', imei)
+          .then((details) {
+            if (mounted &&
+                details.bikeImage != null &&
+                details.bikeImage!.isNotEmpty) {
+              setState(() {
+                _vehicleImageUrl = details.bikeImage;
+              });
+            }
+          })
+          .catchError((e) {
+            // ignore
+          });
+    }
 
     if (vehicleId != null && vehicleId.isNotEmpty) {
-      context.read<DocumentFolderCubit>().fetchDocuments(vehicleId);
+      docCubit.fetchDocuments(vehicleId);
     }
   }
 
@@ -302,615 +313,725 @@ class _DocumentFolderScreenState extends State<DocumentFolderScreen> {
     void handleDocTap(
       String title,
       String subtype,
-      Widget Function() buildUploadScreen,
-    ) {
+      Widget Function(DocumentEntity? doc) buildUploadScreen,
+    ) async {
       final doc = findDoc(subtype);
+      bool? result;
       if (doc != null) {
-        Navigator.push(
+        result = await Navigator.push<bool>(
           context,
           MaterialPageRoute(
             builder: (_) => DocumentDetailsScreen(
               title: title,
               document: doc,
-              onEdit: () {
+              onEdit: () async {
                 Navigator.pop(context);
-                Navigator.push(
+                final res = await Navigator.push<bool>(
                   context,
-                  MaterialPageRoute(builder: (_) => buildUploadScreen()),
+                  MaterialPageRoute(builder: (_) => buildUploadScreen(doc)),
                 );
+                if (res == true && selectedVehicle != null) {
+                  final vId = selectedVehicle.id ?? selectedVehicle.imei;
+                  if (vId != null && vId.isNotEmpty) {
+                    context.read<DocumentFolderCubit>().fetchDocuments(vId);
+                  }
+                }
               },
-              onDelete: () {
-                // Future enhancement: call delete API
+              onDelete: () async {
+                if (doc.id.isNotEmpty) {
+                  final success = await context
+                      .read<DocumentFolderCubit>()
+                      .deleteDocument(doc.id);
+                  if (success && context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(AppLocalizations.of(context)!.successMessage),
+                        backgroundColor: Colors.green,
+                      ),
+                    );
+                    Navigator.pop(context, true);
+                  }
+                }
               },
             ),
           ),
         );
       } else {
-        Navigator.push(
+        result = await Navigator.push<bool>(
           context,
-          MaterialPageRoute(builder: (_) => buildUploadScreen()),
+          MaterialPageRoute(builder: (_) => buildUploadScreen(null)),
         );
+      }
+
+      if (result == true && selectedVehicle != null) {
+        final vId = selectedVehicle.id ?? selectedVehicle.imei;
+        if (vId != null && vId.isNotEmpty) {
+          context.read<DocumentFolderCubit>().fetchDocuments(vId);
+        }
       }
     }
 
-    return Scaffold(
-      backgroundColor: colorScheme.surface,
-      appBar: AppBar(
-        leading: IconButton(
-          icon: Icon(
-            Icons.arrow_back_ios_new,
-            color: colorScheme.onSurface,
-          ),
-          onPressed: () => Navigator.pop(context),
-        ),
-        title: Text(
-          l10n.documentFolder,
-          style: theme.textTheme.titleLarge?.copyWith(
-            fontWeight: FontWeight.w600,
-            color: colorScheme.onSurface,
-          ),
-        ),
+    final isLoading = state is ServiceLogsLoading ||
+        (docState is DocumentFolderLoading && uploadedDocs.isEmpty);
+
+    return BlocListener<ServiceLogsCubit, ServiceLogsState>(
+      listener: (context, state) {
+        if (state is ServiceLogsLoaded && state.selectedVehicle != null) {
+          _fetchVehicleImageIfNeeded(state.selectedVehicle);
+        }
+      },
+      child: Scaffold(
         backgroundColor: colorScheme.surface,
-        elevation: 0,
-        surfaceTintColor: Colors.transparent,
-        centerTitle: false,
-      ),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  const Icon(Icons.shield, color: Colors.green, size: 16),
-                  const SizedBox(width: 6),
-                  Text(
-                    l10n.documentsEncrypted,
-                    style: const TextStyle(color: Colors.green, fontSize: 12),
+        appBar: AppBar(
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back_ios_new, color: colorScheme.onSurface),
+            onPressed: () => Navigator.pop(context),
+          ),
+          title: Text(
+            l10n.documentFolder,
+            style: theme.textTheme.titleLarge?.copyWith(
+              fontWeight: FontWeight.w600,
+              color: colorScheme.onSurface,
+            ),
+          ),
+          backgroundColor: colorScheme.surface,
+          elevation: 0,
+          surfaceTintColor: Colors.transparent,
+          centerTitle: false,
+        ),
+        body: isLoading
+            ? const Center(child: TrackifyLoader())
+            : SafeArea(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 8,
                   ),
-                ],
-              ),
-
-              const SizedBox(height: 20),
-
-              // ── PERSONAL SECTION ─────────────────────────────
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(15),
-                decoration: BoxDecoration(
-                  color: Theme.of(context).cardColor,
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(
-                    color: colorScheme.outlineVariant.withValues(alpha: 0.2),
-                  ),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _sectionTitle(
-                      colorScheme,
-                      title: l10n.personalDocumentsTitle,
-                      subtitle: l10n.personalDocumentsSubtitle,
-                    ),
-                    const SizedBox(height: 16),
-                    SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: Row(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
                         children: [
-                          _docTile(
-                            context,
-                            colorScheme,
-                            title: l10n.drivingLicenseTitle,
-                            document: findDoc('driving_license'),
-                            onTap: () {
-                              final vehicle = selectedVehicle;
-                              if (vehicle == null) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(content: Text(l10n.selectVehicle)),
-                                );
-                                return;
-                              }
-                              handleDocTap(
-                                l10n.drivingLicenseTitle,
-                                'driving_license',
-                                () => DocumentLicense(
-                                  title: l10n.drivingLicenseTitle,
-                                  vehicleId: vehicle.id ?? '',
-                                ),
-                              );
-                            },
+                          const Icon(
+                            Icons.shield,
+                            color: Colors.green,
+                            size: 16,
                           ),
-                          const SizedBox(width: 12),
-                          _docTile(
-                            context,
-                            colorScheme,
-                            title: l10n.otherDocuments,
-                            document: findDoc('other_document'),
-                            onTap: () {
-                              final vehicle = selectedVehicle;
-                              if (vehicle == null) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(content: Text(l10n.selectVehicle)),
-                                );
-                                return;
-                              }
-                              handleDocTap(
-                                l10n.otherDocumentTitle,
-                                'other_document',
-                                () => DocumentOtherdocumentScreen(
-                                  title: l10n.otherDocumentTitle,
-                                  vehicleId: vehicle.id ?? vehicle.imei ?? '',
-                                ),
-                              );
-                            },
+                          const SizedBox(width: 6),
+                          Text(
+                            l10n.documentsEncrypted,
+                            style: const TextStyle(
+                              color: Colors.green,
+                              fontSize: 12,
+                            ),
                           ),
                         ],
                       ),
-                    ),
-                  ],
-                ),
-              ),
 
-              const SizedBox(height: 25),
-              LayoutBuilder(
-                builder: (context, constraints) {
-                  final boxWidth = constraints.constrainWidth();
-                  const dashWidth = 4.0;
-                  const dashHeight = 1.0;
-                  const dashSpace = 4.0;
-                  final dashCount = (boxWidth / (dashWidth + dashSpace))
-                      .floor();
-                  return Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: List.generate(dashCount, (_) {
-                      return SizedBox(
-                        width: dashWidth,
-                        height: dashHeight,
-                        child: DecoratedBox(
-                          decoration: BoxDecoration(
-                            color: colorScheme.outlineVariant.withValues(alpha: 0.5),
-                          ),
-                        ),
-                      );
-                    }),
-                  );
-                },
-              ),
-              const SizedBox(height: 25),
+                      const SizedBox(height: 20),
 
-              // ── VEHICLE IMAGE + SELECTOR ──────────────────────
-              Row(
-                children: [
-                  // 📷 Vehicle Image
-                  GestureDetector(
-                    onTap: () => _showImagePicker(selectedVehicle?.imei),
-                    child: Container(
-                      width: screenWidth * 0.20,
-                      height: screenHeight * 0.07,
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).cardColor,
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(
-                          color: colorScheme.outlineVariant.withValues(alpha: 0.5),
-                        ),
-                      ),
-                      child: _isUploading
-                          ? const Center(
-                              child: SizedBox(
-                                width: 20,
-                                height: 20,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                ),
-                              ),
-                            )
-                          : _vehicleImage == null
-                          ? (_vehicleImageUrl != null
-                                ? ClipRRect(
-                                    borderRadius: BorderRadius.circular(12),
-                                    child: Image.network(
-                                      _vehicleImageUrl!,
-                                      fit: BoxFit.cover,
-                                      errorBuilder: (_, __, ___) => Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          Icon(
-                                            Icons.camera_alt,
-                                            color: colorScheme.onSurfaceVariant,
-                                            size: 20,
-                                          ),
-                                          const SizedBox(height: 4),
-                                          Text(
-                                            l10n.vehicleImage,
-                                            style: theme.textTheme.labelSmall
-                                                ?.copyWith(
-                                                  color: colorScheme
-                                                      .onSurfaceVariant,
-                                                ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  )
-                                : Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Icon(
-                                        Icons.camera_alt,
-                                        color: colorScheme.onSurfaceVariant,
-                                        size: 20,
-                                      ),
-                                      const SizedBox(height: 4),
-                                      Text(
-                                        l10n.vehicleImage,
-                                        style: theme.textTheme.labelSmall
-                                            ?.copyWith(
-                                              color:
-                                                  colorScheme.onSurfaceVariant,
-                                            ),
-                                      ),
-                                    ],
-                                  ))
-                          : ClipRRect(
-                              borderRadius: BorderRadius.circular(12),
-                              child: Image.file(
-                                _vehicleImage!,
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                    ),
-                  ),
-
-                  const SizedBox(width: 12),
-
-                  // 🚗 Vehicle Selector
-                  Expanded(
-                    child: GestureDetector(
-                      onTap: () {
-                        showModalBottomSheet(
-                          context: context,
-                          backgroundColor: Colors.transparent,
-                          isScrollControlled: true,
-                          builder: (sheetContext) => BlocProvider.value(
-                            value: context.read<ServiceLogsCubit>(),
-                            child:
-                                BlocBuilder<ServiceLogsCubit, ServiceLogsState>(
-                                  builder: (context, state) {
-                                    List<Vehicle> vehicles = [];
-                                    Vehicle? selectedVehicle;
-                                    bool isLoading = false;
-                                    String? errorMessage;
-                                    if (state is ServiceLogsError) {
-                                      errorMessage = state.message;
-                                      vehicles = state.vehicles;
-                                      selectedVehicle = state.selectedVehicle;
-                                    } else if (state is ServiceLogsLoaded) {
-                                      vehicles = state.vehicles;
-                                      selectedVehicle = state.selectedVehicle;
-                                    } else if (state is ServiceLogsLoading ||
-                                        state is ServiceLogsInitial) {
-                                      isLoading = true;
-                                    }
-                                    return _VehicleSelectorSheet(
-                                      vehicles: vehicles,
-                                      selectedVehicle: selectedVehicle,
-                                      isLoading: isLoading,
-                                      errorMessage: errorMessage,
-                                      onSelected: (vehicle) {
-                                        context
-                                            .read<ServiceLogsCubit>()
-                                            .selectVehicle(vehicle.id!);
-                                        Navigator.pop(sheetContext);
-                                      },
-                                    );
-                                  },
-                                ),
-                          ),
-                        );
-                      },
-                      child: Container(
-                        height: screenHeight * 0.07,
-                        padding: const EdgeInsets.symmetric(horizontal: 12),
+                      // ── PERSONAL SECTION ─────────────────────────────
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.all(15),
                         decoration: BoxDecoration(
                           color: Theme.of(context).cardColor,
-                          borderRadius: BorderRadius.circular(12),
+                          borderRadius: BorderRadius.circular(16),
                           border: Border.all(
-                            color: colorScheme.outlineVariant.withValues(alpha: 0.5),
+                            color: colorScheme.outlineVariant.withValues(
+                              alpha: 0.2,
+                            ),
                           ),
                         ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Expanded(
-                              child: Text(
-                                selectedVehicle != null
-                                    ? "${selectedVehicle.vehicleMaker} ${selectedVehicle.vehicleModel} (${selectedVehicle.vehicleNumber})"
-                                    : l10n.selectVehicle,
-                                style: TextStyle(color: colorScheme.onSurface),
-                                overflow: TextOverflow.ellipsis,
-                              ),
+                            _sectionTitle(
+                              colorScheme,
+                              title: l10n.personalDocumentsTitle,
+                              subtitle: l10n.personalDocumentsSubtitle,
                             ),
-                            Icon(
-                              Icons.keyboard_arrow_down,
-                              color: colorScheme.onSurfaceVariant,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-
-              const SizedBox(height: 25),
-
-              // ── VEHICLE SECTION ─────────────────────────────
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: Theme.of(context).cardColor,
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(
-                    color: colorScheme.outlineVariant.withValues(alpha: 0.5),
-                  ),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _sectionTitle(
-                      colorScheme,
-                      title: l10n.vehicleDocumentsTitle,
-                      subtitle: l10n.personalDocumentsSubtitle,
-                    ),
-                    const SizedBox(height: 16),
-                    SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: Row(
-                        children: [
-                          _docTile(
-                            context,
-                            colorScheme,
-                            title: l10n.vehicleRC,
-                            document: findDoc('rc'),
-                            onTap: () {
-                              final vehicle = selectedVehicle;
-                              if (vehicle == null) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(content: Text(l10n.selectVehicle)),
-                                );
-                                return;
-                              }
-                              handleDocTap(
-                                l10n.vehicleRCTitle,
-                                'rc',
-                                () => DocumentVehicleRCScreen(
-                                  title: l10n.vehicleRCTitle,
-                                  vehicleId: vehicle.id ?? vehicle.imei ?? '',
-                                ),
-                              );
-                            },
-                          ),
-                          const SizedBox(width: 12),
-                          _docTile(
-                            context,
-                            colorScheme,
-                            title: l10n.insurance,
-                            document: findDoc('insurance'),
-                            onTap: () {
-                              final vehicle = selectedVehicle;
-                              if (vehicle == null) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(content: Text(l10n.selectVehicle)),
-                                );
-                                return;
-                              }
-                              handleDocTap(
-                                l10n.insuranceTitle,
-                                'insurance',
-                                () => DocumentSubScreen(
-                                  title: l10n.insuranceTitle,
-                                  vehicleId: vehicle.id ?? vehicle.imei ?? '',
-                                  subtype: 'insurance',
-                                ),
-                              );
-                            },
-                          ),
-                          const SizedBox(width: 12),
-                          _docTile(
-                            context,
-                            colorScheme,
-                            title: l10n.puc,
-                            document: findDoc('puc'),
-                            onTap: () {
-                              final vehicle = selectedVehicle;
-                              if (vehicle == null) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(content: Text(l10n.selectVehicle)),
-                                );
-                                return;
-                              }
-                              handleDocTap(
-                                l10n.pucTitle,
-                                'puc',
-                                () => DocumentSubScreen(
-                                  title: l10n.pucTitle,
-                                  vehicleId: vehicle.id ?? vehicle.imei ?? '',
-                                  subtype: 'puc',
-                                ),
-                              );
-                            },
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-
-              const SizedBox(height: 25),
-
-              // ── BILLS SECTION ─────────────────────────────
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: Theme.of(context).cardColor,
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(
-                    color: colorScheme.outlineVariant.withValues(alpha: 0.5),
-                  ),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _sectionTitle(
-                      colorScheme,
-                      title: l10n.billsTitle,
-                      subtitle: l10n.billsDescription,
-                    ),
-                    const SizedBox(height: 16),
-                    SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: Row(
-                        children: [
-                          _docTile(
-                            context,
-                            colorScheme,
-                            title: l10n.serviceLogs,
-                            onTap: () {
-                              final vehicle = selectedVehicle;
-                              if (vehicle == null) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(content: Text(l10n.selectVehicle)),
-                                );
-                                return;
-                              }
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      const ServiceLogsScreen(),
-                                ),
-                              );
-                            },
-                            customContent: Container(
-                              decoration: BoxDecoration(
-                                color: Colors.black.withValues(alpha: 0.3),
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
+                            const SizedBox(height: 16),
+                            SingleChildScrollView(
+                              scrollDirection: Axis.horizontal,
+                              child: Row(
                                 children: [
-                                  Text(
-                                    l10n.movedTo,
-                                    style: const TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 10,
-                                    ),
-                                  ),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Text(
-                                        l10n.exploreMore,
-                                        style: const TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 10,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                      const SizedBox(width: 4),
-                                      Container(
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 4,
-                                          vertical: 1,
-                                        ),
-                                        decoration: BoxDecoration(
-                                          color: Colors.amber,
-                                          borderRadius: BorderRadius.circular(
-                                            4,
+                                  _docTile(
+                                    context,
+                                    colorScheme,
+                                    title: l10n.drivingLicenseTitle,
+                                    document: findDoc('driving_license'),
+                                    onTap: () {
+                                      final vehicle = selectedVehicle;
+                                      if (vehicle == null) {
+                                        ScaffoldMessenger.of(
+                                          context,
+                                        ).showSnackBar(
+                                          SnackBar(
+                                            content: Text(l10n.selectVehicle),
                                           ),
+                                        );
+                                        return;
+                                      }
+                                      handleDocTap(
+                                        l10n.drivingLicenseTitle,
+                                        'driving_license',
+                                        (doc) => DocumentLicense(
+                                          title: l10n.drivingLicenseTitle,
+                                          vehicleId: vehicle.id ?? '',
+                                          initialDocument: doc,
                                         ),
-                                        child: Text(
-                                          l10n.newLabel,
-                                          style: const TextStyle(
-                                            color: Colors.black,
-                                            fontSize: 7,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                      ),
-                                    ],
+                                      );
+                                    },
                                   ),
-                                  const SizedBox(height: 4),
-                                  Text(
-                                    "${l10n.viewNow} >",
-                                    style: TextStyle(
-                                      color: colorScheme.primary,
-                                      fontSize: 10,
-                                      fontWeight: FontWeight.w600,
-                                    ),
+                                  const SizedBox(width: 12),
+                                  _docTile(
+                                    context,
+                                    colorScheme,
+                                    title: l10n.otherDocuments,
+                                    document: findDoc('other_document'),
+                                    onTap: () {
+                                      final vehicle = selectedVehicle;
+                                      if (vehicle == null) {
+                                        ScaffoldMessenger.of(
+                                          context,
+                                        ).showSnackBar(
+                                          SnackBar(
+                                            content: Text(l10n.selectVehicle),
+                                          ),
+                                        );
+                                        return;
+                                      }
+                                      handleDocTap(
+                                        l10n.otherDocumentTitle,
+                                        'other_document',
+                                        (doc) => DocumentOtherdocumentScreen(
+                                          title: l10n.otherDocumentTitle,
+                                          vehicleId:
+                                              vehicle.id ?? vehicle.imei ?? '',
+                                          initialDocument: doc,
+                                        ),
+                                      );
+                                    },
                                   ),
                                 ],
                               ),
                             ),
+                          ],
+                        ),
+                      ),
+
+                      const SizedBox(height: 25),
+                      LayoutBuilder(
+                        builder: (context, constraints) {
+                          final boxWidth = constraints.constrainWidth();
+                          const dashWidth = 4.0;
+                          const dashHeight = 1.0;
+                          const dashSpace = 4.0;
+                          final dashCount = (boxWidth / (dashWidth + dashSpace))
+                              .floor();
+                          return Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: List.generate(dashCount, (_) {
+                              return SizedBox(
+                                width: dashWidth,
+                                height: dashHeight,
+                                child: DecoratedBox(
+                                  decoration: BoxDecoration(
+                                    color: colorScheme.outlineVariant
+                                        .withValues(alpha: 0.5),
+                                  ),
+                                ),
+                              );
+                            }),
+                          );
+                        },
+                      ),
+                      const SizedBox(height: 25),
+
+                      // ── VEHICLE IMAGE + SELECTOR ──────────────────────
+                      Row(
+                        children: [
+                          // 📷 Vehicle Image
+                          GestureDetector(
+                            onTap: () =>
+                                _showImagePicker(selectedVehicle?.imei),
+                            child: Container(
+                              width: screenWidth * 0.20,
+                              height: screenHeight * 0.07,
+                              decoration: BoxDecoration(
+                                color: Theme.of(context).cardColor,
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(
+                                  color: colorScheme.outlineVariant.withValues(
+                                    alpha: 0.5,
+                                  ),
+                                ),
+                              ),
+                              child: _isUploading
+                                  ? const Center(
+                                      child: SizedBox(
+                                        width: 20,
+                                        height: 20,
+                                        child: CircularProgressIndicator(
+                                          strokeWidth: 2,
+                                        ),
+                                      ),
+                                    )
+                                  : _vehicleImage == null
+                                  ? (_vehicleImageUrl != null
+                                        ? ClipRRect(
+                                            borderRadius: BorderRadius.circular(
+                                              12,
+                                            ),
+                                            child: Image.network(
+                                              _vehicleImageUrl!,
+                                              fit: BoxFit.cover,
+                                              errorBuilder: (_, __, ___) => Center(
+                                                child: Icon(
+                                                  Icons.camera_alt,
+                                                  color: colorScheme
+                                                      .onSurfaceVariant,
+                                                  size: 20,
+                                                ),
+                                              ),
+                                            ),
+                                          )
+                                        : Center(
+                                            child: Icon(
+                                              Icons.camera_alt,
+                                              color: colorScheme
+                                                  .onSurfaceVariant,
+                                              size: 20,
+                                            ),
+                                          ))
+                                  : ClipRRect(
+                                      borderRadius: BorderRadius.circular(12),
+                                      child: Image.file(
+                                        _vehicleImage!,
+                                        fit: BoxFit.cover,
+                                      ),
+                                    ),
+                            ),
                           ),
+
                           const SizedBox(width: 12),
-                          _docTile(
-                            context,
-                            colorScheme,
-                            title: l10n.accessoryBills,
-                            document: findAllDocs('accessory_bill').isNotEmpty
-                                ? findAllDocs('accessory_bill').first
-                                : null,
-                            badgeCount: findAllDocs('accessory_bill').length,
-                            onTap: () {
-                              final vehicle = selectedVehicle;
-                              if (vehicle == null) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(content: Text(l10n.selectVehicle)),
-                                );
-                                return;
-                              }
-                              final bills = findAllDocs('accessory_bill');
-                              if (bills.isNotEmpty) {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) =>
-                                        AccessoryBillListScreen(
-                                          vehicleId:
-                                              vehicle.id ?? vehicle.imei ?? '',
-                                          bills: bills,
+
+                          // 🚗 Vehicle Selector
+                          Expanded(
+                            child: GestureDetector(
+                              onTap: () {
+                                showModalBottomSheet(
+                                  context: context,
+                                  backgroundColor: Colors.transparent,
+                                  isScrollControlled: true,
+                                  builder: (sheetContext) => BlocProvider.value(
+                                    value: context.read<ServiceLogsCubit>(),
+                                    child:
+                                        BlocBuilder<
+                                          ServiceLogsCubit,
+                                          ServiceLogsState
+                                        >(
+                                          builder: (context, state) {
+                                            List<Vehicle> vehicles = [];
+                                            Vehicle? selectedVehicle;
+                                            bool isLoading = false;
+                                            String? errorMessage;
+                                            if (state is ServiceLogsError) {
+                                              errorMessage = state.message;
+                                              vehicles = state.vehicles;
+                                              selectedVehicle =
+                                                  state.selectedVehicle;
+                                            } else if (state
+                                                is ServiceLogsLoaded) {
+                                              vehicles = state.vehicles;
+                                              selectedVehicle =
+                                                  state.selectedVehicle;
+                                            } else if (state
+                                                    is ServiceLogsLoading ||
+                                                state is ServiceLogsInitial) {
+                                              isLoading = true;
+                                            }
+                                            return _VehicleSelectorSheet(
+                                              vehicles: vehicles,
+                                              selectedVehicle: selectedVehicle,
+                                              isLoading: isLoading,
+                                              errorMessage: errorMessage,
+                                              onSelected: (vehicle) {
+                                                context
+                                                    .read<ServiceLogsCubit>()
+                                                    .selectVehicle(vehicle.id!);
+                                                Navigator.pop(sheetContext);
+                                              },
+                                            );
+                                          },
                                         ),
                                   ),
                                 );
-                              } else {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => AccessoryBillScreen(
-                                      vehicleId:
-                                          vehicle.id ?? vehicle.imei ?? '',
-                                    ),
+                              },
+                              child: Container(
+                                height: screenHeight * 0.07,
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: Theme.of(context).cardColor,
+                                  borderRadius: BorderRadius.circular(12),
+                                  border: Border.all(
+                                    color: colorScheme.outlineVariant
+                                        .withValues(alpha: 0.5),
                                   ),
-                                );
-                              }
-                            },
+                                ),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Expanded(
+                                      child: Text(
+                                        selectedVehicle != null
+                                            ? "${selectedVehicle.vehicleMaker} ${selectedVehicle.vehicleModel} (${selectedVehicle.vehicleNumber})"
+                                            : l10n.selectVehicle,
+                                        style: TextStyle(
+                                          color: colorScheme.onSurface,
+                                        ),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                    Icon(
+                                      Icons.keyboard_arrow_down,
+                                      color: colorScheme.onSurfaceVariant,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
                           ),
                         ],
                       ),
-                    ),
-                  ],
+
+                      const SizedBox(height: 25),
+
+                      // ── VEHICLE SECTION ─────────────────────────────
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).cardColor,
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(
+                            color: colorScheme.outlineVariant.withValues(
+                              alpha: 0.5,
+                            ),
+                          ),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            _sectionTitle(
+                              colorScheme,
+                              title: l10n.vehicleDocumentsTitle,
+                              subtitle: l10n.personalDocumentsSubtitle,
+                            ),
+                            const SizedBox(height: 16),
+                            SingleChildScrollView(
+                              scrollDirection: Axis.horizontal,
+                              child: Row(
+                                children: [
+                                  _docTile(
+                                    context,
+                                    colorScheme,
+                                    title: l10n.vehicleRC,
+                                    document: findDoc('rc'),
+                                    onTap: () {
+                                      final vehicle = selectedVehicle;
+                                      if (vehicle == null) {
+                                        ScaffoldMessenger.of(
+                                          context,
+                                        ).showSnackBar(
+                                          SnackBar(
+                                            content: Text(l10n.selectVehicle),
+                                          ),
+                                        );
+                                        return;
+                                      }
+                                      handleDocTap(
+                                        l10n.vehicleRCTitle,
+                                        'rc',
+                                        (doc) => DocumentVehicleRCScreen(
+                                          title: l10n.vehicleRCTitle,
+                                          vehicleId:
+                                              vehicle.id ?? vehicle.imei ?? '',
+                                          initialDocument: doc,
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                  const SizedBox(width: 12),
+                                  _docTile(
+                                    context,
+                                    colorScheme,
+                                    title: l10n.insurance,
+                                    document: findDoc('insurance'),
+                                    onTap: () {
+                                      final vehicle = selectedVehicle;
+                                      if (vehicle == null) {
+                                        ScaffoldMessenger.of(
+                                          context,
+                                        ).showSnackBar(
+                                          SnackBar(
+                                            content: Text(l10n.selectVehicle),
+                                          ),
+                                        );
+                                        return;
+                                      }
+                                      handleDocTap(
+                                        l10n.insuranceTitle,
+                                        'insurance',
+                                        (doc) => DocumentSubScreen(
+                                          title: l10n.insuranceTitle,
+                                          vehicleId:
+                                              vehicle.id ?? vehicle.imei ?? '',
+                                          subtype: 'insurance',
+                                          initialDocument: doc,
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                  const SizedBox(width: 12),
+                                  _docTile(
+                                    context,
+                                    colorScheme,
+                                    title: l10n.puc,
+                                    document: findDoc('puc'),
+                                    onTap: () {
+                                      final vehicle = selectedVehicle;
+                                      if (vehicle == null) {
+                                        ScaffoldMessenger.of(
+                                          context,
+                                        ).showSnackBar(
+                                          SnackBar(
+                                            content: Text(l10n.selectVehicle),
+                                          ),
+                                        );
+                                        return;
+                                      }
+                                      handleDocTap(
+                                        l10n.pucTitle,
+                                        'puc',
+                                        (doc) => DocumentSubScreen(
+                                          title: l10n.pucTitle,
+                                          vehicleId:
+                                              vehicle.id ?? vehicle.imei ?? '',
+                                          subtype: 'puc',
+                                          initialDocument: doc,
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+
+                      const SizedBox(height: 25),
+
+                      // ── BILLS SECTION ─────────────────────────────
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).cardColor,
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(
+                            color: colorScheme.outlineVariant.withValues(
+                              alpha: 0.5,
+                            ),
+                          ),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            _sectionTitle(
+                              colorScheme,
+                              title: l10n.billsTitle,
+                              subtitle: l10n.billsDescription,
+                            ),
+                            const SizedBox(height: 16),
+                            SingleChildScrollView(
+                              scrollDirection: Axis.horizontal,
+                              child: Row(
+                                children: [
+                                  _docTile(
+                                    context,
+                                    colorScheme,
+                                    title: l10n.serviceLogs,
+                                    onTap: () {
+                                      final vehicle = selectedVehicle;
+                                      if (vehicle == null) {
+                                        ScaffoldMessenger.of(
+                                          context,
+                                        ).showSnackBar(
+                                          SnackBar(
+                                            content: Text(l10n.selectVehicle),
+                                          ),
+                                        );
+                                        return;
+                                      }
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              const ServiceLogsScreen(),
+                                        ),
+                                      );
+                                    },
+                                    customContent: Container(
+                                      decoration: BoxDecoration(
+                                        color: Colors.black.withValues(
+                                          alpha: 0.3,
+                                        ),
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Text(
+                                            l10n.movedTo,
+                                            style: const TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 10,
+                                            ),
+                                          ),
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              Text(
+                                                l10n.exploreMore,
+                                                style: const TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 10,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                              const SizedBox(width: 4),
+                                              Container(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                      horizontal: 4,
+                                                      vertical: 1,
+                                                    ),
+                                                decoration: BoxDecoration(
+                                                  color: Colors.amber,
+                                                  borderRadius:
+                                                      BorderRadius.circular(4),
+                                                ),
+                                                child: Text(
+                                                  l10n.newLabel,
+                                                  style: const TextStyle(
+                                                    color: Colors.black,
+                                                    fontSize: 7,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                          const SizedBox(height: 4),
+                                          Text(
+                                            "${l10n.viewNow} >",
+                                            style: TextStyle(
+                                              color: colorScheme.primary,
+                                              fontSize: 10,
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 12),
+                                  _docTile(
+                                    context,
+                                    colorScheme,
+                                    title: l10n.accessoryBills,
+                                    document:
+                                        findAllDocs('accessory_bill').isNotEmpty
+                                        ? findAllDocs('accessory_bill').first
+                                        : null,
+                                    badgeCount: findAllDocs(
+                                      'accessory_bill',
+                                    ).length,
+                                    onTap: () async {
+                                      final vehicle = selectedVehicle;
+                                      if (vehicle == null) {
+                                        ScaffoldMessenger.of(
+                                          context,
+                                        ).showSnackBar(
+                                          SnackBar(
+                                            content: Text(l10n.selectVehicle),
+                                          ),
+                                        );
+                                        return;
+                                      }
+                                      final bills = findAllDocs(
+                                        'accessory_bill',
+                                      );
+                                      bool? res;
+                                      if (bills.isNotEmpty) {
+                                        res = await Navigator.push<bool>(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                AccessoryBillListScreen(
+                                                  vehicleId:
+                                                      vehicle.id ??
+                                                      vehicle.imei ??
+                                                      '',
+                                                  bills: bills,
+                                                ),
+                                          ),
+                                        );
+                                      } else {
+                                        res = await Navigator.push<bool>(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                AccessoryBillScreen(
+                                                  vehicleId:
+                                                      vehicle.id ??
+                                                      vehicle.imei ??
+                                                      '',
+                                                ),
+                                          ),
+                                        );
+                                      }
+                                      if (res == true && selectedVehicle != null) {
+                                        final vId =
+                                            selectedVehicle.id ??
+                                            selectedVehicle.imei;
+                                        if (vId != null && vId.isNotEmpty) {
+                                          context
+                                              .read<DocumentFolderCubit>()
+                                              .fetchDocuments(vId);
+                                        }
+                                      }
+                                    },
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 40),
+                    ],
+                  ),
                 ),
               ),
-              const SizedBox(height: 40),
-            ],
-          ),
-        ),
       ),
     );
   }
@@ -955,27 +1076,39 @@ class _DocumentFolderScreenState extends State<DocumentFolderScreen> {
     Widget content;
     if (customContent != null) {
       content = customContent;
-    } else if (document != null &&
-        (document.fontpath != null || document.backpath != null)) {
+    } else if (document != null) {
       String? imgPath = document.fontpath ?? document.backpath;
-      String imageUrl = '';
-      if (imgPath != null) {
-        imageUrl = imgPath.startsWith('http')
+      if (imgPath != null && imgPath.isNotEmpty) {
+        String imageUrl = imgPath.startsWith('http')
             ? imgPath
             : '${ApiURL.baseURL}/$imgPath';
-      }
-      if (imageUrl.toLowerCase().endsWith('.pdf')) {
-        content = const Center(
-          child: Icon(Icons.picture_as_pdf, color: Colors.red, size: 28),
-        );
+
+        if (imageUrl.toLowerCase().endsWith('.pdf')) {
+          content = const Center(
+            child: Icon(Icons.picture_as_pdf, color: Colors.red, size: 28),
+          );
+        } else {
+          content = ClipRRect(
+            borderRadius: BorderRadius.circular(12),
+            child: Image.network(
+              imageUrl,
+              fit: BoxFit.cover,
+              errorBuilder: (c, e, s) => Center(
+                child: Icon(
+                  Icons.description,
+                  color: colorScheme.primary,
+                  size: 28,
+                ),
+              ),
+            ),
+          );
+        }
       } else {
-        content = ClipRRect(
-          borderRadius: BorderRadius.circular(12),
-          child: Image.network(
-            imageUrl,
-            fit: BoxFit.cover,
-            errorBuilder: (c, e, s) =>
-                const Center(child: Icon(Icons.error_outline)),
+        content = Center(
+          child: Icon(
+            Icons.description,
+            color: colorScheme.primary,
+            size: 28,
           ),
         );
       }

@@ -14,9 +14,20 @@ abstract class DocumentRepository {
 
   ResultFuture<DocumentUploadResponse> uploadDocument({
     required DocumentUploadRequest request,
-    required List<int> frontImageBytes,
-    required String frontImageName,
+    List<int>? frontImageBytes,
+    String? frontImageName,
     List<int>? backImageBytes,
     String? backImageName,
   });
+
+  ResultFuture<DocumentUploadResponse> updateDocument({
+    required String documentId,
+    required DocumentUploadRequest request,
+    List<int>? frontImageBytes,
+    String? frontImageName,
+    List<int>? backImageBytes,
+    String? backImageName,
+  });
+
+  ResultFuture<dynamic> deleteDocument(String documentId);
 }

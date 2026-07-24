@@ -26,11 +26,11 @@ class _MyGarageScreenState extends State<MyGarageScreen> {
   final Map<String, bool> _vehicleLockStates = {};
   int _vehicleCardRefreshCount = 0;
 
-  Future<void> _fetchLockStatus(String imei) async {
+  Future<void> _fetchLockStatus(String vehicleId, String imei) async {
     if (imei.isEmpty || _vehicleLockStates.containsKey(imei)) return;
     try {
       final repo = VehicleControlRepositoryImpl();
-      final controlDetails = await repo.getVehicleControlDetails(imei);
+      final controlDetails = await repo.getVehicleControlDetails(vehicleId, imei);
       if (mounted) {
         setState(() {
           _vehicleLockStates[imei] = controlDetails.vehicleLock;
@@ -134,7 +134,7 @@ class _MyGarageScreenState extends State<MyGarageScreen> {
                       vehicle.imei != null && vehicle.imei!.isNotEmpty;
 
                   if (isDeviceInstalled && vehicle.imei != null) {
-                    _fetchLockStatus(vehicle.imei!);
+                    _fetchLockStatus(vehicle.id ?? '', vehicle.imei!);
                   }
 
                   final isLocked = _vehicleLockStates[vehicle.imei] ?? false;

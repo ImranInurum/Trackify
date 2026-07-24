@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:trackify/core/config/network/api_host.dart';
 import 'package:trackify/feature/document_folder/domain/entities/doucment_entity.dart';
+import 'package:trackify/feature/document_folder/presentation/cubit/document_folder_cubit.dart';
 import 'package:trackify/feature/document_folder/presentation/pages/accessory_bill_screen.dart';
 import 'package:trackify/l10n/app_localizations.dart';
 
@@ -33,11 +35,29 @@ class AccessoryBillDetailsScreen extends StatelessWidget {
     ];
 
     return Scaffold(
+      backgroundColor: colorScheme.surface,
       appBar: AppBar(
-        title: Text(bill.title ?? 'Accessory Bill'),
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back_ios_new,
+            color: colorScheme.onSurface,
+          ),
+          onPressed: () => Navigator.pop(context),
+        ),
+        title: Text(
+          bill.title ?? 'Accessory Bill',
+          style: theme.textTheme.titleMedium?.copyWith(
+            fontWeight: FontWeight.w600,
+            color: colorScheme.onSurface,
+          ),
+        ),
+        backgroundColor: colorScheme.surface,
+        elevation: 0,
+        surfaceTintColor: Colors.transparent,
+        centerTitle: true,
         actions: [
           IconButton(
-            icon: const Icon(Icons.delete),
+            icon: Icon(Icons.delete, color: colorScheme.onSurface),
             onPressed: () {
               showDialog(
                 context: context,
@@ -49,17 +69,28 @@ class AccessoryBillDetailsScreen extends StatelessWidget {
                   actions: [
                     TextButton(
                       onPressed: () => Navigator.pop(ctx),
-                      child: Text('Cancel'),
+                      child: Text(l10n.cancel),
                     ),
                     TextButton(
-                      onPressed: () {
-                        // Future enhancement: Call delete API
+                      onPressed: () async {
                         Navigator.pop(ctx);
-                        Navigator.pop(context); // Go back
+                        if (bill.id.isNotEmpty) {
+                          final cubit = context.read<DocumentFolderCubit>();
+                          final success = await cubit.deleteDocument(bill.id);
+                          if (success && context.mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(l10n.successMessage),
+                                backgroundColor: Colors.green,
+                              ),
+                            );
+                            Navigator.pop(context, true);
+                          }
+                        }
                       },
-                      child: const Text(
-                        'Delete',
-                        style: TextStyle(color: Colors.red),
+                      child: Text(
+                        l10n.delete,
+                        style: const TextStyle(color: Colors.red),
                       ),
                     ),
                   ],
@@ -68,18 +99,20 @@ class AccessoryBillDetailsScreen extends StatelessWidget {
             },
           ),
           IconButton(
-            icon: const Icon(Icons.edit),
-            onPressed: () {
-              Navigator.pop(context);
-              Navigator.push(
+            icon: Icon(Icons.edit, color: colorScheme.onSurface),
+            onPressed: () async {
+              final res = await Navigator.push<bool>(
                 context,
                 MaterialPageRoute(
                   builder: (context) => AccessoryBillScreen(
                     vehicleId: vehicleId,
-                    // If AccessoryBillScreen supports edit mode, we can pass bill here
+                    initialDocument: bill,
                   ),
                 ),
               );
+              if (res == true && context.mounted) {
+                Navigator.pop(context, true);
+              }
             },
           ),
         ],
@@ -197,16 +230,43 @@ class AccessoryBillDetailsScreen extends StatelessWidget {
                                     ],
                                   ),
                                 )
-                              : Image.network(
-                                  imageUrl,
-                                  fit: BoxFit.cover,
-                                  errorBuilder: (context, error, stackTrace) =>
-                                      const Center(
-                                        child: Icon(
-                                          Icons.broken_image,
-                                          size: 48,
+                              : GestureDetector(
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => Scaffold(
+                                          backgroundColor: Colors.black,
+                                          appBar: AppBar(
+                                            backgroundColor: Colors.black,
+                                            iconTheme: const IconThemeData(
+                                                color: Colors.white),
+                                          ),
+                                          body: Center(
+                                            child: InteractiveViewer(
+                                              minScale: 0.5,
+                                              maxScale: 4.0,
+                                              child: Image.network(
+                                                imageUrl,
+                                                fit: BoxFit.contain,
+                                              ),
+                                            ),
+                                          ),
                                         ),
                                       ),
+                                    );
+                                  },
+                                  child: Image.network(
+                                    imageUrl,
+                                    fit: BoxFit.cover,
+                                    errorBuilder: (context, error, stackTrace) =>
+                                        const Center(
+                                      child: Icon(
+                                        Icons.broken_image,
+                                        size: 48,
+                                      ),
+                                    ),
+                                  ),
                                 ),
                         );
                       },

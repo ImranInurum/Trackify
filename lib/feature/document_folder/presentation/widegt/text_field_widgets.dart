@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-
-
+import 'package:flutter/services.dart';
 
 class TextFieldWidgets extends StatelessWidget {
   final TextEditingController controller;
@@ -8,6 +7,8 @@ class TextFieldWidgets extends StatelessWidget {
   final bool isRequired;
   final Widget? suffixIcon;
   final TextInputType? keyboardType;
+  final List<TextInputFormatter>? inputFormatters;
+  final int? maxLength;
 
   const TextFieldWidgets({
     super.key,
@@ -16,6 +17,8 @@ class TextFieldWidgets extends StatelessWidget {
     this.isRequired = false,
     this.suffixIcon,
     this.keyboardType,
+    this.inputFormatters,
+    this.maxLength,
   });
 
   @override
@@ -24,7 +27,10 @@ class TextFieldWidgets extends StatelessWidget {
     return TextFormField(
       controller: controller,
       keyboardType: keyboardType,
+      inputFormatters: inputFormatters,
+      maxLength: maxLength,
       decoration: InputDecoration(
+        counterText: "",
         filled: true,
         fillColor: Theme.of(context).cardColor,
         label: Text.rich(

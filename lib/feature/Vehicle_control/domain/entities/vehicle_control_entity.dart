@@ -14,6 +14,8 @@ class VehicleControlEntity {
   final String vehicleType;
   final String vehicleMaker;
   final String vehicleModel;
+  final String brandId;
+  final String modelId;
 
   VehicleControlEntity({
     required this.id,
@@ -30,6 +32,8 @@ class VehicleControlEntity {
     this.vehicleType = '',
     this.vehicleMaker = '',
     this.vehicleModel = '',
+    this.brandId = '',
+    this.modelId = '',
   }) : imei = imei ?? id;
 
   Map<String, dynamic> toJson() {
@@ -48,6 +52,8 @@ class VehicleControlEntity {
       'vehicleType': vehicleType,
       'vehicleMaker': vehicleMaker,
       'vehicleModel': vehicleModel,
+      'brandId': brandId,
+      'modelId': modelId,
     };
   }
 
@@ -67,6 +73,8 @@ class VehicleControlEntity {
       vehicleType: json['vehicleType'] ?? '',
       vehicleMaker: json['vehicleMaker'] ?? '',
       vehicleModel: json['vehicleModel'] ?? '',
+      brandId: json['brandId'] ?? '',
+      modelId: json['modelId'] ?? '',
     );
   }
 }

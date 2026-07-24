@@ -41,11 +41,29 @@ class DocumentDetailsScreen extends StatelessWidget {
     ];
 
     return Scaffold(
+      backgroundColor: colorScheme.surface,
       appBar: AppBar(
-        title: Text(title),
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back_ios_new,
+            color: colorScheme.onSurface,
+          ),
+          onPressed: () => Navigator.pop(context),
+        ),
+        title: Text(
+          title,
+          style: theme.textTheme.titleMedium?.copyWith(
+            fontWeight: FontWeight.w600,
+            color: colorScheme.onSurface,
+          ),
+        ),
+        backgroundColor: colorScheme.surface,
+        elevation: 0,
+        surfaceTintColor: Colors.transparent,
+        centerTitle: true,
         actions: [
           IconButton(
-            icon: const Icon(Icons.delete),
+            icon: Icon(Icons.delete, color: colorScheme.onSurface),
             onPressed: () {
               // Confirm delete
               showDialog(
@@ -71,7 +89,7 @@ class DocumentDetailsScreen extends StatelessWidget {
             },
           ),
           IconButton(
-            icon: const Icon(Icons.edit),
+            icon: Icon(Icons.edit, color: colorScheme.onSurface),
             onPressed: onEdit,
           ),
         ],
@@ -153,9 +171,10 @@ class DocumentDetailsScreen extends StatelessWidget {
                       ),
                       itemCount: images.length,
                       itemBuilder: (context, index) {
+                        final isPdf = images[index].toLowerCase().endsWith('.pdf');
                         return ClipRRect(
                           borderRadius: BorderRadius.circular(8),
-                          child: images[index].toLowerCase().endsWith('.pdf')
+                          child: isPdf
                               ? Container(
                                   color: theme.cardColor,
                                   child: Column(
@@ -170,12 +189,38 @@ class DocumentDetailsScreen extends StatelessWidget {
                                     ],
                                   ),
                                 )
-                              : Image.network(
-                                  images[index],
-                                  fit: BoxFit.cover,
-                                  errorBuilder: (context, error, stackTrace) => Container(
-                                    color: theme.cardColor,
-                                    child: const Center(child: Icon(Icons.error_outline)),
+                              : GestureDetector(
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => Scaffold(
+                                          backgroundColor: Colors.black,
+                                          appBar: AppBar(
+                                            backgroundColor: Colors.black,
+                                            iconTheme: const IconThemeData(color: Colors.white),
+                                          ),
+                                          body: Center(
+                                            child: InteractiveViewer(
+                                              minScale: 0.5,
+                                              maxScale: 4.0,
+                                              child: Image.network(
+                                                images[index],
+                                                fit: BoxFit.contain,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                  child: Image.network(
+                                    images[index],
+                                    fit: BoxFit.cover,
+                                    errorBuilder: (context, error, stackTrace) => Container(
+                                      color: theme.cardColor,
+                                      child: const Center(child: Icon(Icons.error_outline)),
+                                    ),
                                   ),
                                 ),
                         );

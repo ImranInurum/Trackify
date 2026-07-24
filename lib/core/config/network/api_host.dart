@@ -41,8 +41,8 @@ class ApiURL {
   // -------------------------
   // Vehicle
   static const String addVehicle = "$baseURL/api/vehicle/vehicle";
-  static String updateVehicleDetails(String imei) =>
-      "$baseURL/api/vehicle/update-vehicle/$imei";
+  static String updateVehicleDetails(String vehicleId) =>
+      "$baseURL/api/vehicle/update-vehicle/$vehicleId";
   static String updateVehicleControl(String imei) =>
       "$baseURL/api/vehicle-control/update/$imei";
   static String lockUnlockVehicle(String imei) =>
@@ -91,6 +91,7 @@ class ApiURL {
   static String onlinePastRides(String userId) => "$baseURL/api/ride-mode/user/$userId";
   static String promoVideos(String imei) => "$baseURL/api/global-video/imei-videos/$imei";
   static const String promoOffers = "$baseURL/api/banner/all";
+  static const String productFeatures = "$baseURL/api/product-features";
 
   // -------------------------
   // LogoURL
@@ -121,6 +122,10 @@ class ApiURL {
   // -------------------------
   static const String uploadDocument = "$baseURL/api/documents/document";
   static const String getDocuments = "$baseURL/api/documents/document";
+  static String updateDocument(String documentId) =>
+      "$baseURL/api/documents/document/$documentId";
+  static String deleteDocument(String documentId) =>
+      "$baseURL/api/documents/document/$documentId";
 
   // -------------------------
   // Service Logs

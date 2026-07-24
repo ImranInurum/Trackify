@@ -389,7 +389,7 @@ class RecordViaPhoneCubit extends Cubit<RecordViaPhoneState> {
           Polyline(
             polylineId: const PolylineId("ride_path"),
             points: points,
-            color: Colors.blueAccent,
+            color: Colors.yellow,
             width: 4,
           ),
         };

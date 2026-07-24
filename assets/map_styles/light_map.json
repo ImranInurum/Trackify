@@ -5,7 +5,7 @@
   },
   {
     "elementType": "labels.icon",
-    "stylers": [{"visibility": "off"}]
+    "stylers": [{"visibility": "on"}]
   },
   {
     "elementType": "labels.text.fill",
@@ -63,10 +63,10 @@
   {
     "featureType": "road",
     "elementType": "labels",
-    "stylers": [{"visibility": "off"}]
+    "stylers": [{"visibility": "on"}]
   },
   {
     "featureType": "transit",
-    "stylers": [{"visibility": "off"}]
+    "stylers": [{"visibility": "on"}]
   }
 ]

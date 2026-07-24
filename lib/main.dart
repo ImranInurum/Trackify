@@ -28,6 +28,8 @@ import 'package:trackify/feature/upgrade_to_plus/data/data_source/plus_membershi
 import 'package:trackify/feature/upgrade_to_plus/data/repository/plus_membership_repository_impl.dart';
 import 'package:trackify/feature/upgrade_to_plus/domain/usecase/get_plus_membership_details.dart';
 import 'package:trackify/feature/upgrade_to_plus/presentation/cubit/upgrade_to_plus_cubit.dart';
+import 'package:trackify/feature/map/presentation/cubit/promo_video_cubit.dart';
+import 'package:trackify/feature/map/data/repository/promo_video_repository_impl.dart';
 import 'package:trackify/feature/video_tutorial/data/repository/tutorial_repository_impl.dart';
 import 'package:trackify/feature/video_tutorial/domain/usecase/tutorial_usecase.dart';
 import 'package:trackify/core/config/network/api_host.dart';
@@ -377,6 +379,9 @@ List<BlocProvider> _buildBlocProviders() {
 
     BlocProvider<SafeParkingCubit>(
       create: (_) => SafeParkingCubit(),
+    ),
+    BlocProvider<PromoVideoCubit>(
+      create: (_) => PromoVideoCubit(PromoVideoRepositoryImpl()),
     ),
     BlocProvider<UpgradeToPlusCubit>(
       create: (_) {

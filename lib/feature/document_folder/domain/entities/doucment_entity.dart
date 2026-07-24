@@ -35,10 +35,21 @@ class DocumentEntity {
     return DocumentEntity(
       id: json['_id']?.toString() ?? json['id']?.toString() ?? '',
       type: json['type']?.toString() ?? '',
-      subtype: json['subtype']?.toString(),
+      subtype: json['subtype']?.toString() ?? json['subType']?.toString() ?? json['sub_type']?.toString(),
       title: json['title']?.toString(),
-      fontpath: json['fontpath']?.toString() ?? json['frontImage']?.toString(),
-      backpath: json['backpath']?.toString() ?? json['backImage']?.toString(),
+      fontpath: json['fontpath']?.toString() ??
+          json['frontImage']?.toString() ??
+          json['frontpath']?.toString() ??
+          json['frontPath']?.toString() ??
+          json['front_image']?.toString() ??
+          json['image']?.toString() ??
+          json['filePath']?.toString() ??
+          json['fileUrl']?.toString() ??
+          json['url']?.toString(),
+      backpath: json['backpath']?.toString() ??
+          json['backImage']?.toString() ??
+          json['backPath']?.toString() ??
+          json['back_image']?.toString(),
       expiryDate: json['expiryDate']?.toString(),
       billingDate: json['billingDate']?.toString(),
       billingAmount: json['billingAmount'] != null ? double.tryParse(json['billingAmount'].toString()) : null,

@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../l10n/app_localizations.dart';
@@ -106,16 +106,18 @@ class _EditVehicleViewState extends State<_EditVehicleView> {
     if (state.isLoadingMakers) return;
 
     final entityMaker = widget.vehicle.vehicleMaker.trim().toLowerCase();
+    final entityBrandId = widget.vehicle.brandId.trim();
     VehicleMaker? matchMaker;
-    if (entityMaker.isNotEmpty || widget.vehicle.vehicleMaker.isNotEmpty) {
+    if (entityMaker.isNotEmpty || entityBrandId.isNotEmpty) {
       try {
         matchMaker = state.makers.firstWhere(
           (m) {
             final mName = m.name.trim().toLowerCase();
             final mId = m.id.trim();
-            final vMakerOrig = widget.vehicle.vehicleMaker.trim();
 
-            if (mName == entityMaker || mId == vMakerOrig) return true;
+            // Match by brandId first (most reliable)
+            if (entityBrandId.isNotEmpty && mId == entityBrandId) return true;
+            if (mName == entityMaker) return true;
             if (entityMaker.isNotEmpty && mName.isNotEmpty && mName.contains(entityMaker)) return true;
             if (entityMaker.isNotEmpty && mName.isNotEmpty && entityMaker.contains(mName)) return true;
             return false;
@@ -128,12 +130,14 @@ class _EditVehicleViewState extends State<_EditVehicleView> {
       _makerSelected = true;
       Future.microtask(() => cubit.selectMaker(matchMaker!));
     } else {
-      // Maker not found — mark as done to avoid infinite loop
+      // Maker not found in list — use real brandId from entity if available
       _makerSelected = true;
-      if (widget.vehicle.vehicleMaker.isNotEmpty) {
-        // Use a 24-character valid ObjectId to prevent backend CastError
-        final dummyMaker = VehicleMaker(id: '000000000000000000000000', name: widget.vehicle.vehicleMaker);
-        Future.microtask(() => cubit.selectMaker(dummyMaker));
+      if (widget.vehicle.vehicleMaker.isNotEmpty || entityBrandId.isNotEmpty) {
+        final fallbackMaker = VehicleMaker(
+          id: entityBrandId.isNotEmpty ? entityBrandId : '',
+          name: widget.vehicle.vehicleMaker,
+        );
+        Future.microtask(() => cubit.selectMaker(fallbackMaker));
       }
     }
   }
@@ -189,15 +193,16 @@ class _EditVehicleViewState extends State<_EditVehicleView> {
       Future.microtask(() => cubit.selectModel(matchModel!));
     } else {
       _modelSelected = true;
-      if (widget.vehicle.vehicleModel.isNotEmpty) {
-        final dummyModel = VehicleModelInfo(
-          id: '000000000000000000000000',
-          brandId: state.selectedMaker?.id ?? '',
+      if (widget.vehicle.vehicleModel.isNotEmpty || widget.vehicle.modelId.isNotEmpty) {
+        // Use actual modelId from entity, not dummy zeros
+        final fallbackModel = VehicleModelInfo(
+          id: widget.vehicle.modelId.isNotEmpty ? widget.vehicle.modelId : '',
+          brandId: state.selectedMaker?.id ?? widget.vehicle.brandId,
           modelName: widget.vehicle.vehicleModel,
           vehicleType: state.selectedConfig?.type ?? '',
           fuelType: state.selectedFuelType != null ? [state.selectedFuelType!] : [],
         );
-        Future.microtask(() => cubit.selectModel(dummyModel));
+        Future.microtask(() => cubit.selectModel(fallbackModel));
       }
     }
   }
@@ -210,15 +215,8 @@ class _EditVehicleViewState extends State<_EditVehicleView> {
 
   bool _isValidVehicleNumber(String number) {
     final normalized = number.replaceAll(' ', '').replaceAll('-', '').toUpperCase();
-    if (normalized.isEmpty) return false;
-    final indianRegex = RegExp(r'^[A-Z]{2}[0-9]{1,2}[A-Z]{1,3}[0-9]{1,4}$');
-    final swissRegex = RegExp(r'^[A-Z]{2}[0-9]{1,6}$');
-    final germanRegex = RegExp(r'^[A-Z]{2,5}[0-9]{1,4}[EH]?$');
-    final italyRegex = RegExp(r'^[A-Z]{2}[0-9]{3}[A-Z]{2}$');
-    return indianRegex.hasMatch(normalized) ||
-        swissRegex.hasMatch(normalized) ||
-        germanRegex.hasMatch(normalized) ||
-        italyRegex.hasMatch(normalized);
+    if (normalized.length < 2 || normalized.length > 20) return false;
+    return RegExp(r'^[A-Z0-9]+$').hasMatch(normalized);
   }
 
   IconData _getVehicleIcon(String type) {
@@ -565,24 +563,33 @@ class _EditVehicleViewState extends State<_EditVehicleView> {
                       }
 
                       final fuelType = state.selectedFuelType ?? widget.vehicle.fuelType;
-                      
+
                       final makerName = state.selectedMaker?.name ?? widget.vehicle.vehicleMaker;
                       final modelName = state.selectedModel?.modelName ?? widget.vehicle.vehicleModel;
-                      
-                      final vehicleName = (makerName.isNotEmpty && modelName.isNotEmpty) 
-                          ? '$makerName $modelName' 
+
+                      // Use actual IDs from entity as fallback (not dummy zeros)
+                      final resolvedBrandId = (state.selectedMaker?.id.isNotEmpty == true && state.selectedMaker!.id != '000000000000000000000000')
+                          ? state.selectedMaker!.id
+                          : widget.vehicle.brandId;
+                      final resolvedModelId = (state.selectedModel?.id.isNotEmpty == true && state.selectedModel!.id != '000000000000000000000000')
+                          ? state.selectedModel!.id
+                          : widget.vehicle.modelId;
+
+                      final vehicleName = (makerName.isNotEmpty && modelName.isNotEmpty)
+                          ? '$makerName $modelName'
                           : (modelName.isNotEmpty ? modelName : widget.vehicle.vehicleName);
 
                       context.read<VehicleControlCubit>().updateVehicleDetails(
-                            vehicleIMEI: widget.vehicle.id,
+                            vehicleId: widget.vehicle.id,
+                            vehicleIMEI: widget.vehicle.imei,
                             vehicleName: vehicleName,
                             vehicleNumber: numberStr,
                             fuelType: fuelType,
                             vehicleType: state.selectedConfig?.type ?? widget.vehicle.vehicleType,
                             vehicleMaker: makerName,
                             vehicleModel: modelName,
-                            brandId: state.selectedMaker?.id ?? '',
-                            modelId: state.selectedModel?.id ?? '',
+                            brandId: resolvedBrandId,
+                            modelId: resolvedModelId,
                           );
                       Navigator.pop(context);
                     },
