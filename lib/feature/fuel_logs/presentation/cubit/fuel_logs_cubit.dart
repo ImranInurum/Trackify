@@ -9,18 +9,18 @@ import 'package:trackify/core/config/network/network_api_service.dart';
 import 'fuel_logs_state.dart';
 
 class FuelLogsCubit extends Cubit<FuelLogsState> {
-  /// Stores the current IMEI so we can reload after adding a refuel.
-  String _currentImei = '';
+  /// Stores the current vehicleId so we can reload after adding a refuel.
+  String _currentVehicleId = '';
 
   FuelLogsCubit() : super(FuelLogsInitial());
 
-  Future<void> loadFuelLogs(String imei) async {
+  Future<void> loadFuelLogs(String vehicleId) async {
     try {
-      _currentImei = imei;
+      _currentVehicleId = vehicleId;
 
       emit(FuelLogsLoading());
 
-      final response = await http.get(Uri.parse(ApiURL.dashboard(imei)));
+      final response = await http.get(Uri.parse(ApiURL.dashboard(vehicleId)));
 
       print("=========== FUEL LOG API HIT ===========");
 
@@ -111,22 +111,22 @@ class FuelLogsCubit extends Cubit<FuelLogsState> {
     }
   }
 
-  /// Reloads the fuel logs using the last known IMEI.
+  /// Reloads the fuel logs using the last known vehicleId.
   /// Call this after successfully adding a new refuel entry.
   Future<void> reloadFuelLogs() async {
-    if (_currentImei.isNotEmpty) {
-      await loadFuelLogs(_currentImei);
+    if (_currentVehicleId.isNotEmpty) {
+      await loadFuelLogs(_currentVehicleId);
     }
   }
 
   Future<String?> updateOdometer(String odometerReading) async {
-    if (_currentImei.isEmpty) return "IMEI is empty";
+    if (_currentVehicleId.isEmpty) return "Vehicle ID is empty";
     try {
       final apiService = NetworkApiService();
       final response = await apiService.getPostApiResponse(
         ApiURL.updateOdometer,
         {
-          "imei": _currentImei,
+          "vehicleId": _currentVehicleId,
           "currentOdometer": (double.tryParse(odometerReading) ?? 0).toInt(),
         },
       );
@@ -145,7 +145,7 @@ class FuelLogsCubit extends Cubit<FuelLogsState> {
   }
 
   Future<String?> updateTankCapacity(String capacity) async {
-    if (_currentImei.isEmpty) return "IMEI is empty";
+    if (_currentVehicleId.isEmpty) return "Vehicle ID is empty";
     final currentState = state;
     try {
       final repo = VehicleControlRepositoryImpl();
@@ -153,7 +153,7 @@ class FuelLogsCubit extends Cubit<FuelLogsState> {
       if (currentState is FuelLogsLoaded) {
         currentMileage = currentState.mileageArai;
       }
-      await repo.updateTankCapacity(_currentImei, capacity, currentMileage);
+      await repo.updateTankCapacity(_currentVehicleId, capacity, currentMileage);
       await reloadFuelLogs();
       return null;
     } catch (e) {
@@ -163,7 +163,7 @@ class FuelLogsCubit extends Cubit<FuelLogsState> {
   }
 
   Future<String?> updateMileage(String mileage) async {
-    if (_currentImei.isEmpty) return "IMEI is empty";
+    if (_currentVehicleId.isEmpty) return "Vehicle ID is empty";
     final currentState = state;
     try {
       final repo = VehicleControlRepositoryImpl();
@@ -171,7 +171,7 @@ class FuelLogsCubit extends Cubit<FuelLogsState> {
       if (currentState is FuelLogsLoaded) {
         currentTankCapacity = currentState.tankCapacity;
       }
-      await repo.updateMileage(_currentImei, mileage, currentTankCapacity);
+      await repo.updateMileage(_currentVehicleId, mileage, currentTankCapacity);
       await reloadFuelLogs();
       return null;
     } catch (e) {

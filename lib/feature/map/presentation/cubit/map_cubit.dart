@@ -12,8 +12,15 @@ class MapCubit extends Cubit<MapState> {
 
   MapCubit(this._mapCase) : super(MapInitial());
 
-  Future<void> fetchVehicles() async {
+  Future<void> fetchVehicles({bool forceRefresh = false}) async {
     final box = Hive.box('map_cache');
+
+    // If forceRefresh is requested (e.g. after vehicle deletion), wipe the
+    // stale cache entry first so we never show ghost vehicles.
+    if (forceRefresh) {
+      await box.delete('vehicles_data');
+    }
+
     final cachedData = box.get('vehicles_data');
 
     UserVehicles? cachedList;

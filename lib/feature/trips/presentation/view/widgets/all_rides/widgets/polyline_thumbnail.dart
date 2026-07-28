@@ -264,7 +264,7 @@ class _PolylineThumbnailState extends State<PolylineThumbnail> {
                   Polyline(
                     polylineId: const PolylineId('route'),
                     points: validPoints,
-                    color: widget.color ?? Theme.of(context).colorScheme.primary,
+                    color: widget.color ?? Colors.yellow,
                     width: widget.strokeWidth.toInt(),
                     startCap: Cap.roundCap,
                     endCap: Cap.roundCap,

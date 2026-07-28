@@ -1,9 +1,10 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../domain/entities/service_log_entity.dart';
 import '../cubit/service_logs_cubit.dart';
+import '../cubit/service_logs_state.dart';
 import 'add_service_log_screen.dart';
 import '../../../../l10n/app_localizations.dart';
 
@@ -18,31 +19,42 @@ class ServiceDetailsScreen extends StatelessWidget {
     final colorScheme = theme.colorScheme;
     final l10n = AppLocalizations.of(context)!;
 
-    String formattedDate = '';
-    try {
-      if (log.serviceDate != null) {
-        final date = DateTime.parse(log.serviceDate!);
-        final day = date.day;
-        final month = DateFormat('MMM').format(date);
-        final year = DateFormat("yy").format(date);
+    return BlocBuilder<ServiceLogsCubit, ServiceLogsState>(
+      builder: (context, state) {
+        ServiceLogEntity currentLog = log;
+        if (state is ServiceLogsLoaded) {
+          try {
+            currentLog = state.logs.firstWhere((e) => e.id == currentLog.id);
+          } catch (e) {
+            // if not found (e.g. deleted), retain the old one
+          }
+        }
 
-        String suffix = 'th';
-        if (day % 10 == 1 && day != 11)
-          suffix = 'st';
-        else if (day % 10 == 2 && day != 12)
-          suffix = 'nd';
-        else if (day % 10 == 3 && day != 13)
-          suffix = 'rd';
+        String formattedDate = '';
+        try {
+          if (currentLog.serviceDate != null) {
+            final date = DateTime.parse(currentLog.serviceDate!);
+            final day = date.day;
+            final month = DateFormat('MMM').format(date);
+            final year = DateFormat("yy").format(date);
 
-        formattedDate = "$day$suffix $month '$year";
-      }
-    } catch (e) {
-      formattedDate = log.serviceDate ?? '';
-    }
+            String suffix = 'th';
+            if (day % 10 == 1 && day != 11)
+              suffix = 'st';
+            else if (day % 10 == 2 && day != 12)
+              suffix = 'nd';
+            else if (day % 10 == 3 && day != 13)
+              suffix = 'rd';
 
-    final amountStr = log.amount?.toStringAsFixed(0) ?? '0';
+            formattedDate = "$day$suffix $month '$year";
+          }
+        } catch (e) {
+          formattedDate = currentLog.serviceDate ?? '';
+        }
 
-    return Scaffold(
+        final amountStr = currentLog.amount?.toStringAsFixed(0) ?? '0';
+
+        return Scaffold(
       backgroundColor: theme.brightness == Brightness.dark
           ? theme.scaffoldBackgroundColor
           : const Color(0xFFF5F5F5),
@@ -97,9 +109,9 @@ class ServiceDetailsScreen extends StatelessWidget {
                         ),
                         TextButton(
                           onPressed: () {
-                            if (log.id != null) {
+                            if (currentLog.id != null) {
                               context.read<ServiceLogsCubit>().deleteServiceLog(
-                                log.id!,
+                                currentLog.id!,
                               );
                             }
                             Navigator.pop(dialogContext); // Close dialog
@@ -222,7 +234,7 @@ class ServiceDetailsScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    log.centerName ?? l10n.unknownText,
+                    currentLog.centerName ?? l10n.unknownText,
                     style: theme.textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
@@ -239,17 +251,17 @@ class ServiceDetailsScreen extends StatelessWidget {
                   Row(
                     children: [
                       Text(
-                        log.contact ?? l10n.notProvided,
+                        currentLog.contact ?? l10n.notProvided,
                         style: theme.textTheme.titleMedium?.copyWith(
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      if (log.contact != null && log.contact!.isNotEmpty) ...[
+                      if (currentLog.contact != null && currentLog.contact!.isNotEmpty) ...[
                         const SizedBox(width: 8),
                         InkWell(
                           onTap: () {
                             Clipboard.setData(
-                              ClipboardData(text: log.contact!),
+                              ClipboardData(text: currentLog.contact!),
                             );
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(content: Text(l10n.contactCopied)),
@@ -276,11 +288,11 @@ class ServiceDetailsScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 16),
-            if (log.billImages != null && log.billImages!.isNotEmpty)
+            if (currentLog.billImages != null && currentLog.billImages!.isNotEmpty)
               Wrap(
                 spacing: 12,
                 runSpacing: 12,
-                children: log.billImages!.map((imageUrl) {
+                children: currentLog.billImages!.map((imageUrl) {
                   return Container(
                     width: 120,
                     height: 120,
@@ -333,6 +345,8 @@ class ServiceDetailsScreen extends StatelessWidget {
           ],
         ),
       ),
+    );
+      },
     );
   }
 }

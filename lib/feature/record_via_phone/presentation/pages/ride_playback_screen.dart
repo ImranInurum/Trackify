@@ -745,7 +745,7 @@ class _RidePlaybackScreenState extends State<RidePlaybackScreen> {
             Polyline(
               polylineId: const PolylineId('route'),
               points: widget.points,
-              color: Theme.of(context).colorScheme.primary,
+              color: Colors.yellow,
               width: 5,
             )
         };

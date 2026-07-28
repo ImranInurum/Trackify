@@ -44,11 +44,13 @@ class VehicleControlCubit extends Cubit<VehicleControlState> {
       vehicleModel: model,
     );
 
-    emit(VehicleControlLoaded(
-      vehicle: entity,
-      tempIcon: entity.selectedIcon,
-      tempColor: entity.selectedColor,
-    ));
+    emit(
+      VehicleControlLoaded(
+        vehicle: entity,
+        tempIcon: entity.selectedIcon,
+        tempColor: entity.selectedColor,
+      ),
+    );
   }
 
   @override
@@ -58,11 +60,11 @@ class VehicleControlCubit extends Cubit<VehicleControlState> {
     }
   }
 
-  void _refreshGlobalVehicleLists() {
+  void _refreshGlobalVehicleLists({bool forceRefresh = false}) {
     final context = rootNavigatorKey.currentContext;
     if (context != null) {
       try {
-        context.read<MapCubit>().fetchVehicles();
+        context.read<MapCubit>().fetchVehicles(forceRefresh: forceRefresh);
         context.read<MyGarageCubit>().fetchVehicles();
         context.read<ProfileCubit>().fetchVehicles();
       } catch (e) {
@@ -71,67 +73,90 @@ class VehicleControlCubit extends Cubit<VehicleControlState> {
     }
   }
 
-  Future<void> loadVehicleDetails([String? vehicleIMEI]) async {
+  Future<void> loadVehicleDetails([String? vehicleIdParam, String? vehicleIMEI]) async {
     try {
       final actualIMEI = (vehicleIMEI == null || vehicleIMEI.isEmpty)
           ? await AppPreference.instance.get(key: AppPreference.IMEI)
           : vehicleIMEI;
+          
+      final actualId = (vehicleIdParam == null || vehicleIdParam.isEmpty)
+          ? await AppPreference.instance.get(key: AppPreference.KEY_SELECTED_UID)
+          : vehicleIdParam;
 
-      if (actualIMEI.isEmpty) {
+      if (actualId.isEmpty && actualIMEI.isEmpty) {
         emit(VehicleControlLoading());
-        final vehicle = await repository.getVehicleControlDetails(actualIMEI);
-        emit(VehicleControlLoaded(
-          vehicle: vehicle,
-          tempIcon: vehicle.selectedIcon,
-          tempColor: vehicle.selectedColor,
-        ));
+        final vehicle = await repository.getVehicleControlDetails(actualId, actualIMEI);
+        emit(
+          VehicleControlLoaded(
+            vehicle: vehicle,
+            tempIcon: vehicle.selectedIcon,
+            tempColor: vehicle.selectedColor,
+          ),
+        );
         return;
       }
 
+      final cacheKey = actualId.isNotEmpty ? actualId : actualIMEI;
       VehicleControlEntity? cachedVehicle;
       final box = Hive.box('map_cache');
-      final cacheData = box.get('vehicle_control_$actualIMEI');
+      final cacheData = box.get('vehicle_control_$cacheKey');
       if (cacheData != null) {
         try {
-          cachedVehicle = VehicleControlEntity.fromJson(jsonDecode(cacheData.toString()));
+          cachedVehicle = VehicleControlEntity.fromJson(
+            jsonDecode(cacheData.toString()),
+          );
         } catch (_) {}
       }
 
-      final isAlreadyLoaded = (state is VehicleControlLoaded &&
-          (state as VehicleControlLoaded).vehicle.imei == actualIMEI);
+      final isAlreadyLoaded =
+          (state is VehicleControlLoaded &&
+          (state as VehicleControlLoaded).vehicle.id == cacheKey);
 
       if (!isAlreadyLoaded) {
         if (cachedVehicle != null) {
-          emit(VehicleControlLoaded(
-            vehicle: cachedVehicle,
-            tempIcon: cachedVehicle.selectedIcon,
-            tempColor: cachedVehicle.selectedColor,
-          ));
+          emit(
+            VehicleControlLoaded(
+              vehicle: cachedVehicle,
+              tempIcon: cachedVehicle.selectedIcon,
+              tempColor: cachedVehicle.selectedColor,
+            ),
+          );
         } else {
           emit(VehicleControlLoading());
         }
       }
 
-      final vehicle = await repository.getVehicleControlDetails(actualIMEI);
+      final vehicle = await repository.getVehicleControlDetails(actualId, actualIMEI);
 
       // Save to cache
-      await box.put('vehicle_control_$actualIMEI', jsonEncode(vehicle.toJson()));
-      await AppPreference.instance.set(key: "last_vehicle_control_imei", value: actualIMEI);
+      await box.put(
+        'vehicle_control_$cacheKey',
+        jsonEncode(vehicle.toJson()),
+      );
+      await AppPreference.instance.set(
+        key: "last_vehicle_control_id",
+        value: cacheKey,
+      );
 
-      emit(VehicleControlLoaded(
-        vehicle: vehicle,
-        tempIcon: vehicle.selectedIcon,
-        tempColor: vehicle.selectedColor,
-      ));
+      emit(
+        VehicleControlLoaded(
+          vehicle: vehicle,
+          tempIcon: vehicle.selectedIcon,
+          tempColor: vehicle.selectedColor,
+        ),
+      );
     } on VehicleNotFoundException catch (e) {
-      emit(VehicleControlLoaded(
-        vehicle: e.fallbackVehicle,
-        tempIcon: e.fallbackVehicle.selectedIcon,
-        tempColor: e.fallbackVehicle.selectedColor,
-        actionError: e.message,
-      ));
+      emit(
+        VehicleControlLoaded(
+          vehicle: e.fallbackVehicle,
+          tempIcon: e.fallbackVehicle.selectedIcon,
+          tempColor: e.fallbackVehicle.selectedColor,
+          actionError: e.message,
+        ),
+      );
     } catch (e) {
-      final isConnectionError = e is NoInternetException ||
+      final isConnectionError =
+          e is NoInternetException ||
           e.toString().contains("SocketException") ||
           e.toString().contains("No Internet") ||
           e.toString().contains("Connection failed");
@@ -164,10 +189,27 @@ class VehicleControlCubit extends Cubit<VehicleControlState> {
   Future<void> saveChanges(String vehicleIMEI) async {
     final currentState = state;
     if (currentState is VehicleControlLoaded) {
+      final vehicleId = currentState.vehicle.id;
+      
+      final json = currentState.vehicle.toJson();
+      json['selectedIcon'] = currentState.tempIcon;
+      json['selectedColor'] = currentState.tempColor;
+      final updatedVehicle = VehicleControlEntity.fromJson(json);
+      emit(currentState.copyWith(vehicle: updatedVehicle));
+      
       try {
-        await repository.updateVehicleIcon(vehicleIMEI, currentState.tempIcon);
-        await repository.updateVehicleColor(vehicleIMEI, currentState.tempColor);
-        loadVehicleDetails(vehicleIMEI);
+        await repository.updateVehicleIcon(vehicleId, currentState.tempIcon);
+        await repository.updateVehicleColor(
+          vehicleId,
+          currentState.tempColor,
+        );
+        
+        final box = Hive.box('map_cache');
+        await box.put(
+          'vehicle_control_${updatedVehicle.id}',
+          jsonEncode(updatedVehicle.toJson()),
+        );
+
         _refreshGlobalVehicleLists();
       } catch (e) {
         emit(currentState.copyWith(actionError: e.toString()));
@@ -179,11 +221,26 @@ class VehicleControlCubit extends Cubit<VehicleControlState> {
     final currentState = state;
     try {
       if (currentState is VehicleControlLoaded) {
-        await repository.updateTankCapacity(vehicleIMEI, capacity, currentState.vehicle.vehicleMileage);
+        final json = currentState.vehicle.toJson();
+        json['tankCapacity'] = capacity;
+        final updatedVehicle = VehicleControlEntity.fromJson(json);
+        emit(currentState.copyWith(vehicle: updatedVehicle));
+        
+        await repository.updateTankCapacity(
+          currentState.vehicle.id,
+          capacity,
+          currentState.vehicle.vehicleMileage,
+        );
+        
+        final box = Hive.box('map_cache');
+        await box.put(
+          'vehicle_control_${updatedVehicle.id}',
+          jsonEncode(updatedVehicle.toJson()),
+        );
       } else {
         await repository.updateTankCapacity(vehicleIMEI, capacity, '');
+        loadVehicleDetails(null, vehicleIMEI);
       }
-      loadVehicleDetails(vehicleIMEI);
       _refreshGlobalVehicleLists();
     } catch (e) {
       if (currentState is VehicleControlLoaded) {
@@ -198,11 +255,26 @@ class VehicleControlCubit extends Cubit<VehicleControlState> {
     final currentState = state;
     try {
       if (currentState is VehicleControlLoaded) {
-        await repository.updateMileage(vehicleIMEI, mileage, currentState.vehicle.tankCapacity);
+        final json = currentState.vehicle.toJson();
+        json['vehicleMileage'] = mileage;
+        final updatedVehicle = VehicleControlEntity.fromJson(json);
+        emit(currentState.copyWith(vehicle: updatedVehicle));
+        
+        await repository.updateMileage(
+          currentState.vehicle.id,
+          mileage,
+          currentState.vehicle.tankCapacity,
+        );
+        
+        final box = Hive.box('map_cache');
+        await box.put(
+          'vehicle_control_${updatedVehicle.id}',
+          jsonEncode(updatedVehicle.toJson()),
+        );
       } else {
         await repository.updateMileage(vehicleIMEI, mileage, '');
+        loadVehicleDetails(null, vehicleIMEI);
       }
-      loadVehicleDetails(vehicleIMEI);
       _refreshGlobalVehicleLists();
     } catch (e) {
       if (currentState is VehicleControlLoaded) {
@@ -214,7 +286,7 @@ class VehicleControlCubit extends Cubit<VehicleControlState> {
   }
 
   Future<void> updateVehicleDetails({
-    required String vehicleIMEI,
+    required String vehicleId,
     required String vehicleName,
     required String vehicleNumber,
     required String fuelType,
@@ -226,8 +298,22 @@ class VehicleControlCubit extends Cubit<VehicleControlState> {
   }) async {
     final currentState = state;
     try {
+      if (currentState is VehicleControlLoaded) {
+        final json = currentState.vehicle.toJson();
+        json['vehicleName'] = vehicleName;
+        json['vehicleNumber'] = vehicleNumber;
+        json['fuelType'] = fuelType;
+        json['vehicleType'] = vehicleType;
+        json['vehicleMaker'] = vehicleMaker;
+        json['vehicleModel'] = vehicleModel;
+        json['brandId'] = brandId;
+        json['modelId'] = modelId;
+        final updatedVehicle = VehicleControlEntity.fromJson(json);
+        emit(currentState.copyWith(vehicle: updatedVehicle));
+      }
+      
       await repository.updateVehicleDetails(
-        vehicleIMEI: vehicleIMEI,
+        vehicleId: vehicleId,
         vehicleName: vehicleName,
         vehicleNumber: vehicleNumber,
         fuelType: fuelType,
@@ -237,7 +323,11 @@ class VehicleControlCubit extends Cubit<VehicleControlState> {
         brandId: brandId,
         modelId: modelId,
       );
-      loadVehicleDetails(vehicleIMEI);
+      if (currentState is VehicleControlLoaded) {
+        loadVehicleDetails(currentState.vehicle.id, currentState.vehicle.imei);
+      } else {
+        loadVehicleDetails(vehicleId, null);
+      }
       _refreshGlobalVehicleLists();
     } catch (e) {
       if (currentState is VehicleControlLoaded) {
@@ -251,8 +341,21 @@ class VehicleControlCubit extends Cubit<VehicleControlState> {
   Future<void> updateVehicleImage(String vehicleIMEI, String imagePath) async {
     final currentState = state;
     try {
-      await repository.updateVehicleImage(vehicleIMEI, imagePath);
-      loadVehicleDetails(vehicleIMEI);
+      if (currentState is VehicleControlLoaded) {
+        final json = currentState.vehicle.toJson();
+        json['bikeImage'] = imagePath;
+        final updatedVehicle = VehicleControlEntity.fromJson(json);
+        emit(currentState.copyWith(vehicle: updatedVehicle));
+        
+        await repository.updateVehicleImage(currentState.vehicle.id, imagePath);
+      } else {
+        await repository.updateVehicleImage(vehicleIMEI, imagePath);
+      }
+      if (currentState is VehicleControlLoaded) {
+        loadVehicleDetails(currentState.vehicle.id, vehicleIMEI);
+      } else {
+        loadVehicleDetails(null, vehicleIMEI);
+      }
       _refreshGlobalVehicleLists();
     } catch (e) {
       if (currentState is VehicleControlLoaded) {
@@ -266,8 +369,21 @@ class VehicleControlCubit extends Cubit<VehicleControlState> {
   Future<void> updateVehicleLock(String vehicleIMEI, bool lockState) async {
     final currentState = state;
     try {
-      await repository.updateVehicleLock(vehicleIMEI, lockState);
-      loadVehicleDetails(vehicleIMEI);
+      if (currentState is VehicleControlLoaded) {
+        final json = currentState.vehicle.toJson();
+        json['vehicleLock'] = lockState;
+        final updatedVehicle = VehicleControlEntity.fromJson(json);
+        emit(currentState.copyWith(vehicle: updatedVehicle));
+        
+        await repository.updateVehicleLock(currentState.vehicle.id, lockState);
+      } else {
+        await repository.updateVehicleLock(vehicleIMEI, lockState);
+      }
+      if (currentState is VehicleControlLoaded) {
+        loadVehicleDetails(currentState.vehicle.id, vehicleIMEI);
+      } else {
+        loadVehicleDetails(null, vehicleIMEI);
+      }
       _refreshGlobalVehicleLists();
     } catch (e) {
       if (currentState is VehicleControlLoaded) {
@@ -283,17 +399,37 @@ class VehicleControlCubit extends Cubit<VehicleControlState> {
     try {
       emit(VehicleControlLoading());
       await repository.deleteVehicle(vehicleId);
-      
+
       final box = Hive.box('map_cache');
-      await box.delete('vehicle_control_$vehicleIMEI');
-      
-      final lastViewedIMEI = await AppPreference.instance.get(key: "last_vehicle_control_imei");
-      if (lastViewedIMEI == vehicleIMEI) {
-        await AppPreference.instance.clearByKey(key: "last_vehicle_control_imei");
+      final cacheKey = vehicleId.isNotEmpty ? vehicleId : vehicleIMEI;
+      await box.delete('vehicle_control_$cacheKey');
+      await box.delete('vehicles_data');
+      await box.delete('common_vehicles_data');
+
+      final prefs = AppPreference.instance;
+      final userId = await prefs.get(key: AppPreference.KEY_USER_ID);
+      if (userId.isNotEmpty) {
+        await box.delete('profile_vehicles_$userId');
+      }
+
+      final lastViewedId = await prefs.get(key: "last_vehicle_control_id");
+      if (lastViewedId == cacheKey) {
+        await prefs.clearByKey(key: "last_vehicle_control_id");
+      }
+
+      // If the deleted vehicle was the currently selected one, clear selected preferences
+      final currentSelectedUid = await prefs.get(
+        key: AppPreference.KEY_SELECTED_UID,
+      );
+      final currentSelectedImei = await prefs.get(key: AppPreference.IMEI);
+      if (currentSelectedUid == vehicleId ||
+          (vehicleIMEI.isNotEmpty && currentSelectedImei == vehicleIMEI)) {
+        await prefs.set(key: AppPreference.KEY_SELECTED_UID, value: '');
+        await prefs.set(key: AppPreference.IMEI, value: '');
       }
 
       emit(const VehicleControlDeleted());
-      _refreshGlobalVehicleLists();
+      _refreshGlobalVehicleLists(forceRefresh: true);
     } catch (e) {
       if (currentState is VehicleControlLoaded) {
         emit(currentState.copyWith(actionError: e.toString()));

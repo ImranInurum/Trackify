@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:trackify/feature/settings/presentation/pages/notification_settings.dart';
 import 'package:trackify/feature/settings/presentation/pages/privacy_screen.dart';
 import 'package:trackify/feature/settings/presentation/pages/manage_access_screen.dart';
 import 'package:trackify/feature/settings/presentation/widgets/setting_list_tile.dart';
 import 'package:trackify/l10n/app_localizations.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../app/cubit/app_cubit.dart';
@@ -26,6 +28,24 @@ class SettingsScreen extends StatefulWidget {
 class _SettingsScreenState extends State<SettingsScreen> {
   final TextEditingController _searchController = TextEditingController();
   String _searchQuery = '';
+  String _appVersion = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _loadAppVersion();
+  }
+
+  Future<void> _loadAppVersion() async {
+    try {
+      final info = await PackageInfo.fromPlatform();
+      setState(() {
+        _appVersion = 'v${info.version}';
+      });
+    } catch (e) {
+      debugPrint('Failed to load app version: $e');
+    }
+  }
 
   @override
   void dispose() {
@@ -56,7 +76,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
         ),
         title: Text(
           l10n.settings,
-          style: TextStyle(fontSize: 20.0, color: Theme.of(context).colorScheme.onSurface,
+          style: TextStyle(
+            fontSize: 20.0,
+            color: Theme.of(context).colorScheme.onSurface,
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -89,7 +111,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       _searchQuery = value;
                     });
                   },
-                  style: TextStyle(color: Theme.of(context).colorScheme.onSurface,
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.onSurface,
                   ),
                   decoration: InputDecoration(
                     filled: false,
@@ -241,6 +264,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 },
               ),
 
+            /*
             if (_isVisible('Manage Access'))
               SettingListTile(
                 icon: Icons.manage_accounts_outlined,
@@ -257,7 +281,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   );
                 },
               ),
-
+*/
             if (_isVisible(l10n.rateUsOnPlayStore))
               SettingListTile(
                 icon: Icons.play_arrow_outlined,
@@ -265,7 +289,22 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 subtitle: l10n.rateUsOnPlayStoreDesc,
                 showArrow: false,
                 showIcon: true,
-                onTap: () => debugPrint("Rate us tapped"),
+                onTap: () async {
+                  final url = Uri.parse(
+                    'https://play.google.com/store/apps/details?id=com.trackify.mytrackmate.trackify',
+                  );
+                  if (await canLaunchUrl(url)) {
+                    await launchUrl(url, mode: LaunchMode.externalApplication);
+                  } else {
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Could not open the Play Store'),
+                        ),
+                      );
+                    }
+                  }
+                },
               ),
 
             if (_isVisible(l10n.logout))
@@ -277,6 +316,21 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 showIcon: true,
                 onTap: () => LogoutConfirmationDialog.show(context),
               ),
+
+            if (_appVersion.isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.only(top: 24, bottom: 16),
+                child: Text(
+                  'App Version $_appVersion',
+                  style: TextStyle(
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.onSurface.withOpacity(0.5),
+                    fontSize: 14,
+                  ),
+                ),
+              ),
+
             const SizedBox(height: 40),
           ],
         ),
@@ -320,7 +374,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       ),
                       title: Text(
                         lang['name'] as String,
-                        style: TextStyle(color: isSelected
+                        style: TextStyle(
+                          color: isSelected
                               ? Theme.of(context).colorScheme.primary
                               : null,
                           fontWeight: isSelected ? FontWeight.bold : null,

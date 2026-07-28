@@ -40,7 +40,6 @@ class ServiceLogModel extends ServiceLogEntity {
   Map<String, dynamic> toJson() {
     return {
       'vehicle_id': vehicleId,
-      'imei': imei,
       'service_date': serviceDate,
       'billing_amount': amount,
       'service_center_name': centerName,

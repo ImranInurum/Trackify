@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:trackify/feature/add_fuel/domain/entities/add_fuel_entity.dart';
@@ -267,7 +268,7 @@ class _AddFuelScreenState extends State<AddFuelScreen> with TickerProviderStateM
                     final currentServiceState = context.read<ServiceLogsCubit>().state;
                     if (currentServiceState is ServiceLogsLoaded) {
                       final entity = AddFuelEntity(
-                        vehicle: currentServiceState.selectedVehicle?.imei ?? '',
+                        vehicle: currentServiceState.selectedVehicle?.id ?? '',
                         dateTime: combinedDateTime,
                         fuelStation: selectedFuelStationName ?? l10n.fuelStationName,
                         odometer: (double.tryParse(
@@ -282,7 +283,11 @@ class _AddFuelScreenState extends State<AddFuelScreen> with TickerProviderStateM
                         fullTank: isFullTankSelected?"1":"2",
                         fuelBeforeRefuel: fuelBeforeRefuelController.text
                       );
-                      await context.read<AddFuelCubit>().saveFuel(entity);
+                      if (widget.isEditMode && widget.initialLog != null) {
+                        await context.read<AddFuelCubit>().updateFuel(widget.initialLog!.id, entity);
+                      } else {
+                        await context.read<AddFuelCubit>().saveFuel(entity);
+                      }
                     }
                     if (context.mounted) {
                       Navigator.pop(context);
@@ -401,7 +406,7 @@ class _AddFuelScreenState extends State<AddFuelScreen> with TickerProviderStateM
                             onBack: () => Navigator.pop(context),
                             onVehicleSelected: (vehicle) {
                               context.read<ServiceLogsCubit>().selectVehicle(vehicle.id!);
-                              context.read<FuelLogsCubit>().loadFuelLogs(vehicle.imei ?? '');
+                              context.read<FuelLogsCubit>().loadFuelLogs(vehicle.id ?? '');
                               _autofillOdometer(vehicle);
                             },
                           ),
@@ -607,9 +612,13 @@ class _AddFuelScreenState extends State<AddFuelScreen> with TickerProviderStateM
                       TextField(
                         controller:
                         odometerController,
+                        keyboardType: TextInputType.number,
+                        inputFormatters: [
+                          FilteringTextInputFormatter.digitsOnly,
+                        ],
                         decoration:
                         _inputDecoration(
-                          ('32857'),
+                          '000',
                           Icons.speed,
                         ),
                       ),
@@ -655,9 +664,11 @@ class _AddFuelScreenState extends State<AddFuelScreen> with TickerProviderStateM
                                 TextField(
                                   controller:
                                   amountController,
+                                   keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                                   inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*'))],
                                   decoration:
                                   _inputDecoration(
-                                    ('700.00'),
+                                    '000',
                                     Icons
                                         .currency_rupee,
                                   ),
@@ -692,9 +703,11 @@ class _AddFuelScreenState extends State<AddFuelScreen> with TickerProviderStateM
                                 TextField(
                                   controller:
                                   priceController,
+                                   keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                                   inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*'))],
                                   decoration:
                                   _inputDecoration(
-                                    ('106.54'),
+                                    '000',
                                     Icons
                                         .currency_rupee,
                                   ),
@@ -728,44 +741,53 @@ class _AddFuelScreenState extends State<AddFuelScreen> with TickerProviderStateM
 
                       const SizedBox(height: 20),
 
-                      Row(
-                        children: [
-
-                          Expanded(
-                            child: GestureDetector(
-                              onTap: () {
-                                setState(() {
-                                  isFullTankSelected = true;
-                                  isPartialTankSelected = false;
-                                });
-                              },
-                              child:
-                              _tankOption(
-                                l10n.fullTank,
-                                isFullTankSelected,
+                      BlocBuilder<ServiceLogsCubit, ServiceLogsState>(
+                        builder: (context, serviceState) {
+                          String? capacity;
+                          if (serviceState is ServiceLogsLoaded && serviceState.selectedVehicle != null) {
+                            final cap = serviceState.selectedVehicle!.tankCapacity;
+                            if (cap != null && cap.trim().isNotEmpty && cap != "null" && cap != "0") {
+                              capacity = cap;
+                            }
+                          }
+                          return Row(
+                            children: [
+                              Expanded(
+                                child: GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      isFullTankSelected = true;
+                                      isPartialTankSelected = false;
+                                    });
+                                  },
+                                  child:
+                                  _tankOption(
+                                    l10n.fullTank,
+                                    isFullTankSelected,
+                                    subtitle: (isFullTankSelected && capacity != null) ? '$capacity ${l10n.liters}' : null,
+                                  ),
+                                ),
                               ),
-                            ),
-                          ),
-
-                          const SizedBox(
-                              width: 16),
-
-                          Expanded(
-                            child: GestureDetector(
-                              onTap: () {
-                                setState(() {
-                                  isFullTankSelected = false;
-                                  isPartialTankSelected = true;
-                                });
-                              },
-                              child:
-                              _tankOption(
-                                l10n.partialTank,
-                                isPartialTankSelected,
+                              const SizedBox(
+                                  width: 16),
+                              Expanded(
+                                child: GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      isFullTankSelected = false;
+                                      isPartialTankSelected = true;
+                                    });
+                                  },
+                                  child:
+                                  _tankOption(
+                                    l10n.partialTank,
+                                    isPartialTankSelected,
+                                  ),
+                                ),
                               ),
-                            ),
-                          ),
-                        ],
+                            ],
+                          );
+                        }
                       ),
 
                       if (isPartialTankSelected) ...[
@@ -977,6 +999,7 @@ class _AddFuelScreenState extends State<AddFuelScreen> with TickerProviderStateM
   Widget _tankOption(
       String title,
       bool selected,
+      {String? subtitle}
       ) {
     return Container(
       height: 72,
@@ -1012,12 +1035,31 @@ class _AddFuelScreenState extends State<AddFuelScreen> with TickerProviderStateM
 
           const SizedBox(width: 8),
 
-          Text(
-            title,
-            style: TextStyle(
-              fontSize: 15,
-              fontWeight:
-              FontWeight.w600,
+          Expanded(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: TextStyle(
+                    fontSize: 15,
+                    fontWeight:
+                    FontWeight.w600,
+                  ),
+                ),
+                if (subtitle != null) ...[
+                  const SizedBox(height: 2),
+                  Text(
+                    subtitle,
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500,
+                      color: colorScheme.primary,
+                    ),
+                  ),
+                ],
+              ],
             ),
           ),
         ],

@@ -3,12 +3,17 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
+import 'package:hive/hive.dart';
 import 'package:trackify/core/config/network/api_host.dart';
 import 'package:trackify/core/utils/typedefs.dart';
 import 'package:trackify/core/widgets/loading_screen_ol.dart';
+import 'package:trackify/main.dart';
+import 'package:trackify/core/utils/shared_preferences.dart';
+import 'package:trackify/feature/auth/presentation/pages/signin_screen.dart';
 
 import 'base_api_service.dart';
 import 'exceptions.dart';
@@ -139,6 +144,9 @@ class NetworkApiService implements BaseApiServices {
           BadRequestException(_readMessage(mapBody, fallback: "Bad request"), 400),
         );
       case 401:
+        if (ApiURL.authToken.isNotEmpty) {
+          _handleSessionExpired();
+        }
         return Left(
           UnauthorisedException(_readMessage(mapBody, fallback: "Unauthorized"), 401),
         );
@@ -184,13 +192,24 @@ class NetworkApiService implements BaseApiServices {
   }
 
   @override
-  ResultFuture<dynamic> getGetApiResponse(String url) {
+  ResultFuture<dynamic> getGetApiResponse(String url, {Map<String, dynamic>? body}) {
     final headers = _buildHeaders();
     return _safeRequest(
-      request: () => http.get(Uri.parse(url), headers: headers),
+      request: () async {
+        if (body != null) {
+          final request = http.Request('GET', Uri.parse(url))
+            ..headers.addAll(headers)
+            ..body = jsonEncode(body);
+          final streamedResponse = await request.send();
+          return http.Response.fromStream(streamedResponse);
+        } else {
+          return http.get(Uri.parse(url), headers: headers);
+        }
+      },
       method: 'GET',
       url: url,
       headers: headers,
+      body: body,
     );
   }
 
@@ -448,5 +467,38 @@ class NetworkApiService implements BaseApiServices {
     }
 
     print("Multipart cURL:\n$curl\n");
+  }
+
+  void _handleSessionExpired() async {
+    // Clear user data
+    final prefs = AppPreference.instance;
+    await prefs.clearByKey(key: AppPreference.KEY_TOKEN);
+    await prefs.clearByKey(key: AppPreference.KEY_USER_ID);
+    await prefs.clearByKey(key: AppPreference.KEY_USER_DETAILS);
+    ApiURL.updateAuthToken('');
+    
+    // Clear offline rides from Hive
+    try {
+      if (Hive.isBoxOpen('offline_saved_rides')) {
+        await Hive.box('offline_saved_rides').clear();
+      } else {
+        final offlineBox = await Hive.openBox('offline_saved_rides');
+        await offlineBox.clear();
+      }
+    } catch (e) {
+      if (kDebugMode) debugPrint("NetworkApiService: Error clearing offline rides: $e");
+    }
+    
+    // Navigate to Login screen
+    if (rootNavigatorKey.currentContext != null) {
+      ScaffoldMessenger.of(rootNavigatorKey.currentContext!).showSnackBar(
+        const SnackBar(content: Text('Session expired. Please log in again.')),
+      );
+      Navigator.pushAndRemoveUntil(
+        rootNavigatorKey.currentContext!,
+        MaterialPageRoute(builder: (context) => const SignInScreen()),
+        (route) => false,
+      );
+    }
   }
 }

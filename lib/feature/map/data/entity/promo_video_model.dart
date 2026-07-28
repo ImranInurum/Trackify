@@ -24,8 +24,8 @@ class PromoVideoModel {
     rawVideoUrl = rawVideoUrl.trim();
 
     return PromoVideoModel(
-      id: json['_id'] ?? '',
-      title: json['title'] ?? '',
+      id: json['id']?.toString() ?? json['_id']?.toString() ?? '',
+      title: json['title']?.toString() ?? '',
       videoUrl: rawVideoUrl,
       thumbnailUrl: json['thumbnail_url']?.toString().trim() ?? '',
       createdAt: json['createdAt'] != null ? DateTime.tryParse(json['createdAt']) : null,

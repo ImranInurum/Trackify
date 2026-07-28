@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-
-import '../../../../l10n/app_localizations.dart';
+import 'package:flutter/services.dart';
 
 class TextFieldWidgets extends StatelessWidget {
   final TextEditingController controller;
@@ -8,6 +7,8 @@ class TextFieldWidgets extends StatelessWidget {
   final bool isRequired;
   final Widget? suffixIcon;
   final TextInputType? keyboardType;
+  final List<TextInputFormatter>? inputFormatters;
+  final int? maxLength;
 
   const TextFieldWidgets({
     super.key,
@@ -16,17 +17,20 @@ class TextFieldWidgets extends StatelessWidget {
     this.isRequired = false,
     this.suffixIcon,
     this.keyboardType,
+    this.inputFormatters,
+    this.maxLength,
   });
 
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    final size = MediaQuery.of(context).size;
-    final screenHeight = size.height;
     return TextFormField(
       controller: controller,
       keyboardType: keyboardType,
+      inputFormatters: inputFormatters,
+      maxLength: maxLength,
       decoration: InputDecoration(
+        counterText: "",
         filled: true,
         fillColor: Theme.of(context).cardColor,
         label: Text.rich(
@@ -53,13 +57,13 @@ class TextFieldWidgets extends StatelessWidget {
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
           borderSide: BorderSide(
-            color: colorScheme.outlineVariant.withOpacity(0.2),
+            color: colorScheme.outlineVariant.withValues(alpha: 0.2),
           ),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
           borderSide: BorderSide(
-            color: colorScheme.outlineVariant.withOpacity(0.2),
+            color: colorScheme.outlineVariant.withValues(alpha: 0.2),
           ),
         ),
         focusedBorder: OutlineInputBorder(

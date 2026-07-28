@@ -10,12 +10,24 @@ abstract class DocumentRepository {
   Future<String?> pickFile(PickerType type);
   Future<void> saveDocument(DocumentEntity doc);
   Future<List<DocumentEntity>> getDocuments();
+  ResultFuture<List<DocumentEntity>> getDocumentsByVehicleId(String vehicleId);
 
   ResultFuture<DocumentUploadResponse> uploadDocument({
     required DocumentUploadRequest request,
-    required List<int> frontImageBytes,
-    required String frontImageName,
+    List<int>? frontImageBytes,
+    String? frontImageName,
     List<int>? backImageBytes,
     String? backImageName,
   });
+
+  ResultFuture<DocumentUploadResponse> updateDocument({
+    required String documentId,
+    required DocumentUploadRequest request,
+    List<int>? frontImageBytes,
+    String? frontImageName,
+    List<int>? backImageBytes,
+    String? backImageName,
+  });
+
+  ResultFuture<dynamic> deleteDocument(String documentId);
 }

@@ -32,6 +32,12 @@ import 'package:trackify/core/common/models/vehicle_list_model.dart';
 import 'package:trackify/app/cubit/app_cubit.dart';
 import 'package:trackify/app/cubit/app_state.dart';
 import 'package:trackify/core/widgets/trackify_loader.dart';
+import 'package:trackify/feature/add_vehicle_and_device/choice_selector.dart';
+import 'package:trackify/feature/device_installation/presentation/pages/device_installation_screen.dart';
+import 'package:trackify/feature/map/presentation/cubit/map_cubit.dart';
+import 'package:trackify/feature/map/presentation/cubit/map_state.dart';
+import 'package:trackify/feature/my_garage/presentation/cubit/my_garage_cubit.dart';
+import 'package:trackify/feature/my_garage/presentation/cubit/my_garage_state.dart';
 
 class VehicleControlScreen extends StatelessWidget {
   final bool isFromGarage;
@@ -54,7 +60,7 @@ class VehicleControlScreen extends StatelessWidget {
           // without making any API call.
           cubit.loadFromVehicle(passedVehicle!);
         } else {
-          cubit.loadVehicleDetails(imei);
+          cubit.loadVehicleDetails(passedVehicle?.id, imei);
         }
         return cubit;
       },
@@ -608,16 +614,25 @@ class _VehicleControlViewState extends State<VehicleControlView> {
                                           : keyId;
 
                                   final apiService = NetworkApiService();
-                                  final result = await apiService.getPostApiResponse(
-                                    ApiURL.addEmergencyNumber,
-                                    {
-                                      "userId": userId,
-                                      "vehicleId": targetVehicleId,
-                                      "name": name,
-                                      "countryCode": countryCode,
-                                      "mobileNumber": mobileNumber,
-                                    },
-                                  );
+                                  final contactId = initialContact?['id'] ?? '';
+                                  final isEdit = contactId.isNotEmpty;
+                                  
+                                  final payload = {
+                                    "userId": userId,
+                                    "vehicleId": targetVehicleId,
+                                    "name": name,
+                                    "mobileNumber": "$countryCode$mobileNumber",
+                                  };
+
+                                  final result = isEdit 
+                                      ? await apiService.getPutApiResponse(
+                                          "${ApiURL.addEmergencyNumber}/$contactId",
+                                          payload,
+                                        )
+                                      : await apiService.getPostApiResponse(
+                                          ApiURL.addEmergencyNumber,
+                                          payload,
+                                        );
 
                                   result.fold(
                                     (failure) {
@@ -637,7 +652,12 @@ class _VehicleControlViewState extends State<VehicleControlView> {
                                       final newContact = {
                                         'name': name,
                                         'phone': '$countryCode $mobileNumber',
+                                        'countryCode': countryCode,
+                                        'mobileNumber': mobileNumber,
                                       };
+                                      if (isEdit) {
+                                        newContact['id'] = contactId;
+                                      }
                                       setState(() {
                                         if (editIndex != null &&
                                             editIndex < _contacts.length) {
@@ -716,7 +736,28 @@ class _VehicleControlViewState extends State<VehicleControlView> {
                 backgroundColor: Colors.green,
               ),
             );
-            Navigator.pop(context);
+
+            final garageState = context.read<MyGarageCubit>().state;
+            bool wasLastVehicle = false;
+            if (garageState is VehiclesLoaded) {
+               wasLastVehicle = garageState.vehicles.length <= 1;
+            } else {
+               final mapState = context.read<MapCubit>().state;
+               if (mapState is MapLoaded) {
+                  wasLastVehicle = (mapState.vehicleList.vehicles?.length ?? 0) <= 1;
+               }
+            }
+
+            if (wasLastVehicle) {
+               Navigator.of(context, rootNavigator: true).pushAndRemoveUntil(
+                 MaterialPageRoute(
+                   builder: (context) => const ChoiceSelector(),
+                 ),
+                 (route) => false,
+               );
+            } else {
+               Navigator.pop(context);
+            }
           }
           if (state is VehicleControlLoaded && state.actionError != null) {
             ScaffoldMessenger.of(context).showSnackBar(
@@ -769,19 +810,22 @@ class _VehicleControlViewState extends State<VehicleControlView> {
 
                         return FlexibleSpaceBar(
                           centerTitle: false,
-                          title: AnimatedOpacity(
-                            duration: const Duration(milliseconds: 300),
-                            opacity: isCollapsed ? 1.0 : 0.0,
-                            child: Text(
-                              vehicle.vehicleName.isNotEmpty
-                                  ? vehicle.vehicleName
-                                  : (widget.passedVehicle != null
-                                        ? "${widget.passedVehicle!.vehicleMaker ?? ''} ${widget.passedVehicle!.vehicleModel ?? ''}"
-                                              .trim()
-                                        : ""),
-                              style: theme.textTheme.titleLarge?.copyWith(
-                                color: theme.colorScheme.onSurface,
-                                fontWeight: FontWeight.bold,
+                          titlePadding: const EdgeInsets.only(left: 48, bottom: 16, right: 16),
+                          title: IgnorePointer(
+                            child: AnimatedOpacity(
+                              duration: const Duration(milliseconds: 300),
+                              opacity: isCollapsed ? 1.0 : 0.0,
+                              child: Text(
+                                vehicle.vehicleName.isNotEmpty
+                                    ? vehicle.vehicleName
+                                    : (widget.passedVehicle != null
+                                          ? "${widget.passedVehicle!.vehicleMaker ?? ''} ${widget.passedVehicle!.vehicleModel ?? ''}"
+                                                .trim()
+                                          : ""),
+                                style: theme.textTheme.titleLarge?.copyWith(
+                                  color: theme.colorScheme.onSurface,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                             ),
                           ),
@@ -819,33 +863,31 @@ class _VehicleControlViewState extends State<VehicleControlView> {
                                   ),
                                 ),
                               ),
-                              if ((widget.passedVehicle?.imei
-                                          ?.trim()
-                                          .isNotEmpty ??
-                                      false) ||
-                                  (vehicle.imei.isNotEmpty &&
-                                      vehicle.imei != vehicle.id))
                                 Positioned(
-                                  bottom: size.height * 0.04,
-                                  right: 20,
-                                  child: GestureDetector(
-                                    onTap: () => _showImageSourceDialog(
-                                      context,
-                                      vehicle.id,
-                                    ),
-                                    child: Container(
-                                      padding: const EdgeInsets.all(12),
-                                      decoration: BoxDecoration(
-                                        color: Colors.black.withOpacity(0.5),
-                                        shape: BoxShape.circle,
-                                        border: Border.all(
-                                          color: Colors.white.withOpacity(0.2),
-                                        ),
+                                  bottom: 16,
+                                  right: 16,
+                                  child: Material(
+                                    type: MaterialType.transparency,
+                                    child: InkWell(
+                                      onTap: () => _showImageSourceDialog(
+                                        context,
+                                        vehicle.id,
                                       ),
-                                      child: const Icon(
-                                        Icons.camera_alt_outlined,
-                                        color: Colors.white,
-                                        size: 28,
+                                      borderRadius: BorderRadius.circular(30),
+                                      child: Container(
+                                        padding: const EdgeInsets.all(12),
+                                        decoration: BoxDecoration(
+                                          color: Colors.black.withOpacity(0.5),
+                                          shape: BoxShape.circle,
+                                          border: Border.all(
+                                            color: Colors.white.withOpacity(0.2),
+                                          ),
+                                        ),
+                                        child: const Icon(
+                                          Icons.camera_alt_outlined,
+                                          color: Colors.white,
+                                          size: 28,
+                                        ),
                                       ),
                                     ),
                                   ),
@@ -862,20 +904,24 @@ class _VehicleControlViewState extends State<VehicleControlView> {
                       children: [
                         Column(
                           children: [
-                            Text(
-                              vehicle.vehicleName.isNotEmpty
-                                  ? vehicle.vehicleName
-                                  : (widget.passedVehicle != null &&
-                                            ("${widget.passedVehicle!.vehicleMaker ?? ''} ${widget.passedVehicle!.vehicleModel ?? ''}"
-                                                    .trim())
-                                                .isNotEmpty
-                                        ? "${widget.passedVehicle!.vehicleMaker ?? ''} ${widget.passedVehicle!.vehicleModel ?? ''}"
-                                              .trim()
-                                        : l10n.vehicleDetailsLabel),
-                              style: theme.textTheme.headlineSmall?.copyWith(
-                                fontWeight: FontWeight.w900,
-                                color: primaryTextColor,
-                                letterSpacing: 0.5,
+                            Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 16),
+                              child: Text(
+                                vehicle.vehicleName.isNotEmpty
+                                    ? vehicle.vehicleName
+                                    : (widget.passedVehicle != null &&
+                                              ("${widget.passedVehicle!.vehicleMaker ?? ''} ${widget.passedVehicle!.vehicleModel ?? ''}"
+                                                      .trim())
+                                                  .isNotEmpty
+                                          ? "${widget.passedVehicle!.vehicleMaker ?? ''} ${widget.passedVehicle!.vehicleModel ?? ''}"
+                                                .trim()
+                                          : l10n.vehicleDetailsLabel),
+                                textAlign: TextAlign.center,
+                                style: theme.textTheme.headlineSmall?.copyWith(
+                                  fontWeight: FontWeight.w900,
+                                  color: primaryTextColor,
+                                  letterSpacing: 0.5,
+                                ),
                               ),
                             ),
                             const SizedBox(height: 6),
@@ -1014,7 +1060,7 @@ class _VehicleControlViewState extends State<VehicleControlView> {
                                 if (context.mounted) {
                                   context
                                       .read<VehicleControlCubit>()
-                                      .loadVehicleDetails(vehicle.imei);
+                                      .loadVehicleDetails(vehicle.id, vehicle.imei);
                                 }
                               }
                             },
@@ -1236,7 +1282,6 @@ class _VehicleControlViewState extends State<VehicleControlView> {
                             ),
                           ),
 
-                        if (widget.isFromGarage) ...[
                           const SizedBox(height: 20),
                           Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -1441,7 +1486,6 @@ class _VehicleControlViewState extends State<VehicleControlView> {
                             ),
                           ),
                           const SizedBox(height: 30),
-                        ],
                       ],
                     ),
                   ),

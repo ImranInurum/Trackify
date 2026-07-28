@@ -41,7 +41,7 @@ class ServiceLogsCubit extends Cubit<ServiceLogsState> {
       emit(ServiceLogsLoaded(vehicles: vehicles, selectedVehicle: selected));
 
       if (selected != null) {
-        fetchServiceLogs(imei: selected.imei);
+        fetchServiceLogs(vehicleId: selected.id);
       }
     });
   }
@@ -81,7 +81,7 @@ class ServiceLogsCubit extends Cubit<ServiceLogsState> {
       final currentState = state as ServiceLogsLoaded;
       final selected = currentState.vehicles.firstWhere((v) => v.id == vehicleId);
       emit(currentState.copyWith(selectedVehicle: selected));
-      fetchServiceLogs(imei: selected.imei);
+      fetchServiceLogs(vehicleId: selected.id);
     }
   }
 
@@ -135,7 +135,7 @@ class ServiceLogsCubit extends Cubit<ServiceLogsState> {
               logs: currentState.logs,
             ),
           );
-          fetchServiceLogs(imei: vehicle.imei);
+          fetchServiceLogs(vehicleId: vehicle.id);
         },
       );
     }
@@ -188,7 +188,7 @@ class ServiceLogsCubit extends Cubit<ServiceLogsState> {
             ),
           );
           if (vehicle != null) {
-            fetchServiceLogs(imei: vehicle.imei);
+            fetchServiceLogs(vehicleId: vehicle.id);
           } else {
             loadVehicles(); // Fallback if vehicle is somehow null but we have a success
           }
@@ -230,7 +230,7 @@ class ServiceLogsCubit extends Cubit<ServiceLogsState> {
             ),
           );
           if (vehicle != null) {
-            fetchServiceLogs(imei: vehicle.imei);
+            fetchServiceLogs(vehicleId: vehicle.id);
           } else {
             loadVehicles();
           }

@@ -1,8 +1,16 @@
+import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:trackify/core/constants/app_images.dart';
+import 'package:trackify/core/utils/active_video_manager.dart';
+import 'package:trackify/core/widgets/trackify_loader.dart';
+import 'package:trackify/feature/map/data/entity/product_feature_model.dart';
+import 'package:trackify/feature/map/presentation/cubit/product_feature_cubit.dart';
+import 'package:trackify/feature/map/presentation/cubit/product_feature_state.dart';
 import 'package:trackify/feature/my_garage/presentation/view/checkout_screen.dart';
 import 'package:trackify/l10n/app_localizations.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:video_player/video_player.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 class ProductOverviewScreen extends StatefulWidget {
@@ -25,8 +33,10 @@ class _ProductOverviewScreenState extends State<ProductOverviewScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    return Scaffold(
-      appBar: AppBar(
+    return BlocProvider(
+      create: (_) => ProductFeatureCubit()..fetchProductFeatures(),
+      child: Builder(builder: (ctx) => Scaffold(
+        appBar: AppBar(
         title: Text(
           l10n?.products ?? "Products", ),
         centerTitle: false,
@@ -39,11 +49,11 @@ class _ProductOverviewScreenState extends State<ProductOverviewScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildPromoCard(context),
+            _buildPromoCard(ctx),
             const SizedBox(height: 24),
-            _buildTrackifyFeatures(context),
+            _buildTrackifyFeatures(ctx),
             const SizedBox(height: 24),
-            _buildDeviceComparisonTable(context),
+            _buildDeviceComparisonTable(ctx),
             const SizedBox(height: 24),
             Center(
               child: Container(
@@ -134,12 +144,12 @@ class _ProductOverviewScreenState extends State<ProductOverviewScreen> {
               ),
             ),
             const SizedBox(height: 48),
-            _buildHappyUsersSection(context),
+            _buildHappyUsersSection(ctx),
             const SizedBox(height: 32),
           ],
         ),
       ),
-    );
+    ))); // closes Scaffold + Builder + BlocProvider
   }
 
   Widget _buildHappyUsersSection(BuildContext context) {
@@ -185,185 +195,225 @@ class _ProductOverviewScreenState extends State<ProductOverviewScreen> {
 
   Widget _buildPromoCard(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    return Container(
-      decoration: BoxDecoration(
-        color: Theme.of(context).cardColor,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: RichText(
-              text: TextSpan(
-                style: TextStyle(color: Theme.of(context).colorScheme.onSurface,
-                  fontSize: 14,
-                  height: 1.4,
-                ),
-                children:  [
-                  TextSpan(
-                    text: '35000+ ',
-                    style: TextStyle(color: Theme.of(context).colorScheme.primary,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  TextSpan(text: l10n?.peopleSmartIntro ?? 'people made their bike smart.\nExperience '),
-                  TextSpan(
-                    text: l10n?.smartText ?? 'Smart ',
-                    style: TextStyle(color: Theme.of(context).colorScheme.primary,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  TextSpan(text: l10n?.featuresOfTrackify ?? 'features of Trackify 🏍️'),
-                ],
+    return BlocBuilder<ProductFeatureCubit, ProductFeatureState>(
+      builder: (context, state) {
+        String titleText = '35000+ people made their bike smart.\nExperience Smart features of Trackify 🏍️';
+        String? promoVideoUrl;
+
+        if (state is ProductFeatureLoaded && state.features.isNotEmpty) {
+          final firstFeature = state.features.first;
+          if (firstFeature.title.isNotEmpty) {
+            titleText = firstFeature.title;
+          }
+          if (firstFeature.titleVideos.isNotEmpty) {
+            promoVideoUrl = firstFeature.titleVideos.first;
+          }
+        }
+
+        return Container(
+          decoration: BoxDecoration(
+            color: Theme.of(context).cardColor,
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.05),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
               ),
-            ),
+            ],
           ),
-          GestureDetector(
-            onTap: () {
-              if (_topYoutubeController == null) {
-                _topYoutubeController = YoutubePlayerController(
-                  initialVideoId: 'l_q_4N59tN8',
-                  flags: const YoutubePlayerFlags(
-                    autoPlay: true,
-                    mute: false,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Text(
+                  titleText,
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.onSurface,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    height: 1.4,
                   ),
-                );
-              }
-              setState(() {
-                _isTopPlaying = !_isTopPlaying;
-                if (_isTopPlaying) {
-                  _topYoutubeController?.play();
-                } else {
-                  _topYoutubeController?.pause();
-                }
-              });
-            },
-            child: Container(
-              height: 200,
-              width: double.infinity,
-              decoration: const BoxDecoration(
-                borderRadius: BorderRadius.only(
-                  bottomLeft: Radius.circular(16),
-                  bottomRight: Radius.circular(16),
                 ),
               ),
-              child: ClipRRect(
-                borderRadius: const BorderRadius.only(
-                  bottomLeft: Radius.circular(16),
-                  bottomRight: Radius.circular(16),
-                ),
-                child: _isTopPlaying && _topYoutubeController != null
-                    ? YoutubePlayer(
-                        controller: _topYoutubeController!,
-                        showVideoProgressIndicator: true,
-                        progressIndicatorColor: Theme.of(context).colorScheme.primary,
-                      )
-                    : Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          Image.asset(
-                            AppImages.bikeInfoImage,
-                            width: double.infinity,
-                            height: 200,
-                            fit: BoxFit.cover,
-                            errorBuilder: (context, error, stackTrace) => Container(
-                              width: double.infinity,
-                              height: 200,
-                              color: Colors.grey[300],
-                            ),
-                          ),
-                          Container(
-                            padding: const EdgeInsets.all(12),
-                            decoration: BoxDecoration(
-                              color: Colors.black.withOpacity(0.5),
-                              shape: BoxShape.circle,
-                            ),
-                            child: const Icon(
-                              Icons.play_arrow,
-                              color: Colors.white,
-                              size: 32,
-                            ),
-                          ),
-                        ],
+              if (promoVideoUrl != null && promoVideoUrl.isNotEmpty)
+                _PromoTitleVideoPlayer(
+                  videoUrl: promoVideoUrl,
+                  title: titleText,
+                )
+              else
+                GestureDetector(
+                  onTap: () {
+                    if (_topYoutubeController == null) {
+                      _topYoutubeController = YoutubePlayerController(
+                        initialVideoId: 'l_q_4N59tN8',
+                        flags: const YoutubePlayerFlags(
+                          autoPlay: true,
+                          mute: false,
+                        ),
+                      );
+                    }
+                    setState(() {
+                      _isTopPlaying = !_isTopPlaying;
+                      if (_isTopPlaying) {
+                        _topYoutubeController?.play();
+                      } else {
+                        _topYoutubeController?.pause();
+                      }
+                    });
+                  },
+                  child: Container(
+                    height: 200,
+                    width: double.infinity,
+                    decoration: const BoxDecoration(
+                      borderRadius: BorderRadius.only(
+                        bottomLeft: Radius.circular(16),
+                        bottomRight: Radius.circular(16),
                       ),
-              ),
-            ),
+                    ),
+                    child: ClipRRect(
+                      borderRadius: const BorderRadius.only(
+                        bottomLeft: Radius.circular(16),
+                        bottomRight: Radius.circular(16),
+                      ),
+                      child: _isTopPlaying && _topYoutubeController != null
+                          ? YoutubePlayer(
+                              controller: _topYoutubeController!,
+                              showVideoProgressIndicator: true,
+                              progressIndicatorColor: Theme.of(context).colorScheme.primary,
+                            )
+                          : Stack(
+                              alignment: Alignment.center,
+                              children: [
+                                Image.asset(
+                                  AppImages.bikeInfoImage,
+                                  width: double.infinity,
+                                  height: 200,
+                                  fit: BoxFit.cover,
+                                  errorBuilder: (context, error, stackTrace) => Container(
+                                    width: double.infinity,
+                                    height: 200,
+                                    color: Colors.grey[300],
+                                  ),
+                                ),
+                                Container(
+                                  padding: const EdgeInsets.all(12),
+                                  decoration: BoxDecoration(
+                                    color: Colors.black.withOpacity(0.5),
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: const Icon(
+                                    Icons.play_arrow,
+                                    color: Colors.white,
+                                    size: 32,
+                                  ),
+                                ),
+                              ],
+                            ),
+                    ),
+                  ),
+                ),
+            ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 
   Widget _buildTrackifyFeatures(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          l10n?.features ?? "Trackify features",
-          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
-        ),
-        const SizedBox(height: 12),
-        SizedBox(
-          height: 180,
-          child: ListView(
-            scrollDirection: Axis.horizontal,
+    return BlocBuilder<ProductFeatureCubit, ProductFeatureState>(
+      builder: (context, state) {
+        // Loading
+        if (state is ProductFeatureLoading) {
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildFeatureItem(
-                context,
-                title: l10n?.accidentAlertCard ?? "Accident alert",
-                imageAsset: AppImages.roadImage,
-                videoId: 'l_q_4N59tN8',
+              Text(
+                l10n?.features ?? "Features",
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
               ),
-              const SizedBox(width: 12),
-              _buildFeatureItem(
-                context,
-                title: l10n?.antiTheftAlertCard ?? "Anti-Theft alert",
-                imageAsset: AppImages.safeParking,
-                videoId: 'dQw4w9WgXcQ',
+              const SizedBox(height: 12),
+              const SizedBox(height: 180, child: Center(child: TrackifyLoader())),
+            ],
+          );
+        }
+
+        // Loaded with data
+        if (state is ProductFeatureLoaded && state.features.isNotEmpty) {
+          // Flatten all videos across all feature groups
+          final List<_FeatureVideoItem> items = [];
+          for (final feature in state.features) {
+            for (final url in feature.allVideos) {
+              items.add(_FeatureVideoItem(title: feature.title, videoUrl: url));
+            }
+          }
+
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                l10n?.features ?? "Features",
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
               ),
-              const SizedBox(width: 12),
-              _buildFeatureItem(
-                context,
-                title: l10n?.liveGpsTrackingCard ?? "Live GPS Tracking",
-                imageAsset: AppImages.exploreApp,
-                videoId: 'l_q_4N59tN8',
+              const SizedBox(height: 12),
+              SizedBox(
+                height: 200,
+                child: ListView.separated(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: items.length,
+                  separatorBuilder: (_, __) => const SizedBox(width: 12),
+                  itemBuilder: (context, index) {
+                    final item = items[index];
+                    return _FeatureVideoCard(title: item.title, videoUrl: item.videoUrl);
+                  },
+                ),
               ),
             ],
-          ),
-        ),
-      ],
+          );
+        }
+
+        // Error or empty — fall back to original dummy cards
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              l10n?.features ?? "Features",
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 12),
+            SizedBox(
+              height: 180,
+              child: ListView(
+                scrollDirection: Axis.horizontal,
+                children: [
+                  _buildFeatureItem(context,
+                      title: l10n?.accidentAlertCard ?? "Accident alert",
+                      imageAsset: AppImages.roadImage, videoId: 'l_q_4N59tN8'),
+                  const SizedBox(width: 12),
+                  _buildFeatureItem(context,
+                      title: l10n?.antiTheftAlertCard ?? "Anti-Theft alert",
+                      imageAsset: AppImages.safeParking, videoId: 'dQw4w9WgXcQ'),
+                  const SizedBox(width: 12),
+                  _buildFeatureItem(context,
+                      title: l10n?.liveGpsTrackingCard ?? "Live GPS Tracking",
+                      imageAsset: AppImages.exploreApp, videoId: 'l_q_4N59tN8'),
+                ],
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 
-  Widget _buildFeatureItem(
-    BuildContext context, {
-    required String title,
-    required String imageAsset,
-    required String videoId,
-  }) {
+  Widget _buildFeatureItem(BuildContext context,
+      {required String title, required String imageAsset, required String videoId}) {
     return InkWell(
       onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (_) => FeatureVideoScreen(
-              title: title,
-              videoId: videoId,
-            ),
-          ),
-        );
+        Navigator.push(context,
+            MaterialPageRoute(builder: (_) => FeatureVideoScreen(title: title, videoId: videoId)));
       },
       borderRadius: BorderRadius.circular(16),
       child: Column(
@@ -373,37 +423,20 @@ class _ProductOverviewScreenState extends State<ProductOverviewScreen> {
             children: [
               ClipRRect(
                 borderRadius: BorderRadius.circular(16),
-                child: Image.asset(
-                  imageAsset,
-                  width: 130,
-                  height: 140,
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) => Container(
-                    width: 130,
-                    height: 140,
-                    color: Colors.grey[300],
-                  ),
-                ),
+                child: Image.asset(imageAsset, width: 130, height: 140, fit: BoxFit.cover,
+                    errorBuilder: (c, e, s) =>
+                        Container(width: 130, height: 140, color: Colors.grey[300])),
               ),
               Container(
                 padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: Colors.black.withOpacity(0.4),
-                  shape: BoxShape.circle,
-                ),
-                child: const Icon(
-                  Icons.play_arrow,
-                  color: Colors.white,
-                  size: 24,
-                ),
+                decoration:
+                    BoxDecoration(color: Colors.black.withOpacity(0.4), shape: BoxShape.circle),
+                child: const Icon(Icons.play_arrow, color: Colors.white, size: 24),
               ),
             ],
           ),
           const SizedBox(height: 8),
-          Text(
-            title,
-            style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
-          ),
+          Text(title, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500)),
         ],
       ),
     );
@@ -707,6 +740,391 @@ class _ProductOverviewScreenState extends State<ProductOverviewScreen> {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+// ──────────────────────────────────────────────────────────────
+// Helper data class for a single video item shown in the
+// horizontal feature list.
+// ──────────────────────────────────────────────────────────────
+class _FeatureVideoItem {
+  final String title;
+  final String videoUrl;
+  const _FeatureVideoItem({required this.title, required this.videoUrl});
+}
+
+// ──────────────────────────────────────────────────────────────
+// Horizontal card that plays a direct MP4 video on tap.
+// ──────────────────────────────────────────────────────────────
+// Top Promo Card Video Player (displays titleVideos MP4)
+// ──────────────────────────────────────────────────────────────
+class _PromoTitleVideoPlayer extends StatefulWidget {
+  final String videoUrl;
+  final String title;
+
+  const _PromoTitleVideoPlayer({
+    Key? key,
+    required this.videoUrl,
+    required this.title,
+  }) : super(key: key);
+
+  @override
+  State<_PromoTitleVideoPlayer> createState() => _PromoTitleVideoPlayerState();
+}
+
+class _PromoTitleVideoPlayerState extends State<_PromoTitleVideoPlayer> {
+  VideoPlayerController? _controller;
+  bool _isInitialized = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _initVideo();
+  }
+
+  Future<void> _initVideo() async {
+    try {
+      _controller = VideoPlayerController.networkUrl(Uri.parse(widget.videoUrl));
+      await _controller!.initialize();
+      if (mounted) {
+        setState(() {
+          _isInitialized = true;
+        });
+      }
+    } catch (e) {
+      debugPrint("Error initializing promo video: $e");
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller?.dispose();
+    super.dispose();
+  }
+
+  void _playFullScreen() {
+    if (ActiveVideoManager.currentDispose != null) {
+      ActiveVideoManager.currentDispose!();
+    }
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => _FullScreenVideoPlayerDialog(
+          title: widget.title,
+          videoUrl: widget.videoUrl,
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: _playFullScreen,
+      child: Container(
+        height: 200,
+        width: double.infinity,
+        decoration: const BoxDecoration(
+          borderRadius: BorderRadius.only(
+            bottomLeft: Radius.circular(16),
+            bottomRight: Radius.circular(16),
+          ),
+        ),
+        child: ClipRRect(
+          borderRadius: const BorderRadius.only(
+            bottomLeft: Radius.circular(16),
+            bottomRight: Radius.circular(16),
+          ),
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              if (_isInitialized && _controller != null && _controller!.value.isInitialized)
+                SizedBox.expand(
+                  child: FittedBox(
+                    fit: BoxFit.cover,
+                    clipBehavior: Clip.hardEdge,
+                    child: SizedBox(
+                      width: _controller!.value.size.width,
+                      height: _controller!.value.size.height,
+                      child: VideoPlayer(_controller!),
+                    ),
+                  ),
+                )
+              else
+                Container(
+                  width: double.infinity,
+                  height: 200,
+                  decoration: const BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [Color(0xFF1A1A2E), Color(0xFF0F3460)],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+                  ),
+                  child: const Center(
+                    child: CircularProgressIndicator(
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.black.withOpacity(0.6),
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(
+                  Icons.play_arrow_rounded,
+                  color: Colors.white,
+                  size: 36,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// ──────────────────────────────────────────────────────────────
+class _FeatureVideoCard extends StatefulWidget {
+  final String title;
+  final String videoUrl;
+  const _FeatureVideoCard({required this.title, required this.videoUrl});
+
+  @override
+  State<_FeatureVideoCard> createState() => _FeatureVideoCardState();
+}
+
+class _FeatureVideoCardState extends State<_FeatureVideoCard> {
+  VideoPlayerController? _controller;
+  bool _isInitialized = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _initThumbnail();
+  }
+
+  Future<void> _initThumbnail() async {
+    try {
+      _controller = VideoPlayerController.networkUrl(Uri.parse(widget.videoUrl));
+      await _controller!.initialize();
+      if (mounted) {
+        setState(() {
+          _isInitialized = true;
+        });
+      }
+    } catch (e) {
+      debugPrint("Error initializing feature video thumbnail: $e");
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller?.dispose();
+    super.dispose();
+  }
+
+  void _openFullScreenVideo() {
+    if (ActiveVideoManager.currentDispose != null) {
+      ActiveVideoManager.currentDispose!();
+    }
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => _FullScreenVideoPlayerDialog(
+          title: widget.title,
+          videoUrl: widget.videoUrl,
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: _openFullScreenVideo,
+      child: Column(
+        children: [
+          Stack(
+            alignment: Alignment.center,
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(16),
+                child: SizedBox(
+                  width: 130,
+                  height: 155,
+                  child: _isInitialized && _controller != null && _controller!.value.isInitialized
+                      ? FittedBox(
+                          fit: BoxFit.cover,
+                          clipBehavior: Clip.hardEdge,
+                          child: SizedBox(
+                            width: _controller!.value.size.width,
+                            height: _controller!.value.size.height,
+                            child: VideoPlayer(_controller!),
+                          ),
+                        )
+                      : Container(
+                          decoration: const BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: [Color(0xFF1A1A2E), Color(0xFF0F3460)],
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                            ),
+                          ),
+                          child: const Center(
+                            child: SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                color: Colors.white54,
+                              ),
+                            ),
+                          ),
+                        ),
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: Colors.black.withOpacity(0.6),
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(Icons.play_arrow_rounded, color: Colors.white, size: 28),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          SizedBox(
+            width: 130,
+            child: Text(
+              widget.title,
+              style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w500),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              textAlign: TextAlign.center,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ──────────────────────────────────────────────────────────────
+// Full Screen Video Player Page/Dialog
+// ──────────────────────────────────────────────────────────────
+class _FullScreenVideoPlayerDialog extends StatefulWidget {
+  final String title;
+  final String videoUrl;
+
+  const _FullScreenVideoPlayerDialog({
+    required this.title,
+    required this.videoUrl,
+  });
+
+  @override
+  State<_FullScreenVideoPlayerDialog> createState() =>
+      __FullScreenVideoPlayerDialogState();
+}
+
+class __FullScreenVideoPlayerDialogState
+    extends State<_FullScreenVideoPlayerDialog> {
+  VideoPlayerController? _controller;
+  ChewieController? _chewieController;
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _initPlayer();
+  }
+
+  Future<void> _disposeControllers() async {
+    final chewie = _chewieController;
+    final vp = _controller;
+    _chewieController = null;
+    _controller = null;
+    try {
+      chewie?.dispose();
+    } catch (e) {
+      debugPrint("Chewie dispose error: $e");
+    }
+    try {
+      await vp?.dispose();
+    } catch (e) {
+      debugPrint("VideoPlayer dispose error: $e");
+    }
+  }
+
+  Future<void> _initPlayer() async {
+    try {
+      _controller = VideoPlayerController.networkUrl(Uri.parse(widget.videoUrl));
+      await _controller!.initialize();
+      _chewieController = ChewieController(
+        videoPlayerController: _controller!,
+        autoPlay: true,
+        looping: false,
+        allowFullScreen: true,
+        showControls: true,
+        aspectRatio: _controller!.value.aspectRatio > 0
+            ? _controller!.value.aspectRatio
+            : 16 / 9,
+      );
+      ActiveVideoManager.currentDispose = _disposeControllers;
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      debugPrint("Error initializing full screen video player: $e");
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    _disposeControllers();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.black,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_new, color: Colors.white),
+          onPressed: () => Navigator.pop(context),
+        ),
+        title: Text(
+          widget.title,
+          style: const TextStyle(color: Colors.white, fontSize: 16),
+        ),
+      ),
+      body: Center(
+        child: _isLoading
+            ? const CircularProgressIndicator(color: Colors.white)
+            : _chewieController != null
+                ? Chewie(controller: _chewieController!)
+                : const Text(
+                    "Unable to load video",
+                    style: TextStyle(color: Colors.white),
+                  ),
       ),
     );
   }

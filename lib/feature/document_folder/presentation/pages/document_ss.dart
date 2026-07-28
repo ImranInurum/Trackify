@@ -6,6 +6,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:intl/intl.dart';
 import 'package:trackify/l10n/app_localizations.dart';
+import 'package:trackify/core/config/network/api_host.dart';
+import 'package:trackify/feature/document_folder/domain/entities/doucment_entity.dart';
 import 'package:trackify/feature/document_folder/data/models/document_upload_request.dart';
 import 'package:trackify/feature/document_folder/data/repository/document_repository_impl.dart';
 import 'package:trackify/feature/document_folder/data/data_sources/document_local_datasources.dart';
@@ -16,8 +18,15 @@ class DocumentSubScreen extends StatefulWidget {
   final String title;
   final String vehicleId;
   final String subtype;
+  final DocumentEntity? initialDocument;
 
-  const DocumentSubScreen({super.key, required this.title, required this.vehicleId, required this.subtype});
+  const DocumentSubScreen({
+    super.key,
+    required this.title,
+    required this.vehicleId,
+    required this.subtype,
+    this.initialDocument,
+  });
 
   @override
   State<DocumentSubScreen> createState() => _DocumentSubScreenState();
@@ -28,11 +37,22 @@ class _DocumentSubScreenState extends State<DocumentSubScreen> {
   File? _backFile;
   DateTime? _selectedDate;
   bool _isLoading = false;
-  String? _error = null;
+  String? _error;
   bool _isPickerActive = false;
 
   static const int _maxBytes = 5 * 1024 * 1024;
   final ImagePicker _picker = ImagePicker();
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.initialDocument?.expiryDate != null &&
+        widget.initialDocument!.expiryDate!.isNotEmpty) {
+      try {
+        _selectedDate = DateTime.tryParse(widget.initialDocument!.expiryDate!);
+      } catch (_) {}
+    }
+  }
 
   bool _isPdf(File f) => f.path.toLowerCase().endsWith('.pdf');
   bool _isValidSize(File f) => f.lengthSync() <= _maxBytes;
@@ -47,12 +67,18 @@ class _DocumentSubScreenState extends State<DocumentSubScreen> {
   // ── DATE PICKER ──────────────────────────────────────────────
 
   Future<void> _pickDate() async {
-    final l10n = AppLocalizations.of(context)!;
     final now = DateTime.now();
+    final firstAllowedDate = DateTime(now.year, now.month, now.day);
+    
+    DateTime initDate = _selectedDate ?? firstAllowedDate;
+    if (initDate.isBefore(firstAllowedDate)) {
+      initDate = firstAllowedDate;
+    }
+
     final picked = await showDatePicker(
       context: context,
-      initialDate: _selectedDate ?? now.add(const Duration(days: 365)),
-      firstDate: now,
+      initialDate: initDate,
+      firstDate: firstAllowedDate,
       lastDate: DateTime(2100),
     );
     if (picked != null) setState(() => _selectedDate = picked);
@@ -280,7 +306,8 @@ class _DocumentSubScreenState extends State<DocumentSubScreen> {
 
   void _submit() async {
     final l10n = AppLocalizations.of(context)!;
-    if (_frontFile == null) {
+    final hasFront = widget.initialDocument != null;
+    if (_frontFile == null && !hasFront) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(l10n.frontRequired)),
       );
@@ -300,8 +327,12 @@ class _DocumentSubScreenState extends State<DocumentSubScreen> {
     });
 
     try {
-      final frontBytes = await _frontFile!.readAsBytes();
-      final frontName = _frontFile!.path.split('/').last;
+      List<int>? frontBytes;
+      String? frontName;
+      if (_frontFile != null) {
+        frontBytes = await _frontFile!.readAsBytes();
+        frontName = _frontFile!.path.split('/').last;
+      }
 
       List<int>? backBytes;
       String? backName;
@@ -320,13 +351,24 @@ class _DocumentSubScreenState extends State<DocumentSubScreen> {
       );
 
       final repo = DocumentRepositoryImpl(DocumentLocalDataSource(ImagePicker()));
-      final result = await repo.uploadDocument(
-        request: request,
-        frontImageBytes: frontBytes,
-        frontImageName: frontName,
-        backImageBytes: backBytes,
-        backImageName: backName,
-      );
+      final isEdit = widget.initialDocument != null && widget.initialDocument!.id.isNotEmpty;
+
+      final result = isEdit
+          ? await repo.updateDocument(
+              documentId: widget.initialDocument!.id,
+              request: request,
+              frontImageBytes: frontBytes,
+              frontImageName: frontName,
+              backImageBytes: backBytes,
+              backImageName: backName,
+            )
+          : await repo.uploadDocument(
+              request: request,
+              frontImageBytes: frontBytes,
+              frontImageName: frontName,
+              backImageBytes: backBytes,
+              backImageName: backName,
+            );
 
       result.fold(
         (failure) {
@@ -342,7 +384,7 @@ class _DocumentSubScreenState extends State<DocumentSubScreen> {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text(response.message ?? l10n.successMessage)),
           );
-          Navigator.pop(context);
+          Navigator.pop(context, true);
         },
       );
     } catch (e) {
@@ -358,9 +400,9 @@ class _DocumentSubScreenState extends State<DocumentSubScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final colorScheme = Theme.of(context).colorScheme;
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
     final size = MediaQuery.of(context).size;
-    final screenWidth = size.width;
     final screenHeight = size.height;
     final dateLabel = _selectedDate == null
         ? l10n.selectExpiryDate
@@ -368,6 +410,26 @@ class _DocumentSubScreenState extends State<DocumentSubScreen> {
 
     return Scaffold(
       backgroundColor: colorScheme.surface,
+      appBar: AppBar(
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back_ios_new,
+            color: colorScheme.onSurface,
+          ),
+          onPressed: () => Navigator.pop(context),
+        ),
+        title: Text(
+          widget.title,
+          style: theme.textTheme.titleMedium?.copyWith(
+            fontWeight: FontWeight.w600,
+            color: colorScheme.onSurface,
+          ),
+        ),
+        backgroundColor: colorScheme.surface,
+        elevation: 0,
+        surfaceTintColor: Colors.transparent,
+        centerTitle: true,
+      ),
       body: SafeArea(
         child: Column(
           children: [
@@ -378,29 +440,6 @@ class _DocumentSubScreenState extends State<DocumentSubScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const SizedBox(height: 14),
-
-                    // ── Header ──────────────────────────────────
-                    Row(
-                      children: [
-                        GestureDetector(
-                          onTap: () => Navigator.pop(context),
-                          child: Icon(Icons.arrow_back_ios_new, color: colorScheme.onSurface),
-                        ),
-                        Expanded(
-                          child: Center(
-                            child: Text(
-                              widget.title,
-                              style: TextStyle(
-                                color: colorScheme.onSurface,
-                                fontSize: 18,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
 
                     const SizedBox(height: 24),
 
@@ -421,7 +460,7 @@ class _DocumentSubScreenState extends State<DocumentSubScreen> {
                           color: Theme.of(context).cardColor,
                           borderRadius: BorderRadius.circular(10),
                           border: Border.all(
-                            color: colorScheme.outlineVariant.withOpacity(0.2),
+                            color: colorScheme.outlineVariant.withValues(alpha: 0.2),
                           ),
                         ),
                         child: Row(
@@ -471,7 +510,7 @@ class _DocumentSubScreenState extends State<DocumentSubScreen> {
                     Text(
                       l10n.commitmentText,
                       style: TextStyle(
-                        color: colorScheme.onSurface.withOpacity(0.5),
+                        color: colorScheme.onSurface.withValues(alpha: 0.5),
                         fontSize: 14,
                       ),
                     ),
@@ -501,39 +540,50 @@ class _DocumentSubScreenState extends State<DocumentSubScreen> {
             // ── Sticky Save Button ─────────────────────────────
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
-              child: GestureDetector(
-                onTap: _isLoading
-                    ? null
-                    : () {
-                        if (_frontFile == null) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(AppLocalizations.of(context)!.frontRequired),
-                            ),
-                          );
-                          return;
-                        }
-                        _submit();
-                      },
-                child: Container(
-                  height: screenHeight * 0.055,
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    color: (_frontFile == null || _isLoading)
-                        ? colorScheme.outline
-                        : colorScheme.primary,
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Center(
-                    child: Text(
-                      l10n.addDocument,
-                      style: TextStyle(
-                        color: colorScheme.onPrimary,
-                        fontWeight: FontWeight.w700,
+              child: Builder(
+                builder: (context) {
+                  final hasFront = _frontFile != null ||
+                      (widget.initialDocument?.fontpath != null &&
+                          widget.initialDocument!.fontpath!.isNotEmpty);
+                  return GestureDetector(
+                    onTap: _isLoading
+                        ? null
+                        : () {
+                            if (!hasFront) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                    AppLocalizations.of(context)!.frontRequired,
+                                  ),
+                                ),
+                              );
+                              return;
+                            }
+                            _submit();
+                          },
+                    child: Container(
+                      height: screenHeight * 0.055,
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        color: (!hasFront || _isLoading)
+                            ? colorScheme.outline
+                            : colorScheme.primary,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Center(
+                        child: Text(
+                          widget.initialDocument != null
+                              ? l10n.update
+                              : l10n.addDocument,
+                          style: TextStyle(
+                            color: colorScheme.onPrimary,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
                       ),
                     ),
-                  ),
-                ),
+                  );
+                },
               ),
             ),
           ],
@@ -544,9 +594,19 @@ class _DocumentSubScreenState extends State<DocumentSubScreen> {
 
   // ── UPLOAD BOX ───────────────────────────────────────────────
 
+  String _getImageUrl(String? path) {
+    if (path == null || path.isEmpty) return '';
+    return path.startsWith('http') ? path : '${ApiURL.baseURL}/$path';
+  }
+
   Widget _uploadBox(bool isFront, File? file, String label) {
     final colorScheme = Theme.of(context).colorScheme;
     final size = MediaQuery.of(context).size;
+    final existingPath = isFront
+        ? widget.initialDocument?.fontpath
+        : widget.initialDocument?.backpath;
+    final existingUrl = _getImageUrl(existingPath);
+
     return GestureDetector(
       onTap: () => _showPicker(isFront),
       child: Container(
@@ -556,29 +616,58 @@ class _DocumentSubScreenState extends State<DocumentSubScreen> {
           color: Theme.of(context).cardColor,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: colorScheme.outlineVariant.withOpacity(0.2),
+            color: colorScheme.outlineVariant.withValues(alpha: 0.2),
           ),
         ),
         child: file == null
-            ? Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.camera_alt_outlined,
-                    color: colorScheme.onSurfaceVariant,
-                    size: 28,
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    label,
-                    style: TextStyle(
-                      color: colorScheme.onSurfaceVariant,
-                      fontSize: 12,
+            ? (existingUrl.isNotEmpty
+                ? ClipRRect(
+                    borderRadius: BorderRadius.circular(12),
+                    child: Image.network(
+                      existingUrl,
+                      fit: BoxFit.cover,
+                      width: double.infinity,
+                      height: double.infinity,
+                      errorBuilder: (_, __, ___) => Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.camera_alt_outlined,
+                            color: colorScheme.onSurfaceVariant,
+                            size: 28,
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            label,
+                            style: TextStyle(
+                              color: colorScheme.onSurfaceVariant,
+                              fontSize: 12,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ],
+                      ),
                     ),
-                    textAlign: TextAlign.center,
-                  ),
-                ],
-              )
+                  )
+                : Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.camera_alt_outlined,
+                        color: colorScheme.onSurfaceVariant,
+                        size: 28,
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        label,
+                        style: TextStyle(
+                          color: colorScheme.onSurfaceVariant,
+                          fontSize: 12,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
+                  ))
             : ClipRRect(
                 borderRadius: BorderRadius.circular(12),
                 child: _isPdf(file)

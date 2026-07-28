@@ -277,7 +277,7 @@ class _ShareRideBottomSheetState extends State<ShareRideBottomSheet> {
                         Polyline(
                           polylineId: const PolylineId('route'),
                           points: widget.routePoints,
-                          color: Theme.of(context).colorScheme.primary,
+                          color: Colors.yellow,
                           width: 4,
                         ),
                     },

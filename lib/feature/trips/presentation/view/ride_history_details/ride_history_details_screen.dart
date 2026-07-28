@@ -744,7 +744,7 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
                         points: mapState.validRidePoints
                             .map((p) => p.location)
                             .toList(),
-                        color: Theme.of(context).colorScheme.primary,
+                        color: Colors.yellow,
                         width: 5,
                         startCap: Cap.roundCap,
                         endCap: Cap.roundCap,

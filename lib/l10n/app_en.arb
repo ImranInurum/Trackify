@@ -1076,7 +1076,7 @@
   "perService": "/Service",
   "avgInterval": "Avg Interval",
   "months": "Months",
-  "deleteAlertTitle": "Delete Alert",
+  "deleteAlertTitle": "Delete",
   "deleteAlertDesc": "Are you sure you want to delete this overspeed alert?",
   "deleteServiceLogDesc": "Are you sure you want to delete this service log?",
   "serviceDetails": "Service Details",
@@ -1123,7 +1123,7 @@
   "chooseNicknameHint": "Choose a unique nickname for this ride",
   "myRideOnTrackify": "My Ride on Trackify",
   "locationAlwaysAccessWarning": "Trackify ride recording feature only work correctly if it can access your location “all the time”",
-  "goToSettingsAndSelectAllowAllTheTime": "Go to settings and select “Allow all the time”",
+  "goToSettingsAndSelectAllowAllTheTime": "Go to settings and select \"Allow all the time\"",
   "locationPermissions": "Location Permissions",
   "allowAllTheTime": "Allow all the time",
   "onlyWhileUsingTheApp": "Only while using the app",
@@ -1310,5 +1310,44 @@
   "noDevice": "No Device",
   "noDeviceNotificationBanner": "No tracking device linked with this vehicle. Notification controls are disabled.",
   "ok": "OK",
-  "profile100PercentComplete": "Your profile is 100% complete!"
+  "profile100PercentComplete": "Your profile is 100% complete!",
+  "locationPermissionWarning": "Sharing your phone's location works correctly only if it can access your location \"all the time\"",
+  "trackifyApp": "Trackify",
+  "locationText": "Location",
+  "tapIntoLocation": "Tap into Location",
+  "goToSettingsBtn": "Go to Settings",
+  "shareLiveLocationFor": "Share your live location for",
+  "twoHours": "2 hours",
+  "fourHours": "4 hours",
+  "eightHours": "8 hours",
+  "untilStopped": "Until Stopped",
+  "shareLocationLink": "Share location link",
+  "documentNameText": "Document Name",
+  "expiryDateText": "Expiry Date",
+  "documentImagesText": "Document Images",
+  "noImagesAvailableText": "No images available",
+  "pdfDocumentText": "PDF Document",
+  "deleteAlertDescription": "Are you sure you want to delete this document?",
+  "deleteRideTitle": "Delete Ride",
+  "deleteRideConfirmMessage": "Are you sure you want to delete this ride record?",
+  "rideDeletedSuccess": "Ride deleted successfully",
+  "onlineRideDeleteNotSupported": "Online ride deletion not supported offline",
+  "rideDeleteFailedInvalidId": "Ride deletion failed: Invalid ID",
+  "twoHoursLink": "2 hours link",
+  "expiresInTime": "Expires in {time}",
+  "@expiresInTime": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "stopSharingConfirmation": "Are you sure you want to stop sharing the location of {name}?",
+  "@stopSharingConfirmation": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  }
 }

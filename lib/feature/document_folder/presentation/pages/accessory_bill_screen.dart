@@ -1,11 +1,15 @@
 import 'dart:io';
 
-import 'package:file_picker/file_picker.dart';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:intl/intl.dart';
 import 'package:trackify/core/config/font_manager.dart';
+import 'package:trackify/feature/document_folder/presentation/widegt/text_field_widgets.dart';
+import 'package:trackify/core/config/network/api_host.dart';
+import 'package:trackify/feature/document_folder/domain/entities/doucment_entity.dart';
 import 'package:trackify/feature/document_folder/presentation/widegt/text_field_widgets.dart';
 import 'package:trackify/l10n/app_localizations.dart';
 import 'package:trackify/feature/document_folder/data/models/document_upload_request.dart';
@@ -14,8 +18,13 @@ import 'package:trackify/feature/document_folder/data/data_sources/document_loca
 
 class AccessoryBillScreen extends StatefulWidget {
   final String vehicleId;
+  final DocumentEntity? initialDocument;
 
-  const AccessoryBillScreen({super.key, required this.vehicleId});
+  const AccessoryBillScreen({
+    super.key,
+    required this.vehicleId,
+    this.initialDocument,
+  });
 
   @override
   State<AccessoryBillScreen> createState() => _AccessoryBillScreenState();
@@ -31,8 +40,34 @@ class _AccessoryBillScreenState extends State<AccessoryBillScreen> {
   DateTime? _billingDate;
   DateTime? _warrantyExpiryDate;
   bool _isLoading = false;
-  String? _error = null;
+  String? _error;
   bool _isPickerActive = false;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.initialDocument != null) {
+      final doc = widget.initialDocument!;
+      _nameController.text = doc.title ?? '';
+      _amountController.text = doc.billingAmount != null ? doc.billingAmount.toString() : '';
+      _shopNameController.text = doc.shopName ?? '';
+      _shopContactController.text = doc.shopContact ?? '';
+
+      final bDateStr = doc.billingDate;
+      if (bDateStr != null && bDateStr.isNotEmpty) {
+        try {
+          _billingDate = DateTime.tryParse(bDateStr);
+        } catch (_) {}
+      }
+
+      final wDateStr = doc.warrantyExpiry ?? doc.expiryDate;
+      if (wDateStr != null && wDateStr.isNotEmpty) {
+        try {
+          _warrantyExpiryDate = DateTime.tryParse(wDateStr);
+        } catch (_) {}
+      }
+    }
+  }
 
   static const int _maxBytes = 5 * 1024 * 1024;
   final ImagePicker _picker = ImagePicker();
@@ -72,10 +107,17 @@ class _AccessoryBillScreenState extends State<AccessoryBillScreen> {
 
   Future<void> _pickWarrantyExpiryDate() async {
     final now = DateTime.now();
+    final firstAllowedDate = DateTime(now.year, now.month, now.day);
+    
+    DateTime initDate = _warrantyExpiryDate ?? firstAllowedDate;
+    if (initDate.isBefore(firstAllowedDate)) {
+      initDate = firstAllowedDate;
+    }
+
     final picked = await showDatePicker(
       context: context,
-      initialDate: _warrantyExpiryDate ?? now.add(const Duration(days: 365)),
-      firstDate: now,
+      initialDate: initDate,
+      firstDate: firstAllowedDate,
       lastDate: DateTime(2100),
     );
 
@@ -101,7 +143,7 @@ class _AccessoryBillScreenState extends State<AccessoryBillScreen> {
       }
 
       // ✅ CLOSE bottom sheet HERE (correct timing)
-      if (Navigator.canPop(context)) {
+      if (mounted && Navigator.canPop(context)) {
         Navigator.pop(context);
       }
 
@@ -113,6 +155,7 @@ class _AccessoryBillScreenState extends State<AccessoryBillScreen> {
         return;
       }
 
+      if (!mounted) return;
       if (!_isValidSize(croppedFile)) {
         _setError(AppLocalizations.of(context)!.fileTooLarge);
         return;
@@ -128,7 +171,9 @@ class _AccessoryBillScreenState extends State<AccessoryBillScreen> {
       });
     } catch (e) {
       debugPrint("Pick error: $e");
-      _setError(AppLocalizations.of(context)!.errorPickingImage);
+      if (mounted) {
+        _setError(AppLocalizations.of(context)!.errorPickingImage);
+      }
     } finally {
       if (mounted) {
         setState(() => _isPickerActive = false);
@@ -137,17 +182,18 @@ class _AccessoryBillScreenState extends State<AccessoryBillScreen> {
   }
 
   Future<File?> _cropImage(File imageFile) async {
-
+    if (!mounted) return null;
+    final l10n = AppLocalizations.of(context)!;
     try {
       final croppedFile = await ImageCropper().cropImage(
         sourcePath: imageFile.path,
         uiSettings: [
           AndroidUiSettings(
-            toolbarTitle: AppLocalizations.of(context)!.cropDocument,
+            toolbarTitle: l10n.cropDocument,
             toolbarColor: Colors.black,
             toolbarWidgetColor: Colors.white,
           ),
-          IOSUiSettings(title: AppLocalizations.of(context)!.cropDocument),
+          IOSUiSettings(title: l10n.cropDocument),
         ],
       );
 
@@ -268,18 +314,53 @@ class _AccessoryBillScreenState extends State<AccessoryBillScreen> {
 
   void _submit() async {
     final l10n = AppLocalizations.of(context)!;
-    if (_frontFile == null) {
-      setState(() => _error = l10n.frontDocumentRequired);
-      return;
-    }
+    final hasFront = widget.initialDocument != null &&
+        widget.initialDocument!.fontpath != null &&
+        widget.initialDocument!.fontpath!.isNotEmpty;
 
     if (_nameController.text.trim().isEmpty) {
-      setState(() => _error = l10n.accessoryName + " is required");
+      final msg = "${l10n.accessoryName} is required";
+      setState(() => _error = msg);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(msg)),
+      );
       return;
     }
 
     if (_billingDate == null) {
-      setState(() => _error = l10n.billingDate + " is required");
+      final msg = "${l10n.billingDate} is required";
+      setState(() => _error = msg);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(msg)),
+      );
+      return;
+    }
+
+    if (_amountController.text.trim().isEmpty) {
+      final msg = "${l10n.billingAmount} is required";
+      setState(() => _error = msg);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(msg)),
+      );
+      return;
+    }
+
+    if (_frontFile == null && !hasFront) {
+      final msg = l10n.frontDocumentRequired;
+      setState(() => _error = msg);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(msg)),
+      );
+      return;
+    }
+
+    final contact = _shopContactController.text.trim();
+    if (contact.isNotEmpty && !RegExp(r'^[6-9]\d{9}$').hasMatch(contact)) {
+      const msg = "Please enter a valid 10-digit mobile number";
+      setState(() => _error = msg);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text(msg)),
+      );
       return;
     }
 
@@ -289,8 +370,12 @@ class _AccessoryBillScreenState extends State<AccessoryBillScreen> {
     });
 
     try {
-      final frontBytes = await _frontFile!.readAsBytes();
-      final frontName = _frontFile!.path.split('/').last;
+      List<int>? frontBytes;
+      String? frontName;
+      if (_frontFile != null) {
+        frontBytes = await _frontFile!.readAsBytes();
+        frontName = _frontFile!.path.split('/').last;
+      }
 
       List<int>? backBytes;
       String? backName;
@@ -314,13 +399,24 @@ class _AccessoryBillScreenState extends State<AccessoryBillScreen> {
       );
 
       final repo = DocumentRepositoryImpl(DocumentLocalDataSource(ImagePicker()));
-      final result = await repo.uploadDocument(
-        request: request,
-        frontImageBytes: frontBytes,
-        frontImageName: frontName,
-        backImageBytes: backBytes,
-        backImageName: backName,
-      );
+      final isEdit = widget.initialDocument != null && widget.initialDocument!.id.isNotEmpty;
+
+      final result = isEdit
+          ? await repo.updateDocument(
+              documentId: widget.initialDocument!.id,
+              request: request,
+              frontImageBytes: frontBytes,
+              frontImageName: frontName,
+              backImageBytes: backBytes,
+              backImageName: backName,
+            )
+          : await repo.uploadDocument(
+              request: request,
+              frontImageBytes: frontBytes,
+              frontImageName: frontName,
+              backImageBytes: backBytes,
+              backImageName: backName,
+            );
 
       result.fold(
         (failure) {
@@ -336,7 +432,7 @@ class _AccessoryBillScreenState extends State<AccessoryBillScreen> {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text(response.message ?? l10n.documentUploadedSuccessfully)),
           );
-          Navigator.pop(context);
+          Navigator.pop(context, true);
         },
       );
     } catch (e) {
@@ -420,7 +516,7 @@ class _AccessoryBillScreenState extends State<AccessoryBillScreen> {
                                 color: Theme.of(context).cardColor,
                                 borderRadius: BorderRadius.circular(10),
                                 border: Border.all(
-                                  color: colorScheme.outlineVariant.withOpacity(0.2),
+                                  color: colorScheme.outlineVariant.withValues(alpha: 0.2),
                                 ),
                               ),
                               child: Row(
@@ -489,6 +585,11 @@ class _AccessoryBillScreenState extends State<AccessoryBillScreen> {
                       controller: _shopContactController,
                       hintText: AppLocalizations.of(context)!.shopContact,
                       keyboardType: TextInputType.phone,
+                      maxLength: 10,
+                      inputFormatters: [
+                        FilteringTextInputFormatter.digitsOnly,
+                        LengthLimitingTextInputFormatter(10),
+                      ],
                     ),
                     const SizedBox(height: 20),
                     GestureDetector(
@@ -501,7 +602,9 @@ class _AccessoryBillScreenState extends State<AccessoryBillScreen> {
                           color: Theme.of(context).cardColor,
                           borderRadius: BorderRadius.circular(10),
                           border: Border.all(
-                            color: colorScheme.outlineVariant.withOpacity(0.2),
+                            color: colorScheme.outlineVariant.withValues(
+                            alpha: 0.2,
+                          ),
                           ),
                         ),
                         child: Row(
@@ -550,7 +653,7 @@ class _AccessoryBillScreenState extends State<AccessoryBillScreen> {
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeightManager.medium,
-                        color: colorScheme.onSurface.withOpacity(0.7),
+                        color: colorScheme.onSurface.withValues(alpha: 0.7),
                       ),
                     ),
 
@@ -561,26 +664,33 @@ class _AccessoryBillScreenState extends State<AccessoryBillScreen> {
               ),
             ),
 
-            GestureDetector(
-              onTap: (_frontFile == null || _isLoading) ? null : _submit,
-              child: Container(
-                height: screenHeight * 0.055,
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  color: (_frontFile == null || _isLoading)
-                      ? colorScheme.outline
-                      : colorScheme.primary,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Center(
-                  child: Text(
-                    AppLocalizations.of(context)!.addDocument,
-                    style: TextStyle(color: colorScheme.onPrimary,
-                      fontWeight: FontWeight.bold,
+            Builder(
+              builder: (context) {
+                return GestureDetector(
+                  onTap: _isLoading ? null : _submit,
+                  child: Container(
+                    height: screenHeight * 0.055,
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      color: _isLoading
+                          ? colorScheme.outline
+                          : colorScheme.primary,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Center(
+                      child: Text(
+                        widget.initialDocument != null
+                            ? AppLocalizations.of(context)!.update
+                            : AppLocalizations.of(context)!.addDocument,
+                        style: TextStyle(
+                          color: colorScheme.onPrimary,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                     ),
                   ),
-                ),
-              ),
+                );
+              },
             ),
 
             SizedBox(height: screenHeight * 0.02),
@@ -592,9 +702,19 @@ class _AccessoryBillScreenState extends State<AccessoryBillScreen> {
 
   // ── UPLOAD BOX ─────────────────────────────────────────────
 
+  String _getImageUrl(String? path) {
+    if (path == null || path.isEmpty) return '';
+    return path.startsWith('http') ? path : '${ApiURL.baseURL}/$path';
+  }
+
   Widget _uploadBox(bool isFront, File? file, String label) {
     final colorScheme = Theme.of(context).colorScheme;
     final size = MediaQuery.of(context).size;
+    final existingPath = isFront
+        ? widget.initialDocument?.fontpath
+        : widget.initialDocument?.backpath;
+    final existingUrl = _getImageUrl(existingPath);
+
     return GestureDetector(
       onTap: () => _showPicker(isFront),
       child: Container(
@@ -604,63 +724,92 @@ class _AccessoryBillScreenState extends State<AccessoryBillScreen> {
           color: Theme.of(context).cardColor,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: colorScheme.outlineVariant.withOpacity(0.2),
+            color: colorScheme.outlineVariant.withValues(alpha: 0.2),
           ),
         ),
         child: file == null
-            ? Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.camera_alt_outlined,
-              color: colorScheme.onSurfaceVariant,
-              size: 28,
-            ),
-            const SizedBox(height: 8),
-            Text(
-              label,
-              style: TextStyle(
-                color: colorScheme.onSurfaceVariant,
-                fontSize: 12,
-              ),
-              textAlign: TextAlign.center,
-            ),
-          ],
-        )
+            ? (existingUrl.isNotEmpty
+                ? ClipRRect(
+                    borderRadius: BorderRadius.circular(12),
+                    child: Image.network(
+                      existingUrl,
+                      fit: BoxFit.cover,
+                      width: double.infinity,
+                      height: double.infinity,
+                      errorBuilder: (_, __, ___) => Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.camera_alt_outlined,
+                            color: colorScheme.onSurfaceVariant,
+                            size: 28,
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            label,
+                            style: TextStyle(
+                              color: colorScheme.onSurfaceVariant,
+                              fontSize: 12,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ],
+                      ),
+                    ),
+                  )
+                : Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.camera_alt_outlined,
+                        color: colorScheme.onSurfaceVariant,
+                        size: 28,
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        label,
+                        style: TextStyle(
+                          color: colorScheme.onSurfaceVariant,
+                          fontSize: 12,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
+                  ))
             : ClipRRect(
-          borderRadius: BorderRadius.circular(12),
-          child: _isPdf(file)
-              ? Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(
-                Icons.picture_as_pdf,
-                color: Colors.red,
-                size: 32,
+                borderRadius: BorderRadius.circular(12),
+                child: _isPdf(file)
+                    ? Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(
+                            Icons.picture_as_pdf,
+                            color: Colors.red,
+                            size: 32,
+                          ),
+                          const SizedBox(height: 6),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 6),
+                            child: Text(
+                              file.path.split('/').last,
+                              style: TextStyle(
+                                color: colorScheme.onSurfaceVariant,
+                                fontSize: 10,
+                              ),
+                              textAlign: TextAlign.center,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
+                      )
+                    : Image.file(
+                        file,
+                        fit: BoxFit.cover,
+                        width: double.infinity,
+                        height: double.infinity,
+                      ),
               ),
-              const SizedBox(height: 6),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 6),
-                child: Text(
-                  file.path.split('/').last,
-                  style: TextStyle(
-                    color: colorScheme.onSurfaceVariant,
-                    fontSize: 10,
-                  ),
-                  textAlign: TextAlign.center,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-            ],
-          )
-              : Image.file(
-            file,
-            fit: BoxFit.cover,
-            width: double.infinity,
-            height: double.infinity,
-          ),
-        ),
       ),
     );
   }

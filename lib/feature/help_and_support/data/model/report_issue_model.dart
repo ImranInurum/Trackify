@@ -1,6 +1,6 @@
 class ReportIssueRequest {
   final String userId;
-  final String imei;
+  final String vehicleId;
   final String issueType;
   final String issueRelatedTo;
   final String description;
@@ -8,7 +8,7 @@ class ReportIssueRequest {
 
   ReportIssueRequest({
     required this.userId,
-    required this.imei,
+    required this.vehicleId,
     required this.issueType,
     required this.issueRelatedTo,
     required this.description,
@@ -18,7 +18,7 @@ class ReportIssueRequest {
   Map<String, dynamic> toJson() {
     return {
       "userId": userId,
-      "imei": imei,
+      "vehicleId": vehicleId,
       "issueType": issueType,
       "issueRelatedTo": issueRelatedTo,
       "description": description,

@@ -1,6 +1,8 @@
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 import 'package:trackify/core/config/network/api_host.dart';
 import 'package:trackify/core/config/network/network_api_service.dart';
-
+import 'package:trackify/feature/add_fuel/data/model/add_fuel_model.dart';
 import '../model/refuel_log_model.dart';
 
 class RefuelDataSource {
@@ -33,9 +35,9 @@ class RefuelDataSource {
     );
   }
 
-  Future<void> deleteRefuelLog(String imei, String refuelId) async {
+  Future<void> deleteRefuelLog(String vehicleId, String refuelId) async {
     final response = await _apiServices.getDeleteApiResponse(
-      ApiURL.deleteRefuel(imei, refuelId),
+      ApiURL.deleteRefuel(vehicleId, refuelId),
       {},
     );
 
@@ -46,5 +48,32 @@ class RefuelDataSource {
         print("DELETE RESPONSE: $r");
       },
     );
+  }
+
+  Future<void> updateRefuelLog(String refuelId, AddFuelModel model) async {
+    try {
+      print("=========== UPDATE REFUEL API HIT ===========");
+      print("REFUEL ID: $refuelId");
+      print("REQUEST BODY: ${model.toUpdateMap()}");
+
+      final response = await http.put(
+        Uri.parse(ApiURL.updateRefuelLog(refuelId)),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ${ApiURL.authToken}',
+        },
+        body: jsonEncode(model.toUpdateMap()),
+      );
+
+      print("STATUS CODE: ${response.statusCode}");
+      print("RESPONSE BODY: ${response.body}");
+
+      if (response.statusCode != 200 && response.statusCode != 201) {
+        throw Exception('Failed to update refuel log: ${response.body}');
+      }
+    } catch (e) {
+      print("UPDATE REFUEL ERROR: $e");
+      rethrow;
+    }
   }
 }

@@ -18,24 +18,29 @@ class _ChoiceSelectorState extends State<ChoiceSelector> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    return Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        leading: IconButton(
-          icon: Icon(
-            Icons.arrow_back_ios_new,
-            color: Theme.of(context).colorScheme.onSurface,
-          ),
-          onPressed: () {
-            if (Navigator.of(context).canPop()) {
-              Navigator.of(context).pop();
-            }
-          },
+    final canPop = Navigator.of(context).canPop();
+    return PopScope(
+      canPop: canPop,
+      child: Scaffold(
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          leading: canPop
+              ? IconButton(
+                  icon: Icon(
+                    Icons.arrow_back_ios_new,
+                    color: Theme.of(context).colorScheme.onSurface,
+                  ),
+                  onPressed: () {
+                    if (Navigator.of(context).canPop()) {
+                      Navigator.of(context).pop();
+                    }
+                  },
+                )
+              : null,
         ),
-      ),
-      body: SafeArea(
+        body: SafeArea(
         child: Column(
           children: [
             Expanded(
@@ -125,6 +130,7 @@ class _ChoiceSelectorState extends State<ChoiceSelector> {
           ],
         ),
       ),
+    ),
     );
   }
 

@@ -24,7 +24,7 @@ import '../../../../l10n/app_localizations.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:trackify/feature/record_via_phone/data/model/device_data_by_date_response.dart';
 import 'package:trackify/feature/record_via_phone/presentation/pages/ride_playback_screen.dart';
-
+import 'package:trackify/feature/record_via_phone/presentation/pages/ride_detail_screen.dart';
 import 'package:trackify/feature/record_via_phone/presentation/pages/widgets/share_ride_bottom_sheet.dart';
 import 'package:trackify/feature/map/presentation/pages/shared_with_me_screen.dart';
 import 'package:trackify/feature/record_via_phone/presentation/pages/shared_rides_screen.dart';
@@ -49,7 +49,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
   BitmapDescriptor? _customMarkerIcon;
   String? _mobileDeviceName;
 
-  String _activeDateFilter = "Today";
+  String _activeDateFilter = "All";
   String? _selectedFilterTag;
   final Map<int, String> _rideTags = {};
   DateTime _selectedStatsDate = DateTime.now();
@@ -60,6 +60,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
   BitmapDescriptor? _endMarkerIcon;
   bool _isFullScreen = false;
   DateTime? _recordingStartDateTime;
+  Future<List<Map<String, dynamic>>>? _pastRidesFuture;
 
   @override
   void initState() {
@@ -77,6 +78,14 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
     // Pre-fetch today's history
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _initCustomMarker();
+    });
+
+    _refreshPastRides();
+  }
+
+  void _refreshPastRides() {
+    setState(() {
+      _pastRidesFuture = context.read<RecordViaPhoneCubit>().getAllPastRides();
     });
   }
 
@@ -190,7 +199,9 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
   }
 
   String _getStatsDateText() {
-    if (_activeDateFilter == "Today") {
+    if (_activeDateFilter == "All") {
+      return "All Time";
+    } else if (_activeDateFilter == "Today") {
       return "${DateFormat('MMMM d').format(DateTime.now())} (Today)";
     } else if (_activeDateFilter == "Yesterday") {
       final yesterday = DateTime.now().subtract(const Duration(days: 1));
@@ -621,11 +632,16 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
                     final newTag = textController.text.trim();
                     if (newTag.isNotEmpty) {
                       if (ride.id != null && ride.id!.isNotEmpty) {
-                        await context.read<RecordViaPhoneCubit>().updateOfflineRideTag(ride.id!, newTag);
+                        if (ride.id!.startsWith('ride_')) {
+                          await context.read<RecordViaPhoneCubit>().updateOfflineRideTag(ride.id!, newTag);
+                        } else {
+                          await context.read<RecordViaPhoneCubit>().updateOnlineRideTag(ride.id!, newTag);
+                        }
+                        if (mounted) _refreshPastRides();
                       } else {
                         _rideTags[index] = newTag;
+                        if (mounted) setState(() {});
                       }
-                      if (mounted) setState(() {});
                     }
                     if (mounted) Navigator.pop(ctx);
                   },
@@ -637,6 +653,119 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
               ],
             );
           },
+        );
+      },
+    );
+  }
+
+  void _showDeleteRideConfirmDialog(PastRide ride) {
+    final l10n = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
+    showDialog(
+      context: context,
+      builder: (ctx) {
+        return AlertDialog(
+          backgroundColor: theme.cardColor,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(24),
+          ),
+          title: Row(
+            children: [
+              const Icon(
+                Icons.delete_outline,
+                color: Colors.redAccent,
+                size: 28,
+              ),
+              const SizedBox(width: 12),
+              Text(
+                l10n.deleteRideTitle,
+                style: TextStyle(
+                  color: isDark ? Colors.white : Colors.black87,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20,
+                ),
+              ),
+            ],
+          ),
+          content: Text(
+            l10n.deleteRideConfirmMessage,
+            style: TextStyle(
+              color: isDark ? Colors.white70 : Colors.black54,
+              fontSize: 16,
+            ),
+          ),
+          actionsPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx),
+              style: TextButton.styleFrom(
+                foregroundColor: isDark ? Colors.white70 : Colors.black54,
+              ),
+              child: Text(
+                l10n.cancel,
+                style: const TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                Navigator.pop(ctx);
+                if (ride.id != null) {
+                  if (ride.id!.startsWith('ride_')) {
+                    await context.read<RecordViaPhoneCubit>().deleteOfflineRide(ride.id!);
+                    _refreshPastRides();
+                    if (mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(l10n.rideDeletedSuccess),
+                          duration: const Duration(seconds: 2),
+                        ),
+                      );
+                    }
+                  } else {
+                    await context.read<RecordViaPhoneCubit>().deleteOnlineRide(ride.id!);
+                    _refreshPastRides();
+                    if (mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(l10n.rideDeletedSuccess),
+                          duration: const Duration(seconds: 2),
+                        ),
+                      );
+                    }
+                  }
+                } else {
+                  if (mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(l10n.rideDeleteFailedInvalidId),
+                        duration: const Duration(seconds: 2),
+                      ),
+                    );
+                  }
+                }
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.redAccent,
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+              ),
+              child: Text(
+                l10n.delete,
+                style: const TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ],
         );
       },
     );
@@ -761,7 +890,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
       Polyline(
         polylineId: PolylineId("preview_polyline_$index"),
         points: ride.points,
-        color: Colors.amber,
+        color: Colors.yellow,
         width: 4,
         jointType: JointType.round,
         startCap: Cap.roundCap,
@@ -845,10 +974,25 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
                       }
                     });
                     _saveFavoriteRides();
+                    if (ride.id != null && !ride.id!.startsWith('ride_')) {
+                      context.read<RecordViaPhoneCubit>().rateOnlineRide(ride.id!);
+                    }
                   },
+                  child: Padding(
+                    padding: const EdgeInsets.all(4),
+                    child: Icon(
+                      isFav ? Icons.favorite : Icons.favorite_border,
+                      color: isFav ? Colors.red : (isDark ? Colors.white.withOpacity(0.6) : Colors.black54),
+                      size: 24,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 16),
+                GestureDetector(
+                  onTap: () => _showDeleteRideConfirmDialog(ride),
                   child: Icon(
-                    isFav ? Icons.favorite : Icons.favorite_border,
-                    color: isFav ? Colors.red : (isDark ? Colors.white.withOpacity(0.6) : Colors.black54),
+                    Icons.delete_outline,
+                    color: Colors.redAccent,
                     size: 20,
                   ),
                 ),
@@ -931,39 +1075,49 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
                   Positioned(
                     bottom: 12,
                     right: 12,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                      decoration: BoxDecoration(
-                        color: isDark ? const Color(0xFF131A26) : Colors.white,
-                        borderRadius: BorderRadius.circular(24),
-                        border: Border.all(color: Colors.amber, width: 1.5),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.3),
-                            blurRadius: 4,
+                    child: GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => RideDetailScreen(ride: ride),
                           ),
-                        ],
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            "${index + 1} ",
-                            style: const TextStyle(
-                              color: Colors.amber,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 14,
+                        );
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                        decoration: BoxDecoration(
+                          color: isDark ? const Color(0xFF131A26) : Colors.white,
+                          borderRadius: BorderRadius.circular(24),
+                          border: Border.all(color: Colors.amber, width: 1.5),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.3),
+                              blurRadius: 4,
                             ),
-                          ),
-                          const Text(
-                            "⇆",
-                            style: TextStyle(
-                              color: Colors.amber,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 14,
+                          ],
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              "${index + 1} ",
+                              style: const TextStyle(
+                                color: Colors.amber,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 14,
+                              ),
                             ),
-                          ),
-                        ],
+                            const Text(
+                              "⇆",
+                              style: TextStyle(
+                                color: Colors.amber,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 14,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
@@ -1305,7 +1459,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
                     Polyline(
                       polylineId: const PolylineId("live_ride"),
                       points: state.currentRidePoints,
-                      color: Theme.of(context).colorScheme.primary,
+                      color: Colors.yellow,
                       width: 5,
                       jointType: JointType.round,
                       startCap: Cap.roundCap,
@@ -1511,7 +1665,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
     String lastUpdatedText =
         "${AppLocalizations.of(context)!.lastUpdated} ${AppLocalizations.of(context)!.justNow}";
     if (_recordingStartDateTime != null) {
-      final formattedTime = DateFormat('h:mm a, dd MMM yyyy').format(_recordingStartDateTime!);
+      final formattedTime = DateFormat('dd MMM yyyy, h:mm a').format(_recordingStartDateTime!);
       lastUpdatedText =
           "${AppLocalizations.of(context)!.lastUpdated} $formattedTime";
     } else {
@@ -1520,7 +1674,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
         final timeFormat = DateFormat('h:mm a');
         final formattedTime = timeFormat.format(currentLoc.timestamp);
         lastUpdatedText =
-            "${AppLocalizations.of(context)!.lastUpdated} $formattedTime, ${AppLocalizations.of(context)!.today}";
+            "${AppLocalizations.of(context)!.lastUpdated} ${AppLocalizations.of(context)!.today}, $formattedTime";
       }
     }
 
@@ -1839,12 +1993,11 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
     );
   }
 
-  // --- History View ---
   Widget _buildHistoryView() {
     return BlocBuilder<RecordViaPhoneCubit, RecordViaPhoneState>(
       builder: (context, state) {
         return FutureBuilder<List<Map<String, dynamic>>>(
-          future: context.read<RecordViaPhoneCubit>().getOfflineRides(),
+          future: _pastRidesFuture,
           builder: (context, snapshot) {
             final offlineRidesRaw = snapshot.data ?? [];
             final List<PastRide> offlineRides = offlineRidesRaw.map((r) {
@@ -1890,11 +2043,42 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
               final bDate = b.rawDate ?? DateTime.tryParse(b.dateStr) ?? DateTime(0);
               return bDate.compareTo(aDate);
             });
-            
+
+            // Apply date range filter (skip if "All")
+            if (_activeDateFilter != "All") {
+              final startOfDay = DateTime(
+                _statsStartDate.year,
+                _statsStartDate.month,
+                _statsStartDate.day,
+              );
+              final endOfDay = DateTime(
+                _statsEndDate.year,
+                _statsEndDate.month,
+                _statsEndDate.day,
+                23, 59, 59, 999,
+              );
+              rides = rides.where((r) {
+                final rideDate = r.rawDate ?? DateTime.tryParse(r.dateStr);
+                if (rideDate == null) return false;
+                return rideDate.isAfter(
+                      startOfDay.subtract(const Duration(milliseconds: 1)),
+                    ) &&
+                    rideDate.isBefore(
+                      endOfDay.add(const Duration(milliseconds: 1)),
+                    );
+              }).toList();
+            }
+
+            // Apply tag filter
             if (_selectedFilterTag != null) {
-              rides = rides.where((r) => r.tag.toLowerCase() == _selectedFilterTag!.toLowerCase()).toList();
+              rides = rides
+                  .where((r) =>
+                      r.tag.toLowerCase() ==
+                      _selectedFilterTag!.toLowerCase())
+                  .toList();
             }
             
+
             return Column(
               children: [
                 Padding(
@@ -1948,7 +2132,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
                             color: Theme.of(context).cardColor,
                             borderRadius: BorderRadius.circular(10),
                             border: Border.all(
-                              color: _activeDateFilter != "Today"
+                              color: _activeDateFilter != "All"
                                   ? Theme.of(context).colorScheme.primary
                                   : Theme.of(context).dividerColor,
                               width: 1.5,
@@ -1960,14 +2144,15 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
                               Icon(
                                 Icons.calendar_today,
                                 size: 14,
-                                color: _activeDateFilter != "Today"
+                                color: _activeDateFilter != "All"
                                     ? Theme.of(context).colorScheme.primary
                                     : Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
                               ),
                               const SizedBox(width: 8),
                               Text(
                                 'Date: $_activeDateFilter',
-                                style: TextStyle(color: _activeDateFilter != "Today"
+                                style: TextStyle(
+                                  color: _activeDateFilter != "All"
                                       ? Theme.of(context).colorScheme.primary
                                       : Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
                                   fontSize: 13,
@@ -1983,21 +2168,43 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
                 ),
                 
                 Expanded(
-                  child: rides.isEmpty
-                      ? Center(
-                          child: Text(
-                            "No past rides found",
-                            style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+                  child: RefreshIndicator(
+                    onRefresh: () async {
+                      _refreshPastRides();
+                      if (_pastRidesFuture != null) {
+                        await _pastRidesFuture;
+                      }
+                    },
+                    child: rides.isEmpty
+                        ? LayoutBuilder(
+                            builder: (context, constraints) => SingleChildScrollView(
+                              physics: const AlwaysScrollableScrollPhysics(),
+                              child: ConstrainedBox(
+                                constraints: BoxConstraints(
+                                  minHeight: constraints.maxHeight,
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    _activeDateFilter == "All"
+                                        ? "No past rides found"
+                                        : "No rides found for '$_activeDateFilter'",
+                                    style: TextStyle(
+                                      color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+                                    ),
+                                  ),
+                                ),
+                              ),
                             ),
+                          )
+                        : ListView.builder(
+                            physics: const AlwaysScrollableScrollPhysics(),
+                            itemCount: rides.length,
+                            padding: const EdgeInsets.only(bottom: 24),
+                            itemBuilder: (context, index) {
+                              return _buildRideCard(rides[index], index);
+                            },
                           ),
-                        )
-                      : ListView.builder(
-                          itemCount: rides.length,
-                          padding: const EdgeInsets.only(bottom: 24),
-                          itemBuilder: (context, index) {
-                            return _buildRideCard(rides[index], index);
-                          },
-                        ),
+                  ),
                 ),
               ],
             );
@@ -2098,7 +2305,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
     return BlocBuilder<RecordViaPhoneCubit, RecordViaPhoneState>(
       builder: (context, state) {
         return FutureBuilder<List<Map<String, dynamic>>>(
-          future: context.read<RecordViaPhoneCubit>().getOfflineRides(),
+          future: _pastRidesFuture,
           builder: (context, snapshot) {
             final offlineRidesRaw = snapshot.data ?? [];
             final List<PastRide> offlineRides = offlineRidesRaw.map((r) {
@@ -3303,32 +3510,45 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
                                 );
                               }
 
+                              _refreshPastRides();
                               cubit.stopRecording();
                               return;
                             }
 
-                            // ── ONLINE MODE — open playback then stop ──
-                            Navigator.push(
-                              screenContext,
-                              MaterialPageRoute(
-                                builder: (_) => RidePlaybackScreen(
-                                  points: points,
-                                  totalDistance: distance,
-                                  totalDuration: duration,
-                                  topSpeed: topSpd > 0
-                                      ? topSpd
-                                      : (duration.inSeconds > 0
-                                            ? (distance /
-                                                  (duration.inSeconds / 3600))
-                                            : 0.0),
-                                  avgSpeed: avgSpd,
-                                  startTime: DateTime.now().subtract(
-                                    duration,
-                                  ),
-                                ),
-                              ),
+                            // ── ONLINE MODE — save to API, open playback, then stop ──
+                            final onlineSuccess = await cubit.saveRideOnline(
+                              tag: selectedLabel,
+                              points: points,
+                              distanceKm: distance,
+                              duration: duration,
+                              avgSpeed: avgSpd,
+                              topSpeed: topSpd,
                             );
 
+                            if (onlineSuccess && screenContext.mounted) {
+                              Navigator.push(
+                                screenContext,
+                                MaterialPageRoute(
+                                  builder: (_) => RidePlaybackScreen(
+                                    points: points,
+                                    totalDistance: distance,
+                                    totalDuration: duration,
+                                    topSpeed: topSpd > 0
+                                        ? topSpd
+                                        : (duration.inSeconds > 0
+                                              ? (distance /
+                                                    (duration.inSeconds / 3600))
+                                              : 0.0),
+                                    avgSpeed: avgSpd,
+                                    startTime: DateTime.now().subtract(
+                                      duration,
+                                    ),
+                                  ),
+                                ),
+                              );
+                            }
+
+                            _refreshPastRides();
                             cubit.stopRecording();
                           },
                           child: Text(
@@ -3422,16 +3642,18 @@ class _DateRangePickerBottomSheetState extends State<_DateRangePickerBottomSheet
     super.initState();
     _activeFilter = widget.initialActiveFilter;
     
-    int initialIndex = 0; // "Day" tab
-    if (_activeFilter == "This week" || _activeFilter == "Last week" || _activeFilter == "Last 7 days") {
-      initialIndex = 1; // "Week" tab
+    int initialIndex = 0; // "All" tab
+    if (_activeFilter == "Today" || _activeFilter == "Yesterday" || _activeFilter.contains("/")) {
+      initialIndex = 1; // "Day" tab
+    } else if (_activeFilter == "This week" || _activeFilter == "Last week" || _activeFilter == "Last 7 days") {
+      initialIndex = 2; // "Week" tab
     } else if (_activeFilter == "This month" || _activeFilter == "Last month" || _activeFilter == "Last 30 days") {
-      initialIndex = 2; // "Month" tab
+      initialIndex = 3; // "Month" tab
     } else if (_activeFilter.contains(" - ") || _activeFilter == "Custom") {
-      initialIndex = 3; // "Other" tab
+      initialIndex = 4; // "Other" tab
     }
     
-    _tabController = TabController(length: 4, vsync: this, initialIndex: initialIndex);
+    _tabController = TabController(length: 5, vsync: this, initialIndex: initialIndex);
   }
 
   @override
@@ -3503,6 +3725,7 @@ class _DateRangePickerBottomSheetState extends State<_DateRangePickerBottomSheet
               indicatorSize: TabBarIndicatorSize.tab,
               dividerColor: Colors.transparent,
               tabs: const [
+                Tab(text: "All"),
                 Tab(text: "Day"),
                 Tab(text: "Week"),
                 Tab(text: "Month"),
@@ -3515,6 +3738,23 @@ class _DateRangePickerBottomSheetState extends State<_DateRangePickerBottomSheet
               child: TabBarView(
                 controller: _tabController,
                 children: [
+                  // All Tab
+                  ListView(
+                    shrinkWrap: true,
+                    physics: const ClampingScrollPhysics(),
+                    children: [
+                      _buildOption(
+                        title: "All Rides",
+                        subtitle: "Show all rides regardless of date",
+                        isSelected: _activeFilter == "All",
+                        onTap: () {
+                          final bigBang = DateTime(2020);
+                          final farFuture = DateTime(2100, 12, 31, 23, 59, 59);
+                          _selectFilter("All", bigBang, farFuture);
+                        },
+                      ),
+                    ],
+                  ),
                   // Day Tab
                   ListView(
                     shrinkWrap: true,

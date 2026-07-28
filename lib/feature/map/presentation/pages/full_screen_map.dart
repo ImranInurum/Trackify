@@ -138,6 +138,42 @@ class _FullScreenMapState extends State<FullScreenMap>
 
     if (_useDemoSimulation) {
       _startDemoSimulation();
+    } else {
+      // Initialize animated marker state with current best position to prevent initial jump
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        final initialPos = _getBestPosition();
+        if (initialPos != null) {
+          final appState = context.read<AppCubit>().state;
+          final currData = appState.devices.firstWhere(
+            (d) =>
+                d['imei'] == _currentVehicle?.imei ||
+                d['_id'] == _currentVehicle?.id ||
+                d['id'] == _currentVehicle?.id,
+            orElse: () => <String, dynamic>{},
+          );
+          double bearing =
+              double.tryParse(
+                (currData['course'] ??
+                        currData['bearing'] ??
+                        currData['angle'] ??
+                        currData['dir'] ??
+                        '0')
+                    .toString(),
+              ) ??
+              0.0;
+          
+          setState(() {
+            _animatedMarkerPos = initialPos;
+            _animStartMarkerTarget = initialPos;
+            _animEndMarkerTarget = initialPos;
+            _animatedMarkerBearing = bearing;
+            _animStartMarkerBearing = bearing;
+            _animEndMarkerBearing = bearing;
+            _lastDataReceivedMs = DateTime.now().millisecondsSinceEpoch;
+          });
+        }
+      });
     }
 
     _markerAnimController!.addListener(() {
@@ -1375,13 +1411,47 @@ class _FullScreenMapState extends State<FullScreenMap>
               bearing = rawCourse;
             }
           }
-          _animStartMarkerTarget = _animatedMarkerPos ?? target;
-          _animStartMarkerBearing = _animatedMarkerPos != null
-              ? _animatedMarkerBearing
-              : bearing;
-          _animEndMarkerTarget = target;
-          _animEndMarkerBearing = bearing;
-          _lastDataReceivedMs = DateTime.now().millisecondsSinceEpoch;
+          int nowMs = DateTime.now().millisecondsSinceEpoch;
+          double distToNew = 0;
+          if (_animatedMarkerPos != null) {
+            distToNew = Geolocator.distanceBetween(
+              _animatedMarkerPos!.latitude,
+              _animatedMarkerPos!.longitude,
+              target.latitude,
+              target.longitude,
+            );
+          }
+
+          if (_animatedMarkerPos == null || distToNew > 500) {
+            _animatedMarkerPos = target;
+            _animatedMarkerBearing = bearing;
+            _animStartMarkerTarget = target;
+            _animStartMarkerBearing = bearing;
+            _animEndMarkerTarget = target;
+            _animEndMarkerBearing = bearing;
+            _lastDataReceivedMs = nowMs;
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              if (mounted) _mapRebuildNotifier.value++;
+            });
+          } else {
+            _animStartMarkerTarget = _animatedMarkerPos;
+            _animStartMarkerBearing = _animatedMarkerBearing;
+            _animEndMarkerTarget = target;
+
+            _animStartMarkerBearing = _normalizeBearing(
+              _animStartMarkerBearing,
+            );
+            double endB = _normalizeBearing(bearing);
+            double diff = endB - _animStartMarkerBearing;
+            if (diff > 180) {
+              diff -= 360;
+            } else if (diff < -180) {
+              diff += 360;
+            }
+            _animEndMarkerBearing = _animStartMarkerBearing + diff;
+
+            _lastDataReceivedMs = nowMs;
+          }
 
           if (_uiCubit.state.isAutoFollowing &&
               _mapController != null &&
@@ -1982,7 +2052,7 @@ class _FullScreenMapState extends State<FullScreenMap>
         return BlocProvider(
           create: (context) =>
               VehicleControlCubit(VehicleControlRepositoryImpl())
-                ..loadVehicleDetails(_currentVehicle!.imei),
+                ..loadVehicleDetails(_currentVehicle!.id, _currentVehicle!.imei),
           child: Builder(
             builder: (context) {
               return Column(
@@ -2966,26 +3036,94 @@ class _FullScreenMapState extends State<FullScreenMap>
             ? (fuelPercentage / 20).round().clamp(0, 5)
             : 3; // Default to 3 bars if not available
 
-        // Parse battery/voltage details
+        dynamic attrs = liveDevice['attributes'];
+        if (attrs is String) {
+          try {
+            attrs = jsonDecode(attrs);
+          } catch (_) {}
+        }
+
         final batteryVal =
             liveDevice['battery'] ??
             liveDevice['batteryLevel'] ??
             liveDevice['battery_level'] ??
-            liveDevice['bat'];
+            liveDevice['bat'] ??
+            liveDevice['voltageLevel'] ??
+            liveDevice['voltage_level'] ??
+            (attrs is Map
+                ? (attrs['battery'] ??
+                      attrs['batteryLevel'] ??
+                      attrs['voltageLevel'] ??
+                      attrs['battery_level'] ??
+                      attrs['voltage_level'])
+                : null);
 
         final voltageVal =
             liveDevice['voltage'] ??
             liveDevice['volts'] ??
             liveDevice['battery_voltage'] ??
             liveDevice['v_bat'] ??
-            liveDevice['power'];
+            liveDevice['power'] ??
+            (attrs is Map
+                ? (attrs['voltage'] ??
+                      attrs['battery_voltage'] ??
+                      attrs['v_bat'])
+                : null);
 
         String batteryText = "--";
         Color batteryColor = Colors.green;
         IconData batteryIcon = Icons.battery_charging_full;
 
-        if (batteryVal != null || voltageVal != null) {
-          if (batteryVal != null) {
+        final rawVal = batteryVal ?? voltageVal;
+        if (rawVal != null) {
+          final rawStr = rawVal.toString().trim();
+          int? intLevel;
+
+          if (rawStr.toLowerCase().startsWith('0x')) {
+            intLevel = int.tryParse(rawStr.substring(2), radix: 16);
+          } else if (RegExp(r'^\d+$').hasMatch(rawStr)) {
+            intLevel = int.tryParse(rawStr);
+          }
+
+          if (intLevel != null && intLevel >= 0 && intLevel <= 6) {
+            switch (intLevel) {
+              case 0:
+                batteryText = "No Power";
+                batteryColor = Colors.red;
+                batteryIcon = Icons.battery_0_bar;
+                break;
+              case 1:
+                batteryText = "Extremely Low";
+                batteryColor = Colors.red;
+                batteryIcon = Icons.battery_1_bar;
+                break;
+              case 2:
+                batteryText = "Very Low";
+                batteryColor = Colors.redAccent;
+                batteryIcon = Icons.battery_2_bar;
+                break;
+              case 3:
+                batteryText = "Low";
+                batteryColor = Colors.orange;
+                batteryIcon = Icons.battery_3_bar;
+                break;
+              case 4:
+                batteryText = "Medium";
+                batteryColor = Colors.amber.shade700;
+                batteryIcon = Icons.battery_4_bar;
+                break;
+              case 5:
+                batteryText = "High";
+                batteryColor = Colors.green;
+                batteryIcon = Icons.battery_5_bar;
+                break;
+              case 6:
+                batteryText = "Very High";
+                batteryColor = Colors.green;
+                batteryIcon = Icons.battery_full;
+                break;
+            }
+          } else if (batteryVal != null) {
             final batDouble = double.tryParse(
               batteryVal.toString().replaceAll(RegExp(r'[^0-9.]'), ''),
             );

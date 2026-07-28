@@ -47,7 +47,7 @@ class _AddOverspeedAlertScreenState extends State<AddOverspeedAlertScreen> {
       if (cubitState is OverspeedAlertLoaded) {
         _allVehicles = cubitState.userVehicles;
         final vehicle = cubitState.userVehicles.cast<Vehicle?>().firstWhere(
-              (v) => v?.imei == alert.imei,
+              (v) => (alert.vehicleId != null && v?.id == alert.vehicleId) || (alert.imei != null && v?.imei == alert.imei),
               orElse: () => null,
             );
         if (vehicle != null) {
@@ -343,10 +343,20 @@ class _AddOverspeedAlertScreenState extends State<AddOverspeedAlertScreen> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                    '${_selectedVehicles.length} Selected',
-                    style: theme.textTheme.bodyMedium,
+                  Expanded(
+                    child: Text(
+                      _selectedVehicles.isEmpty
+                          ? '0 Selected'
+                          : _selectedVehicles.length == 1
+                              ? '${_selectedVehicles.first.vehicleMaker ?? ''} ${_selectedVehicles.first.vehicleModel ?? ''}'.trim().isNotEmpty 
+                                  ? '${_selectedVehicles.first.vehicleMaker ?? ''} ${_selectedVehicles.first.vehicleModel ?? ''}'.trim()
+                                  : _selectedVehicles.first.vehicleNumber ?? '1 Selected'
+                              : '${_selectedVehicles.length} Selected',
+                      style: theme.textTheme.bodyMedium,
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   ),
+                  const SizedBox(width: 8),
                   Icon(
                     Icons.open_in_new,
                     color: theme.colorScheme.onSurface.withOpacity(0.6),

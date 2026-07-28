@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:image_picker/image_picker.dart';
@@ -221,12 +222,14 @@ class _AddServiceLogScreenState extends State<AddServiceLogScreen> {
                           isRequired: true,
                           keyboardType: TextInputType.number,
                           prefixText: "₹ ",
+                          textInputAction: TextInputAction.next,
                         ),
                         const SizedBox(height: 16),
 
                         _buildTextField(
                           controller: _centerNameController,
                           label: l10n.serviceCenterName,
+                          textInputAction: TextInputAction.next,
                         ),
                         const SizedBox(height: 16),
 
@@ -234,6 +237,12 @@ class _AddServiceLogScreenState extends State<AddServiceLogScreen> {
                           controller: _contactController,
                           label: l10n.serviceCenterContact,
                           keyboardType: TextInputType.phone,
+                          textInputAction: TextInputAction.next,
+                          maxLength: 10,
+                          inputFormatters: [
+                            FilteringTextInputFormatter.digitsOnly,
+                            LengthLimitingTextInputFormatter(10),
+                          ],
                           validator: (value) {
                             if (value != null && value.trim().isNotEmpty) {
                               final cleanValue = value.trim();
@@ -253,6 +262,7 @@ class _AddServiceLogScreenState extends State<AddServiceLogScreen> {
                           controller: _noteController,
                           label: l10n.additionalNote,
                           maxLines: 3,
+                          textInputAction: TextInputAction.done,
                         ),
                         const SizedBox(height: 40),
 
@@ -334,7 +344,10 @@ class _AddServiceLogScreenState extends State<AddServiceLogScreen> {
     IconData? suffixIcon,
     String? prefixText,
     TextInputType? keyboardType,
+    TextInputAction? textInputAction,
     int maxLines = 1,
+    int? maxLength,
+    List<TextInputFormatter>? inputFormatters,
     String? Function(String?)? validator,
   }) {
     final theme = Theme.of(context);
@@ -347,9 +360,13 @@ class _AddServiceLogScreenState extends State<AddServiceLogScreen> {
           readOnly: readOnly,
           onTap: onTap,
           keyboardType: keyboardType,
+          textInputAction: textInputAction,
           maxLines: maxLines,
+          maxLength: maxLength,
+          inputFormatters: inputFormatters,
           style: theme.textTheme.bodyMedium,
           decoration: InputDecoration(
+            counterText: "",
             labelText: "$label${isRequired ? "*" : ""}",
             labelStyle: theme.textTheme.bodyMedium?.copyWith(
               color: theme.colorScheme.onSurface.withOpacity(0.5),

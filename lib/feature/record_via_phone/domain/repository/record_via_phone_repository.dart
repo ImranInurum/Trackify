@@ -3,4 +3,9 @@ import '../../../record_via_phone/data/model/device_data_by_date_response.dart';
 
 abstract interface class RecordViaPhoneRepository {
   ResultFuture<DeviceDataByDateResponse> getDeviceDataByDate(Map<String, dynamic> body);
+  ResultFuture<void> saveRideModeOnline(Map<String, dynamic> body);
+  ResultFuture<dynamic> getOnlinePastRides(String userId);
+  ResultFuture<void> updateOnlinePastRideTag(String rideId, String tag);
+  ResultFuture<void> deleteOnlinePastRide(String rideId);
+  ResultFuture<void> rateOnlinePastRide(String rideId, Map<String, dynamic> body);
 }

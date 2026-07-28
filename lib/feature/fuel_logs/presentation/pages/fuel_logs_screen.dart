@@ -82,21 +82,21 @@ class _FuelLogsScreenState extends State<FuelLogsScreen>
         BlocProvider(
           create: (context) {
             final serviceState = context.read<ServiceLogsCubit>().state;
-            final imei = serviceState is ServiceLogsLoaded 
-                ? (serviceState.selectedVehicle?.imei ?? '') 
+            final vehicleId = serviceState is ServiceLogsLoaded 
+                ? (serviceState.selectedVehicle?.id ?? '') 
                 : '';
-            return FuelLogsCubit()..loadFuelLogs(imei);
+            return FuelLogsCubit()..loadFuelLogs(vehicleId);
           },
         ),
         BlocProvider(
           create: (context) {
-            final serviceState = context.read<ServiceLogsCubit>().state;
-            final imei = serviceState is ServiceLogsLoaded 
-                ? (serviceState.selectedVehicle?.imei ?? '') 
+            final serviceState2 = context.read<ServiceLogsCubit>().state;
+            final vehicleId2 = serviceState2 is ServiceLogsLoaded 
+                ? (serviceState2.selectedVehicle?.id ?? '') 
                 : '';
             final cubit = RefuelHistoryCubit(RefuelDataSource());
-            if (imei.isNotEmpty) {
-              cubit.loadRefuelHistory(imei);
+            if (vehicleId2.isNotEmpty) {
+              cubit.loadRefuelHistory(vehicleId2);
             }
             return cubit;
           },
@@ -150,8 +150,8 @@ class _FuelLogsScreenState extends State<FuelLogsScreen>
                   onBack: () => Navigator.pop(context),
                   onVehicleSelected: (vehicle) {
                     context.read<ServiceLogsCubit>().selectVehicle(vehicle.id!);
-                    context.read<FuelLogsCubit>().loadFuelLogs(vehicle.imei ?? '');
-                    context.read<RefuelHistoryCubit>().loadRefuelHistory(vehicle.imei ?? '');
+                    context.read<FuelLogsCubit>().loadFuelLogs(vehicle.id ?? '');
+                    context.read<RefuelHistoryCubit>().loadRefuelHistory(vehicle.id ?? '');
                   },
                 ),
                 Padding(
@@ -197,7 +197,7 @@ class _FuelLogsScreenState extends State<FuelLogsScreen>
                     controller: _tabController,
                     children: [
                       const DashboardTabView(),
-                      RefuelHistoryTabView(imei: currentState.selectedVehicle?.imei ?? ''),
+                      RefuelHistoryTabView(vehicleId: currentState.selectedVehicle?.id ?? ''),
                       const FuelStationsTabView(),
                     ],
                   ),

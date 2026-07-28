@@ -2768,7 +2768,7 @@ class AppLocalizationsMr extends AppLocalizations {
   String get months => 'महिने';
 
   @override
-  String get deleteAlertTitle => 'अलर्ट हटवा';
+  String get deleteAlertTitle => 'हटवा';
 
   @override
   String get deleteAlertDesc =>
@@ -2916,7 +2916,7 @@ class AppLocalizationsMr extends AppLocalizations {
 
   @override
   String get goToSettingsAndSelectAllowAllTheTime =>
-      'Go to settings and select “Allow all the time”';
+      'Go to settings and select \"Allow all the time\"';
 
   @override
   String get locationPermissions => 'Location Permissions';
@@ -3380,4 +3380,87 @@ class AppLocalizationsMr extends AppLocalizations {
 
   @override
   String get profile100PercentComplete => 'तुमची प्रोफाइल १००% पूर्ण आहे!';
+
+  @override
+  String get locationPermissionWarning =>
+      'Sharing your phone\'s location works correctly only if it can access your location \"all the time\"';
+
+  @override
+  String get trackifyApp => 'Trackify';
+
+  @override
+  String get locationText => 'Location';
+
+  @override
+  String get tapIntoLocation => 'Tap into Location';
+
+  @override
+  String get goToSettingsBtn => 'Go to Settings';
+
+  @override
+  String get shareLiveLocationFor => 'Share your live location for';
+
+  @override
+  String get twoHours => '2 hours';
+
+  @override
+  String get fourHours => '4 hours';
+
+  @override
+  String get eightHours => '8 hours';
+
+  @override
+  String get untilStopped => 'Until Stopped';
+
+  @override
+  String get shareLocationLink => 'Share location link';
+
+  @override
+  String get documentNameText => 'कागदपत्राचे नाव';
+
+  @override
+  String get expiryDateText => 'कालबाह्य तारीख';
+
+  @override
+  String get documentImagesText => 'कागदपत्राची छायाचित्रे';
+
+  @override
+  String get noImagesAvailableText => 'कोणतीही चित्रे उपलब्ध नाहीत';
+
+  @override
+  String get pdfDocumentText => 'पीडीएफ कागदपत्र';
+
+  @override
+  String get deleteAlertDescription =>
+      'तुम्हाला खात्री आहे की तुम्ही हे कागदपत्र हटवू इच्छिता?';
+
+  @override
+  String get deleteRideTitle => 'राईड हटवा';
+
+  @override
+  String get deleteRideConfirmMessage =>
+      'तुम्हाला खात्री आहे की तुम्ही हा राईड रेकॉर्ड हटवू इच्छिता?';
+
+  @override
+  String get rideDeletedSuccess => 'राईड यशस्वीरीत्या हटवली गेली';
+
+  @override
+  String get onlineRideDeleteNotSupported =>
+      'ऑनलाइन राईड ऑफलाईन मोडमध्ये हटवता येणार नाही';
+
+  @override
+  String get rideDeleteFailedInvalidId => 'राईड हटवणे अपयशी: अवैध आयडी';
+
+  @override
+  String get twoHoursLink => '2 hours link';
+
+  @override
+  String expiresInTime(String time) {
+    return 'Expires in $time';
+  }
+
+  @override
+  String stopSharingConfirmation(String name) {
+    return 'Are you sure you want to stop sharing the location of $name?';
+  }
 }

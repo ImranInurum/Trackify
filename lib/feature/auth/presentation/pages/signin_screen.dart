@@ -72,6 +72,7 @@ class _SignInScreenState extends State<SignInScreen> {
   }
 
   void _onLoginPressed(BuildContext context) {
+    FocusManager.instance.primaryFocus?.unfocus();
     if (_formKey.currentState?.validate() ?? false) {
       if (_rememberMe) {
         AppPreference.instance.setBool(

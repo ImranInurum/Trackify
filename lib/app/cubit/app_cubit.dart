@@ -296,11 +296,22 @@ class AppCubit extends Cubit<AppState> with WidgetsBindingObserver {
 
     // 4. Clear Hive Cache
     try {
-      final box = Hive.box('map_cache');
-      await box.clear();
-      debugPrint("AppCubit: [LOGOUT] Hive box 'map_cache' cleared successfully.");
+      if (Hive.isBoxOpen('map_cache')) {
+        await Hive.box('map_cache').clear();
+      } else {
+        final mapBox = await Hive.openBox('map_cache');
+        await mapBox.clear();
+      }
+      
+      if (Hive.isBoxOpen('offline_saved_rides')) {
+        await Hive.box('offline_saved_rides').clear();
+      } else {
+        final offlineBox = await Hive.openBox('offline_saved_rides');
+        await offlineBox.clear();
+      }
+      debugPrint("AppCubit: [LOGOUT] Hive boxes cleared successfully.");
     } catch (e) {
-      debugPrint("AppCubit: [LOGOUT] Error clearing Hive box 'map_cache': $e");
+      debugPrint("AppCubit: [LOGOUT] Error clearing Hive boxes: $e");
     }
   }
 

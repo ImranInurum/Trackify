@@ -944,7 +944,7 @@ class _MapCard extends StatelessWidget {
                   points: allPoints,
                   startLabel: firstRide.startLocation,
                   endLabel: lastRide.endLocation,
-                  color: goldColor,
+                  color: Colors.yellow,
                   rideId: 'trip_${firstRide.id}_${lastRide.id}',
                 ),
                 // Unmerge Button
