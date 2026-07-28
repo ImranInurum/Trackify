@@ -287,7 +287,6 @@ class VehicleControlCubit extends Cubit<VehicleControlState> {
 
   Future<void> updateVehicleDetails({
     required String vehicleId,
-    required String vehicleIMEI,
     required String vehicleName,
     required String vehicleNumber,
     required String fuelType,
@@ -315,7 +314,6 @@ class VehicleControlCubit extends Cubit<VehicleControlState> {
       
       await repository.updateVehicleDetails(
         vehicleId: vehicleId,
-        vehicleIMEI: vehicleIMEI,
         vehicleName: vehicleName,
         vehicleNumber: vehicleNumber,
         fuelType: fuelType,
@@ -326,9 +324,9 @@ class VehicleControlCubit extends Cubit<VehicleControlState> {
         modelId: modelId,
       );
       if (currentState is VehicleControlLoaded) {
-        loadVehicleDetails(currentState.vehicle.id, vehicleIMEI);
+        loadVehicleDetails(currentState.vehicle.id, currentState.vehicle.imei);
       } else {
-        loadVehicleDetails(null, vehicleIMEI);
+        loadVehicleDetails(vehicleId, null);
       }
       _refreshGlobalVehicleLists();
     } catch (e) {

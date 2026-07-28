@@ -3455,4 +3455,17 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get rideDeleteFailedInvalidId => 'यात्रा हटाना विफल रहा: अमान्य आईडी';
+
+  @override
+  String get twoHoursLink => '2 hours link';
+
+  @override
+  String expiresInTime(String time) {
+    return 'Expires in $time';
+  }
+
+  @override
+  String stopSharingConfirmation(String name) {
+    return 'Are you sure you want to stop sharing the location of $name?';
+  }
 }

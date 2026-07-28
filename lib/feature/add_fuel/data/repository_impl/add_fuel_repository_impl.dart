@@ -24,7 +24,21 @@ class AddFuelRepositoryImpl implements AddFuelRepository{
         fuelBeforeRefuel: entity.fuelBeforeRefuel
     );
     await dataSource.saveFuel(model);
+  }
 
+  @override
+  Future<void> updateFuel(String refuelId, AddFuelEntity entity) async{
+    final model  = AddFuelModel(
+        vehicle: entity.vehicle,
+        dateTime: entity.dateTime,
+        fuelStation: entity.fuelStation,
+        amount: entity.amount,
+        odometer: entity.odometer,
+        fullTank: entity.fullTank,
+        pricePerLitre: entity.pricePerLitre,
+        fuelBeforeRefuel: entity.fuelBeforeRefuel
+    );
+    await dataSource.updateFuel(refuelId, model);
   }
 
   

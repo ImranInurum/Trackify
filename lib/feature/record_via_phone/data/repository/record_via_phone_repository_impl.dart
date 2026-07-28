@@ -73,4 +73,53 @@ class RecordViaPhoneRepositoryImpl implements RecordViaPhoneRepository {
       return Left(e);
     }
   }
+
+  @override
+  ResultFuture<void> updateOnlinePastRideTag(String rideId, String tag) async {
+    try {
+      final body = {"tag": tag};
+      final res = await _apiServices.getPutApiResponse(
+        ApiURL.updateOnlinePastRideTag(rideId),
+        body,
+      );
+      return res.fold(
+        (error) => Left(error),
+        (data) => const Right(null),
+      );
+    } on AppException catch (e) {
+      return Left(e);
+    }
+  }
+
+  @override
+  ResultFuture<void> deleteOnlinePastRide(String rideId) async {
+    try {
+      final res = await _apiServices.getDeleteApiResponse(
+        ApiURL.deleteOnlinePastRide(rideId),
+        {},
+      );
+      return res.fold(
+        (error) => Left(error),
+        (data) => const Right(null),
+      );
+    } on AppException catch (e) {
+      return Left(e);
+    }
+  }
+
+  @override
+  ResultFuture<void> rateOnlinePastRide(String rideId, Map<String, dynamic> body) async {
+    try {
+      final res = await _apiServices.getPostApiResponse(
+        ApiURL.rateOnlinePastRide(rideId),
+        body,
+      );
+      return res.fold(
+        (error) => Left(error),
+        (data) => const Right(null),
+      );
+    } on AppException catch (e) {
+      return Left(e);
+    }
+  }
 }

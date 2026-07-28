@@ -581,7 +581,6 @@ class _EditVehicleViewState extends State<_EditVehicleView> {
 
                       context.read<VehicleControlCubit>().updateVehicleDetails(
                             vehicleId: widget.vehicle.id,
-                            vehicleIMEI: widget.vehicle.imei,
                             vehicleName: vehicleName,
                             vehicleNumber: numberStr,
                             fuelType: fuelType,

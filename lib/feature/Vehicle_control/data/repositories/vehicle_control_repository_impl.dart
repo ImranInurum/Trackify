@@ -122,10 +122,12 @@ class VehicleControlRepositoryImpl implements VehicleControlRepository {
     }
 
     if (vehicleId.isEmpty) {
-      if (controlData.containsKey('_id')) {
-        vehicleId = controlData['_id']?.toString() ?? '';
-      } else if (controlData.containsKey('vehicleId')) {
+      if (controlData.containsKey('vehicleId') && controlData['vehicleId'] != null) {
         vehicleId = controlData['vehicleId']?.toString() ?? '';
+      } else if (controlData.containsKey('vehicle') && controlData['vehicle'] is Map && controlData['vehicle']['_id'] != null) {
+        vehicleId = controlData['vehicle']['_id']?.toString() ?? '';
+      } else if (controlData.containsKey('_id')) {
+        vehicleId = controlData['_id']?.toString() ?? '';
       }
     }
 
@@ -287,7 +289,6 @@ class VehicleControlRepositoryImpl implements VehicleControlRepository {
   @override
   Future<void> updateVehicleDetails({
     required String vehicleId,
-    required String vehicleIMEI,
     required String vehicleName,
     required String vehicleNumber,
     required String fuelType,
@@ -298,6 +299,7 @@ class VehicleControlRepositoryImpl implements VehicleControlRepository {
     required String modelId,
   }) async {
     final Map<String, dynamic> payload = {
+      'vehicleId': vehicleId,
       'vehicleType': _formatVehicleType(vehicleType),
       'fuelType': _formatFuelType(fuelType),
       'brandId': brandId,
@@ -305,7 +307,7 @@ class VehicleControlRepositoryImpl implements VehicleControlRepository {
       'vehicleNumber': vehicleNumber,
     };
 
-    final targetId = vehicleId.isNotEmpty ? vehicleId : vehicleIMEI;
+    final targetId = vehicleId;
 
     final response = await _apiService.getPutApiResponse(
       ApiURL.updateVehicleDetails(targetId),

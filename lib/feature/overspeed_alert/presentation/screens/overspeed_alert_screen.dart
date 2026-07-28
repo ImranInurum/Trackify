@@ -69,11 +69,30 @@ class _OverSpeedAlertScreenState extends State<OverSpeedAlertScreen> {
                   const Expanded(child: const Center(child: TrackifyLoader()))
                 else if (alerts.isEmpty)
                   Expanded(
-                    child: Center(
-                      child: Text(
-                        l10n.noAlertsCreated,
-                        style: theme.textTheme.bodyLarge?.copyWith(
-                          color: theme.colorScheme.onSurface.withOpacity(0.5),
+                    child: RefreshIndicator(
+                      onRefresh: () async {
+                        if (selectedVehicle != null) {
+                          await context.read<OverspeedAlertCubit>().selectVehicle(selectedVehicle);
+                        } else {
+                          await context.read<OverspeedAlertCubit>().fetchInitialData();
+                        }
+                      },
+                      child: LayoutBuilder(
+                        builder: (context, constraints) => SingleChildScrollView(
+                          physics: const AlwaysScrollableScrollPhysics(),
+                          child: ConstrainedBox(
+                            constraints: BoxConstraints(
+                              minHeight: constraints.maxHeight,
+                            ),
+                            child: Center(
+                              child: Text(
+                                l10n.noAlertsCreated,
+                                style: theme.textTheme.bodyLarge?.copyWith(
+                                  color: theme.colorScheme.onSurface.withOpacity(0.5),
+                                ),
+                              ),
+                            ),
+                          ),
                         ),
                       ),
                     ),
@@ -89,6 +108,7 @@ class _OverSpeedAlertScreenState extends State<OverSpeedAlertScreen> {
                         }
                       },
                       child: ListView.builder(
+                        physics: const AlwaysScrollableScrollPhysics(),
                         padding: const EdgeInsets.only(top: 10, bottom: 80),
                         itemCount: alerts.length,
                         itemBuilder: (context, index) {

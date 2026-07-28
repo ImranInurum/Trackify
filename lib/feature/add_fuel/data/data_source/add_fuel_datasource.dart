@@ -58,4 +58,36 @@ class AddFuelDataSource {
       rethrow;
     }
   }
+
+  Future<void> updateFuel(
+      String refuelId,
+      AddFuelModel model,
+      ) async {
+    print("=========== API HIT (UPDATE) ===========");
+    print("REQUEST BODY :");
+    print(model.toUpdateMap());
+
+    try {
+      final response = await http.put(
+        Uri.parse(ApiURL.updateRefuelLog(refuelId)),
+        headers: {
+          "Content-Type": "application/json",
+          'Authorization': 'Bearer ${ApiURL.authToken}',
+        },
+        body: jsonEncode(
+          model.toUpdateMap(),
+        ),
+      );
+
+      print("STATUS CODE : ${response.statusCode}");
+      print("RESPONSE BODY : ${response.body}");
+
+      if (response.statusCode != 200 && response.statusCode != 201) {
+        throw Exception("Failed To Update Fuel");
+      }
+    } catch (e) {
+      print("API ERROR (UPDATE) : $e");
+      rethrow;
+    }
+  }
 }

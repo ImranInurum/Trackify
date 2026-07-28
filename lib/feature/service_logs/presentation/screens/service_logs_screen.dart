@@ -145,8 +145,18 @@ class _ServiceLogsScreenState extends State<ServiceLogsScreen> {
             },
           ),
           Expanded(
-            child: CustomScrollView(
-              slivers: [
+            child: RefreshIndicator(
+              onRefresh: () async {
+                final vehicleId = state.selectedVehicle?.id;
+                if (vehicleId != null) {
+                  await context.read<ServiceLogsCubit>().fetchServiceLogs(vehicleId: vehicleId);
+                } else {
+                  await context.read<ServiceLogsCubit>().loadVehicles();
+                }
+              },
+              child: CustomScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                slivers: [
                 // Filter Dropdown
                 SliverToBoxAdapter(
                   child: Padding(
@@ -282,6 +292,7 @@ class _ServiceLogsScreenState extends State<ServiceLogsScreen> {
                 // Padding at bottom
                 const SliverToBoxAdapter(child: SizedBox(height: 80)),
               ],
+            ),
             ),
           ),
         ],

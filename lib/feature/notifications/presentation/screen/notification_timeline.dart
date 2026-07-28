@@ -133,21 +133,34 @@ class _NotificationTimelineViewState extends State<NotificationTimelineView> {
             final items = state.notifications;
             
             if (items.isEmpty) {
-              return Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(Icons.notifications_off_outlined, size: 64, color: secondaryTextColor.withOpacity(0.5)),
-                    const SizedBox(height: 16),
-                    Text(
-                      AppLocalizations.of(context)!.noRecordsFound,
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: secondaryTextColor,
-                        fontWeight: FontWeight.w500,
+              return RefreshIndicator(
+                onRefresh: () => context.read<NotificationTimelineCubit>().fetchTimeline(),
+                child: LayoutBuilder(
+                  builder: (context, constraints) => SingleChildScrollView(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    child: ConstrainedBox(
+                      constraints: BoxConstraints(
+                        minHeight: constraints.maxHeight,
+                      ),
+                      child: Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.notifications_off_outlined, size: 64, color: secondaryTextColor.withOpacity(0.5)),
+                            const SizedBox(height: 16),
+                            Text(
+                              AppLocalizations.of(context)!.noRecordsFound,
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: secondaryTextColor,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
-                  ],
+                  ),
                 ),
               );
             }
@@ -157,10 +170,13 @@ class _NotificationTimelineViewState extends State<NotificationTimelineView> {
 
             return Stack(
               children: [
-                ListView.builder(
-                  controller: _scrollController,
-                  padding: EdgeInsets.zero,
-                  itemCount: items.length,
+                RefreshIndicator(
+                  onRefresh: () => context.read<NotificationTimelineCubit>().fetchTimeline(),
+                  child: ListView.builder(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    controller: _scrollController,
+                    padding: EdgeInsets.zero,
+                    itemCount: items.length,
                   itemBuilder: (context, index) {
                     final item = items[index];
                     final date = item.time.split(', ').last;
@@ -186,6 +202,7 @@ class _NotificationTimelineViewState extends State<NotificationTimelineView> {
                       ],
                     );
                   },
+                ),
                 ),
                 // The Sticky Header
                 ValueListenableBuilder<double>(

@@ -3467,4 +3467,17 @@ class AppLocalizationsKn extends AppLocalizations {
   @override
   String get rideDeleteFailedInvalidId =>
       'ರೈಡ್ ಅಳಿಸುವಿಕೆ ವಿಫಲವಾಗಿದೆ: ಅಮಾನ್ಯ ID';
+
+  @override
+  String get twoHoursLink => '2 hours link';
+
+  @override
+  String expiresInTime(String time) {
+    return 'Expires in $time';
+  }
+
+  @override
+  String stopSharingConfirmation(String name) {
+    return 'Are you sure you want to stop sharing the location of $name?';
+  }
 }

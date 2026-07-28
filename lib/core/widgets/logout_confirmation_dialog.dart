@@ -67,6 +67,34 @@ class LogoutConfirmationDialog {
                     height: 1.4,
                   ),
                 ),
+                const SizedBox(height: 16),
+                
+                // Warning Box for Offline Data
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: colorScheme.error.withOpacity(0.08),
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: colorScheme.error.withOpacity(0.3)),
+                  ),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Icon(Icons.warning_amber_rounded, color: colorScheme.error, size: 20),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Text(
+                          "Warning: Logging out will clear all local offline data, including saved offline rides.",
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            color: colorScheme.error,
+                            fontWeight: FontWeight.w600,
+                            height: 1.3,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
                 const SizedBox(height: 28),
 
                 // Buttons Row

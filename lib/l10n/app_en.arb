@@ -1332,5 +1332,22 @@
   "deleteRideConfirmMessage": "Are you sure you want to delete this ride record?",
   "rideDeletedSuccess": "Ride deleted successfully",
   "onlineRideDeleteNotSupported": "Online ride deletion not supported offline",
-  "rideDeleteFailedInvalidId": "Ride deletion failed: Invalid ID"
+  "rideDeleteFailedInvalidId": "Ride deletion failed: Invalid ID",
+  "twoHoursLink": "2 hours link",
+  "expiresInTime": "Expires in {time}",
+  "@expiresInTime": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "stopSharingConfirmation": "Are you sure you want to stop sharing the location of {name}?",
+  "@stopSharingConfirmation": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  }
 }

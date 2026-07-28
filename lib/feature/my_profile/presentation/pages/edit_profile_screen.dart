@@ -9,6 +9,8 @@ import '../../../../l10n/app_localizations.dart';
 import 'package:trackify/feature/my_profile/presentation/cubit/my_profile_cubit.dart';
 import 'package:trackify/feature/my_profile/presentation/cubit/my_profile_state.dart';
 import 'package:trackify/feature/my_profile/data/models/update_profile_request.dart';
+import 'package:trackify/feature/auth/presentation/cubit/auth_cubit.dart';
+import 'package:trackify/feature/auth/presentation/cubit/auth_state.dart';
 import 'package:intl/intl.dart';
 import 'package:country_state_city/country_state_city.dart' as csc;
 import 'package:dropdown_button2/dropdown_button2.dart';
@@ -23,6 +25,7 @@ class EditProfileScreen extends StatefulWidget {
 
 class _EditProfileScreenState extends State<EditProfileScreen> {
   final _formKey = GlobalKey<FormState>();
+  final ScrollController _scrollController = ScrollController();
 
   late final l10n = AppLocalizations.of(context)!;
 
@@ -176,6 +179,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     _middleNameCtrl.dispose();
     _lastNameCtrl.dispose();
     _addressCtrl.dispose();
+    _scrollController.dispose();
     super.dispose();
   }
 
@@ -527,96 +531,178 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   void _showEditEmailDialog() {
     final dialogFormKey = GlobalKey<FormState>();
     final ctrl = TextEditingController(text: _email);
+    final otpCtrl = TextEditingController();
+    bool isOtpSent = false;
 
     showDialog(
       context: context,
-      builder: (dialogCtx) => AlertDialog(
-        backgroundColor: Theme.of(context).cardColor,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        titlePadding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
-        contentPadding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
-        title: Text(
-          l10n.editEmailAddress,
-        ),
-        content: Form(
-          key: dialogFormKey,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: 10),
-              TextFormField(
-                controller: ctrl,
-                keyboardType: TextInputType.emailAddress,
-                autovalidateMode: AutovalidateMode.onUserInteraction,
-                style: const TextStyle(fontSize: 16),
-                decoration: InputDecoration(
-                  labelText: l10n.emailAddress,
-                  labelStyle: TextStyle(
-                    fontSize: 12.5,
-                    color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
-                  ),
-                  floatingLabelBehavior: FloatingLabelBehavior.auto,
-                  isDense: true,
-                  contentPadding: const EdgeInsets.only(bottom: 8),
-                  enabledBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color: Theme.of(context).dividerColor),
-                  ),
-                  focusedBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color: Theme.of(context).colorScheme.primary),
-                  ),
-                  errorBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color: Theme.of(context).colorScheme.error),
-                  ),
-                  focusedErrorBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color: Theme.of(context).colorScheme.error),
-                  ),
-                ),
-                validator: (val) {
-                  if (val == null || val.trim().isEmpty) {
-                    return l10n.required;
-                  }
-                  final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
-                  if (!emailRegex.hasMatch(val.trim())) {
-                    return l10n.invalidEmail;
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 8),
-              Text(
-                l10n.emailNotVerified,
-                style: const TextStyle(color: Colors.red, fontSize: 13),
-              ),
-            ],
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(dialogCtx),
-            child: Text(
-              l10n.cancel,
-              style: TextStyle(
-                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
-              ),
-            ),
-          ),
-          TextButton(
-            onPressed: () {
-              if (dialogFormKey.currentState?.validate() ?? false) {
+      barrierDismissible: false,
+      builder: (dialogCtx) => StatefulBuilder(
+        builder: (context, setDialogState) {
+          return BlocConsumer<AuthCubit, AuthState>(
+            listener: (context, state) {
+              if (state is ForgotPasswordOtpSent) {
+                setDialogState(() {
+                  isOtpSent = true;
+                });
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text(l10n.otpSent)),
+                );
+              } else if (state is ForgotPasswordOtpVerified) {
                 setState(() => _email = ctrl.text.trim());
                 Navigator.pop(dialogCtx);
+                Future.delayed(const Duration(milliseconds: 300), () {
+                  if (_scrollController.hasClients) {
+                    _scrollController.animateTo(
+                      _scrollController.position.maxScrollExtent,
+                      duration: const Duration(milliseconds: 500),
+                      curve: Curves.easeOut,
+                    );
+                  }
+                });
+              } else if (state is AuthFailure) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text(state.error.message ?? "")),
+                );
               }
             },
-            child: Text(
-              l10n.saveAndVerify,
-              style: TextStyle(
-                color: Theme.of(context).colorScheme.primary,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-        ],
+            builder: (context, state) {
+              return AlertDialog(
+                backgroundColor: Theme.of(context).cardColor,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                titlePadding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+                contentPadding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
+                title: Text(l10n.editEmailAddress),
+                content: Form(
+                  key: dialogFormKey,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SizedBox(height: 10),
+                      TextFormField(
+                        controller: ctrl,
+                        enabled: !isOtpSent,
+                        keyboardType: TextInputType.emailAddress,
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
+                        style: const TextStyle(fontSize: 16),
+                        decoration: InputDecoration(
+                          labelText: l10n.emailAddress,
+                          labelStyle: TextStyle(
+                            fontSize: 12.5,
+                            color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+                          ),
+                          floatingLabelBehavior: FloatingLabelBehavior.auto,
+                          isDense: true,
+                          contentPadding: const EdgeInsets.only(bottom: 8),
+                          enabledBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(color: Theme.of(context).dividerColor),
+                          ),
+                          focusedBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(color: Theme.of(context).colorScheme.primary),
+                          ),
+                          errorBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(color: Theme.of(context).colorScheme.error),
+                          ),
+                          focusedErrorBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(color: Theme.of(context).colorScheme.error),
+                          ),
+                        ),
+                        validator: (val) {
+                          if (val == null || val.trim().isEmpty) {
+                            return l10n.required;
+                          }
+                          final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+                          if (!emailRegex.hasMatch(val.trim())) {
+                            return l10n.invalidEmail;
+                          }
+                          return null;
+                        },
+                      ),
+                      if (isOtpSent) ...[
+                        const SizedBox(height: 16),
+                        TextFormField(
+                          controller: otpCtrl,
+                          keyboardType: TextInputType.number,
+                          autovalidateMode: AutovalidateMode.onUserInteraction,
+                          style: const TextStyle(fontSize: 16),
+                          decoration: InputDecoration(
+                            labelText: l10n.otp,
+                            labelStyle: TextStyle(
+                              fontSize: 12.5,
+                              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+                            ),
+                            floatingLabelBehavior: FloatingLabelBehavior.auto,
+                            isDense: true,
+                            contentPadding: const EdgeInsets.only(bottom: 8),
+                            enabledBorder: UnderlineInputBorder(
+                              borderSide: BorderSide(color: Theme.of(context).dividerColor),
+                            ),
+                            focusedBorder: UnderlineInputBorder(
+                              borderSide: BorderSide(color: Theme.of(context).colorScheme.primary),
+                            ),
+                            errorBorder: UnderlineInputBorder(
+                              borderSide: BorderSide(color: Theme.of(context).colorScheme.error),
+                            ),
+                            focusedErrorBorder: UnderlineInputBorder(
+                              borderSide: BorderSide(color: Theme.of(context).colorScheme.error),
+                            ),
+                          ),
+                          validator: (val) {
+                            if (val == null || val.trim().isEmpty) {
+                              return l10n.otpRequired;
+                            }
+                            return null;
+                          },
+                        ),
+                      ] else ...[
+                        const SizedBox(height: 8),
+                        Text(
+                          l10n.emailNotVerified,
+                          style: const TextStyle(color: Colors.red, fontSize: 13),
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+                actions: [
+                  TextButton(
+                    onPressed: state is AuthLoading ? null : () => Navigator.pop(dialogCtx),
+                    child: Text(
+                      l10n.cancel,
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
+                      ),
+                    ),
+                  ),
+                  TextButton(
+                    onPressed: state is AuthLoading
+                        ? null
+                        : () {
+                            if (dialogFormKey.currentState?.validate() ?? false) {
+                              if (!isOtpSent) {
+                                context.read<AuthCubit>().sendOtp({"email": ctrl.text.trim()});
+                              } else {
+                                context.read<AuthCubit>().verifyOtp({
+                                  "email": ctrl.text.trim(),
+                                  "otp": otpCtrl.text.trim()
+                                });
+                              }
+                            }
+                          },
+                    child: Text(
+                      isOtpSent ? "Verify OTP" : "Send OTP",
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.primary,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ],
+              );
+            },
+          );
+        },
       ),
     );
   }
@@ -720,6 +806,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           body: Form(
             key: _formKey,
             child: SingleChildScrollView(
+              controller: _scrollController,
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
               physics: const BouncingScrollPhysics(),
               child: Column(

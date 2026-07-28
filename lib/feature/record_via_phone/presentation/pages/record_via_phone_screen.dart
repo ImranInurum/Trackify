@@ -24,7 +24,7 @@ import '../../../../l10n/app_localizations.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:trackify/feature/record_via_phone/data/model/device_data_by_date_response.dart';
 import 'package:trackify/feature/record_via_phone/presentation/pages/ride_playback_screen.dart';
-
+import 'package:trackify/feature/record_via_phone/presentation/pages/ride_detail_screen.dart';
 import 'package:trackify/feature/record_via_phone/presentation/pages/widgets/share_ride_bottom_sheet.dart';
 import 'package:trackify/feature/map/presentation/pages/shared_with_me_screen.dart';
 import 'package:trackify/feature/record_via_phone/presentation/pages/shared_rides_screen.dart';
@@ -632,11 +632,16 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
                     final newTag = textController.text.trim();
                     if (newTag.isNotEmpty) {
                       if (ride.id != null && ride.id!.isNotEmpty) {
-                        await context.read<RecordViaPhoneCubit>().updateOfflineRideTag(ride.id!, newTag);
+                        if (ride.id!.startsWith('ride_')) {
+                          await context.read<RecordViaPhoneCubit>().updateOfflineRideTag(ride.id!, newTag);
+                        } else {
+                          await context.read<RecordViaPhoneCubit>().updateOnlineRideTag(ride.id!, newTag);
+                        }
+                        if (mounted) _refreshPastRides();
                       } else {
                         _rideTags[index] = newTag;
+                        if (mounted) setState(() {});
                       }
-                      if (mounted) setState(() {});
                     }
                     if (mounted) Navigator.pop(ctx);
                   },
@@ -722,10 +727,12 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
                       );
                     }
                   } else {
+                    await context.read<RecordViaPhoneCubit>().deleteOnlineRide(ride.id!);
+                    _refreshPastRides();
                     if (mounted) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
-                          content: Text(l10n.onlineRideDeleteNotSupported),
+                          content: Text(l10n.rideDeletedSuccess),
                           duration: const Duration(seconds: 2),
                         ),
                       );
@@ -967,11 +974,17 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
                       }
                     });
                     _saveFavoriteRides();
+                    if (ride.id != null && !ride.id!.startsWith('ride_')) {
+                      context.read<RecordViaPhoneCubit>().rateOnlineRide(ride.id!);
+                    }
                   },
-                  child: Icon(
-                    isFav ? Icons.favorite : Icons.favorite_border,
-                    color: isFav ? Colors.red : (isDark ? Colors.white.withOpacity(0.6) : Colors.black54),
-                    size: 20,
+                  child: Padding(
+                    padding: const EdgeInsets.all(4),
+                    child: Icon(
+                      isFav ? Icons.favorite : Icons.favorite_border,
+                      color: isFav ? Colors.red : (isDark ? Colors.white.withOpacity(0.6) : Colors.black54),
+                      size: 24,
+                    ),
                   ),
                 ),
                 const SizedBox(width: 16),
@@ -1062,39 +1075,49 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
                   Positioned(
                     bottom: 12,
                     right: 12,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                      decoration: BoxDecoration(
-                        color: isDark ? const Color(0xFF131A26) : Colors.white,
-                        borderRadius: BorderRadius.circular(24),
-                        border: Border.all(color: Colors.amber, width: 1.5),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.3),
-                            blurRadius: 4,
+                    child: GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => RideDetailScreen(ride: ride),
                           ),
-                        ],
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            "${index + 1} ",
-                            style: const TextStyle(
-                              color: Colors.amber,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 14,
+                        );
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                        decoration: BoxDecoration(
+                          color: isDark ? const Color(0xFF131A26) : Colors.white,
+                          borderRadius: BorderRadius.circular(24),
+                          border: Border.all(color: Colors.amber, width: 1.5),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.3),
+                              blurRadius: 4,
                             ),
-                          ),
-                          const Text(
-                            "⇆",
-                            style: TextStyle(
-                              color: Colors.amber,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 14,
+                          ],
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              "${index + 1} ",
+                              style: const TextStyle(
+                                color: Colors.amber,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 14,
+                              ),
                             ),
-                          ),
-                        ],
+                            const Text(
+                              "⇆",
+                              style: TextStyle(
+                                color: Colors.amber,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 14,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
@@ -2145,23 +2168,43 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
                 ),
                 
                 Expanded(
-                  child: rides.isEmpty
-                      ? Center(
-                          child: Text(
-                            _activeDateFilter == "All"
-                                ? "No past rides found"
-                                : "No rides found for '$_activeDateFilter'",
-                            style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+                  child: RefreshIndicator(
+                    onRefresh: () async {
+                      _refreshPastRides();
+                      if (_pastRidesFuture != null) {
+                        await _pastRidesFuture;
+                      }
+                    },
+                    child: rides.isEmpty
+                        ? LayoutBuilder(
+                            builder: (context, constraints) => SingleChildScrollView(
+                              physics: const AlwaysScrollableScrollPhysics(),
+                              child: ConstrainedBox(
+                                constraints: BoxConstraints(
+                                  minHeight: constraints.maxHeight,
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    _activeDateFilter == "All"
+                                        ? "No past rides found"
+                                        : "No rides found for '$_activeDateFilter'",
+                                    style: TextStyle(
+                                      color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+                                    ),
+                                  ),
+                                ),
+                              ),
                             ),
+                          )
+                        : ListView.builder(
+                            physics: const AlwaysScrollableScrollPhysics(),
+                            itemCount: rides.length,
+                            padding: const EdgeInsets.only(bottom: 24),
+                            itemBuilder: (context, index) {
+                              return _buildRideCard(rides[index], index);
+                            },
                           ),
-                        )
-                      : ListView.builder(
-                          itemCount: rides.length,
-                          padding: const EdgeInsets.only(bottom: 24),
-                          itemBuilder: (context, index) {
-                            return _buildRideCard(rides[index], index);
-                          },
-                        ),
+                  ),
                 ),
               ],
             );

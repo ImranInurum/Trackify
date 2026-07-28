@@ -17,9 +17,9 @@ import 'package:trackify/core/widgets/trackify_loader.dart';
 import 'package:trackify/feature/add_fuel/presentation/pages/add_fuel_screen.dart' as trackify_add_fuel;
 
 class RefuelHistoryTabView extends StatefulWidget {
-  final String imei;
+  final String vehicleId;
 
-  const RefuelHistoryTabView({super.key, required this.imei});
+  const RefuelHistoryTabView({super.key, required this.vehicleId});
 
   @override
   State<RefuelHistoryTabView> createState() => _RefuelHistoryTabViewState();
@@ -35,7 +35,7 @@ class _RefuelHistoryTabViewState extends State<RefuelHistoryTabView> {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<RefuelHistoryCubit>().loadRefuelHistory(widget.imei);
+      context.read<RefuelHistoryCubit>().loadRefuelHistory(widget.vehicleId);
     });
   }
 
@@ -69,12 +69,17 @@ class _RefuelHistoryTabViewState extends State<RefuelHistoryTabView> {
           // Use actual list length so the count is always in sync with visible history
           final refuelCount = refuelState.refuelLogs.length.toString();
 
-          return SingleChildScrollView(
-            padding: EdgeInsets.symmetric(
-              horizontal: screenWidth * 0.04,
-
-              vertical: screenHeight * 0.01,
-            ),
+          return RefreshIndicator(
+            onRefresh: () async {
+              await context.read<RefuelHistoryCubit>().loadRefuelHistory(widget.vehicleId);
+              context.read<FuelLogsCubit>().loadFuelLogs(widget.vehicleId);
+            },
+            child: SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              padding: EdgeInsets.symmetric(
+                horizontal: screenWidth * 0.04,
+                vertical: screenHeight * 0.01,
+              ),
 
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -111,7 +116,7 @@ class _RefuelHistoryTabViewState extends State<RefuelHistoryTabView> {
                 SizedBox(height: screenHeight * 0.1),
               ],
             ),
-          );
+          ));
         }
 
         if (refuelState is RefuelHistoryError) {
@@ -479,7 +484,7 @@ class _RefuelHistoryTabViewState extends State<RefuelHistoryTabView> {
               
               if (context.mounted) {
                 context.read<FuelLogsCubit>().reloadFuelLogs();
-                context.read<RefuelHistoryCubit>().loadRefuelHistory(widget.imei);
+                context.read<RefuelHistoryCubit>().loadRefuelHistory(widget.vehicleId);
               }
             },
             onDelete: () {

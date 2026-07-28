@@ -32,9 +32,9 @@ class DashboardTabView extends StatelessWidget {
             final serviceState = context.read<ServiceLogsCubit>().state;
 
             if (serviceState is ServiceLogsLoaded) {
-              final imei = serviceState.selectedVehicle?.imei ?? '';
+              final vehicleId = serviceState.selectedVehicle?.id ?? '';
 
-              context.read<FuelLogsCubit>().loadFuelLogs(imei);
+              context.read<FuelLogsCubit>().loadFuelLogs(vehicleId);
             }
           });
         }
@@ -42,8 +42,19 @@ class DashboardTabView extends StatelessWidget {
         if (state is FuelLogsLoaded) {
           return Container(
             color: theme.scaffoldBackgroundColor,
-            child: ListView(
-              padding: EdgeInsets.all(screenWidth * 0.04),
+            child: RefreshIndicator(
+              onRefresh: () async {
+                final serviceState = context.read<ServiceLogsCubit>().state;
+                if (serviceState is ServiceLogsLoaded) {
+                  final vehicleId = serviceState.selectedVehicle?.id ?? '';
+                  await context.read<FuelLogsCubit>().loadFuelLogs(vehicleId);
+                } else {
+                  context.read<FuelLogsCubit>().reloadFuelLogs();
+                }
+              },
+              child: ListView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                padding: EdgeInsets.all(screenWidth * 0.04),
               children: [
                 OdometerCard(state: state, l10n: l10n),
                 SizedBox(height: screenHeight * 0.02),
@@ -54,6 +65,7 @@ class DashboardTabView extends StatelessWidget {
                 const NearbyFuelStationsDashboard(),
                 SizedBox(height: screenHeight * 0.1), // Space for FAB
               ],
+              ),
             ),
           );
         }

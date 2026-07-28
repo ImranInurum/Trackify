@@ -20,4 +20,16 @@ class RecordViaPhoneUseCase {
   ResultFuture<dynamic> getOnlinePastRides(String userId) {
     return recordViaPhoneRepository.getOnlinePastRides(userId);
   }
+
+  ResultFuture<void> updateOnlinePastRideTag(String rideId, String tag) {
+    return recordViaPhoneRepository.updateOnlinePastRideTag(rideId, tag);
+  }
+
+  ResultFuture<void> deleteOnlinePastRide(String rideId) {
+    return recordViaPhoneRepository.deleteOnlinePastRide(rideId);
+  }
+
+  ResultFuture<void> rateOnlinePastRide(String rideId, Map<String, dynamic> body) {
+    return recordViaPhoneRepository.rateOnlinePastRide(rideId, body);
+  }
 }

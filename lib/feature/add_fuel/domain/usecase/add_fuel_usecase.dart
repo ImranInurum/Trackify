@@ -8,6 +8,9 @@ class AddFuelUseCase{
 
   Future<void> call(AddFuelEntity entity,)async{
     await repository.saveFuel(entity);
+  }
 
+  Future<void> updateFuel(String refuelId, AddFuelEntity entity) async {
+    await repository.updateFuel(refuelId, entity);
   }
 }

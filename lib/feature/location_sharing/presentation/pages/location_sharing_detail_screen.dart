@@ -149,17 +149,12 @@ class _LocationSharingDetailScreenState
     if (item.isSharing) {
       return ListView(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
-        children: const [
+        children: [
           LiveSharingLinkCard(
-            title: '2 hours link',
-            expiresIn: 'Expires in 1 hr 52 min',
+            title: l10n.twoHoursLink,
+            expiresIn: l10n.expiresInTime('1 hr 52 min'),
             viewers: 0,
-          ),
-          SizedBox(height: 16),
-          LiveSharingLinkCard(
-            title: '2 hours link',
-            expiresIn: 'Expires in 1 hr 51 min',
-            viewers: 0,
+            onStopSharing: () => _showStopSharingDialog(context, item),
           ),
         ],
       );
@@ -247,18 +242,70 @@ class _LocationSharingDetailScreenState
       ),
     );
   }
+
+  void _showStopSharingDialog(BuildContext context, LocationSharingItem item) {
+    final theme = Theme.of(context);
+    showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          backgroundColor: theme.dialogBackgroundColor,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          contentPadding: const EdgeInsets.fromLTRB(24, 24, 24, 8),
+          content: Text(
+            AppLocalizations.of(context)!.stopSharingConfirmation(item.name),
+            style: const TextStyle(
+              fontSize: 15,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(dialogContext).pop();
+              },
+              child: Text(
+                AppLocalizations.of(context)!.cancel,
+                style: TextStyle(
+                  color: theme.colorScheme.onSurface.withOpacity(0.6),
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(dialogContext).pop();
+                context.read<LocationSharingCubit>().toggleSharing(item.id);
+              },
+              child: Text(
+                AppLocalizations.of(context)!.stopSharing,
+                style: TextStyle(
+                  color: theme.colorScheme.primary,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
 }
 
 class LiveSharingLinkCard extends StatelessWidget {
   final String title;
   final String expiresIn;
   final int viewers;
+  final VoidCallback onStopSharing;
 
   const LiveSharingLinkCard({
     super.key,
     required this.title,
     required this.expiresIn,
     required this.viewers,
+    required this.onStopSharing,
   });
 
   @override
@@ -337,9 +384,7 @@ class LiveSharingLinkCard extends StatelessWidget {
               children: [
                 Expanded(
                   child: InkWell(
-                    onTap: () {
-                      // Stop sharing logic
-                    },
+                    onTap: onStopSharing,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [

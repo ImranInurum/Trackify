@@ -6,8 +6,8 @@ import 'fuel_logs_state.dart';
 class RefuelHistoryCubit extends Cubit<RefuelHistoryState> {
   final RefuelDataSource _dataSource;
 
-  /// Stores the current IMEI so we can reload after adding a refuel.
-  String _currentImei = '';
+  /// Stores the current vehicleId so we can reload after adding a refuel.
+  String _currentVehicleId = '';
 
   RefuelHistoryCubit(this._dataSource) : super(RefuelHistoryInitial());
 
@@ -20,12 +20,12 @@ class RefuelHistoryCubit extends Cubit<RefuelHistoryState> {
     return 0;
   }
 
-  Future<void> loadRefuelHistory(String imei) async {
+  Future<void> loadRefuelHistory(String vehicleId) async {
     try {
-      _currentImei = imei;
+      _currentVehicleId = vehicleId;
       emit(RefuelHistoryLoading());
 
-      final refuelLogs = await _dataSource.getRefuelLogs(imei);
+      final refuelLogs = await _dataSource.getRefuelLogs(vehicleId);
 
       // Create a completely new unmodifiable list so that:
       // 1. Equatable detects the change (new list reference + loadedAt).
@@ -45,17 +45,17 @@ class RefuelHistoryCubit extends Cubit<RefuelHistoryState> {
     }
   }
 
-  /// Reloads the refuel history using the last known IMEI.
+  /// Reloads the refuel history using the last known vehicleId.
   /// Call this after successfully adding a new refuel entry.
   Future<void> reloadHistory() async {
-    if (_currentImei.isNotEmpty) {
-      await loadRefuelHistory(_currentImei);
+    if (_currentVehicleId.isNotEmpty) {
+      await loadRefuelHistory(_currentVehicleId);
     }
   }
 
   Future<void> deleteRefuelLog(String refuelId) async {
     try {
-      await _dataSource.deleteRefuelLog(_currentImei, refuelId);
+      await _dataSource.deleteRefuelLog(_currentVehicleId, refuelId);
       await reloadHistory();
     } catch (e) {
       print("DELETE REFUEL ERROR : $e");

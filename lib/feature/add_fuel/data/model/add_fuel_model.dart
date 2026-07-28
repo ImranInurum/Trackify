@@ -34,14 +34,27 @@ class AddFuelModel extends AddFuelEntity {
 
   Map<String, dynamic> toMap() {
     return {
-      'imei': vehicle,
+      'vehicleId': vehicle,
       'refuelDate': "${dateTime.year}-${dateTime.month.toString().padLeft(2,'0')}-${dateTime.day.toString().padLeft(2,'0')}",
-      'refuelTime' : "${dateTime.hour.toString().padLeft(2,'0')}-${dateTime.minute.toString().padLeft(2,'0')}",
+      'refuelTime' : "${dateTime.hour.toString().padLeft(2,'0')}:${dateTime.minute.toString().padLeft(2,'0')}",
       "currentOdometer": odometer,
       "totalAmount": amount,
       "stationName": fuelStation,
       "pricePerLiter": pricePerLitre,
       "tankStatus": fullTank,
+      "fuelBeforeRefuel": fuelBeforeRefuel,
+    };
+  }
+
+  Map<String, dynamic> toUpdateMap() {
+    return {
+      'vehicleId': vehicle,
+      'refuelDate': "${dateTime.year}-${dateTime.month.toString().padLeft(2,'0')}-${dateTime.day.toString().padLeft(2,'0')}",
+      'refuelTime' : "${dateTime.hour.toString().padLeft(2,'0')}:${dateTime.minute.toString().padLeft(2,'0')}",
+      "currentOdometer": odometer,
+      "totalAmount": amount,
+      "pricePerLiter": pricePerLitre,
+      "tankStatus": int.tryParse(fullTank) ?? 1,
       "fuelBeforeRefuel": fuelBeforeRefuel,
     };
   }

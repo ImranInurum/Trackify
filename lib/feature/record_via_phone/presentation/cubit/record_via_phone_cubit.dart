@@ -223,11 +223,19 @@ class RecordViaPhoneCubit extends Cubit<RecordViaPhoneState> {
               final onlineList = data['data'] as List;
               for (var r in onlineList) {
                 if (r is Map) {
+                  bool isFav = false;
+                  if (r['likes'] is List) {
+                    final likesList = List<String>.from(r['likes']);
+                    if (likesList.contains(userId)) {
+                      isFav = true;
+                    }
+                  }
+
                   final mappedRide = {
                     'id': r['_id'],
                     'dateStr': r['date_time'],
                     'tag': r['tag'] ?? 'Commute',
-                    'isFavorite': false,
+                    'isFavorite': isFav,
                     'distanceKm': (r['distance_km'] as num?)?.toDouble() ?? 0.0,
                     'durationSeconds': r['duration_seconds'] as int? ?? 0,
                     'avgSpeed': (r['avg_speed'] as num?)?.toDouble() ?? 0.0,
@@ -265,6 +273,45 @@ class RecordViaPhoneCubit extends Cubit<RecordViaPhoneState> {
     }
   }
 
+  /// Deletes a specific online ride by its id.
+  Future<void> deleteOnlineRide(String id) async {
+    try {
+      final res = await _recordViaPhoneUseCase.deleteOnlinePastRide(id);
+      res.fold(
+        (failure) => debugPrint('❌ Error deleting online ride: ${failure.message}'),
+        (_) => debugPrint('🗑️ Online ride deleted. Key: $id'),
+      );
+    } catch (e) {
+      debugPrint('❌ Exception deleting online ride: $e');
+    }
+  }
+
+  /// Rates (likes/dislikes) a specific online ride by its id.
+  Future<bool> rateOnlineRide(String id) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final userId = prefs.getString(AppPreference.KEY_USER_ID) ?? '';
+      
+      if (userId.isEmpty) return false;
+
+      final body = {"userId": userId};
+      final res = await _recordViaPhoneUseCase.rateOnlinePastRide(id, body);
+      return res.fold(
+        (failure) {
+          debugPrint('❌ Error rating online ride: ${failure.message}');
+          return false;
+        },
+        (_) {
+          debugPrint('❤️ Online ride rated. Key: $id');
+          return true;
+        },
+      );
+    } catch (e) {
+      debugPrint('❌ Exception rating online ride: $e');
+      return false;
+    }
+  }
+
   /// Updates tag of a specific offline ride by its id key.
   Future<bool> updateOfflineRideTag(String id, String newTag) async {
     try {
@@ -280,6 +327,26 @@ class RecordViaPhoneCubit extends Cubit<RecordViaPhoneState> {
       return false;
     } catch (e) {
       debugPrint('❌ Error updating offline ride tag: $e');
+      return false;
+    }
+  }
+
+  /// Updates tag of a specific online ride by its id.
+  Future<bool> updateOnlineRideTag(String id, String newTag) async {
+    try {
+      final res = await _recordViaPhoneUseCase.updateOnlinePastRideTag(id, newTag);
+      return res.fold(
+        (failure) {
+          debugPrint('❌ Error updating online ride tag: ${failure.message}');
+          return false;
+        },
+        (_) {
+          debugPrint('🏷️ Online ride tag updated. Key: $id | Tag: $newTag');
+          return true;
+        },
+      );
+    } catch (e) {
+      debugPrint('❌ Exception updating online ride tag: $e');
       return false;
     }
   }

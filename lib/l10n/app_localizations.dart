@@ -6621,6 +6621,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Ride deletion failed: Invalid ID'**
   String get rideDeleteFailedInvalidId;
+
+  /// No description provided for @twoHoursLink.
+  ///
+  /// In en, this message translates to:
+  /// **'2 hours link'**
+  String get twoHoursLink;
+
+  /// No description provided for @expiresInTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Expires in {time}'**
+  String expiresInTime(String time);
+
+  /// No description provided for @stopSharingConfirmation.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to stop sharing the location of {name}?'**
+  String stopSharingConfirmation(String name);
 }
 
 class _AppLocalizationsDelegate

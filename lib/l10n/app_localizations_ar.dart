@@ -3432,4 +3432,17 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get rideDeleteFailedInvalidId => 'فشل حذف الرحلة: معرف غير صالح';
+
+  @override
+  String get twoHoursLink => '2 hours link';
+
+  @override
+  String expiresInTime(String time) {
+    return 'Expires in $time';
+  }
+
+  @override
+  String stopSharingConfirmation(String name) {
+    return 'Are you sure you want to stop sharing the location of $name?';
+  }
 }

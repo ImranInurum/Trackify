@@ -71,23 +71,36 @@ class NotificationListScreen extends StatelessWidget {
               final notifications = state.notificationModel.data ?? [];
 
               if (notifications.isEmpty) {
-                return Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        Icons.notifications_off_outlined,
-                        color: theme.hintColor.withOpacity(0.4),
-                        size: 80,
-                      ),
-                      const SizedBox(height: 16),
-                      Text(
-                        l10n.noNotifications,
-                        style: theme.textTheme.titleMedium?.copyWith(
-                          color: theme.hintColor,
+                return RefreshIndicator(
+                  onRefresh: () => context.read<NotificationCubit>().fetchNotifications(),
+                  child: LayoutBuilder(
+                    builder: (context, constraints) => SingleChildScrollView(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      child: ConstrainedBox(
+                        constraints: BoxConstraints(
+                          minHeight: constraints.maxHeight,
+                        ),
+                        child: Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.notifications_off_outlined,
+                                color: theme.hintColor.withOpacity(0.4),
+                                size: 80,
+                              ),
+                              const SizedBox(height: 16),
+                              Text(
+                                l10n.noNotifications,
+                                style: theme.textTheme.titleMedium?.copyWith(
+                                  color: theme.hintColor,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
-                    ],
+                    ),
                   ),
                 );
               }
@@ -96,6 +109,7 @@ class NotificationListScreen extends StatelessWidget {
                 onRefresh: () =>
                     context.read<NotificationCubit>().fetchNotifications(),
                 child: ListView.builder(
+                  physics: const AlwaysScrollableScrollPhysics(),
                   padding: const EdgeInsets.symmetric(vertical: 12),
                   itemCount: notifications.length,
                   itemBuilder: (context, index) {

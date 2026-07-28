@@ -403,6 +403,7 @@ class _DocumentFolderScreenState extends State<DocumentFolderScreen> {
             ? const Center(child: TrackifyLoader())
             : SafeArea(
                 child: SingleChildScrollView(
+                  key: const PageStorageKey<String>('document_folder_scroll'),
                   padding: const EdgeInsets.symmetric(
                     horizontal: 16,
                     vertical: 8,
@@ -554,8 +555,51 @@ class _DocumentFolderScreenState extends State<DocumentFolderScreen> {
                         children: [
                           // 📷 Vehicle Image
                           GestureDetector(
-                            onTap: () =>
-                                _showImagePicker(selectedVehicle?.imei),
+                            onTap: () {
+                              if (_vehicleImage != null || _vehicleImageUrl != null) {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => Scaffold(
+                                      backgroundColor: Colors.black,
+                                      appBar: AppBar(
+                                        backgroundColor: Colors.black,
+                                        iconTheme: const IconThemeData(color: Colors.white),
+                                        actions: [
+                                          IconButton(
+                                            icon: const Icon(Icons.edit, color: Colors.white),
+                                            onPressed: () {
+                                              Navigator.pop(context);
+                                              _showImagePicker(selectedVehicle?.imei);
+                                            },
+                                          ),
+                                        ],
+                                      ),
+                                      body: Center(
+                                        child: InteractiveViewer(
+                                          minScale: 0.5,
+                                          maxScale: 4.0,
+                                          child: _vehicleImage != null
+                                              ? Image.file(
+                                                  _vehicleImage!,
+                                                  fit: BoxFit.contain,
+                                                )
+                                              : Image.network(
+                                                  _vehicleImageUrl!,
+                                                  fit: BoxFit.contain,
+                                                  errorBuilder: (_, __, ___) => const Center(
+                                                    child: Icon(Icons.error, color: Colors.white),
+                                                  ),
+                                                ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              } else {
+                                _showImagePicker(selectedVehicle?.imei);
+                              }
+                            },
                             child: Container(
                               width: screenWidth * 0.20,
                               height: screenHeight * 0.07,

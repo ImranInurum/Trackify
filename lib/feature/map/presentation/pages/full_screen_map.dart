@@ -138,6 +138,42 @@ class _FullScreenMapState extends State<FullScreenMap>
 
     if (_useDemoSimulation) {
       _startDemoSimulation();
+    } else {
+      // Initialize animated marker state with current best position to prevent initial jump
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        final initialPos = _getBestPosition();
+        if (initialPos != null) {
+          final appState = context.read<AppCubit>().state;
+          final currData = appState.devices.firstWhere(
+            (d) =>
+                d['imei'] == _currentVehicle?.imei ||
+                d['_id'] == _currentVehicle?.id ||
+                d['id'] == _currentVehicle?.id,
+            orElse: () => <String, dynamic>{},
+          );
+          double bearing =
+              double.tryParse(
+                (currData['course'] ??
+                        currData['bearing'] ??
+                        currData['angle'] ??
+                        currData['dir'] ??
+                        '0')
+                    .toString(),
+              ) ??
+              0.0;
+          
+          setState(() {
+            _animatedMarkerPos = initialPos;
+            _animStartMarkerTarget = initialPos;
+            _animEndMarkerTarget = initialPos;
+            _animatedMarkerBearing = bearing;
+            _animStartMarkerBearing = bearing;
+            _animEndMarkerBearing = bearing;
+            _lastDataReceivedMs = DateTime.now().millisecondsSinceEpoch;
+          });
+        }
+      });
     }
 
     _markerAnimController!.addListener(() {

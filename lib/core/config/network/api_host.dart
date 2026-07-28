@@ -4,14 +4,14 @@ class ApiURL {
   const ApiURL._(this.hostUrl);
 
   factory ApiURL.devENV() {
-    return const ApiURL._('http://139.59.1.109:5000');
+    return const ApiURL._('https://trackifybackend.inurum.com');
   }
 
   factory ApiURL.prodENV() {
-    return const ApiURL._('http://139.59.1.109:5000');
+    return const ApiURL._('https://trackifybackend.inurum.com');
   }
 
-  static const String baseURL = 'http://139.59.1.109:5000';
+  static const String baseURL = 'https://trackifybackend.inurum.com';
   static const String socketURL = 'ws://139.59.1.109:4000';
 
   // Razorpay
@@ -89,6 +89,9 @@ class ApiURL {
   static const String journeyRideHistory = "$baseURL/api/journey/ride-history";
   static const String createRideMode = "$baseURL/api/ride-mode/create";
   static String onlinePastRides(String userId) => "$baseURL/api/ride-mode/user/$userId";
+  static String updateOnlinePastRideTag(String rideId) => "$baseURL/api/ride-mode/update-tag/$rideId";
+  static String deleteOnlinePastRide(String rideId) => "$baseURL/api/ride-mode/delete/$rideId";
+  static String rateOnlinePastRide(String rideId) => "$baseURL/api/ride-mode/rate/$rideId";
   static String promoVideos(String imei) => "$baseURL/api/global-video/imei-videos/$imei";
   static const String promoOffers = "$baseURL/api/banner/all";
   static const String productFeatures = "$baseURL/api/product-features";
@@ -151,10 +154,11 @@ class ApiURL {
   // Add Fuel
   // -------------------------
   static const String addFuel = "$baseURL/api/vehicle-refuel/create";
-  static String dashboard(String imei) =>
-      "$baseURL/api/vehicle-refuel/fuel-log-details/$imei";
-  static String refuel(String imei) => "$baseURL/api/vehicle-refuel/$imei";
-  static String deleteRefuel(String imei, String refuelId) => "$baseURL/api/vehicle-refuel/$imei/$refuelId";
+  static String dashboard(String vehicleId) =>
+      "$baseURL/api/vehicle-refuel/fuel-log-details/$vehicleId";
+  static String refuel(String vehicleId) => "$baseURL/api/vehicle-refuel/$vehicleId";
+  static String deleteRefuel(String vehicleId, String refuelId) => "$baseURL/api/vehicle-refuel/$vehicleId/$refuelId";
+  static String updateRefuelLog(String refuelId) => "$baseURL/api/vehicle-refuel/update/$refuelId";
   static const String updateOdometer = "$baseURL/api/vehicle-refuel/update-odometer";
 
   // -------------------------

@@ -23,4 +23,18 @@ class AddFuelCubit extends  Cubit<AddFuelState>{
     }
   }
 
+  Future<void> updateFuel(
+      String refuelId,
+      AddFuelEntity entity,
+      )async{
+    try{
+      emit(AddFuelLoading());
+      await useCase.updateFuel(refuelId, entity);
+      
+      emit(AddFuelSuccess());
+    }catch(e){
+      emit(AddFuelError(e.toString()));
+    }
+  }
+
 }

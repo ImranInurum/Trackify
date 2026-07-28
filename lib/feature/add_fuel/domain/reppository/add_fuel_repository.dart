@@ -4,4 +4,8 @@ abstract class AddFuelRepository{
   Future<void> saveFuel(
       AddFuelEntity entity,
       );
+  Future<void> updateFuel(
+      String refuelId,
+      AddFuelEntity entity,
+      );
 }

@@ -8,7 +8,6 @@ abstract class VehicleControlRepository {
   Future<void> updateMileage(String vehicleId, String mileage, String currentCapacity);
   Future<void> updateVehicleDetails({
     required String vehicleId,
-    required String vehicleIMEI,
     required String vehicleName,
     required String vehicleNumber,
     required String fuelType,
