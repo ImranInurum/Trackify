@@ -64,7 +64,8 @@ class RecordViaPhoneRepositoryImpl implements RecordViaPhoneRepository {
   @override
   ResultFuture<dynamic> getOnlinePastRides(String userId) async {
     try {
-      final res = await _apiServices.getGetApiResponse(ApiURL.onlinePastRides(userId));
+      final unit = await AppPreference.instance.get(key: AppPreference.KEY_DISTANCE_UNIT);
+      final res = await _apiServices.getGetApiResponse(ApiURL.onlinePastRides(userId, unit: unit.isNotEmpty ? unit : 'km'));
       return res.fold(
         (error) => Left(error),
         (data) => Right(data),

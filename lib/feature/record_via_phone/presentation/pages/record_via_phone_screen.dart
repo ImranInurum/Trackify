@@ -883,6 +883,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
   Widget _buildRideCard(PastRide ride, int index) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
+    final appState = context.read<AppCubit>().state;
     final rideKey = ride.rawDate?.toIso8601String() ?? ride.dateStr;
     final isFav = ride.isFavorite || _favoriteRides.contains(rideKey);
     
@@ -1134,7 +1135,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 _buildCardStatItem(
-                  "${ride.distanceKm.toStringAsFixed(1)} km",
+                  "${ride.distanceKm.toStringAsFixed(1)} ${appState.distanceUnit}",
                   "Distance",
                   isDark,
                 ),
@@ -1144,7 +1145,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
                   isDark,
                 ),
                 _buildCardStatItem(
-                  "${ride.avgSpeed.toStringAsFixed(1)} km/h",
+                  "${ride.avgSpeed.toStringAsFixed(1)} ${appState.distanceUnit == 'miles' ? 'mph' : 'km/h'}",
                   "Avg. Speed",
                   isDark,
                 ),
@@ -2301,6 +2302,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
   Widget _buildStatisticsView() {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+    final appState = context.read<AppCubit>().state;
 
     return BlocBuilder<RecordViaPhoneCubit, RecordViaPhoneState>(
       builder: (context, state) {
@@ -2501,13 +2503,13 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
                       ),
                       _buildStatCard(
                         l10n.averageSpeed,
-                        "${(stats['avgSpeed'] as double).toStringAsFixed(0)} km/h",
+                        "${(stats['avgSpeed'] as double).toStringAsFixed(0)} ${appState.distanceUnit == 'miles' ? 'mph' : 'km/h'}",
                         Icons.speed,
                         Colors.orange,
                       ),
                       _buildStatCard(
                         l10n.topSpeed,
-                        "${(stats['topSpeed'] as double).toStringAsFixed(0)} km/h",
+                        "${(stats['topSpeed'] as double).toStringAsFixed(0)} ${appState.distanceUnit == 'miles' ? 'mph' : 'km/h'}",
                         Icons.bolt,
                         Colors.purple,
                       ),
@@ -2529,6 +2531,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
   }
 
   Widget _buildSummaryCard(Map<String, dynamic> stats) {
+    final appState = context.read<AppCubit>().state;
     String formattedTime = "";
     final dur = stats['drivingTime'] as Duration;
     if (dur.inHours > 0) {
@@ -2567,7 +2570,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
           ),
           const SizedBox(height: 8),
           Text(
-            "${(stats['distance'] as double).toStringAsFixed(2)} km",
+            "${(stats['distance'] as double).toStringAsFixed(2)} ${appState.distanceUnit}",
             style: const TextStyle(
               color: Colors.white,
               fontSize: 32,

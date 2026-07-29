@@ -59,6 +59,9 @@ class AuthCubit extends Cubit<AuthState> {
       final devInfo = await _getDeviceInfo();
       body['deviceModel'] = devInfo['deviceModel'];
       body['osVersion'] = devInfo['osVersion'];
+      
+      final fcmToken = await AppPreference.instance.get(key: AppPreference.KEY_FCM_TOKEN);
+      body['fcmToken'] = fcmToken;
 
       final result = await _authCase.loginCall(body);
       await result.fold(
@@ -161,12 +164,15 @@ class AuthCubit extends Cubit<AuthState> {
         final firebaseUser = userCredential.user!;
 
         final devInfo = await _getDeviceInfo();
+        final fcmToken = await AppPreference.instance.get(key: AppPreference.KEY_FCM_TOKEN);
+
         final body = {
           "name": firebaseUser.displayName ?? "Google User",
           "email": firebaseUser.email,
           "socialId": firebaseUser.uid,
           "deviceModel": devInfo['deviceModel'],
           "osVersion": devInfo['osVersion'],
+          "fcmToken": fcmToken,
         };
 
         final result = await _authCase.socialLoginCall(body);

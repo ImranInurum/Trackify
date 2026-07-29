@@ -1116,6 +1116,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                   prev.livePosition != curr.livePosition ||
                   prev.liveBearing != curr.liveBearing ||
                   prev.devices != curr.devices ||
+                  prev.distanceUnit != curr.distanceUnit ||
                   prev.userData?.name != curr.userData?.name,
               listener: (context, state) async {
                 final name = state.userData?.name ?? 'Me';
@@ -1135,6 +1136,11 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                       debugPrint("Error setting map style: $e");
                     }
                   }
+                }
+                
+                // Rebuild the UI if distance unit changes so the labels update instantly
+                if (mounted) {
+                  setState(() {});
                 }
               },
             ),
@@ -2086,38 +2092,38 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
               if (intLevel != null && intLevel >= 0 && intLevel <= 6) {
                 switch (intLevel) {
                   case 0:
-                    batteryText = "No Power";
-                    batteryColor = Colors.red;
-                    batteryIcon = Icons.battery_0_bar;
+                    batteryText = "Disconnected";
+                    batteryColor = Colors.red.shade900;
+                    batteryIcon = Icons.battery_unknown;
                     break;
                   case 1:
-                    batteryText = "Extremely Low";
-                    batteryColor = Colors.red;
+                    batteryText = "Critical";
+                    batteryColor = Colors.red.shade700;
                     batteryIcon = Icons.battery_1_bar;
                     break;
                   case 2:
-                    batteryText = "Very Low";
-                    batteryColor = Colors.redAccent;
+                    batteryText = "Very low";
+                    batteryColor = Colors.red.shade400;
                     batteryIcon = Icons.battery_2_bar;
                     break;
                   case 3:
                     batteryText = "Low";
-                    batteryColor = Colors.orange;
+                    batteryColor = Colors.orange.shade800;
                     batteryIcon = Icons.battery_3_bar;
                     break;
                   case 4:
                     batteryText = "Medium";
-                    batteryColor = Colors.amber.shade700;
+                    batteryColor = Colors.green.shade600;
                     batteryIcon = Icons.battery_4_bar;
                     break;
                   case 5:
-                    batteryText = "High";
-                    batteryColor = AppColors.paletteGreen;
+                    batteryText = "Normal";
+                    batteryColor = Colors.green.shade400;
                     batteryIcon = Icons.battery_5_bar;
                     break;
                   case 6:
-                    batteryText = "Very High";
-                    batteryColor = AppColors.paletteGreen;
+                    batteryText = "Normal";
+                    batteryColor = Colors.green.shade400;
                     batteryIcon = Icons.battery_full;
                     break;
                 }

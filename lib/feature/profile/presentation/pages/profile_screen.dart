@@ -780,7 +780,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 title: Text(
                                   AppLocalizations.of(context)!.miles,
                                 ),
-                                value: 'mi',
+                                value: 'miles',
                                 groupValue: appState.distanceUnit,
                                 contentPadding: EdgeInsets.zero,
                                 dense: true,

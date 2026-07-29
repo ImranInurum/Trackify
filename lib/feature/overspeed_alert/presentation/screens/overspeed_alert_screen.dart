@@ -8,6 +8,8 @@ import '../cubit/overspeed_alert_state.dart';
 import 'package:trackify/core/common/models/vehicle_list_model.dart';
 import 'package:trackify/feature/overspeed_alert/data/model/overspeed_alert_model.dart';
 import 'package:trackify/core/widgets/trackify_loader.dart';
+import 'package:trackify/app/cubit/app_cubit.dart';
+import 'package:trackify/app/cubit/app_state.dart';
 
 
 class OverSpeedAlertScreen extends StatefulWidget {
@@ -48,7 +50,12 @@ class _OverSpeedAlertScreenState extends State<OverSpeedAlertScreen> {
         ),
         centerTitle: false,
       ),
-      body: BlocBuilder<OverspeedAlertCubit, OverspeedAlertState>(
+      body: BlocListener<AppCubit, AppState>(
+        listenWhen: (prev, curr) => prev.distanceUnit != curr.distanceUnit,
+        listener: (context, state) {
+          if (mounted) setState(() {});
+        },
+        child: BlocBuilder<OverspeedAlertCubit, OverspeedAlertState>(
         builder: (context, state) {
           if (state is OverspeedAlertInitial) {
             return const Center(child: TrackifyLoader());
@@ -182,6 +189,7 @@ class _OverSpeedAlertScreenState extends State<OverSpeedAlertScreen> {
 
           return const SizedBox();
         },
+      ),
       ),
       floatingActionButton: FloatingActionButton(
         shape: const CircleBorder(),

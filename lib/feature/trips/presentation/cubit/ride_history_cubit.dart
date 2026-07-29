@@ -45,8 +45,11 @@ class RideHistoryCubit extends Cubit<RideHistoryState> {
       emit(RideHistoryLoading());
     }
 
+    final distanceUnit = await prefs.get(key: AppPreference.KEY_DISTANCE_UNIT);
+    
     final request = {
       'imei': iMEI,
+      'unit': distanceUnit.isNotEmpty ? distanceUnit : 'km',
     };
     debugPrint('Fetching ride history with request: $request');
     final result = await _assignDeviceUseCase.getRideHistory(body: request);

@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:trackify/core/config/network/api_host.dart';
 import 'package:trackify/core/config/network/network_api_service.dart';
+import 'package:trackify/core/utils/shared_preferences.dart';
 import 'package:trackify/feature/add_fuel/data/model/add_fuel_model.dart';
 import '../model/refuel_log_model.dart';
 
@@ -9,8 +10,9 @@ class RefuelDataSource {
   final NetworkApiService _apiServices = NetworkApiService();
 
   Future<List<RefuelLogModel>> getRefuelLogs(String imei) async {
+    final unit = await AppPreference.instance.get(key: AppPreference.KEY_DISTANCE_UNIT);
     final response = await _apiServices.getGetApiResponse(
-      ApiURL.refuel(imei),
+      ApiURL.refuel(imei, unit: unit.isNotEmpty ? unit : 'km'),
     );
 
     return response.fold(

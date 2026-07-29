@@ -76,6 +76,9 @@ class ApiURL {
   ) =>
       "$baseURL/api/vehicle/models?vehicleType=$vehicleType&fuelType=$fuelType&brandId=$brandId";
 
+  static String vehicleModelDetails(String vehicleId) =>
+      "$baseURL/api/vehicle/vehicle-model-details/$vehicleId";
+
   // -------------------------
   // Device
   // -------------------------
@@ -88,7 +91,7 @@ class ApiURL {
 
   static const String journeyRideHistory = "$baseURL/api/journey/ride-history";
   static const String createRideMode = "$baseURL/api/ride-mode/create";
-  static String onlinePastRides(String userId) => "$baseURL/api/ride-mode/user/$userId";
+  static String onlinePastRides(String userId, {String? unit}) => "$baseURL/api/ride-mode/user/$userId${unit != null && unit.isNotEmpty ? '?unit=$unit' : ''}";
   static String updateOnlinePastRideTag(String rideId) => "$baseURL/api/ride-mode/update-tag/$rideId";
   static String deleteOnlinePastRide(String rideId) => "$baseURL/api/ride-mode/delete/$rideId";
   static String rateOnlinePastRide(String rideId) => "$baseURL/api/ride-mode/rate/$rideId";
@@ -154,9 +157,9 @@ class ApiURL {
   // Add Fuel
   // -------------------------
   static const String addFuel = "$baseURL/api/vehicle-refuel/create";
-  static String dashboard(String vehicleId) =>
-      "$baseURL/api/vehicle-refuel/fuel-log-details/$vehicleId";
-  static String refuel(String vehicleId) => "$baseURL/api/vehicle-refuel/$vehicleId";
+  static String dashboard(String vehicleId, {String? unit}) =>
+      "$baseURL/api/vehicle-refuel/fuel-log-details/$vehicleId${unit != null && unit.isNotEmpty ? '?unit=$unit' : ''}";
+  static String refuel(String vehicleId, {String? unit}) => "$baseURL/api/vehicle-refuel/$vehicleId${unit != null && unit.isNotEmpty ? '?unit=$unit' : ''}";
   static String deleteRefuel(String vehicleId, String refuelId) => "$baseURL/api/vehicle-refuel/$vehicleId/$refuelId";
   static String updateRefuelLog(String refuelId) => "$baseURL/api/vehicle-refuel/update/$refuelId";
   static const String updateOdometer = "$baseURL/api/vehicle-refuel/update-odometer";
@@ -260,10 +263,18 @@ class ApiURL {
   // -------------------------
   // Statistics
   // -------------------------
-  static String statistics(String imei, {String? date}) {
+  static String statistics(String imei, {String? date, String? unit}) {
+    String url = "$baseURL/api/statistics/$imei";
+    List<String> queryParams = [];
     if (date != null && date.isNotEmpty) {
-      return "$baseURL/api/statistics/$imei?date=$date";
+      queryParams.add("date=$date");
     }
-    return "$baseURL/api/statistics/$imei";
+    if (unit != null && unit.isNotEmpty) {
+      queryParams.add("unit=$unit");
+    }
+    if (queryParams.isNotEmpty) {
+      url += "?${queryParams.join('&')}";
+    }
+    return url;
   }
 }

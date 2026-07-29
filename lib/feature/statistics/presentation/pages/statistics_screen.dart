@@ -1,6 +1,8 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:trackify/app/cubit/app_cubit.dart';
+import 'package:trackify/app/cubit/app_state.dart';
 import 'package:trackify/core/common/models/vehicle_list_model.dart';
 import 'package:trackify/core/constants/app_images.dart';
 import 'package:trackify/l10n/app_localizations.dart';
@@ -55,7 +57,25 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
     final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
 
-    return BlocBuilder<StatisticsCubit, StatisticsState>(
+    return BlocListener<AppCubit, AppState>(
+      listenWhen: (previous, current) => previous.distanceUnit != current.distanceUnit,
+      listener: (context, appState) {
+        final statsState = context.read<StatisticsCubit>().state;
+        if (statsState is StatisticsLoaded) {
+          if (statsState.selectedVehicle != null) {
+            context.read<StatisticsCubit>().loadStatistics(
+              vehicle: statsState.selectedVehicle!,
+              date: statsState.selectedDate,
+              vehicles: statsState.userVehicles,
+            );
+          } else {
+            context.read<StatisticsCubit>().fetchInitialData();
+          }
+        } else {
+          context.read<StatisticsCubit>().fetchInitialData();
+        }
+      },
+      child: BlocBuilder<StatisticsCubit, StatisticsState>(
       builder: (context, state) {
         if (state is StatisticsInitial ||
             (state is StatisticsLoading && state.userVehicles.isEmpty)) {
@@ -227,6 +247,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
           ),
         );
       },
+      ),
     );
   }
 }

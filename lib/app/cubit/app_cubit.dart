@@ -1,11 +1,14 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:bloc/bloc.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 
 import '../../core/config/network/api_host.dart';
 import '../../core/config/network/base_api_service.dart';
@@ -278,6 +281,53 @@ class AppCubit extends Cubit<AppState> with WidgetsBindingObserver {
   Future<void> logout() async {
     debugPrint("AppCubit: [LOGOUT] Logging out user and clearing all local caches/sessions.");
     
+    // 0. Logout current device sessions from backend
+    try {
+      final prefs = AppPreference.instance;
+      final userId = await prefs.get(key: AppPreference.KEY_USER_ID);
+      final currentToken = await prefs.get(key: AppPreference.KEY_TOKEN);
+      
+      if (userId.isNotEmpty) {
+        final getSessionsUrl = ApiURL.getSessions(userId);
+        final sessionsResult = await _apiServices.getGetApiResponse(getSessionsUrl);
+        
+        await sessionsResult.fold(
+          (failure) async => debugPrint("AppCubit: [LOGOUT] Failed to fetch sessions: ${failure.message}"),
+          (response) async {
+            try {
+              List dynamicList = [];
+              if (response is Map<String, dynamic> && response['data'] is List) {
+                dynamicList = response['data'] as List;
+              } else if (response is List) {
+                dynamicList = response;
+              }
+              
+              // Removed device info fetching since we only match by exact token now
+
+              for (var item in dynamicList) {
+                final s = Map<String, dynamic>.from(item as Map);
+                if (s['isActive'] == true) {
+                  if (currentToken.isNotEmpty && s['token'] == currentToken) {
+                    final sessionId = s['_id']?.toString() ?? '';
+                    if (sessionId.isNotEmpty) {
+                      debugPrint("AppCubit: [LOGOUT] Calling logout API for exact token session ID: $sessionId");
+                      final logoutSessionUrl = ApiURL.logoutSession(sessionId);
+                      await _apiServices.getPostApiResponse(logoutSessionUrl, {});
+                      break; // Break since we only need to log out the exact current session
+                    }
+                  }
+                }
+              }
+            } catch (e) {
+              debugPrint("AppCubit: [LOGOUT] Error processing sessions: $e");
+            }
+          }
+        );
+      }
+    } catch(e) {
+      debugPrint("AppCubit: [LOGOUT] Exception during session logout: $e");
+    }
+
     // 1. Disconnect socket
     _socketService.disconnect();
     await _socketSubscription?.cancel();

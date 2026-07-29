@@ -1468,20 +1468,26 @@ class _FullScreenMapState extends State<FullScreenMap>
           }
         }
       },
-      child: Scaffold(
-        body: NotificationListener<DraggableScrollableNotification>(
-          onNotification: (notification) {
-            _sheetExtent.value = notification.extent;
-            return false;
-          },
-          child: Stack(
-            children: [
-              _buildMap(),
-              _buildTopActions(),
-              _buildLeftSideActions(),
-              _buildRightSideActions(),
-              _buildDraggableBottomCard(),
-            ],
+      child: BlocListener<AppCubit, AppState>(
+        listenWhen: (prev, curr) => prev.distanceUnit != curr.distanceUnit,
+        listener: (context, state) {
+          if (mounted) setState(() {});
+        },
+        child: Scaffold(
+          body: NotificationListener<DraggableScrollableNotification>(
+            onNotification: (notification) {
+              _sheetExtent.value = notification.extent;
+              return false;
+            },
+            child: Stack(
+              children: [
+                _buildMap(),
+                _buildTopActions(),
+                _buildLeftSideActions(),
+                _buildRightSideActions(),
+                _buildDraggableBottomCard(),
+              ],
+            ),
           ),
         ),
       ),
@@ -3088,38 +3094,38 @@ class _FullScreenMapState extends State<FullScreenMap>
           if (intLevel != null && intLevel >= 0 && intLevel <= 6) {
             switch (intLevel) {
               case 0:
-                batteryText = "No Power";
-                batteryColor = Colors.red;
-                batteryIcon = Icons.battery_0_bar;
+                batteryText = "Disconnected";
+                batteryColor = Colors.red.shade900;
+                batteryIcon = Icons.battery_unknown;
                 break;
               case 1:
-                batteryText = "Extremely Low";
-                batteryColor = Colors.red;
+                batteryText = "Critical";
+                batteryColor = Colors.red.shade700;
                 batteryIcon = Icons.battery_1_bar;
                 break;
               case 2:
-                batteryText = "Very Low";
-                batteryColor = Colors.redAccent;
+                batteryText = "Very low";
+                batteryColor = Colors.red.shade400;
                 batteryIcon = Icons.battery_2_bar;
                 break;
               case 3:
                 batteryText = "Low";
-                batteryColor = Colors.orange;
+                batteryColor = Colors.orange.shade800;
                 batteryIcon = Icons.battery_3_bar;
                 break;
               case 4:
                 batteryText = "Medium";
-                batteryColor = Colors.amber.shade700;
+                batteryColor = Colors.green.shade600;
                 batteryIcon = Icons.battery_4_bar;
                 break;
               case 5:
-                batteryText = "High";
-                batteryColor = Colors.green;
+                batteryText = "Normal";
+                batteryColor = Colors.green.shade400;
                 batteryIcon = Icons.battery_5_bar;
                 break;
               case 6:
-                batteryText = "Very High";
-                batteryColor = Colors.green;
+                batteryText = "Normal";
+                batteryColor = Colors.green.shade400;
                 batteryIcon = Icons.battery_full;
                 break;
             }

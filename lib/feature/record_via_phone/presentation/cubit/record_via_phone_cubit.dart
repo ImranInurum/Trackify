@@ -181,8 +181,25 @@ class RecordViaPhoneCubit extends Cubit<RecordViaPhoneState> {
   Future<List<Map<String, dynamic>>> getOfflineRides() async {
     try {
       final box = await _getOfflineRidesBox();
+      final unit = await AppPreference.instance.get(key: AppPreference.KEY_DISTANCE_UNIT);
+      final isMiles = unit == 'miles';
+      
       final rides = box.values
-          .map((v) => jsonDecode(v as String) as Map<String, dynamic>)
+          .map((v) {
+            final map = jsonDecode(v as String) as Map<String, dynamic>;
+            if (isMiles) {
+              if (map['distanceKm'] != null) {
+                map['distanceKm'] = (map['distanceKm'] as num).toDouble() * 0.621371;
+              }
+              if (map['avgSpeed'] != null) {
+                map['avgSpeed'] = (map['avgSpeed'] as num).toDouble() * 0.621371;
+              }
+              if (map['topSpeed'] != null) {
+                map['topSpeed'] = (map['topSpeed'] as num).toDouble() * 0.621371;
+              }
+            }
+            return map;
+          })
           .toList();
       // Sort newest first by dateStr
       rides.sort((a, b) {

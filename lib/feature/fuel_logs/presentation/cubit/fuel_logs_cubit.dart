@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:trackify/core/config/network/api_host.dart';
 import 'package:trackify/feature/Vehicle_control/data/repositories/vehicle_control_repository_impl.dart';
 import 'package:trackify/core/config/network/network_api_service.dart';
+import 'package:trackify/core/utils/shared_preferences.dart';
 
 import 'fuel_logs_state.dart';
 
@@ -20,7 +21,8 @@ class FuelLogsCubit extends Cubit<FuelLogsState> {
 
       emit(FuelLogsLoading());
 
-      final response = await http.get(Uri.parse(ApiURL.dashboard(vehicleId)));
+      final unit = AppPreference.instance.getSync(key: AppPreference.KEY_DISTANCE_UNIT);
+      final response = await http.get(Uri.parse(ApiURL.dashboard(vehicleId, unit: unit.isNotEmpty ? unit : 'km')));
 
       print("=========== FUEL LOG API HIT ===========");
 
