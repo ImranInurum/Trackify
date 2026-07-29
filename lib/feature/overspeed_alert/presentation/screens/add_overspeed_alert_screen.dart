@@ -7,6 +7,7 @@ import '../cubit/overspeed_alert_cubit.dart';
 import '../cubit/overspeed_alert_state.dart';
 import '../widgets/vehicle_multi_selection_dialog.dart';
 import 'package:trackify/core/widgets/loading_screen_ol.dart';
+import 'package:trackify/core/utils/distance_utils.dart';
 
 class AddOverspeedAlertScreen extends StatefulWidget {
   /// Pass an existing alert to pre-fill the form (edit mode).
@@ -147,7 +148,7 @@ class _AddOverspeedAlertScreenState extends State<AddOverspeedAlertScreen> {
                   const SizedBox(height: 24),
                   _buildInputField(
                     icon: Icons.speed_rounded,
-                    label: l10n.speedLimitKmH,
+                    label: l10n.speedLimitKmH.replaceAll('km/h', context.displayKmh).replaceAll('km/hr', context.displayKmHr),
                     controller: _speedController,
                     keyboardType: TextInputType.number,
                   ),

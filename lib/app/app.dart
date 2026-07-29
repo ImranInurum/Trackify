@@ -11,6 +11,7 @@ import 'package:trackify/feature/onboarding/presentation/pages/splash.dart';
 import 'package:trackify/l10n/app_localizations.dart';
 import 'package:trackify/main.dart';
 import 'package:trackify/core/widgets/global_no_internet_screen.dart';
+import 'package:trackify/app/session_route_observer.dart';
 
 class MyApp extends StatefulWidget {
   const MyApp({super.key});
@@ -108,6 +109,7 @@ class _MyAppState extends State<MyApp> {
         locale: state.locale,
         supportedLocales: AppLocalizations.supportedLocales,
         localizationsDelegates: AppLocalizations.localizationsDelegates,
+        navigatorObservers: [SessionRouteObserver()],
         home: const SplashScreen(),
         builder: (context, child) {
           return Stack(

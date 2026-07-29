@@ -7,6 +7,7 @@ import 'package:trackify/core/common/usecase/get_user_vehicles_usecase.dart';
 import '../../data/model/statistics_request_model.dart';
 import '../../data/model/statistics_response_model.dart';
 import '../../domain/repository/statistics_repository.dart';
+import 'package:trackify/core/utils/shared_preferences.dart';
 import 'statistics_state.dart';
 
 class StatisticsCubit extends Cubit<StatisticsState> {
@@ -113,7 +114,8 @@ class StatisticsCubit extends Cubit<StatisticsState> {
             : [vehicle]);
 
     final formattedDate = DateFormat('yyyy-MM-dd').format(date);
-    final cacheKey = 'stats_${vehicle.imei}_$formattedDate';
+    final distanceUnit = AppPreference.instance.getSync(key: AppPreference.KEY_DISTANCE_UNIT);
+    final cacheKey = 'stats_${vehicle.imei}_${formattedDate}_$distanceUnit';
     final box = Hive.box('map_cache');
     final cachedData = box.get(cacheKey);
 

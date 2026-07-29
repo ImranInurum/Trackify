@@ -90,7 +90,7 @@ class MapScreen extends StatefulWidget {
   State<MapScreen> createState() => _MapScreenState();
 }
 
-class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
+class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin, WidgetsBindingObserver {
   GoogleMapController? _mapController;
   String? _lightMapStyle;
   String? _darkMapStyle;
@@ -160,7 +160,20 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
     _markerAnimController?.dispose();
     _mapRebuildNotifier.dispose();
     _scrollController.dispose();
+    WidgetsBinding.instance.removeObserver(this);
     super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      if (mounted) {
+        context.read<MapCubit>().fetchVehicles();
+        if (_selectedDevice != null && _selectedDevice!.imei != null) {
+          context.read<AppCubit>().initializeSocket(imei: _selectedDevice!.imei);
+        }
+      }
+    }
   }
 
   Brightness? _currentBrightness;
@@ -182,6 +195,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _offerPageController = PageController();
     _fetchOffers();
     _startOfferAutoScroll();
@@ -304,7 +318,9 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
       if (mounted) {
         final appState = context.read<AppCubit>().state;
         context.read<MapCubit>().fetchVehicles();
-        context.read<PromoVideoCubit>().fetchPromoVideos(_selectedDevice?.imei ?? 'null');
+        context.read<PromoVideoCubit>().fetchPromoVideos(
+          _selectedDevice?.imei ?? 'null',
+        );
         final name = appState.userData?.name ?? 'Me';
         final letter = name.isNotEmpty ? name[0].toUpperCase() : 'Me';
         final primaryColor = Theme.of(context).colorScheme.primary;
@@ -980,280 +996,305 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
     );
     final l10n = AppLocalizations.of(context)!;
     return Scaffold(
-        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-        body: MultiBlocListener(
-          listeners: [
-            // ── Logout detector: reset warranty state when user logs out ──
-            BlocListener<AppCubit, AppState>(
-              listenWhen: (prev, curr) =>
-                  prev.userData != null && curr.userData == null,
-              listener: (context, appState) {
-                if (mounted) {
-                  setState(() {
-                    _selectedDevice = null;
-                    _isWarrantyExpired = true;
-                    _isWarrantyLoading = false;
-                    _hasShownWarrantyPopup = false;
-                    _hasNavigatedToInstallation = false;
-                  });
-                  debugPrint(
-                    '[MapScreen] Logout detected — warranty & device state reset.',
-                  );
-                }
-              },
-            ),
-            BlocListener<MapCubit, MapState>(
-              listener: (context, state) {
-                if (state is MapLoaded) {
-                  final vehicles = state.vehicleList.vehicles ?? [];
-                  if (vehicles.isNotEmpty) {
-                    // Vehicles exist — reset the navigation flag so that a future
-                    // deletion will navigate again even if the flag was previously set.
-                    _hasNavigatedToInstallation = false;
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      body: MultiBlocListener(
+        listeners: [
+          // ── Logout detector: reset warranty state when user logs out ──
+          BlocListener<AppCubit, AppState>(
+            listenWhen: (prev, curr) =>
+                prev.userData != null && curr.userData == null,
+            listener: (context, appState) {
+              if (mounted) {
+                setState(() {
+                  _selectedDevice = null;
+                  _isWarrantyExpired = true;
+                  _isWarrantyLoading = false;
+                  _hasShownWarrantyPopup = false;
+                  _hasNavigatedToInstallation = false;
+                });
+                debugPrint(
+                  '[MapScreen] Logout detected — warranty & device state reset.',
+                );
+              }
+            },
+          ),
+          BlocListener<MapCubit, MapState>(
+            listener: (context, state) {
+              if (state is MapLoaded) {
+                final vehicles = state.vehicleList.vehicles ?? [];
+                if (vehicles.isNotEmpty) {
+                  // Vehicles exist — reset the navigation flag so that a future
+                  // deletion will navigate again even if the flag was previously set.
+                  _hasNavigatedToInstallation = false;
 
-                    // Check if current selection is still valid in the new vehicles list
-                    final bool isCurrentSelectedValid = _selectedDevice != null &&
-                        vehicles.any((v) => v.id == _selectedDevice!.id);
+                  // Check if current selection is still valid in the new vehicles list
+                  final bool isCurrentSelectedValid =
+                      _selectedDevice != null &&
+                      vehicles.any((v) => v.id == _selectedDevice!.id);
 
-                    if (!isCurrentSelectedValid) {
-                      // Selection is invalid (deleted or null). Reset selection.
-                      final savedUid = prefs.getSync(key: AppPreference.KEY_SELECTED_UID);
-                      final savedImei = prefs.getSync(key: AppPreference.IMEI);
+                  if (!isCurrentSelectedValid) {
+                    // Selection is invalid (deleted or null). Reset selection.
+                    final savedUid = prefs.getSync(
+                      key: AppPreference.KEY_SELECTED_UID,
+                    );
+                    final savedImei = prefs.getSync(key: AppPreference.IMEI);
 
-                      Vehicles? matchedVehicle;
-                      if (savedUid.isNotEmpty) {
-                        try {
-                          matchedVehicle = vehicles.firstWhere((v) => v.id == savedUid);
-                        } catch (_) {}
-                      }
-                      if (matchedVehicle == null && savedImei.isNotEmpty) {
-                        try {
-                          matchedVehicle = vehicles.firstWhere((v) => v.imei == savedImei);
-                        } catch (_) {}
-                      }
-
-                      final savedVehicle = matchedVehicle ?? vehicles.first;
-
-                      setState(() {
-                        _selectedDevice = savedVehicle;
-                      });
-
-                      prefs.set(key: AppPreference.KEY_SELECTED_UID, value: savedVehicle.id);
-                      prefs.set(key: AppPreference.IMEI, value: savedVehicle.imei ?? '');
-                      AppNavigation.refreshNavigationState();
-
-                      // Refresh rides and initialize socket for the new vehicle
-                      context.read<RideHistoryCubit>().getRideHistoryData();
-                      context.read<AppCubit>().initializeSocket(imei: savedVehicle.imei);
-
-                      if (savedVehicle.imei != null && savedVehicle.imei!.isNotEmpty) {
-                        context.read<GeoFenceCubit>().fetchGeoFences(savedVehicle.imei!);
-                        _checkWarrantyStatus(savedVehicle.imei!);
-                        context.read<PromoVideoCubit>().fetchPromoVideos(savedVehicle.imei!);
-                      } else {
-                        context.read<PromoVideoCubit>().fetchPromoVideos("null");
-                        setState(() {
-                          _isWarrantyExpired = AppPreference.instance.getBoolSync(
-                            key: 'KEY_WARRANTY_EXPIRED',
-                            defaultValue: true,
-                          );
-                          _isWarrantyLoading = false;
-                        });
-                      }
-                    } else {
-                      // Current selection is still valid, just update the data (strictly by ID)
-                      final updatedDevice = vehicles.firstWhere((v) => v.id == _selectedDevice!.id);
-                      setState(() {
-                        _selectedDevice = updatedDevice;
-                      });
-                      if (updatedDevice.imei != null && updatedDevice.imei!.isNotEmpty) {
-                        context.read<GeoFenceCubit>().fetchGeoFences(updatedDevice.imei!);
-                        _checkWarrantyStatus(updatedDevice.imei!);
-                        context.read<PromoVideoCubit>().fetchPromoVideos(updatedDevice.imei!);
-                      } else {
-                        context.read<PromoVideoCubit>().fetchPromoVideos("null");
-                        setState(() {
-                          _isWarrantyExpired = AppPreference.instance.getBoolSync(
-                            key: 'KEY_WARRANTY_EXPIRED',
-                            defaultValue: true,
-                          );
-                          _isWarrantyLoading = false;
-                        });
-                      }
+                    Vehicles? matchedVehicle;
+                    if (savedUid.isNotEmpty) {
+                      try {
+                        matchedVehicle = vehicles.firstWhere(
+                          (v) => v.id == savedUid,
+                        );
+                      } catch (_) {}
                     }
-                  } else {
-                    // ── Garage is EMPTY ──────────────────────────────────────────
-                    // Clear stale in-memory & persistent vehicle references
+                    if (matchedVehicle == null && savedImei.isNotEmpty) {
+                      try {
+                        matchedVehicle = vehicles.firstWhere(
+                          (v) => v.imei == savedImei,
+                        );
+                      } catch (_) {}
+                    }
+
+                    final savedVehicle = matchedVehicle ?? vehicles.first;
+
                     setState(() {
-                      _selectedDevice = null;
-                      _isWarrantyLoading = false;
-                      _isWarrantyExpired = true;
+                      _selectedDevice = savedVehicle;
                     });
-                    prefs.set(key: AppPreference.KEY_SELECTED_UID, value: '');
-                    prefs.set(key: AppPreference.IMEI, value: '');
+
+                    prefs.set(
+                      key: AppPreference.KEY_SELECTED_UID,
+                      value: savedVehicle.id,
+                    );
+                    prefs.set(
+                      key: AppPreference.IMEI,
+                      value: savedVehicle.imei ?? '',
+                    );
                     AppNavigation.refreshNavigationState();
 
-                    // Guard: only navigate once per empty-garage event to prevent
-                    // duplicate pushes if MapLoaded(empty) is emitted multiple times.
-                    if (!_hasNavigatedToInstallation) {
-                      _hasNavigatedToInstallation = true;
-                      Navigator.of(context).pushAndRemoveUntil(
-                        MaterialPageRoute(
-                          builder: (context) => const ChoiceSelector(),
-                        ),
-                        (route) => false,
+                    // Refresh rides and initialize socket for the new vehicle
+                    context.read<RideHistoryCubit>().getRideHistoryData();
+                    context.read<AppCubit>().initializeSocket(
+                      imei: savedVehicle.imei,
+                    );
+
+                    if (savedVehicle.imei != null &&
+                        savedVehicle.imei!.isNotEmpty) {
+                      context.read<GeoFenceCubit>().fetchGeoFences(
+                        savedVehicle.imei!,
                       );
+                      _checkWarrantyStatus(savedVehicle.imei!);
+                      context.read<PromoVideoCubit>().fetchPromoVideos(
+                        savedVehicle.imei!,
+                      );
+                    } else {
+                      context.read<PromoVideoCubit>().fetchPromoVideos("null");
+                      setState(() {
+                        _isWarrantyExpired = AppPreference.instance.getBoolSync(
+                          key: 'KEY_WARRANTY_EXPIRED',
+                          defaultValue: true,
+                        );
+                        _isWarrantyLoading = false;
+                      });
+                    }
+                  } else {
+                    // Current selection is still valid, just update the data (strictly by ID)
+                    final updatedDevice = vehicles.firstWhere(
+                      (v) => v.id == _selectedDevice!.id,
+                    );
+                    setState(() {
+                      _selectedDevice = updatedDevice;
+                    });
+                    if (updatedDevice.imei != null &&
+                        updatedDevice.imei!.isNotEmpty) {
+                      context.read<GeoFenceCubit>().fetchGeoFences(
+                        updatedDevice.imei!,
+                      );
+                      _checkWarrantyStatus(updatedDevice.imei!);
+                      context.read<PromoVideoCubit>().fetchPromoVideos(
+                        updatedDevice.imei!,
+                      );
+                    } else {
+                      context.read<PromoVideoCubit>().fetchPromoVideos("null");
+                      setState(() {
+                        _isWarrantyExpired = AppPreference.instance.getBoolSync(
+                          key: 'KEY_WARRANTY_EXPIRED',
+                          defaultValue: true,
+                        );
+                        _isWarrantyLoading = false;
+                      });
                     }
                   }
-                }
-              },
-            ),
-            BlocListener<AppCubit, AppState>(
-              listenWhen: (prev, curr) =>
-                  prev.mapStyle != curr.mapStyle ||
-                  prev.mapType != curr.mapType ||
-                  prev.isTrafficEnabled != curr.isTrafficEnabled ||
-                  prev.livePosition != curr.livePosition ||
-                  prev.liveBearing != curr.liveBearing ||
-                  prev.devices != curr.devices ||
-                  prev.userData?.name != curr.userData?.name,
-              listener: (context, state) async {
-                final name = state.userData?.name ?? 'Me';
-                final letter = name.isNotEmpty ? name[0].toUpperCase() : 'Me';
-                if (_currentMarkerLetter != letter) {
-                  _currentMarkerLetter = letter;
-                  final primaryColor = Theme.of(context).colorScheme.primary;
-                  _createUserLocationMarker(letter, primaryColor);
-                }
-                _manageRideHistoryTimer(state);
-                if (_mapController != null) {
-                  String? style = _getMapStyle(state, context);
-                  if (mounted && _mapController != null) {
-                    try {
-                      await MapUtils.setStyle(_mapController!, style);
-                    } catch (e) {
-                      debugPrint("Error setting map style: $e");
-                    }
+                } else {
+                  // ── Garage is EMPTY ──────────────────────────────────────────
+                  // Clear stale in-memory & persistent vehicle references
+                  setState(() {
+                    _selectedDevice = null;
+                    _isWarrantyLoading = false;
+                    _isWarrantyExpired = true;
+                  });
+                  prefs.set(key: AppPreference.KEY_SELECTED_UID, value: '');
+                  prefs.set(key: AppPreference.IMEI, value: '');
+                  AppNavigation.refreshNavigationState();
+
+                  // Guard: only navigate once per empty-garage event to prevent
+                  // duplicate pushes if MapLoaded(empty) is emitted multiple times.
+                  if (!_hasNavigatedToInstallation) {
+                    _hasNavigatedToInstallation = true;
+                    Navigator.of(context).pushAndRemoveUntil(
+                      MaterialPageRoute(
+                        builder: (context) => const ChoiceSelector(),
+                      ),
+                      (route) => false,
+                    );
                   }
                 }
-              },
-            ),
-          ],
-          child: BlocBuilder<MapCubit, MapState>(
-            builder: (context, state) {
-              final List<Vehicles> vehicles = state is MapLoaded
-                  ? (state.vehicleList.vehicles ?? <Vehicles>[])
-                  : <Vehicles>[];
+              }
+            },
+          ),
+          BlocListener<AppCubit, AppState>(
+            listenWhen: (prev, curr) =>
+                prev.mapStyle != curr.mapStyle ||
+                prev.mapType != curr.mapType ||
+                prev.isTrafficEnabled != curr.isTrafficEnabled ||
+                prev.livePosition != curr.livePosition ||
+                prev.liveBearing != curr.liveBearing ||
+                prev.devices != curr.devices ||
+                prev.distanceUnit != curr.distanceUnit ||
+                prev.userData?.name != curr.userData?.name,
+            listener: (context, state) async {
+              final name = state.userData?.name ?? 'Me';
+              final letter = name.isNotEmpty ? name[0].toUpperCase() : 'Me';
+              if (_currentMarkerLetter != letter) {
+                _currentMarkerLetter = letter;
+                final primaryColor = Theme.of(context).colorScheme.primary;
+                _createUserLocationMarker(letter, primaryColor);
+              }
+              _manageRideHistoryTimer(state);
+              if (_mapController != null) {
+                String? style = _getMapStyle(state, context);
+                if (mounted && _mapController != null) {
+                  try {
+                    await MapUtils.setStyle(_mapController!, style);
+                  } catch (e) {
+                    debugPrint("Error setting map style: $e");
+                  }
+                }
+              }
 
-              final topSpacing = MediaQuery.of(context).padding.top + 85;
-              final bool isDeviceNotInstalledOrExpired =
-                  _selectedDevice == null ||
-                  _selectedDevice!.imei == null ||
-                  _selectedDevice!.imei!.isEmpty ||
-                  _isWarrantyExpired;
+              // Rebuild the UI if distance unit changes so the labels update instantly
+              if (mounted) {
+                setState(() {});
+              }
+            },
+          ),
+        ],
+        child: BlocBuilder<MapCubit, MapState>(
+          builder: (context, state) {
+            final List<Vehicles> vehicles = state is MapLoaded
+                ? (state.vehicleList.vehicles ?? <Vehicles>[])
+                : <Vehicles>[];
 
-              return Scaffold(
-                body: Stack(
-                  children: [
-                    Positioned.fill(
-                      child: NotificationListener<ScrollNotification>(
-                        onNotification: (ScrollNotification scrollInfo) {
-                          if (scrollInfo.metrics.pixels >=
-                              scrollInfo.metrics.maxScrollExtent - 50) {
-                            context.read<PromoVideoCubit>().loadMoreVideos();
-                          }
-                          return false;
-                        },
-                        child: SingleChildScrollView(
-                          controller: _scrollController,
-                          physics: const BouncingScrollPhysics(),
-                          child: Column(
-                            children: [
-                              SizedBox(height: topSpacing),
-                              _buildOfferSection(),
-                              if (_isWarrantyLoading)
-                                const Padding(
-                                  padding: EdgeInsets.symmetric(
-                                    vertical: 100.0,
-                                  ),
-                                  child: Center(child: TrackifyLoader()),
-                                )
-                              else if (isDeviceNotInstalledOrExpired)
-                                _buildPhoneAsGpsBanner()
-                              else
-                                _buildMapSection(),
-                              if (!_hidePromoBanner &&
-                                  !isDeviceNotInstalledOrExpired &&
-                                  !_isWarrantyLoading) ...[
-                                const SizedBox(height: 5 ),
-                                _buildPromoBanner(),
-                              ],
-                              SizedBox(height: 5),
-                              _buildExploreMore(_selectedDevice),
-                              _buildRecentRidesSection(
-                                _selectedDevice,
-                              ),
-                              _buildVideosSection(),
-                              const SizedBox(height: 100),
+            final topSpacing = MediaQuery.of(context).padding.top + 85;
+            final bool isDeviceNotInstalledOrExpired =
+                _selectedDevice == null ||
+                _selectedDevice!.imei == null ||
+                _selectedDevice!.imei!.isEmpty ||
+                _isWarrantyExpired;
+
+            return Scaffold(
+              body: Stack(
+                children: [
+                  Positioned.fill(
+                    child: NotificationListener<ScrollNotification>(
+                      onNotification: (ScrollNotification scrollInfo) {
+                        if (scrollInfo.metrics.pixels >=
+                            scrollInfo.metrics.maxScrollExtent - 50) {
+                          context.read<PromoVideoCubit>().loadMoreVideos();
+                        }
+                        return false;
+                      },
+                      child: SingleChildScrollView(
+                        controller: _scrollController,
+                        physics: const BouncingScrollPhysics(),
+                        child: Column(
+                          children: [
+                            SizedBox(height: topSpacing),
+                            _buildOfferSection(),
+                            if (_isWarrantyLoading)
+                              const Padding(
+                                padding: EdgeInsets.symmetric(vertical: 100.0),
+                                child: Center(child: TrackifyLoader()),
+                              )
+                            else if (isDeviceNotInstalledOrExpired)
+                              _buildPhoneAsGpsBanner()
+                            else
+                              _buildMapSection(),
+                            if (!_hidePromoBanner &&
+                                !isDeviceNotInstalledOrExpired &&
+                                !_isWarrantyLoading) ...[
+                              const SizedBox(height: 5),
+                              _buildPromoBanner(),
                             ],
-                          ),
+                            SizedBox(height: 5),
+                            _buildExploreMore(_selectedDevice),
+                            _buildRecentRidesSection(_selectedDevice),
+                            _buildVideosSection(),
+                            const SizedBox(height: 100),
+                          ],
                         ),
                       ),
                     ),
-                    _buildDraggableAppBar(vehicles),
+                  ),
+                  _buildDraggableAppBar(vehicles),
+                ],
+              ),
+            );
+          },
+        ),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      floatingActionButton: _showScrollToTop
+          ? GestureDetector(
+              onTap: () {
+                _scrollController.animateTo(
+                  0,
+                  duration: const Duration(milliseconds: 500),
+                  curve: Curves.easeInOut,
+                );
+              },
+              child: Container(
+                height: 32, // Reduced height
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.95),
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.1),
+                      blurRadius: 4,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                  border: Border.all(color: Colors.grey.withOpacity(0.2)),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.arrow_upward, color: Colors.grey[800], size: 16),
+                    const SizedBox(width: 6),
+                    Text(
+                      l10n.scrollToTop,
+                      style: TextStyle(
+                        color: Colors.grey[800],
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
                   ],
                 ),
-              );
-            },
-          ),
-        ),
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-        floatingActionButton: _showScrollToTop
-            ? GestureDetector(
-                onTap: () {
-                  _scrollController.animateTo(
-                    0,
-                    duration: const Duration(milliseconds: 500),
-                    curve: Curves.easeInOut,
-                  );
-                },
-                child: Container(
-                  height: 32, // Reduced height
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.95),
-                    borderRadius: BorderRadius.circular(16),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
-                        blurRadius: 4,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
-                    border: Border.all(color: Colors.grey.withOpacity(0.2)),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        Icons.arrow_upward,
-                        color: Colors.grey[800],
-                        size: 16,
-                      ),
-                      const SizedBox(width: 6),
-                      Text(
-                        l10n.scrollToTop,
-                        style: TextStyle(
-                          color: Colors.grey[800],
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              )
-            : null,
+              ),
+            )
+          : null,
     );
   }
 
@@ -1618,7 +1659,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
           _animEndMarkerTarget = bestPos;
           _animEndMarkerBearing = bearing;
           _lastDataReceivedMs = DateTime.now().millisecondsSinceEpoch;
-          
+
           WidgetsBinding.instance.addPostFrameCallback((_) {
             if (mounted) _mapRebuildNotifier.value++;
           });
@@ -1967,9 +2008,13 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                 int? unixTime = int.tryParse(lastUpdateRaw);
                 if (unixTime != null && unixTime > 1000000000) {
                   if (unixTime > 1000000000000) {
-                    updateDate = DateTime.fromMillisecondsSinceEpoch(unixTime).toLocal();
+                    updateDate = DateTime.fromMillisecondsSinceEpoch(
+                      unixTime,
+                    ).toLocal();
                   } else {
-                    updateDate = DateTime.fromMillisecondsSinceEpoch(unixTime * 1000).toLocal();
+                    updateDate = DateTime.fromMillisecondsSinceEpoch(
+                      unixTime * 1000,
+                    ).toLocal();
                   }
                 } else {
                   updateDate = DateTime.parse(lastUpdateRaw).toLocal();
@@ -2050,10 +2095,10 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                 liveDevice['voltage_level'] ??
                 (attrs is Map
                     ? (attrs['battery'] ??
-                        attrs['batteryLevel'] ??
-                        attrs['voltageLevel'] ??
-                        attrs['battery_level'] ??
-                        attrs['voltage_level'])
+                          attrs['batteryLevel'] ??
+                          attrs['voltageLevel'] ??
+                          attrs['battery_level'] ??
+                          attrs['voltage_level'])
                     : null);
 
             final voltageVal =
@@ -2064,8 +2109,8 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                 liveDevice['power'] ??
                 (attrs is Map
                     ? (attrs['voltage'] ??
-                        attrs['battery_voltage'] ??
-                        attrs['v_bat'])
+                          attrs['battery_voltage'] ??
+                          attrs['v_bat'])
                     : null);
 
             String batteryText = "";
@@ -2086,38 +2131,38 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
               if (intLevel != null && intLevel >= 0 && intLevel <= 6) {
                 switch (intLevel) {
                   case 0:
-                    batteryText = "No Power";
-                    batteryColor = Colors.red;
-                    batteryIcon = Icons.battery_0_bar;
+                    batteryText = "Disconnected";
+                    batteryColor = Colors.red.shade900;
+                    batteryIcon = Icons.battery_alert_sharp;
                     break;
                   case 1:
-                    batteryText = "Extremely Low";
-                    batteryColor = Colors.red;
+                    batteryText = "Critical";
+                    batteryColor = Colors.red.shade700;
                     batteryIcon = Icons.battery_1_bar;
                     break;
                   case 2:
-                    batteryText = "Very Low";
-                    batteryColor = Colors.redAccent;
+                    batteryText = "Very low";
+                    batteryColor = Colors.red.shade400;
                     batteryIcon = Icons.battery_2_bar;
                     break;
                   case 3:
                     batteryText = "Low";
-                    batteryColor = Colors.orange;
+                    batteryColor = Colors.orange.shade800;
                     batteryIcon = Icons.battery_3_bar;
                     break;
                   case 4:
                     batteryText = "Medium";
-                    batteryColor = Colors.amber.shade700;
+                    batteryColor = Colors.green.shade600;
                     batteryIcon = Icons.battery_4_bar;
                     break;
                   case 5:
-                    batteryText = "High";
-                    batteryColor = AppColors.paletteGreen;
+                    batteryText = "Normal";
+                    batteryColor = Colors.green.shade400;
                     batteryIcon = Icons.battery_5_bar;
                     break;
                   case 6:
-                    batteryText = "Very High";
-                    batteryColor = AppColors.paletteGreen;
+                    batteryText = "Normal";
+                    batteryColor = Colors.green.shade400;
                     batteryIcon = Icons.battery_full;
                     break;
                 }
@@ -3155,7 +3200,9 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(24),
           ),
-          backgroundColor: isDark ? colorScheme.surfaceContainerHigh : Colors.white,
+          backgroundColor: isDark
+              ? colorScheme.surfaceContainerHigh
+              : Colors.white,
           elevation: 8,
           child: Padding(
             padding: const EdgeInsets.all(20.0),
@@ -3654,8 +3701,6 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
       ),
     );
   }
-
-
 
   Widget _buildDraggableAppBar(List<Vehicles> vehicles) {
     return DraggableAppBar(

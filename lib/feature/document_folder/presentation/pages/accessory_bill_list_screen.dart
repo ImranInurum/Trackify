@@ -7,6 +7,7 @@ import 'package:trackify/feature/document_folder/presentation/cubit/document_fol
 import 'package:trackify/feature/document_folder/presentation/cubit/document_folder_state.dart';
 import 'package:trackify/feature/document_folder/presentation/pages/accessory_bill_screen.dart';
 import 'package:trackify/feature/document_folder/presentation/pages/accessory_bill_details_screen.dart';
+import 'package:intl/intl.dart';
 
 class AccessoryBillListScreen extends StatelessWidget {
   final String vehicleId;
@@ -21,6 +22,16 @@ class AccessoryBillListScreen extends StatelessWidget {
   String _getImageUrl(String? path) {
     if (path == null || path.isEmpty) return '';
     return path.startsWith('http') ? path : '${ApiURL.baseURL}/$path';
+  }
+
+  String _formatDate(String? dateStr) {
+    if (dateStr == null || dateStr.isEmpty) return 'N/A';
+    try {
+      final parsed = DateTime.parse(dateStr);
+      return DateFormat('dd/MM/yyyy').format(parsed);
+    } catch (_) {
+      return dateStr;
+    }
   }
 
   @override
@@ -144,7 +155,7 @@ class AccessoryBillListScreen extends StatelessWidget {
                                 const SizedBox(width: 4),
                                 Expanded(
                                   child: Text(
-                                    'Bill Date: ${bill.billingDate ?? 'N/A'}',
+                                    'Bill Date: ${_formatDate(bill.billingDate)}',
                                     style: TextStyle(
                                       color: colorScheme.onSurfaceVariant,
                                       fontSize: 12,

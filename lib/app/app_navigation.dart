@@ -11,6 +11,16 @@ import '../feature/trips/presentation/view/trip_screen.dart';
 import '../feature/product_over_view/product_screen.dart';
 import '../feature/device_warranty/pages/device_warranty_page.dart';
 
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:trackify/app/cubit/app_cubit.dart';
+import 'package:trackify/feature/auth/presentation/pages/signin_screen.dart';
+import 'package:trackify/feature/map/presentation/cubit/map_cubit.dart';
+import 'package:trackify/feature/my_garage/presentation/cubit/my_garage_cubit.dart';
+import 'package:trackify/feature/my_profile/presentation/cubit/my_profile_cubit.dart';
+import 'package:trackify/feature/profile/presentation/cubit/profile_cubit.dart';
+import 'package:trackify/feature/service_logs/presentation/cubit/service_logs_cubit.dart';
+import 'package:trackify/app/session_route_observer.dart';
+
 class AppNavigation extends StatefulWidget {
   static _AppNavigationState? currentState;
   static final ValueNotifier<int> currentTabNotifier = ValueNotifier<int>(0);
@@ -47,6 +57,11 @@ class _AppNavigationState extends State<AppNavigation> {
     _navigatorKeys = List.generate(4, (index) => GlobalKey<NavigatorState>());
     _productNavigatorKey = GlobalKey<NavigatorState>();
     _warrantyNavigatorKey = GlobalKey<NavigatorState>();
+    
+    // Initial check on load
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _checkSessionAndLogout();
+    });
   }
 
   @override
@@ -160,6 +175,31 @@ class _AppNavigationState extends State<AppNavigation> {
       _currentIndex = index;
     });
     AppNavigation.currentTabNotifier.value = _getActualIndex(index);
+    _checkSessionAndLogout();
+  }
+
+  Future<void> _checkSessionAndLogout() async {
+    if (!mounted) return;
+    final isExpired = await context.read<AppCubit>().isSessionExpired();
+    if (isExpired && mounted) {
+      await context.read<AppCubit>().logout();
+      if (mounted) {
+        context.read<ProfileCubit>().reset();
+        context.read<MyProfileCubit>().reset();
+        context.read<MapCubit>().reset();
+        context.read<MyGarageCubit>().reset();
+        context.read<ServiceLogsCubit>().reset();
+        Navigator.of(
+          context,
+          rootNavigator: true,
+        ).pushAndRemoveUntil(
+          MaterialPageRoute(
+            builder: (context) => const SignInScreen(),
+          ),
+          (Route<dynamic> route) => false,
+        );
+      }
+    }
   }
 
   int _getActualIndex(int displayIndex) {
@@ -174,6 +214,7 @@ class _AppNavigationState extends State<AppNavigation> {
   Widget _buildNavigator(GlobalKey<NavigatorState> key, Widget child) {
     return Navigator(
       key: key,
+      observers: [SessionRouteObserver()],
       onGenerateRoute: (settings) =>
           MaterialPageRoute(builder: (context) => child),
     );

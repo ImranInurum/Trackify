@@ -3,6 +3,7 @@ import 'package:trackify/feature/trips/data/entity/ride_model.dart';
 import 'package:trackify/feature/trips/presentation/view/widgets/all_rides/widgets/polyline_thumbnail.dart';
 import 'package:trackify/l10n/app_localizations.dart';
 import 'package:trackify/core/utils/distance_utils.dart';
+import 'package:intl/intl.dart';
 
 class RideCard extends StatelessWidget {
   final Ride ride;
@@ -18,19 +19,30 @@ class RideCard extends StatelessWidget {
       DateTime? parsedDate;
       if (ride.rawStartTime.isNotEmpty) {
         parsedDate = DateTime.parse(ride.rawStartTime).toLocal();
+      } else {
+        // Fallback parsing if rawStartTime is empty but date is present
+        try {
+          parsedDate = DateFormat('dd/MM/yyyy').parse(ride.date);
+        } catch (_) {
+          try {
+            parsedDate = DateTime.parse(ride.date);
+          } catch (_) {}
+        }
       }
+      
       if (parsedDate != null) {
         final now = DateTime.now();
         if (parsedDate.year == now.year &&
             parsedDate.month == now.month &&
             parsedDate.day == now.day) {
           displayDate = l10n.today;
+        } else {
+          displayDate = DateFormat('dd/MM/yyyy').format(parsedDate);
         }
       } else {
         final now = DateTime.now();
         final format1 = "${now.day}/${now.month}/${now.year}";
-        final format2 =
-            "${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}";
+        final format2 = DateFormat('dd/MM/yyyy').format(now);
         if (ride.date == format1 || ride.date == format2) {
           displayDate = l10n.today;
         }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:intl/intl.dart';
 import 'dart:async';
 import 'dart:math' as math;
 import 'dart:ui' as ui;
@@ -11,6 +12,10 @@ import 'package:trackify/feature/trips/presentation/cubit/ride_history_details_s
 import 'package:trackify/l10n/app_localizations.dart';
 import 'package:trackify/core/utils/distance_utils.dart';
 import 'package:trackify/core/widgets/trackify_loader.dart';
+import 'package:trackify/app/cubit/app_cubit.dart';
+import 'package:trackify/app/cubit/app_state.dart';
+import 'package:trackify/core/constants/app_images.dart';
+import 'package:trackify/core/utils/map_utils.dart';
 
 class RideHistoryDetailsScreen extends StatefulWidget {
   final Ride ride;
@@ -57,6 +62,19 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
   bool _isDraggingSlider = false;
   bool _isDirectionMode = false;
 
+  String? _lightMapStyle;
+  String? _darkMapStyle;
+
+  Future<void> _loadMapStyles() async {
+    _lightMapStyle = await MapUtils.loadStyle(
+      'assets/map_styles/light_map.json',
+    );
+    _darkMapStyle = await MapUtils.loadStyle('assets/map_styles/dark_map.json');
+    if (mounted && _lastCameraPosition != null) {
+      // Just to ensure if it loads late, we might need to update the controller.
+    }
+  }
+
   double _getSpeedMultiplier(int speed) {
     switch (speed) {
       case 2:
@@ -79,6 +97,7 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
   @override
   void initState() {
     super.initState();
+    _loadMapStyles();
 
     _playController = AnimationController(
       vsync: this,
@@ -725,73 +744,84 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
                         current.validRidePoints.length;
               },
               builder: (context, mapState) {
-                return GoogleMap(
-                  initialCameraPosition: const CameraPosition(
-                    target: LatLng(20.5937, 78.9629), // Start at India
-                    zoom: 4.2,
-                  ),
-                  mapType: MapType.normal,
-                  style: Theme.of(context).brightness == Brightness.dark ? mapState.darkMapStyle : null,
-                  zoomControlsEnabled: false,
-                  myLocationButtonEnabled: false,
-                  compassEnabled: false,
-                  mapToolbarEnabled: false,
-                  padding: const EdgeInsets.only(bottom: 220),
-                  polylines: {
-                    if (mapState.validRidePoints.isNotEmpty)
-                      Polyline(
-                        polylineId: const PolylineId('route'),
-                        points: mapState.validRidePoints
-                            .map((p) => p.location)
-                            .toList(),
-                        color: Colors.yellow,
-                        width: 5,
-                        startCap: Cap.roundCap,
-                        endCap: Cap.roundCap,
-                        jointType: JointType.round,
+                return BlocBuilder<AppCubit, AppState>(
+                  builder: (context, appState) {
+                    return GoogleMap(
+                      initialCameraPosition: const CameraPosition(
+                        target: LatLng(20.5937, 78.9629), // Start at India
+                        zoom: 4.2,
                       ),
-                  },
-                  markers: {
-                    if (mapState.startIcon != null &&
-                        mapState.validRidePoints.isNotEmpty)
-                      Marker(
-                        markerId: const MarkerId('start'),
-                        position: mapState.validRidePoints.first.location,
-                        icon: mapState.startIcon!,
-                        anchor: const Offset(0.5, 0.5),
-                      ),
-                    if (mapState.endIcon != null &&
-                        mapState.validRidePoints.isNotEmpty)
-                      Marker(
-                        markerId: const MarkerId('end'),
-                        position: mapState.validRidePoints.last.location,
-                        icon: mapState.endIcon!,
-                        anchor: const Offset(0.5, 1.0),
-                      ),
-                    if (mapState.vehicleIcon != null &&
-                        mapState.currentVehiclePosition != null &&
-                        mapState.isPlaybackStarted)
-                      Marker(
-                        markerId: const MarkerId('vehicle'),
-                        position: mapState.currentVehiclePosition!,
-                        icon: mapState.vehicleIcon!,
-                        anchor: const Offset(0.5, 0.5),
-                        rotation: mapState.currentHeading,
-                        flat: true,
-                        zIndexInt: 2,
-                      ),
-                  },
-                  onMapCreated: _onMapCreated,
-                  onCameraMove: (position) {
-                    if (_isGliding ||
-                        (mounted &&
-                            context
-                                .read<RideHistoryDetailsCubit>()
-                                .state
-                                .isPlaying)) {
-                      return; // Ignore laggy async native updates during active programmatic tracking/glides
-                    }
-                    _lastCameraPosition = position;
+                      mapType: appState.mapType == 'satellite'
+                          ? MapType.satellite
+                          : MapType.normal,
+                      style: appState.mapType == 'satellite'
+                          ? null
+                          : (Theme.of(context).brightness == Brightness.dark
+                                ? (_darkMapStyle ?? mapState.darkMapStyle)
+                                : _lightMapStyle),
+                      trafficEnabled: appState.isTrafficEnabled,
+                      zoomControlsEnabled: false,
+                      myLocationButtonEnabled: false,
+                      compassEnabled: false,
+                      mapToolbarEnabled: false,
+                      padding: const EdgeInsets.only(bottom: 220),
+                      polylines: {
+                        if (mapState.validRidePoints.isNotEmpty)
+                          Polyline(
+                            polylineId: const PolylineId('route'),
+                            points: mapState.validRidePoints
+                                .map((p) => p.location)
+                                .toList(),
+                            color: Colors.yellow,
+                            width: 5,
+                            startCap: Cap.roundCap,
+                            endCap: Cap.roundCap,
+                            jointType: JointType.round,
+                          ),
+                      },
+                      markers: {
+                        if (mapState.startIcon != null &&
+                            mapState.validRidePoints.isNotEmpty)
+                          Marker(
+                            markerId: const MarkerId('start'),
+                            position: mapState.validRidePoints.first.location,
+                            icon: mapState.startIcon!,
+                            anchor: const Offset(0.5, 0.5),
+                          ),
+                        if (mapState.endIcon != null &&
+                            mapState.validRidePoints.isNotEmpty)
+                          Marker(
+                            markerId: const MarkerId('end'),
+                            position: mapState.validRidePoints.last.location,
+                            icon: mapState.endIcon!,
+                            anchor: const Offset(0.5, 1.0),
+                          ),
+                        if (mapState.vehicleIcon != null &&
+                            mapState.currentVehiclePosition != null &&
+                            mapState.isPlaybackStarted)
+                          Marker(
+                            markerId: const MarkerId('vehicle'),
+                            position: mapState.currentVehiclePosition!,
+                            icon: mapState.vehicleIcon!,
+                            anchor: const Offset(0.5, 0.5),
+                            rotation: mapState.currentHeading,
+                            flat: true,
+                            zIndexInt: 2,
+                          ),
+                      },
+                      onMapCreated: _onMapCreated,
+                      onCameraMove: (position) {
+                        if (_isGliding ||
+                            (mounted &&
+                                context
+                                    .read<RideHistoryDetailsCubit>()
+                                    .state
+                                    .isPlaying)) {
+                          return; // Ignore laggy async native updates during active programmatic tracking/glides
+                        }
+                        _lastCameraPosition = position;
+                      },
+                    );
                   },
                 );
               },
@@ -828,15 +858,59 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
                       ),
                       onPressed: () => Navigator.pop(context),
                     ),
-                    Expanded(
-                      child: Text(
-                        widget.ride.date,
-                        style: TextStyle(
-                          color: Theme.of(context).colorScheme.onSurface,
-                          fontSize: 18,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
+                    Builder(
+                      builder: (context) {
+                        String displayDate = widget.ride.date;
+                        try {
+                          DateTime? parsedDate;
+                          if (widget.ride.rawStartTime.isNotEmpty) {
+                            parsedDate = DateTime.parse(
+                              widget.ride.rawStartTime,
+                            ).toLocal();
+                          } else {
+                            try {
+                              parsedDate = DateFormat(
+                                'dd/MM/yyyy',
+                              ).parse(widget.ride.date);
+                            } catch (_) {
+                              try {
+                                parsedDate = DateTime.parse(widget.ride.date);
+                              } catch (_) {}
+                            }
+                          }
+                          if (parsedDate != null) {
+                            final now = DateTime.now();
+                            if (parsedDate.year == now.year &&
+                                parsedDate.month == now.month &&
+                                parsedDate.day == now.day) {
+                              displayDate = AppLocalizations.of(context)!.today;
+                            } else {
+                              displayDate = DateFormat(
+                                'dd/MM/yyyy',
+                              ).format(parsedDate);
+                            }
+                          } else {
+                            final now = DateTime.now();
+                            final format1 =
+                                "${now.day}/${now.month}/${now.year}";
+                            final format2 = DateFormat(
+                              'dd/MM/yyyy',
+                            ).format(now);
+                            if (widget.ride.date == format1 ||
+                                widget.ride.date == format2) {
+                              displayDate = AppLocalizations.of(context)!.today;
+                            }
+                          }
+                        } catch (_) {}
+                        return Text(
+                          displayDate,
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.onSurface,
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        );
+                      },
                     ),
                   ],
                 ),
@@ -1078,7 +1152,12 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
               bottom: 240,
               child: Column(
                 children: [
-                  _buildMapFloatingBtn(Icons.layers_outlined, onTap: () {}),
+                  _buildMapFloatingBtn(
+                    Icons.layers_outlined,
+                    onTap: () {
+                      _showMapStyleBottomSheet();
+                    },
+                  ),
                   const SizedBox(height: 12),
                   _buildMapFloatingBtn(
                     _isDirectionMode ? Icons.navigation : Icons.my_location,
@@ -1429,7 +1508,9 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
               builder: (context, state) {
                 if (state.isDataProcessing) {
                   return Container(
-                    color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.7),
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.surface.withValues(alpha: 0.7),
                     child: const Center(child: TrackifyLoader()),
                   );
                 }
@@ -1543,5 +1624,283 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
         ),
       ],
     );
+  }
+
+  void _showMapStyleBottomSheet() {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      barrierColor: Colors.black45,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(36)),
+      ),
+      builder: (context) {
+        return BlocBuilder<AppCubit, AppState>(
+          builder: (context, state) {
+            final l10n = AppLocalizations.of(context)!;
+            return Container(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+              decoration: BoxDecoration(
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.1),
+                    blurRadius: 15,
+                    spreadRadius: 2,
+                  ),
+                ],
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Center(
+                    child: Container(
+                      width: 44,
+                      height: 5,
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).dividerColor,
+                        borderRadius: BorderRadius.circular(3),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  Text(
+                    l10n.mapStyleLabel,
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                      color: Theme.of(context).colorScheme.onSurface,
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      _buildStyleOption(
+                        l10n.darkStyle,
+                        AppImages.darkMapStyle,
+                        state,
+                      ),
+                      _buildStyleOption(
+                        l10n.lightStyle,
+                        AppImages.lightMapStyle,
+                        state,
+                      ),
+                      _buildStyleOption(
+                        l10n.simpleStyle,
+                        AppImages.simpleMapStyle,
+                        state,
+                      ),
+                      _buildStyleOption(
+                        l10n.satelliteStyle,
+                        AppImages.sateLiteMapStyle,
+                        state,
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 32),
+                  Text(
+                    l10n.mapOptionsLabel,
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                      color: Theme.of(context).colorScheme.onSurface,
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  Row(
+                    children: [
+                      _buildMapOption(
+                        l10n.trafficLabel,
+                        AppImages.trafficMapStyle,
+                        state.isTrafficEnabled,
+                        (val) => context.read<AppCubit>().updateMapConfig(
+                          isTrafficEnabled: val,
+                        ),
+                      ),
+                      const SizedBox(width: 24),
+                      _buildMapOption(
+                        l10n.labelsLabel,
+                        AppImages.darkMapStyle,
+                        state.isLabelsEnabled,
+                        (val) => context.read<AppCubit>().updateMapConfig(
+                          isLabelsEnabled: val,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 24),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  Widget _buildStyleOption(String name, String imagePath, AppState appState) {
+    final bool isSelected =
+        appState.mapStyle == name ||
+        (appState.mapType == 'satellite' && name == "Satellite");
+    return GestureDetector(
+      onTap: () async {
+        if (name == "Satellite") {
+          context.read<AppCubit>().updateMapConfig(
+            mapType: 'satellite',
+            mapStyle: 'Satellite',
+          );
+        } else {
+          context.read<AppCubit>().updateMapConfig(
+            mapType: 'normal',
+            mapStyle: name,
+          );
+        }
+
+        if (mounted) {
+          final controller = await _controller.future;
+          _updateMapStyle(controller);
+        }
+      },
+      child: Column(
+        children: [
+          Container(
+            height: 68,
+            width: 68,
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage(imagePath),
+                fit: BoxFit.cover,
+              ),
+              borderRadius: BorderRadius.circular(16),
+              border: isSelected
+                  ? Border.all(
+                      color: Theme.of(context).colorScheme.primary,
+                      width: 2.5,
+                    )
+                  : Border.all(color: Theme.of(context).dividerColor),
+              boxShadow: [
+                if (isSelected)
+                  BoxShadow(
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.primary.withValues(alpha: 0.2),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
+                  ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            name,
+            style: TextStyle(
+              fontSize: 13,
+              fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+              color: isSelected
+                  ? Theme.of(context).colorScheme.primary
+                  : Theme.of(context).colorScheme.onSurface,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMapOption(
+    String name,
+    String imagePath,
+    bool isActive,
+    Function(bool) onChanged,
+  ) {
+    return GestureDetector(
+      onTap: () => onChanged(!isActive),
+      child: Column(
+        children: [
+          Stack(
+            children: [
+              Container(
+                height: 68,
+                width: 68,
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    image: AssetImage(imagePath),
+                    fit: BoxFit.cover,
+                  ),
+                  borderRadius: BorderRadius.circular(16),
+                  border: isActive
+                      ? Border.all(
+                          color: Theme.of(context).colorScheme.primary,
+                          width: 2,
+                        )
+                      : Border.all(color: Colors.transparent),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.05),
+                      blurRadius: 10,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+              ),
+              if (isActive)
+                Positioned(
+                  right: 8,
+                  top: 8,
+                  child: Container(
+                    padding: const EdgeInsets.all(2),
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.primary,
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(
+                      Icons.check,
+                      size: 10,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Text(
+            name,
+            style: TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.w500,
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _updateMapStyle(GoogleMapController controller) async {
+    final appConfig = context.read<AppCubit>().state;
+    final l10n = AppLocalizations.of(context);
+
+    if (appConfig.mapType == 'satellite' ||
+        appConfig.mapStyle == 'Satellite' ||
+        appConfig.mapStyle == l10n?.satelliteStyle) {
+      await MapUtils.setStyle(controller, null);
+      return;
+    }
+
+    String? style;
+    if (appConfig.mapStyle == 'Dark' || appConfig.mapStyle == l10n?.darkStyle) {
+      style = _darkMapStyle;
+    } else if (appConfig.mapStyle == 'Light' ||
+        appConfig.mapStyle == l10n?.lightStyle) {
+      style = _lightMapStyle;
+    } else if (appConfig.mapStyle == 'Simple' ||
+        appConfig.mapStyle == l10n?.simpleStyle) {
+      style = _lightMapStyle;
+    } else {
+      final isDarkTheme = Theme.of(context).brightness == Brightness.dark;
+      style = isDarkTheme ? _darkMapStyle : _lightMapStyle;
+    }
+
+    await MapUtils.setStyle(controller, style);
   }
 }

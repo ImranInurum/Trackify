@@ -54,7 +54,7 @@ class FullScreenMap extends StatefulWidget {
 }
 
 class _FullScreenMapState extends State<FullScreenMap>
-    with TickerProviderStateMixin {
+    with TickerProviderStateMixin, WidgetsBindingObserver {
   final bool _useDemoSimulation = false;
   Timer? _demoTimer;
   int _demoIndex = 0;
@@ -117,6 +117,7 @@ class _FullScreenMapState extends State<FullScreenMap>
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _uiCubit = FullScreenMapUiCubit();
     _currentVehicle = widget.selectedVehicle;
     if (_currentVehicle?.imei != null && _currentVehicle!.imei!.isNotEmpty) {
@@ -162,7 +163,7 @@ class _FullScreenMapState extends State<FullScreenMap>
                     .toString(),
               ) ??
               0.0;
-          
+
           setState(() {
             _animatedMarkerPos = initialPos;
             _animStartMarkerTarget = initialPos;
@@ -405,6 +406,7 @@ class _FullScreenMapState extends State<FullScreenMap>
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _statusTimer?.cancel();
     _demoTimer?.cancel();
     _autoFollowResumeTimer?.cancel();
@@ -413,6 +415,19 @@ class _FullScreenMapState extends State<FullScreenMap>
     _cameraAnimationController?.dispose();
     _markerAnimController?.dispose();
     super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      if (mounted) {
+        context.read<MapCubit>().fetchVehicles();
+        if (_currentVehicle != null && _currentVehicle!.imei != null) {
+          context.read<AppCubit>().initializeSocket(imei: _currentVehicle!.imei);
+          _fetchDeviceStatus(_currentVehicle!.imei!);
+        }
+      }
+    }
   }
 
   Future<void> _fetchDeviceStatus(String imei) async {
@@ -1468,20 +1483,26 @@ class _FullScreenMapState extends State<FullScreenMap>
           }
         }
       },
-      child: Scaffold(
-        body: NotificationListener<DraggableScrollableNotification>(
-          onNotification: (notification) {
-            _sheetExtent.value = notification.extent;
-            return false;
-          },
-          child: Stack(
-            children: [
-              _buildMap(),
-              _buildTopActions(),
-              _buildLeftSideActions(),
-              _buildRightSideActions(),
-              _buildDraggableBottomCard(),
-            ],
+      child: BlocListener<AppCubit, AppState>(
+        listenWhen: (prev, curr) => prev.distanceUnit != curr.distanceUnit,
+        listener: (context, state) {
+          if (mounted) setState(() {});
+        },
+        child: Scaffold(
+          body: NotificationListener<DraggableScrollableNotification>(
+            onNotification: (notification) {
+              _sheetExtent.value = notification.extent;
+              return false;
+            },
+            child: Stack(
+              children: [
+                _buildMap(),
+                _buildTopActions(),
+                _buildLeftSideActions(),
+                _buildRightSideActions(),
+                _buildDraggableBottomCard(),
+              ],
+            ),
           ),
         ),
       ),
@@ -2050,9 +2071,9 @@ class _FullScreenMapState extends State<FullScreenMap>
       backgroundColor: Colors.transparent,
       builder: (BuildContext ctx) {
         return BlocProvider(
-          create: (context) =>
-              VehicleControlCubit(VehicleControlRepositoryImpl())
-                ..loadVehicleDetails(_currentVehicle!.id, _currentVehicle!.imei),
+          create: (context) => VehicleControlCubit(
+            VehicleControlRepositoryImpl(),
+          )..loadVehicleDetails(_currentVehicle!.id, _currentVehicle!.imei),
           child: Builder(
             builder: (context) {
               return Column(
@@ -2546,7 +2567,7 @@ class _FullScreenMapState extends State<FullScreenMap>
                   } else if (isYesterday) {
                     parkedSince = '${timeFormat.format(stoppedAt)}, Yesterday';
                   } else {
-                    final dateFormat = DateFormat('MMM dd');
+                    final dateFormat = DateFormat('dd/MM/yyyy');
                     parkedSince =
                         '${timeFormat.format(stoppedAt)}, ${dateFormat.format(stoppedAt)}';
                   }
@@ -3088,38 +3109,38 @@ class _FullScreenMapState extends State<FullScreenMap>
           if (intLevel != null && intLevel >= 0 && intLevel <= 6) {
             switch (intLevel) {
               case 0:
-                batteryText = "No Power";
-                batteryColor = Colors.red;
-                batteryIcon = Icons.battery_0_bar;
+                batteryText = "Disconnected";
+                batteryColor = Colors.red.shade900;
+                batteryIcon = Icons.battery_alert_sharp;
                 break;
               case 1:
-                batteryText = "Extremely Low";
-                batteryColor = Colors.red;
+                batteryText = "Critical";
+                batteryColor = Colors.red.shade700;
                 batteryIcon = Icons.battery_1_bar;
                 break;
               case 2:
-                batteryText = "Very Low";
-                batteryColor = Colors.redAccent;
+                batteryText = "Very low";
+                batteryColor = Colors.red.shade400;
                 batteryIcon = Icons.battery_2_bar;
                 break;
               case 3:
                 batteryText = "Low";
-                batteryColor = Colors.orange;
+                batteryColor = Colors.orange.shade800;
                 batteryIcon = Icons.battery_3_bar;
                 break;
               case 4:
                 batteryText = "Medium";
-                batteryColor = Colors.amber.shade700;
+                batteryColor = Colors.green.shade600;
                 batteryIcon = Icons.battery_4_bar;
                 break;
               case 5:
-                batteryText = "High";
-                batteryColor = Colors.green;
+                batteryText = "Normal";
+                batteryColor = Colors.green.shade400;
                 batteryIcon = Icons.battery_5_bar;
                 break;
               case 6:
-                batteryText = "Very High";
-                batteryColor = Colors.green;
+                batteryText = "Normal";
+                batteryColor = Colors.green.shade400;
                 batteryIcon = Icons.battery_full;
                 break;
             }

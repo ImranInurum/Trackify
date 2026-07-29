@@ -342,4 +342,21 @@ class VehicleControlRepositoryImpl implements VehicleControlRepository {
     );
     response.fold((failure) => throw failure, (success) => null);
   }
+
+  @override
+  Future<Map<String, dynamic>?> getVehicleModelDetails(String vehicleId) async {
+    final response = await _apiService.getGetApiResponse(
+      ApiURL.vehicleModelDetails(vehicleId),
+    );
+    Map<String, dynamic>? resultData;
+    response.fold(
+      (failure) => throw failure,
+      (data) {
+        if (data is Map && data['data'] != null) {
+          resultData = Map<String, dynamic>.from(data['data']);
+        }
+      },
+    );
+    return resultData;
+  }
 }

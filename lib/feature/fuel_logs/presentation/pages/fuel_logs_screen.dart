@@ -15,6 +15,8 @@ import 'package:trackify/feature/fuel_logs/presentation/pages/widgets/fuel_stati
 import 'package:trackify/feature/fuel_logs/data/data source/refuel_data_source.dart';
 import 'package:trackify/feature/fuel_logs/presentation/cubit/refuel_history_cubit.dart';
 import 'package:trackify/core/widgets/trackify_loader.dart';
+import 'package:trackify/app/cubit/app_cubit.dart';
+import 'package:trackify/app/cubit/app_state.dart';
 
 class FuelLogsScreen extends StatefulWidget {
   const FuelLogsScreen({super.key});
@@ -106,7 +108,19 @@ class _FuelLogsScreenState extends State<FuelLogsScreen>
               FuelStationsCubit(OverpassService())..fetchNearbyStations(),
         ),
       ],
-      child: BlocConsumer<ServiceLogsCubit, ServiceLogsState>(
+      child: BlocListener<AppCubit, AppState>(
+        listenWhen: (prev, curr) => prev.distanceUnit != curr.distanceUnit,
+        listener: (context, appState) {
+          final serviceState = context.read<ServiceLogsCubit>().state;
+          if (serviceState is ServiceLogsLoaded && serviceState.selectedVehicle != null) {
+            final vehicleId = serviceState.selectedVehicle!.id;
+            if (vehicleId != null) {
+              context.read<FuelLogsCubit>().loadFuelLogs(vehicleId);
+              context.read<RefuelHistoryCubit>().loadRefuelHistory(vehicleId);
+            }
+          }
+        },
+        child: BlocConsumer<ServiceLogsCubit, ServiceLogsState>(
         listener: (context, state) {
           if (state is ServiceLogsSuccess) {
             ScaffoldMessenger.of(context).showSnackBar(
@@ -276,6 +290,7 @@ class _FuelLogsScreenState extends State<FuelLogsScreen>
             ),
           );
         },
+      ),
       ),
     );
   }

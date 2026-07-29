@@ -420,7 +420,7 @@ class _DocumentLicenseState extends State<DocumentLicense> {
 
     final dateLabel = _selectedDate == null
         ? l10n.selectExpiryDate
-        : DateFormat('dd / MM / yyyy').format(_selectedDate!);
+        : DateFormat('dd/MM/yyyy').format(_selectedDate!);
 
     return Scaffold(
       backgroundColor: colorScheme.surface,

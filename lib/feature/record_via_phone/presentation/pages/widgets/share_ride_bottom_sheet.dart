@@ -376,7 +376,7 @@ class _ShareRideBottomSheetState extends State<ShareRideBottomSheet> {
                                 ),
                                 const SizedBox(height: 4),
                                 Text(
-                                  '${AppLocalizations.of(context)!.rideOnLabel} ${DateFormat('d MMM').format(widget.date)}',
+                                  '${AppLocalizations.of(context)!.rideOnLabel} ${DateFormat('dd/MM/yyyy').format(widget.date)}',
                                   style: TextStyle(
                                     color: Colors.white.withOpacity(0.7),
                                     fontSize: 12,

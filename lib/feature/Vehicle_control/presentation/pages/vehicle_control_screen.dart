@@ -1001,6 +1001,7 @@ class _VehicleControlViewState extends State<VehicleControlView> {
                                     context,
                                     vehicle.imei,
                                     vehicle.tankCapacity,
+                                    vehicle.id,
                                   ),
                                 ),
                               ),
@@ -1015,6 +1016,7 @@ class _VehicleControlViewState extends State<VehicleControlView> {
                                     context,
                                     vehicle.imei,
                                     vehicle.vehicleMileage,
+                                    vehicle.id,
                                   ),
                                 ),
                               ),
@@ -1575,6 +1577,7 @@ class _VehicleControlViewState extends State<VehicleControlView> {
     BuildContext context,
     String vehicleIMEI,
     String currentVal,
+    String vehicleId,
   ) {
     // ── Device install check ─────────────────────────────────────────────
     if (vehicleIMEI.isEmpty) {
@@ -1610,34 +1613,39 @@ class _VehicleControlViewState extends State<VehicleControlView> {
 
     showDialog(
       context: context,
-      builder: (context) => Dialog(
-        backgroundColor: isDark ? const Color(0xFF2C2C2C) : theme.cardColor,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        child: Padding(
-          padding: const EdgeInsets.all(24),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
+      builder: (context) {
+        bool isLoadingDefault = false;
+        return StatefulBuilder(
+          builder: (context, setStateDialog) => Dialog(
+            backgroundColor: isDark ? const Color(0xFF2C2C2C) : theme.cardColor,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+            child: Padding(
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Icon(
-                    Icons.local_gas_station_outlined,
-                    color: theme.colorScheme.primary,
-                    size: 24,
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.local_gas_station_outlined,
+                        color: theme.colorScheme.primary,
+                        size: 24,
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Text(
+                          l10n.tankCapacity,
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: theme.colorScheme.onSurface,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                  const SizedBox(width: 12),
-                  Text(
-                    l10n.tankCapacity,
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: theme.colorScheme.onSurface,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 12),
+                  const SizedBox(height: 12),
               Container(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(12),
@@ -1681,8 +1689,36 @@ class _VehicleControlViewState extends State<VehicleControlView> {
               ),
               const SizedBox(height: 32),
               Row(
-                mainAxisAlignment: MainAxisAlignment.end,
                 children: [
+                  if (vehicleId.isNotEmpty)
+                    isLoadingDefault
+                        ? const Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 16.0),
+                            child: SizedBox(
+                              width: 16,
+                              height: 16,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            ),
+                          )
+                        : TextButton(
+                            onPressed: () async {
+                              setStateDialog(() => isLoadingDefault = true);
+                              final data = await cubit.fetchDefaultVehicleModelDetails(vehicleId);
+                              setStateDialog(() => isLoadingDefault = false);
+                              if (data != null && data['tankCapacity'] != null) {
+                                String cap = data['tankCapacity'].toString().replaceAll(RegExp(r'[^0-9.]'), '');
+                                controller.text = cap;
+                              }
+                            },
+                            child: Text(
+                              "Default",
+                              style: TextStyle(
+                                color: theme.colorScheme.primary,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                  const Spacer(),
                   TextButton(
                     onPressed: () => Navigator.pop(context),
                     child: Text(
@@ -1712,6 +1748,8 @@ class _VehicleControlViewState extends State<VehicleControlView> {
           ),
         ),
       ),
+        );
+      },
     );
   }
 
@@ -1719,6 +1757,7 @@ class _VehicleControlViewState extends State<VehicleControlView> {
     BuildContext context,
     String vehicleIMEI,
     String currentVal,
+    String vehicleId,
   ) {
     // ── Device install check ─────────────────────────────────────────────
     if (vehicleIMEI.isEmpty) {
@@ -1754,34 +1793,39 @@ class _VehicleControlViewState extends State<VehicleControlView> {
 
     showDialog(
       context: context,
-      builder: (context) => Dialog(
-        backgroundColor: isDark ? const Color(0xFF2C2C2C) : theme.cardColor,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        child: Padding(
-          padding: const EdgeInsets.all(24),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
+      builder: (context) {
+        bool isLoadingDefault = false;
+        return StatefulBuilder(
+          builder: (context, setStateDialog) => Dialog(
+            backgroundColor: isDark ? const Color(0xFF2C2C2C) : theme.cardColor,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+            child: Padding(
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Icon(
-                    Icons.speed_outlined,
-                    color: theme.colorScheme.primary,
-                    size: 24,
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.speed_outlined,
+                        color: theme.colorScheme.primary,
+                        size: 24,
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Text(
+                          l10n.vehicleMileage,
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: theme.colorScheme.onSurface,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                  const SizedBox(width: 12),
-                  Text(
-                    l10n.vehicleMileage,
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: theme.colorScheme.onSurface,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 12),
+                  const SizedBox(height: 12),
               Container(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(12),
@@ -1825,8 +1869,36 @@ class _VehicleControlViewState extends State<VehicleControlView> {
               ),
               const SizedBox(height: 32),
               Row(
-                mainAxisAlignment: MainAxisAlignment.end,
                 children: [
+                  if (vehicleId.isNotEmpty)
+                    isLoadingDefault
+                        ? const Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 16.0),
+                            child: SizedBox(
+                              width: 16,
+                              height: 16,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            ),
+                          )
+                        : TextButton(
+                            onPressed: () async {
+                              setStateDialog(() => isLoadingDefault = true);
+                              final data = await cubit.fetchDefaultVehicleModelDetails(vehicleId);
+                              setStateDialog(() => isLoadingDefault = false);
+                              if (data != null && data['mileage'] != null) {
+                                String mil = data['mileage'].toString().replaceAll(RegExp(r'[^0-9.]'), '');
+                                controller.text = mil;
+                              }
+                            },
+                            child: Text(
+                              "Default",
+                              style: TextStyle(
+                                color: theme.colorScheme.primary,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                  const Spacer(),
                   TextButton(
                     onPressed: () => Navigator.pop(context),
                     child: Text(
@@ -1856,6 +1928,8 @@ class _VehicleControlViewState extends State<VehicleControlView> {
           ),
         ),
       ),
+        );
+      },
     );
   }
 

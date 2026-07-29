@@ -394,6 +394,15 @@ class VehicleControlCubit extends Cubit<VehicleControlState> {
     }
   }
 
+  Future<Map<String, dynamic>?> fetchDefaultVehicleModelDetails(String vehicleId) async {
+    try {
+      if (vehicleId.isEmpty) return null;
+      return await repository.getVehicleModelDetails(vehicleId);
+    } catch (e) {
+      return null;
+    }
+  }
+
   Future<void> deleteVehicle(String vehicleId, String vehicleIMEI) async {
     final currentState = state;
     try {

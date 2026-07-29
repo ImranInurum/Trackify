@@ -565,11 +565,11 @@ DateTime? _parseDateTime(String? timeStr) {
   
   // 1. Try ISO parsing directly
   DateTime? dt = DateTime.tryParse(cleanStr);
-  if (dt != null) return dt;
+  if (dt != null) return dt.toLocal();
   
   // 2. Try replacing spaces with 'T' (e.g. "2026-05-23 15:41:10")
   dt = DateTime.tryParse(cleanStr.replaceAll(' ', 'T'));
-  if (dt != null) return dt;
+  if (dt != null) return dt.toLocal();
 
   // 3. Try parsing Unix timestamp
   final isDigitsOnly = RegExp(r'^\d+$').hasMatch(cleanStr);

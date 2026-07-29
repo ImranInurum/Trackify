@@ -5,6 +5,7 @@ import 'package:trackify/feature/document_folder/domain/entities/doucment_entity
 import 'package:trackify/feature/document_folder/presentation/cubit/document_folder_cubit.dart';
 import 'package:trackify/feature/document_folder/presentation/pages/accessory_bill_screen.dart';
 import 'package:trackify/l10n/app_localizations.dart';
+import 'package:intl/intl.dart';
 
 class AccessoryBillDetailsScreen extends StatelessWidget {
   final DocumentEntity bill;
@@ -19,6 +20,16 @@ class AccessoryBillDetailsScreen extends StatelessWidget {
   String _getImageUrl(String? path) {
     if (path == null || path.isEmpty) return '';
     return path.startsWith('http') ? path : '${ApiURL.baseURL}/$path';
+  }
+
+  String _formatDate(String? dateStr) {
+    if (dateStr == null || dateStr.isEmpty) return 'N/A';
+    try {
+      final parsed = DateTime.parse(dateStr);
+      return DateFormat('dd/MM/yyyy').format(parsed);
+    } catch (_) {
+      return dateStr;
+    }
   }
 
   @override
@@ -143,7 +154,7 @@ class AccessoryBillDetailsScreen extends StatelessWidget {
                   _buildDetailRow(
                     colorScheme,
                     'Date',
-                    bill.billingDate ?? 'N/A',
+                    _formatDate(bill.billingDate),
                     'Amount',
                     bill.billingAmount != null
                         ? '₹${bill.billingAmount}'
@@ -169,7 +180,7 @@ class AccessoryBillDetailsScreen extends StatelessWidget {
                   _buildDetailRow(
                     colorScheme,
                     'Warranty',
-                    bill.warrantyExpiry ?? 'N/A',
+                    _formatDate(bill.warrantyExpiry),
                     '',
                     '',
                   ),

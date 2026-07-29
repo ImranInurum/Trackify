@@ -281,14 +281,28 @@ class _SelectionGroupCardState extends State<_SelectionGroupCard> {
 
   String _formatDate(String dateStr) {
     try {
-      final parts = dateStr.split('/');
-      if (parts.length == 3) {
-        final dt = DateTime(
-          int.parse(parts[2]),
-          int.parse(parts[1]),
-          int.parse(parts[0]),
-        );
-        return DateFormat('EEEE, d MMM yyyy').format(dt);
+      DateTime? parsedDate;
+      try {
+        parsedDate = DateFormat('dd/MM/yyyy').parse(dateStr);
+      } catch (_) {
+        try {
+          parsedDate = DateTime.parse(dateStr);
+        } catch (_) {}
+      }
+      if (parsedDate != null) {
+        final now = DateTime.now();
+        if (parsedDate.year == now.year &&
+            parsedDate.month == now.month &&
+            parsedDate.day == now.day) {
+          return AppLocalizations.of(context)!.today;
+        }
+        return DateFormat('dd/MM/yyyy').format(parsedDate);
+      } else {
+        final now = DateTime.now();
+        if (dateStr == "${now.day}/${now.month}/${now.year}" ||
+            dateStr == DateFormat('dd/MM/yyyy').format(now)) {
+          return AppLocalizations.of(context)!.today;
+        }
       }
     } catch (_) {}
     return dateStr;

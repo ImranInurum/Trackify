@@ -5,7 +5,7 @@ import 'package:trackify/feature/trips/presentation/view/create_trip/create_trip
 import 'package:trackify/feature/trips/presentation/view/ride_history_details/ride_history_details_screen.dart';
 import 'package:trackify/feature/trips/presentation/view/widgets/all_rides/widgets/polyline_thumbnail.dart';
 
-
+import 'package:intl/intl.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'package:hive/hive.dart';
@@ -1038,32 +1038,65 @@ class _MapCard extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(16),
             color: theme.cardColor,
-            child: Row(
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "${firstRide.date} ${firstRide.startTime}",
-                        style: TextStyle(color: goldColor, fontSize: 11),
+            child: Builder(
+              builder: (context) {
+                String formatDate(String rawDate) {
+                  try {
+                    DateTime? parsedDate;
+                    try {
+                      parsedDate = DateFormat('dd/MM/yyyy').parse(rawDate);
+                    } catch (_) {
+                      try {
+                        parsedDate = DateTime.parse(rawDate);
+                      } catch (_) {}
+                    }
+                    if (parsedDate != null) {
+                      final now = DateTime.now();
+                      if (parsedDate.year == now.year &&
+                          parsedDate.month == now.month &&
+                          parsedDate.day == now.day) {
+                        return l10n.today;
+                      }
+                      return DateFormat('dd/MM/yyyy').format(parsedDate);
+                    } else {
+                      final now = DateTime.now();
+                      if (rawDate == "${now.day}/${now.month}/${now.year}" ||
+                          rawDate == DateFormat('dd/MM/yyyy').format(now)) {
+                        return l10n.today;
+                      }
+                    }
+                  } catch (_) {}
+                  return rawDate;
+                }
+
+                return Row(
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "${formatDate(firstRide.date)} ${firstRide.startTime}",
+                            style: TextStyle(color: goldColor, fontSize: 11),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                ),
-                const SizedBox(width: 20),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Text(
-                        "${lastRide.date} ${lastRide.endTime}",
-                        style: TextStyle(color: goldColor, fontSize: 11),
+                    ),
+                    const SizedBox(width: 20),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Text(
+                            "${formatDate(lastRide.date)} ${lastRide.endTime}",
+                            style: TextStyle(color: goldColor, fontSize: 11),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                ),
-              ],
+                    ),
+                  ],
+                );
+              }
             ),
           ),
         ],

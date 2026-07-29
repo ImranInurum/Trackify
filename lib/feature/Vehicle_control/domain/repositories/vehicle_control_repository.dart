@@ -20,6 +20,7 @@ abstract class VehicleControlRepository {
   Future<void> updateVehicleImage(String vehicleId, String imagePath);
   Future<void> updateVehicleLock(String vehicleId, bool lockState);
   Future<void> deleteVehicle(String vehicleId);
+  Future<Map<String, dynamic>?> getVehicleModelDetails(String vehicleId);
 }
 
 class VehicleNotFoundException implements Exception {
