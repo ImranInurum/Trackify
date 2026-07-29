@@ -6,7 +6,9 @@ import 'package:device_info_plus/device_info_plus.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:trackify/core/config/network/api_host.dart';
 import 'package:trackify/core/config/network/network_api_service.dart';
-import 'package:trackify/core/common/repositories/common_repo_impl.dart' as trackify;
+import 'package:trackify/core/utils/shared_preferences.dart';
+import 'package:trackify/core/common/repositories/common_repo_impl.dart'
+    as trackify;
 import 'location_sharing_state.dart';
 
 class LocationSharingCubit extends Cubit<LocationSharingState> {
@@ -46,7 +48,8 @@ class LocationSharingCubit extends Cubit<LocationSharingState> {
     ];
 
     try {
-      final trackify.CommonRepositoryImpl commonRepo = trackify.CommonRepositoryImpl();
+      final trackify.CommonRepositoryImpl commonRepo =
+          trackify.CommonRepositoryImpl();
       final res = await commonRepo.getUserVehicles();
 
       res.fold(
@@ -56,13 +59,16 @@ class LocationSharingCubit extends Cubit<LocationSharingState> {
         (vehicleListResponse) {
           final vehicles = vehicleListResponse.vehicles ?? [];
           for (var vehicle in vehicles) {
-            items.add(LocationSharingItem(
-              id: vehicle.id ?? vehicle.imei ?? '',
-              name: '${vehicle.vehicleMaker ?? ''} ${vehicle.vehicleModel ?? ''} (${vehicle.vehicleNumber ?? ''})',
-              isSharing: false,
-              isPhone: false,
-              imei: vehicle.imei ?? '',
-            ));
+            items.add(
+              LocationSharingItem(
+                id: vehicle.id ?? vehicle.imei ?? '',
+                name:
+                    '${vehicle.vehicleMaker ?? ''} ${vehicle.vehicleModel ?? ''} (${vehicle.vehicleNumber ?? ''})',
+                isSharing: false,
+                isPhone: false,
+                imei: vehicle.imei ?? '',
+              ),
+            );
           }
         },
       );
@@ -86,38 +92,52 @@ class LocationSharingCubit extends Cubit<LocationSharingState> {
     }
   }
 
-  Future<void> shareLiveLocation(BuildContext context, String id, int duration) async {
+  Future<void> shareLiveLocation(
+    BuildContext context,
+    String id,
+    int duration,
+  ) async {
     if (state is! LocationSharingLoaded) return;
-    
+
     final items = (state as LocationSharingLoaded).items;
     final itemIndex = items.indexWhere((e) => e.id == id);
     if (itemIndex == -1) return;
-    
+
     final item = items[itemIndex];
-    
+
     try {
+      final prefs = AppPreference.instance;
+      final userId = await prefs.get(key: AppPreference.KEY_USER_ID);
+
       // 1. Create Share Link
       final createUrl = '${ApiURL.baseURL}/api/share/create';
       final shareType = item.isPhone ? 'device' : 'ride';
-      
+
       final Map<String, dynamic> createBody = {
         "shareType": shareType,
         "expiresInHours": duration == 0 ? 8760 : duration,
+        "userId": userId,
       };
 
       if (shareType == 'ride') {
         createBody['imei'] = item.imei.isNotEmpty ? item.imei : 'UNKNOWN_IMEI';
         createBody['startDate'] = DateTime.now().toUtc().toIso8601String();
-        createBody['endDate'] = DateTime.now().toUtc().add(Duration(hours: duration == 0 ? 8760 : duration)).toIso8601String();
+        createBody['endDate'] = DateTime.now()
+            .toUtc()
+            .add(Duration(hours: duration == 0 ? 8760 : duration))
+            .toIso8601String();
       } else {
         createBody['imei'] = null;
       }
-      
-      final createResult = await _apiService.getPostApiResponse(createUrl, createBody);
-      
-      String token = '';
+
+      final createResult = await _apiService.getPostApiResponse(
+        createUrl,
+        createBody,
+      );
+
+      String webLink = '';
       String? errorMessage;
-      
+
       createResult.fold(
         (failure) {
           debugPrint('Error creating share link: ${failure.message}');
@@ -125,64 +145,36 @@ class LocationSharingCubit extends Cubit<LocationSharingState> {
         },
         (success) {
           if (success['success'] == true && success['data'] != null) {
-            token = success['data']['token'];
+            webLink = success['data']['webLink'] ?? '';
           } else {
-            errorMessage = success['message']?.toString() ?? 'Failed to create share link';
+            errorMessage =
+                success['message']?.toString() ?? 'Failed to create share link';
           }
         },
       );
-      
-      if (token.isEmpty) {
-        if (context.mounted && errorMessage != null) {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(errorMessage!), backgroundColor: Colors.red));
-        }
-        return;
-      }
-      
-      // 2. Fetch mapLink
-      final endpoint = shareType == 'device' ? 'device' : 'ride';
-      final fetchUrl = '${ApiURL.baseURL}/api/share/$endpoint/$token';
-      
-      final fetchResult = await _apiService.getGetApiResponse(fetchUrl);
-      
-      String shareUrl = '';
-      
-      fetchResult.fold(
-        (failure) {
-          debugPrint('Error fetching share link: ${failure.message}');
-          errorMessage = failure.message;
-        },
-        (success) {
-          if (success['success'] == true) {
-            shareUrl = success['deepLink'] ?? success['result']?['mapLink'] ?? '';
-          } else {
-            errorMessage = success['message']?.toString() ?? 'Failed to fetch share link';
-          }
-        },
-      );
-      
-      if (shareUrl.isEmpty) {
-        if (context.mounted && errorMessage != null) {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(errorMessage!), backgroundColor: Colors.red));
-        }
-        return;
-      }
-      
-      // 3. Share the link
-      if (shareUrl.isNotEmpty) {
-        // Update UI state so the card shows active sharing
-        final updatedItems = List<LocationSharingItem>.from(items);
-        updatedItems[itemIndex] = item.copyWith(isSharing: true);
-        emit(LocationSharingLoaded(items: updatedItems));
 
-        // Trigger native share sheet
-        await Share.share('Track my live location here: $shareUrl');
+      if (webLink.isEmpty) {
+        if (context.mounted && errorMessage != null) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(errorMessage!), backgroundColor: Colors.red),
+          );
+        }
+        return;
       }
-      
+
+      // Update UI state so the card shows active sharing
+      final updatedItems = List<LocationSharingItem>.from(items);
+      updatedItems[itemIndex] = item.copyWith(isSharing: true);
+      emit(LocationSharingLoaded(items: updatedItems));
+
+      // Trigger native share sheet
+      await Share.share('$webLink');
     } catch (e) {
       debugPrint('Exception in shareLiveLocation: $e');
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.toString()), backgroundColor: Colors.red));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(e.toString()), backgroundColor: Colors.red),
+        );
       }
     }
   }

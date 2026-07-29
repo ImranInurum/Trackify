@@ -278,6 +278,41 @@ class AppCubit extends Cubit<AppState> with WidgetsBindingObserver {
     emit(state.copyWith(userData: user));
   }
 
+  Future<bool> isSessionExpired() async {
+    final prefs = AppPreference.instance;
+    final currentToken = await prefs.get(key: AppPreference.KEY_TOKEN);
+    final fcmToken = await prefs.get(key: AppPreference.KEY_FCM_TOKEN);
+    // If token is empty, we are likely already logged out.
+    // Return false to prevent infinite logout loops.
+    if (currentToken.isEmpty) return false;
+
+    try {
+      final result = await _apiServices.getPostApiResponse(
+        ApiURL.checkToken,
+        {
+          "token": currentToken,
+          if (fcmToken.isNotEmpty) "fcmToken": fcmToken,
+        },
+      );
+      
+      bool expired = false;
+      result.fold(
+        (failure) {
+          debugPrint("AppCubit: [CHECK SESSION] API failed: ${failure.message}");
+        },
+        (response) {
+          if (response is Map<String, dynamic>) {
+            expired = response['isExpired'] == true;
+          }
+        }
+      );
+      return expired;
+    } catch(e) {
+      debugPrint("AppCubit: [CHECK SESSION] Exception: $e");
+      return false;
+    }
+  }
+
   Future<void> logout() async {
     debugPrint("AppCubit: [LOGOUT] Logging out user and clearing all local caches/sessions.");
     

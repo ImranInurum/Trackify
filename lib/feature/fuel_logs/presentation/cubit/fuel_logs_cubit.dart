@@ -15,6 +15,12 @@ class FuelLogsCubit extends Cubit<FuelLogsState> {
 
   FuelLogsCubit() : super(FuelLogsInitial());
 
+  @override
+  void emit(FuelLogsState state) {
+    if (isClosed) return;
+    super.emit(state);
+  }
+
   Future<void> loadFuelLogs(String vehicleId) async {
     try {
       _currentVehicleId = vehicleId;

@@ -54,7 +54,7 @@ class FullScreenMap extends StatefulWidget {
 }
 
 class _FullScreenMapState extends State<FullScreenMap>
-    with TickerProviderStateMixin {
+    with TickerProviderStateMixin, WidgetsBindingObserver {
   final bool _useDemoSimulation = false;
   Timer? _demoTimer;
   int _demoIndex = 0;
@@ -117,6 +117,7 @@ class _FullScreenMapState extends State<FullScreenMap>
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _uiCubit = FullScreenMapUiCubit();
     _currentVehicle = widget.selectedVehicle;
     if (_currentVehicle?.imei != null && _currentVehicle!.imei!.isNotEmpty) {
@@ -162,7 +163,7 @@ class _FullScreenMapState extends State<FullScreenMap>
                     .toString(),
               ) ??
               0.0;
-          
+
           setState(() {
             _animatedMarkerPos = initialPos;
             _animStartMarkerTarget = initialPos;
@@ -405,6 +406,7 @@ class _FullScreenMapState extends State<FullScreenMap>
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _statusTimer?.cancel();
     _demoTimer?.cancel();
     _autoFollowResumeTimer?.cancel();
@@ -413,6 +415,19 @@ class _FullScreenMapState extends State<FullScreenMap>
     _cameraAnimationController?.dispose();
     _markerAnimController?.dispose();
     super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      if (mounted) {
+        context.read<MapCubit>().fetchVehicles();
+        if (_currentVehicle != null && _currentVehicle!.imei != null) {
+          context.read<AppCubit>().initializeSocket(imei: _currentVehicle!.imei);
+          _fetchDeviceStatus(_currentVehicle!.imei!);
+        }
+      }
+    }
   }
 
   Future<void> _fetchDeviceStatus(String imei) async {
@@ -2056,9 +2071,9 @@ class _FullScreenMapState extends State<FullScreenMap>
       backgroundColor: Colors.transparent,
       builder: (BuildContext ctx) {
         return BlocProvider(
-          create: (context) =>
-              VehicleControlCubit(VehicleControlRepositoryImpl())
-                ..loadVehicleDetails(_currentVehicle!.id, _currentVehicle!.imei),
+          create: (context) => VehicleControlCubit(
+            VehicleControlRepositoryImpl(),
+          )..loadVehicleDetails(_currentVehicle!.id, _currentVehicle!.imei),
           child: Builder(
             builder: (context) {
               return Column(
@@ -2552,7 +2567,7 @@ class _FullScreenMapState extends State<FullScreenMap>
                   } else if (isYesterday) {
                     parkedSince = '${timeFormat.format(stoppedAt)}, Yesterday';
                   } else {
-                    final dateFormat = DateFormat('MMM dd');
+                    final dateFormat = DateFormat('dd/MM/yyyy');
                     parkedSince =
                         '${timeFormat.format(stoppedAt)}, ${dateFormat.format(stoppedAt)}';
                   }
@@ -3096,7 +3111,7 @@ class _FullScreenMapState extends State<FullScreenMap>
               case 0:
                 batteryText = "Disconnected";
                 batteryColor = Colors.red.shade900;
-                batteryIcon = Icons.battery_unknown;
+                batteryIcon = Icons.battery_alert_sharp;
                 break;
               case 1:
                 batteryText = "Critical";

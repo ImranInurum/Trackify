@@ -153,7 +153,6 @@ class _LocationSharingDetailScreenState
           LiveSharingLinkCard(
             title: l10n.twoHoursLink,
             expiresIn: l10n.expiresInTime('1 hr 52 min'),
-            viewers: 0,
             onStopSharing: () => _showStopSharingDialog(context, item),
           ),
         ],
@@ -297,14 +296,12 @@ class _LocationSharingDetailScreenState
 class LiveSharingLinkCard extends StatelessWidget {
   final String title;
   final String expiresIn;
-  final int viewers;
   final VoidCallback onStopSharing;
 
   const LiveSharingLinkCard({
     super.key,
     required this.title,
     required this.expiresIn,
-    required this.viewers,
     required this.onStopSharing,
   });
 
@@ -345,23 +342,6 @@ class LiveSharingLinkCard extends StatelessWidget {
                       expiresIn,
                       style: theme.textTheme.bodyMedium?.copyWith(
                         color: theme.hintColor.withOpacity(0.7),
-                      ),
-                    ),
-                  ],
-                ),
-                Row(
-                  children: [
-                    Icon(
-                      Icons.visibility,
-                      size: 16,
-                      color: colorScheme.primary,
-                    ),
-                    const SizedBox(width: 4),
-                    Text(
-                      '$viewers',
-                      style: TextStyle(
-                        color: colorScheme.primary,
-                        fontWeight: FontWeight.bold,
                       ),
                     ),
                   ],

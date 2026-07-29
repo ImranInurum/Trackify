@@ -156,15 +156,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
             const SizedBox(height: 10),
 
-            if (_isVisible(l10n.backupAndRestore))
-              SettingListTile(
-                icon: Icons.cloud_upload_outlined,
-                title: l10n.backupAndRestore,
-                subtitle: l10n.backupAndRestoreDesc,
-                showArrow: true,
-                showIcon: true,
-                onTap: () => debugPrint("Backup & Restore tapped"),
-              ),
+            // if (_isVisible(l10n.backupAndRestore))
+            //   SettingListTile(
+            //     icon: Icons.cloud_upload_outlined,
+            //     title: l10n.backupAndRestore,
+            //     subtitle: l10n.backupAndRestoreDesc,
+            //     showArrow: true,
+            //     showIcon: true,
+            //     onTap: () => debugPrint("Backup & Restore tapped"),
+            //   ),
             // if (_isVisible(l10n.appSettings))
             //   SettingListTile(
             //     icon: Icons.settings_outlined,

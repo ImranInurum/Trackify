@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:intl/intl.dart';
 import 'dart:async';
 import 'dart:math' as math;
 import 'dart:ui' as ui;
@@ -15,6 +16,7 @@ import 'package:trackify/app/cubit/app_cubit.dart';
 import 'package:trackify/app/cubit/app_state.dart';
 import 'package:trackify/core/constants/app_images.dart';
 import 'package:trackify/core/utils/map_utils.dart';
+
 class RideHistoryDetailsScreen extends StatefulWidget {
   final Ride ride;
 
@@ -59,12 +61,14 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
   bool _wasPlayingBeforeDrag = false;
   bool _isDraggingSlider = false;
   bool _isDirectionMode = false;
-  
+
   String? _lightMapStyle;
   String? _darkMapStyle;
 
   Future<void> _loadMapStyles() async {
-    _lightMapStyle = await MapUtils.loadStyle('assets/map_styles/light_map.json');
+    _lightMapStyle = await MapUtils.loadStyle(
+      'assets/map_styles/light_map.json',
+    );
     _darkMapStyle = await MapUtils.loadStyle('assets/map_styles/dark_map.json');
     if (mounted && _lastCameraPosition != null) {
       // Just to ensure if it loads late, we might need to update the controller.
@@ -762,66 +766,66 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
                       mapToolbarEnabled: false,
                       padding: const EdgeInsets.only(bottom: 220),
                       polylines: {
-                    if (mapState.validRidePoints.isNotEmpty)
-                      Polyline(
-                        polylineId: const PolylineId('route'),
-                        points: mapState.validRidePoints
-                            .map((p) => p.location)
-                            .toList(),
-                        color: Colors.yellow,
-                        width: 5,
-                        startCap: Cap.roundCap,
-                        endCap: Cap.roundCap,
-                        jointType: JointType.round,
-                      ),
-                  },
-                  markers: {
-                    if (mapState.startIcon != null &&
-                        mapState.validRidePoints.isNotEmpty)
-                      Marker(
-                        markerId: const MarkerId('start'),
-                        position: mapState.validRidePoints.first.location,
-                        icon: mapState.startIcon!,
-                        anchor: const Offset(0.5, 0.5),
-                      ),
-                    if (mapState.endIcon != null &&
-                        mapState.validRidePoints.isNotEmpty)
-                      Marker(
-                        markerId: const MarkerId('end'),
-                        position: mapState.validRidePoints.last.location,
-                        icon: mapState.endIcon!,
-                        anchor: const Offset(0.5, 1.0),
-                      ),
-                    if (mapState.vehicleIcon != null &&
-                        mapState.currentVehiclePosition != null &&
-                        mapState.isPlaybackStarted)
-                      Marker(
-                        markerId: const MarkerId('vehicle'),
-                        position: mapState.currentVehiclePosition!,
-                        icon: mapState.vehicleIcon!,
-                        anchor: const Offset(0.5, 0.5),
-                        rotation: mapState.currentHeading,
-                        flat: true,
-                        zIndexInt: 2,
-                      ),
-                  },
-                  onMapCreated: _onMapCreated,
-                  onCameraMove: (position) {
-                    if (_isGliding ||
-                        (mounted &&
-                            context
-                                .read<RideHistoryDetailsCubit>()
-                                .state
-                                .isPlaying)) {
-                      return; // Ignore laggy async native updates during active programmatic tracking/glides
-                    }
-                    _lastCameraPosition = position;
+                        if (mapState.validRidePoints.isNotEmpty)
+                          Polyline(
+                            polylineId: const PolylineId('route'),
+                            points: mapState.validRidePoints
+                                .map((p) => p.location)
+                                .toList(),
+                            color: Colors.yellow,
+                            width: 5,
+                            startCap: Cap.roundCap,
+                            endCap: Cap.roundCap,
+                            jointType: JointType.round,
+                          ),
+                      },
+                      markers: {
+                        if (mapState.startIcon != null &&
+                            mapState.validRidePoints.isNotEmpty)
+                          Marker(
+                            markerId: const MarkerId('start'),
+                            position: mapState.validRidePoints.first.location,
+                            icon: mapState.startIcon!,
+                            anchor: const Offset(0.5, 0.5),
+                          ),
+                        if (mapState.endIcon != null &&
+                            mapState.validRidePoints.isNotEmpty)
+                          Marker(
+                            markerId: const MarkerId('end'),
+                            position: mapState.validRidePoints.last.location,
+                            icon: mapState.endIcon!,
+                            anchor: const Offset(0.5, 1.0),
+                          ),
+                        if (mapState.vehicleIcon != null &&
+                            mapState.currentVehiclePosition != null &&
+                            mapState.isPlaybackStarted)
+                          Marker(
+                            markerId: const MarkerId('vehicle'),
+                            position: mapState.currentVehiclePosition!,
+                            icon: mapState.vehicleIcon!,
+                            anchor: const Offset(0.5, 0.5),
+                            rotation: mapState.currentHeading,
+                            flat: true,
+                            zIndexInt: 2,
+                          ),
+                      },
+                      onMapCreated: _onMapCreated,
+                      onCameraMove: (position) {
+                        if (_isGliding ||
+                            (mounted &&
+                                context
+                                    .read<RideHistoryDetailsCubit>()
+                                    .state
+                                    .isPlaying)) {
+                          return; // Ignore laggy async native updates during active programmatic tracking/glides
+                        }
+                        _lastCameraPosition = position;
+                      },
+                    );
                   },
                 );
               },
-            );
-          },
-        ),
+            ),
 
             // Custom AppBar (Static back button layer)
             Positioned(
@@ -854,15 +858,59 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
                       ),
                       onPressed: () => Navigator.pop(context),
                     ),
-                    Expanded(
-                      child: Text(
-                        widget.ride.date,
-                        style: TextStyle(
-                          color: Theme.of(context).colorScheme.onSurface,
-                          fontSize: 18,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
+                    Builder(
+                      builder: (context) {
+                        String displayDate = widget.ride.date;
+                        try {
+                          DateTime? parsedDate;
+                          if (widget.ride.rawStartTime.isNotEmpty) {
+                            parsedDate = DateTime.parse(
+                              widget.ride.rawStartTime,
+                            ).toLocal();
+                          } else {
+                            try {
+                              parsedDate = DateFormat(
+                                'dd/MM/yyyy',
+                              ).parse(widget.ride.date);
+                            } catch (_) {
+                              try {
+                                parsedDate = DateTime.parse(widget.ride.date);
+                              } catch (_) {}
+                            }
+                          }
+                          if (parsedDate != null) {
+                            final now = DateTime.now();
+                            if (parsedDate.year == now.year &&
+                                parsedDate.month == now.month &&
+                                parsedDate.day == now.day) {
+                              displayDate = AppLocalizations.of(context)!.today;
+                            } else {
+                              displayDate = DateFormat(
+                                'dd/MM/yyyy',
+                              ).format(parsedDate);
+                            }
+                          } else {
+                            final now = DateTime.now();
+                            final format1 =
+                                "${now.day}/${now.month}/${now.year}";
+                            final format2 = DateFormat(
+                              'dd/MM/yyyy',
+                            ).format(now);
+                            if (widget.ride.date == format1 ||
+                                widget.ride.date == format2) {
+                              displayDate = AppLocalizations.of(context)!.today;
+                            }
+                          }
+                        } catch (_) {}
+                        return Text(
+                          displayDate,
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.onSurface,
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        );
+                      },
                     ),
                   ],
                 ),
@@ -1104,9 +1152,12 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
               bottom: 240,
               child: Column(
                 children: [
-                  _buildMapFloatingBtn(Icons.layers_outlined, onTap: () {
-                    _showMapStyleBottomSheet();
-                  }),
+                  _buildMapFloatingBtn(
+                    Icons.layers_outlined,
+                    onTap: () {
+                      _showMapStyleBottomSheet();
+                    },
+                  ),
                   const SizedBox(height: 12),
                   _buildMapFloatingBtn(
                     _isDirectionMode ? Icons.navigation : Icons.my_location,
@@ -1457,7 +1508,9 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
               builder: (context, state) {
                 if (state.isDataProcessing) {
                   return Container(
-                    color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.7),
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.surface.withValues(alpha: 0.7),
                     child: const Center(child: TrackifyLoader()),
                   );
                 }
@@ -1705,8 +1758,8 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
         }
 
         if (mounted) {
-           final controller = await _controller.future;
-           _updateMapStyle(controller);
+          final controller = await _controller.future;
+          _updateMapStyle(controller);
         }
       },
       child: Column(

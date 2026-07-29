@@ -259,6 +259,7 @@ class ApiURL {
   // -------------------------
   static String getSessions(String userId) => "$baseURL/api/sessions/$userId";
   static String logoutSession(String sessionId) => "$baseURL/api/sessions/logout/$sessionId";
+  static const String checkToken = "$baseURL/api/sessions/check-token";
 
   // -------------------------
   // Statistics

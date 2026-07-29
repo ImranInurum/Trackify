@@ -120,20 +120,6 @@ class LocationSharingCard extends StatelessWidget {
                           fontSize: 13,
                         ),
                       ),
-                      const SizedBox(width: 16),
-                      Icon(
-                        Icons.visibility,
-                        size: 14,
-                        color: theme.colorScheme.primary,
-                      ),
-                      const SizedBox(width: 4),
-                      Text(
-                        '0 Viewers',
-                        style: theme.textTheme.bodyMedium?.copyWith(
-                          color: theme.colorScheme.primary,
-                          fontSize: 13,
-                        ),
-                      ),
                     ],
                   ),
                 ],

@@ -269,7 +269,7 @@ class _DatePickerBar extends StatelessWidget {
     final now = DateTime.now();
     final isToday =
         date.year == now.year && date.month == now.month && date.day == now.day;
-    final format = isToday ? DateFormat('MMMM d') : DateFormat('MMMM d, y');
+    final format = DateFormat('dd/MM/yyyy');
     final l10n = AppLocalizations.of(context)!;
     return isToday
         ? '${format.format(date)} ${l10n.todayLabel}'

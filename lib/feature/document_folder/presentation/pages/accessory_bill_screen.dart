@@ -455,10 +455,10 @@ class _AccessoryBillScreenState extends State<AccessoryBillScreen> {
     final screenHeight = size.height;
     final billingDateLabel = _billingDate == null
         ? null
-        : DateFormat('dd / MM / yyyy').format(_billingDate!);
+        : DateFormat('dd/MM/yyyy').format(_billingDate!);
     final warrantyExpiryLabel = _warrantyExpiryDate == null
         ? AppLocalizations.of(context)!.selectExpiryDate
-        : DateFormat('dd / MM / yyyy').format(_warrantyExpiryDate!);
+        : DateFormat('dd/MM/yyyy').format(_warrantyExpiryDate!);
 
     return Scaffold(
       backgroundColor: colorScheme.surface,

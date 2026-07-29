@@ -1,4 +1,5 @@
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:intl/intl.dart';
 import 'ride_history_response_model.dart';
 
 class RidePoint {
@@ -237,7 +238,7 @@ class Ride {
       if (isoString == null) return "Unknown Date";
       try {
         final date = DateTime.parse(isoString);
-        return "${date.day}/${date.month}/${date.year}";
+        return DateFormat('dd/MM/yyyy').format(date);
       } catch (e) {
         return isoString;
       }
