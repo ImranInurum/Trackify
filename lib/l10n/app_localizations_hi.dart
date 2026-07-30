@@ -2436,7 +2436,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get savedSuccessfully => 'सफलतापूर्वक सेव किया गया';
 
   @override
-  String get fuelStationName => 'सी.एम. पेट्रो पॉइंट, बीपीसीएल पेट्रोल...';
+  String get fuelStationName => 'उदा. इंडियन ऑयल, शेल';
 
   @override
   String get yourPhoneLocation => 'आपके फोन की लोकेशन';
@@ -3468,4 +3468,20 @@ class AppLocalizationsHi extends AppLocalizations {
   String stopSharingConfirmation(String name) {
     return 'Are you sure you want to stop sharing the location of $name?';
   }
+
+  @override
+  String hoursLink(String hours) {
+    return '$hours घंटे का लिंक';
+  }
+
+  @override
+  String activeSharingCount(int count) {
+    return '$count सक्रिय शेयरिंग';
+  }
+
+  @override
+  String get sharingStoppedSuccessfully => 'शेयरिंग सफलतापूर्वक रोक दी गई।';
+
+  @override
+  String get failedToCreateShareLink => 'शेयर लिंक बनाने में विफल';
 }

@@ -2432,7 +2432,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get savedSuccessfully => 'Saved Successfully';
 
   @override
-  String get fuelStationName => 'C.M. Petro Point, BPCL petr...';
+  String get fuelStationName => 'E.g. Indian Oil, Shell';
 
   @override
   String get yourPhoneLocation => 'Your Phone\'s Location';
@@ -3461,4 +3461,20 @@ class AppLocalizationsEn extends AppLocalizations {
   String stopSharingConfirmation(String name) {
     return 'Are you sure you want to stop sharing the location of $name?';
   }
+
+  @override
+  String hoursLink(String hours) {
+    return '$hours hours link';
+  }
+
+  @override
+  String activeSharingCount(int count) {
+    return '$count active sharing';
+  }
+
+  @override
+  String get sharingStoppedSuccessfully => 'Sharing stopped successfully.';
+
+  @override
+  String get failedToCreateShareLink => 'Failed to create share link';
 }

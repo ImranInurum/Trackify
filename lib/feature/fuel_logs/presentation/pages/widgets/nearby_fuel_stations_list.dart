@@ -111,6 +111,7 @@ class NearbyFuelStationsDashboard extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 10),
       decoration: BoxDecoration(
         color: theme.cardColor,
+        border: Border.all(color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5), width: 0.5),
         borderRadius: BorderRadius.circular(14),
       ),
       child: Material(

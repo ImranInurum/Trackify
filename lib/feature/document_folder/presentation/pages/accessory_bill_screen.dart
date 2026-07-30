@@ -455,10 +455,10 @@ class _AccessoryBillScreenState extends State<AccessoryBillScreen> {
     final screenHeight = size.height;
     final billingDateLabel = _billingDate == null
         ? null
-        : DateFormat('dd/MM/yyyy').format(_billingDate!);
+        : DateFormat('dd MMM yyyy').format(_billingDate!);
     final warrantyExpiryLabel = _warrantyExpiryDate == null
         ? AppLocalizations.of(context)!.selectExpiryDate
-        : DateFormat('dd/MM/yyyy').format(_warrantyExpiryDate!);
+        : DateFormat('dd MMM yyyy').format(_warrantyExpiryDate!);
 
     return Scaffold(
       backgroundColor: colorScheme.surface,
@@ -514,11 +514,10 @@ class _AccessoryBillScreenState extends State<AccessoryBillScreen> {
                               padding: const EdgeInsets.symmetric(horizontal: 14),
                               decoration: BoxDecoration(
                                 color: Theme.of(context).cardColor,
+                                border: Border.all(color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5), width: 0.5),
                                 borderRadius: BorderRadius.circular(10),
-                                border: Border.all(
-                                  color: colorScheme.outlineVariant.withValues(alpha: 0.2),
+                              
                                 ),
-                              ),
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
@@ -600,13 +599,11 @@ class _AccessoryBillScreenState extends State<AccessoryBillScreen> {
                         padding: const EdgeInsets.symmetric(horizontal: 14),
                         decoration: BoxDecoration(
                           color: Theme.of(context).cardColor,
+                          border: Border.all(color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5), width: 0.5),
                           borderRadius: BorderRadius.circular(10),
-                          border: Border.all(
-                            color: colorScheme.outlineVariant.withValues(
-                            alpha: 0.2,
+                    
                           ),
-                          ),
-                        ),
+                        
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -722,11 +719,10 @@ class _AccessoryBillScreenState extends State<AccessoryBillScreen> {
         height: size.width * 0.32,
         decoration: BoxDecoration(
           color: Theme.of(context).cardColor,
+          border: Border.all(color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5), width: 0.5),
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: colorScheme.outlineVariant.withValues(alpha: 0.2),
           ),
-        ),
+      
         child: file == null
             ? (existingUrl.isNotEmpty
                 ? ClipRRect(

@@ -2422,7 +2422,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get savedSuccessfully => 'تم الحفظ بنجاح';
 
   @override
-  String get fuelStationName => 'سي إم بترو بوينت، بي بي سي إل بتر...';
+  String get fuelStationName => 'على سبيل المثال شركة نفط الهند، شل';
 
   @override
   String get yourPhoneLocation => 'موقع هاتفك';
@@ -3445,4 +3445,20 @@ class AppLocalizationsAr extends AppLocalizations {
   String stopSharingConfirmation(String name) {
     return 'Are you sure you want to stop sharing the location of $name?';
   }
+
+  @override
+  String hoursLink(String hours) {
+    return 'رابط لمدة $hours ساعات';
+  }
+
+  @override
+  String activeSharingCount(int count) {
+    return '$count مشاركة نشطة';
+  }
+
+  @override
+  String get sharingStoppedSuccessfully => 'تم إيقاف المشاركة بنجاح.';
+
+  @override
+  String get failedToCreateShareLink => 'فشل في إنشاء رابط المشاركة';
 }

@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../l10n/app_localizations.dart';
 
@@ -83,6 +83,10 @@ class _GeoFenceScreenState extends State<GeoFenceScreen> {
                     decoration: BoxDecoration(
                       color: colorScheme.onSurface.withValues(alpha: 0.05),
                       borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: colorScheme.outlineVariant.withValues(alpha: 0.5),
+                        width: 0.5,
+                      ),
                     ),
                     child: Row(
                       children: [
@@ -188,7 +192,7 @@ class _GeoFenceScreenState extends State<GeoFenceScreen> {
                 onPressed: () => _navigateToAddScreen(),
                 backgroundColor: colorScheme.primary,
                 shape: const CircleBorder(),
-                child: const Icon(Icons.add, size: 30, color: Colors.black),
+                child: Icon(Icons.add, size: 30, color: colorScheme.onPrimary),
               ),
             );
           }

@@ -949,7 +949,7 @@
   "liters": "ಲೀಟರ್",
   "fuelBeforeRefuelDesc": "ನೀವು ಇಂಧನ ತುಂಬುವ ಮೊದಲು ಟ್ಯಾಂಕ್‌ನಲ್ಲಿ ಇದ್ದ ಇಂಧನದ ಅಂದಾಜು ಪ್ರಮಾಣವನ್ನು ನಮೂದಿಸಿ.",
   "savedSuccessfully": "ಯಶಸ್ವಿಯಾಗಿ ಉಳಿಸಲಾಗಿದೆ",
-  "fuelStationName": "ಸಿ.எಂ. ಪೆಟ್ರೋ ಪಾಯಿಂಟ್, ಬಿಪಿಸಿಎಲ್ ಪೆಟ್ರೋ...",
+  "fuelStationName": "ಉದಾ. ಇಂಡಿಯನ್ ಆಯಿಲ್, ಶೆಲ್",
   "yourPhoneLocation": "ನಿಮ್ಮ ಫೋನ್ ಸ್ಥಳ",
   "sharingActive": "ಹಂಚಿಕೆ ಸಕ್ರಿಯವಾಗಿದೆ",
   "noActiveSharing": "ಯಾವುದೇ ಸಕ್ರಿಯ ಹಂಚಿಕೆ ಇಲ್ಲ",
@@ -1333,5 +1333,23 @@
   "deleteRideConfirmMessage": "ನೀವು ಈ ರೈಡ್ ರೆಕಾರ್ಡ್ ಅನ್ನು ಅಳಿಸಲು ಖಚಿತವಾಗಿ ಬಯಸುವಿರಾ?",
   "rideDeletedSuccess": "ರೈಡ್ ಯಶಸ್ವಿಯಾಗಿ ಅಳಿಸಲಾಗಿದೆ",
   "onlineRideDeleteNotSupported": "ಆನ್‌ಲೈನ್ ರೈಡ್ ಅಳಿಸುವಿಕೆಯನ್ನು ಆಫ್‌ಲೈನ್‌ನಲ್ಲಿ ಬೆಂಬಲಿಸುವುದಿಲ್ಲ",
-  "rideDeleteFailedInvalidId": "ರೈಡ್ ಅಳಿಸುವಿಕೆ ವಿಫಲವಾಗಿದೆ: ಅಮಾನ್ಯ ID"
+  "rideDeleteFailedInvalidId": "ರೈಡ್ ಅಳಿಸುವಿಕೆ ವಿಫಲವಾಗಿದೆ: ಅಮಾನ್ಯ ID",
+  "hoursLink": "{hours} ಗಂಟೆಗಳ ಲಿಂಕ್",
+  "@hoursLink": {
+    "placeholders": {
+      "hours": {
+        "type": "String"
+      }
+    }
+  },
+  "activeSharingCount": "{count} ಸಕ್ರಿಯ ಹಂಚಿಕೆ",
+  "@activeSharingCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "sharingStoppedSuccessfully": "ಹಂಚಿಕೆಯನ್ನು ಯಶಸ್ವಿಯಾಗಿ ನಿಲ್ಲಿಸಲಾಗಿದೆ.",
+  "failedToCreateShareLink": "ಹಂಚಿಕೆ ಲಿಂಕ್ ರಚಿಸಲು ವಿಫಲವಾಗಿದೆ"
 }

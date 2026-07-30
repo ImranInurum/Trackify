@@ -155,6 +155,7 @@ class _DeviceDataScreenState extends State<DeviceDataScreen> {
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
                   color: theme.cardColor,
+                  border: Border.all(color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5), width: 0.5),
                   borderRadius: BorderRadius.circular(14),
                 ),
                 child: Column(
@@ -698,6 +699,7 @@ class _DeviceDataScreenState extends State<DeviceDataScreen> {
         return Container(
           decoration: BoxDecoration(
             color: theme.cardColor,
+            border: Border.all(color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5), width: 0.5),
             borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
           ),
           child: Column(

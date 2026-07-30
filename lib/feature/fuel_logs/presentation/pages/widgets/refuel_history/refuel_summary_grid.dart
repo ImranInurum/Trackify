@@ -28,7 +28,7 @@ class RefuelSummaryGrid extends StatelessWidget {
       physics: const NeverScrollableScrollPhysics(),
       crossAxisSpacing: screenWidth * 0.04,
       mainAxisSpacing: screenWidth * 0.04,
-      childAspectRatio: 1.6,
+      childAspectRatio: 1.9,
       children: [
         _buildSummaryCard(
           context,
@@ -81,15 +81,18 @@ class RefuelSummaryGrid extends StatelessWidget {
     final screenWidth = mediaQuery.size.width;
 
     return Container(
-      padding: EdgeInsets.all(screenWidth * 0.04),
+      padding: EdgeInsets.symmetric(
+        horizontal: screenWidth * 0.03,
+        vertical: screenWidth * 0.03,
+      ),
       decoration: BoxDecoration(
         color: theme.cardColor,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: theme.dividerColor, width: 1),
+        border: Border.all(color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5), width: 0.5),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Row(
             children: [
@@ -109,6 +112,7 @@ class RefuelSummaryGrid extends StatelessWidget {
               ),
             ],
           ),
+          const SizedBox(height: 4),
           Row(
             crossAxisAlignment: CrossAxisAlignment.baseline,
             textBaseline: TextBaseline.alphabetic,

@@ -949,7 +949,7 @@
   "liters": "லிட்டர்கள்",
   "fuelBeforeRefuelDesc": "நீங்கள் எரிபொருள் நிரப்புவதற்கு முன் டேங்கில் இருந்த எரிபொருளின் மதிப்பிடப்பட்ட அளவை உள்ளிடவும்.",
   "savedSuccessfully": "வெற்றிகரமாக சேமிக்கப்பட்டது",
-  "fuelStationName": "சி.எம். பெட்ரோ பாயிண்ட், பிபிசிஎல் பெட்ரோ...",
+  "fuelStationName": "உ.ம். இந்தியன் ஆயில், ஷெல்",
   "yourPhoneLocation": "உங்கள் தொலைபேசியின் இருப்பிடம்",
   "sharingActive": "பகிர்வு செயல்பாட்டில் உள்ளது",
   "noActiveSharing": "செயலில் உள்ள பகிர்வு இல்லை",
@@ -1333,5 +1333,23 @@
   "deleteRideConfirmMessage": "இந்த பயணப் பதிவை நீக்க விரும்புகிறீர்களா?",
   "rideDeletedSuccess": "பயணம் வெற்றிகரமாக நீக்கப்பட்டது",
   "onlineRideDeleteNotSupported": "ஆன்லைன் பயணத்தை ஆஃப்லைனில் நீக்க முடியாது",
-  "rideDeleteFailedInvalidId": "பயணத்தை நீக்க முடியவில்லை: தவறான ஐடி"
+  "rideDeleteFailedInvalidId": "பயணத்தை நீக்க முடியவில்லை: தவறான ஐடி",
+  "hoursLink": "{hours} மணிநேர இணைப்பு",
+  "@hoursLink": {
+    "placeholders": {
+      "hours": {
+        "type": "String"
+      }
+    }
+  },
+  "activeSharingCount": "{count} செயலில் உள்ள பகிர்வு",
+  "@activeSharingCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "sharingStoppedSuccessfully": "பகிர்வு வெற்றிகரமாக நிறுத்தப்பட்டது.",
+  "failedToCreateShareLink": "பகிர்வு இணைப்பை உருவாக்குவதில் தோல்வி"
 }

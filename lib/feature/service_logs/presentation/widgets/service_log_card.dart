@@ -21,7 +21,7 @@ class ServiceLogCard extends StatelessWidget {
     try {
       if (log.serviceDate != null) {
         final date = DateTime.parse(log.serviceDate!);
-        formattedDate = DateFormat('dd/MM/yyyy').format(date);
+        formattedDate = DateFormat('dd MMM yyyy').format(date);
       }
     } catch (e) {
       formattedDate = log.serviceDate ?? '';

@@ -299,8 +299,8 @@ class _DeviceWarrantyConfirmScreenState
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: theme.cardColor,
+        border: Border.all(color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5), width: 0.5),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: colorScheme.onSurface.withValues(alpha: 0.1)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -390,10 +390,9 @@ class _DeviceWarrantyConfirmScreenState
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
             color: theme.cardColor,
+            border: Border.all(color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5), width: 0.5),
             borderRadius: BorderRadius.circular(8),
-            border: Border.all(
-              color: colorScheme.onSurface.withValues(alpha: 0.1),
-            ),
+            
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,

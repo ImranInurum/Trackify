@@ -296,11 +296,11 @@ class _SelectionGroupCardState extends State<_SelectionGroupCard> {
             parsedDate.day == now.day) {
           return AppLocalizations.of(context)!.today;
         }
-        return DateFormat('dd/MM/yyyy').format(parsedDate);
+        return DateFormat('dd MMM yyyy').format(parsedDate);
       } else {
         final now = DateTime.now();
         if (dateStr == "${now.day}/${now.month}/${now.year}" ||
-            dateStr == DateFormat('dd/MM/yyyy').format(now)) {
+            dateStr == DateFormat('dd MMM yyyy').format(now)) {
           return AppLocalizations.of(context)!.today;
         }
       }
@@ -329,6 +329,7 @@ class _SelectionGroupCardState extends State<_SelectionGroupCard> {
           margin: const EdgeInsets.only(bottom: 16),
           decoration: BoxDecoration(
             color: theme.cardColor,
+            border: Border.all(color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5), width: 0.5),
             borderRadius: BorderRadius.circular(16),
           ),
           padding: const EdgeInsets.all(20),
@@ -554,6 +555,7 @@ class _SelectionTooltip extends StatelessWidget {
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
             color: theme.cardColor,
+            border: Border.all(color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5), width: 0.5),
             borderRadius: BorderRadius.circular(16),
             boxShadow: [
               BoxShadow(
@@ -651,6 +653,7 @@ class _SelectionSummarySheet extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: theme.cardColor,
+        border: Border.all(color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5), width: 0.5),
         borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
       ),
       padding: const EdgeInsets.fromLTRB(20, 20, 20, 30),

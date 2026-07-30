@@ -75,7 +75,8 @@ class _AllRidesState extends State<AllRides> {
                     color: theme.colorScheme.onSurface.withOpacity(0.05),
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
-                      color: theme.colorScheme.onSurface.withOpacity(0.1),
+                      color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5),
+                      width: 0.5,
                     ),
                   ),
                   child: Row(
@@ -141,7 +142,8 @@ class _AllRidesState extends State<AllRides> {
                     color: theme.colorScheme.onSurface.withOpacity(0.05),
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
-                      color: theme.colorScheme.primary.withOpacity(0.5),
+                      color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5),
+                      width: 0.5,
                     ),
                   ),
                   child: Icon(Icons.sort, color: theme.colorScheme.primary),

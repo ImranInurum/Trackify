@@ -19,11 +19,14 @@ class LastRefuelCard extends StatelessWidget {
     final screenWidth = mediaQuery.size.width;
 
     return Container(
-      padding: EdgeInsets.all(screenWidth * 0.05),
+      padding: EdgeInsets.all(screenWidth * 0.04),
       decoration: BoxDecoration(
         color: theme.cardColor,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: theme.dividerColor, width: 1),
+        border: Border.all(
+          color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5),
+          width: 0.5,
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -43,7 +46,7 @@ class LastRefuelCard extends StatelessWidget {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    const SizedBox(height: 4),
+                    const SizedBox(height: 2),
                     Text(
                       "${(state.lastRefuelDate.isEmpty || state.lastRefuelDate == 'null') ? '--' : state.lastRefuelDate} | ₹${(state.lastRefuelAmount.isEmpty || state.lastRefuelAmount == 'null') ? '0' : state.lastRefuelAmount} | ${(state.lastRefuelLiters.isEmpty || state.lastRefuelLiters == 'null') ? '0' : state.lastRefuelLiters} ${l10n.litersShort}",
                       style: TextStyle(
@@ -64,7 +67,7 @@ class LastRefuelCard extends StatelessWidget {
               ),
             ],
           ),
-          SizedBox(height: mediaQuery.size.height * 0.03),
+          const SizedBox(height: 16),
           Row(
             children: [
               Expanded(
@@ -85,7 +88,7 @@ class LastRefuelCard extends StatelessWidget {
               ),
             ],
           ),
-          SizedBox(height: mediaQuery.size.height * 0.03),
+          const SizedBox(height: 16),
           Row(
             children: [
               Expanded(
@@ -152,7 +155,7 @@ class LastRefuelCard extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 6),
+          const SizedBox(height: 2),
           Row(
             children: [
               Text(
@@ -224,7 +227,9 @@ class LastRefuelCard extends StatelessWidget {
   void _showUpdateMileageDialog(BuildContext context, AppLocalizations l10n) {
     final theme = Theme.of(context);
     final initialMileage = state.mileageArai == 'null' ? '' : state.mileageArai;
-    final TextEditingController controller = TextEditingController(text: initialMileage);
+    final TextEditingController controller = TextEditingController(
+      text: initialMileage,
+    );
 
     showDialog(
       context: context,
@@ -256,14 +261,20 @@ class LastRefuelCard extends StatelessWidget {
                 keyboardType: TextInputType.number,
                 decoration: InputDecoration(
                   fillColor: theme.inputDecorationTheme.fillColor,
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 12,
+                  ),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                     borderSide: BorderSide(color: theme.dividerColor),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide(color: theme.primaryColor, width: 1.5),
+                    borderSide: BorderSide(
+                      color: theme.primaryColor,
+                      width: 1.5,
+                    ),
                   ),
                   suffixIcon: Padding(
                     padding: const EdgeInsets.only(right: 16),
@@ -273,12 +284,18 @@ class LastRefuelCard extends StatelessWidget {
                       children: [
                         Text(
                           context.displayKmL,
-                          style: TextStyle(color: theme.hintColor, fontSize: 14),
+                          style: TextStyle(
+                            color: theme.hintColor,
+                            fontSize: 14,
+                          ),
                         ),
                       ],
                     ),
                   ),
-                  suffixIconConstraints: const BoxConstraints(minWidth: 0, minHeight: 0),
+                  suffixIconConstraints: const BoxConstraints(
+                    minWidth: 0,
+                    minHeight: 0,
+                  ),
                 ),
                 style: TextStyle(color: theme.textTheme.bodyLarge?.color),
               ),
@@ -298,7 +315,9 @@ class LastRefuelCard extends StatelessWidget {
                     onPressed: () async {
                       final mileageText = controller.text.trim();
                       if (mileageText.isNotEmpty) {
-                        final error = await context.read<FuelLogsCubit>().updateMileage(mileageText);
+                        final error = await context
+                            .read<FuelLogsCubit>()
+                            .updateMileage(mileageText);
                         if (error != null && context.mounted) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(

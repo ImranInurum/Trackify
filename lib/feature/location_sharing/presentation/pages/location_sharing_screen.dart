@@ -3,10 +3,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../cubit/location_sharing_cubit.dart';
 import '../cubit/location_sharing_state.dart';
+import '../cubit/live/location_sharing_live_cubit.dart';
+import '../cubit/history/location_sharing_history_cubit.dart';
 import 'location_sharing_detail_screen.dart';
 import 'widgets/location_sharing_card.dart';
 import 'package:trackify/core/widgets/trackify_loader.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:trackify/core/common/widgets/unlock_device_dialog.dart';
 
 class LocationSharingScreen extends StatefulWidget {
   const LocationSharingScreen({super.key});
@@ -29,6 +32,7 @@ class _LocationSharingScreenState extends State<LocationSharingScreen> {
       context: context,
       builder: (BuildContext context) {
         final l10n = AppLocalizations.of(context)!;
+        final theme = Theme.of(context);
         return AlertDialog(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
@@ -37,9 +41,9 @@ class _LocationSharingScreenState extends State<LocationSharingScreen> {
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(
+              Icon(
                 Icons.warning_rounded,
-                color: Colors.redAccent,
+                color: theme.colorScheme.error,
                 size: 48,
               ),
               const SizedBox(height: 16),
@@ -52,7 +56,7 @@ class _LocationSharingScreenState extends State<LocationSharingScreen> {
               Text(
                 l10n.goToSettingsAndSelectAllowAllTheTime,
                 textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 14, color: Colors.grey),
+                style: TextStyle(fontSize: 14, color: theme.hintColor),
               ),
               const SizedBox(height: 24),
               // Simulated Phone UI
@@ -60,22 +64,22 @@ class _LocationSharingScreenState extends State<LocationSharingScreen> {
                 height: 150,
                 width: 110,
                 decoration: BoxDecoration(
-                  color: const Color(0xFF2E2E2E),
+                  color: theme.colorScheme.surfaceContainerHighest,
                   borderRadius: BorderRadius.circular(18),
-                  border: Border.all(color: Colors.grey.shade800, width: 4),
+                  border: Border.all(color: theme.colorScheme.outlineVariant, width: 4),
                 ),
                 child: Column(
                   children: [
                     const SizedBox(height: 12),
-                    const Icon(
+                    Icon(
                       Icons.location_on,
-                      color: Colors.amber,
+                      color: theme.colorScheme.primary,
                       size: 24,
                     ),
                     const SizedBox(height: 4),
                     Text(
                       l10n.trackifyApp,
-                      style: const TextStyle(color: Colors.white, fontSize: 9),
+                      style: TextStyle(color: theme.colorScheme.onSurface, fontSize: 9),
                     ),
                     const SizedBox(height: 16),
                     Container(
@@ -85,7 +89,7 @@ class _LocationSharingScreenState extends State<LocationSharingScreen> {
                       ),
                       height: 16,
                       decoration: BoxDecoration(
-                        color: Colors.white10,
+                        color: theme.colorScheme.onSurface.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(4),
                       ),
                     ),
@@ -96,7 +100,7 @@ class _LocationSharingScreenState extends State<LocationSharingScreen> {
                       ),
                       height: 16,
                       decoration: BoxDecoration(
-                        color: Colors.white10,
+                        color: theme.colorScheme.onSurface.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(4),
                       ),
                     ),
@@ -107,14 +111,14 @@ class _LocationSharingScreenState extends State<LocationSharingScreen> {
                       ),
                       height: 18,
                       decoration: BoxDecoration(
-                        color: Colors.white24,
+                        color: theme.colorScheme.onSurface.withValues(alpha: 0.2),
                         borderRadius: BorderRadius.circular(4),
                       ),
                       child: Center(
                         child: Text(
                           l10n.locationText,
-                          style: const TextStyle(
-                            color: Colors.amber,
+                          style: TextStyle(
+                            color: theme.colorScheme.primary,
                             fontSize: 9,
                             fontWeight: FontWeight.bold,
                           ),
@@ -127,7 +131,7 @@ class _LocationSharingScreenState extends State<LocationSharingScreen> {
               const SizedBox(height: 12),
               Text(
                 l10n.tapIntoLocation,
-                style: TextStyle(fontSize: 12, color: Colors.grey),
+                style: TextStyle(fontSize: 12, color: theme.hintColor),
               ),
               const SizedBox(height: 24),
               SizedBox(
@@ -138,8 +142,8 @@ class _LocationSharingScreenState extends State<LocationSharingScreen> {
                     openAppSettings();
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.lightBlue,
-                    foregroundColor: Colors.white,
+                    backgroundColor: theme.colorScheme.primary,
+                    foregroundColor: theme.colorScheme.onPrimary,
                     padding: const EdgeInsets.symmetric(vertical: 14),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
@@ -169,6 +173,7 @@ class _LocationSharingScreenState extends State<LocationSharingScreen> {
       context: context,
       builder: (BuildContext context) {
         final l10n = AppLocalizations.of(context)!;
+        final theme = Theme.of(context);
         return StatefulBuilder(
           builder: (context, setState) {
             return AlertDialog(
@@ -246,9 +251,9 @@ class _LocationSharingScreenState extends State<LocationSharingScreen> {
                         Navigator.pop(context);
                         cubit.shareLiveLocation(context, item.id, selectedOption);
                       },
-                      icon: const Icon(
+                      icon: Icon(
                         Icons.share,
-                        color: Colors.white,
+                        color: theme.colorScheme.onPrimary,
                         size: 20,
                       ),
                       label: Text(
@@ -259,8 +264,8 @@ class _LocationSharingScreenState extends State<LocationSharingScreen> {
                         ),
                       ),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.lightBlue,
-                        foregroundColor: Colors.white,
+                        backgroundColor: theme.colorScheme.primary,
+                        foregroundColor: theme.colorScheme.onPrimary,
                         padding: const EdgeInsets.symmetric(vertical: 14),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8),
@@ -288,7 +293,7 @@ class _LocationSharingScreenState extends State<LocationSharingScreen> {
         appBar: AppBar(
           backgroundColor: theme.cardColor,
           elevation: 1,
-          shadowColor: Colors.black.withOpacity(0.1),
+          shadowColor: theme.shadowColor.withOpacity(0.1),
           leading: IconButton(
             icon: Icon(
               Icons.arrow_back_ios_new,
@@ -331,6 +336,11 @@ class _LocationSharingScreenState extends State<LocationSharingScreen> {
                                 _showPermissionDialog(context);
                                 return;
                               }
+                            } else {
+                              if (item.imei.isEmpty) {
+                                showUnlockDeviceDialog(context, "Location Sharing");
+                                return;
+                              }
                             }
                             // Show the duration dialog
                             _showDurationDialog(context, item, cubit);
@@ -343,12 +353,27 @@ class _LocationSharingScreenState extends State<LocationSharingScreen> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (_) => BlocProvider.value(
-                                value: context.read<LocationSharingCubit>(),
+                              builder: (_) => MultiBlocProvider(
+                                providers: [
+                                  BlocProvider.value(
+                                    value: context.read<LocationSharingCubit>(),
+                                  ),
+                                  BlocProvider(
+                                    create: (context) => LocationSharingLiveCubit(locationItem: item)..fetchLiveShares(),
+                                  ),
+                                  BlocProvider(
+                                    create: (context) => LocationSharingHistoryCubit(locationItem: item)..fetchHistory(),
+                                  ),
+                                ],
                                 child: LocationSharingDetailScreen(item: item),
                               ),
                             ),
-                          );
+                          ).then((_) {
+                            // Refresh count when returning to this screen
+                            if (context.mounted) {
+                              context.read<LocationSharingCubit>().fetchActiveShareCount(item);
+                            }
+                          });
                         },
                       );
                     },

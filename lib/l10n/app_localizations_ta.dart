@@ -2444,7 +2444,7 @@ class AppLocalizationsTa extends AppLocalizations {
   String get savedSuccessfully => 'வெற்றிகரமாக சேமிக்கப்பட்டது';
 
   @override
-  String get fuelStationName => 'சி.எம். பெட்ரோ பாயிண்ட், பிபிசிஎல் பெட்ரோ...';
+  String get fuelStationName => 'உ.ம். இந்தியன் ஆயில், ஷெல்';
 
   @override
   String get yourPhoneLocation => 'உங்கள் தொலைபேசியின் இருப்பிடம்';
@@ -3487,4 +3487,21 @@ class AppLocalizationsTa extends AppLocalizations {
   String stopSharingConfirmation(String name) {
     return 'Are you sure you want to stop sharing the location of $name?';
   }
+
+  @override
+  String hoursLink(String hours) {
+    return '$hours மணிநேர இணைப்பு';
+  }
+
+  @override
+  String activeSharingCount(int count) {
+    return '$count செயலில் உள்ள பகிர்வு';
+  }
+
+  @override
+  String get sharingStoppedSuccessfully =>
+      'பகிர்வு வெற்றிகரமாக நிறுத்தப்பட்டது.';
+
+  @override
+  String get failedToCreateShareLink => 'பகிர்வு இணைப்பை உருவாக்குவதில் தோல்வி';
 }

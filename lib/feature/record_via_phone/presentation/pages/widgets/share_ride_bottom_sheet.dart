@@ -234,6 +234,7 @@ class _ShareRideBottomSheetState extends State<ShareRideBottomSheet> {
     return Container(
       decoration: BoxDecoration(
         color: Theme.of(context).cardColor,
+        border: Border.all(color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5), width: 0.5),
         borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
       ),
       padding: const EdgeInsets.fromLTRB(24, 12, 24, 24),
@@ -376,7 +377,7 @@ class _ShareRideBottomSheetState extends State<ShareRideBottomSheet> {
                                 ),
                                 const SizedBox(height: 4),
                                 Text(
-                                  '${AppLocalizations.of(context)!.rideOnLabel} ${DateFormat('dd/MM/yyyy').format(widget.date)}',
+                                  '${AppLocalizations.of(context)!.rideOnLabel} ${DateFormat('dd MMM yyyy').format(widget.date)}',
                                   style: TextStyle(
                                     color: Colors.white.withOpacity(0.7),
                                     fontSize: 12,

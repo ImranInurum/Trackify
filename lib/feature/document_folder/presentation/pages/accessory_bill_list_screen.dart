@@ -28,7 +28,7 @@ class AccessoryBillListScreen extends StatelessWidget {
     if (dateStr == null || dateStr.isEmpty) return 'N/A';
     try {
       final parsed = DateTime.parse(dateStr);
-      return DateFormat('dd/MM/yyyy').format(parsed);
+      return DateFormat('dd MMM yyyy').format(parsed);
     } catch (_) {
       return dateStr;
     }
@@ -108,6 +108,7 @@ class AccessoryBillListScreen extends StatelessWidget {
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
                     color: theme.cardColor,
+                    border: Border.all(color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5), width: 0.5),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Row(

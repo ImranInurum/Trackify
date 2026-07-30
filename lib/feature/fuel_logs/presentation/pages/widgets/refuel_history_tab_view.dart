@@ -103,7 +103,7 @@ class _RefuelHistoryTabViewState extends State<RefuelHistoryTabView> {
 
                 _buildHistoryHeader(context, l10n),
 
-                SizedBox(height: screenHeight * 0.015),
+                SizedBox(height: screenHeight * 0.005),
 
                 _buildRefuelLogs(
                   context,
@@ -111,6 +111,10 @@ class _RefuelHistoryTabViewState extends State<RefuelHistoryTabView> {
                   l10n,
 
                   _applyFilters(refuelState.refuelLogs),
+                  
+                  refuelState.refuelLogs.isNotEmpty 
+                      ? refuelState.refuelLogs.reduce((a, b) => a.dateTime.isAfter(b.dateTime) ? a : b).id 
+                      : null,
                 ),
 
                 SizedBox(height: screenHeight * 0.1),
@@ -427,6 +431,8 @@ class _RefuelHistoryTabViewState extends State<RefuelHistoryTabView> {
     AppLocalizations l10n,
 
     List<RefuelLog> logs,
+    
+    String? mostRecentLogId,
   ) {
     if (logs.isEmpty) {
       return Center(
@@ -455,11 +461,11 @@ class _RefuelHistoryTabViewState extends State<RefuelHistoryTabView> {
             "${log.dateTime.hour >= 12 ? 'PM' : 'AM'}";
 
         return Padding(
-          padding: const EdgeInsets.only(bottom: 14.0),
+          padding: const EdgeInsets.only(bottom: 8.0),
           child: RefuelLogListItem(
             date: dateStr,
             time: timeStr,
-            odometer: log.odometer,
+            odometer: double.tryParse(log.odometer)?.toInt().toString() ?? log.odometer,
             location: log.location,
             amount: log.amount,
             rate: log.rate,
@@ -467,6 +473,7 @@ class _RefuelHistoryTabViewState extends State<RefuelHistoryTabView> {
             liters: log.liters,
             mileage: log.mileage,
             showDetails: index == 0,
+            isRecent: log.id == mostRecentLogId,
             onEdit: () async {
               final fuelLogsCubit = context.read<FuelLogsCubit>();
               await Navigator.push(
@@ -604,7 +611,7 @@ class _RefuelHistoryTabViewState extends State<RefuelHistoryTabView> {
                             return DataRow(cells: [
                               DataCell(Text(dateStr)),
                               DataCell(Text(timeStr)),
-                              DataCell(Text(log.odometer)),
+                              DataCell(Text(double.tryParse(log.odometer)?.toInt().toString() ?? log.odometer)),
                               DataCell(Text(log.location)),
                               DataCell(Text(log.amount)),
                               DataCell(Text(log.rate)),
@@ -676,7 +683,7 @@ class _RefuelHistoryTabViewState extends State<RefuelHistoryTabView> {
         final timeStr =
             "${log.dateTime.hour % 12 == 0 ? 12 : log.dateTime.hour % 12}:${log.dateTime.minute.toString().padLeft(2, '0')} ${log.dateTime.hour >= 12 ? 'PM' : 'AM'}";
         sb.writeln(
-            '${escape(dateStr)},${escape(timeStr)},${escape(log.odometer)},${escape(log.location)},${escape(log.amount)},${escape(log.rate)},${escape(log.liters)},${escape(log.mileage)}');
+            '${escape(dateStr)},${escape(timeStr)},${escape(double.tryParse(log.odometer)?.toInt().toString() ?? log.odometer)},${escape(log.location)},${escape(log.amount)},${escape(log.rate)},${escape(log.liters)},${escape(log.mileage)}');
       }
 
       final Uint8List bytes = Uint8List.fromList(utf8.encode(sb.toString()));

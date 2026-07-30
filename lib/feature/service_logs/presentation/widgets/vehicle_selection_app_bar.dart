@@ -39,6 +39,7 @@ class VehicleSelectionAppBar extends StatelessWidget {
           ? null
           : BoxDecoration(
               color: theme.cardColor.withOpacity(0.8),
+              border: Border.all(color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5), width: 0.5),
               borderRadius: const BorderRadius.only(
                 bottomLeft: Radius.circular(30),
                 bottomRight: Radius.circular(30),
@@ -230,6 +231,7 @@ class _VehicleSelectorSheet extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: theme.cardColor,
+        border: Border.all(color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5), width: 0.5),
         borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
       ),
       child: Column(

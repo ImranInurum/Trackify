@@ -203,10 +203,9 @@ class _SortOptionChip extends StatelessWidget {
           decoration: BoxDecoration(
             color: isSelected ? Colors.transparent : Colors.transparent,
             borderRadius: BorderRadius.circular(8),
-            border: Border.all(
-              color: isSelected ? theme.colorScheme.primary : theme.colorScheme.onSurface.withOpacity(0.1),
-              width: 1.5,
-            ),
+            border: isSelected
+                ? Border.all(color: theme.colorScheme.primary, width: 1.5)
+                : Border.all(color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5), width: 0.5),
           ),
           child: Center(
             child: Text(

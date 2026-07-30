@@ -21,6 +21,7 @@ class TripTooltip extends StatelessWidget {
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
             color: Theme.of(context).cardColor,
+            border: Border.all(color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5), width: 0.5),
             borderRadius: BorderRadius.circular(16),
             boxShadow: [
               BoxShadow(

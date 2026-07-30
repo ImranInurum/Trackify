@@ -657,6 +657,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   decoration: BoxDecoration(
                     color: Theme.of(context).cardColor,
+                    border: Border.all(color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5), width: 0.5),
                     borderRadius: BorderRadius.circular(18),
                     boxShadow: const [
                       BoxShadow(color: Colors.black12, blurRadius: 6),
@@ -732,6 +733,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                   decoration: BoxDecoration(
                     color: Theme.of(context).cardColor,
+                    border: Border.all(color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5), width: 0.5),
                     borderRadius: BorderRadius.circular(18),
                     boxShadow: const [
                       BoxShadow(color: Colors.black12, blurRadius: 6),

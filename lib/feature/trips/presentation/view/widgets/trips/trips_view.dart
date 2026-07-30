@@ -159,9 +159,8 @@ class _TripsState extends State<Trips> {
                           ),
                           borderRadius: BorderRadius.circular(12),
                           border: Border.all(
-                            color: theme.colorScheme.onSurface.withValues(
-                              alpha: 0.1,
-                            ),
+                            color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5),
+                            width: 0.5,
                           ),
                         ),
                         child: Row(
@@ -235,9 +234,8 @@ class _TripsState extends State<Trips> {
                           ),
                           borderRadius: BorderRadius.circular(12),
                           border: Border.all(
-                            color: theme.colorScheme.primary.withValues(
-                              alpha: 0.5,
-                            ),
+                            color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5),
+                            width: 0.5,
                           ),
                         ),
                         child: Icon(

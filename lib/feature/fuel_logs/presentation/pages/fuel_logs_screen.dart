@@ -11,7 +11,6 @@ import 'package:trackify/feature/fuel_logs/presentation/cubit/fuel_logs_cubit.da
 import 'package:trackify/feature/fuel_logs/presentation/cubit/fuel_stations_cubit.dart';
 import 'package:trackify/feature/fuel_logs/data/repository/overpass_service.dart';
 import 'package:trackify/feature/fuel_logs/presentation/pages/widgets/dashboard_tab_view.dart';
-import 'package:trackify/feature/fuel_logs/presentation/pages/widgets/fuel_stations_tab_view.dart';
 import 'package:trackify/feature/fuel_logs/data/data source/refuel_data_source.dart';
 import 'package:trackify/feature/fuel_logs/presentation/cubit/refuel_history_cubit.dart';
 import 'package:trackify/core/widgets/trackify_loader.dart';
@@ -34,7 +33,7 @@ class _FuelLogsScreenState extends State<FuelLogsScreen>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 3, vsync: this);
+    _tabController = TabController(length: 2, vsync: this);
     context.read<ServiceLogsCubit>().loadVehicles();
 
     // Periodic expansion: every 10 seconds
@@ -178,6 +177,7 @@ class _FuelLogsScreenState extends State<FuelLogsScreen>
                     padding: const EdgeInsets.all(4),
                     decoration: BoxDecoration(
                       color: theme.cardColor,
+                      border: Border.all(color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5), width: 0.5),
                       borderRadius: BorderRadius.circular(16),
                     ),
                     child: TabBar(
@@ -201,7 +201,7 @@ class _FuelLogsScreenState extends State<FuelLogsScreen>
                       tabs: [
                         Tab(text: l10n.dashboard),
                         Tab(text: l10n.refuelHistory),
-                        Tab(text: l10n.fuelStations),
+                        // Tab(text: l10n.fuelStations),
                       ],
                     ),
                   ),
@@ -212,7 +212,7 @@ class _FuelLogsScreenState extends State<FuelLogsScreen>
                     children: [
                       const DashboardTabView(),
                       RefuelHistoryTabView(vehicleId: currentState.selectedVehicle?.id ?? ''),
-                      const FuelStationsTabView(),
+                      // const FuelStationsTabView(),
                     ],
                   ),
                 ),

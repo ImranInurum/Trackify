@@ -308,7 +308,7 @@ class _FuelStationsTabViewState extends State<FuelStationsTabView> {
               decoration: BoxDecoration(
                 color: Colors.white,
                 shape: BoxShape.circle,
-                border: Border.all(color: theme.dividerColor),
+                border: Border.all(color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5), width: 0.5),
               ),
               child: ClipOval(child: _getBrandLogo(station.brand)),
             ),

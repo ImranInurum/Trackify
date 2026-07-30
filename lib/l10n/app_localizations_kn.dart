@@ -2440,7 +2440,7 @@ class AppLocalizationsKn extends AppLocalizations {
   String get savedSuccessfully => 'ಯಶಸ್ವಿಯಾಗಿ ಉಳಿಸಲಾಗಿದೆ';
 
   @override
-  String get fuelStationName => 'ಸಿ.எಂ. ಪೆಟ್ರೋ ಪಾಯಿಂಟ್, ಬಿಪಿಸಿಎಲ್ ಪೆಟ್ರೋ...';
+  String get fuelStationName => 'ಉದಾ. ಇಂಡಿಯನ್ ಆಯಿಲ್, ಶೆಲ್';
 
   @override
   String get yourPhoneLocation => 'ನಿಮ್ಮ ಫೋನ್ ಸ್ಥಳ';
@@ -3480,4 +3480,21 @@ class AppLocalizationsKn extends AppLocalizations {
   String stopSharingConfirmation(String name) {
     return 'Are you sure you want to stop sharing the location of $name?';
   }
+
+  @override
+  String hoursLink(String hours) {
+    return '$hours ಗಂಟೆಗಳ ಲಿಂಕ್';
+  }
+
+  @override
+  String activeSharingCount(int count) {
+    return '$count ಸಕ್ರಿಯ ಹಂಚಿಕೆ';
+  }
+
+  @override
+  String get sharingStoppedSuccessfully =>
+      'ಹಂಚಿಕೆಯನ್ನು ಯಶಸ್ವಿಯಾಗಿ ನಿಲ್ಲಿಸಲಾಗಿದೆ.';
+
+  @override
+  String get failedToCreateShareLink => 'ಹಂಚಿಕೆ ಲಿಂಕ್ ರಚಿಸಲು ವಿಫಲವಾಗಿದೆ';
 }
