@@ -350,6 +350,10 @@ class _LocationSharingScreenState extends State<LocationSharingScreen> {
                           }
                         },
                         onCardTap: () {
+                          if (!item.isPhone && item.imei.isEmpty) {
+                            showUnlockDeviceDialog(context, "Location Sharing");
+                            return;
+                          }
                           Navigator.push(
                             context,
                             MaterialPageRoute(

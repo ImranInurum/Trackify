@@ -83,7 +83,7 @@ class DashboardTabView extends StatelessWidget {
               l10n.noDataAvailable,
               style: TextStyle(
                 color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
-                fontSize: 16,
+                fontSize: 14,
               ),
             ),
           );

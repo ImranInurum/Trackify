@@ -24,7 +24,7 @@ class _ChoiceSelectorState extends State<ChoiceSelector> {
       child: Scaffold(
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         appBar: AppBar(
-          backgroundColor: Colors.transparent,
+          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
           elevation: 0,
           leading: canPop
               ? IconButton(

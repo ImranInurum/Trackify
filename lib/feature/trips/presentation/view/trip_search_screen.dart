@@ -1,7 +1,8 @@
-﻿import 'dart:convert';
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive/hive.dart';
+import 'package:intl/intl.dart';
 import 'package:trackify/feature/trips/data/entity/ride_model.dart';
 import 'package:trackify/feature/trips/presentation/cubit/ride_history_cubit.dart';
 import 'package:trackify/feature/trips/presentation/cubit/ride_history_state.dart';
@@ -24,6 +25,7 @@ class TripSearchScreen extends StatefulWidget {
 class _TripSearchScreenState extends State<TripSearchScreen> {
   final TextEditingController _searchController = TextEditingController();
   String _query = '';
+  DateTime? _selectedDate;
   List<Map<String, dynamic>> _savedTrips = [];
   bool _isLoadingTrips = false;
 
@@ -114,6 +116,52 @@ class _TripSearchScreenState extends State<TripSearchScreen> {
                     color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
                     size: 20,
                   ),
+                  suffixIcon: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      if (_selectedDate != null || _query.isNotEmpty)
+                        IconButton(
+                          icon: const Icon(Icons.clear, size: 20),
+                          onPressed: () {
+                            _searchController.clear();
+                            setState(() {
+                              _query = '';
+                              _selectedDate = null;
+                            });
+                          },
+                        ),
+                      IconButton(
+                        icon: Icon(
+                          _selectedDate != null ? Icons.calendar_today : Icons.calendar_today_outlined,
+                          color: _selectedDate != null ? theme.primaryColor : theme.colorScheme.onSurface.withValues(alpha: 0.5),
+                          size: 20,
+                        ),
+                        onPressed: () async {
+                          final picked = await showDatePicker(
+                            context: context,
+                            initialDate: _selectedDate ?? DateTime.now(),
+                            firstDate: DateTime(2000),
+                            lastDate: DateTime(2100),
+                            builder: (context, child) {
+                              return Theme(
+                                data: Theme.of(context).copyWith(
+                                  colorScheme: Theme.of(context).colorScheme.copyWith(
+                                    primary: theme.primaryColor,
+                                  ),
+                                ),
+                                child: child!,
+                              );
+                            },
+                          );
+                          if (picked != null) {
+                            setState(() {
+                              _selectedDate = picked;
+                            });
+                          }
+                        },
+                      ),
+                    ],
+                  ),
                   border: InputBorder.none,
                   enabledBorder: InputBorder.none,
                   focusedBorder: InputBorder.none,
@@ -149,7 +197,7 @@ class _TripSearchScreenState extends State<TripSearchScreen> {
                       ),
                     );
                   }
-                  if (_query.isEmpty) {
+                  if (_query.isEmpty && _selectedDate == null) {
                     if (state.rides.isEmpty) {
                       return Center(
                         child: Text(
@@ -356,17 +404,33 @@ class _TripSearchScreenState extends State<TripSearchScreen> {
         final title = (trip['title'] as String? ?? '').toLowerCase();
         final ridesData = trip['rides'] as List<dynamic>? ?? [];
         bool matchesRide = false;
+        bool matchesDate = _selectedDate == null;
+        
         for (var r in ridesData) {
           try {
             final start = (r['start_location'] ?? r['startLocation'] ?? '').toString().toLowerCase();
             final end = (r['end_location'] ?? r['endLocation'] ?? '').toString().toLowerCase();
-            if (start.contains(_query) || end.contains(_query)) {
+            if (_query.isNotEmpty && (start.contains(_query) || end.contains(_query))) {
               matchesRide = true;
-              break;
+            }
+            
+            if (_selectedDate != null) {
+              final dateStr = r['date'] as String?;
+              final selectedDateStr = DateFormat('dd MMM yyyy').format(_selectedDate!);
+              if (dateStr == selectedDateStr) {
+                matchesDate = true;
+              }
+              // Check DD/MM/YYYY as well since formats could vary
+              final selectedDateStr2 = DateFormat('dd/MM/yyyy').format(_selectedDate!);
+              if (dateStr == selectedDateStr2) {
+                matchesDate = true;
+              }
             }
           } catch (_) {}
         }
-        return title.contains(_query) || matchesRide;
+        
+        final matchesQuery = _query.isEmpty || title.contains(_query) || matchesRide;
+        return matchesQuery && matchesDate;
       }).toList();
 
       if (results.isEmpty) {
@@ -409,7 +473,18 @@ class _TripSearchScreenState extends State<TripSearchScreen> {
       final results = rides.where((r) {
         final start = r.startLocation.toLowerCase();
         final end = r.endLocation.toLowerCase();
-        return start.contains(_query) || end.contains(_query);
+        final matchesQuery = _query.isEmpty || start.contains(_query) || end.contains(_query);
+        
+        bool matchesDate = _selectedDate == null;
+        if (_selectedDate != null) {
+          final selectedDateStr = DateFormat('dd MMM yyyy').format(_selectedDate!);
+          final selectedDateStr2 = DateFormat('dd/MM/yyyy').format(_selectedDate!);
+          if (r.date == selectedDateStr || r.date == selectedDateStr2) {
+            matchesDate = true;
+          }
+        }
+        
+        return matchesQuery && matchesDate;
       }).toList();
 
       if (results.isEmpty) {

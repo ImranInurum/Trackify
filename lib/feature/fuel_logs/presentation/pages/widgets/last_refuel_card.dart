@@ -42,7 +42,7 @@ class LastRefuelCard extends StatelessWidget {
                       l10n.afterLastRefuel,
                       style: TextStyle(
                         color: theme.textTheme.titleMedium?.color,
-                        fontSize: mediaQuery.textScaler.scale(15),
+                        fontSize: mediaQuery.textScaler.scale(13),
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -50,8 +50,8 @@ class LastRefuelCard extends StatelessWidget {
                     Text(
                       "${(state.lastRefuelDate.isEmpty || state.lastRefuelDate == 'null') ? '--' : state.lastRefuelDate} | ₹${(state.lastRefuelAmount.isEmpty || state.lastRefuelAmount == 'null') ? '0' : state.lastRefuelAmount} | ${(state.lastRefuelLiters.isEmpty || state.lastRefuelLiters == 'null') ? '0' : state.lastRefuelLiters} ${l10n.litersShort}",
                       style: TextStyle(
-                        color: theme.hintColor,
-                        fontSize: mediaQuery.textScaler.scale(11),
+                        color: theme.colorScheme.onSurface,
+                        fontSize: mediaQuery.textScaler.scale(10),
                       ),
                     ),
                   ],
@@ -61,8 +61,8 @@ class LastRefuelCard extends StatelessWidget {
                 onTap: () => _showInfoDialog(context, l10n),
                 child: Icon(
                   Icons.info_outline,
-                  size: mediaQuery.textScaler.scale(20),
-                  color: theme.hintColor,
+                  size: mediaQuery.textScaler.scale(18),
+                  color: theme.colorScheme.onSurface,
                 ),
               ),
             ],
@@ -138,7 +138,7 @@ class LastRefuelCard extends StatelessWidget {
               Icon(
                 icon,
                 color: theme.primaryColor,
-                size: mediaQuery.textScaler.scale(16),
+                size: mediaQuery.textScaler.scale(14),
               ),
               const SizedBox(width: 8),
               Expanded(
@@ -146,7 +146,7 @@ class LastRefuelCard extends StatelessWidget {
                   label,
                   style: TextStyle(
                     color: theme.primaryColor,
-                    fontSize: mediaQuery.textScaler.scale(12),
+                    fontSize: mediaQuery.textScaler.scale(10),
                     fontWeight: FontWeight.w400,
                   ),
                   maxLines: 1,
@@ -162,7 +162,7 @@ class LastRefuelCard extends StatelessWidget {
                 value,
                 style: TextStyle(
                   color: theme.textTheme.titleLarge?.color,
-                  fontSize: mediaQuery.textScaler.scale(22),
+                  fontSize: mediaQuery.textScaler.scale(20),
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -170,8 +170,8 @@ class LastRefuelCard extends StatelessWidget {
                 const SizedBox(width: 6),
                 Icon(
                   Icons.edit_outlined,
-                  color: theme.hintColor,
-                  size: mediaQuery.textScaler.scale(16),
+                  color: theme.colorScheme.onSurface,
+                  size: mediaQuery.textScaler.scale(14),
                 ),
               ],
             ],
@@ -198,7 +198,7 @@ class LastRefuelCard extends StatelessWidget {
                 l10n.fuelEstimateNote,
                 style: TextStyle(
                   color: theme.textTheme.bodyMedium?.color,
-                  fontSize: 15,
+                  fontSize: 13,
                   height: 1.5,
                 ),
               ),
@@ -211,7 +211,7 @@ class LastRefuelCard extends StatelessWidget {
                     l10n.gotIt,
                     style: TextStyle(
                       color: theme.primaryColor,
-                      fontSize: 16,
+                      fontSize: 14,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -246,14 +246,14 @@ class LastRefuelCard extends StatelessWidget {
                 l10n.updateMileageArai,
                 style: TextStyle(
                   color: theme.textTheme.titleLarge?.color,
-                  fontSize: 18,
+                  fontSize: 16,
                   fontWeight: FontWeight.bold,
                 ),
               ),
               const SizedBox(height: 8),
               Text(
                 l10n.mileageDesc,
-                style: TextStyle(color: theme.hintColor, fontSize: 13),
+                style: TextStyle(color: theme.colorScheme.onSurface, fontSize: 11),
               ),
               const SizedBox(height: 16),
               TextField(
@@ -285,8 +285,8 @@ class LastRefuelCard extends StatelessWidget {
                         Text(
                           context.displayKmL,
                           style: TextStyle(
-                            color: theme.hintColor,
-                            fontSize: 14,
+                            color: theme.colorScheme.onSurface,
+                            fontSize: 12,
                           ),
                         ),
                       ],
@@ -307,7 +307,7 @@ class LastRefuelCard extends StatelessWidget {
                     onPressed: () => Navigator.pop(ctx),
                     child: Text(
                       l10n.cancel,
-                      style: TextStyle(color: theme.hintColor, fontSize: 16),
+                      style: TextStyle(color: theme.colorScheme.onSurface, fontSize: 14),
                     ),
                   ),
                   const SizedBox(width: 8),
@@ -335,7 +335,7 @@ class LastRefuelCard extends StatelessWidget {
                       l10n.save,
                       style: TextStyle(
                         color: theme.primaryColor,
-                        fontSize: 16,
+                        fontSize: 14,
                         fontWeight: FontWeight.bold,
                       ),
                     ),

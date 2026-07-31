@@ -21,7 +21,7 @@ class FuelStationScreen extends StatelessWidget {
           title: Text(
             l10n.fuelStations,
             style: TextStyle(
-              fontSize: 22,
+              fontSize: 20,
               fontWeight: FontWeight.w700,
               color: Theme.of(context).colorScheme.onSurface,
             ),

@@ -1848,8 +1848,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get unmapTrackify => 'إلغاء ربط Trackify الخاص بك';
 
   @override
-  String get unmapStep1 =>
-      'الخطوة 1: لإلغاء ربط الجهاز، اتصل على +918061971443';
+  String unmapStep1(String mobileNumber) {
+    return 'الخطوة 1: لإلغاء ربط الجهاز، اتصل على $mobileNumber';
+  }
 
   @override
   String get unmapStep2 => 'الخطوة 2: إزالة المركبة';

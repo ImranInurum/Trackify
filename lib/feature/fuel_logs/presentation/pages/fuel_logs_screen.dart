@@ -189,14 +189,14 @@ class _FuelLogsScreenState extends State<FuelLogsScreen>
                         borderRadius: BorderRadius.circular(12),
                       ),
                       labelColor: theme.primaryColor,
-                      unselectedLabelColor: theme.hintColor,
+                      unselectedLabelColor: theme.colorScheme.onSurface,
                       labelStyle: TextStyle(
                         fontWeight: FontWeight.bold,
-                        fontSize: mediaQuery.textScaler.scale(14),
+                        fontSize: mediaQuery.textScaler.scale(12),
                       ),
                       unselectedLabelStyle: TextStyle(
                         fontWeight: FontWeight.normal,
-                        fontSize: mediaQuery.textScaler.scale(14),
+                        fontSize: mediaQuery.textScaler.scale(12),
                       ),
                       tabs: [
                         Tab(text: l10n.dashboard),
@@ -266,7 +266,7 @@ class _FuelLogsScreenState extends State<FuelLogsScreen>
                               style: TextStyle(
                                 color: theme.colorScheme.onPrimary,
                                 fontWeight: FontWeight.bold,
-                                fontSize: mediaQuery.textScaler.scale(14),
+                                fontSize: mediaQuery.textScaler.scale(12),
                               ),
                             ),
                           )
@@ -275,7 +275,7 @@ class _FuelLogsScreenState extends State<FuelLogsScreen>
                   Icon(
                     Icons.add,
                     color: theme.colorScheme.onPrimary,
-                    size: mediaQuery.textScaler.scale(24),
+                    size: mediaQuery.textScaler.scale(22),
                   ),
                 ],
               ),

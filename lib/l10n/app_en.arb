@@ -718,7 +718,14 @@
   "notificationControls": "Notification controls",
   "changeNotificationPreferences": "Change your notification preferences",
   "unmapTrackify": "Unmap your Trackify",
-  "unmapStep1": "Step 1: To un-map device, call at +918061971443",
+  "unmapStep1": "Step 1: To un-map device, call at {mobileNumber}",
+  "@unmapStep1": {
+    "placeholders": {
+      "mobileNumber": {
+        "type": "String"
+      }
+    }
+  },
   "unmapStep2": "Step 2: Remove vehicle",
   "updateMileage": "Update Mileage",
   "lastUpdated": "Last updated: ",

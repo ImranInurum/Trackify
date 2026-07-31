@@ -237,9 +237,9 @@ class _RefuelHistoryTabViewState extends State<RefuelHistoryTabView> {
           Icon(
             Icons.calendar_today_outlined,
 
-            size: mediaQuery.textScaler.scale(18),
+            size: mediaQuery.textScaler.scale(16),
 
-            color: theme.hintColor,
+            color: theme.colorScheme.onSurface,
           ),
 
           const SizedBox(width: 8),
@@ -248,15 +248,15 @@ class _RefuelHistoryTabViewState extends State<RefuelHistoryTabView> {
             _getTimeFilterLabel(l10n, _selectedTimeFilter),
 
             style: TextStyle(
-              color: theme.hintColor,
+              color: theme.colorScheme.onSurface,
 
-              fontSize: mediaQuery.textScaler.scale(14),
+              fontSize: mediaQuery.textScaler.scale(12),
 
               fontWeight: FontWeight.w500,
             ),
           ),
 
-          Icon(Icons.keyboard_arrow_down, color: theme.hintColor),
+          Icon(Icons.keyboard_arrow_down, color: theme.colorScheme.onSurface),
         ],
       ),
 
@@ -313,9 +313,9 @@ class _RefuelHistoryTabViewState extends State<RefuelHistoryTabView> {
               l10n.refuelingHistory,
 
               style: TextStyle(
-                color: theme.hintColor,
+                color: theme.colorScheme.onSurface,
 
-                fontSize: 16,
+                fontSize: 14,
 
                 fontWeight: FontWeight.w500,
               ),
@@ -352,17 +352,17 @@ class _RefuelHistoryTabViewState extends State<RefuelHistoryTabView> {
 
           child: Row(
             children: [
-              Icon(Icons.sort, size: 18, color: theme.hintColor),
+              Icon(Icons.sort, size: 18, color: theme.colorScheme.onSurface),
 
               const SizedBox(width: 4),
 
               Text(
                 _getSortLabel(l10n, _selectedSort),
 
-                style: TextStyle(color: theme.hintColor, fontSize: 14),
+                style: TextStyle(color: theme.colorScheme.onSurface, fontSize: 12),
               ),
 
-              Icon(Icons.keyboard_arrow_down, color: theme.hintColor),
+              Icon(Icons.keyboard_arrow_down, color: theme.colorScheme.onSurface),
             ],
           ),
 
@@ -573,7 +573,7 @@ class _RefuelHistoryTabViewState extends State<RefuelHistoryTabView> {
                         Text(
                           l10n.refuelingHistory,
                           style: const TextStyle(
-                            fontSize: 18,
+                            fontSize: 16,
                             fontWeight: FontWeight.bold,
                           ),
                         ),

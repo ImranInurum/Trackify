@@ -906,7 +906,7 @@
   "vehicleMileage": "استهلاك المركبة",
   "notificationControls": "عناصر التحكم في الإشعارات",
   "unmapTrackify": "إلغاء ربط Trackify الخاص بك",
-  "unmapStep1": "الخطوة 1: لإلغاء ربط الجهاز، اتصل على +918061971443",
+  "unmapStep1": "الخطوة 1: لإلغاء ربط الجهاز، اتصل على {mobileNumber}",
   "unmapStep2": "الخطوة 2: إزالة المركبة",
   "updateMileage": "تحديث الاستهلاك",
   "lastUpdated": "آخر تحديث: ",

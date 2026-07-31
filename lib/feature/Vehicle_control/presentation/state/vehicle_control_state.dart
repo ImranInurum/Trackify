@@ -17,12 +17,18 @@ class VehicleControlLoaded extends VehicleControlState {
   final String tempIcon;
   final String tempColor;
   final String? actionError;
+  final String journeyDistance;
+  final String journeyHours;
+  final String journeyMinutes;
 
   const VehicleControlLoaded({
     required this.vehicle,
     required this.tempIcon,
     required this.tempColor,
     this.actionError,
+    this.journeyDistance = "0.0",
+    this.journeyHours = "0",
+    this.journeyMinutes = "0",
   });
 
   VehicleControlLoaded copyWith({
@@ -30,17 +36,31 @@ class VehicleControlLoaded extends VehicleControlState {
     String? tempIcon,
     String? tempColor,
     String? actionError,
+    String? journeyDistance,
+    String? journeyHours,
+    String? journeyMinutes,
   }) {
     return VehicleControlLoaded(
       vehicle: vehicle ?? this.vehicle,
       tempIcon: tempIcon ?? this.tempIcon,
       tempColor: tempColor ?? this.tempColor,
       actionError: actionError,
+      journeyDistance: journeyDistance ?? this.journeyDistance,
+      journeyHours: journeyHours ?? this.journeyHours,
+      journeyMinutes: journeyMinutes ?? this.journeyMinutes,
     );
   }
 
   @override
-  List<Object?> get props => [vehicle, tempIcon, tempColor, actionError];
+  List<Object?> get props => [
+        vehicle,
+        tempIcon,
+        tempColor,
+        actionError,
+        journeyDistance,
+        journeyHours,
+        journeyMinutes,
+      ];
 }
 
 class VehicleControlError extends VehicleControlState {

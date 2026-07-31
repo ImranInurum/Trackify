@@ -1866,8 +1866,9 @@ class AppLocalizationsTa extends AppLocalizations {
   String get unmapTrackify => 'உங்கள் Trackify ஐ அன்மேப் செய்யவும்';
 
   @override
-  String get unmapStep1 =>
-      'படி 1: சாதனத்தை அன்மேப் செய்ய, +918061971443 ஐ அழைக்கவும்';
+  String unmapStep1(String mobileNumber) {
+    return 'படி 1: சாதனத்தை அன்மேப் செய்ய, $mobileNumber ஐ அழைக்கவும்';
+  }
 
   @override
   String get unmapStep2 => 'படி 2: வாகனத்தை அகற்றவும்';

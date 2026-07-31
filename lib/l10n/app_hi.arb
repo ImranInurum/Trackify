@@ -727,7 +727,7 @@
   "notificationControls": "अधिसूचना नियंत्रण",
   "changeNotificationPreferences": "अपनी अधिसूचना प्राथमिकताएं बदलें",
   "unmapTrackify": "अपने Trackify को अनमैप करें",
-  "unmapStep1": "चरण 1: डिवाइस को अन-मैप करने के लिए, +918061971443 पर कॉल करें",
+  "unmapStep1": "चरण 1: डिवाइस को अन-मैप करने के लिए, {mobileNumber} पर कॉल करें",
   "unmapStep2": "चरण 2: वाहन निकालें",
   "updateMileage": "माइलेज अपडेट करें",
   "lastUpdated": "अंतिम अपडेट: ",

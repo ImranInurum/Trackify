@@ -39,7 +39,11 @@ class VehicleSelectionAppBar extends StatelessWidget {
           ? null
           : BoxDecoration(
               color: theme.cardColor.withOpacity(0.8),
-              border: Border.all(color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5), width: 0.5),
+              border: Border(
+                left: BorderSide(color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5), width: 0.5),
+                right: BorderSide(color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5), width: 0.5),
+                bottom: BorderSide(color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5), width: 0.5),
+              ),
               borderRadius: const BorderRadius.only(
                 bottomLeft: Radius.circular(30),
                 bottomRight: Radius.circular(30),
@@ -65,9 +69,11 @@ class VehicleSelectionAppBar extends StatelessWidget {
                     const SizedBox(width: 8),
                   Text(
                     title,
-                    style: theme.textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: theme.appBarTheme.titleTextStyle ??
+                        const TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w600,
+                        ),
                   ),
                 ],
               ),

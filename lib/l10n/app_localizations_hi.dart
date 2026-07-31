@@ -1860,8 +1860,9 @@ class AppLocalizationsHi extends AppLocalizations {
   String get unmapTrackify => 'अपने Trackify को अनमैप करें';
 
   @override
-  String get unmapStep1 =>
-      'चरण 1: डिवाइस को अन-मैप करने के लिए, +918061971443 पर कॉल करें';
+  String unmapStep1(String mobileNumber) {
+    return 'चरण 1: डिवाइस को अन-मैप करने के लिए, $mobileNumber पर कॉल करें';
+  }
 
   @override
   String get unmapStep2 => 'चरण 2: वाहन निकालें';

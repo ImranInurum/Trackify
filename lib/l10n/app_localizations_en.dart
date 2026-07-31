@@ -1858,7 +1858,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get unmapTrackify => 'Unmap your Trackify';
 
   @override
-  String get unmapStep1 => 'Step 1: To un-map device, call at +918061971443';
+  String unmapStep1(String mobileNumber) {
+    return 'Step 1: To un-map device, call at $mobileNumber';
+  }
 
   @override
   String get unmapStep2 => 'Step 2: Remove vehicle';

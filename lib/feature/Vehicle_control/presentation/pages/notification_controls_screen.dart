@@ -324,30 +324,30 @@ class _NotificationControlsScreenState extends State<NotificationControlsScreen>
           Text(
             title,
             style: TextStyle(
-              fontSize: 18,
+              fontSize: 16,
               fontWeight: FontWeight.w600,
               color: onSurface.withOpacity(0.9),
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 6),
           Text(
             subtitle,
             style: TextStyle(
-              fontSize: 14,
+              fontSize: 13,
               color: onSurfaceVariant,
               height: 1.4,
             ),
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 20),
           Row(
             children: [
-              Icon(Icons.app_registration_rounded, color: onSurfaceVariant, size: 28),
-              const SizedBox(width: 16),
+              Icon(Icons.app_registration_rounded, color: onSurfaceVariant, size: 24),
+              const SizedBox(width: 12),
               Expanded(
                 child: Text(
                   AppLocalizations.of(context)!.appNotification,
                   style: TextStyle(
-                    fontSize: 16,
+                    fontSize: 14,
                     color: onSurface,
                     fontWeight: FontWeight.w500,
                   ),

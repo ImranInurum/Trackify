@@ -6,6 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:trackify/core/config/network/api_host.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import 'package:firebase_messaging/firebase_messaging.dart';
 import '../../../../core/services/google_auth_service.dart';
 import '../../../../core/utils/shared_preferences.dart';
 import '../../../../core/widgets/loading_screen_ol.dart';
@@ -60,8 +61,19 @@ class AuthCubit extends Cubit<AuthState> {
       body['deviceModel'] = devInfo['deviceModel'];
       body['osVersion'] = devInfo['osVersion'];
       
-      final fcmToken = await AppPreference.instance.get(key: AppPreference.KEY_FCM_TOKEN);
+      var fcmToken = await AppPreference.instance.get(key: AppPreference.KEY_FCM_TOKEN);
+      if (fcmToken.isEmpty) {
+        try {
+          fcmToken = await FirebaseMessaging.instance.getToken() ?? "";
+          if (fcmToken.isNotEmpty) {
+            await AppPreference.instance.set(key: AppPreference.KEY_FCM_TOKEN, value: fcmToken);
+          }
+        } catch (e) {
+          debugPrint('Error fetching FCM token: $e');
+        }
+      }
       body['fcmToken'] = fcmToken;
+
 
       final result = await _authCase.loginCall(body);
       await result.fold(
@@ -164,7 +176,17 @@ class AuthCubit extends Cubit<AuthState> {
         final firebaseUser = userCredential.user!;
 
         final devInfo = await _getDeviceInfo();
-        final fcmToken = await AppPreference.instance.get(key: AppPreference.KEY_FCM_TOKEN);
+        var fcmToken = await AppPreference.instance.get(key: AppPreference.KEY_FCM_TOKEN);
+        if (fcmToken.isEmpty) {
+          try {
+            fcmToken = await FirebaseMessaging.instance.getToken() ?? "";
+            if (fcmToken.isNotEmpty) {
+              await AppPreference.instance.set(key: AppPreference.KEY_FCM_TOKEN, value: fcmToken);
+            }
+          } catch (e) {
+            debugPrint('Error fetching FCM token: $e');
+          }
+        }
 
         final body = {
           "name": firebaseUser.displayName ?? "Google User",

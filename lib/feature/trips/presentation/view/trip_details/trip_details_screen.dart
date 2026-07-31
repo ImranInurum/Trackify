@@ -931,7 +931,7 @@ class _MapCard extends StatelessWidget {
         margin: const EdgeInsets.symmetric(horizontal: 20),
         height: 380,
       decoration: BoxDecoration(
-        color: theme.cardColor.withValues(alpha: 0.5),
+        color: theme.cardColor,
         borderRadius: BorderRadius.circular(20),
         border: Border.all(color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5), width: 0.5),
       ),
@@ -1038,7 +1038,6 @@ class _MapCard extends StatelessWidget {
           // Date/Time Footer
           Container(
             padding: const EdgeInsets.all(16),
-            color: theme.cardColor,
             child: Builder(
               builder: (context) {
                 String formatDate(String rawDate) {
@@ -1058,7 +1057,7 @@ class _MapCard extends StatelessWidget {
                           parsedDate.day == now.day) {
                         return l10n.today;
                       }
-                      return DateFormat('dd/MM/yyyy').format(parsedDate);
+                      return DateFormat('dd MMM yyyy').format(parsedDate);
                     } else {
                       final now = DateTime.now();
                       if (rawDate == "${now.day}/${now.month}/${now.year}" ||

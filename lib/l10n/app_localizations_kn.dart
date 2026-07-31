@@ -1864,8 +1864,9 @@ class AppLocalizationsKn extends AppLocalizations {
   String get unmapTrackify => 'ನಿಮ್ಮ ಟ್ರ್ಯಾಕಿಫೈ ಅನ್ನು ಅನ್‌ಮ್ಯಾಪ್ ಮಾಡಿ';
 
   @override
-  String get unmapStep1 =>
-      'ಹಂತ 1: ಸಾಧನವನ್ನು ಅನ್‌ಮ್ಯಾಪ್ ಮಾಡಲು, +918061971443 ಗೆ ಕರೆ ಮಾಡಿ';
+  String unmapStep1(String mobileNumber) {
+    return 'ಹಂತ 1: ಸಾಧನವನ್ನು ಅನ್‌ಮ್ಯಾಪ್ ಮಾಡಲು, $mobileNumber ಗೆ ಕರೆ ಮಾಡಿ';
+  }
 
   @override
   String get unmapStep2 => 'ಹಂತ 2: ವಾಹನವನ್ನು ತೆಗೆದುಹಾಕಿ';

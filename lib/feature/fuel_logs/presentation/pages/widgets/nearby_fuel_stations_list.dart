@@ -33,7 +33,7 @@ class NearbyFuelStationsDashboard extends StatelessWidget {
                   'Could not load stations',
                   style: TextStyle(
                     color: theme.colorScheme.error,
-                    fontSize: textScaler.scale(13),
+                    fontSize: textScaler.scale(11),
                   ),
                   textAlign: TextAlign.center,
                 ),
@@ -54,8 +54,8 @@ class NearbyFuelStationsDashboard extends StatelessWidget {
               child: Text(
                 'No fuel stations found nearby',
                 style: TextStyle(
-                  color: theme.hintColor,
-                  fontSize: textScaler.scale(13),
+                  color: theme.colorScheme.onSurface,
+                  fontSize: textScaler.scale(11),
                 ),
               ),
             ),
@@ -77,7 +77,7 @@ class NearbyFuelStationsDashboard extends StatelessWidget {
                     l10n.fuelStationNearVehicle,
                     style: TextStyle(
                       color: theme.colorScheme.onSurface,
-                      fontSize: textScaler.scale(16),
+                      fontSize: textScaler.scale(14),
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -86,8 +86,8 @@ class NearbyFuelStationsDashboard extends StatelessWidget {
                     child: Text(
                       l10n.seeAll,
                       style: TextStyle(
-                        color: theme.hintColor,
-                        fontSize: textScaler.scale(13),
+                        color: theme.colorScheme.onSurface,
+                        fontSize: textScaler.scale(11),
                       ),
                     ),
                   ),
@@ -146,7 +146,7 @@ class NearbyFuelStationsDashboard extends StatelessWidget {
                         station.name,
                         style: TextStyle(
                           color: theme.colorScheme.onSurface,
-                          fontSize: textScaler.scale(14),
+                          fontSize: textScaler.scale(12),
                           fontWeight: FontWeight.w500,
                         ),
                         maxLines: 1,
@@ -159,23 +159,23 @@ class NearbyFuelStationsDashboard extends StatelessWidget {
                         children: [
                           Icon(
                             Icons.location_on_outlined,
-                            color: theme.hintColor,
+                            color: theme.colorScheme.onSurface,
                             size: 14,
                           ),
                           const SizedBox(width: 3),
                           Text(
                             '${station.distance?.toStringAsFixed(2) ?? '0.00'} km away',
                             style: TextStyle(
-                              color: theme.hintColor,
-                              fontSize: textScaler.scale(12),
+                              color: theme.colorScheme.onSurface,
+                              fontSize: textScaler.scale(10),
                             ),
                           ),
                           const SizedBox(width: 10),
                           Text(
                             '₹N/A',
                             style: TextStyle(
-                              color: theme.hintColor,
-                              fontSize: textScaler.scale(12),
+                              color: theme.colorScheme.onSurface,
+                              fontSize: textScaler.scale(10),
                             ),
                           ),
                         ],
@@ -187,7 +187,7 @@ class NearbyFuelStationsDashboard extends StatelessWidget {
                 // ── Chevron ──
                 Icon(
                   Icons.chevron_right,
-                  color: theme.hintColor,
+                  color: theme.colorScheme.onSurface,
                   size: 20,
                 ),
               ],

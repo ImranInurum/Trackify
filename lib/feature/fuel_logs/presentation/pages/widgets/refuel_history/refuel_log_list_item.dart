@@ -66,8 +66,8 @@ class RefuelLogListItem extends StatelessWidget {
                     children: [
                       Icon(
                         Icons.calendar_today_outlined,
-                        size: mediaQuery.textScaler.scale(18),
-                        color: theme.hintColor,
+                        size: mediaQuery.textScaler.scale(16),
+                        color: theme.colorScheme.onSurface,
                       ),
                       const SizedBox(width: 8),
                       Text(
@@ -75,7 +75,7 @@ class RefuelLogListItem extends StatelessWidget {
                         style: TextStyle(
                           color: theme.textTheme.bodyMedium?.color,
                           fontWeight: FontWeight.bold,
-                          fontSize: mediaQuery.textScaler.scale(14),
+                          fontSize: mediaQuery.textScaler.scale(12),
                         ),
                       ),
                     ],
@@ -96,7 +96,7 @@ class RefuelLogListItem extends StatelessWidget {
                           style: TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
-                            fontSize: mediaQuery.textScaler.scale(14),
+                            fontSize: mediaQuery.textScaler.scale(12),
                           ),
                         ),
                       ),
@@ -107,7 +107,7 @@ class RefuelLogListItem extends StatelessWidget {
                           width: 24,
                           child: PopupMenuButton<String>(
                             padding: EdgeInsets.zero,
-                            child: Icon(Icons.more_vert, color: theme.hintColor, size: 20),
+                            child: Icon(Icons.more_vert, color: theme.colorScheme.onSurface, size: 20),
                             onSelected: (value) {
                               if (value == 'edit') {
                                 if (onEdit != null) onEdit!();
@@ -122,7 +122,7 @@ class RefuelLogListItem extends StatelessWidget {
                                   children: [
                                     Icon(
                                       Icons.edit_outlined,
-                                      size: mediaQuery.textScaler.scale(18),
+                                      size: mediaQuery.textScaler.scale(16),
                                     ),
                                     const SizedBox(width: 7),
                                     Text(l10n.edit),
@@ -135,7 +135,7 @@ class RefuelLogListItem extends StatelessWidget {
                                   children: [
                                     Icon(
                                       Icons.delete_outline,
-                                      size: mediaQuery.textScaler.scale(18),
+                                      size: mediaQuery.textScaler.scale(16),
                                     ),
                                     const SizedBox(width: 12),
                                     Text(l10n.delete),
@@ -157,8 +157,8 @@ class RefuelLogListItem extends StatelessWidget {
                     children: [
                       Icon(
                         Icons.speed,
-                        size: mediaQuery.textScaler.scale(18),
-                        color: theme.hintColor,
+                        size: mediaQuery.textScaler.scale(16),
+                        color: theme.colorScheme.onSurface,
                       ),
                       const SizedBox(width: 8),
                       Text(
@@ -166,7 +166,7 @@ class RefuelLogListItem extends StatelessWidget {
                         style: TextStyle(
                           color: theme.textTheme.bodyLarge?.color,
                           fontWeight: FontWeight.bold,
-                          fontSize: mediaQuery.textScaler.scale(15),
+                          fontSize: mediaQuery.textScaler.scale(13),
                         ),
                       ),
                     ],
@@ -174,8 +174,8 @@ class RefuelLogListItem extends StatelessWidget {
                   Text(
                     "${l10n.currencySymbol}$rate",
                     style: TextStyle(
-                      color: theme.hintColor,
-                      fontSize: mediaQuery.textScaler.scale(13),
+                      color: theme.colorScheme.onSurface,
+                      fontSize: mediaQuery.textScaler.scale(11),
                     ),
                   ),
                 ],
@@ -185,16 +185,16 @@ class RefuelLogListItem extends StatelessWidget {
                 children: [
                   Icon(
                     Icons.location_on_outlined,
-                    size: mediaQuery.textScaler.scale(18),
-                    color: theme.hintColor,
+                    size: mediaQuery.textScaler.scale(16),
+                    color: theme.colorScheme.onSurface,
                   ),
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
                       location,
                       style: TextStyle(
-                        color: theme.hintColor,
-                        fontSize: mediaQuery.textScaler.scale(13),
+                        color: theme.colorScheme.onSurface,
+                        fontSize: mediaQuery.textScaler.scale(11),
                       ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
@@ -259,15 +259,15 @@ class RefuelLogListItem extends StatelessWidget {
       children: [
         Icon(
           icon,
-          size: mediaQuery.textScaler.scale(14),
-          color: theme.hintColor,
+          size: mediaQuery.textScaler.scale(12),
+          color: theme.colorScheme.onSurface,
         ),
         const SizedBox(width: 6),
         Text(
           text,
           style: TextStyle(
-            color: theme.hintColor,
-            fontSize: mediaQuery.textScaler.scale(12),
+            color: theme.colorScheme.onSurface,
+            fontSize: mediaQuery.textScaler.scale(10),
           ),
         ),
       ],

@@ -3014,7 +3014,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin, Wi
       {
         "icon": Icons.sos_outlined,
         "label": l10n.emergency,
-        "badge": l10n.comingSoonOption,
+        "badge": null,
       },
       {
         "icon": Icons.play_arrow_outlined,
@@ -3279,17 +3279,6 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin, Wi
                     ),
                   ),
                 ),
-                const SizedBox(height: 14),
-                Text(
-                  "50 users bought Trackify device yesterday",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 12.5,
-                    fontWeight: FontWeight.w500,
-                    color: colorScheme.onSurfaceVariant.withOpacity(0.7),
-                  ),
-                ),
-                const SizedBox(height: 4),
               ],
             ),
           ),
@@ -3468,7 +3457,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin, Wi
     } else if (label == l10n.emergency) {
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => EmergencyAlertScreen()),
+        MaterialPageRoute(builder: (context) => EmergencyAlertScreen(selectedDevice: selectedDevice)),
       );
     } else if (label == l10n.safeParking) {
       Navigator.push(

@@ -1858,8 +1858,9 @@ class AppLocalizationsMr extends AppLocalizations {
   String get unmapTrackify => 'तुमचे ट्रॅकिफाय अन-मॅप करा';
 
   @override
-  String get unmapStep1 =>
-      'हंत १: डिव्हाइस अन-मॅप करण्यासाठी, +९१८०६१९७१४४३ वर कॉल करा';
+  String unmapStep1(String mobileNumber) {
+    return 'हंत १: डिव्हाइस अन-मॅप करण्यासाठी, +९१८०६१९७१४४३ वर कॉल करा';
+  }
 
   @override
   String get unmapStep2 => 'हंत २: वाहन काढून टाका';

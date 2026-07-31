@@ -162,7 +162,7 @@ class _FuelStationsTabViewState extends State<FuelStationsTabView> {
                                 Text(
                                   l10n.fuelStations,
                                   style: TextStyle(
-                                    fontSize: mediaQuery.textScaler.scale(18),
+                                    fontSize: mediaQuery.textScaler.scale(16),
                                     fontWeight: FontWeight.bold,
                                     color: theme.textTheme.titleLarge?.color,
                                   ),
@@ -194,7 +194,7 @@ class _FuelStationsTabViewState extends State<FuelStationsTabView> {
                                     tabAlignment: TabAlignment.start,
                                     indicatorColor: theme.primaryColor,
                                     labelColor: theme.primaryColor,
-                                    unselectedLabelColor: theme.hintColor,
+                                    unselectedLabelColor: theme.colorScheme.onSurface,
                                     labelStyle: const TextStyle(
                                       fontWeight: FontWeight.bold,
                                     ),
@@ -324,7 +324,7 @@ class _FuelStationsTabViewState extends State<FuelStationsTabView> {
                           station.name,
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
-                            fontSize: mediaQuery.textScaler.scale(15),
+                            fontSize: mediaQuery.textScaler.scale(13),
                           ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
@@ -334,14 +334,14 @@ class _FuelStationsTabViewState extends State<FuelStationsTabView> {
                         Icon(
                           Icons.near_me_outlined,
                           size: 14,
-                          color: theme.hintColor,
+                          color: theme.colorScheme.onSurface,
                         ),
                         const SizedBox(width: 4),
                         Text(
                           "${station.distance!.toStringAsFixed(2)} km",
                           style: TextStyle(
-                            color: theme.hintColor,
-                            fontSize: mediaQuery.textScaler.scale(12),
+                            color: theme.colorScheme.onSurface,
+                            fontSize: mediaQuery.textScaler.scale(10),
                           ),
                         ),
                       ],
@@ -351,8 +351,8 @@ class _FuelStationsTabViewState extends State<FuelStationsTabView> {
                   Text(
                     station.address ?? 'Address not available',
                     style: TextStyle(
-                      color: theme.hintColor,
-                      fontSize: mediaQuery.textScaler.scale(12),
+                      color: theme.colorScheme.onSurface,
+                      fontSize: mediaQuery.textScaler.scale(10),
                     ),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,

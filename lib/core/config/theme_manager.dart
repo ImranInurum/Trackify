@@ -26,13 +26,7 @@ class ThemeManager {
       ? Typography.material2021().black 
       : Typography.material2021().white;
 
-    TextTheme textTheme;
-    try {
-      textTheme = GoogleFonts.getTextTheme(config.fontFamily, baseTextTheme);
-    } catch (e) {
-      // Fallback to Roboto if font not found
-      textTheme = GoogleFonts.robotoTextTheme(baseTextTheme);
-    }
+    TextTheme textTheme = GoogleFonts.robotoTextTheme(baseTextTheme);
 
     // Apply dynamic text colors to the theme
     textTheme = textTheme.copyWith(

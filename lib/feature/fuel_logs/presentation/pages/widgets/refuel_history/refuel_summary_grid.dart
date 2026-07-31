@@ -96,14 +96,14 @@ class RefuelSummaryGrid extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(icon, color: iconColor, size: mediaQuery.textScaler.scale(20)),
+              Icon(icon, color: iconColor, size: mediaQuery.textScaler.scale(18)),
               const SizedBox(width: 6),
               Expanded(
                 child: Text(
                   title,
                   style: TextStyle(
-                    color: theme.hintColor,
-                    fontSize: mediaQuery.textScaler.scale(13),
+                    color: theme.colorScheme.onSurface,
+                    fontSize: mediaQuery.textScaler.scale(11),
                     fontWeight: FontWeight.w500,
                   ),
                   maxLines: 1,
@@ -122,7 +122,7 @@ class RefuelSummaryGrid extends StatelessWidget {
                   unit,
                   style: TextStyle(
                     color: theme.textTheme.titleLarge?.color,
-                    fontSize: mediaQuery.textScaler.scale(16),
+                    fontSize: mediaQuery.textScaler.scale(14),
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -131,7 +131,7 @@ class RefuelSummaryGrid extends StatelessWidget {
                 value,
                 style: TextStyle(
                   color: theme.textTheme.titleLarge?.color,
-                  fontSize: mediaQuery.textScaler.scale(22),
+                  fontSize: mediaQuery.textScaler.scale(20),
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -141,7 +141,7 @@ class RefuelSummaryGrid extends StatelessWidget {
                   unit,
                   style: TextStyle(
                     color: theme.textTheme.titleLarge?.color,
-                    fontSize: mediaQuery.textScaler.scale(16),
+                    fontSize: mediaQuery.textScaler.scale(14),
                     fontWeight: FontWeight.bold,
                   ),
                 ),

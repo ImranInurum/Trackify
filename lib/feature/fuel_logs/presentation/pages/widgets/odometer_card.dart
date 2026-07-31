@@ -34,7 +34,7 @@ class OdometerCard extends StatelessWidget {
                 l10n.odometerReading,
                 style: TextStyle(
                   color: theme.textTheme.titleMedium?.color,
-                  fontSize: mediaQuery.textScaler.scale(15),
+                  fontSize: mediaQuery.textScaler.scale(13),
                   fontWeight: FontWeight.w500,
                 ),
               ),
@@ -44,7 +44,7 @@ class OdometerCard extends StatelessWidget {
                   l10n.update,
                   style: TextStyle(
                     color: theme.primaryColor,
-                    fontSize: mediaQuery.textScaler.scale(15),
+                    fontSize: mediaQuery.textScaler.scale(13),
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -70,8 +70,8 @@ class OdometerCard extends StatelessWidget {
             child: Text(
               l10n.gpsReadingNote,
               style: TextStyle(
-                color: theme.hintColor,
-                fontSize: mediaQuery.textScaler.scale(11),
+                color: theme.colorScheme.onSurface,
+                fontSize: mediaQuery.textScaler.scale(10),
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -83,15 +83,15 @@ class OdometerCard extends StatelessWidget {
             children: [
               Icon(
                 Icons.local_gas_station_outlined,
-                color: theme.hintColor,
-                size: mediaQuery.textScaler.scale(18),
+                color: theme.colorScheme.onSurface,
+                size: mediaQuery.textScaler.scale(16),
               ),
               const SizedBox(width: 10),
               Text(
                 l10n.tankCapacity,
                 style: TextStyle(
                   color: theme.textTheme.bodyMedium?.color,
-                  fontSize: mediaQuery.textScaler.scale(14),
+                  fontSize: mediaQuery.textScaler.scale(12),
                 ),
               ),
               const Spacer(),
@@ -99,7 +99,7 @@ class OdometerCard extends StatelessWidget {
                 "${state.tankCapacity == 'null' ? '0' : state.tankCapacity} ${l10n.litersShort}",
                 style: TextStyle(
                   color: theme.textTheme.bodyLarge?.color,
-                  fontSize: mediaQuery.textScaler.scale(16),
+                  fontSize: mediaQuery.textScaler.scale(14),
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -114,8 +114,8 @@ class OdometerCard extends StatelessWidget {
                   ),
                   child: Icon(
                     Icons.edit_outlined,
-                    color: theme.hintColor,
-                    size: mediaQuery.textScaler.scale(14),
+                    color: theme.colorScheme.onSurface,
+                    size: mediaQuery.textScaler.scale(12),
                   ),
                 ),
               ),
@@ -157,7 +157,7 @@ class OdometerCard extends StatelessWidget {
         digit,
         style: TextStyle(
           color: theme.textTheme.titleLarge?.color,
-          fontSize: mediaQuery.textScaler.scale(24),
+          fontSize: mediaQuery.textScaler.scale(22),
           fontWeight: FontWeight.bold,
         ),
       ),
@@ -187,7 +187,7 @@ class OdometerCard extends StatelessWidget {
                 l10n.currentOdometerReading,
                 style: TextStyle(
                   color: theme.textTheme.titleLarge?.color,
-                  fontSize: 18,
+                  fontSize: 16,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -214,7 +214,7 @@ class OdometerCard extends StatelessWidget {
                       children: [
                         Text(
                           context.displayKms,
-                          style: TextStyle(color: theme.hintColor, fontSize: 14),
+                          style: TextStyle(color: theme.colorScheme.onSurface, fontSize: 12),
                         ),
                       ],
                     ),
@@ -226,7 +226,7 @@ class OdometerCard extends StatelessWidget {
               const SizedBox(height: 16),
               Text(
                 l10n.odometerUpdateDesc,
-                style: TextStyle(color: theme.hintColor, fontSize: 13),
+                style: TextStyle(color: theme.colorScheme.onSurface, fontSize: 11),
               ),
               const SizedBox(height: 24),
               Row(
@@ -236,7 +236,7 @@ class OdometerCard extends StatelessWidget {
                     onPressed: () => Navigator.pop(context),
                     child: Text(
                       l10n.cancel,
-                      style: TextStyle(color: theme.hintColor, fontSize: 16),
+                      style: TextStyle(color: theme.colorScheme.onSurface, fontSize: 14),
                     ),
                   ),
                   const SizedBox(width: 8),
@@ -261,7 +261,7 @@ class OdometerCard extends StatelessWidget {
                       l10n.save,
                       style: TextStyle(
                         color: theme.primaryColor,
-                        fontSize: 16,
+                        fontSize: 14,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -300,7 +300,7 @@ class OdometerCard extends StatelessWidget {
                     l10n.updateTankCapacity,
                     style: TextStyle(
                       color: theme.textTheme.titleLarge?.color,
-                      fontSize: 18,
+                      fontSize: 16,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -309,7 +309,7 @@ class OdometerCard extends StatelessWidget {
               const SizedBox(height: 8),
               Text(
                 l10n.tankCapacityDesc,
-                style: TextStyle(color: theme.hintColor, fontSize: 13),
+                style: TextStyle(color: theme.colorScheme.onSurface, fontSize: 11),
               ),
               const SizedBox(height: 16),
               TextField(
@@ -318,7 +318,7 @@ class OdometerCard extends StatelessWidget {
                 decoration: InputDecoration(
                   fillColor: theme.inputDecorationTheme.fillColor,
                   hintText: l10n.hintEg("13"),
-                  hintStyle: TextStyle(color: theme.hintColor),
+                  hintStyle: TextStyle(color: theme.colorScheme.onSurface),
                   contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
@@ -336,7 +336,7 @@ class OdometerCard extends StatelessWidget {
                       children: [
                         Text(
                           l10n.litres,
-                          style: TextStyle(color: theme.hintColor, fontSize: 14),
+                          style: TextStyle(color: theme.colorScheme.onSurface, fontSize: 12),
                         ),
                       ],
                     ),
@@ -353,7 +353,7 @@ class OdometerCard extends StatelessWidget {
                     onPressed: () => Navigator.pop(context),
                     child: Text(
                       l10n.cancel,
-                      style: TextStyle(color: theme.hintColor, fontSize: 16),
+                      style: TextStyle(color: theme.colorScheme.onSurface, fontSize: 14),
                     ),
                   ),
                   const SizedBox(width: 8),
@@ -378,7 +378,7 @@ class OdometerCard extends StatelessWidget {
                       l10n.save,
                       style: TextStyle(
                         color: theme.primaryColor,
-                        fontSize: 16,
+                        fontSize: 14,
                         fontWeight: FontWeight.bold,
                       ),
                     ),

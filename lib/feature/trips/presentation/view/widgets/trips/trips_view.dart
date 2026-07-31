@@ -16,7 +16,7 @@ import '../../../cubit/ride_history_cubit.dart';
 import '../../../cubit/ride_history_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../create_trip/create_trip_screen.dart';
-import '../../trip_search_screen.dart';
+import 'package:intl/intl.dart';
 import 'package:trackify/core/widgets/trackify_loader.dart';
 
 class Trips extends StatefulWidget {
@@ -29,7 +29,7 @@ class Trips extends StatefulWidget {
 class _TripsState extends State<Trips> {
   bool _showOverlay = false;
   bool _isFabExtended = true;
-  String _searchQuery = '';
+  DateTime? _selectedDate;
   List<Map<String, dynamic>> _savedTrips = [];
   bool _isLoadingTrips = true;
   late final Timer _fabTimer;
@@ -143,162 +143,242 @@ class _TripsState extends State<Trips> {
         alignment: Alignment.center,
         children: [
           /// BACKGROUND CONTENT
-          Column(
-            children: [
-              /// SEARCH BAR & FILTER
-              Padding(
-                padding: const EdgeInsets.only(left: 16, right: 16, top: 16),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Container(
-                        height: 48,
-                        decoration: BoxDecoration(
-                          color: theme.colorScheme.onSurface.withValues(
-                            alpha: 0.05,
-                          ),
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(
-                            color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5),
-                            width: 0.5,
-                          ),
-                        ),
-                        child: Row(
-                          children: [
-                            const SizedBox(width: 16),
-                            Icon(
-                              Icons.search,
-                              color: theme.colorScheme.onSurface.withValues(
-                                alpha: 0.5,
-                              ),
-                              size: 20,
-                            ),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: GestureDetector(
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) =>
-                                          const TripSearchScreen(),
-                                    ),
-                                  );
-                                },
-                                child: Container(
-                                  alignment: Alignment.centerLeft,
-                                  padding: const EdgeInsets.symmetric(
-                                    vertical: 14,
-                                  ),
-                                  child: Text(
-                                    l10n.searchTrips,
-                                    style: TextStyle(
-                                      color: theme.colorScheme.onSurface
-                                          .withValues(alpha: 0.4),
-                                      fontSize: 14,
+          CustomScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            slivers: [
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 16, right: 16, top: 16),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: GestureDetector(
+                          onTap: () async {
+                            final picked = await showDatePicker(
+                              context: context,
+                              initialDate: _selectedDate ?? DateTime.now(),
+                              firstDate: DateTime(2000),
+                              lastDate: DateTime(2100),
+                              builder: (context, child) {
+                                return Theme(
+                                  data: Theme.of(context).copyWith(
+                                    colorScheme: Theme.of(context).colorScheme.copyWith(
+                                      primary: theme.primaryColor,
                                     ),
                                   ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    GestureDetector(
-                      onTap: () {
-                        showModalBottomSheet(
-                          context: context,
-                          isScrollControlled: true,
-                          backgroundColor: Colors.transparent,
-                          builder: (context) {
-                            final cubit = context.read<RideHistoryCubit>();
-                            return SortingBottomSheet(
-                              initialSortBy: cubit.currentSortBy,
-                              initialIsRecentToOldest:
-                                  cubit.currentIsRecentToOldest,
-                              onApply: (sortBy, isRecentToOldest) {
-                                cubit.sortRides(sortBy, isRecentToOldest);
+                                  child: child!,
+                                );
                               },
                             );
-                          },
-                        );
-                      },
-                      child: Container(
-                        height: 48,
-                        width: 48,
-                        decoration: BoxDecoration(
-                          color: theme.colorScheme.onSurface.withValues(
-                            alpha: 0.05,
-                          ),
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(
-                            color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5),
-                            width: 0.5,
-                          ),
-                        ),
-                        child: Icon(
-                          Icons.sort,
-                          color: theme.colorScheme.primary,
-                          size: 20,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 12),
-              Expanded(
-                child: _isLoadingTrips
-                    ? const Center(child: TrackifyLoader())
-                    : _savedTrips.isEmpty
-                    ? const TripEmptyState()
-                    : ListView.builder(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        itemCount: _savedTrips.length,
-                        itemBuilder: (context, index) {
-                          final trip = _savedTrips[index];
-                          final ridesData = trip['rides'] as List<dynamic>;
-                          final rides = ridesData
-                              .map(
-                                (e) => Ride.fromJson(e as Map<String, dynamic>),
-                              )
-                              .toList();
-
-                          // Optional: Apply filter logic based on _searchQuery
-                          if (_searchQuery.isNotEmpty) {
-                            final title = (trip['title'] as String?) ?? '';
-                            if (!title.toLowerCase().contains(
-                              _searchQuery.toLowerCase(),
-                            )) {
-                              return const SizedBox.shrink();
+                            if (picked != null) {
+                              setState(() {
+                                _selectedDate = picked;
+                              });
                             }
-                          }
-
-                          final displayTitle = _getLocalizedTripTitle(
-                            trip['title'] ?? l10n.tripLabel('${index + 1}'),
-                            l10n,
-                          );
-                          return TripCard(
-                            title: displayTitle,
-                            rides: rides,
-                            imagePath: trip['imagePath'] as String?,
-                            onTap: () async {
-                              await Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => TripDetailsScreen(
-                                    tripName: displayTitle,
-                                    rides: rides,
+                          },
+                          child: Container(
+                            height: 48,
+                            decoration: BoxDecoration(
+                              color: theme.colorScheme.onSurface.withValues(
+                                alpha: 0.05,
+                              ),
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(
+                                color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5),
+                                width: 0.5,
+                              ),
+                            ),
+                            child: Row(
+                              children: [
+                                const SizedBox(width: 16),
+                                Icon(
+                                  _selectedDate != null ? Icons.calendar_today : Icons.calendar_today_outlined,
+                                  color: _selectedDate != null ? theme.primaryColor : theme.colorScheme.onSurface.withValues(
+                                    alpha: 0.5,
+                                  ),
+                                  size: 20,
+                                ),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: Container(
+                                    alignment: Alignment.centerLeft,
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 14,
+                                    ),
+                                    child: Text(
+                                      _selectedDate != null ? DateFormat('dd MMM yyyy').format(_selectedDate!) : 'Select Date',
+                                      style: TextStyle(
+                                        color: _selectedDate != null ? theme.primaryColor : theme.colorScheme.onSurface
+                                            .withValues(alpha: 0.4),
+                                        fontSize: 14,
+                                        fontWeight: _selectedDate != null ? FontWeight.bold : FontWeight.normal,
+                                      ),
+                                    ),
                                   ),
                                 ),
+                                if (_selectedDate != null)
+                                  IconButton(
+                                    icon: const Icon(Icons.clear, size: 20),
+                                    onPressed: () {
+                                      setState(() {
+                                        _selectedDate = null;
+                                      });
+                                    },
+                                  ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      GestureDetector(
+                        onTap: () {
+                          showModalBottomSheet(
+                            context: context,
+                            isScrollControlled: true,
+                            backgroundColor: Colors.transparent,
+                            builder: (context) {
+                              final cubit = context.read<RideHistoryCubit>();
+                              return SortingBottomSheet(
+                                initialSortBy: cubit.currentSortBy,
+                                initialIsRecentToOldest:
+                                    cubit.currentIsRecentToOldest,
+                                onApply: (sortBy, isRecentToOldest) {
+                                  cubit.sortRides(sortBy, isRecentToOldest);
+                                },
                               );
                             },
                           );
                         },
+                        child: Container(
+                          height: 48,
+                          width: 48,
+                          decoration: BoxDecoration(
+                            color: theme.colorScheme.onSurface.withValues(
+                              alpha: 0.05,
+                            ),
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(
+                              color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5),
+                              width: 0.5,
+                            ),
+                          ),
+                          child: Icon(
+                            Icons.sort,
+                            color: theme.colorScheme.primary,
+                            size: 20,
+                          ),
+                        ),
                       ),
+                    ],
+                  ),
+                ),
               ),
+              const SliverToBoxAdapter(child: SizedBox(height: 12)),
+              
+              if (_isLoadingTrips)
+                const SliverFillRemaining(child: Center(child: TrackifyLoader())),
+                
+              if (!_isLoadingTrips && _savedTrips.isEmpty)
+                const SliverFillRemaining(child: TripEmptyState()),
+                
+              if (!_isLoadingTrips && _savedTrips.isNotEmpty)
+                ...(() {
+                  final List<Map<String, dynamic>> filteredTrips = [];
+                  for (var trip in _savedTrips) {
+                    final ridesData = trip['rides'] as List<dynamic>? ?? [];
+                    final rides = ridesData
+                        .map((e) => Ride.fromJson(e as Map<String, dynamic>))
+                        .toList();
+
+                    bool includeTrip = true;
+                    if (_selectedDate != null) {
+                      bool hasMatchingDate = false;
+                      for (var r in rides) {
+                        DateTime? parsedDate;
+                        if (r.rawStartTime.isNotEmpty) {
+                          try {
+                            parsedDate = DateTime.parse(r.rawStartTime).toLocal();
+                          } catch (_) {}
+                        }
+                        if (parsedDate == null && r.date.isNotEmpty) {
+                          try {
+                            parsedDate = DateFormat('dd/MM/yyyy').parse(r.date);
+                          } catch (_) {
+                            try {
+                              parsedDate = DateTime.parse(r.date);
+                            } catch (_) {}
+                          }
+                        }
+                        
+                        if (parsedDate != null) {
+                          if (parsedDate.year == _selectedDate!.year &&
+                              parsedDate.month == _selectedDate!.month &&
+                              parsedDate.day == _selectedDate!.day) {
+                            hasMatchingDate = true;
+                            break;
+                          }
+                        } else {
+                          final dateStr1 = DateFormat('dd MMM yyyy').format(_selectedDate!);
+                          final dateStr2 = DateFormat('dd/MM/yyyy').format(_selectedDate!);
+                          if (r.date == dateStr1 || r.date == dateStr2) {
+                            hasMatchingDate = true;
+                            break;
+                          }
+                        }
+                      }
+                      if (!hasMatchingDate) {
+                        includeTrip = false;
+                      }
+                    }
+                    if (includeTrip) {
+                      filteredTrips.add(trip);
+                    }
+                  }
+
+                  if (filteredTrips.isEmpty) {
+                    return [const SliverFillRemaining(child: TripEmptyState())];
+                  }
+
+                  return [
+                    SliverPadding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      sliver: SliverList(
+                        delegate: SliverChildBuilderDelegate(
+                          (context, index) {
+                            final trip = filteredTrips[index];
+                            final ridesData = trip['rides'] as List<dynamic>? ?? [];
+                            final rides = ridesData
+                                .map((e) => Ride.fromJson(e as Map<String, dynamic>))
+                                .toList();
+
+                            final displayTitle = _getLocalizedTripTitle(
+                              trip['title'] ?? l10n.tripLabel('${index + 1}'),
+                              l10n,
+                            );
+                            return TripCard(
+                              title: displayTitle,
+                              rides: rides,
+                              imagePath: trip['imagePath'] as String?,
+                              onTap: () async {
+                                await Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => TripDetailsScreen(
+                                      tripName: displayTitle,
+                                      rides: rides,
+                                    ),
+                                  ),
+                                );
+                              },
+                            );
+                          },
+                          childCount: filteredTrips.length,
+                        ),
+                      ),
+                    )
+                  ];
+                })(),
             ],
           ),
 

@@ -3619,8 +3619,8 @@ abstract class AppLocalizations {
   /// No description provided for @unmapStep1.
   ///
   /// In en, this message translates to:
-  /// **'Step 1: To un-map device, call at +918061971443'**
-  String get unmapStep1;
+  /// **'Step 1: To un-map device, call at {mobileNumber}'**
+  String unmapStep1(String mobileNumber);
 
   /// No description provided for @unmapStep2.
   ///

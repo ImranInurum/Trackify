@@ -64,7 +64,7 @@ class OverspeedCard extends StatelessWidget {
                 ),
             ],
           ),
-          const SizedBox(height: 6),
+          const SizedBox(height: 2),
 
           // Speed · Duration · Date row
           Row(
