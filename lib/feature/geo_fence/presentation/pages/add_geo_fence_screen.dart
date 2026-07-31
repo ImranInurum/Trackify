@@ -92,6 +92,8 @@ class _AddGeoFenceScreenState extends State<AddGeoFenceScreen> {
     final position = await Geolocator.getCurrentPosition();
     final userLatLng = LatLng(position.latitude, position.longitude);
 
+    if (!mounted) return;
+
     setState(() {
       _userLocation = userLatLng;
       _fencePosition = userLatLng;
@@ -99,14 +101,12 @@ class _AddGeoFenceScreenState extends State<AddGeoFenceScreen> {
 
     _mapController?.animateCamera(CameraUpdate.newLatLngZoom(userLatLng, 15));
 
-    if (mounted) {
-      context.read<GeoFenceCubit>().updateAddress(
-        latitude: userLatLng.latitude,
-        longitude: userLatLng.longitude,
-        radius: _radius,
-        selectedType: _selectedType,
-      );
-    }
+    context.read<GeoFenceCubit>().updateAddress(
+      latitude: userLatLng.latitude,
+      longitude: userLatLng.longitude,
+      radius: _radius,
+      selectedType: _selectedType,
+    );
   }
 
   void _onCameraMove(CameraPosition position) {

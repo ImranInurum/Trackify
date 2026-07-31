@@ -4,33 +4,28 @@ import '../model/fuel_station_model.dart';
 import 'package:geolocator/geolocator.dart';
 
 class OverpassService {
-  static const String _baseUrl = 'https://overpass.kumi.systems/api/interpreter';
+  static const String _baseUrl = 'https://overpass-api.de/api/interpreter';
 
   Future<List<FuelStation>> fetchNearbyFuelStations(
     double lat,
     double lon, {
-    double radius = 3000,
+    double radius = 5000,
   }) async {
     final query =
         '''
-      [out:json][timeout:25];
-      (
-        node["amenity"="fuel"](around:$radius, $lat, $lon);
-        way["amenity"="fuel"](around:$radius, $lat, $lon);
-        relation["amenity"="fuel"](around:$radius, $lat, $lon);
-      );
-      out center;
+[out:json][timeout:25];
+node["amenity"="fuel"](around:$radius,$lat,$lon);
+out;
     ''';
 
     try {
+      final uri = Uri.parse('$_baseUrl?data=${Uri.encodeComponent(query)}');
       final response = await http
-          .post(
-            Uri.parse(_baseUrl),
+          .get(
+            uri,
             headers: {
-              'Content-Type': 'application/x-www-form-urlencoded',
               'User-Agent': 'Trackify/1.0 (https://trackify.com)',
             },
-            body: {'data': query},
           )
           .timeout(const Duration(seconds: 30));
       if (response.statusCode == 200) {

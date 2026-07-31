@@ -152,7 +152,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
     } else if (checkDate == yesterday) {
       return "Yesterday, $timeStr";
     } else {
-      return "${DateFormat('dd/MM/yyyy').format(dt)}, $timeStr";
+      return "${DateFormat('dd MMM yyyy').format(dt)}, $timeStr";
     }
   }
 
@@ -187,7 +187,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
     final yesterday = today.subtract(const Duration(days: 1));
     final checkDate = DateTime(date.year, date.month, date.day);
 
-    final dateStr = DateFormat('dd/MM/yyyy').format(date);
+    final dateStr = DateFormat('dd MMM yyyy').format(date);
     if (checkDate == today) {
       return "$dateStr (Today)";
     } else if (checkDate == yesterday) {
@@ -202,18 +202,18 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
     if (_activeDateFilter == "All") {
       return "All Time";
     } else if (_activeDateFilter == "Today") {
-      return "${DateFormat('dd/MM/yyyy').format(DateTime.now())} (Today)";
+      return "${DateFormat('dd MMM yyyy').format(DateTime.now())} (Today)";
     } else if (_activeDateFilter == "Yesterday") {
       final yesterday = DateTime.now().subtract(const Duration(days: 1));
-      return "${DateFormat('dd/MM/yyyy').format(yesterday)} (Yesterday)";
+      return "${DateFormat('dd MMM yyyy').format(yesterday)} (Yesterday)";
     } else if (_activeDateFilter == "This week" || 
                _activeDateFilter == "Last week" || 
                _activeDateFilter == "Last 7 days" ||
                _activeDateFilter == "This month" ||
                _activeDateFilter == "Last month" ||
                _activeDateFilter == "Last 30 days") {
-      final startStr = DateFormat('dd/MM/yyyy').format(_statsStartDate);
-      final endStr = DateFormat('dd/MM/yyyy').format(_statsEndDate);
+      final startStr = DateFormat('dd MMM yyyy').format(_statsStartDate);
+      final endStr = DateFormat('dd MMM yyyy').format(_statsEndDate);
       return "$_activeDateFilter ($startStr - $endStr)";
     } else if (_activeDateFilter.contains(" - ")) {
       return _activeDateFilter;
@@ -920,10 +920,11 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
         color: theme.cardColor,
+        
         borderRadius: BorderRadius.circular(24),
         border: Border.all(
-          color: theme.colorScheme.onSurface.withOpacity(0.05),
-          width: 1,
+          color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5),
+          width: 0.5,
         ),
         boxShadow: [
           BoxShadow(
@@ -1666,7 +1667,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
     String lastUpdatedText =
         "${AppLocalizations.of(context)!.lastUpdated} ${AppLocalizations.of(context)!.justNow}";
     if (_recordingStartDateTime != null) {
-      final formattedTime = DateFormat('dd/MM/yyyy, h:mm a').format(_recordingStartDateTime!);
+      final formattedTime = DateFormat('dd MMM yyyy, h:mm a').format(_recordingStartDateTime!);
       lastUpdatedText =
           "${AppLocalizations.of(context)!.lastUpdated} $formattedTime";
     } else {
@@ -1686,6 +1687,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
       padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
       decoration: BoxDecoration(
         color: Theme.of(context).cardColor,
+        border: Border.all(color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5), width: 0.5),
         borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
         boxShadow: [
           BoxShadow(
@@ -1959,6 +1961,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
         decoration: BoxDecoration(
           color: Theme.of(context).cardColor,
+          border: Border.all(color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5), width: 0.5),
           borderRadius: BorderRadius.circular(40),
           boxShadow: [
             BoxShadow(
@@ -2093,12 +2096,15 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
                           decoration: BoxDecoration(
                             color: Theme.of(context).cardColor,
                             borderRadius: BorderRadius.circular(10),
-                            border: Border.all(
-                              color: _selectedFilterTag != null
-                                  ? Theme.of(context).colorScheme.primary
-                                  : Theme.of(context).dividerColor,
-                              width: 1.5,
-                            ),
+                            border: _selectedFilterTag != null
+                                ? Border.all(
+                                    color: Theme.of(context).colorScheme.primary,
+                                    width: 1.5,
+                                  )
+                                : Border.all(
+                                    color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5),
+                                    width: 0.5,
+                                  ),
                           ),
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
@@ -2132,12 +2138,15 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
                           decoration: BoxDecoration(
                             color: Theme.of(context).cardColor,
                             borderRadius: BorderRadius.circular(10),
-                            border: Border.all(
-                              color: _activeDateFilter != "All"
-                                  ? Theme.of(context).colorScheme.primary
-                                  : Theme.of(context).dividerColor,
-                              width: 1.5,
-                            ),
+                            border: _activeDateFilter != "All"
+                                ? Border.all(
+                                    color: Theme.of(context).colorScheme.primary,
+                                    width: 1.5,
+                                  )
+                                : Border.all(
+                                    color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5),
+                                    width: 0.5,
+                                  ),
                           ),
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
@@ -2223,15 +2232,20 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
         : null;
 
     // Filter offline rides by currently selected date range
-    final startOfDay = DateTime(_statsStartDate.year, _statsStartDate.month, _statsStartDate.day);
-    final endOfDay = DateTime(_statsEndDate.year, _statsEndDate.month, _statsEndDate.day, 23, 59, 59, 999);
+    List<PastRide> filteredOfflineRides;
+    if (_activeDateFilter == "All") {
+      filteredOfflineRides = List.from(offlineRides);
+    } else {
+      final startOfDay = DateTime(_statsStartDate.year, _statsStartDate.month, _statsStartDate.day);
+      final endOfDay = DateTime(_statsEndDate.year, _statsEndDate.month, _statsEndDate.day, 23, 59, 59, 999);
 
-    final filteredOfflineRides = offlineRides.where((r) {
-      final rideDate = r.rawDate ?? DateTime.tryParse(r.dateStr);
-      if (rideDate == null) return false;
-      return rideDate.isAfter(startOfDay.subtract(const Duration(milliseconds: 1))) &&
-             rideDate.isBefore(endOfDay.add(const Duration(milliseconds: 1)));
-    }).toList();
+      filteredOfflineRides = offlineRides.where((r) {
+        final rideDate = r.rawDate ?? DateTime.tryParse(r.dateStr);
+        if (rideDate == null) return false;
+        return rideDate.isAfter(startOfDay.subtract(const Duration(milliseconds: 1))) &&
+               rideDate.isBefore(endOfDay.add(const Duration(milliseconds: 1)));
+      }).toList();
+    }
 
     List<PastRide> rides = List.from(filteredOfflineRides);
 
@@ -2359,6 +2373,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
                       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                       decoration: BoxDecoration(
                         color: theme.cardColor,
+                     
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(
                           color: theme.dividerColor.withValues(alpha: 0.1),
@@ -2441,6 +2456,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
                           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                           decoration: BoxDecoration(
                             color: theme.cardColor,
+                        
                             borderRadius: BorderRadius.circular(10),
                             border: Border.all(
                               color: _selectedFilterTag != null
@@ -2620,6 +2636,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Theme.of(context).cardColor,
+        border: Border.all(color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5), width: 0.5),
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10),
@@ -3765,7 +3782,7 @@ class _DateRangePickerBottomSheetState extends State<_DateRangePickerBottomSheet
                     children: [
                       _buildOption(
                         title: "Today",
-                        subtitle: DateFormat('dd/MM/yyyy').format(today),
+                        subtitle: DateFormat('dd MMM yyyy').format(today),
                         isSelected: _activeFilter == "Today",
                         onTap: () => _selectFilter(
                           "Today",
@@ -3775,7 +3792,7 @@ class _DateRangePickerBottomSheetState extends State<_DateRangePickerBottomSheet
                       ),
                       _buildOption(
                         title: "Yesterday",
-                        subtitle: DateFormat('dd/MM/yyyy').format(yesterday),
+                        subtitle: DateFormat('dd MMM yyyy').format(yesterday),
                         isSelected: _activeFilter == "Yesterday",
                         onTap: () => _selectFilter(
                           "Yesterday",
@@ -3819,7 +3836,7 @@ class _DateRangePickerBottomSheetState extends State<_DateRangePickerBottomSheet
                     children: [
                       _buildOption(
                         title: "This week",
-                        subtitle: "${DateFormat('dd/MM/yyyy').format(thisWeekStart)} - ${DateFormat('dd/MM/yyyy').format(thisWeekEnd)}",
+                        subtitle: "${DateFormat('dd MMM yyyy').format(thisWeekStart)} - ${DateFormat('dd MMM yyyy').format(thisWeekEnd)}",
                         isSelected: _activeFilter == "This week",
                         onTap: () => _selectFilter(
                           "This week",
@@ -3829,7 +3846,7 @@ class _DateRangePickerBottomSheetState extends State<_DateRangePickerBottomSheet
                       ),
                       _buildOption(
                         title: "Last week",
-                        subtitle: "${DateFormat('dd/MM/yyyy').format(lastWeekStart)} - ${DateFormat('dd/MM/yyyy').format(lastWeekEnd)}",
+                        subtitle: "${DateFormat('dd MMM yyyy').format(lastWeekStart)} - ${DateFormat('dd MMM yyyy').format(lastWeekEnd)}",
                         isSelected: _activeFilter == "Last week",
                         onTap: () => _selectFilter(
                           "Last week",
@@ -3839,7 +3856,7 @@ class _DateRangePickerBottomSheetState extends State<_DateRangePickerBottomSheet
                       ),
                       _buildOption(
                         title: "Last 7 days",
-                        subtitle: "${DateFormat('dd/MM/yyyy').format(last7DaysStart)} - ${DateFormat('dd/MM/yyyy').format(today)}",
+                        subtitle: "${DateFormat('dd MMM yyyy').format(last7DaysStart)} - ${DateFormat('dd MMM yyyy').format(today)}",
                         isSelected: _activeFilter == "Last 7 days",
                         onTap: () => _selectFilter(
                           "Last 7 days",
@@ -3856,7 +3873,7 @@ class _DateRangePickerBottomSheetState extends State<_DateRangePickerBottomSheet
                     children: [
                       _buildOption(
                         title: "This month",
-                        subtitle: "${DateFormat('dd/MM/yyyy').format(thisMonthStart)} - ${DateFormat('dd/MM/yyyy').format(thisMonthEnd)}",
+                        subtitle: "${DateFormat('dd MMM yyyy').format(thisMonthStart)} - ${DateFormat('dd MMM yyyy').format(thisMonthEnd)}",
                         isSelected: _activeFilter == "This month",
                         onTap: () => _selectFilter(
                           "This month",
@@ -3866,7 +3883,7 @@ class _DateRangePickerBottomSheetState extends State<_DateRangePickerBottomSheet
                       ),
                       _buildOption(
                         title: "Last month",
-                        subtitle: "${DateFormat('dd/MM/yyyy').format(lastMonthStart)} - ${DateFormat('dd/MM/yyyy').format(lastMonthEnd)}",
+                        subtitle: "${DateFormat('dd MMM yyyy').format(lastMonthStart)} - ${DateFormat('dd MMM yyyy').format(lastMonthEnd)}",
                         isSelected: _activeFilter == "Last month",
                         onTap: () => _selectFilter(
                           "Last month",
@@ -3876,7 +3893,7 @@ class _DateRangePickerBottomSheetState extends State<_DateRangePickerBottomSheet
                       ),
                       _buildOption(
                         title: "Last 30 days",
-                        subtitle: "${DateFormat('dd/MM/yyyy').format(last30DaysStart)} - ${DateFormat('dd/MM/yyyy').format(today)}",
+                        subtitle: "${DateFormat('dd MMM yyyy').format(last30DaysStart)} - ${DateFormat('dd MMM yyyy').format(today)}",
                         isSelected: _activeFilter == "Last 30 days",
                         onTap: () => _selectFilter(
                           "Last 30 days",

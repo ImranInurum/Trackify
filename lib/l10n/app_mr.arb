@@ -949,7 +949,7 @@
   "liters": "लिटर",
   "fuelBeforeRefuelDesc": "रिफ्यूल करण्यापूर्वी टाकीत असलेल्या इंधनाचे अंदाजित प्रमाण भरा.",
   "savedSuccessfully": "यशस्वीरित्या जतन केले",
-  "fuelStationName": "सी.एम. पेट्रो पॉइंट, बीपीसीएल पेट्रोल...",
+  "fuelStationName": "उदा. इंडियन ऑइल, शेल",
   "yourPhoneLocation": "तुमच्या फोनचे लोकेशन",
   "sharingActive": "शेअरिंग सक्रिय आहे",
   "noActiveSharing": "कोणतीही सक्रिय शेअरिंग नाही",
@@ -1333,5 +1333,23 @@
   "deleteRideConfirmMessage": "तुम्हाला खात्री आहे की तुम्ही हा राईड रेकॉर्ड हटवू इच्छिता?",
   "rideDeletedSuccess": "राईड यशस्वीरीत्या हटवली गेली",
   "onlineRideDeleteNotSupported": "ऑनलाइन राईड ऑफलाईन मोडमध्ये हटवता येणार नाही",
-  "rideDeleteFailedInvalidId": "राईड हटवणे अपयशी: अवैध आयडी"
+  "rideDeleteFailedInvalidId": "राईड हटवणे अपयशी: अवैध आयडी",
+  "hoursLink": "{hours} तासांची लिंक",
+  "@hoursLink": {
+    "placeholders": {
+      "hours": {
+        "type": "String"
+      }
+    }
+  },
+  "activeSharingCount": "{count} सक्रिय शेअरिंग",
+  "@activeSharingCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "sharingStoppedSuccessfully": "शेअरिंग यशस्वीरित्या थांबवली.",
+  "failedToCreateShareLink": "शेअर लिंक तयार करण्यात अयशस्वी"
 }

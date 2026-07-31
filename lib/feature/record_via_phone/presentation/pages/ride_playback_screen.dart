@@ -331,7 +331,7 @@ class _RidePlaybackScreenState extends State<RidePlaybackScreen> {
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
-          DateFormat('dd/MM/yyyy').format(widget.startTime), ),
+          DateFormat('dd MMM yyyy').format(widget.startTime), ),
         actions: [
 //           IconButton(
 //             icon: Icon(Icons.video_library, color: Theme.of(context).colorScheme.onSurface),
@@ -789,6 +789,7 @@ class _RidePlaybackScreenState extends State<RidePlaybackScreen> {
         margin: const EdgeInsets.symmetric(horizontal: 16),
         decoration: BoxDecoration(
           color: Theme.of(context).cardColor.withOpacity(0.95),
+          border: Border.all(color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5), width: 0.5),
           borderRadius: BorderRadius.circular(30),
           boxShadow: [
             BoxShadow(color: Colors.black.withOpacity(0.12), blurRadius: 10)
@@ -868,6 +869,7 @@ class _RidePlaybackScreenState extends State<RidePlaybackScreen> {
       padding: const EdgeInsets.fromLTRB(16, 32, 16, 32),
       decoration: BoxDecoration(
         color: Theme.of(context).cardColor,
+        border: Border.all(color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5), width: 0.5),
         borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
       ),
       child: Column(
@@ -1007,7 +1009,7 @@ class _RidePlaybackScreenState extends State<RidePlaybackScreen> {
 
   void _showExportDialog(BuildContext context) {
     final TextEditingController controller = TextEditingController(
-      text: DateFormat('dd/MM/yyyy').format(widget.startTime),
+      text: DateFormat('dd MMM yyyy').format(widget.startTime),
     );
 
     showDialog(

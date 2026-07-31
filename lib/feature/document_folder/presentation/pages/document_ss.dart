@@ -406,7 +406,7 @@ class _DocumentSubScreenState extends State<DocumentSubScreen> {
     final screenHeight = size.height;
     final dateLabel = _selectedDate == null
         ? l10n.selectExpiryDate
-        : DateFormat('dd/MM/yyyy').format(_selectedDate!);
+        : DateFormat('dd MMM yyyy').format(_selectedDate!);
 
     return Scaffold(
       backgroundColor: colorScheme.surface,
@@ -458,11 +458,11 @@ class _DocumentSubScreenState extends State<DocumentSubScreen> {
                         padding: const EdgeInsets.symmetric(horizontal: 14),
                         decoration: BoxDecoration(
                           color: Theme.of(context).cardColor,
+                          border: Border.all(color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5), width: 0.5),
                           borderRadius: BorderRadius.circular(10),
-                          border: Border.all(
-                            color: colorScheme.outlineVariant.withValues(alpha: 0.2),
+                     
                           ),
-                        ),
+                        
                         child: Row(
                           children: [
                             Expanded(
@@ -614,11 +614,11 @@ class _DocumentSubScreenState extends State<DocumentSubScreen> {
         height: size.width * 0.42,
         decoration: BoxDecoration(
           color: Theme.of(context).cardColor,
+          border: Border.all(color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5), width: 0.5),
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: colorScheme.outlineVariant.withValues(alpha: 0.2),
+          
           ),
-        ),
+        
         child: file == null
             ? (existingUrl.isNotEmpty
                 ? ClipRRect(

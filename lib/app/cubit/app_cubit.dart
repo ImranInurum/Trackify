@@ -80,12 +80,63 @@ class AppCubit extends Cubit<AppState> with WidgetsBindingObserver {
       // await AppPreference.instance.init(); // Redundant, already done in main.dart
       // await loadSavedThemeMode(); // Redundant, handled in constructor
       await loadThemeFromCache();
+      fetchGeneralSettings(); // Load globally
       _initializeConnectivity();
       await _initializeLocation();
       await loadUserSession();
+      await _syncFcmToken();
       await initializeSocket();
     } catch (e) {
       print('Initialization error: $e');
+    }
+  }
+
+  Future<void> _syncFcmToken() async {
+    try {
+      final prefs = AppPreference.instance;
+      final userId = await prefs.get(key: AppPreference.KEY_USER_ID);
+      final currentToken = await prefs.get(key: AppPreference.KEY_TOKEN);
+      final fcmToken = await prefs.get(key: AppPreference.KEY_FCM_TOKEN);
+
+      if (userId.isEmpty || currentToken.isEmpty || fcmToken.isEmpty) return;
+
+      String? currentSessionId;
+      final getSessionsUrl = ApiURL.getSessions(userId);
+      final sessionsResult = await _apiServices.getGetApiResponse(getSessionsUrl);
+
+      await sessionsResult.fold(
+        (failure) async => debugPrint("AppCubit: [FCM SYNC] Failed to fetch sessions: ${failure.message}"),
+        (response) async {
+          List dynamicList = [];
+          if (response is Map<String, dynamic> && response['data'] is List) {
+            dynamicList = response['data'] as List;
+          } else if (response is List) {
+            dynamicList = response;
+          }
+
+          for (var item in dynamicList) {
+            final s = Map<String, dynamic>.from(item as Map);
+            if (s['isActive'] == true && s['token'] == currentToken) {
+              currentSessionId = s['_id']?.toString();
+              break;
+            }
+          }
+        },
+      );
+
+      if (currentSessionId != null && currentSessionId!.isNotEmpty) {
+        debugPrint("AppCubit: [FCM SYNC] Updating FCM for session $currentSessionId");
+        await _apiServices.getPostApiResponse(
+          ApiURL.updateFcmSession,
+          {
+            "userId": userId,
+            "sessionId": currentSessionId,
+            "fcmToken": fcmToken,
+          },
+        );
+      }
+    } catch (e) {
+      debugPrint("AppCubit: [FCM SYNC] Exception: $e");
     }
   }
 
@@ -151,6 +202,33 @@ class AppCubit extends Cubit<AppState> with WidgetsBindingObserver {
     }
   }
 
+  Future<void> fetchGeneralSettings() async {
+    try {
+      final result = await _apiServices.getGetApiResponse(ApiURL.generalSettings);
+      result.fold(
+        (error) => print('Error fetching general settings: ${error.message}'),
+        (data) async {
+          try {
+            if (data is Map<String, dynamic> && data['data'] != null) {
+              final mobileNumber = data['data']['mobileNumber']?.toString() ?? "";
+              if (mobileNumber.isNotEmpty) {
+                emit(state.copyWith(companyMobileNumber: mobileNumber));
+                await AppPreference.instance.set(
+                  key: 'company_mobile_number',
+                  value: mobileNumber,
+                );
+              }
+            }
+          } catch (e) {
+            print('Error parsing general settings JSON: $e');
+          }
+        },
+      );
+    } catch (e) {
+      print('Unexpected error fetching general settings: $e');
+    }
+  }
+
   void _initializeConnectivity() {
     _connectivityService.initialize();
     _connectivitySubscription = _connectivityService.connectivityStream.listen((
@@ -201,6 +279,7 @@ class AppCubit extends Cubit<AppState> with WidgetsBindingObserver {
     print("Refreshing app data...");
     // Fetch theme, user session, and any other critical state
     await fetchTheme();
+    await fetchGeneralSettings();
     await loadUserSession();
     // Add other API refresh calls here if needed (e.g., active orders, notifications)
   }
@@ -246,6 +325,11 @@ class AppCubit extends Cubit<AppState> with WidgetsBindingObserver {
     if (userData.isNotEmpty) {
       final user = User.fromJson(jsonDecode(userData));
       emit(state.copyWith(userData: user));
+    }
+
+    final cachedMobileNumber = await prefs.get(key: 'company_mobile_number');
+    if (cachedMobileNumber.isNotEmpty) {
+      emit(state.copyWith(companyMobileNumber: cachedMobileNumber));
     }
 
     if (selectedLanguageKey.isNotEmpty) {

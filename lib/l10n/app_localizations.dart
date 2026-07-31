@@ -3619,8 +3619,8 @@ abstract class AppLocalizations {
   /// No description provided for @unmapStep1.
   ///
   /// In en, this message translates to:
-  /// **'Step 1: To un-map device, call at +918061971443'**
-  String get unmapStep1;
+  /// **'Step 1: To un-map device, call at {mobileNumber}'**
+  String unmapStep1(String mobileNumber);
 
   /// No description provided for @unmapStep2.
   ///
@@ -4717,7 +4717,7 @@ abstract class AppLocalizations {
   /// No description provided for @fuelStationName.
   ///
   /// In en, this message translates to:
-  /// **'C.M. Petro Point, BPCL petr...'**
+  /// **'E.g. Indian Oil, Shell'**
   String get fuelStationName;
 
   /// No description provided for @yourPhoneLocation.
@@ -6639,6 +6639,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Are you sure you want to stop sharing the location of {name}?'**
   String stopSharingConfirmation(String name);
+
+  /// No description provided for @hoursLink.
+  ///
+  /// In en, this message translates to:
+  /// **'{hours} hours link'**
+  String hoursLink(String hours);
+
+  /// No description provided for @activeSharingCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} active sharing'**
+  String activeSharingCount(int count);
+
+  /// No description provided for @sharingStoppedSuccessfully.
+  ///
+  /// In en, this message translates to:
+  /// **'Sharing stopped successfully.'**
+  String get sharingStoppedSuccessfully;
+
+  /// No description provided for @failedToCreateShareLink.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to create share link'**
+  String get failedToCreateShareLink;
 }
 
 class _AppLocalizationsDelegate

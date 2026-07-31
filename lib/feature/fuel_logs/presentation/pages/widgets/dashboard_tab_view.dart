@@ -54,15 +54,18 @@ class DashboardTabView extends StatelessWidget {
               },
               child: ListView(
                 physics: const AlwaysScrollableScrollPhysics(),
-                padding: EdgeInsets.all(screenWidth * 0.04),
+                padding: EdgeInsets.symmetric(
+                  horizontal: screenWidth * 0.04,
+                  vertical: screenWidth * 0.02,
+                ),
               children: [
                 OdometerCard(state: state, l10n: l10n),
-                SizedBox(height: screenHeight * 0.02),
+                SizedBox(height: screenHeight * 0.01),
                 LastRefuelCard(state: state, l10n: l10n),
-                SizedBox(height: screenHeight * 0.02),
+                SizedBox(height: screenHeight * 0.01),
                 SpendingCard(state: state, l10n: l10n),
-                SizedBox(height: screenHeight * 0.02),
-                const NearbyFuelStationsDashboard(),
+                SizedBox(height: screenHeight * 0.01),
+                // const NearbyFuelStationsDashboard(),
                 SizedBox(height: screenHeight * 0.1), // Space for FAB
               ],
               ),
@@ -80,7 +83,7 @@ class DashboardTabView extends StatelessWidget {
               l10n.noDataAvailable,
               style: TextStyle(
                 color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
-                fontSize: 16,
+                fontSize: 14,
               ),
             ),
           );

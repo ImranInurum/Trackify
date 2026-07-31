@@ -123,7 +123,7 @@ class _TripScreenState extends State<TripScreen>
       decoration: BoxDecoration(
         color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(30),
-        border: Border.all(color: Theme.of(context).dividerColor),
+        border: Border.all(color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5), width: 0.5),
       ),
       child: Row(
         children: [_buildTab(l10n.allRides, 0), _buildTab(l10n.trips, 1)],

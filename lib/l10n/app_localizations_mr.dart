@@ -1858,8 +1858,9 @@ class AppLocalizationsMr extends AppLocalizations {
   String get unmapTrackify => 'तुमचे ट्रॅकिफाय अन-मॅप करा';
 
   @override
-  String get unmapStep1 =>
-      'हंत १: डिव्हाइस अन-मॅप करण्यासाठी, +९१८०६१९७१४४३ वर कॉल करा';
+  String unmapStep1(String mobileNumber) {
+    return 'हंत १: डिव्हाइस अन-मॅप करण्यासाठी, +९१८०६१९७१४४३ वर कॉल करा';
+  }
 
   @override
   String get unmapStep2 => 'हंत २: वाहन काढून टाका';
@@ -2433,7 +2434,7 @@ class AppLocalizationsMr extends AppLocalizations {
   String get savedSuccessfully => 'यशस्वीरित्या जतन केले';
 
   @override
-  String get fuelStationName => 'सी.एम. पेट्रो पॉइंट, बीपीसीएल पेट्रोल...';
+  String get fuelStationName => 'उदा. इंडियन ऑइल, शेल';
 
   @override
   String get yourPhoneLocation => 'तुमच्या फोनचे लोकेशन';
@@ -3463,4 +3464,20 @@ class AppLocalizationsMr extends AppLocalizations {
   String stopSharingConfirmation(String name) {
     return 'Are you sure you want to stop sharing the location of $name?';
   }
+
+  @override
+  String hoursLink(String hours) {
+    return '$hours तासांची लिंक';
+  }
+
+  @override
+  String activeSharingCount(int count) {
+    return '$count सक्रिय शेअरिंग';
+  }
+
+  @override
+  String get sharingStoppedSuccessfully => 'शेअरिंग यशस्वीरित्या थांबवली.';
+
+  @override
+  String get failedToCreateShareLink => 'शेअर लिंक तयार करण्यात अयशस्वी';
 }

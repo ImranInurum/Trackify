@@ -41,7 +41,7 @@ class AddFuelModel extends AddFuelEntity {
       "totalAmount": amount,
       "stationName": fuelStation,
       "pricePerLiter": pricePerLitre,
-      "tankStatus": fullTank,
+      "tankStatus": int.tryParse(fullTank) ?? 1,
       "fuelBeforeRefuel": fuelBeforeRefuel,
     };
   }

@@ -37,12 +37,12 @@ class RideCard extends StatelessWidget {
             parsedDate.day == now.day) {
           displayDate = l10n.today;
         } else {
-          displayDate = DateFormat('dd/MM/yyyy').format(parsedDate);
+          displayDate = DateFormat('dd MMM yyyy').format(parsedDate);
         }
       } else {
         final now = DateTime.now();
         final format1 = "${now.day}/${now.month}/${now.year}";
-        final format2 = DateFormat('dd/MM/yyyy').format(now);
+        final format2 = DateFormat('dd MMM yyyy').format(now);
         if (ride.date == format1 || ride.date == format2) {
           displayDate = l10n.today;
         }
@@ -62,6 +62,7 @@ class RideCard extends StatelessWidget {
         margin: const EdgeInsets.only(bottom: 8),
         decoration: BoxDecoration(
           color: Theme.of(context).cardColor,
+          border: Border.all(color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5), width: 0.5),
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
@@ -148,7 +149,7 @@ class RideCard extends StatelessWidget {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 8),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [

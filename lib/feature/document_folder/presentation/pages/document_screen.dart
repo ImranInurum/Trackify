@@ -437,13 +437,11 @@ class _DocumentFolderScreenState extends State<DocumentFolderScreen> {
                         padding: const EdgeInsets.all(15),
                         decoration: BoxDecoration(
                           color: Theme.of(context).cardColor,
+                          border: Border.all(color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5), width: 0.5),
                           borderRadius: BorderRadius.circular(16),
-                          border: Border.all(
-                            color: colorScheme.outlineVariant.withValues(
-                              alpha: 0.2,
-                            ),
+                          
                           ),
-                        ),
+                        
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -605,13 +603,11 @@ class _DocumentFolderScreenState extends State<DocumentFolderScreen> {
                               height: screenHeight * 0.07,
                               decoration: BoxDecoration(
                                 color: Theme.of(context).cardColor,
+                                border: Border.all(color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5), width: 0.5),
                                 borderRadius: BorderRadius.circular(12),
-                                border: Border.all(
-                                  color: colorScheme.outlineVariant.withValues(
-                                    alpha: 0.5,
-                                  ),
+                                 
                                 ),
-                              ),
+                            
                               child: _isUploading
                                   ? const Center(
                                       child: SizedBox(
@@ -720,12 +716,11 @@ class _DocumentFolderScreenState extends State<DocumentFolderScreen> {
                                 ),
                                 decoration: BoxDecoration(
                                   color: Theme.of(context).cardColor,
+                                  border: Border.all(color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5), width: 0.5),
                                   borderRadius: BorderRadius.circular(12),
-                                  border: Border.all(
-                                    color: colorScheme.outlineVariant
-                                        .withValues(alpha: 0.5),
+                               
                                   ),
-                                ),
+                                
                                 child: Row(
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
@@ -761,13 +756,11 @@ class _DocumentFolderScreenState extends State<DocumentFolderScreen> {
                         padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
                           color: Theme.of(context).cardColor,
+                          border: Border.all(color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5), width: 0.5),
                           borderRadius: BorderRadius.circular(16),
-                          border: Border.all(
-                            color: colorScheme.outlineVariant.withValues(
-                              alpha: 0.5,
-                            ),
+                     
                           ),
-                        ),
+                        
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -887,13 +880,11 @@ class _DocumentFolderScreenState extends State<DocumentFolderScreen> {
                         padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
                           color: Theme.of(context).cardColor,
+                          border: Border.all(color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5), width: 0.5),
                           borderRadius: BorderRadius.circular(16),
-                          border: Border.all(
-                            color: colorScheme.outlineVariant.withValues(
-                              alpha: 0.5,
-                            ),
+                      
                           ),
-                        ),
+                        
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -1202,11 +1193,11 @@ class _DocumentFolderScreenState extends State<DocumentFolderScreen> {
             height: screenWidth * 0.30,
             decoration: BoxDecoration(
               color: Theme.of(context).cardColor,
+              border: Border.all(color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5), width: 0.5),
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(
-                color: colorScheme.outlineVariant.withValues(alpha: 0.5),
+           
               ),
-            ),
+            
             child: content,
           ),
           const SizedBox(height: 8),

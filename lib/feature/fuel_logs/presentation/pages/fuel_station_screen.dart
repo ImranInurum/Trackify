@@ -14,8 +14,18 @@ class FuelStationScreen extends StatelessWidget {
     return BlocProvider(
       create: (context) => FuelStationsCubit(OverpassService())..fetchNearbyStations(),
       child: Scaffold(
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         appBar: AppBar(
-          title: Text(l10n.fuelStations),
+          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+          elevation: 0,
+          title: Text(
+            l10n.fuelStations,
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.w700,
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
+          ),
           leading: IconButton(
             icon: Icon(
               Icons.arrow_back_ios_new,

@@ -103,7 +103,7 @@ class _RefuelHistoryTabViewState extends State<RefuelHistoryTabView> {
 
                 _buildHistoryHeader(context, l10n),
 
-                SizedBox(height: screenHeight * 0.015),
+                SizedBox(height: screenHeight * 0.005),
 
                 _buildRefuelLogs(
                   context,
@@ -111,6 +111,10 @@ class _RefuelHistoryTabViewState extends State<RefuelHistoryTabView> {
                   l10n,
 
                   _applyFilters(refuelState.refuelLogs),
+                  
+                  refuelState.refuelLogs.isNotEmpty 
+                      ? refuelState.refuelLogs.reduce((a, b) => a.dateTime.isAfter(b.dateTime) ? a : b).id 
+                      : null,
                 ),
 
                 SizedBox(height: screenHeight * 0.1),
@@ -233,9 +237,9 @@ class _RefuelHistoryTabViewState extends State<RefuelHistoryTabView> {
           Icon(
             Icons.calendar_today_outlined,
 
-            size: mediaQuery.textScaler.scale(18),
+            size: mediaQuery.textScaler.scale(16),
 
-            color: theme.hintColor,
+            color: theme.colorScheme.onSurface,
           ),
 
           const SizedBox(width: 8),
@@ -244,15 +248,15 @@ class _RefuelHistoryTabViewState extends State<RefuelHistoryTabView> {
             _getTimeFilterLabel(l10n, _selectedTimeFilter),
 
             style: TextStyle(
-              color: theme.hintColor,
+              color: theme.colorScheme.onSurface,
 
-              fontSize: mediaQuery.textScaler.scale(14),
+              fontSize: mediaQuery.textScaler.scale(12),
 
               fontWeight: FontWeight.w500,
             ),
           ),
 
-          Icon(Icons.keyboard_arrow_down, color: theme.hintColor),
+          Icon(Icons.keyboard_arrow_down, color: theme.colorScheme.onSurface),
         ],
       ),
 
@@ -309,9 +313,9 @@ class _RefuelHistoryTabViewState extends State<RefuelHistoryTabView> {
               l10n.refuelingHistory,
 
               style: TextStyle(
-                color: theme.hintColor,
+                color: theme.colorScheme.onSurface,
 
-                fontSize: 16,
+                fontSize: 14,
 
                 fontWeight: FontWeight.w500,
               ),
@@ -348,17 +352,17 @@ class _RefuelHistoryTabViewState extends State<RefuelHistoryTabView> {
 
           child: Row(
             children: [
-              Icon(Icons.sort, size: 18, color: theme.hintColor),
+              Icon(Icons.sort, size: 18, color: theme.colorScheme.onSurface),
 
               const SizedBox(width: 4),
 
               Text(
                 _getSortLabel(l10n, _selectedSort),
 
-                style: TextStyle(color: theme.hintColor, fontSize: 14),
+                style: TextStyle(color: theme.colorScheme.onSurface, fontSize: 12),
               ),
 
-              Icon(Icons.keyboard_arrow_down, color: theme.hintColor),
+              Icon(Icons.keyboard_arrow_down, color: theme.colorScheme.onSurface),
             ],
           ),
 
@@ -427,6 +431,8 @@ class _RefuelHistoryTabViewState extends State<RefuelHistoryTabView> {
     AppLocalizations l10n,
 
     List<RefuelLog> logs,
+    
+    String? mostRecentLogId,
   ) {
     if (logs.isEmpty) {
       return Center(
@@ -455,11 +461,11 @@ class _RefuelHistoryTabViewState extends State<RefuelHistoryTabView> {
             "${log.dateTime.hour >= 12 ? 'PM' : 'AM'}";
 
         return Padding(
-          padding: const EdgeInsets.only(bottom: 14.0),
+          padding: const EdgeInsets.only(bottom: 8.0),
           child: RefuelLogListItem(
             date: dateStr,
             time: timeStr,
-            odometer: log.odometer,
+            odometer: double.tryParse(log.odometer)?.toInt().toString() ?? log.odometer,
             location: log.location,
             amount: log.amount,
             rate: log.rate,
@@ -467,6 +473,7 @@ class _RefuelHistoryTabViewState extends State<RefuelHistoryTabView> {
             liters: log.liters,
             mileage: log.mileage,
             showDetails: index == 0,
+            isRecent: log.id == mostRecentLogId,
             onEdit: () async {
               final fuelLogsCubit = context.read<FuelLogsCubit>();
               await Navigator.push(
@@ -566,7 +573,7 @@ class _RefuelHistoryTabViewState extends State<RefuelHistoryTabView> {
                         Text(
                           l10n.refuelingHistory,
                           style: const TextStyle(
-                            fontSize: 18,
+                            fontSize: 16,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -604,7 +611,7 @@ class _RefuelHistoryTabViewState extends State<RefuelHistoryTabView> {
                             return DataRow(cells: [
                               DataCell(Text(dateStr)),
                               DataCell(Text(timeStr)),
-                              DataCell(Text(log.odometer)),
+                              DataCell(Text(double.tryParse(log.odometer)?.toInt().toString() ?? log.odometer)),
                               DataCell(Text(log.location)),
                               DataCell(Text(log.amount)),
                               DataCell(Text(log.rate)),
@@ -676,7 +683,7 @@ class _RefuelHistoryTabViewState extends State<RefuelHistoryTabView> {
         final timeStr =
             "${log.dateTime.hour % 12 == 0 ? 12 : log.dateTime.hour % 12}:${log.dateTime.minute.toString().padLeft(2, '0')} ${log.dateTime.hour >= 12 ? 'PM' : 'AM'}";
         sb.writeln(
-            '${escape(dateStr)},${escape(timeStr)},${escape(log.odometer)},${escape(log.location)},${escape(log.amount)},${escape(log.rate)},${escape(log.liters)},${escape(log.mileage)}');
+            '${escape(dateStr)},${escape(timeStr)},${escape(double.tryParse(log.odometer)?.toInt().toString() ?? log.odometer)},${escape(log.location)},${escape(log.amount)},${escape(log.rate)},${escape(log.liters)},${escape(log.mileage)}');
       }
 
       final Uint8List bytes = Uint8List.fromList(utf8.encode(sb.toString()));

@@ -11,6 +11,8 @@ import 'package:trackify/main.dart';
 import 'package:trackify/feature/map/presentation/cubit/map_cubit.dart';
 import 'package:trackify/feature/my_garage/presentation/cubit/my_garage_cubit.dart';
 import 'package:trackify/feature/profile/presentation/cubit/profile_cubit.dart';
+import 'package:trackify/core/config/network/api_host.dart';
+import 'package:trackify/core/config/network/network_api_service.dart';
 
 class VehicleControlCubit extends Cubit<VehicleControlState> {
   final VehicleControlRepository repository;
@@ -145,6 +147,10 @@ class VehicleControlCubit extends Cubit<VehicleControlState> {
           tempColor: vehicle.selectedColor,
         ),
       );
+
+      if (vehicle.imei.isNotEmpty) {
+        _fetchStatistics(vehicle.imei);
+      }
     } on VehicleNotFoundException catch (e) {
       emit(
         VehicleControlLoaded(
@@ -445,6 +451,62 @@ class VehicleControlCubit extends Cubit<VehicleControlState> {
       } else {
         emit(VehicleControlError(e.toString()));
       }
+    }
+  }
+  Future<void> _fetchStatistics(String imei) async {
+    try {
+      final unit = await AppPreference.instance.get(key: AppPreference.KEY_DISTANCE_UNIT);
+      final url = ApiURL.statistics(imei, unit: unit.isNotEmpty ? unit : 'km');
+      final apiService = NetworkApiService();
+      final response = await apiService.getGetApiResponse(url);
+
+      response.fold(
+        (failure) {
+          // Handle silently
+        },
+        (data) {
+          if (state is VehicleControlLoaded) {
+            final currentState = state as VehicleControlLoaded;
+            
+            String distance = "0.0";
+            String hours = "0";
+            String minutes = "0";
+
+            if (data is Map<String, dynamic> && data['data'] != null && data['data']['journey'] != null) {
+              final journey = data['data']['journey'];
+              final distVal = journey['distanceTravelled'];
+              if (distVal is double) {
+                distance = distVal.toStringAsFixed(1);
+              } else if (distVal is int) {
+                distance = distVal.toString();
+              } else {
+                distance = distVal?.toString() ?? "0.0";
+              }
+              
+              int totalMinutes = 0;
+              final minsVal = journey['timeDurationMinutes'];
+              if (minsVal is int) {
+                totalMinutes = minsVal;
+              } else if (minsVal is String) {
+                totalMinutes = int.tryParse(minsVal) ?? 0;
+              }
+              
+              hours = (totalMinutes ~/ 60).toString();
+              minutes = (totalMinutes % 60).toString();
+            }
+
+            emit(
+              currentState.copyWith(
+                journeyDistance: distance,
+                journeyHours: hours,
+                journeyMinutes: minutes,
+              ),
+            );
+          }
+        },
+      );
+    } catch (e) {
+      // Handle silently
     }
   }
 }

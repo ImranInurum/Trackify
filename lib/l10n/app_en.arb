@@ -718,7 +718,14 @@
   "notificationControls": "Notification controls",
   "changeNotificationPreferences": "Change your notification preferences",
   "unmapTrackify": "Unmap your Trackify",
-  "unmapStep1": "Step 1: To un-map device, call at +918061971443",
+  "unmapStep1": "Step 1: To un-map device, call at {mobileNumber}",
+  "@unmapStep1": {
+    "placeholders": {
+      "mobileNumber": {
+        "type": "String"
+      }
+    }
+  },
   "unmapStep2": "Step 2: Remove vehicle",
   "updateMileage": "Update Mileage",
   "lastUpdated": "Last updated: ",
@@ -949,7 +956,7 @@
   "liters": "Liters",
   "fuelBeforeRefuelDesc": "Enter the estimated amount of fuel that was in the tank you refuelled.",
   "savedSuccessfully": "Saved Successfully",
-  "fuelStationName": "C.M. Petro Point, BPCL petr...",
+  "fuelStationName": "E.g. Indian Oil, Shell",
   "yourPhoneLocation": "Your Phone's Location",
   "sharingActive": "Sharing active",
   "noActiveSharing": "No active sharing",
@@ -1349,5 +1356,23 @@
         "type": "String"
       }
     }
-  }
+  },
+  "hoursLink": "{hours} hours link",
+  "@hoursLink": {
+    "placeholders": {
+      "hours": {
+        "type": "String"
+      }
+    }
+  },
+  "activeSharingCount": "{count} active sharing",
+  "@activeSharingCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "sharingStoppedSuccessfully": "Sharing stopped successfully.",
+  "failedToCreateShareLink": "Failed to create share link"
 }

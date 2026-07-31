@@ -58,7 +58,8 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
     final theme = Theme.of(context);
 
     return BlocListener<AppCubit, AppState>(
-      listenWhen: (previous, current) => previous.distanceUnit != current.distanceUnit,
+      listenWhen: (previous, current) =>
+          previous.distanceUnit != current.distanceUnit,
       listener: (context, appState) {
         final statsState = context.read<StatisticsCubit>().state;
         if (statsState is StatisticsLoaded) {
@@ -76,87 +77,85 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
         }
       },
       child: BlocBuilder<StatisticsCubit, StatisticsState>(
-      builder: (context, state) {
-        if (state is StatisticsInitial ||
-            (state is StatisticsLoading && state.userVehicles.isEmpty)) {
-          return Scaffold(
-            backgroundColor: theme.scaffoldBackgroundColor,
-            appBar: AppBar(
-              automaticallyImplyLeading: false,
-              title: Text(
-                l10n.statistics, ),
-              backgroundColor: Colors.transparent,
-              elevation: 0,
-              centerTitle: false,
-            ),
-            body: const Center(child: TrackifyLoader()),
-          );
-        }
-
-        if (state is StatisticsError && state.userVehicles.isEmpty) {
-          return Scaffold(
-            backgroundColor: theme.scaffoldBackgroundColor,
-            appBar: AppBar(
-              automaticallyImplyLeading: false,
-              title: Text(
-                l10n.statistics, ),
-              backgroundColor: Colors.transparent,
-              elevation: 0,
-              centerTitle: false,
-            ),
-            body: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    state.message == 'No vehicles found'
-                        ? l10n.noVehiclesInGarage
-                        : state.message == 'No IMEI provided'
-                            ? l10n.noDeviceFound
-                            : state.message,
-                    style: TextStyle(color: theme.colorScheme.error),
-                  ),
-                  const SizedBox(height: 16),
-                  ElevatedButton(
-                    onPressed: () =>
-                        context.read<StatisticsCubit>().fetchInitialData(),
-                    child: Text(l10n.retry),
-                  ),
-                ],
+        builder: (context, state) {
+          if (state is StatisticsInitial ||
+              (state is StatisticsLoading && state.userVehicles.isEmpty)) {
+            return Scaffold(
+              backgroundColor: theme.scaffoldBackgroundColor,
+              appBar: AppBar(
+                automaticallyImplyLeading: false,
+                title: Text(l10n.statistics),
+                backgroundColor: Colors.transparent,
+                elevation: 0,
+                centerTitle: false,
               ),
-            ),
-          );
-        }
+              body: const Center(child: TrackifyLoader()),
+            );
+          }
 
-        final userVehicles = state is StatisticsLoaded
-            ? state.userVehicles
-            : state is StatisticsLoading
-            ? state.userVehicles
-            : state is StatisticsError
-            ? state.userVehicles
-            : <Vehicle>[];
+          if (state is StatisticsError && state.userVehicles.isEmpty) {
+            return Scaffold(
+              backgroundColor: theme.scaffoldBackgroundColor,
+              appBar: AppBar(
+                automaticallyImplyLeading: false,
+                title: Text(l10n.statistics),
+                backgroundColor: Colors.transparent,
+                elevation: 0,
+                centerTitle: false,
+              ),
+              body: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      state.message == 'No vehicles found'
+                          ? l10n.noVehiclesInGarage
+                          : state.message == 'No IMEI provided'
+                          ? l10n.noDeviceFound
+                          : state.message,
+                      style: TextStyle(color: theme.colorScheme.error),
+                    ),
+                    const SizedBox(height: 16),
+                    ElevatedButton(
+                      onPressed: () =>
+                          context.read<StatisticsCubit>().fetchInitialData(),
+                      child: Text(l10n.retry),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          }
 
-        final selectedVehicle = state is StatisticsLoaded
-            ? state.selectedVehicle
-            : state is StatisticsLoading
-            ? state.selectedVehicle
-            : state is StatisticsError
-            ? state.selectedVehicle
-            : null;
+          final userVehicles = state is StatisticsLoaded
+              ? state.userVehicles
+              : state is StatisticsLoading
+              ? state.userVehicles
+              : state is StatisticsError
+              ? state.userVehicles
+              : <Vehicle>[];
 
-        final selectedDate = state is StatisticsLoaded
-            ? state.selectedDate
-            : state is StatisticsLoading
-            ? state.selectedDate
-            : state is StatisticsError
-            ? state.selectedDate
-            : DateTime.now();
+          final selectedVehicle = state is StatisticsLoaded
+              ? state.selectedVehicle
+              : state is StatisticsLoading
+              ? state.selectedVehicle
+              : state is StatisticsError
+              ? state.selectedVehicle
+              : null;
 
-        return Scaffold(
-          backgroundColor: theme.scaffoldBackgroundColor,
-          body: SafeArea(
-            child: Column(
+          final selectedDate = state is StatisticsLoaded
+              ? state.selectedDate
+              : state is StatisticsLoading
+              ? state.selectedDate
+              : state is StatisticsError
+              ? state.selectedDate
+              : DateTime.now();
+
+          return Scaffold(
+            backgroundColor: theme.scaffoldBackgroundColor,
+            body: Column(
               children: [
+                SizedBox(height: 5),
                 VehicleSelectionAppBar(
                   title: l10n.statistics,
                   selectedVehicle: selectedVehicle,
@@ -187,9 +186,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                 ),
                 const SizedBox(height: 12),
                 if (state is StatisticsLoading)
-                  const Expanded(
-                    child: const Center(child: TrackifyLoader()),
-                  )
+                  const Expanded(child: const Center(child: TrackifyLoader()))
                 else if (state is StatisticsError)
                   Expanded(
                     child: Center(
@@ -200,8 +197,8 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                             state.message == 'No vehicles found'
                                 ? l10n.noVehiclesInGarage
                                 : state.message == 'No IMEI provided'
-                                    ? l10n.noDeviceFound
-                                    : state.message,
+                                ? l10n.noDeviceFound
+                                : state.message,
                             style: TextStyle(color: theme.colorScheme.error),
                           ),
                           const SizedBox(height: 16),
@@ -244,9 +241,8 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                   ),
               ],
             ),
-          ),
-        );
-      },
+          );
+        },
       ),
     );
   }
@@ -281,6 +277,12 @@ class _DatePickerBar extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: Theme.of(context).cardColor,
+        border: Border.all(
+          color: Theme.of(
+            context,
+          ).colorScheme.outlineVariant.withValues(alpha: 0.5),
+          width: 0.5,
+        ),
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
@@ -385,7 +387,8 @@ class _RidingBehaviourCard extends StatelessWidget {
     final statusText = data?.statusText ?? l10n.notAvailable;
     final comparisonText = data?.comparisonText ?? '';
 
-    final isZeroScore = data == null ||
+    final isZeroScore =
+        data == null ||
         score == 0 ||
         scoreText == '0.0%' ||
         scoreText == '0%' ||
@@ -397,6 +400,10 @@ class _RidingBehaviourCard extends StatelessWidget {
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
           color: theme.cardColor,
+          border: Border.all(
+            color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5),
+            width: 0.5,
+          ),
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
@@ -456,6 +463,10 @@ class _RidingBehaviourCard extends StatelessWidget {
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: theme.cardColor,
+        border: Border.all(
+          color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5),
+          width: 0.5,
+        ),
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
@@ -479,11 +490,7 @@ class _RidingBehaviourCard extends StatelessWidget {
                   color: theme.colorScheme.onSurface,
                 ),
               ),
-              Icon(
-                Icons.arrow_forward_rounded,
-                size: 18,
-                color: theme.colorScheme.onSurface.withOpacity(0.6),
-              ),
+              // Removed right arrow icon
             ],
           ),
           const SizedBox(height: 16),
@@ -585,7 +592,8 @@ class _RidingBehaviourCard extends StatelessWidget {
                                 ),
                                 TextSpan(
                                   text: trendLabel,
-                                  style: TextStyle(color: theme.colorScheme.onSurface
+                                  style: TextStyle(
+                                    color: theme.colorScheme.onSurface
                                         .withOpacity(0.6),
                                     fontSize: 13,
                                   ),
@@ -619,7 +627,10 @@ class _JourneyCard extends StatelessWidget {
       metrics: [
         _MetricItem(
           label: l10n.distanceTravelled,
-          value: (data?.distanceTravelledText ?? '0.0 km').replaceAll('km', context.displayKm),
+          value: (data?.distanceTravelledText ?? '0.0 km').replaceAll(
+            'km',
+            context.displayKm,
+          ),
           comparisonText: data?.distanceComparisonText ?? '',
           iconPath: AppImages.distanceTravelledIcon,
           color: const Color(0xFFB9F3E4),
@@ -649,14 +660,18 @@ class _SpeedCard extends StatelessWidget {
       metrics: [
         _MetricItem(
           label: l10n.averageSpeed,
-          value: (data?.averageSpeedText ?? '0.0 km/hr').replaceAll('km/hr', context.displayKmHr).replaceAll('km', context.displayKm),
+          value: (data?.averageSpeedText ?? '0.0 km/hr')
+              .replaceAll('km/hr', context.displayKmHr)
+              .replaceAll('km', context.displayKm),
           comparisonText: data?.averageSpeedComparisonText ?? '',
           iconPath: AppImages.averageSpeedIcon,
           color: const Color(0xFFFDE8E0),
         ),
         _MetricItem(
           label: l10n.topSpeed,
-          value: (data?.topSpeedText ?? '0.0 km/hr').replaceAll('km/hr', context.displayKmHr).replaceAll('km', context.displayKm),
+          value: (data?.topSpeedText ?? '0.0 km/hr')
+              .replaceAll('km/hr', context.displayKmHr)
+              .replaceAll('km', context.displayKm),
           comparisonText: data?.topSpeedComparisonText ?? '',
           iconPath: AppImages.topSpeedIcon,
           color: const Color(0xFFFFF7D1),
@@ -705,9 +720,15 @@ class _StatSectionCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       decoration: BoxDecoration(
         color: Theme.of(context).cardColor,
+        border: Border.all(
+          color: Theme.of(
+            context,
+          ).colorScheme.outlineVariant.withValues(alpha: 0.5),
+          width: 0.5,
+        ),
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
@@ -731,11 +752,7 @@ class _StatSectionCard extends StatelessWidget {
                   color: Theme.of(context).colorScheme.onSurface,
                 ),
               ),
-              Icon(
-                Icons.chevron_right_rounded,
-                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.3),
-                size: 20,
-              ),
+              // Removed right arrow icon
             ],
           ),
           const SizedBox(height: 16),
@@ -789,7 +806,7 @@ class _MetricItem extends StatelessWidget {
     }
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 12.0),
+      padding: const EdgeInsets.symmetric(horizontal: 4.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -818,19 +835,23 @@ class _MetricItem extends StatelessWidget {
                     color: theme.colorScheme.onSurface.withOpacity(0.6),
                     fontWeight: FontWeight.w400,
                   ),
-                  maxLines: 1,
+                  maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
             ],
           ),
           const SizedBox(height: 12),
-          Text(
-            value,
-            style: TextStyle(
-              fontSize: 22,
-              fontWeight: FontWeight.bold,
-              color: theme.colorScheme.onSurface,
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            alignment: Alignment.centerLeft,
+            child: Text(
+              value,
+              style: TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+                color: theme.colorScheme.onSurface,
+              ),
             ),
           ),
           const SizedBox(height: 4),
@@ -853,7 +874,7 @@ class _MetricItem extends StatelessWidget {
                       color: theme.colorScheme.onSurface.withOpacity(0.5),
                       fontWeight: FontWeight.w400,
                     ),
-                    maxLines: 1,
+                    maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),

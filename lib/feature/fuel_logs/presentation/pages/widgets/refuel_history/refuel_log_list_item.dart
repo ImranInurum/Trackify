@@ -15,6 +15,7 @@ class RefuelLogListItem extends StatelessWidget {
   final bool showDetails;
   final VoidCallback? onDelete;
   final VoidCallback? onEdit;
+  final bool isRecent;
 
   const RefuelLogListItem({
     super.key,
@@ -30,6 +31,7 @@ class RefuelLogListItem extends StatelessWidget {
     this.showDetails = false,
     this.onDelete,
     this.onEdit,
+    this.isRecent = false,
   });
 
   @override
@@ -42,11 +44,17 @@ class RefuelLogListItem extends StatelessWidget {
     return Column(
       children: [
         Container(
-          padding: EdgeInsets.all(screenWidth * 0.04),
+          padding: EdgeInsets.symmetric(
+            horizontal: screenWidth * 0.03,
+            vertical: screenWidth * 0.03,
+          ),
           decoration: BoxDecoration(
             color: theme.cardColor,
             borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: theme.dividerColor, width: 1),
+            border: Border.all(
+              color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5),
+              width: 0.5,
+            ),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -58,8 +66,8 @@ class RefuelLogListItem extends StatelessWidget {
                     children: [
                       Icon(
                         Icons.calendar_today_outlined,
-                        size: mediaQuery.textScaler.scale(18),
-                        color: theme.hintColor,
+                        size: mediaQuery.textScaler.scale(16),
+                        color: theme.colorScheme.onSurface,
                       ),
                       const SizedBox(width: 8),
                       Text(
@@ -67,7 +75,7 @@ class RefuelLogListItem extends StatelessWidget {
                         style: TextStyle(
                           color: theme.textTheme.bodyMedium?.color,
                           fontWeight: FontWeight.bold,
-                          fontSize: mediaQuery.textScaler.scale(14),
+                          fontSize: mediaQuery.textScaler.scale(12),
                         ),
                       ),
                     ],
@@ -76,7 +84,9 @@ class RefuelLogListItem extends StatelessWidget {
                     children: [
                       Container(
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 10, vertical: 4),
+                          horizontal: 10,
+                          vertical: 4,
+                        ),
                         decoration: BoxDecoration(
                           color: Colors.black,
                           borderRadius: BorderRadius.circular(6),
@@ -86,65 +96,77 @@ class RefuelLogListItem extends StatelessWidget {
                           style: TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
-                            fontSize: mediaQuery.textScaler.scale(14),
+                            fontSize: mediaQuery.textScaler.scale(12),
                           ),
                         ),
                       ),
                       const SizedBox(width: 4),
-                      PopupMenuButton<String>(
-                        icon: Icon(Icons.more_vert, color: theme.hintColor),
-                        onSelected: (value) {
-                          if (value == 'edit') {
-                            if (onEdit != null) onEdit!();
-                          } else if (value == 'delete') {
-                            if (onDelete != null) onDelete!();
-                          }
-                        },
-                        itemBuilder: (context) => [
-                          PopupMenuItem(
-                            value: 'edit',
-                            child: Row(
-                              children: [
-                                Icon(Icons.edit_outlined,
-                                    size: mediaQuery.textScaler.scale(18)),
-                                const SizedBox(width: 12),
-                                Text(l10n.edit),
-                              ],
-                            ),
+                      if (isRecent)
+                        SizedBox(
+                          height: 24,
+                          width: 24,
+                          child: PopupMenuButton<String>(
+                            padding: EdgeInsets.zero,
+                            child: Icon(Icons.more_vert, color: theme.colorScheme.onSurface, size: 20),
+                            onSelected: (value) {
+                              if (value == 'edit') {
+                                if (onEdit != null) onEdit!();
+                              } else if (value == 'delete') {
+                                if (onDelete != null) onDelete!();
+                              }
+                            },
+                            itemBuilder: (context) => [
+                              PopupMenuItem(
+                                value: 'edit',
+                                child: Row(
+                                  children: [
+                                    Icon(
+                                      Icons.edit_outlined,
+                                      size: mediaQuery.textScaler.scale(16),
+                                    ),
+                                    const SizedBox(width: 7),
+                                    Text(l10n.edit),
+                                  ],
+                                ),
+                              ),
+                              PopupMenuItem(
+                                value: 'delete',
+                                child: Row(
+                                  children: [
+                                    Icon(
+                                      Icons.delete_outline,
+                                      size: mediaQuery.textScaler.scale(16),
+                                    ),
+                                    const SizedBox(width: 12),
+                                    Text(l10n.delete),
+                                  ],
+                                ),
+                              ),
+                            ],
                           ),
-                          PopupMenuItem(
-                            value: 'delete',
-                            child: Row(
-                              children: [
-                                Icon(Icons.delete_outline,
-                                    size: mediaQuery.textScaler.scale(18)),
-                                const SizedBox(width: 12),
-                                Text(l10n.delete),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
+                        ),
                     ],
                   ),
                 ],
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: 2),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Row(
                     children: [
-                      Icon(Icons.speed,
-                          size: mediaQuery.textScaler.scale(18),
-                          color: theme.hintColor),
+                      Icon(
+                        Icons.speed,
+                        size: mediaQuery.textScaler.scale(16),
+                        color: theme.colorScheme.onSurface,
+                      ),
                       const SizedBox(width: 8),
                       Text(
-                        "$odometer ${context.displayKms}",
+                        "${double.tryParse(odometer)?.toInt() ?? odometer} ${context.displayKms}",
                         style: TextStyle(
                           color: theme.textTheme.bodyLarge?.color,
                           fontWeight: FontWeight.bold,
-                          fontSize: mediaQuery.textScaler.scale(15),
+                          fontSize: mediaQuery.textScaler.scale(13),
                         ),
                       ),
                     ],
@@ -152,25 +174,27 @@ class RefuelLogListItem extends StatelessWidget {
                   Text(
                     "${l10n.currencySymbol}$rate",
                     style: TextStyle(
-                      color: theme.hintColor,
-                      fontSize: mediaQuery.textScaler.scale(13),
+                      color: theme.colorScheme.onSurface,
+                      fontSize: mediaQuery.textScaler.scale(11),
                     ),
                   ),
                 ],
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: 6),
               Row(
                 children: [
-                  Icon(Icons.location_on_outlined,
-                      size: mediaQuery.textScaler.scale(18),
-                      color: theme.hintColor),
+                  Icon(
+                    Icons.location_on_outlined,
+                    size: mediaQuery.textScaler.scale(16),
+                    color: theme.colorScheme.onSurface,
+                  ),
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
                       location,
                       style: TextStyle(
-                        color: theme.hintColor,
-                        fontSize: mediaQuery.textScaler.scale(13),
+                        color: theme.colorScheme.onSurface,
+                        fontSize: mediaQuery.textScaler.scale(11),
                       ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
@@ -198,13 +222,22 @@ class RefuelLogListItem extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 _buildMiniDetail(
-                    context, Icons.route_outlined, "$distance ${context.displayKms}"),
-                _buildSeparator(context),
-                _buildMiniDetail(context, Icons.local_gas_station_outlined,
-                    "$liters ${l10n.litersShort}"),
+                  context,
+                  Icons.route_outlined,
+                  "$distance ${context.displayKms}",
+                ),
                 _buildSeparator(context),
                 _buildMiniDetail(
-                    context, Icons.bolt_outlined, "$mileage ${context.displayKmL}"),
+                  context,
+                  Icons.local_gas_station_outlined,
+                  "$liters ${l10n.litersShort}",
+                ),
+                _buildSeparator(context),
+                _buildMiniDetail(
+                  context,
+                  Icons.bolt_outlined,
+                  "$mileage ${context.displayKmL}",
+                ),
               ],
             ),
           ),
@@ -224,13 +257,17 @@ class RefuelLogListItem extends StatelessWidget {
     final mediaQuery = MediaQuery.of(context);
     return Row(
       children: [
-        Icon(icon, size: mediaQuery.textScaler.scale(14), color: theme.hintColor),
+        Icon(
+          icon,
+          size: mediaQuery.textScaler.scale(12),
+          color: theme.colorScheme.onSurface,
+        ),
         const SizedBox(width: 6),
         Text(
           text,
           style: TextStyle(
-            color: theme.hintColor,
-            fontSize: mediaQuery.textScaler.scale(12),
+            color: theme.colorScheme.onSurface,
+            fontSize: mediaQuery.textScaler.scale(10),
           ),
         ),
       ],

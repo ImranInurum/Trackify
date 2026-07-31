@@ -33,11 +33,15 @@ class LocationSharingCard extends StatelessWidget {
       elevation: 0,
 
       color: theme.brightness == Brightness.dark
-          ? AppColors.cardDark
+          ? theme.colorScheme.surfaceContainerHighest
           : theme.cardColor,
 
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(14),
+        side: BorderSide(
+          color: colorScheme.outlineVariant.withValues(alpha: 0.5),
+          width: 0.5,
+        ),
       ),
 
       child: InkWell(
@@ -65,16 +69,16 @@ class LocationSharingCard extends StatelessWidget {
                   if (item.isSharing) ...[
                     Row(
                       children: [
-                        const Icon(
+                        Icon(
                           Icons.location_on_outlined,
                           size: 14,
-                          color: Colors.green,
+                          color: theme.colorScheme.primary,
                         ),
                         const SizedBox(width: 6),
                         Text(
                           l10n.sharingActive,
                           style: theme.textTheme.labelMedium?.copyWith(
-                            color: Colors.green,
+                            color: theme.colorScheme.primary,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -91,9 +95,7 @@ class LocationSharingCard extends StatelessWidget {
                           style: theme.textTheme.titleMedium?.copyWith(
                             fontWeight: FontWeight.bold,
                             fontSize: 16,
-                            color: theme.brightness == Brightness.dark
-                                ? AppColors.textPrimaryDark
-                                : AppColors.textPrimaryLight,
+                            color: theme.colorScheme.onSurface,
                           ),
                         ),
                       ),
@@ -114,7 +116,7 @@ class LocationSharingCard extends StatelessWidget {
                       ),
                       const SizedBox(width: 4),
                       Text(
-                        item.isSharing ? '1 active sharing' : '0 active sharing',
+                        l10n.activeSharingCount(item.activeShareCount),
                         style: theme.textTheme.bodyMedium?.copyWith(
                           color: theme.colorScheme.primary,
                           fontSize: 13,
@@ -131,10 +133,7 @@ class LocationSharingCard extends StatelessWidget {
               height: 1,
               thickness: 1,
 
-              color: theme.brightness ==
-                  Brightness.dark
-                  ? AppColors.dividerDark
-                  : theme.dividerColor,
+              color: theme.dividerColor,
             ),
 
             Container(

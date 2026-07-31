@@ -727,7 +727,7 @@
   "notificationControls": "अधिसूचना नियंत्रण",
   "changeNotificationPreferences": "अपनी अधिसूचना प्राथमिकताएं बदलें",
   "unmapTrackify": "अपने Trackify को अनमैप करें",
-  "unmapStep1": "चरण 1: डिवाइस को अन-मैप करने के लिए, +918061971443 पर कॉल करें",
+  "unmapStep1": "चरण 1: डिवाइस को अन-मैप करने के लिए, {mobileNumber} पर कॉल करें",
   "unmapStep2": "चरण 2: वाहन निकालें",
   "updateMileage": "माइलेज अपडेट करें",
   "lastUpdated": "अंतिम अपडेट: ",
@@ -950,7 +950,7 @@
   "liters": "लीटर",
   "fuelBeforeRefuelDesc": "रिफ्यूल करने से पहले टैंक में मौजूद अनुमानित ईंधन दर्ज करें।",
   "savedSuccessfully": "सफलतापूर्वक सेव किया गया",
-  "fuelStationName": "सी.एम. पेट्रो पॉइंट, बीपीसीएल पेट्रोल...",
+  "fuelStationName": "उदा. इंडियन ऑयल, शेल",
   "yourPhoneLocation": "आपके फोन की लोकेशन",
   "sharingActive": "शेयरिंग सक्रिय है",
   "noActiveSharing": "कोई सक्रिय शेयरिंग नहीं",
@@ -1333,5 +1333,23 @@
   "deleteRideConfirmMessage": "क्या आप वाकई इस यात्रा रिकॉर्ड को हटाना चाहते हैं?",
   "rideDeletedSuccess": "यात्रा सफलतापूर्वक हटा दी गई",
   "onlineRideDeleteNotSupported": "ऑनलाइन यात्रा को ऑफ़लाइन हटाने की सुविधा उपलब्ध नहीं है",
-  "rideDeleteFailedInvalidId": "यात्रा हटाना विफल रहा: अमान्य आईडी"
+  "rideDeleteFailedInvalidId": "यात्रा हटाना विफल रहा: अमान्य आईडी",
+  "hoursLink": "{hours} घंटे का लिंक",
+  "@hoursLink": {
+    "placeholders": {
+      "hours": {
+        "type": "String"
+      }
+    }
+  },
+  "activeSharingCount": "{count} सक्रिय शेयरिंग",
+  "@activeSharingCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "sharingStoppedSuccessfully": "शेयरिंग सफलतापूर्वक रोक दी गई।",
+  "failedToCreateShareLink": "शेयर लिंक बनाने में विफल"
 }

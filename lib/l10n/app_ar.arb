@@ -906,7 +906,7 @@
   "vehicleMileage": "استهلاك المركبة",
   "notificationControls": "عناصر التحكم في الإشعارات",
   "unmapTrackify": "إلغاء ربط Trackify الخاص بك",
-  "unmapStep1": "الخطوة 1: لإلغاء ربط الجهاز، اتصل على +918061971443",
+  "unmapStep1": "الخطوة 1: لإلغاء ربط الجهاز، اتصل على {mobileNumber}",
   "unmapStep2": "الخطوة 2: إزالة المركبة",
   "updateMileage": "تحديث الاستهلاك",
   "lastUpdated": "آخر تحديث: ",
@@ -949,7 +949,7 @@
   "liters": "لتر",
   "fuelBeforeRefuelDesc": "أدخل الكمية التقديرية للوقود الموجودة في الخزان قبل إعادة التعبئة.",
   "savedSuccessfully": "تم الحفظ بنجاح",
-  "fuelStationName": "سي إم بترو بوينت، بي بي سي إل بتر...",
+  "fuelStationName": "على سبيل المثال شركة نفط الهند، شل",
   "yourPhoneLocation": "موقع هاتفك",
   "sharingActive": "المشاركة نشطة",
   "noActiveSharing": "لا توجد مشاركة نشطة",
@@ -1333,5 +1333,23 @@
   "deleteRideConfirmMessage": "هل أنت متأكد من أنك تريد حذف سجل الرحلة هذا؟",
   "rideDeletedSuccess": "تم حذف الرحلة بنجاح",
   "onlineRideDeleteNotSupported": "حذف الرحلة عبر الإنترنت غير مدعوم في وضع عدم الاتصال",
-  "rideDeleteFailedInvalidId": "فشل حذف الرحلة: معرف غير صالح"
+  "rideDeleteFailedInvalidId": "فشل حذف الرحلة: معرف غير صالح",
+  "hoursLink": "رابط لمدة {hours} ساعات",
+  "@hoursLink": {
+    "placeholders": {
+      "hours": {
+        "type": "String"
+      }
+    }
+  },
+  "activeSharingCount": "{count} مشاركة نشطة",
+  "@activeSharingCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "sharingStoppedSuccessfully": "تم إيقاف المشاركة بنجاح.",
+  "failedToCreateShareLink": "فشل في إنشاء رابط المشاركة"
 }

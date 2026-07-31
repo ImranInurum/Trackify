@@ -23,6 +23,7 @@ class AppState extends Equatable {
   final LatLng? livePosition;
   final double liveBearing;
   final String distanceUnit;
+  final String companyMobileNumber;
 
   const AppState({
     this.themeMode = ThemeMode.light,
@@ -40,6 +41,7 @@ class AppState extends Equatable {
     this.livePosition,
     this.liveBearing = 0.0,
     this.distanceUnit = 'km',
+    this.companyMobileNumber = '',
   });
 
   AppState copyWith({
@@ -59,6 +61,7 @@ class AppState extends Equatable {
     double? liveBearing,
     String? distanceUnit,
     bool clearUserData = false,
+    String? companyMobileNumber,
   }) {
     return AppState(
       themeMode: themeMode ?? this.themeMode,
@@ -76,6 +79,7 @@ class AppState extends Equatable {
       livePosition: livePosition ?? this.livePosition,
       liveBearing: liveBearing ?? this.liveBearing,
       distanceUnit: distanceUnit ?? this.distanceUnit,
+      companyMobileNumber: companyMobileNumber ?? this.companyMobileNumber,
     );
   }
 
@@ -96,5 +100,6 @@ class AppState extends Equatable {
     livePosition,
     liveBearing,
     distanceUnit,
+    companyMobileNumber,
   ];
 }

@@ -19,7 +19,7 @@ class SpendingCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: theme.cardColor,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: theme.dividerColor, width: 1),
+        border: Border.all(color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5), width: 0.5),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -28,7 +28,7 @@ class SpendingCard extends StatelessWidget {
             l10n.spendingOnFuel,
             style: TextStyle(
               color: theme.textTheme.titleMedium?.color,
-              fontSize: mediaQuery.textScaler.scale(15),
+              fontSize: mediaQuery.textScaler.scale(13),
               fontWeight: FontWeight.w500,
             ),
           ),
@@ -36,8 +36,8 @@ class SpendingCard extends StatelessWidget {
           Text(
             l10n.thisWeek,
             style: TextStyle(
-              color: theme.hintColor,
-              fontSize: mediaQuery.textScaler.scale(11),
+              color: theme.colorScheme.onSurface,
+              fontSize: mediaQuery.textScaler.scale(10),
             ),
           ),
           SizedBox(height: mediaQuery.size.height * 0.01),
@@ -49,7 +49,7 @@ class SpendingCard extends StatelessWidget {
                   "₹${(state.totalSpendings.isEmpty || state.totalSpendings == 'null') ? '0' : state.totalSpendings} • ${(state.totalFuelAdded.isEmpty || state.totalFuelAdded == 'null') ? '0' : state.totalFuelAdded} L",
                   style: TextStyle(
                     color: theme.textTheme.titleLarge?.color,
-                    fontSize: mediaQuery.textScaler.scale(20),
+                    fontSize: mediaQuery.textScaler.scale(18),
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -59,14 +59,14 @@ class SpendingCard extends StatelessWidget {
                   Icon(
                     Icons.trending_down,
                     color: theme.colorScheme.error,
-                    size: mediaQuery.textScaler.scale(18),
+                    size: mediaQuery.textScaler.scale(16),
                   ),
                   const SizedBox(width: 4),
                   Text(
                     l10n.percentageValue("100"),
                     style: TextStyle(
                       color: theme.colorScheme.error,
-                      fontSize: mediaQuery.textScaler.scale(14),
+                      fontSize: mediaQuery.textScaler.scale(12),
                       fontWeight: FontWeight.bold,
                     ),
                   ),

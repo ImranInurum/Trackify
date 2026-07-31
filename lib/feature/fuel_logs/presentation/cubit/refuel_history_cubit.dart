@@ -30,6 +30,7 @@ class RefuelHistoryCubit extends Cubit<RefuelHistoryState> {
       // Create a completely new unmodifiable list so that:
       // 1. Equatable detects the change (new list reference + loadedAt).
       // 2. No external code can mutate the emitted list.
+      if (isClosed) return;
       emit(
         RefuelHistoryLoaded(
           refuelLogs: List<RefuelLog>.unmodifiable(refuelLogs),
@@ -37,6 +38,7 @@ class RefuelHistoryCubit extends Cubit<RefuelHistoryState> {
       );
     } catch (e) {
       print("REFUEL HISTORY ERROR : $e");
+      if (isClosed) return;
       emit(
         RefuelHistoryError(
           e.toString(),

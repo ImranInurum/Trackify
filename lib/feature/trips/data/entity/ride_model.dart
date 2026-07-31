@@ -238,7 +238,7 @@ class Ride {
       if (isoString == null) return "Unknown Date";
       try {
         final date = DateTime.parse(isoString);
-        return DateFormat('dd/MM/yyyy').format(date);
+        return DateFormat('dd MMM yyyy').format(date);
       } catch (e) {
         return isoString;
       }

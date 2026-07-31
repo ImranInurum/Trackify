@@ -841,6 +841,7 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
                 ),
                 decoration: BoxDecoration(
                   color: Theme.of(context).cardColor.withValues(alpha: 0.8),
+                  border: Border.all(color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5), width: 0.5),
                   boxShadow: [
                     BoxShadow(
                       color: Colors.black.withValues(alpha: 0.1),
@@ -946,9 +947,8 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
                         ).cardColor.withValues(alpha: 0.85),
                         borderRadius: BorderRadius.circular(30),
                         border: Border.all(
-                          color: Theme.of(
-                            context,
-                          ).colorScheme.onSurface.withValues(alpha: 0.1),
+                          color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5),
+                          width: 0.5,
                         ),
                       ),
                       child: Row(
@@ -1085,9 +1085,8 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
                         ).cardColor.withValues(alpha: 0.85),
                         borderRadius: BorderRadius.circular(16),
                         border: Border.all(
-                          color: Theme.of(
-                            context,
-                          ).colorScheme.onSurface.withValues(alpha: 0.1),
+                          color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5),
+                          width: 0.5,
                         ),
                       ),
                       child: Row(
@@ -1182,6 +1181,7 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
               child: Container(
                 decoration: BoxDecoration(
                   color: Theme.of(context).cardColor,
+                  border: Border.all(color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5), width: 0.5),
                   borderRadius: const BorderRadius.vertical(
                     top: Radius.circular(24),
                   ),
@@ -1274,12 +1274,8 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
                                                         .withValues(alpha: 0.9),
                                                     shape: BoxShape.circle,
                                                     border: Border.all(
-                                                      color: Theme.of(context)
-                                                          .colorScheme
-                                                          .onSurface
-                                                          .withValues(
-                                                            alpha: 0.15,
-                                                          ),
+                                                      color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5),
+                                                      width: 0.5,
                                                     ),
                                                   ),
                                                   child: Icon(
@@ -1302,10 +1298,8 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
                                                 borderRadius:
                                                     BorderRadius.circular(20),
                                                 border: Border.all(
-                                                  color: Theme.of(context)
-                                                      .colorScheme
-                                                      .onSurface
-                                                      .withValues(alpha: 0.1),
+                                                  color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5),
+                                                  width: 0.5,
                                                 ),
                                               ),
                                               child: Row(
@@ -1566,10 +1560,8 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
           border: Border.all(
             color: isActive
                 ? Theme.of(context).colorScheme.primary
-                : Theme.of(
-                    context,
-                  ).colorScheme.onSurface.withValues(alpha: 0.1),
-            width: isActive ? 2 : 1,
+                : Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5),
+            width: isActive ? 2 : 0.5,
           ),
           boxShadow: [
             BoxShadow(

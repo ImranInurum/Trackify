@@ -9,6 +9,8 @@ import 'package:trackify/core/config/network/network_api_service.dart';
 import 'package:trackify/core/utils/shared_preferences.dart';
 import 'package:trackify/core/common/repositories/common_repo_impl.dart'
     as trackify;
+import 'package:trackify/core/common/widgets/unlock_device_dialog.dart';
+import '../../../../l10n/app_localizations.dart';
 import 'location_sharing_state.dart';
 
 class LocationSharingCubit extends Cubit<LocationSharingState> {
@@ -77,6 +79,53 @@ class LocationSharingCubit extends Cubit<LocationSharingState> {
     }
 
     emit(LocationSharingLoaded(items: items));
+
+    // Fetch active share counts for each item
+    for (int i = 0; i < items.length; i++) {
+      fetchActiveShareCount(items[i]);
+    }
+  }
+
+  Future<void> fetchActiveShareCount(LocationSharingItem item) async {
+    try {
+      String queryParams = '?page=1&limit=50';
+      if (item.isPhone) {
+        queryParams += '&shareType=device';
+      } else {
+        if (item.imei.isEmpty) return; // Can't fetch without IMEI
+        queryParams += '&shareType=ride&imei=${item.imei}';
+      }
+      final url = '${ApiURL.baseURL}/api/share/live-shares$queryParams';
+      final response = await _apiService.getGetApiResponse(url);
+
+      response.fold(
+        (failure) {}, // Ignore errors silently to not break UI
+        (success) {
+          if (success['success'] == true && success['data'] != null) {
+            final List<dynamic> data = success['data'];
+            final activeCount = data.length;
+            
+            // Update the state
+            if (state is LocationSharingLoaded) {
+              final currentStateItems = (state as LocationSharingLoaded).items;
+              final updatedItems = currentStateItems.map((existingItem) {
+                if (existingItem.id == item.id) {
+                  return existingItem.copyWith(
+                    activeShareCount: activeCount,
+                    isSharing: activeCount > 0,
+                  );
+                }
+                return existingItem;
+              }).toList();
+              
+              emit(LocationSharingLoaded(items: updatedItems));
+            }
+          }
+        },
+      );
+    } catch (e) {
+      debugPrint('Error fetching live shares for ${item.name}: $e');
+    }
   }
 
   void toggleSharing(String id) {
@@ -120,7 +169,13 @@ class LocationSharingCubit extends Cubit<LocationSharingState> {
       };
 
       if (shareType == 'ride') {
-        createBody['imei'] = item.imei.isNotEmpty ? item.imei : 'UNKNOWN_IMEI';
+        if (item.imei.isEmpty) {
+          if (context.mounted) {
+            showUnlockDeviceDialog(context, "Location Sharing");
+          }
+          return;
+        }
+        createBody['imei'] = item.imei;
         createBody['startDate'] = DateTime.now().toUtc().toIso8601String();
         createBody['endDate'] = DateTime.now()
             .toUtc()
@@ -148,7 +203,7 @@ class LocationSharingCubit extends Cubit<LocationSharingState> {
             webLink = success['data']['webLink'] ?? '';
           } else {
             errorMessage =
-                success['message']?.toString() ?? 'Failed to create share link';
+                success['message']?.toString() ?? (context.mounted ? AppLocalizations.of(context)!.failedToCreateShareLink : 'Failed to create share link');
           }
         },
       );
@@ -156,16 +211,21 @@ class LocationSharingCubit extends Cubit<LocationSharingState> {
       if (webLink.isEmpty) {
         if (context.mounted && errorMessage != null) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(errorMessage!), backgroundColor: Colors.red),
+            SnackBar(
+                content: Text(errorMessage!),
+                backgroundColor: Theme.of(context).colorScheme.error),
           );
         }
         return;
       }
 
-      // Update UI state so the card shows active sharing
+      // Update UI state so the card shows active sharing optimistically
       final updatedItems = List<LocationSharingItem>.from(items);
-      updatedItems[itemIndex] = item.copyWith(isSharing: true);
+      updatedItems[itemIndex] = item.copyWith(isSharing: true, activeShareCount: item.activeShareCount + 1);
       emit(LocationSharingLoaded(items: updatedItems));
+
+      // Refresh the live api count for this item from backend
+      fetchActiveShareCount(item);
 
       // Trigger native share sheet
       await Share.share('$webLink');
@@ -173,7 +233,9 @@ class LocationSharingCubit extends Cubit<LocationSharingState> {
       debugPrint('Exception in shareLiveLocation: $e');
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(e.toString()), backgroundColor: Colors.red),
+          SnackBar(
+              content: Text(e.toString()),
+              backgroundColor: Theme.of(context).colorScheme.error),
         );
       }
     }

@@ -1848,8 +1848,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get unmapTrackify => 'إلغاء ربط Trackify الخاص بك';
 
   @override
-  String get unmapStep1 =>
-      'الخطوة 1: لإلغاء ربط الجهاز، اتصل على +918061971443';
+  String unmapStep1(String mobileNumber) {
+    return 'الخطوة 1: لإلغاء ربط الجهاز، اتصل على $mobileNumber';
+  }
 
   @override
   String get unmapStep2 => 'الخطوة 2: إزالة المركبة';
@@ -2422,7 +2423,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get savedSuccessfully => 'تم الحفظ بنجاح';
 
   @override
-  String get fuelStationName => 'سي إم بترو بوينت، بي بي سي إل بتر...';
+  String get fuelStationName => 'على سبيل المثال شركة نفط الهند، شل';
 
   @override
   String get yourPhoneLocation => 'موقع هاتفك';
@@ -3445,4 +3446,20 @@ class AppLocalizationsAr extends AppLocalizations {
   String stopSharingConfirmation(String name) {
     return 'Are you sure you want to stop sharing the location of $name?';
   }
+
+  @override
+  String hoursLink(String hours) {
+    return 'رابط لمدة $hours ساعات';
+  }
+
+  @override
+  String activeSharingCount(int count) {
+    return '$count مشاركة نشطة';
+  }
+
+  @override
+  String get sharingStoppedSuccessfully => 'تم إيقاف المشاركة بنجاح.';
+
+  @override
+  String get failedToCreateShareLink => 'فشل في إنشاء رابط المشاركة';
 }

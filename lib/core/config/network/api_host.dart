@@ -259,6 +259,7 @@ class ApiURL {
   // -------------------------
   static String getSessions(String userId) => "$baseURL/api/sessions/$userId";
   static String logoutSession(String sessionId) => "$baseURL/api/sessions/logout/$sessionId";
+  static const String updateFcmSession = "$baseURL/api/sessions/update-fcm";
   static const String checkToken = "$baseURL/api/sessions/check-token";
 
   // -------------------------
@@ -278,4 +279,9 @@ class ApiURL {
     }
     return url;
   }
+
+  // -------------------------
+  // General Settings
+  // -------------------------
+  static const String generalSettings = "$baseURL/api/general-settings";
 }

@@ -383,7 +383,7 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> {
             height: 64,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              border: Border.all(color: Colors.grey.withValues(alpha: 0.2)),
+              border: Border.all(color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5), width: 0.5),
             ),
             child: Icon(icon, color: Colors.grey[700], size: 28),
           ),
@@ -737,7 +737,7 @@ class _StatCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: cardBg,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: theme.dividerColor.withValues(alpha: 0.1)),
+        border: Border.all(color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5), width: 0.5),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -819,7 +819,8 @@ class _BehaviourCard extends StatelessWidget {
         color: cardBg,
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: theme.colorScheme.onSurface.withValues(alpha: 0.05),
+          color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5),
+          width: 0.5,
         ),
       ),
       child: Column(
@@ -855,8 +856,8 @@ class _BehaviourCard extends StatelessWidget {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
-          color: theme.colorScheme.onSurface.withValues(alpha: 0.3),
-          width: 1,
+          color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5),
+          width: 0.5,
         ),
       ),
       clipBehavior: Clip.antiAlias,
@@ -930,9 +931,9 @@ class _MapCard extends StatelessWidget {
         margin: const EdgeInsets.symmetric(horizontal: 20),
         height: 380,
       decoration: BoxDecoration(
-        color: theme.cardColor.withValues(alpha: 0.5),
+        color: theme.cardColor,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: theme.dividerColor.withValues(alpha: 0.1)),
+        border: Border.all(color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5), width: 0.5),
       ),
       clipBehavior: Clip.antiAlias,
       child: Column(
@@ -1037,7 +1038,6 @@ class _MapCard extends StatelessWidget {
           // Date/Time Footer
           Container(
             padding: const EdgeInsets.all(16),
-            color: theme.cardColor,
             child: Builder(
               builder: (context) {
                 String formatDate(String rawDate) {
@@ -1057,7 +1057,7 @@ class _MapCard extends StatelessWidget {
                           parsedDate.day == now.day) {
                         return l10n.today;
                       }
-                      return DateFormat('dd/MM/yyyy').format(parsedDate);
+                      return DateFormat('dd MMM yyyy').format(parsedDate);
                     } else {
                       final now = DateTime.now();
                       if (rawDate == "${now.day}/${now.month}/${now.year}" ||

@@ -28,7 +28,7 @@ class RefuelSummaryGrid extends StatelessWidget {
       physics: const NeverScrollableScrollPhysics(),
       crossAxisSpacing: screenWidth * 0.04,
       mainAxisSpacing: screenWidth * 0.04,
-      childAspectRatio: 1.6,
+      childAspectRatio: 1.9,
       children: [
         _buildSummaryCard(
           context,
@@ -81,26 +81,29 @@ class RefuelSummaryGrid extends StatelessWidget {
     final screenWidth = mediaQuery.size.width;
 
     return Container(
-      padding: EdgeInsets.all(screenWidth * 0.04),
+      padding: EdgeInsets.symmetric(
+        horizontal: screenWidth * 0.03,
+        vertical: screenWidth * 0.03,
+      ),
       decoration: BoxDecoration(
         color: theme.cardColor,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: theme.dividerColor, width: 1),
+        border: Border.all(color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5), width: 0.5),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Row(
             children: [
-              Icon(icon, color: iconColor, size: mediaQuery.textScaler.scale(20)),
+              Icon(icon, color: iconColor, size: mediaQuery.textScaler.scale(18)),
               const SizedBox(width: 6),
               Expanded(
                 child: Text(
                   title,
                   style: TextStyle(
-                    color: theme.hintColor,
-                    fontSize: mediaQuery.textScaler.scale(13),
+                    color: theme.colorScheme.onSurface,
+                    fontSize: mediaQuery.textScaler.scale(11),
                     fontWeight: FontWeight.w500,
                   ),
                   maxLines: 1,
@@ -109,6 +112,7 @@ class RefuelSummaryGrid extends StatelessWidget {
               ),
             ],
           ),
+          const SizedBox(height: 4),
           Row(
             crossAxisAlignment: CrossAxisAlignment.baseline,
             textBaseline: TextBaseline.alphabetic,
@@ -118,7 +122,7 @@ class RefuelSummaryGrid extends StatelessWidget {
                   unit,
                   style: TextStyle(
                     color: theme.textTheme.titleLarge?.color,
-                    fontSize: mediaQuery.textScaler.scale(16),
+                    fontSize: mediaQuery.textScaler.scale(14),
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -127,7 +131,7 @@ class RefuelSummaryGrid extends StatelessWidget {
                 value,
                 style: TextStyle(
                   color: theme.textTheme.titleLarge?.color,
-                  fontSize: mediaQuery.textScaler.scale(22),
+                  fontSize: mediaQuery.textScaler.scale(20),
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -137,7 +141,7 @@ class RefuelSummaryGrid extends StatelessWidget {
                   unit,
                   style: TextStyle(
                     color: theme.textTheme.titleLarge?.color,
-                    fontSize: mediaQuery.textScaler.scale(16),
+                    fontSize: mediaQuery.textScaler.scale(14),
                     fontWeight: FontWeight.bold,
                   ),
                 ),

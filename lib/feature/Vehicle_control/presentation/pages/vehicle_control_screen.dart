@@ -422,6 +422,7 @@ class _VehicleControlViewState extends State<VehicleControlView> {
                     keyboardType: TextInputType.name,
                     textCapitalization: TextCapitalization.words,
                     textInputAction: TextInputAction.next,
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
                     onFieldSubmitted: (_) {
                       phoneFocusNode.requestFocus();
                     },
@@ -459,6 +460,7 @@ class _VehicleControlViewState extends State<VehicleControlView> {
                     keyboardType: TextInputType.phone,
                     textInputAction: TextInputAction.done,
                     maxLength: 10,
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
                     buildCounter: (context, {required int currentLength, required bool isFocused, required int? maxLength}) => null,
                     inputFormatters: [
                       FilteringTextInputFormatter.digitsOnly,
@@ -621,7 +623,8 @@ class _VehicleControlViewState extends State<VehicleControlView> {
                                     "userId": userId,
                                     "vehicleId": targetVehicleId,
                                     "name": name,
-                                    "mobileNumber": "$countryCode$mobileNumber",
+                                    "countryCode": countryCode,
+                                    "mobileNumber": mobileNumber,
                                   };
 
                                   final result = isEdit 
@@ -1112,44 +1115,19 @@ class _VehicleControlViewState extends State<VehicleControlView> {
                             (vehicle.imei.isNotEmpty && vehicle.imei != vehicle.id)) ...[
                           const SizedBox(height: 12),
 
-                          BlocBuilder<AppCubit, AppState>(
-                            builder: (context, appState) {
-                              final matchingDevice = appState.devices.firstWhere(
-                                (d) =>
-                                    d['imei']?.toString() == vehicle.imei ||
-                                    d['_id']?.toString() == vehicle.id ||
-                                    d['id']?.toString() == vehicle.id,
-                                orElse: () => <String, dynamic>{},
+                          JourneyCard(
+                            cardColor: cardColor,
+                            primaryTextColor: primaryTextColor,
+                            secondaryTextColor: secondaryTextColor,
+                            distance: state.journeyDistance,
+                            hours: state.journeyHours,
+                            minutes: state.journeyMinutes,
+                            onTap: () {
+                              Navigator.popUntil(
+                                context,
+                                (route) => route.isFirst,
                               );
-                              String distanceTravelled = "0.0";
-                              if (matchingDevice.isNotEmpty) {
-                                final odometerRaw = matchingDevice['odometer'];
-                                if (odometerRaw != null) {
-                                  final double? val = double.tryParse(
-                                    odometerRaw.toString(),
-                                  );
-                                  if (val != null) {
-                                    distanceTravelled = val.toStringAsFixed(1);
-                                  } else {
-                                    distanceTravelled = odometerRaw.toString();
-                                  }
-                                }
-                              }
-                              return JourneyCard(
-                                cardColor: cardColor,
-                                primaryTextColor: primaryTextColor,
-                                secondaryTextColor: secondaryTextColor,
-                                distance: distanceTravelled,
-                                hours: "0",
-                                minutes: "0",
-                                onTap: () {
-                                  Navigator.popUntil(
-                                    context,
-                                    (route) => route.isFirst,
-                                  );
-                                  AppNavigation.setIndex(2);
-                                },
-                              );
+                              AppNavigation.setIndex(2);
                             },
                           ),
                         ],
@@ -1263,13 +1241,17 @@ class _VehicleControlViewState extends State<VehicleControlView> {
                                   ),
                                 ),
                                 const SizedBox(height: 12),
-                                Text(
-                                  l10n.unmapStep1,
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    color: secondaryTextColor,
-                                    height: 1.4,
-                                  ),
+                                BlocBuilder<AppCubit, AppState>(
+                                  builder: (context, appState) {
+                                    return Text(
+                                      l10n.unmapStep1(appState.companyMobileNumber.isNotEmpty ? appState.companyMobileNumber : ''),
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        color: secondaryTextColor,
+                                        height: 1.4,
+                                      ),
+                                    );
+                                  },
                                 ),
                                 const SizedBox(height: 8),
                                 Text(

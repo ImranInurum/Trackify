@@ -5,10 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:trackify/feature/add_fuel/domain/entities/add_fuel_entity.dart';
 import 'package:trackify/feature/add_fuel/presentation/cubit/add_fuel_cubit.dart';
 import 'package:trackify/feature/add_fuel/presentation/cubit/add_fuel_state.dart';
-import 'package:trackify/feature/fuel_logs/presentation/pages/fuel_station_screen.dart';
 import 'package:trackify/l10n/app_localizations.dart';
-import 'package:trackify/feature/fuel_logs/data/repository/overpass_service.dart';
-import 'package:geolocator/geolocator.dart';
 
 import 'package:trackify/feature/fuel_logs/presentation/cubit/fuel_logs_cubit.dart';
 import 'package:trackify/feature/fuel_logs/presentation/cubit/fuel_logs_state.dart';
@@ -35,6 +32,7 @@ class _AddFuelScreenState extends State<AddFuelScreen> with TickerProviderStateM
   final amountController = TextEditingController();
   final priceController = TextEditingController();
   final fuelBeforeRefuelController = TextEditingController();
+  final fuelStationController = TextEditingController();
 
   late final l10n = AppLocalizations.of(context)!;
   late final theme = Theme.of(context);
@@ -47,58 +45,6 @@ class _AddFuelScreenState extends State<AddFuelScreen> with TickerProviderStateM
   bool isPartialTankSelected = false;
   DateTime _selectedDate = DateTime.now();
   TimeOfDay _selectedTime = TimeOfDay.now();
-  String? selectedFuelStationName;
-  bool _isLoadingNearest = false;
-
-  Future<void> _loadNearestFuelStation() async {
-    setState(() {
-      _isLoadingNearest = true;
-    });
-    try {
-      bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
-      if (!serviceEnabled) {
-        return;
-      }
-
-      LocationPermission permission = await Geolocator.checkPermission();
-      if (permission == LocationPermission.denied) {
-        permission = await Geolocator.requestPermission();
-        if (permission == LocationPermission.denied) {
-          return;
-        }
-      }
-      
-      if (permission == LocationPermission.deniedForever) {
-        return;
-      }
-
-      final position = await Geolocator.getCurrentPosition(
-        locationSettings: const LocationSettings(
-          accuracy: LocationAccuracy.low,
-        ),
-      ).timeout(const Duration(seconds: 5));
-
-      final overpassService = OverpassService();
-      final stations = await overpassService.fetchNearbyFuelStations(
-        position.latitude,
-        position.longitude,
-      );
-
-      if (stations.isNotEmpty && mounted) {
-        setState(() {
-          selectedFuelStationName = stations.first.name;
-        });
-      }
-    } catch (e) {
-      debugPrint('Error getting nearest station: $e');
-    } finally {
-      if (mounted) {
-        setState(() {
-          _isLoadingNearest = false;
-        });
-      }
-    }
-  }
 
   Future<void> _selectDate() async {
     final DateTime? picked = await showDatePicker(
@@ -137,7 +83,6 @@ class _AddFuelScreenState extends State<AddFuelScreen> with TickerProviderStateM
     if (amountController.text.trim().isEmpty) return false;
     if (priceController.text.trim().isEmpty) return false;
     if (!isFullTankSelected && !isPartialTankSelected) return false;
-    if (isPartialTankSelected && fuelBeforeRefuelController.text.trim().isEmpty) return false;
     return true;
   }
 
@@ -153,16 +98,15 @@ class _AddFuelScreenState extends State<AddFuelScreen> with TickerProviderStateM
       priceController.text = log.rate;
       _selectedDate = log.dateTime;
       _selectedTime = TimeOfDay.fromDateTime(log.dateTime);
-      selectedFuelStationName = log.location;
+      fuelStationController.text = log.location;
       isFullTankSelected = true; // Default since not in log model
-    } else {
-      _loadNearestFuelStation();
     }
     
     odometerController.addListener(_validateForm);
     amountController.addListener(_validateForm);
     priceController.addListener(_validateForm);
     fuelBeforeRefuelController.addListener(_validateForm);
+    fuelStationController.addListener(_validateForm);
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
@@ -225,6 +169,8 @@ class _AddFuelScreenState extends State<AddFuelScreen> with TickerProviderStateM
     amountController.removeListener(_validateForm);
     priceController.removeListener(_validateForm);
     fuelBeforeRefuelController.removeListener(_validateForm);
+    fuelStationController.removeListener(_validateForm);
+    fuelStationController.dispose();
     _tabController.dispose();
     super.dispose();
   }
@@ -270,7 +216,7 @@ class _AddFuelScreenState extends State<AddFuelScreen> with TickerProviderStateM
                       final entity = AddFuelEntity(
                         vehicle: currentServiceState.selectedVehicle?.id ?? '',
                         dateTime: combinedDateTime,
-                        fuelStation: selectedFuelStationName ?? l10n.fuelStationName,
+                        fuelStation: fuelStationController.text.trim(),
                         odometer: (double.tryParse(
                           odometerController.text,
                         ) ?? 0).toInt(),
@@ -280,7 +226,7 @@ class _AddFuelScreenState extends State<AddFuelScreen> with TickerProviderStateM
                         pricePerLitre: double.tryParse(
                           priceController.text,
                         ) ?? 0,
-                        fullTank: isFullTankSelected?"1":"2",
+                        fullTank: isFullTankSelected?"":"",
                         fuelBeforeRefuel: fuelBeforeRefuelController.text
                       );
                       if (widget.isEditMode && widget.initialLog != null) {
@@ -298,7 +244,7 @@ class _AddFuelScreenState extends State<AddFuelScreen> with TickerProviderStateM
             child: Text(
               l10n.save,
               style: TextStyle(
-                fontSize: 20,
+                fontSize: 18,
                 color: _isFormValid 
                     ? colorScheme.onPrimary 
                     : colorScheme.onSurface.withOpacity(0.38),
@@ -383,9 +329,8 @@ class _AddFuelScreenState extends State<AddFuelScreen> with TickerProviderStateM
                     Text(
                       l10n.addRefuelingDetails,
                       style: TextStyle(
-                        fontSize: 22,
-                        fontWeight:
-                        FontWeight.w700,
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
                   ],
@@ -468,7 +413,7 @@ class _AddFuelScreenState extends State<AddFuelScreen> with TickerProviderStateM
                       Text(
                         l10n.fuelStation,
                         style: TextStyle(
-                          fontSize: 18,
+                          fontSize: 14,
                           fontWeight:
                           FontWeight.w500,
                         ),
@@ -476,113 +421,12 @@ class _AddFuelScreenState extends State<AddFuelScreen> with TickerProviderStateM
 
                       const SizedBox(height: 12),
 
-                      GestureDetector(
-                        onTap: () async {
-                          final result = await Navigator.push<String>(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => const FuelStationScreen(),
-                            ),
-                          );
-                          if (result != null) {
-                            setState(() {
-                              selectedFuelStationName = result;
-                            });
-                          }
-                        },
-                        child: Container(
-                          height: 60,
-                          padding:
-                          const EdgeInsets
-                              .symmetric(
-                            horizontal: 16,
-                          ),
-                          decoration:
-                          BoxDecoration(
-                            color: theme.cardColor,
-                            borderRadius:
-                            BorderRadius
-                                .circular(20),
-                            border: Border.all(
-                              color: colorScheme.secondary.withOpacity(0.2),
-                            ),
-                          ),
-
-                          child: Row(
-                            children: [
-
-                              Icon(
-                                Icons.location_on,
-                                color: colorScheme.secondary,
-                              ),
-
-                              const SizedBox(
-                                  width: 12),
-
-                              Expanded(
-                                child: _isLoadingNearest
-                                    ? Row(
-                                        children: [
-                                          SizedBox(
-                                            width: 16,
-                                            height: 16,
-                                            child: CircularProgressIndicator(
-                                              strokeWidth: 2,
-                                              color: colorScheme.secondary,
-                                            ),
-                                          ),
-                                          const SizedBox(width: 8),
-                                          Text(
-                                            'Locating nearest...',
-                                            style: TextStyle(
-                                              color: colorScheme.secondary,
-                                              fontSize: 16,
-                                            ),
-                                          ),
-                                        ],
-                                      )
-                                    : Text(
-                                        selectedFuelStationName ?? l10n.fuelStationName,
-                                        style: TextStyle(
-                                          color: colorScheme.secondary,
-                                          fontSize: 16,
-                                        ),
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                              ),
-
-                              Container(
-                                padding:
-                                const EdgeInsets
-                                    .symmetric(
-                                  horizontal:
-                                  18,
-                                  vertical:
-                                  8,
-                                ),
-                                decoration:
-                                BoxDecoration(
-                                  color: colorScheme.secondaryContainer,
-                                  borderRadius:
-                                  BorderRadius
-                                      .circular(
-                                    20,
-                                  ),
-                                ),
-                                child:
-                                Text(
-                                  l10n.change,
-                                  style:
-                                  TextStyle(
-                                    color: colorScheme.onSurfaceVariant,
-                                    fontWeight:
-                                    FontWeight
-                                        .w600,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
+                      TextField(
+                        controller: fuelStationController,
+                        textInputAction: TextInputAction.next,
+                        decoration: _inputDecoration(
+                          l10n.fuelStationName,
+                          Icons.location_on,
                         ),
                       ),
                     ],
@@ -601,7 +445,7 @@ class _AddFuelScreenState extends State<AddFuelScreen> with TickerProviderStateM
                       Text(
                         l10n.currentOdometer,
                         style: TextStyle(
-                          fontSize: 18,
+                          fontSize: 14,
                           fontWeight:
                           FontWeight.w500,
                         ),
@@ -612,6 +456,7 @@ class _AddFuelScreenState extends State<AddFuelScreen> with TickerProviderStateM
                       TextField(
                         controller:
                         odometerController,
+                        textInputAction: TextInputAction.next,
                         keyboardType: TextInputType.number,
                         inputFormatters: [
                           FilteringTextInputFormatter.digitsOnly,
@@ -629,7 +474,7 @@ class _AddFuelScreenState extends State<AddFuelScreen> with TickerProviderStateM
                       Text(
                         l10n.lastRecorded,
                         style: TextStyle(
-                          fontSize: 16,
+                          fontSize: 12,
                           color:
                           colorScheme.onSurfaceVariant,
                         ),
@@ -652,8 +497,7 @@ class _AddFuelScreenState extends State<AddFuelScreen> with TickerProviderStateM
                                   l10n.totalAmount,
                                   style:
                                   TextStyle(
-                                    fontSize:
-                                    18,
+                                    fontSize: 14,
                                   ),
                                 ),
 
@@ -664,13 +508,14 @@ class _AddFuelScreenState extends State<AddFuelScreen> with TickerProviderStateM
                                 TextField(
                                   controller:
                                   amountController,
+                                  textInputAction: TextInputAction.next,
                                    keyboardType: const TextInputType.numberWithOptions(decimal: true),
                                    inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*'))],
                                   decoration:
                                   _inputDecoration(
                                     '000',
-                                    Icons
-                                        .currency_rupee,
+                                    Icons.currency_rupee,
+                                    iconSize: 18,
                                   ),
                                 ),
                               ],
@@ -691,8 +536,7 @@ class _AddFuelScreenState extends State<AddFuelScreen> with TickerProviderStateM
                                   l10n.pricePerLitre,
                                   style:
                                   TextStyle(
-                                    fontSize:
-                                    18,
+                                    fontSize: 14,
                                   ),
                                 ),
 
@@ -703,13 +547,14 @@ class _AddFuelScreenState extends State<AddFuelScreen> with TickerProviderStateM
                                 TextField(
                                   controller:
                                   priceController,
+                                  textInputAction: isPartialTankSelected ? TextInputAction.next : TextInputAction.done,
                                    keyboardType: const TextInputType.numberWithOptions(decimal: true),
                                    inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*'))],
                                   decoration:
                                   _inputDecoration(
                                     '000',
-                                    Icons
-                                        .currency_rupee,
+                                    Icons.currency_rupee,
+                                    iconSize: 18,
                                   ),
                                 ),
                               ],
@@ -733,7 +578,7 @@ class _AddFuelScreenState extends State<AddFuelScreen> with TickerProviderStateM
                       Text(
                         l10n.tankStatus,
                         style: TextStyle(
-                          fontSize: 18,
+                          fontSize: 14,
                           fontWeight:
                           FontWeight.w500,
                         ),
@@ -796,6 +641,7 @@ class _AddFuelScreenState extends State<AddFuelScreen> with TickerProviderStateM
                           padding: const EdgeInsets.all(20),
                           decoration: BoxDecoration(
                             color: theme.cardColor,
+                            border: Border.all(color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5), width: 0.5),
                             borderRadius: BorderRadius.circular(24),
                           ),
                           child: Column(
@@ -804,7 +650,7 @@ class _AddFuelScreenState extends State<AddFuelScreen> with TickerProviderStateM
                               Text(
                                 l10n.fuelBeforeRefuel,
                                 style: TextStyle(
-                                  fontSize: 18,
+                                  fontSize: 14,
                                   fontWeight: FontWeight.w600,
                                   color: colorScheme.onSurfaceVariant,
                                 ),
@@ -814,18 +660,23 @@ class _AddFuelScreenState extends State<AddFuelScreen> with TickerProviderStateM
                                 height: 60,
                                 decoration: BoxDecoration(
                                   color: theme.cardColor,
+                                  border: Border.all(color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5), width: 0.5),
                                   borderRadius: BorderRadius.circular(16),
                                 ),
                                 child: TextField(
                                   controller: fuelBeforeRefuelController,
+                                  textInputAction: TextInputAction.done,
                                   keyboardType: TextInputType.number,
                                   textAlign: TextAlign.start,
                                   style: TextStyle(
-                                    fontSize: 18,
+                                    fontSize: 14,
                                     fontWeight: FontWeight.w500,
                                   ),
                                   decoration: InputDecoration(
                                     hintText: ('0'),
+                                    hintStyle: TextStyle(
+                                      color: colorScheme.onSurfaceVariant,
+                                    ),
                                     contentPadding: const EdgeInsets.symmetric(
                                       horizontal: 16,
                                       vertical: 18,
@@ -844,7 +695,7 @@ class _AddFuelScreenState extends State<AddFuelScreen> with TickerProviderStateM
                                           Text(
                                             l10n.liters,
                                               style: TextStyle(
-                                                fontSize: 16,
+                                                fontSize: 14,
                                                 fontWeight: FontWeight.w500,
                                                 color: colorScheme.onSurfaceVariant,
                                               ),
@@ -869,7 +720,7 @@ class _AddFuelScreenState extends State<AddFuelScreen> with TickerProviderStateM
                                     child: Text(
                                       l10n.fuelBeforeRefuelDesc,
                                       style: TextStyle(
-                                        fontSize: 13,
+                                        fontSize: 11,
                                         color: colorScheme.onSurface.withOpacity(0.6),
                                         height: 1.4,
                                       ),
@@ -900,6 +751,7 @@ class _AddFuelScreenState extends State<AddFuelScreen> with TickerProviderStateM
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: theme.cardColor,
+        border: Border.all(color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5), width: 0.5),
         borderRadius:
         BorderRadius.circular(28),
       ),
@@ -920,7 +772,7 @@ class _AddFuelScreenState extends State<AddFuelScreen> with TickerProviderStateM
         Text(
           title,
           style: TextStyle(
-            fontSize: 18,
+            fontSize: 14,
             color: colorScheme.onSurfaceVariant,
           ),
         ),
@@ -928,13 +780,14 @@ class _AddFuelScreenState extends State<AddFuelScreen> with TickerProviderStateM
         const SizedBox(height: 12),
 
         Container(
-          height: 70,
+          height: 54,
           padding:
           const EdgeInsets.symmetric(
             horizontal: 16,
           ),
           decoration: BoxDecoration(
             color: theme.cardColor,
+            border: Border.all(color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5), width: 0.5),
             borderRadius:
             BorderRadius.circular(
               20,
@@ -954,7 +807,7 @@ class _AddFuelScreenState extends State<AddFuelScreen> with TickerProviderStateM
               Text(
                 value,
                 style: TextStyle(
-                  fontSize: 15,
+                  fontSize: 13,
                 ),
               ),
             ],
@@ -966,32 +819,42 @@ class _AddFuelScreenState extends State<AddFuelScreen> with TickerProviderStateM
 
   InputDecoration _inputDecoration(
       String hint,
-      IconData icon,
-      ) {
+      IconData icon, {
+      double? iconSize,
+      }) {
     return InputDecoration(
       hintText: hint,
+      hintStyle: TextStyle(
+        color: theme.colorScheme.onSurfaceVariant,
+      ),
 
-      prefixIcon: Icon(icon),
+      prefixIcon: Icon(
+        icon, 
+        size: iconSize ?? 24,
+        color: theme.colorScheme.onSurfaceVariant,
+      ),
 
       filled: true,
       fillColor: theme.cardColor,
+      isDense: true,
+      contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
 
       border: OutlineInputBorder(
         borderRadius:
         BorderRadius.circular(20),
-        borderSide: BorderSide.none,
+        borderSide: BorderSide(color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5), width: 0.5),
       ),
 
       enabledBorder: OutlineInputBorder(
         borderRadius:
         BorderRadius.circular(20),
-        borderSide: BorderSide.none,
+        borderSide: BorderSide(color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5), width: 0.5),
       ),
 
       focusedBorder: OutlineInputBorder(
         borderRadius:
         BorderRadius.circular(20),
-        borderSide: BorderSide.none,
+        borderSide: BorderSide(color: theme.primaryColor, width: 1),
       ),
     );
   }
@@ -1002,7 +865,7 @@ class _AddFuelScreenState extends State<AddFuelScreen> with TickerProviderStateM
       {String? subtitle}
       ) {
     return Container(
-      height: 72,
+      height: 64,
       padding:
       const EdgeInsets.symmetric(
         horizontal: 20,
@@ -1018,7 +881,7 @@ class _AddFuelScreenState extends State<AddFuelScreen> with TickerProviderStateM
           color: colorScheme.primary,
           width: 1.5,
         )
-            : null,
+            : Border.all(color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5), width: 0.5),
       ),
 
       child: Row(
@@ -1043,7 +906,7 @@ class _AddFuelScreenState extends State<AddFuelScreen> with TickerProviderStateM
                 Text(
                   title,
                   style: TextStyle(
-                    fontSize: 15,
+                    fontSize: 13,
                     fontWeight:
                     FontWeight.w600,
                   ),
@@ -1053,7 +916,7 @@ class _AddFuelScreenState extends State<AddFuelScreen> with TickerProviderStateM
                   Text(
                     subtitle,
                     style: TextStyle(
-                      fontSize: 12,
+                      fontSize: 10,
                       fontWeight: FontWeight.w500,
                       color: colorScheme.primary,
                     ),
