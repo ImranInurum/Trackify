@@ -490,7 +490,7 @@ class _DocumentOtherdocumentScreenState extends State<DocumentOtherdocumentScree
                         controller: _nameController,
                         decoration: InputDecoration(
                           filled: true,
-                          fillColor: Colors.white,
+                          fillColor: Theme.of(context).cardColor,
                           labelText: l10n.documentName,
                           labelStyle: TextStyle(
                             color: colorScheme.onSurfaceVariant,
@@ -534,7 +534,7 @@ class _DocumentOtherdocumentScreenState extends State<DocumentOtherdocumentScree
                           width: double.infinity,
                           padding: const EdgeInsets.symmetric(horizontal: 14),
                           decoration: BoxDecoration(
-                            color: Colors.white,
+                            color: Theme.of(context).cardColor,
                             borderRadius: BorderRadius.circular(10),
                             border: Border.all(color: colorScheme.outlineVariant.withValues(alpha: 0.2)),
                           ),

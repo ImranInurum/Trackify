@@ -235,7 +235,9 @@ class _LocationSharingDetailScreenState
               return Padding(
                 padding: const EdgeInsets.only(bottom: 16),
                 child: LiveSharingLinkCard(
-                  title: l10n.hoursLink(shareItem.expiresInHours.toString()),
+                  title: shareItem.expiresInHours == -30 
+                      ? '30 minutes link' 
+                      : l10n.hoursLink(shareItem.expiresInHours.toString()),
                   expiresIn: expiresInText,
                   onStopSharing: () =>
                       _showStopSharingDialog(context, shareItem.token),
@@ -307,26 +309,35 @@ class _LocationSharingDetailScreenState
             itemBuilder: (context, index) {
               final shareItem = state.items[index];
               String expiredText = 'Expired';
-              if (shareItem.stoppedAt != null) {
+              if (shareItem.endDate != null) {
+                final date = shareItem.endDate!.toLocal();
+                final formattedTime = DateFormat(
+                  'h:mma',
+                ).format(date).toLowerCase();
+                final formattedDate = DateFormat('dd/MM/yyyy').format(date);
+                expiredText = 'Expired on $formattedTime, $formattedDate';
+              } else if (shareItem.stoppedAt != null) {
                 final date = shareItem.stoppedAt!.toLocal();
                 final formattedTime = DateFormat(
                   'h:mma',
                 ).format(date).toLowerCase();
-                final formattedDate = DateFormat('d MMM yyyy').format(date);
+                final formattedDate = DateFormat('dd/MM/yyyy').format(date);
                 expiredText = 'Expired on $formattedTime, $formattedDate';
               } else if (shareItem.expiresAt != null) {
                 final date = shareItem.expiresAt!.toLocal();
                 final formattedTime = DateFormat(
                   'h:mma',
                 ).format(date).toLowerCase();
-                final formattedDate = DateFormat('d MMM yyyy').format(date);
+                final formattedDate = DateFormat('dd/MM/yyyy').format(date);
                 expiredText = 'Expired on $formattedTime, $formattedDate';
               }
 
               return Padding(
                 padding: const EdgeInsets.only(bottom: 12),
                 child: HistorySharingLinkCard(
-                  title: '${shareItem.expiresInHours} hours link',
+                  title: shareItem.expiresInHours == -30
+                      ? '30 minutes link'
+                      : '${shareItem.expiresInHours} hours link',
                   expiredText: expiredText,
                 ),
               );

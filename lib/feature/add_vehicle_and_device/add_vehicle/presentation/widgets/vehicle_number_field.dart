@@ -94,7 +94,7 @@ class _VehicleNumberFieldState extends State<VehicleNumberField> {
               color: theme.hintColor,
             ),
             filled: true,
-            fillColor: Colors.white,
+            fillColor: theme.cardColor,
             contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
             suffixIcon: text.isEmpty 
                 ? null 
