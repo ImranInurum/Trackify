@@ -835,17 +835,33 @@ class _DraggableAppBarState extends State<DraggableAppBar>
   Widget _buildVehicleImageOrIcon(BuildContext context, Vehicles device) {
     final type = device.vehicleType.toLowerCase();
 
-    if (type.contains('car')) {
-      return Icon(
-        Icons.directions_car,
-        size: 40,
-        color: Theme.of(context).colorScheme.primary,
+    if (type.contains('car') || type.contains('4_wheeler') || type.contains('commercial ev')) {
+      return Image.asset(
+        AppImages.carImage,
+        height: 60,
+        width: 60,
+        fit: BoxFit.contain,
       );
-    } else if (type.contains('truck')) {
-      return Icon(
-        Icons.local_shipping,
-        size: 40,
-        color: Theme.of(context).colorScheme.primary,
+    } else if (type.contains('auto rickshaw') || type.contains('auto') || type.contains('3_wheeler')) {
+      return Image.asset(
+        AppImages.rickshawImage,
+        height: 60,
+        width: 60,
+        fit: BoxFit.contain,
+      );
+    } else if (type.contains('bus')) {
+      return Image.asset(
+        AppImages.busImage,
+        height: 60,
+        width: 60,
+        fit: BoxFit.contain,
+      );
+    } else if (type.contains('van') || type.contains('truck') || type.contains('pickup') || type.contains('pick-up')) {
+      return Image.asset(
+        AppImages.vanImage,
+        height: 60,
+        width: 60,
+        fit: BoxFit.contain,
       );
     } else if (type.contains('bus')) {
       return Icon(

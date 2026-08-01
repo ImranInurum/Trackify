@@ -5,6 +5,10 @@ class AppImages {
   static const String icons = 'assets/icons';
 
   static const String bikeImage = '$icons/bike2.png';
+  static const String carImage = '$icons/car.png';
+  static const String rickshawImage = '$icons/rickshaw.png';
+  static const String busImage = '$icons/bus-icon.png';
+  static const String vanImage = '$icons/van.png';
   static const String appLogo = '$icons/appLogo.png';
 
   static const String kingIcon = "$icons/king.png";

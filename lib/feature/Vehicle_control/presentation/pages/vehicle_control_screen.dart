@@ -1082,6 +1082,7 @@ class _VehicleControlViewState extends State<VehicleControlView> {
                           accentColor: theme.colorScheme.primary,
                           selectedIcon: state.tempIcon,
                           selectedColor: state.tempColor,
+                          vehicleType: vehicle.vehicleType,
                           onUpgrade: () {
                             Navigator.push(
                               context,

@@ -139,7 +139,19 @@ class _VehicleCardState extends State<VehicleCard> {
                           width: 50,
                           height: 50,
                           child: Image.asset(
-                            AppImages.bikeImage,
+                            (() {
+                              final lower = widget.vehicle.vehicleType?.toLowerCase() ?? '';
+                              if (lower.contains('auto rickshaw') || lower.contains('auto') || lower.contains('3_wheeler')) {
+                                return AppImages.rickshawImage;
+                              } else if (lower.contains('car') || lower.contains('4_wheeler') || lower.contains('commercial ev')) {
+                                return AppImages.carImage;
+                              } else if (lower.contains('bus')) {
+                                return AppImages.busImage;
+                              } else if (lower.contains('van') || lower.contains('truck') || lower.contains('pickup') || lower.contains('pick-up')) {
+                                return AppImages.vanImage;
+                              }
+                              return AppImages.bikeImage;
+                            })(),
                             fit: BoxFit.contain,
                           ),
                         ),

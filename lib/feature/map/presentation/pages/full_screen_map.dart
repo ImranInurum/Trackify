@@ -111,6 +111,10 @@ class _FullScreenMapState extends State<FullScreenMap>
   String _currentMarkerLetter = '';
   Timer? _statusTimer;
   Timer? _autoFollowResumeTimer;
+  BitmapDescriptor? _carMarker;
+  BitmapDescriptor? _rickshawMarker;
+  BitmapDescriptor? _busMarker;
+  BitmapDescriptor? _vanMarker;
 
   late final FullScreenMapUiCubit _uiCubit;
 
@@ -423,7 +427,9 @@ class _FullScreenMapState extends State<FullScreenMap>
       if (mounted) {
         context.read<MapCubit>().fetchVehicles();
         if (_currentVehicle != null && _currentVehicle!.imei != null) {
-          context.read<AppCubit>().initializeSocket(imei: _currentVehicle!.imei);
+          context.read<AppCubit>().initializeSocket(
+            imei: _currentVehicle!.imei,
+          );
           _fetchDeviceStatus(_currentVehicle!.imei!);
         }
       }
@@ -487,7 +493,27 @@ class _FullScreenMapState extends State<FullScreenMap>
       assetPath,
       110,
     );
+    final Uint8List carIcon = await MapUtils.getBytesFromAsset(
+      AppImages.carImage,
+      110,
+    );
+    final Uint8List rickshawIcon = await MapUtils.getBytesFromAsset(
+      AppImages.rickshawImage,
+      110,
+    );
+    final Uint8List busIcon = await MapUtils.getBytesFromAsset(
+      AppImages.busImage,
+      110,
+    );
+    final Uint8List vanIcon = await MapUtils.getBytesFromAsset(
+      AppImages.vanImage,
+      110,
+    );
     if (mounted) {
+      _carMarker = BitmapDescriptor.fromBytes(carIcon);
+      _rickshawMarker = BitmapDescriptor.fromBytes(rickshawIcon);
+      _busMarker = BitmapDescriptor.fromBytes(busIcon);
+      _vanMarker = BitmapDescriptor.fromBytes(vanIcon);
       _uiCubit.setCustomMarker(BitmapDescriptor.fromBytes(markerIcon));
       _mapRebuildNotifier.value++;
     }
@@ -760,7 +786,20 @@ class _FullScreenMapState extends State<FullScreenMap>
         Marker(
           markerId: const MarkerId('vehicle_marker'),
           position: vehiclePos,
-          icon: _uiCubit.state.customMarker ?? BitmapDescriptor.defaultMarker,
+          icon: (() {
+                  final type = _currentVehicle?.vehicleType.toLowerCase() ?? '';
+                  if (type.contains('auto rickshaw') || type.contains('auto') || type.contains('3_wheeler')) {
+                    return _rickshawMarker;
+                  } else if (type.contains('car') || type.contains('4_wheeler') || type.contains('commercial ev')) {
+                    return _carMarker;
+                  } else if (type.contains('bus')) {
+                    return _busMarker;
+                  } else if (type.contains('van') || type.contains('truck') || type.contains('pickup') || type.contains('pick-up')) {
+                    return _vanMarker;
+                  }
+                  return _uiCubit.state.customMarker;
+                })() ??
+              BitmapDescriptor.defaultMarker,
           anchor: const Offset(0.5, 0.5),
           flat: true,
           rotation: bearing % 360,
@@ -1825,7 +1864,12 @@ class _FullScreenMapState extends State<FullScreenMap>
                     decoration: BoxDecoration(
                       color: Theme.of(context).cardColor,
                       shape: BoxShape.circle,
-                      border: Border.all(color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5), width: 0.5),
+                      border: Border.all(
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.outlineVariant.withValues(alpha: 0.5),
+                        width: 0.5,
+                      ),
                       boxShadow: [
                         BoxShadow(
                           color: Colors.black.withOpacity(0.1),
@@ -1892,10 +1936,12 @@ class _FullScreenMapState extends State<FullScreenMap>
     final type = vehicle.vehicleType.toLowerCase();
     if (type.contains('scoot') || type.contains('moped')) {
       return Icons.moped;
-    } else if (type.contains('car') ||
-        type.contains('my vehicle') ||
-        type.contains('four')) {
+    } else if (type.contains('car') || type.contains('4_wheeler') || type.contains('commercial ev') || type.contains('my vehicle') || type.contains('four')) {
       return Icons.directions_car;
+    } else if (type.contains('bus')) {
+      return Icons.directions_bus;
+    } else if (type.contains('van') || type.contains('truck') || type.contains('pickup') || type.contains('pick-up')) {
+      return Icons.airport_shuttle;
     }
     return Icons.motorcycle;
   }
@@ -1925,37 +1971,33 @@ class _FullScreenMapState extends State<FullScreenMap>
 
     final type = (selectedIcon ?? vehicle.vehicleType).toLowerCase();
 
-    if (type.contains('car') || type.contains('four')) {
-      return Container(
+    if (type.contains('car') || type.contains('four') || type.contains('4_wheeler') || type.contains('commercial ev')) {
+      return Image.asset(
+        AppImages.carImage,
         height: 48,
         width: 48,
-        decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
-          shape: BoxShape.circle,
-        ),
-        child: Center(
-          child: Icon(
-            Icons.directions_car,
-            size: 28,
-            color: Theme.of(context).colorScheme.primary,
-          ),
-        ),
+        fit: BoxFit.contain,
       );
-    } else if (type.contains('truck')) {
-      return Container(
+    } else if (type.contains('auto rickshaw') || type.contains('auto') || type.contains('3_wheeler')) {
+      return Image.asset(
+        AppImages.rickshawImage,
         height: 48,
         width: 48,
-        decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
-          shape: BoxShape.circle,
-        ),
-        child: Center(
-          child: Icon(
-            Icons.local_shipping,
-            size: 28,
-            color: Theme.of(context).colorScheme.primary,
-          ),
-        ),
+        fit: BoxFit.contain,
+      );
+    } else if (type.contains('bus')) {
+      return Image.asset(
+        AppImages.busImage,
+        height: 48,
+        width: 48,
+        fit: BoxFit.contain,
+      );
+    } else if (type.contains('van') || type.contains('truck') || type.contains('pickup') || type.contains('pick-up')) {
+      return Image.asset(
+        AppImages.vanImage,
+        height: 48,
+        width: 48,
+        fit: BoxFit.contain,
       );
     } else if (type.contains('bus')) {
       return Container(
@@ -2108,6 +2150,7 @@ class _FullScreenMapState extends State<FullScreenMap>
                           accentColor: Theme.of(context).colorScheme.primary,
                           selectedIcon: state.tempIcon,
                           selectedColor: state.tempColor,
+                          vehicleType: state.vehicle.vehicleType,
                           margin: EdgeInsets.zero,
                           borderRadius: const BorderRadius.vertical(
                             top: Radius.circular(20),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../core/common/models/vehicle_list_model.dart';
 import '../../../../l10n/app_localizations.dart';
+import '../../../../core/constants/app_images.dart';
 
 class VehicleSelectionAppBar extends StatelessWidget {
   final String title;
@@ -272,7 +273,19 @@ class _VehicleSelectorSheet extends StatelessWidget {
                     padding: const EdgeInsets.symmetric(vertical: 4.0),
                     child: ListTile(
                       leading: Image.asset(
-                        'assets/icons/bike2.png',
+                        (() {
+                          final lower = vehicle.vehicleType?.toLowerCase() ?? '';
+                          if (lower.contains('auto rickshaw') || lower.contains('auto') || lower.contains('3_wheeler')) {
+                            return AppImages.rickshawImage;
+                          } else if (lower.contains('car') || lower.contains('4_wheeler') || lower.contains('commercial ev')) {
+                            return AppImages.carImage;
+                          } else if (lower.contains('bus')) {
+                            return AppImages.busImage;
+                          } else if (lower.contains('van') || lower.contains('truck') || lower.contains('pickup') || lower.contains('pick-up')) {
+                            return AppImages.vanImage;
+                          }
+                          return AppImages.bikeImage;
+                        })(),
                         width: 50,
                         height: 50,
                       ),

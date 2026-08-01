@@ -96,6 +96,10 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin, Wi
   String? _darkMapStyle;
   Vehicles? _selectedDevice;
   BitmapDescriptor? _customMarker;
+  BitmapDescriptor? _carMarker;
+  BitmapDescriptor? _rickshawMarker;
+  BitmapDescriptor? _busMarker;
+  BitmapDescriptor? _vanMarker;
   BitmapDescriptor? _userLocationMarker;
   final prefs = AppPreference.instance;
   bool _isExploreExpanded = false; // For Expandable Explore More section
@@ -526,9 +530,29 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin, Wi
       AppImages.bikeImage,
       80,
     );
+    final Uint8List carIcon = await MapUtils.getBytesFromAsset(
+      AppImages.carImage,
+      80,
+    );
+    final Uint8List rickshawIcon = await MapUtils.getBytesFromAsset(
+      AppImages.rickshawImage,
+      80,
+    );
+    final Uint8List busIcon = await MapUtils.getBytesFromAsset(
+      AppImages.busImage,
+      80,
+    );
+    final Uint8List vanIcon = await MapUtils.getBytesFromAsset(
+      AppImages.vanImage,
+      80,
+    );
     if (mounted) {
       setState(() {
         _customMarker = BitmapDescriptor.fromBytes(markerIcon);
+        _carMarker = BitmapDescriptor.fromBytes(carIcon);
+        _rickshawMarker = BitmapDescriptor.fromBytes(rickshawIcon);
+        _busMarker = BitmapDescriptor.fromBytes(busIcon);
+        _vanMarker = BitmapDescriptor.fromBytes(vanIcon);
       });
       _mapRebuildNotifier.value++;
     }
@@ -1743,9 +1767,20 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin, Wi
                               Marker(
                                 markerId: const MarkerId('vehicle_marker'),
                                 position: animPos,
-                                icon:
-                                    _customMarker ??
-                                    BitmapDescriptor.defaultMarker,
+                                icon: (() {
+                                        final type = _selectedDevice?.vehicleType.toLowerCase() ?? '';
+                                        if (type.contains('auto rickshaw') || type.contains('auto') || type.contains('3_wheeler')) {
+                                          return _rickshawMarker;
+                                        } else if (type.contains('car') || type.contains('4_wheeler') || type.contains('commercial ev')) {
+                                          return _carMarker;
+                                        } else if (type.contains('bus')) {
+                                          return _busMarker;
+                                        } else if (type.contains('van') || type.contains('truck') || type.contains('pickup') || type.contains('pick-up')) {
+                                          return _vanMarker;
+                                        }
+                                        return _customMarker;
+                                      })() ??
+                                      BitmapDescriptor.defaultMarker,
                                 anchor: const Offset(0.5, 0.5),
                                 flat: true,
                                 rotation: animBearing % 360,
