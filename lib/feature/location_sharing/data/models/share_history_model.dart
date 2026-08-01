@@ -32,15 +32,33 @@ class ShareHistoryItem {
   });
 
   factory ShareHistoryItem.fromJson(Map<String, dynamic> json) {
-    int calculatedHours = json['expiresInHours'] ?? 0;
-    
-    // Fallback: Calculate hours from expiresAt and startDate if expiresInHours is 0
-    if (calculatedHours == 0 && json['expiresAt'] != null && json['startDate'] != null) {
-      final expires = DateTime.parse(json['expiresAt']);
-      final start = DateTime.parse(json['startDate']);
-      calculatedHours = (expires.difference(start).inMinutes / 60.0).round();
-      if (calculatedHours < 0) calculatedHours = 0; // Prevent negative hours
+    int calculatedHours = 0;
+    if (json['expiresInHours'] != null) {
+      if (json['expiresInHours'] is int) {
+        calculatedHours = json['expiresInHours'];
+      } else if (json['expiresInHours'] is double) {
+        calculatedHours = (json['expiresInHours'] as double).round();
+      } else {
+        calculatedHours = int.tryParse(json['expiresInHours'].toString()) ?? 0;
+      }
     }
+    
+    // Determine hours based on dates if available
+    if (json['startDate'] != null) {
+      final start = DateTime.parse(json['startDate']);
+      DateTime? end = json['endDate'] != null ? DateTime.parse(json['endDate']) : null;
+      end ??= json['expiresAt'] != null ? DateTime.parse(json['expiresAt']) : null;
+      
+      if (end != null) {
+        final diffMinutes = end.difference(start).inMinutes;
+        if (diffMinutes > 0 && diffMinutes <= 35) {
+          calculatedHours = -30; // 30 minutes link
+        } else if (calculatedHours == 0) {
+          calculatedHours = (diffMinutes / 60.0).round();
+        }
+      }
+    }
+    if (calculatedHours < 0 && calculatedHours != -30) calculatedHours = 0; // Prevent negative hours except our 30 min flag
 
     return ShareHistoryItem(
       shareId: json['shareId'] ?? '',

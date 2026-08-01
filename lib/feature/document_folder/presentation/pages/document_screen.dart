@@ -51,9 +51,7 @@ class _DocumentFolderScreenState extends State<DocumentFolderScreen> {
 
   void _fetchVehicleImageIfNeeded(Vehicle? vehicle) {
     final imei = vehicle?.imei;
-    final vehicleId = (vehicle?.id != null && vehicle!.id!.isNotEmpty)
-        ? vehicle.id
-        : vehicle?.imei;
+    final vehicleId = vehicle?.id;
 
     final docCubit = context.read<DocumentFolderCubit>();
     final isDocInitial = docCubit.state is DocumentFolderInitial;
@@ -92,7 +90,7 @@ class _DocumentFolderScreenState extends State<DocumentFolderScreen> {
     }
   }
 
-  Future<void> _pickImage(ImageSource source, String? imei) async {
+  Future<void> _pickImage(ImageSource source, String? vehicleId) async {
     if (_isPickerActive) return;
     setState(() => _isPickerActive = true);
 
@@ -107,8 +105,8 @@ class _DocumentFolderScreenState extends State<DocumentFolderScreen> {
         if (croppedFile != null) {
           setState(() => _vehicleImage = croppedFile);
           // Upload if vehicle is selected
-          if (imei != null && imei.isNotEmpty) {
-            await _uploadVehicleImage(croppedFile, imei);
+          if (vehicleId != null && vehicleId.isNotEmpty) {
+            await _uploadVehicleImage(croppedFile, vehicleId);
           }
         }
       }
@@ -117,12 +115,12 @@ class _DocumentFolderScreenState extends State<DocumentFolderScreen> {
     }
   }
 
-  Future<void> _uploadVehicleImage(File imageFile, String imei) async {
+  Future<void> _uploadVehicleImage(File imageFile, String vehicleId) async {
     if (!mounted) return;
     setState(() => _isUploading = true);
     try {
       await VehicleControlRepositoryImpl().updateVehicleImage(
-        imei,
+        vehicleId,
         imageFile.path,
       );
       if (mounted) {
@@ -170,7 +168,7 @@ class _DocumentFolderScreenState extends State<DocumentFolderScreen> {
     return croppedFile != null ? File(croppedFile.path) : null;
   }
 
-  void _showImagePicker(String? imei) {
+  void _showImagePicker(String? vehicleId) {
     final colorScheme = Theme.of(context).colorScheme;
     final l10n = AppLocalizations.of(context)!;
 
@@ -216,7 +214,7 @@ class _DocumentFolderScreenState extends State<DocumentFolderScreen> {
                     onTap: () async {
                       Navigator.pop(context);
                       await Future.delayed(const Duration(milliseconds: 300));
-                      _pickImage(ImageSource.camera, imei);
+                      _pickImage(ImageSource.camera, vehicleId);
                     },
                   ),
                   const SizedBox(width: 32),
@@ -226,7 +224,7 @@ class _DocumentFolderScreenState extends State<DocumentFolderScreen> {
                     onTap: () async {
                       Navigator.pop(context);
                       await Future.delayed(const Duration(milliseconds: 300));
-                      _pickImage(ImageSource.gallery, imei);
+                      _pickImage(ImageSource.gallery, vehicleId);
                     },
                   ),
                 ],
@@ -331,7 +329,7 @@ class _DocumentFolderScreenState extends State<DocumentFolderScreen> {
                   MaterialPageRoute(builder: (_) => buildUploadScreen(doc)),
                 );
                 if (res == true && selectedVehicle != null) {
-                  final vId = selectedVehicle.id ?? selectedVehicle.imei;
+                  final vId = selectedVehicle.id;
                   if (vId != null && vId.isNotEmpty) {
                     context.read<DocumentFolderCubit>().fetchDocuments(vId);
                   }
@@ -364,7 +362,7 @@ class _DocumentFolderScreenState extends State<DocumentFolderScreen> {
       }
 
       if (result == true && selectedVehicle != null) {
-        final vId = selectedVehicle.id ?? selectedVehicle.imei;
+        final vId = selectedVehicle.id;
         if (vId != null && vId.isNotEmpty) {
           context.read<DocumentFolderCubit>().fetchDocuments(vId);
         }
@@ -506,8 +504,7 @@ class _DocumentFolderScreenState extends State<DocumentFolderScreen> {
                                         'other_document',
                                         (doc) => DocumentOtherdocumentScreen(
                                           title: l10n.otherDocumentTitle,
-                                          vehicleId:
-                                              vehicle.id ?? vehicle.imei ?? '',
+                                          vehicleId: vehicle.id ?? '',
                                           initialDocument: doc,
                                         ),
                                       );
@@ -568,7 +565,7 @@ class _DocumentFolderScreenState extends State<DocumentFolderScreen> {
                                             icon: const Icon(Icons.edit, color: Colors.white),
                                             onPressed: () {
                                               Navigator.pop(context);
-                                              _showImagePicker(selectedVehicle?.imei);
+                                              _showImagePicker(selectedVehicle?.id);
                                             },
                                           ),
                                         ],
@@ -595,7 +592,7 @@ class _DocumentFolderScreenState extends State<DocumentFolderScreen> {
                                   ),
                                 );
                               } else {
-                                _showImagePicker(selectedVehicle?.imei);
+                                _showImagePicker(selectedVehicle?.id);
                               }
                             },
                             child: Container(
@@ -796,8 +793,7 @@ class _DocumentFolderScreenState extends State<DocumentFolderScreen> {
                                         'rc',
                                         (doc) => DocumentVehicleRCScreen(
                                           title: l10n.vehicleRCTitle,
-                                          vehicleId:
-                                              vehicle.id ?? vehicle.imei ?? '',
+                                          vehicleId: vehicle.id ?? '',
                                           initialDocument: doc,
                                         ),
                                       );
@@ -826,8 +822,7 @@ class _DocumentFolderScreenState extends State<DocumentFolderScreen> {
                                         'insurance',
                                         (doc) => DocumentSubScreen(
                                           title: l10n.insuranceTitle,
-                                          vehicleId:
-                                              vehicle.id ?? vehicle.imei ?? '',
+                                          vehicleId: vehicle.id ?? '',
                                           subtype: 'insurance',
                                           initialDocument: doc,
                                         ),
@@ -857,8 +852,7 @@ class _DocumentFolderScreenState extends State<DocumentFolderScreen> {
                                         'puc',
                                         (doc) => DocumentSubScreen(
                                           title: l10n.pucTitle,
-                                          vehicleId:
-                                              vehicle.id ?? vehicle.imei ?? '',
+                                          vehicleId: vehicle.id ?? '',
                                           subtype: 'puc',
                                           initialDocument: doc,
                                         ),
@@ -1022,10 +1016,7 @@ class _DocumentFolderScreenState extends State<DocumentFolderScreen> {
                                           MaterialPageRoute(
                                             builder: (context) =>
                                                 AccessoryBillListScreen(
-                                                  vehicleId:
-                                                      vehicle.id ??
-                                                      vehicle.imei ??
-                                                      '',
+                                                  vehicleId: vehicle.id ?? '',
                                                   bills: bills,
                                                 ),
                                           ),
@@ -1036,18 +1027,13 @@ class _DocumentFolderScreenState extends State<DocumentFolderScreen> {
                                           MaterialPageRoute(
                                             builder: (context) =>
                                                 AccessoryBillScreen(
-                                                  vehicleId:
-                                                      vehicle.id ??
-                                                      vehicle.imei ??
-                                                      '',
+                                                  vehicleId: vehicle.id ?? '',
                                                 ),
                                           ),
                                         );
                                       }
                                       if (res == true && selectedVehicle != null) {
-                                        final vId =
-                                            selectedVehicle.id ??
-                                            selectedVehicle.imei;
+                                        final vId = selectedVehicle.id;
                                         if (vId != null && vId.isNotEmpty) {
                                           context
                                               .read<DocumentFolderCubit>()

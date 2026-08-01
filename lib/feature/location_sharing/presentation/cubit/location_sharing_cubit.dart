@@ -164,7 +164,7 @@ class LocationSharingCubit extends Cubit<LocationSharingState> {
 
       final Map<String, dynamic> createBody = {
         "shareType": shareType,
-        "expiresInHours": duration == 0 ? 8760 : duration,
+        "expiresInHours": duration == -30 ? (30 / 60.0) : (duration == 0 ? 8760 : duration),
         "userId": userId,
       };
 
@@ -179,7 +179,7 @@ class LocationSharingCubit extends Cubit<LocationSharingState> {
         createBody['startDate'] = DateTime.now().toUtc().toIso8601String();
         createBody['endDate'] = DateTime.now()
             .toUtc()
-            .add(Duration(hours: duration == 0 ? 8760 : duration))
+            .add(duration == -30 ? const Duration(minutes: 30) : Duration(hours: duration == 0 ? 8760 : duration))
             .toIso8601String();
       } else {
         createBody['imei'] = null;

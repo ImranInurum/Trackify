@@ -192,6 +192,19 @@ class _LocationSharingScreenState extends State<LocationSharingScreen> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   RadioListTile<int>(
+                    title: const Text('30 Minutes'),
+                    value: -30,
+                    groupValue: selectedOption,
+                    onChanged: (value) {
+                      setState(() => selectedOption = value!);
+                    },
+                    contentPadding: EdgeInsets.zero,
+                    visualDensity: const VisualDensity(
+                      horizontal: -4,
+                      vertical: -4,
+                    ),
+                  ),
+                  RadioListTile<int>(
                     title: Text(l10n.twoHours),
                     value: 2,
                     groupValue: selectedOption,
