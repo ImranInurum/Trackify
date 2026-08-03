@@ -70,12 +70,12 @@ class RideDetailScreen extends StatelessWidget {
                 color: isDark ? const Color(0xFF222222) : Colors.white,
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                  color: theme.colorScheme.onSurface.withOpacity(0.05),
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.05),
                 ),
                 boxShadow: [
                   if (!isDark)
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.05),
+                      color: Colors.black.withValues(alpha: 0.05),
                       blurRadius: 10,
                       offset: const Offset(0, 4),
                     ),
@@ -107,7 +107,7 @@ class RideDetailScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 12),
                   Divider(
-                    color: theme.colorScheme.onSurface.withOpacity(0.1),
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.1),
                     height: 1,
                   ),
                   const SizedBox(height: 16),
@@ -118,7 +118,7 @@ class RideDetailScreen extends StatelessWidget {
                         children: [
                           Icon(
                             Icons.add_road,
-                            color: theme.colorScheme.onSurface.withOpacity(0.7),
+                            color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                             size: 18,
                           ),
                           const SizedBox(width: 6),
@@ -135,7 +135,7 @@ class RideDetailScreen extends StatelessWidget {
                       Text(
                         ride.tag,
                         style: TextStyle(
-                          color: theme.colorScheme.onSurface.withOpacity(0.9),
+                          color: theme.colorScheme.onSurface.withValues(alpha: 0.9),
                           fontSize: 14,
                           fontWeight: FontWeight.w500,
                         ),
@@ -144,7 +144,7 @@ class RideDetailScreen extends StatelessWidget {
                         children: [
                           Icon(
                             Icons.timer_outlined,
-                            color: theme.colorScheme.onSurface.withOpacity(0.7),
+                            color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                             size: 18,
                           ),
                           const SizedBox(width: 6),

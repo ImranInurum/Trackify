@@ -214,14 +214,14 @@ class _AddOverspeedAlertScreenState extends State<AddOverspeedAlertScreen> {
     return Row(
       children: [
         Icon(icon,
-            color: theme.colorScheme.onSurface.withOpacity(0.6), size: 20),
+            color: theme.colorScheme.onSurface.withValues(alpha: 0.6), size: 20),
         const SizedBox(width: 16),
         Expanded(
           flex: 2,
           child: Text(
             label,
             style: theme.textTheme.bodyMedium?.copyWith(
-                color: theme.colorScheme.onSurface.withOpacity(0.8)),
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.8)),
           ),
         ),
         Expanded(
@@ -258,14 +258,14 @@ class _AddOverspeedAlertScreenState extends State<AddOverspeedAlertScreen> {
     return Row(
       children: [
         Icon(icon,
-            color: theme.colorScheme.onSurface.withOpacity(0.6), size: 20),
+            color: theme.colorScheme.onSurface.withValues(alpha: 0.6), size: 20),
         const SizedBox(width: 16),
         Expanded(
           flex: 2,
           child: Text(
             label,
             style: theme.textTheme.bodyMedium?.copyWith(
-                color: theme.colorScheme.onSurface.withOpacity(0.8)),
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.8)),
           ),
         ),
         Expanded(
@@ -306,14 +306,14 @@ class _AddOverspeedAlertScreenState extends State<AddOverspeedAlertScreen> {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Icon(Icons.directions_car_filled_outlined,
-            color: theme.colorScheme.onSurface.withOpacity(0.6), size: 20),
+            color: theme.colorScheme.onSurface.withValues(alpha: 0.6), size: 20),
         const SizedBox(width: 16),
         Expanded(
           flex: 2,
           child: Text(
             l10n.selectYourVehicle,
             style: theme.textTheme.bodyMedium?.copyWith(
-                color: theme.colorScheme.onSurface.withOpacity(0.8)),
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.8)),
           ),
         ),
         Expanded(
@@ -360,7 +360,7 @@ class _AddOverspeedAlertScreenState extends State<AddOverspeedAlertScreen> {
                   const SizedBox(width: 8),
                   Icon(
                     Icons.open_in_new,
-                    color: theme.colorScheme.onSurface.withOpacity(0.6),
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                     size: 16,
                   ),
                 ],

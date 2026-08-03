@@ -96,8 +96,8 @@ class _ScanQrScreenState extends State<ScanQrScreen> with SingleTickerProviderSt
                     // Overlay
                     CustomPaint(
                       painter: ScannerOverlayPainter(
-                        overlayColor: Colors.black.withOpacity(0.6),
-                        borderColor: theme.colorScheme.onSurface.withOpacity(0.8),
+                        overlayColor: Colors.black.withValues(alpha: 0.6),
+                        borderColor: theme.colorScheme.onSurface.withValues(alpha: 0.8),
                         scanAreaSize: scanAreaSize,
                       ),
                     ),
@@ -121,7 +121,7 @@ class _ScanQrScreenState extends State<ScanQrScreen> with SingleTickerProviderSt
                                       color: Colors.cyan,
                                       boxShadow: [
                                         BoxShadow(
-                                          color: Colors.cyan.withOpacity(0.5),
+                                          color: Colors.cyan.withValues(alpha: 0.5),
                                           blurRadius: 4,
                                           spreadRadius: 1,
                                         ),

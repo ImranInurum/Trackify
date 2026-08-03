@@ -47,7 +47,7 @@ class SafeParkingScreen extends StatelessWidget {
                   child: TextButton(
                     onPressed: () {},
                     style: TextButton.styleFrom(
-                      backgroundColor: color.primary.withOpacity(0.1),
+                      backgroundColor: color.primary.withValues(alpha: 0.1),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(20),
                       ),
@@ -119,7 +119,7 @@ class SafeParkingScreen extends StatelessWidget {
                     l10n.safeParkingSubtitle,
                     textAlign: TextAlign.center,
                     style: text.bodyMedium?.copyWith(
-                      color: color.onSurface.withOpacity(0.6),
+                      color: color.onSurface.withValues(alpha: 0.6),
                     ),
                   ),
                 ),
@@ -138,7 +138,7 @@ class SafeParkingScreen extends StatelessWidget {
                         colors: state.isActivated
                             ? [
                           color.primary,
-                          color.primary.withOpacity(0.7),
+                          color.primary.withValues(alpha: 0.7),
                         ]
                             : isDark
                             ? [

@@ -94,7 +94,7 @@ class _SearchableDropdownState<T> extends State<SearchableDropdown<T>> {
             decoration: BoxDecoration(
               color: Colors.transparent,
               borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: theme.colorScheme.onSurface.withOpacity(0.12)),
+              border: Border.all(color: theme.colorScheme.onSurface.withValues(alpha: 0.12)),
             ),
             padding: const EdgeInsets.symmetric(horizontal: 14),
             child: Theme(

@@ -40,9 +40,9 @@ class _SwipeToLockState extends State<SwipeToLock> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     const SizedBox(width: 48), // Offset for the thumb
-                    Icon(Icons.chevron_right, color: Colors.blue.withOpacity(0.3), size: 20),
-                    Icon(Icons.chevron_right, color: Colors.blue.withOpacity(0.5), size: 20),
-                    Icon(Icons.chevron_right, color: Colors.blue.withOpacity(0.7), size: 20),
+                    Icon(Icons.chevron_right, color: Colors.blue.withValues(alpha: 0.3), size: 20),
+                    Icon(Icons.chevron_right, color: Colors.blue.withValues(alpha: 0.5), size: 20),
+                    Icon(Icons.chevron_right, color: Colors.blue.withValues(alpha: 0.7), size: 20),
                     const SizedBox(width: 12),
                     Text(
                       widget.text.toUpperCase(),
@@ -82,10 +82,10 @@ class _SwipeToLockState extends State<SwipeToLock> {
                     decoration: BoxDecoration(
                       color: Colors.white,
                       shape: BoxShape.circle,
-                      border: Border.all(color: Colors.red.withOpacity(0.3), width: 1),
+                      border: Border.all(color: Colors.red.withValues(alpha: 0.3), width: 1),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.1),
+                          color: Colors.black.withValues(alpha: 0.1),
                           blurRadius: 4,
                           offset: const Offset(0, 2),
                         ),

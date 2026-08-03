@@ -102,7 +102,7 @@ class LocationSharingCard extends StatelessWidget {
                       Icon(
                         Icons.arrow_forward_ios_rounded,
                         size: 16,
-                        color: theme.hintColor.withOpacity(0.5),
+                        color: theme.hintColor.withValues(alpha: 0.5),
                       ),
                     ],
                   ),

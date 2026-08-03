@@ -95,7 +95,7 @@ class _OverSpeedAlertScreenState extends State<OverSpeedAlertScreen> {
                               child: Text(
                                 l10n.noAlertsCreated,
                                 style: theme.textTheme.bodyLarge?.copyWith(
-                                  color: theme.colorScheme.onSurface.withOpacity(0.5),
+                                  color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
                                 ),
                               ),
                             ),
@@ -157,7 +157,7 @@ class _OverSpeedAlertScreenState extends State<OverSpeedAlertScreen> {
                                             child: Text(
                                               l10n.cancel,
                                               style: theme.textTheme.bodyMedium?.copyWith(
-                                                color: theme.colorScheme.onSurface.withOpacity(0.6),
+                                                color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                                               ),
                                             ),
                                         ),

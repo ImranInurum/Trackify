@@ -337,7 +337,7 @@ class _EditVehicleViewState extends State<_EditVehicleView> {
                     children: state.configs.map((config) {
                       final isSelected = state.selectedConfig?.id == config.id;
                       final Color active = theme.colorScheme.secondary;
-                      final Color inactive = theme.colorScheme.onSurface.withOpacity(0.5);
+                      final Color inactive = theme.colorScheme.onSurface.withValues(alpha: 0.5);
                       return Padding(
                         padding: const EdgeInsets.only(right: 4),
                         child: GestureDetector(
@@ -400,7 +400,7 @@ class _EditVehicleViewState extends State<_EditVehicleView> {
                           children: state.selectedConfig!.supportedFuelTypes.map((fuel) {
                             final isSelected = state.selectedFuelType == fuel;
                             final Color active = theme.colorScheme.secondary;
-                            final Color inactive = theme.colorScheme.onSurface.withOpacity(0.5);
+                            final Color inactive = theme.colorScheme.onSurface.withValues(alpha: 0.5);
                             return Padding(
                               padding: const EdgeInsets.only(right: 4),
                               child: GestureDetector(
@@ -647,7 +647,7 @@ class _EditVehicleViewState extends State<_EditVehicleView> {
         color: Colors.transparent,
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
-          color: theme.colorScheme.onSurface.withOpacity(0.12),
+          color: theme.colorScheme.onSurface.withValues(alpha: 0.12),
         ),
       ),
       child: Theme(
@@ -669,7 +669,7 @@ class _EditVehicleViewState extends State<_EditVehicleView> {
                 Icon(Icons.arrow_drop_down, color: theme.colorScheme.primary),
             hint: Text(
               hint,
-              style: TextStyle(color: theme.colorScheme.onSurface.withOpacity(0.5),
+              style: TextStyle(color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
                 fontSize: 14,
               ),
             ),

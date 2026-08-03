@@ -1,5 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:trackify/app/cubit/app_cubit.dart';
 import 'package:trackify/feature/trips/data/entity/ride_model.dart';
 import 'package:trackify/feature/trips/presentation/view/widgets/all_rides/widgets/polyline_thumbnail.dart';
 import 'package:trackify/l10n/app_localizations.dart';
@@ -11,6 +13,7 @@ class TripCard extends StatelessWidget {
   final List<Ride> rides;
   final VoidCallback onTap;
   final String? imagePath;
+  final String savedUnit;
 
   const TripCard({
     super.key,
@@ -18,6 +21,7 @@ class TripCard extends StatelessWidget {
     required this.rides,
     required this.onTap,
     this.imagePath,
+    this.savedUnit = 'km',
   });
 
   @override
@@ -25,11 +29,11 @@ class TripCard extends StatelessWidget {
     final theme = Theme.of(context);
     final goldColor = theme.colorScheme.primary;
     final l10n = AppLocalizations.of(context)!;
-
+    final currentUnit = context.watch<AppCubit>().state.distanceUnit;
     
     double totalDist = 0;
     for (var r in rides) {
-      totalDist += r.distance;
+      totalDist += DistanceUnitExt.convertDistance(r.distance, savedUnit, currentUnit);
     }
 
     return GestureDetector(

@@ -188,7 +188,7 @@ class _AddFuelScreenState extends State<AddFuelScreen> with TickerProviderStateM
           child: ElevatedButton(
             style: ElevatedButton.styleFrom(
               backgroundColor: colorScheme.primary,
-              disabledBackgroundColor: colorScheme.onSurface.withOpacity(0.12),
+              disabledBackgroundColor: colorScheme.onSurface.withValues(alpha: 0.12),
               shape: RoundedRectangleBorder(
                 borderRadius:
                 BorderRadius.circular(16),
@@ -247,7 +247,7 @@ class _AddFuelScreenState extends State<AddFuelScreen> with TickerProviderStateM
                 fontSize: 18,
                 color: _isFormValid 
                     ? colorScheme.onPrimary 
-                    : colorScheme.onSurface.withOpacity(0.38),
+                    : colorScheme.onSurface.withValues(alpha: 0.38),
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -721,7 +721,7 @@ class _AddFuelScreenState extends State<AddFuelScreen> with TickerProviderStateM
                                       l10n.fuelBeforeRefuelDesc,
                                       style: TextStyle(
                                         fontSize: 11,
-                                        color: colorScheme.onSurface.withOpacity(0.6),
+                                        color: colorScheme.onSurface.withValues(alpha: 0.6),
                                         height: 1.4,
                                       ),
                                     ),

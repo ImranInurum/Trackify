@@ -2148,7 +2148,7 @@ class AppLocalizationsKn extends AppLocalizations {
 
   @override
   String ridesSelectedSummary(String count, String distance, String duration) {
-    return '$count ಸವಾರಿಗಳನ್ನು ಆಯ್ಕೆ ಮಾಡಲಾಗಿದೆ | $distance ಕಿಮೀ • $duration';
+    return '$count ಸವಾರಿಗಳನ್ನು ಆಯ್ಕೆ ಮಾಡಲಾಗಿದೆ | $distance • $duration';
   }
 
   @override

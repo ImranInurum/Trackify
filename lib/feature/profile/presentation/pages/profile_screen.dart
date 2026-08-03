@@ -254,7 +254,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 style: TextStyle(
                                   color: Theme.of(
                                     context,
-                                  ).colorScheme.onSurface.withOpacity(0.6),
+                                  ).colorScheme.onSurface.withValues(alpha: 0.6),
                                 ),
                               ),
                               const SizedBox(height: 2),
@@ -263,7 +263,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 style: TextStyle(
                                   color: Theme.of(
                                     context,
-                                  ).colorScheme.onSurface.withOpacity(0.6),
+                                  ).colorScheme.onSurface.withValues(alpha: 0.6),
                                 ),
                               ),
                             ],
@@ -274,7 +274,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           size: 40,
                           color: Theme.of(
                             context,
-                          ).colorScheme.onSurface.withOpacity(0.3),
+                          ).colorScheme.onSurface.withValues(alpha: 0.3),
                         ),
                       ],
                     ),
@@ -497,7 +497,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     style: TextStyle(
                                       color: Theme.of(
                                         context,
-                                      ).colorScheme.onSurface.withOpacity(0.6),
+                                      ).colorScheme.onSurface.withValues(alpha: 0.6),
                                       fontSize: 12,
                                     ),
                                   ),
@@ -508,7 +508,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               Icons.chevron_right,
                               color: Theme.of(
                                 context,
-                              ).colorScheme.onSurface.withOpacity(0.3),
+                              ).colorScheme.onSurface.withValues(alpha: 0.3),
                             ),
                           ],
                         ),
@@ -851,7 +851,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         style: TextStyle(
                           color: Theme.of(
                             context,
-                          ).colorScheme.onSurface.withOpacity(0.6),
+                          ).colorScheme.onSurface.withValues(alpha: 0.6),
                           fontSize: 13,
                         ),
                       ),
@@ -863,7 +863,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   size: 18,
                   color: Theme.of(
                     context,
-                  ).colorScheme.onSurface.withOpacity(0.3),
+                  ).colorScheme.onSurface.withValues(alpha: 0.3),
                 ),
               ],
             ),

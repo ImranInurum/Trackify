@@ -90,6 +90,7 @@ class RideCard extends StatelessWidget {
                         startLabel: ride.startLocation,
                         endLabel: ride.endLocation,
                         rideId: ride.id,
+                        isDotted: ride.distance < 0.1,
                       ),
                     ),
                     Positioned(

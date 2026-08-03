@@ -591,7 +591,7 @@ class _RefuelHistoryTabViewState extends State<RefuelHistoryTabView> {
                       child: SingleChildScrollView(
                         child: DataTable(
                           headingRowColor: MaterialStateProperty.all(
-                            Theme.of(context).primaryColor.withOpacity(0.1),
+                            Theme.of(context).primaryColor.withValues(alpha: 0.1),
                           ),
                           columns: [
                             DataColumn(label: Text(l10n.dateHeader)),

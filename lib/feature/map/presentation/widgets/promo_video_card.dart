@@ -238,7 +238,7 @@ class _PromoVideoCardState extends State<PromoVideoCard> {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.08),
+            color: Colors.black.withValues(alpha: 0.08),
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),
@@ -320,7 +320,7 @@ class _PromoVideoCardState extends State<PromoVideoCard> {
                 padding:
                     const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
-                  color: Colors.red.withOpacity(0.85),
+                  color: Colors.red.withValues(alpha: 0.85),
                   borderRadius: BorderRadius.circular(6),
                 ),
                 child: const Row(
@@ -345,7 +345,7 @@ class _PromoVideoCardState extends State<PromoVideoCard> {
             Container(
               padding: const EdgeInsets.all(14),
               decoration: BoxDecoration(
-                color: Colors.red.shade700.withOpacity(0.85),
+                color: Colors.red.shade700.withValues(alpha: 0.85),
                 shape: BoxShape.circle,
               ),
               child: const Icon(Icons.error_outline,
@@ -357,7 +357,7 @@ class _PromoVideoCardState extends State<PromoVideoCard> {
             Container(
               padding: const EdgeInsets.all(14),
               decoration: BoxDecoration(
-                color: Colors.black.withOpacity(0.7),
+                color: Colors.black.withValues(alpha: 0.7),
                 shape: BoxShape.circle,
               ),
               child: const Icon(Icons.play_arrow,

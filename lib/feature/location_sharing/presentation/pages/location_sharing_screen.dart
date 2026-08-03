@@ -306,7 +306,7 @@ class _LocationSharingScreenState extends State<LocationSharingScreen> {
         appBar: AppBar(
           backgroundColor: theme.cardColor,
           elevation: 1,
-          shadowColor: theme.shadowColor.withOpacity(0.1),
+          shadowColor: theme.shadowColor.withValues(alpha: 0.1),
           leading: IconButton(
             icon: Icon(
               Icons.arrow_back_ios_new,

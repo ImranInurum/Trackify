@@ -571,7 +571,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin, Wi
 
     // Outer glow ring
     final Paint glowPaint = Paint()
-      ..color = Colors.white.withOpacity(0.22)
+      ..color = Colors.white.withValues(alpha: 0.22)
       ..style = PaintingStyle.fill;
     canvas.drawCircle(
       const Offset(center, center - tipHeight / 2),
@@ -1290,16 +1290,16 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin, Wi
                 height: 32, // Reduced height
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.95),
+                  color: Colors.white.withValues(alpha: 0.95),
                   borderRadius: BorderRadius.circular(16),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.1),
+                      color: Colors.black.withValues(alpha: 0.1),
                       blurRadius: 4,
                       offset: const Offset(0, 2),
                     ),
                   ],
-                  border: Border.all(color: Colors.grey.withOpacity(0.2)),
+                  border: Border.all(color: Colors.grey.withValues(alpha: 0.2)),
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
@@ -1448,7 +1448,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin, Wi
                 : Icons.keyboard_arrow_down,
             size: 14,
             color: isDark
-                ? theme.colorScheme.onSurface.withOpacity(0.7)
+                ? theme.colorScheme.onSurface.withValues(alpha: 0.7)
                 : Colors.black54,
           ),
         ],
@@ -1471,7 +1471,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin, Wi
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.1),
+              color: Colors.black.withValues(alpha: 0.1),
               blurRadius: 8,
               offset: const Offset(0, 4),
             ),
@@ -1570,7 +1570,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin, Wi
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.03),
+              color: Colors.black.withValues(alpha: 0.03),
               blurRadius: 4,
               offset: const Offset(0, 2),
             ),
@@ -2355,7 +2355,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin, Wi
         Text(
           l10n.labelColon(label),
           style: getRegularStyle(
-            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+            color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
             fontSize: 11,
           ),
         ),
@@ -2545,7 +2545,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin, Wi
                         style: getRegularStyle(
                           color: Theme.of(
                             context,
-                          ).colorScheme.onSurface.withOpacity(0.6),
+                          ).colorScheme.onSurface.withValues(alpha: 0.6),
                           fontSize: 11,
                         ),
                       ),
@@ -2707,12 +2707,12 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin, Wi
               color: Theme.of(context).cardColor,
               borderRadius: BorderRadius.circular(20),
               border: Border.all(
-                color: Theme.of(context).dividerColor.withOpacity(0.5),
+                color: Theme.of(context).dividerColor.withValues(alpha: 0.5),
                 width: 0.5, // Added 0.5 border width as requested
               ),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(isDark ? 0.3 : 0.05),
+                  color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.05),
                   blurRadius: 10,
                   offset: const Offset(0, 4),
                 ),
@@ -2745,7 +2745,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin, Wi
                     style: getRegularStyle(
                       color: Theme.of(
                         context,
-                      ).colorScheme.onSurface.withOpacity(0.7),
+                      ).colorScheme.onSurface.withValues(alpha: 0.7),
                       fontSize: 12, // Reduced by 2 as requested
                     ),
                   ),
@@ -2766,7 +2766,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin, Wi
                           width: double.infinity,
                           height: 250, // Increased height
                           color: isDark
-                              ? Colors.black.withOpacity(0.2)
+                              ? Colors.black.withValues(alpha: 0.2)
                               : Colors.transparent,
                         ),
                       ],
@@ -2805,7 +2805,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin, Wi
                                 style: getRegularStyle(
                                   color: Theme.of(
                                     context,
-                                  ).colorScheme.onSurface.withOpacity(0.6),
+                                  ).colorScheme.onSurface.withValues(alpha: 0.6),
                                   fontSize: 11,
                                 ),
                               ),
@@ -2846,11 +2846,11 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin, Wi
           color: Theme.of(context).cardColor,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: Theme.of(context).dividerColor.withOpacity(0.5),
+            color: Theme.of(context).dividerColor.withValues(alpha: 0.5),
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(isDark ? 0.3 : 0.05),
+              color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.05),
               blurRadius: 8,
               offset: const Offset(0, 2),
             ),
@@ -2894,7 +2894,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin, Wi
               ),
               child: Icon(
                 Icons.chevron_right,
-                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
                 size: 16,
               ),
             ),
@@ -2922,10 +2922,10 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin, Wi
         decoration: BoxDecoration(
           color: Theme.of(context).cardColor,
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: statusColor.withOpacity(0.35), width: 1),
+          border: Border.all(color: statusColor.withValues(alpha: 0.35), width: 1),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(isDark ? 0.3 : 0.05),
+              color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.05),
               blurRadius: 8,
               offset: const Offset(0, 2),
             ),
@@ -2936,7 +2936,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin, Wi
             Container(
               padding: const EdgeInsets.all(6),
               decoration: BoxDecoration(
-                color: statusColor.withOpacity(0.12),
+                color: statusColor.withValues(alpha: 0.12),
                 shape: BoxShape.circle,
               ),
               child: Icon(icon, color: statusColor, size: 20),
@@ -2952,7 +2952,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin, Wi
                     style: getRegularStyle(
                       color: Theme.of(
                         context,
-                      ).colorScheme.onSurface.withOpacity(0.55),
+                      ).colorScheme.onSurface.withValues(alpha: 0.55),
                       fontSize: 10,
                     ),
                     maxLines: 1,
@@ -3090,7 +3090,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin, Wi
             color: Theme.of(context).cardColor,
             borderRadius: BorderRadius.circular(18),
             boxShadow: [
-              BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10),
+              BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 10),
             ],
           ),
           child: Column(
@@ -3133,12 +3133,12 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin, Wi
               decoration: BoxDecoration(
                 color: Theme.of(context).cardColor,
                 border: Border.all(
-                  color: Theme.of(context).dividerColor.withOpacity(0.2),
+                  color: Theme.of(context).dividerColor.withValues(alpha: 0.2),
                 ),
                 borderRadius: BorderRadius.circular(24),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
+                    color: Colors.black.withValues(alpha: 0.05),
                     blurRadius: 4,
                     offset: const Offset(0, 2),
                   ),
@@ -3214,7 +3214,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin, Wi
             textAlign: TextAlign.center,
             maxLines: 2,
             style: getMediumStyle(
-              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7),
               fontSize: 10.5,
             ),
           ),
@@ -3255,7 +3255,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin, Wi
                       height: 120,
                       width: 120,
                       decoration: BoxDecoration(
-                        color: colorScheme.primary.withOpacity(0.1),
+                        color: colorScheme.primary.withValues(alpha: 0.1),
                         shape: BoxShape.circle,
                       ),
                       child: Icon(
@@ -3298,7 +3298,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin, Wi
                           : const Color(0xFFF9F7F2),
                       borderRadius: BorderRadius.circular(14),
                       border: Border.all(
-                        color: colorScheme.outline.withOpacity(0.3),
+                        color: colorScheme.outline.withValues(alpha: 0.3),
                         width: 1.5,
                       ),
                     ),
@@ -3328,7 +3328,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin, Wi
       height: 50,
       alignment: Alignment.center,
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.primary.withOpacity(0.08),
+        color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.08),
         borderRadius: BorderRadius.circular(16),
       ),
       child: Container(
@@ -3361,7 +3361,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin, Wi
           height: 50,
           alignment: Alignment.center,
           decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.primary.withOpacity(0.08),
+            color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.08),
             borderRadius: BorderRadius.circular(16),
           ),
           child: Icon(
@@ -3381,7 +3381,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin, Wi
                 shape: BoxShape.circle,
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
+                    color: Colors.black.withValues(alpha: 0.1),
                     blurRadius: 4,
                   ),
                 ],

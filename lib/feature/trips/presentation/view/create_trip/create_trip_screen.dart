@@ -77,6 +77,7 @@ class _CreateTripScreenState extends State<CreateTripScreen> {
                 builder: (context) => TripDetailsScreen(
                   tripName: _getLocalizedTripTitle(state.title, l10n),
                   rides: state.rides,
+                  savedUnit: state.savedUnit,
                 ),
               ),
             );
@@ -219,7 +220,7 @@ class _CreateTripScreenState extends State<CreateTripScreen> {
               return _SelectionSummarySheet(
                 summary: l10n.ridesSelectedSummary(
                   selectedRides.length.toString(),
-                  totalDist.toStringAsFixed(0),
+                  '${totalDist.toStringAsFixed(0)} ${context.displayKms}',
                   durationStr,
                 ),
                 goldColor: goldColor,
@@ -559,7 +560,7 @@ class _SelectionTooltip extends StatelessWidget {
             borderRadius: BorderRadius.circular(16),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.15),
+                color: Colors.black.withValues(alpha: 0.15),
                 blurRadius: 15,
                 spreadRadius: 2,
                 offset: const Offset(0, 6),

@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../cubit/feature_cubit.dart';
@@ -164,7 +164,7 @@ class _FeatureDetailsScreenState
 
                         color: colorScheme
                             .outlineVariant
-                            .withOpacity(0.1),
+                            .withValues(alpha: 0.1),
                       ),
                     ),
 
@@ -185,7 +185,7 @@ class _FeatureDetailsScreenState
 
                             color: colorScheme
                                 .surface
-                                .withOpacity(0.54),
+                                .withValues(alpha: 0.54),
 
                             borderRadius:
                             BorderRadius.circular(
@@ -196,7 +196,7 @@ class _FeatureDetailsScreenState
 
                               color: colorScheme
                                   .outlineVariant
-                                  .withOpacity(0.1),
+                                  .withValues(alpha: 0.1),
                             ),
                           ),
 
@@ -265,7 +265,7 @@ class _FeatureDetailsScreenState
 
                                 style: TextStyle(color: colorScheme
                                       .onSurface
-                                      .withOpacity(0.7),
+                                      .withValues(alpha: 0.7),
 
                                   fontSize: 13,
 

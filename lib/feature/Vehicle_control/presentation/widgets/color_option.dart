@@ -37,7 +37,7 @@ class ColorOption extends StatelessWidget {
                   border: Border.all(
                     color: isSelected 
                         ? (theme.brightness == Brightness.dark ? Colors.white : theme.colorScheme.primary)
-                        : theme.colorScheme.onSurface.withOpacity(0.15),
+                        : theme.colorScheme.onSurface.withValues(alpha: 0.15),
                     width: 1.5,
                   ),
                 ),
@@ -67,7 +67,7 @@ class ColorOption extends StatelessWidget {
               fontSize: 11,
               color: isSelected 
                   ? theme.colorScheme.onSurface 
-                  : theme.colorScheme.onSurface.withOpacity(0.4),
+                  : theme.colorScheme.onSurface.withValues(alpha: 0.4),
               fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
             ),
           ),

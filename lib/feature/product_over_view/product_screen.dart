@@ -216,7 +216,7 @@ class _ProductOverviewScreenState extends State<ProductOverviewScreen> {
             borderRadius: BorderRadius.circular(16),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.05),
+                color: Colors.black.withValues(alpha: 0.05),
                 blurRadius: 10,
                 offset: const Offset(0, 4),
               ),
@@ -300,7 +300,7 @@ class _ProductOverviewScreenState extends State<ProductOverviewScreen> {
                                 Container(
                                   padding: const EdgeInsets.all(12),
                                   decoration: BoxDecoration(
-                                    color: Colors.black.withOpacity(0.5),
+                                    color: Colors.black.withValues(alpha: 0.5),
                                     shape: BoxShape.circle,
                                   ),
                                   child: const Icon(
@@ -430,7 +430,7 @@ class _ProductOverviewScreenState extends State<ProductOverviewScreen> {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration:
-                    BoxDecoration(color: Colors.black.withOpacity(0.4), shape: BoxShape.circle),
+                    BoxDecoration(color: Colors.black.withValues(alpha: 0.4), shape: BoxShape.circle),
                 child: const Icon(Icons.play_arrow, color: Colors.white, size: 24),
               ),
             ],
@@ -565,7 +565,7 @@ class _ProductOverviewScreenState extends State<ProductOverviewScreen> {
     final l10n = AppLocalizations.of(context);
     return Container(
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surfaceContainerHighest.withOpacity(0.3),
+        color: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
         borderRadius: const BorderRadius.only(
           bottomLeft: Radius.circular(16),
           bottomRight: Radius.circular(16),
@@ -618,9 +618,9 @@ class _ProductOverviewScreenState extends State<ProductOverviewScreen> {
               ],
             ),
           ),
-          _buildPricingCell(context, "1599", "1519", "699", Colors.purple.withOpacity(0.1)),
-          _buildPricingCell(context, "2690", "2556", "699", Colors.blue.withOpacity(0.1)),
-          _buildPricingCell(context, "3990", "3791", "699", Colors.orange.withOpacity(0.1)),
+          _buildPricingCell(context, "1599", "1519", "699", Colors.purple.withValues(alpha: 0.1)),
+          _buildPricingCell(context, "2690", "2556", "699", Colors.blue.withValues(alpha: 0.1)),
+          _buildPricingCell(context, "3990", "3791", "699", Colors.orange.withValues(alpha: 0.1)),
         ],
       ),
     );
@@ -873,7 +873,7 @@ class _PromoTitleVideoPlayerState extends State<_PromoTitleVideoPlayer> {
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: Colors.black.withOpacity(0.6),
+                  color: Colors.black.withValues(alpha: 0.6),
                   shape: BoxShape.circle,
                 ),
                 child: const Icon(
@@ -994,7 +994,7 @@ class _FeatureVideoCardState extends State<_FeatureVideoCard> {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: Colors.black.withOpacity(0.6),
+                  color: Colors.black.withValues(alpha: 0.6),
                   shape: BoxShape.circle,
                 ),
                 child: const Icon(Icons.play_arrow_rounded, color: Colors.white, size: 28),

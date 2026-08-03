@@ -40,7 +40,7 @@ class _TripScreenState extends State<TripScreen>
       /// APP BAR
       appBar: AppBar(
         elevation: 1,
-        shadowColor: Colors.black.withOpacity(0.1),
+        shadowColor: Colors.black.withValues(alpha: 0.1),
         backgroundColor: Theme.of(context).cardColor,
         title: Text(
           l10n.journey,
@@ -141,7 +141,7 @@ class _TripScreenState extends State<TripScreen>
           padding: const EdgeInsets.symmetric(vertical: 12),
           decoration: BoxDecoration(
             color: isSelected
-                ? theme.colorScheme.primary.withOpacity(0.12)
+                ? theme.colorScheme.primary.withValues(alpha: 0.12)
                 : Colors.transparent,
             borderRadius: BorderRadius.circular(25),
           ),
@@ -151,7 +151,7 @@ class _TripScreenState extends State<TripScreen>
               style: TextStyle(fontWeight: FontWeight.w700,
                 color: isSelected
                     ? theme.colorScheme.primary
-                    : theme.colorScheme.onSurface.withOpacity(0.5),
+                    : theme.colorScheme.onSurface.withValues(alpha: 0.5),
               ),
             ),
           ),

@@ -786,7 +786,7 @@
   "tripQuoteDefault": "كل رحلة لها قصة. قصتك تبدأ هنا.",
   "deleteTrip": "حذف الرحلة",
   "hrLabel": "ساعة",
-  "ridesSelectedSummary": "تم اختيار {count} رحلات | {distance} كم • {duration}",
+  "ridesSelectedSummary": "تم اختيار {count} رحلات | {distance} • {duration}",
   "@ridesSelectedSummary": {
     "placeholders": {
       "count": {

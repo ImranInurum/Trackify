@@ -352,6 +352,7 @@ class _TripsState extends State<Trips> {
                                 .map((e) => Ride.fromJson(e as Map<String, dynamic>))
                                 .toList();
 
+                            final savedUnit = trip['unit'] as String? ?? 'km';
                             final displayTitle = _getLocalizedTripTitle(
                               trip['title'] ?? l10n.tripLabel('${index + 1}'),
                               l10n,
@@ -359,6 +360,7 @@ class _TripsState extends State<Trips> {
                             return TripCard(
                               title: displayTitle,
                               rides: rides,
+                              savedUnit: savedUnit,
                               imagePath: trip['imagePath'] as String?,
                               onTap: () async {
                                 await Navigator.push(
@@ -367,6 +369,7 @@ class _TripsState extends State<Trips> {
                                     builder: (context) => TripDetailsScreen(
                                       tripName: displayTitle,
                                       rides: rides,
+                                      savedUnit: savedUnit,
                                     ),
                                   ),
                                 );

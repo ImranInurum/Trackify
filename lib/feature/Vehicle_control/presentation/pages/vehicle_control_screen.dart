@@ -433,11 +433,11 @@ class _VehicleControlViewState extends State<VehicleControlView> {
                     decoration: InputDecoration(
                       labelText: l10n.name,
                       labelStyle: TextStyle(
-                        color: theme.colorScheme.onSurface.withOpacity(0.6),
+                        color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                       ),
                       enabledBorder: UnderlineInputBorder(
                         borderSide: BorderSide(
-                          color: theme.colorScheme.onSurface.withOpacity(0.2),
+                          color: theme.colorScheme.onSurface.withValues(alpha: 0.2),
                         ),
                       ),
                       focusedBorder: UnderlineInputBorder(
@@ -473,11 +473,11 @@ class _VehicleControlViewState extends State<VehicleControlView> {
                     decoration: InputDecoration(
                       labelText: l10n.mobileNumber,
                       labelStyle: TextStyle(
-                        color: theme.colorScheme.onSurface.withOpacity(0.6),
+                        color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                       ),
                       enabledBorder: UnderlineInputBorder(
                         borderSide: BorderSide(
-                          color: theme.colorScheme.onSurface.withOpacity(0.2),
+                          color: theme.colorScheme.onSurface.withValues(alpha: 0.2),
                         ),
                       ),
                       focusedBorder: UnderlineInputBorder(
@@ -590,7 +590,7 @@ class _VehicleControlViewState extends State<VehicleControlView> {
                         child: Text(
                           l10n.cancel,
                           style: TextStyle(
-                            color: theme.colorScheme.onSurface.withOpacity(0.6),
+                            color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                           ),
                         ),
                       ),
@@ -724,7 +724,7 @@ class _VehicleControlViewState extends State<VehicleControlView> {
     final bgColor = theme.scaffoldBackgroundColor;
     final cardColor = isDark ? const Color(0xFF1E1E1E) : theme.cardColor;
     final primaryTextColor = colorScheme.onSurface;
-    final secondaryTextColor = colorScheme.onSurface.withOpacity(0.6);
+    final secondaryTextColor = colorScheme.onSurface.withValues(alpha: 0.6);
 
     return Scaffold(
       backgroundColor: bgColor,
@@ -860,7 +860,7 @@ class _VehicleControlViewState extends State<VehicleControlView> {
                                     stops: const [0.6, 0.9, 1.0],
                                     colors: [
                                       Colors.transparent,
-                                      bgColor.withOpacity(0.8),
+                                      bgColor.withValues(alpha: 0.8),
                                       bgColor,
                                     ],
                                   ),
@@ -880,10 +880,10 @@ class _VehicleControlViewState extends State<VehicleControlView> {
                                       child: Container(
                                         padding: const EdgeInsets.all(12),
                                         decoration: BoxDecoration(
-                                          color: Colors.black.withOpacity(0.5),
+                                          color: Colors.black.withValues(alpha: 0.5),
                                           shape: BoxShape.circle,
                                           border: Border.all(
-                                            color: Colors.white.withOpacity(0.2),
+                                            color: Colors.white.withValues(alpha: 0.2),
                                           ),
                                         ),
                                         child: const Icon(
@@ -970,7 +970,7 @@ class _VehicleControlViewState extends State<VehicleControlView> {
                                     ),
                                     decoration: BoxDecoration(
                                       color: theme.colorScheme.onSurface
-                                          .withOpacity(0.1),
+                                          .withValues(alpha: 0.1),
                                       borderRadius: BorderRadius.circular(4),
                                     ),
                                     child: Text(
@@ -1156,7 +1156,7 @@ class _VehicleControlViewState extends State<VehicleControlView> {
 
                         Divider(
                           height: 1,
-                          color: theme.colorScheme.onSurface.withOpacity(0.15),
+                          color: theme.colorScheme.onSurface.withValues(alpha: 0.15),
                         ),
 
                         if (widget.isFromGarage == false)
@@ -1223,7 +1223,7 @@ class _VehicleControlViewState extends State<VehicleControlView> {
 
                         Divider(
                           height: 1,
-                          color: theme.colorScheme.onSurface.withOpacity(0.15),
+                          color: theme.colorScheme.onSurface.withValues(alpha: 0.15),
                         ),
                         const SizedBox(height: 20),
 
@@ -1278,7 +1278,7 @@ class _VehicleControlViewState extends State<VehicleControlView> {
                                     Icon(
                                       Icons.add_ic_call,
                                       color: theme.colorScheme.onSurface
-                                          .withOpacity(0.6),
+                                          .withValues(alpha: 0.6),
                                       size: 20,
                                     ),
                                     const SizedBox(width: 12),
@@ -1329,7 +1329,7 @@ class _VehicleControlViewState extends State<VehicleControlView> {
                                           borderRadius: BorderRadius.circular(12),
                                           border: Border.all(
                                             color: theme.colorScheme.onSurface
-                                                .withOpacity(0.08),
+                                                .withValues(alpha: 0.08),
                                           ),
                                         ),
                                         child: Row(
@@ -1339,7 +1339,7 @@ class _VehicleControlViewState extends State<VehicleControlView> {
                                               backgroundColor: theme
                                                   .colorScheme
                                                   .primary
-                                                  .withOpacity(0.1),
+                                                  .withValues(alpha: 0.1),
                                               child: Text(
                                                 name.isNotEmpty
                                                     ? name[0].toUpperCase()
@@ -1381,7 +1381,7 @@ class _VehicleControlViewState extends State<VehicleControlView> {
                                               icon: Icon(
                                                 Icons.delete_outline,
                                                 color: theme.colorScheme.error
-                                                    .withOpacity(0.8),
+                                                    .withValues(alpha: 0.8),
                                                 size: 20,
                                               ),
                                               onPressed: () {
@@ -1438,7 +1438,7 @@ class _VehicleControlViewState extends State<VehicleControlView> {
                           const SizedBox(height: 16),
                           Divider(
                             height: 1,
-                            color: theme.colorScheme.onSurface.withOpacity(
+                            color: theme.colorScheme.onSurface.withValues(alpha: 
                               0.15,
                             ),
                           ),
@@ -1633,7 +1633,7 @@ class _VehicleControlViewState extends State<VehicleControlView> {
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: theme.colorScheme.onSurface.withOpacity(0.2),
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.2),
                   ),
                 ),
                 child: TextField(
@@ -1643,7 +1643,7 @@ class _VehicleControlViewState extends State<VehicleControlView> {
                   decoration: InputDecoration(
                     hintText: l10n.tankCapacityHint,
                     hintStyle: TextStyle(
-                      color: theme.colorScheme.onSurface.withOpacity(0.3),
+                      color: theme.colorScheme.onSurface.withValues(alpha: 0.3),
                     ),
                     contentPadding: const EdgeInsets.symmetric(
                       horizontal: 16,
@@ -1655,7 +1655,7 @@ class _VehicleControlViewState extends State<VehicleControlView> {
                       child: Text(
                         l10n.litresShort,
                         style: TextStyle(
-                          color: theme.colorScheme.onSurface.withOpacity(0.5),
+                          color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
                         ),
                       ),
                     ),
@@ -1666,7 +1666,7 @@ class _VehicleControlViewState extends State<VehicleControlView> {
               Text(
                 "${l10n.lastUpdatedLabel}$currentVal ${l10n.litresShort}",
                 style: TextStyle(
-                  color: theme.colorScheme.onSurface.withOpacity(0.4),
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.4),
                   fontSize: 12,
                 ),
               ),
@@ -1707,7 +1707,7 @@ class _VehicleControlViewState extends State<VehicleControlView> {
                     child: Text(
                       l10n.cancel,
                       style: TextStyle(
-                        color: theme.colorScheme.onSurface.withOpacity(0.6),
+                        color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                       ),
                     ),
                   ),
@@ -1813,7 +1813,7 @@ class _VehicleControlViewState extends State<VehicleControlView> {
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: theme.colorScheme.onSurface.withOpacity(0.2),
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.2),
                   ),
                 ),
                 child: TextField(
@@ -1823,7 +1823,7 @@ class _VehicleControlViewState extends State<VehicleControlView> {
                   decoration: InputDecoration(
                     hintText: l10n.mileageHint,
                     hintStyle: TextStyle(
-                      color: theme.colorScheme.onSurface.withOpacity(0.3),
+                      color: theme.colorScheme.onSurface.withValues(alpha: 0.3),
                     ),
                     contentPadding: const EdgeInsets.symmetric(
                       horizontal: 16,
@@ -1835,7 +1835,7 @@ class _VehicleControlViewState extends State<VehicleControlView> {
                       child: Text(
                         context.displayKmL,
                         style: TextStyle(
-                          color: theme.colorScheme.onSurface.withOpacity(0.5),
+                          color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
                         ),
                       ),
                     ),
@@ -1846,7 +1846,7 @@ class _VehicleControlViewState extends State<VehicleControlView> {
               Text(
                 "${l10n.lastUpdatedLabel}$currentVal ${context.displayKmL}",
                 style: TextStyle(
-                  color: theme.colorScheme.onSurface.withOpacity(0.4),
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.4),
                   fontSize: 12,
                 ),
               ),
@@ -1887,7 +1887,7 @@ class _VehicleControlViewState extends State<VehicleControlView> {
                     child: Text(
                       l10n.cancel,
                       style: TextStyle(
-                        color: theme.colorScheme.onSurface.withOpacity(0.6),
+                        color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                       ),
                     ),
                   ),
@@ -1946,7 +1946,7 @@ class _VehicleControlViewState extends State<VehicleControlView> {
               Text(
                 l10n.sleepModeDesc1,
                 style: TextStyle(
-                  color: theme.colorScheme.onSurface.withOpacity(0.8),
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
                   fontSize: 14,
                   height: 1.5,
                 ),
@@ -1955,7 +1955,7 @@ class _VehicleControlViewState extends State<VehicleControlView> {
               Text(
                 l10n.sleepModeDesc2,
                 style: TextStyle(
-                  color: theme.colorScheme.onSurface.withOpacity(0.8),
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
                   fontSize: 14,
                   height: 1.5,
                 ),

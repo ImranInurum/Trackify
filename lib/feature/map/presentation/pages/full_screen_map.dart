@@ -532,7 +532,7 @@ class _FullScreenMapState extends State<FullScreenMap>
 
     // Outer glow ring
     final Paint glowPaint = Paint()
-      ..color = Colors.white.withOpacity(0.22)
+      ..color = Colors.white.withValues(alpha: 0.22)
       ..style = PaintingStyle.fill;
     canvas.drawCircle(
       const Offset(center, center - tipHeight / 2),
@@ -1138,7 +1138,7 @@ class _FullScreenMapState extends State<FullScreenMap>
               decoration: BoxDecoration(
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
+                    color: Colors.black.withValues(alpha: 0.1),
                     blurRadius: 15,
                     spreadRadius: 2,
                   ),
@@ -1279,7 +1279,7 @@ class _FullScreenMapState extends State<FullScreenMap>
                   BoxShadow(
                     color: Theme.of(
                       context,
-                    ).colorScheme.primary.withOpacity(0.2),
+                    ).colorScheme.primary.withValues(alpha: 0.2),
                     blurRadius: 10,
                     offset: const Offset(0, 4),
                   ),
@@ -1331,7 +1331,7 @@ class _FullScreenMapState extends State<FullScreenMap>
                       : Border.all(color: Colors.transparent),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.05),
+                      color: Colors.black.withValues(alpha: 0.05),
                       blurRadius: 10,
                       offset: const Offset(0, 2),
                     ),
@@ -1753,14 +1753,14 @@ class _FullScreenMapState extends State<FullScreenMap>
                           decoration: BoxDecoration(
                             color: Theme.of(
                               context,
-                            ).cardColor.withOpacity(0.95),
+                            ).cardColor.withValues(alpha: 0.95),
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(
                               color: Theme.of(context).dividerColor,
                             ),
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.black.withOpacity(0.3),
+                                color: Colors.black.withValues(alpha: 0.3),
                                 blurRadius: 10,
                                 spreadRadius: 1,
                               ),
@@ -1872,7 +1872,7 @@ class _FullScreenMapState extends State<FullScreenMap>
                       ),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.1),
+                          color: Colors.black.withValues(alpha: 0.1),
                           blurRadius: 4,
                           offset: const Offset(0, 2),
                         ),
@@ -2004,7 +2004,7 @@ class _FullScreenMapState extends State<FullScreenMap>
         height: 48,
         width: 48,
         decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+          color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
           shape: BoxShape.circle,
         ),
         child: Center(
@@ -2020,7 +2020,7 @@ class _FullScreenMapState extends State<FullScreenMap>
         height: 48,
         width: 48,
         decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+          color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
           shape: BoxShape.circle,
         ),
         child: Center(
@@ -2146,7 +2146,7 @@ class _FullScreenMapState extends State<FullScreenMap>
                           ).colorScheme.onSurface,
                           secondaryTextColor: Theme.of(
                             context,
-                          ).colorScheme.onSurface.withOpacity(0.6),
+                          ).colorScheme.onSurface.withValues(alpha: 0.6),
                           accentColor: Theme.of(context).colorScheme.primary,
                           selectedIcon: state.tempIcon,
                           selectedColor: state.tempColor,
@@ -2299,12 +2299,12 @@ class _FullScreenMapState extends State<FullScreenMap>
         width: 48,
         decoration: BoxDecoration(
           color: isDisabled
-              ? theme.colorScheme.onSurface.withOpacity(0.08)
+              ? theme.colorScheme.onSurface.withValues(alpha: 0.08)
               : (isActiveColor ? theme.colorScheme.primary : theme.cardColor),
           shape: BoxShape.circle,
           border: Border.all(
             color: isDisabled
-                ? theme.dividerColor.withOpacity(0.3)
+                ? theme.dividerColor.withValues(alpha: 0.3)
                 : (isActiveColor
                       ? theme.colorScheme.primary
                       : theme.dividerColor),
@@ -2312,7 +2312,7 @@ class _FullScreenMapState extends State<FullScreenMap>
           boxShadow: [
             if (!isDisabled)
               BoxShadow(
-                color: Colors.black.withOpacity(0.1),
+                color: Colors.black.withValues(alpha: 0.1),
                 blurRadius: 4,
                 offset: const Offset(0, 2),
               ),
@@ -2321,10 +2321,10 @@ class _FullScreenMapState extends State<FullScreenMap>
         child: Icon(
           icon,
           color: isDisabled
-              ? theme.colorScheme.onSurface.withOpacity(0.3)
+              ? theme.colorScheme.onSurface.withValues(alpha: 0.3)
               : (isActiveColor
                     ? theme.colorScheme.onPrimary
-                    : theme.colorScheme.onSurface.withOpacity(0.85)),
+                    : theme.colorScheme.onSurface.withValues(alpha: 0.85)),
           size: 24,
         ),
       ),
@@ -2360,7 +2360,7 @@ class _FullScreenMapState extends State<FullScreenMap>
                   ),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.08),
+                      color: Colors.black.withValues(alpha: 0.08),
                       blurRadius: 15,
                       spreadRadius: 2,
                     ),
@@ -2731,7 +2731,7 @@ class _FullScreenMapState extends State<FullScreenMap>
                       fontSize: 14,
                       color: Theme.of(
                         context,
-                      ).colorScheme.onSurface.withOpacity(0.5),
+                      ).colorScheme.onSurface.withValues(alpha: 0.5),
                       fontWeight: FontWeight.w500,
                     ),
                   ),
@@ -2802,7 +2802,7 @@ class _FullScreenMapState extends State<FullScreenMap>
               label,
               style: TextStyle(
                 fontSize: 12,
-                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.4),
+                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.4),
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -2825,11 +2825,11 @@ class _FullScreenMapState extends State<FullScreenMap>
           color: Theme.of(context).cardColor,
           borderRadius: BorderRadius.circular(4),
           border: Border.all(
-            color: Theme.of(context).dividerColor.withOpacity(0.5),
+            color: Theme.of(context).dividerColor.withValues(alpha: 0.5),
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
+              color: Colors.black.withValues(alpha: 0.05),
               blurRadius: 2,
               offset: const Offset(0, 1),
             ),
@@ -2838,7 +2838,7 @@ class _FullScreenMapState extends State<FullScreenMap>
         child: Icon(
           icon,
           size: 16,
-          color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+          color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
         ),
       ),
     );
@@ -3018,7 +3018,7 @@ class _FullScreenMapState extends State<FullScreenMap>
               borderRadius: BorderRadius.circular(6),
               boxShadow: [
                 BoxShadow(
-                  color: const Color(0xFFD4AF37).withOpacity(0.3),
+                  color: const Color(0xFFD4AF37).withValues(alpha: 0.3),
                   blurRadius: 4,
                   offset: const Offset(0, 2),
                 ),
@@ -3047,7 +3047,7 @@ class _FullScreenMapState extends State<FullScreenMap>
           label,
           style: TextStyle(
             fontSize: 13,
-            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.4),
+            color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.4),
             fontWeight: FontWeight.w500,
           ),
         ),
@@ -3234,11 +3234,11 @@ class _FullScreenMapState extends State<FullScreenMap>
                   color: Theme.of(context).cardColor,
                   borderRadius: BorderRadius.circular(16),
                   border: Border.all(
-                    color: Theme.of(context).dividerColor.withOpacity(0.5),
+                    color: Theme.of(context).dividerColor.withValues(alpha: 0.5),
                   ),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.02),
+                      color: Colors.black.withValues(alpha: 0.02),
                       blurRadius: 10,
                       offset: const Offset(0, 4),
                     ),
@@ -3299,7 +3299,7 @@ class _FullScreenMapState extends State<FullScreenMap>
                         fontSize: 12,
                         color: Theme.of(
                           context,
-                        ).colorScheme.onSurface.withOpacity(0.4),
+                        ).colorScheme.onSurface.withValues(alpha: 0.4),
                         fontWeight: FontWeight.w500,
                       ),
                     ),
@@ -3319,11 +3319,11 @@ class _FullScreenMapState extends State<FullScreenMap>
                   color: Theme.of(context).cardColor,
                   borderRadius: BorderRadius.circular(16),
                   border: Border.all(
-                    color: Theme.of(context).dividerColor.withOpacity(0.5),
+                    color: Theme.of(context).dividerColor.withValues(alpha: 0.5),
                   ),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.02),
+                      color: Colors.black.withValues(alpha: 0.02),
                       blurRadius: 10,
                       offset: const Offset(0, 4),
                     ),
@@ -3346,7 +3346,7 @@ class _FullScreenMapState extends State<FullScreenMap>
                         Container(
                           padding: const EdgeInsets.all(4),
                           decoration: BoxDecoration(
-                            color: batteryColor.withOpacity(0.1),
+                            color: batteryColor.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(4),
                           ),
                           child: Icon(
@@ -3393,7 +3393,7 @@ class _FullScreenMapState extends State<FullScreenMap>
       icon,
       color: isSelected
           ? Theme.of(context).colorScheme.primary
-          : Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+          : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
       size: 28,
     );
   }

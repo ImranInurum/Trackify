@@ -339,7 +339,7 @@ class _TutorialScreenState
                         decoration:
                         BoxDecoration(
                           color: Colors.black
-                              .withOpacity(0.7),
+                              .withValues(alpha: 0.7),
 
                           shape:
                           BoxShape.circle,

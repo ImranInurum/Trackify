@@ -129,10 +129,10 @@ class _ReachMeStickerScreenState extends State<ReachMeStickerScreen> {
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: theme.cardColor.withOpacity(0.5),
+                color: theme.cardColor.withValues(alpha: 0.5),
                 borderRadius: BorderRadius.circular(20),
                 border: Border.all(
-                  color: theme.colorScheme.primary.withOpacity(0.5),
+                  color: theme.colorScheme.primary.withValues(alpha: 0.5),
                   width: 0.5,
                 ),
               ),

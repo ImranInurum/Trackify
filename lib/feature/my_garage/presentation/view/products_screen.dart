@@ -40,7 +40,7 @@ class _ProductScreenState extends State<ProductScreen> {
           padding: const EdgeInsets.all(8.0),
           child: Container(
             decoration: BoxDecoration(
-              color: colorScheme.surfaceContainerHighest.withOpacity(0.5),
+              color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
               borderRadius: BorderRadius.circular(12),
             ),
             child: IconButton(
@@ -92,18 +92,18 @@ class _ProductScreenState extends State<ProductScreen> {
       margin: const EdgeInsets.only(bottom: 20),
       decoration: BoxDecoration(
         color: isDark
-            ? colorScheme.surfaceContainerHigh.withOpacity(0.6)
+            ? colorScheme.surfaceContainerHigh.withValues(alpha: 0.6)
             : colorScheme.surface,
         borderRadius: BorderRadius.circular(24),
         border: Border.all(
           color: isDark
-              ? colorScheme.outline.withOpacity(0.2)
-              : colorScheme.outlineVariant.withOpacity(0.5),
+              ? colorScheme.outline.withValues(alpha: 0.2)
+              : colorScheme.outlineVariant.withValues(alpha: 0.5),
           width: 1,
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(isDark ? 0.3 : 0.06),
+            color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.06),
             blurRadius: 20,
             offset: const Offset(0, 8),
           ),
@@ -133,7 +133,7 @@ class _ProductScreenState extends State<ProductScreen> {
                               : Colors.grey.shade50,
                           borderRadius: BorderRadius.circular(18),
                           border: Border.all(
-                            color: colorScheme.outlineVariant.withOpacity(0.4),
+                            color: colorScheme.outlineVariant.withValues(alpha: 0.4),
                           ),
                         ),
                         child: Image.asset(
@@ -157,7 +157,7 @@ class _ProductScreenState extends State<ProductScreen> {
                               borderRadius: BorderRadius.circular(8),
                               boxShadow: [
                                 BoxShadow(
-                                  color: Colors.red.withOpacity(0.3),
+                                  color: Colors.red.withValues(alpha: 0.3),
                                   blurRadius: 4,
                                   offset: const Offset(0, 2),
                                 ),
@@ -192,10 +192,10 @@ class _ProductScreenState extends State<ProductScreen> {
                                 vertical: 4,
                               ),
                               decoration: BoxDecoration(
-                                color: colorScheme.primary.withOpacity(0.1),
+                                color: colorScheme.primary.withValues(alpha: 0.1),
                                 borderRadius: BorderRadius.circular(20),
                                 border: Border.all(
-                                  color: colorScheme.primary.withOpacity(0.25),
+                                  color: colorScheme.primary.withValues(alpha: 0.25),
                                 ),
                               ),
                               child: Row(
@@ -256,7 +256,7 @@ class _ProductScreenState extends State<ProductScreen> {
                               Text(
                                 "₹${product.mrp}",
                                 style: TextStyle(
-                                  color: colorScheme.onSurfaceVariant.withOpacity(0.6),
+                                  color: colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
                                   fontSize: 13,
                                   decoration: TextDecoration.lineThrough,
                                 ),
@@ -276,7 +276,7 @@ class _ProductScreenState extends State<ProductScreen> {
               margin: const EdgeInsets.symmetric(horizontal: 16),
               decoration: BoxDecoration(
                 color: isDark
-                    ? colorScheme.surfaceContainerHighest.withOpacity(0.3)
+                    ? colorScheme.surfaceContainerHighest.withValues(alpha: 0.3)
                     : colorScheme.surfaceContainerLowest,
                 borderRadius: BorderRadius.circular(14),
               ),
@@ -310,7 +310,7 @@ class _ProductScreenState extends State<ProductScreen> {
                                     borderRadius: BorderRadius.circular(12),
                                     border: Border.all(
                                       color: colorScheme.outlineVariant
-                                          .withOpacity(0.4),
+                                          .withValues(alpha: 0.4),
                                     ),
                                   ),
                                   child: Text(
@@ -384,7 +384,7 @@ class _ProductScreenState extends State<ProductScreen> {
                   borderRadius: BorderRadius.circular(16),
                   boxShadow: [
                     BoxShadow(
-                      color: colorScheme.primary.withOpacity(0.3),
+                      color: colorScheme.primary.withValues(alpha: 0.3),
                       blurRadius: 12,
                       offset: const Offset(0, 4),
                     ),

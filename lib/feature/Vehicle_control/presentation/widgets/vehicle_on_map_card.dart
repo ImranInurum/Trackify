@@ -81,7 +81,7 @@ class _VehicleOnMapCardState extends State<VehicleOnMapCard>
       decoration: BoxDecoration(
         color: widget.cardColor,
         borderRadius: widget.borderRadius ?? BorderRadius.circular(20),
-        border: Border.all(color: Colors.grey.withOpacity(0.5), width: 0.5),
+        border: Border.all(color: Colors.grey.withValues(alpha: 0.5), width: 0.5),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

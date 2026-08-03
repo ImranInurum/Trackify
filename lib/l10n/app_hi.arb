@@ -825,7 +825,7 @@
   "tripQuoteDefault": "हर ट्रिप की एक कहानी होती है। आपकी यहाँ है।",
   "deleteTrip": "ट्रिप हटाएं",
   "hrLabel": "घंटा",
-  "ridesSelectedSummary": "{count} राइड्स चुनी गईं | {distance} किमी • {duration}",
+  "ridesSelectedSummary": "{count} राइड्स चुनी गईं | {distance} • {duration}",
   "@ridesSelectedSummary": {
     "placeholders": {
       "count": {

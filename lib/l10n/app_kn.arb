@@ -764,7 +764,7 @@
   "tripQuoteDefault": "ಪ್ರತಿಯೊಂದು ಪ್ರವಾಸಕ್ಕೂ ಒಂದು ಕಥೆ ಇರುತ್ತದೆ. ನಿಮ್ಮದು ಇಲ್ಲಿದೆ.",
   "deleteTrip": "ಪ್ರವಾಸವನ್ನು ಅಳಿಸಿ",
   "hrLabel": "ಗಂಟೆ",
-  "ridesSelectedSummary": "{count} ಸವಾರಿಗಳನ್ನು ಆಯ್ಕೆ ಮಾಡಲಾಗಿದೆ | {distance} ಕಿಮೀ • {duration}",
+  "ridesSelectedSummary": "{count} ಸವಾರಿಗಳನ್ನು ಆಯ್ಕೆ ಮಾಡಲಾಗಿದೆ | {distance} • {duration}",
   "@ridesSelectedSummary": {
     "placeholders": {
       "count": {

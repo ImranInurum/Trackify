@@ -49,7 +49,7 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
   }) {
     final theme = Theme.of(context);
     final Color active = theme.colorScheme.secondary;
-    final Color inactive = theme.colorScheme.onSurface.withOpacity(0.5);
+    final Color inactive = theme.colorScheme.onSurface.withValues(alpha: 0.5);
 
     return GestureDetector(
       onTap: () => context.read<AddVehicleCubit>().selectVehicleType(config),
@@ -98,7 +98,7 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
   }) {
     final theme = Theme.of(context);
     final Color active = theme.colorScheme.secondary;
-    final Color inactive = theme.colorScheme.onSurface.withOpacity(0.5);
+    final Color inactive = theme.colorScheme.onSurface.withValues(alpha: 0.5);
 
     return GestureDetector(
       onTap: () => context.read<AddVehicleCubit>().selectFuelType(type),
@@ -160,7 +160,7 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
               label,
               style: theme.textTheme.labelMedium?.copyWith(
                 fontWeight: FontWeight.w500,
-                color: theme.colorScheme.onSurface.withOpacity(0.6),
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
               ),
             ),
             if (isLoading)
@@ -187,7 +187,7 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
               color: Colors.transparent,
               borderRadius: BorderRadius.circular(8),
               border: Border.all(
-                color: theme.colorScheme.onSurface.withOpacity(0.12),
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.12),
               ),
             ),
             padding: const EdgeInsets.symmetric(horizontal: 14),
@@ -208,7 +208,7 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
                   elevation: 4,
                   hint: Text(
                     hint ?? label,
-                    style: TextStyle(color: theme.colorScheme.onSurface.withOpacity(0.5),
+                    style: TextStyle(color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
                       fontSize: 14,
                     ),
                   ),
@@ -497,7 +497,7 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
                                     padding: const EdgeInsets.only(bottom: 4),
                                     child: Text(
                                       l10n.selectVehicleTypeForFuel,
-                                      style: TextStyle(color: theme.hintColor.withOpacity(0.7),
+                                      style: TextStyle(color: theme.hintColor.withValues(alpha: 0.7),
                                         fontSize: 12,
                                         fontStyle: FontStyle.italic,
                                       ),
@@ -625,7 +625,7 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
                               ),
                               elevation: 0,
                               disabledBackgroundColor: theme.colorScheme.secondary
-                                  .withOpacity(0.6),
+                                  .withValues(alpha: 0.6),
                             ),
                             child: state.isSubmitting
                                 ? const SizedBox(

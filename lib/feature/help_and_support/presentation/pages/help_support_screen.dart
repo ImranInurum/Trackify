@@ -205,7 +205,7 @@ class _HelpSuggestionScreenState extends State<HelpSuggestionScreen> {
             height: 48,
             decoration: BoxDecoration(
               border: Border.all(
-                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
+                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
               ),
               borderRadius: BorderRadius.circular(4),
             ),
@@ -292,7 +292,7 @@ class _HelpSuggestionScreenState extends State<HelpSuggestionScreen> {
                 : l10n.iWantToProvideSuggestion,
             style: TextStyle(
               fontSize: 13,
-              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7),
             ),
           ),
 
@@ -373,7 +373,7 @@ class _HelpSuggestionScreenState extends State<HelpSuggestionScreen> {
                             style: TextStyle(
                               fontSize: 14,
                               color: selectedSuggestionType == null 
-                                  ? Theme.of(context).colorScheme.onSurface.withOpacity(0.5)
+                                  ? Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5)
                                   : Theme.of(context).colorScheme.onSurface,
                             ),
                           ),
@@ -400,7 +400,7 @@ class _HelpSuggestionScreenState extends State<HelpSuggestionScreen> {
                   ? l10n.whatIsYourIssueRelatedTo
                   : l10n.whatIsSuggestionSubject,
               hintStyle: TextStyle(
-                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.4),
+                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.4),
                 fontSize: 15,
               ),
               enabledBorder: UnderlineInputBorder(
@@ -431,7 +431,7 @@ class _HelpSuggestionScreenState extends State<HelpSuggestionScreen> {
                   ? l10n.giveShortDescription
                   : l10n.giveSuggestionFeedback,
               hintStyle: TextStyle(
-                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.4),
+                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.4),
                 fontSize: 15,
               ),
               enabledBorder: UnderlineInputBorder(
@@ -630,7 +630,7 @@ class _HelpSuggestionScreenState extends State<HelpSuggestionScreen> {
             Icon(
               Icons.arrow_forward_ios,
               size: 18,
-              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
             ),
           ],
         ),
@@ -679,7 +679,7 @@ class _HelpSuggestionScreenState extends State<HelpSuggestionScreen> {
         const SizedBox(height: 12),
         Text(
           l10n.forceMigrateDesc1,
-          style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+          style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
             fontSize: 13,
             height: 1.4,
           ),
@@ -687,7 +687,7 @@ class _HelpSuggestionScreenState extends State<HelpSuggestionScreen> {
         const SizedBox(height: 8),
         Text(
           l10n.forceMigrateDesc2,
-          style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+          style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
             fontSize: 13,
             height: 1.4,
           ),
@@ -786,7 +786,7 @@ class _HelpSuggestionScreenState extends State<HelpSuggestionScreen> {
             Icon(
               Icons.arrow_forward_ios,
               size: 14,
-              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.4),
+              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.4),
             ),
           ],
         ),
@@ -799,7 +799,7 @@ class _HelpSuggestionScreenState extends State<HelpSuggestionScreen> {
       alignment: Alignment.centerRight,
       child: Text(
         "B3000507.V19.7.1.J406",
-        style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.4),
+        style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.4),
           fontSize: 11,
         ),
       ),

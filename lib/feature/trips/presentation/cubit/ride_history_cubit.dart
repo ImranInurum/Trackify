@@ -25,8 +25,11 @@ class RideHistoryCubit extends Cubit<RideHistoryState> {
       return;
     }
 
+    final distanceUnit = await prefs.get(key: AppPreference.KEY_DISTANCE_UNIT);
+    final unit = distanceUnit.isNotEmpty ? distanceUnit : 'km';
+    
     final box = Hive.box('map_cache');
-    final cacheKey = 'ride_history_$iMEI';
+    final cacheKey = 'ride_history_${iMEI}_$unit';
     final cachedData = box.get(cacheKey);
 
     List<Ride>? cachedList;
@@ -44,12 +47,10 @@ class RideHistoryCubit extends Cubit<RideHistoryState> {
     } else {
       emit(RideHistoryLoading());
     }
-
-    final distanceUnit = await prefs.get(key: AppPreference.KEY_DISTANCE_UNIT);
     
     final request = {
       'imei': iMEI,
-      'unit': distanceUnit.isNotEmpty ? distanceUnit : 'km',
+      'unit': unit,
     };
     debugPrint('Fetching ride history with request: $request');
     final result = await _assignDeviceUseCase.getRideHistory(body: request);

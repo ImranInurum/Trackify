@@ -23,7 +23,7 @@ class LoadingScreenOL {
         builder: (context) => Stack(
           children: [
             Positioned.fill(
-              child: Container(color: Colors.black.withOpacity(0.6)),
+              child: Container(color: Colors.black.withValues(alpha: 0.6)),
             ),
             const Center(
               child: Material(

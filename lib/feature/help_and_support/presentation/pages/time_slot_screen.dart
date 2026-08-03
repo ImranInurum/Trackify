@@ -80,7 +80,7 @@ class _BookCallSlotScreenState
               style: ElevatedButton.styleFrom(
                 backgroundColor: colorScheme.primary,
                 disabledBackgroundColor:
-                colorScheme.onSurface.withOpacity(0.12),
+                colorScheme.onSurface.withValues(alpha: 0.12),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(40),
                 ),
@@ -401,7 +401,7 @@ class _BookCallSlotScreenState
                                   alignment: Alignment.center,
                                   decoration: BoxDecoration(
                                     color: isDisabled
-                                        ? colorScheme.onSurface.withOpacity(0.10)
+                                        ? colorScheme.onSurface.withValues(alpha: 0.10)
                                         : (isSelected
                                         ? colorScheme.primary
                                         : colorScheme.surface),
@@ -409,7 +409,7 @@ class _BookCallSlotScreenState
                                     border: Border.all(
                                       color: isDisabled
                                           ? Colors.transparent
-                                          : colorScheme.outline.withOpacity(0.3),
+                                          : colorScheme.outline.withValues(alpha: 0.3),
                                     ),
                                   ),
                                   child: Column(

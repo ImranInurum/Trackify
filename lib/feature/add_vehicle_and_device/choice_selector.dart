@@ -113,14 +113,14 @@ class _ChoiceSelectorState extends State<ChoiceSelector> {
                   Icons.logout,
                   color: Theme.of(
                     context,
-                  ).colorScheme.onSurface.withOpacity(0.5),
+                  ).colorScheme.onSurface.withValues(alpha: 0.5),
                   size: 20,
                 ),
                 label: Text(
                   l10n.logout,
                   style: TextStyle(color: Theme.of(
                       context,
-                    ).colorScheme.onSurface.withOpacity(0.5),
+                    ).colorScheme.onSurface.withValues(alpha: 0.5),
                     fontSize: 15,
                     fontWeight: FontWeight.w500,
                   ),
@@ -155,12 +155,12 @@ class _ChoiceSelectorState extends State<ChoiceSelector> {
             end: Alignment.bottomRight,
             colors: [
               Theme.of(context).colorScheme.surface,
-              Theme.of(context).colorScheme.primary.withOpacity(0.15),
+              Theme.of(context).colorScheme.primary.withValues(alpha: 0.15),
             ],
           ),
           boxShadow: [
             BoxShadow(
-              color: Theme.of(context).shadowColor.withOpacity(0.1),
+              color: Theme.of(context).shadowColor.withValues(alpha: 0.1),
               blurRadius: 4,
               offset: const Offset(0, 2),
             ),
@@ -174,7 +174,7 @@ class _ChoiceSelectorState extends State<ChoiceSelector> {
             ), // Replaced padding with slight spacing from top
             Icon(
               Icons.arrow_forward,
-              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.4),
+              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.4),
               size: 20,
             ),
             Padding(
@@ -203,7 +203,7 @@ class _ChoiceSelectorState extends State<ChoiceSelector> {
                             subtitle,
                             style: TextStyle(color: Theme.of(
                                 context,
-                              ).colorScheme.onSurface.withOpacity(0.6),
+                              ).colorScheme.onSurface.withValues(alpha: 0.6),
                               fontSize: 13,
                               height: 1.4,
                             ),
@@ -230,7 +230,7 @@ class _ChoiceSelectorState extends State<ChoiceSelector> {
                               size: 40,
                               color: Theme.of(
                                 context,
-                              ).hintColor.withOpacity(0.5),
+                              ).hintColor.withValues(alpha: 0.5),
                             ),
                           ),
                         ),

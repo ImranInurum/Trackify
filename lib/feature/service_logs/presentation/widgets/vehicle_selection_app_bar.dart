@@ -39,7 +39,7 @@ class VehicleSelectionAppBar extends StatelessWidget {
       decoration: isMinimal
           ? null
           : BoxDecoration(
-              color: theme.cardColor.withOpacity(0.8),
+              color: theme.cardColor.withValues(alpha: 0.8),
               border: Border(
                 left: BorderSide(color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5), width: 0.5),
                 right: BorderSide(color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5), width: 0.5),
@@ -87,7 +87,7 @@ class VehicleSelectionAppBar extends StatelessWidget {
               margin: EdgeInsets.symmetric(horizontal: screenWidth * 0.04),
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
               decoration: BoxDecoration(
-                color: theme.colorScheme.surfaceContainerHighest.withOpacity(
+                color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 
                   0.5,
                 ),
                 borderRadius: BorderRadius.circular(16),
@@ -164,7 +164,7 @@ void showDeviceNotInstalledDialog(BuildContext context, Vehicle vehicle) {
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Colors.orange.withOpacity(0.15),
+                color: Colors.orange.withValues(alpha: 0.15),
                 shape: BoxShape.circle,
               ),
               child: const Icon(
@@ -188,7 +188,7 @@ void showDeviceNotInstalledDialog(BuildContext context, Vehicle vehicle) {
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 14,
-                color: theme.colorScheme.onSurface.withOpacity(0.7),
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                 height: 1.4,
               ),
             ),
@@ -265,7 +265,7 @@ class _VehicleSelectorSheet extends StatelessWidget {
 
               return Container(
                 color: isSelected
-                    ? theme.scaffoldBackgroundColor.withOpacity(1)
+                    ? theme.scaffoldBackgroundColor.withValues(alpha: 1)
                     : theme.cardColor,
                 child: Material(
                   type: MaterialType.transparency,
@@ -312,7 +312,7 @@ class _VehicleSelectorSheet extends StatelessWidget {
                                 vertical: 2,
                               ),
                               decoration: BoxDecoration(
-                                color: Colors.orange.withOpacity(0.15),
+                                color: Colors.orange.withValues(alpha: 0.15),
                                 borderRadius: BorderRadius.circular(4),
                               ),
                               child: const Text(

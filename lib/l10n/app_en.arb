@@ -828,7 +828,7 @@
   "tripQuoteDefault": "Every trip has a story. Yours goes here.",
   "deleteTrip": "Delete Trip",
   "hrLabel": "hr",
-  "ridesSelectedSummary": "{count} rides selected | {distance} km • {duration}",
+  "ridesSelectedSummary": "{count} rides selected | {distance} • {duration}",
   "@ridesSelectedSummary": {
     "placeholders": {
       "count": {

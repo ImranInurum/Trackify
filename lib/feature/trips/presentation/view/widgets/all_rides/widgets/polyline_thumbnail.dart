@@ -13,6 +13,7 @@ class PolylineThumbnail extends StatefulWidget {
   final String startLabel;
   final String endLabel;
   final String? rideId;
+  final bool isDotted;
 
   const PolylineThumbnail({
     super.key,
@@ -22,6 +23,7 @@ class PolylineThumbnail extends StatefulWidget {
     this.startLabel = 'Start',
     this.endLabel = 'End',
     this.rideId,
+    this.isDotted = false,
   });
 
   @override
@@ -59,8 +61,8 @@ class _PolylineThumbnailState extends State<PolylineThumbnail> {
   void didUpdateWidget(covariant PolylineThumbnail oldWidget) {
     super.didUpdateWidget(oldWidget);
     final themeKey = _currentBrightness == Brightness.dark ? 'dark' : 'light';
-    final oldSignature = "${oldWidget.points.length}_${oldWidget.points.isEmpty ? '' : oldWidget.points.first.latitude}_${oldWidget.points.isEmpty ? '' : oldWidget.points.last.latitude}_$themeKey";
-    final newSignature = "${widget.points.length}_${widget.points.isEmpty ? '' : widget.points.first.latitude}_${widget.points.isEmpty ? '' : widget.points.last.latitude}_$themeKey";
+    final oldSignature = "${oldWidget.points.length}_${oldWidget.points.isEmpty ? '' : oldWidget.points.first.latitude}_${oldWidget.points.isEmpty ? '' : oldWidget.points.last.latitude}_${oldWidget.isDotted}_$themeKey";
+    final newSignature = "${widget.points.length}_${widget.points.isEmpty ? '' : widget.points.first.latitude}_${widget.points.isEmpty ? '' : widget.points.last.latitude}_${widget.isDotted}_$themeKey";
     
     if (widget.rideId != oldWidget.rideId || oldSignature != newSignature) {
       setState(() {
@@ -75,7 +77,7 @@ class _PolylineThumbnailState extends State<PolylineThumbnail> {
       try {
         final box = Hive.box('map_cache');
         final themeKey = _currentBrightness == Brightness.dark ? 'dark' : 'light';
-        final signature = "${widget.points.length}_${widget.points.isEmpty ? '' : widget.points.first.latitude}_${widget.points.isEmpty ? '' : widget.points.last.latitude}_$themeKey";
+        final signature = "${widget.points.length}_${widget.points.isEmpty ? '' : widget.points.first.latitude}_${widget.points.isEmpty ? '' : widget.points.last.latitude}_${widget.isDotted}_$themeKey";
         final cachedSignature = box.get('map_thumbnail_v2_sig_${widget.rideId}_$themeKey');
         if (cachedSignature == signature) {
           final data = box.get('map_thumbnail_v2_${widget.rideId}_$themeKey');
@@ -264,11 +266,12 @@ class _PolylineThumbnailState extends State<PolylineThumbnail> {
                   Polyline(
                     polylineId: const PolylineId('route'),
                     points: validPoints,
-                    color: widget.color ?? Colors.yellow,
-                    width: widget.strokeWidth.toInt(),
+                    color: widget.isDotted ? Colors.grey : (widget.color ?? Colors.yellow),
+                    width: widget.isDotted ? 6 : widget.strokeWidth.toInt(),
                     startCap: Cap.roundCap,
                     endCap: Cap.roundCap,
                     jointType: JointType.round,
+                    patterns: widget.isDotted ? [PatternItem.dot, PatternItem.gap(12.0)] : const <PatternItem>[],
                   ),
                 },
                 markers: {
@@ -334,7 +337,7 @@ class _PolylineThumbnailState extends State<PolylineThumbnail> {
                         final bytes = await controller.takeSnapshot();
                         if (bytes != null && mounted) {
                           final box = Hive.box('map_cache');
-                          final signature = "${widget.points.length}_${widget.points.isEmpty ? '' : widget.points.first.latitude}_${widget.points.isEmpty ? '' : widget.points.last.latitude}_$currentThemeKey";
+                          final signature = "${widget.points.length}_${widget.points.isEmpty ? '' : widget.points.first.latitude}_${widget.points.isEmpty ? '' : widget.points.last.latitude}_${widget.isDotted}_$currentThemeKey";
                           await box.put('map_thumbnail_v2_${widget.rideId}_$currentThemeKey', bytes);
                           await box.put('map_thumbnail_v2_sig_${widget.rideId}_$currentThemeKey', signature);
                           if (mounted && _currentBrightness == (currentThemeKey == 'dark' ? Brightness.dark : Brightness.light)) {
