@@ -4,9 +4,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:trackify/feature/add_vehicle_and_device/add_vehicle/domain/use_case/add_vehicle_use_case.dart';
-import 'package:trackify/feature/document_folder/presentation/cubit/document_cubit.dart';
-import 'package:trackify/feature/help_and_support/data/repository_impl/help_support_repository_impl.dart';
-import 'package:trackify/feature/help_and_support/domain/use_case/help_support_use_case.dart';
 import 'package:trackify/feature/help_and_support/presentation/cubit/help_support_cubit.dart';
 import 'package:trackify/feature/help_and_support/data/data source/report_issue_data_source.dart';
 import 'package:trackify/feature/help_and_support/domain/repository/help_support_repository.dart';
@@ -77,7 +74,6 @@ import 'package:trackify/feature/device_warranty/domain/usecase/extend_warranty_
 import 'package:trackify/feature/device_warranty/domain/usecase/verify_payment_usecase.dart';
 import 'package:trackify/feature/device_warranty/data/repository/device_warranty_repository_impl.dart';
 import 'package:trackify/feature/device_warranty/data/data_source/device_warranty_data_source.dart';
-import 'package:trackify/feature/document_folder/presentation/pages/document_screen.dart';
 import 'package:trackify/feature/document_folder/data/data_sources/document_local_datasources.dart';
 import 'package:trackify/feature/document_folder/data/repository/document_repository_impl.dart';
 import 'package:trackify/feature/document_folder/presentation/cubit/document_folder_cubit.dart';
@@ -86,7 +82,6 @@ import 'package:trackify/feature/emergency_sos/data/data_source/emergency_alert_
 import 'package:trackify/feature/emergency_sos/data/repository/emergency_alert_repository_impl.dart';
 import 'package:trackify/feature/emergency_sos/domain/usecase/emergency_alert_usecase.dart';
 import 'package:trackify/feature/emergency_sos/presentation/cubit/emergency_alert_cubit.dart';
-import 'package:trackify/feature/emergency_sos/presentation/cubit/emergency_alert_state.dart' show EmergencySent;
 import 'package:trackify/feature/geo_fence/presentation/cubit/geo_fence_cubit.dart';
 import 'package:trackify/feature/get_more_out/data/repository/discover_repository_impl.dart';
 import 'package:trackify/feature/get_more_out/data/repository/feature_repository_impl.dart';
@@ -104,7 +99,6 @@ import 'package:trackify/feature/health_insurance/domain/usecase/health_insuranc
 import 'package:trackify/feature/health_insurance/domain/usecase/save_health_insurance_usecase.dart';
 import 'package:trackify/feature/health_insurance/presentation/cubit/health_insurance_cubit.dart';
 import 'package:trackify/feature/my_garage/data/repository_impl/product_repository_impl.dart';
-import 'package:trackify/feature/my_garage/domain/repository/product_repository.dart';
 import 'package:trackify/feature/my_garage/domain/use_case/product_usecase.dart';
 import 'package:trackify/feature/my_garage/presentation/cubit/product_cubit.dart';
 import 'package:trackify/feature/service_logs/data/data_source/service_logs_remote_data_source.dart';

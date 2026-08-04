@@ -20,7 +20,7 @@ class RideHistoryCubit extends Cubit<RideHistoryState> {
 
   Future<void> getRideHistoryData() async {
     final iMEI = await prefs.get(key: AppPreference.IMEI);
-    if (iMEI == null || iMEI.isEmpty) {
+    if (iMEI.isEmpty) {
       emit(RideHistorySuccess(const []));
       return;
     }

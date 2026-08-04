@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:trackify/feature/settings/presentation/pages/notification_settings.dart';
 import 'package:trackify/feature/settings/presentation/pages/privacy_screen.dart';
-import 'package:trackify/feature/settings/presentation/pages/manage_access_screen.dart';
 import 'package:trackify/feature/settings/presentation/widgets/setting_list_tile.dart';
 import 'package:trackify/l10n/app_localizations.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -11,11 +10,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../app/cubit/app_cubit.dart';
 import '../../../../app/cubit/app_state.dart';
 import '../../../../core/constants/app_languages.dart';
-import '../../../auth/presentation/pages/signin_screen.dart';
-import 'package:trackify/feature/profile/presentation/cubit/profile_cubit.dart';
-import 'package:trackify/feature/my_profile/presentation/cubit/my_profile_cubit.dart';
-import 'package:trackify/feature/map/presentation/cubit/map_cubit.dart';
-import 'package:trackify/feature/my_garage/presentation/cubit/my_garage_cubit.dart';
 import 'package:trackify/core/widgets/logout_confirmation_dialog.dart';
 
 class SettingsScreen extends StatefulWidget {

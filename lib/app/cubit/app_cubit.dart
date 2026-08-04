@@ -1,14 +1,11 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:bloc/bloc.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:device_info_plus/device_info_plus.dart';
 
 import '../../core/config/network/api_host.dart';
 import '../../core/config/network/base_api_service.dart';
@@ -512,10 +509,9 @@ class AppCubit extends Cubit<AppState> with WidgetsBindingObserver {
     _socketService.disconnect();
 
     // Set up the listener before connecting to avoid missing immediate packets
-    if (_socketSubscription == null) {
-      _socketSubscription = _socketService.deviceDataStream.listen(
+    _socketSubscription ??= _socketService.deviceDataStream.listen(
         (deviceData) {
-          print("DATAAA : ${deviceData}");
+          print("DATAAA : $deviceData");
           handleDeviceData(deviceData);
         },
         onError: (error) {
@@ -523,7 +519,6 @@ class AppCubit extends Cubit<AppState> with WidgetsBindingObserver {
           emit(state.copyWith(isSocketConnected: false));
         },
       );
-    }
 
     try {
       await _socketService.connect(ApiURL.socketURL, imei: imei);

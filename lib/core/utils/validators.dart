@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 
 class Validators {
   /// Validates that the input is not empty.

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:trackify/core/config/font_manager.dart';
 import 'package:trackify/feature/video_tutorial/presentation/pages/tutorial_screen.dart';
-import 'package:trackify/l10n/app_localizations_ar.dart';
 
 import '../../../../l10n/app_localizations.dart';
 import '../../data/datasource/category_datasource.dart';

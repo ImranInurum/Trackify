@@ -7,9 +7,6 @@ import '../../../../core/config/theme_manager.dart';
 import '../cubit/upgrade_to_plus_cubit.dart';
 import '../state/upgrade_to_plus_state.dart';
 import '../../domain/entity/plus_membership_entity.dart';
-import '../../data/data_source/plus_membership_remote_data_source.dart';
-import '../../data/repository/plus_membership_repository_impl.dart';
-import '../../domain/usecase/get_plus_membership_details.dart';
 import 'package:trackify/core/widgets/trackify_loader.dart';
 
 class UpgradeToPlusScreen extends StatefulWidget {
@@ -833,10 +830,12 @@ class _UpgradeToPlusScreenState extends State<UpgradeToPlusScreen> {
   }
 
   Widget _buildTableValue(String value, bool isPlus) {
-    if (value == "Check")
+    if (value == "Check") {
       return Icon(Icons.check, color: Colors.grey.withValues(alpha: 0.5), size: 22);
-    if (value == "CheckGold")
+    }
+    if (value == "CheckGold") {
       return const Icon(Icons.check, color: AppColors.goldStart, size: 22);
+    }
     return Text(
       value,
       style: TextStyle(

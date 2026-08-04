@@ -4,10 +4,9 @@ import 'package:trackify/core/constants/app_images.dart';
 import 'package:trackify/l10n/app_localizations.dart';
 
 import '../cubit/safe_parking_cubit.dart';
-import '../cubit/safe_parking_state.dart';
 
 class SafeParkingScreen extends StatelessWidget {
-  const SafeParkingScreen({Key? key}) : super(key: key);
+  const SafeParkingScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -142,11 +141,11 @@ class SafeParkingScreen extends StatelessWidget {
                         ]
                             : isDark
                             ? [
-                          color.surfaceVariant,
+                          color.surfaceContainerHighest,
                           color.surface,
                         ]
                             : [
-                          color.surfaceVariant,
+                          color.surfaceContainerHighest,
                           color.surface,
                         ],
                       ),

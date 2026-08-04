@@ -380,16 +380,16 @@ class _RidePlaybackScreenState extends State<RidePlaybackScreen> {
                   heroTag: 'mapType',
                   mini: true,
                   backgroundColor: Theme.of(context).cardColor,
-                  child: Icon(Icons.map, color: Theme.of(context).iconTheme.color ?? Colors.grey),
                   onPressed: _showMapStyleBottomSheet,
+                  child: Icon(Icons.map, color: Theme.of(context).iconTheme.color ?? Colors.grey),
                 ),
                 const SizedBox(height: 8),
                 FloatingActionButton(
                   heroTag: 'myLocation',
                   mini: true,
                   backgroundColor: Theme.of(context).cardColor,
-                  child: Icon(Icons.my_location, color: Theme.of(context).colorScheme.primary),
                   onPressed: _moveToCurrentLocation,
+                  child: Icon(Icons.my_location, color: Theme.of(context).colorScheme.primary),
                 ),
               ],
             ),
@@ -688,7 +688,7 @@ class _RidePlaybackScreenState extends State<RidePlaybackScreen> {
   Widget _buildMap() {
     return BlocBuilder<AppCubit, AppState>(
       builder: (context, appState) {
-        final String? mapTypePref = appState.mapType;
+        final String mapTypePref = appState.mapType;
         MapType resolvedMapType = MapType.normal;
         if (mapTypePref == 'satellite' || appState.mapStyle == 'Satellite') {
           resolvedMapType = MapType.satellite;

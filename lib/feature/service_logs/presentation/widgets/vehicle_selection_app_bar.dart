@@ -97,9 +97,8 @@ class VehicleSelectionAppBar extends StatelessWidget {
                   Expanded(
                     child: Text(
                       selectedVehicle != null
-                          ? "${selectedVehicle!.vehicleMaker ?? ""} ${selectedVehicle!.vehicleModel ?? ""}"
-                                    .trim() +
-                                " (${selectedVehicle!.vehicleNumber ?? ""})"
+                          ? "${"${selectedVehicle!.vehicleMaker ?? ""} ${selectedVehicle!.vehicleModel ?? ""}"
+                                    .trim()} (${selectedVehicle!.vehicleNumber ?? ""})"
                           : l10n.selectVehicle,
                       style: theme.textTheme.bodyLarge?.copyWith(
                         fontWeight: FontWeight.w600,

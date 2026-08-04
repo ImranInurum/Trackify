@@ -590,7 +590,7 @@ class _RefuelHistoryTabViewState extends State<RefuelHistoryTabView> {
                       scrollDirection: Axis.horizontal,
                       child: SingleChildScrollView(
                         child: DataTable(
-                          headingRowColor: MaterialStateProperty.all(
+                          headingRowColor: WidgetStateProperty.all(
                             Theme.of(context).primaryColor.withValues(alpha: 0.1),
                           ),
                           columns: [

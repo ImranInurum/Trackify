@@ -1216,7 +1216,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
       text: userName.isNotEmpty ? userName[0].toUpperCase() : 'U',
       style: TextStyle(
         fontSize: size * 0.45,
-        color: Colors.black,
+        color: Colors.white,
         fontWeight: FontWeight.bold,
       ),
     );
@@ -1728,7 +1728,8 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
                 alignment: Alignment.center,
                 child: Text(
                   userName.isNotEmpty ? userName[0].toUpperCase() : 'U',
-                  style: TextStyle(color: Colors.black.withValues(alpha: 0.7),
+                  style: const TextStyle(
+                    color: Colors.white,
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
                   ),

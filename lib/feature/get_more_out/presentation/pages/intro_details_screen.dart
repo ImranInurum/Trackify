@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:trackify/core/common/models/vehicle_list_model.dart';
+import 'package:trackify/feature/map/data/entity/user_vehicles.dart';
 
 import '../../../../l10n/app_localizations.dart';
 import '../cubit/geo_fenc_cubit.dart';
@@ -50,7 +52,7 @@ class _IntroDetailsScreenState extends State<IntroDetailsScreen> {
 
     String? vehicleName;
     String? imei;
-    var selectedDevice; // Using var or dynamic if we don't import Vehicle explicitly
+    Vehicles? selectedDevice;
 
     final mapState = context.read<MapCubit>().state;
     if (mapState is MapLoaded) {
@@ -80,19 +82,27 @@ class _IntroDetailsScreenState extends State<IntroDetailsScreen> {
       targetScreen = const EmergencyAlertScreen();
     } else if (titleLower.contains('overspeed') ||
         titleLower.contains('speed')) {
-      targetScreen = OverSpeedAlertScreen(vehicle: selectedDevice);
+      final vehicle = selectedDevice != null
+          ? Vehicle(
+              id: selectedDevice.id,
+              userId: selectedDevice.userId,
+              vehicleMaker: selectedDevice.vehicleMaker,
+              vehicleNumber: selectedDevice.vehicleNumber,
+              vehicleModel: selectedDevice.vehicleModel,
+              imei: selectedDevice.imei,
+            )
+          : null;
+      targetScreen = OverSpeedAlertScreen(vehicle: vehicle);
     } else {
       // Fallback if needed, just pop out or do nothing
       Navigator.pop(context);
       return;
     }
 
-    if (targetScreen != null) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (_) => targetScreen!),
-      );
-    }
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (_) => targetScreen!),
+    );
   }
 
   @override

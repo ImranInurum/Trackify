@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:trackify/core/config/network/api_host.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
-import 'package:trackify/core/config/font_manager.dart';
 import 'package:trackify/core/utils/shared_preferences.dart';
 import 'package:trackify/feature/device_warranty/domain/entities/device_warranty_entity.dart';
 import 'package:trackify/feature/device_warranty/domain/entities/warranty_payment_summary_entity.dart';
@@ -587,10 +586,10 @@ class PaymentSuccessOverlay extends StatefulWidget {
   final VoidCallback onComplete;
 
   const PaymentSuccessOverlay({
-    Key? key,
+    super.key,
     required this.message,
     required this.onComplete,
-  }) : super(key: key);
+  });
 
   @override
   State<PaymentSuccessOverlay> createState() => _PaymentSuccessOverlayState();

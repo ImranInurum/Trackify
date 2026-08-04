@@ -54,7 +54,7 @@ class _VehicleMultiSelectionDialogState
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              '${l10n.selectVehiclesOverspeedAlert}',
+              l10n.selectVehiclesOverspeedAlert,
               style: theme.textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.bold,
               ),

@@ -65,7 +65,20 @@ class _EditVehicleViewState extends State<_EditVehicleView> {
     VehicleConfig? matchConfig;
     try {
       matchConfig = state.configs.firstWhere(
-        (c) => c.type.trim().toLowerCase() == entityType || c.id == widget.vehicle.vehicleType,
+        (c) {
+          final cType = c.type.trim().toLowerCase();
+          if (cType == entityType || c.id == widget.vehicle.vehicleType) return true;
+          
+          if ((entityType == '2_wheeler' || entityType == 'two_wheeler' || entityType == 'bike') && 
+              (cType == 'bike' || cType == '2_wheeler' || cType == 'two wheeler' || cType.contains('2'))) {
+            return true;
+          }
+          if ((entityType == '3_wheeler' || entityType == 'auto rickshaw') &&
+              (cType == 'auto rickshaw' || cType == '3_wheeler' || cType == 'three wheeler' || cType.contains('3'))) {
+            return true;
+          }
+          return false;
+        },
       );
     } catch (_) {
       if (state.configs.isNotEmpty) matchConfig = state.configs.first;

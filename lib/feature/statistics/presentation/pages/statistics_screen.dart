@@ -186,7 +186,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                 ),
                 const SizedBox(height: 12),
                 if (state is StatisticsLoading)
-                  const Expanded(child: const Center(child: TrackifyLoader()))
+                  const Expanded(child: Center(child: TrackifyLoader()))
                 else if (state is StatisticsError)
                   Expanded(
                     child: Center(

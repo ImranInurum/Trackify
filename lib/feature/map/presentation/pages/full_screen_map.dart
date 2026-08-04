@@ -23,7 +23,6 @@ import 'package:trackify/feature/map/data/entity/user_vehicles.dart';
 import '../../../../l10n/app_localizations.dart';
 import 'package:trackify/core/utils/distance_utils.dart';
 import '../cubit/map_cubit.dart';
-import '../cubit/map_state.dart';
 import 'package:trackify/feature/Vehicle_control/presentation/cubit/vehicle_control_cubit.dart';
 import 'package:trackify/feature/Vehicle_control/data/repositories/vehicle_control_repository_impl.dart';
 import 'package:trackify/feature/Vehicle_control/presentation/widgets/vehicle_on_map_card.dart';
@@ -69,7 +68,7 @@ class _FullScreenMapState extends State<FullScreenMap>
     key: 'KEY_WARRANTY_EXPIRED',
     defaultValue: true,
   );
-  int _statsPageIndex = 0;
+  final int _statsPageIndex = 0;
   GoogleMapController? _mapController;
   String? _lightMapStyle;
   String? _darkMapStyle;
@@ -86,8 +85,8 @@ class _FullScreenMapState extends State<FullScreenMap>
   // Animation start/end states
   LatLng? _animStartTarget;
   LatLng? _animEndTarget;
-  double _animStartTargetLat = 0;
-  double _animStartTargetLng = 0;
+  final double _animStartTargetLat = 0;
+  final double _animStartTargetLng = 0;
   double _animStartZoom = 16.0;
   double _animEndZoom = 18.0;
   double _animStartTilt = 0.0;
@@ -764,7 +763,7 @@ class _FullScreenMapState extends State<FullScreenMap>
   }
 
   GeoFenceState? _lastGeoStateMarkers;
-  Set<Marker> _cachedGeoMarkers = {};
+  final Set<Marker> _cachedGeoMarkers = {};
 
   /// Builds the markers set — called from build so it always reads latest _showCurrentLocation.
   Set<Marker> _buildMarkers(
@@ -1652,8 +1651,9 @@ class _FullScreenMapState extends State<FullScreenMap>
                         onCameraMove: (position) {
                           if (_uiCubit.state.isAutoFollowing) return;
                           if (_cameraAnimationController != null &&
-                              _cameraAnimationController!.isAnimating)
+                              _cameraAnimationController!.isAnimating) {
                             return;
+                          }
 
                           _cameraTarget = position.target;
                           _cameraZoom = position.zoom;
@@ -1924,8 +1924,9 @@ class _FullScreenMapState extends State<FullScreenMap>
           final iconStr = cachedMap['selectedIcon']?.toString();
           if (iconStr != null) {
             if (iconStr == 'Scooty') return Icons.moped;
-            if (iconStr == 'My Vehicle' || iconStr == 'Car')
+            if (iconStr == 'My Vehicle' || iconStr == 'Car') {
               return Icons.directions_car;
+            }
             if (iconStr == 'Bike') return Icons.motorcycle;
           }
         }
@@ -2953,10 +2954,10 @@ class _FullScreenMapState extends State<FullScreenMap>
                     final int s = totalSeconds % 60;
                     if (h > 0) {
                       durationStr =
-                          "${h}h ${m}${AppLocalizations.of(context)!.minutesShort}";
+                          "${h}h $m${AppLocalizations.of(context)!.minutesShort}";
                     } else {
                       durationStr =
-                          "${m}${AppLocalizations.of(context)!.minutesShort} ${s}${AppLocalizations.of(context)!.secondsShort}";
+                          "$m${AppLocalizations.of(context)!.minutesShort} $s${AppLocalizations.of(context)!.secondsShort}";
                     }
                   }
                 }

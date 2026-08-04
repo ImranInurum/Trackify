@@ -2,7 +2,6 @@ import 'package:trackify/feature/add_fuel/data/data_source/add_fuel_datasource.d
 import 'package:trackify/feature/add_fuel/data/model/add_fuel_model.dart';
 import 'package:trackify/feature/add_fuel/domain/entities/add_fuel_entity.dart';
 import 'package:trackify/feature/add_fuel/domain/reppository/add_fuel_repository.dart';
-import 'package:trackify/feature/add_fuel/domain/usecase/add_fuel_usecase.dart';
 
 class AddFuelRepositoryImpl implements AddFuelRepository{
 

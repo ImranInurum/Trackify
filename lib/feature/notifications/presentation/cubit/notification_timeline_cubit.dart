@@ -10,7 +10,7 @@ class NotificationTimelineCubit extends Cubit<NotificationTimelineState> {
 
   NotificationTimelineCubit(this._repository) : super(NotificationTimelineInitial());
 
-  List<NotificationTimelineItem> _allNotifications = [];
+  final List<NotificationTimelineItem> _allNotifications = [];
   int _currentPage = 1;
   int _totalPages = 1;
   bool _isLoadingMore = false;

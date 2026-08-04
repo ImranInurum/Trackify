@@ -228,7 +228,7 @@ class LocationSharingCubit extends Cubit<LocationSharingState> {
       fetchActiveShareCount(item);
 
       // Trigger native share sheet
-      await Share.share('$webLink');
+      await Share.share(webLink);
     } catch (e) {
       debugPrint('Exception in shareLiveLocation: $e');
       if (context.mounted) {

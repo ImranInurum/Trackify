@@ -3,14 +3,10 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:intl/intl.dart';
 import 'package:trackify/app/cubit/app_cubit.dart';
 import 'package:trackify/core/config/network/api_host.dart';
 import 'package:trackify/core/constants/app_images.dart';
-import 'package:trackify/core/theme/app_colors.dart';
 import 'package:trackify/feature/map/data/entity/user_vehicles.dart';
-import 'package:trackify/feature/trips/presentation/cubit/ride_history_cubit.dart';
-import 'package:trackify/feature/trips/presentation/cubit/ride_history_state.dart';
 import 'package:trackify/feature/device_warranty/data/model/warranty_status_model.dart';
 import 'package:trackify/feature/device_warranty/data/repository/device_warranty_repository_impl.dart';
 import 'package:trackify/feature/device_warranty/data/data_source/device_warranty_data_source.dart';
@@ -823,7 +819,7 @@ class _DraggableAppBarState extends State<DraggableAppBar>
 
   Widget _buildTag(Vehicles device) {
     return Text(
-      "${device.fuelType}", // Default for now
+      device.fuelType, // Default for now
       style: TextStyle(
         fontSize: 11,
         color: Theme.of(context).colorScheme.primary,

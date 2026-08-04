@@ -11,7 +11,6 @@ import '../cubit/device_data_state.dart';
 import 'package:trackify/core/widgets/trackify_loader.dart';
 import 'package:trackify/feature/service_logs/presentation/cubit/service_logs_cubit.dart';
 import 'package:trackify/feature/service_logs/presentation/cubit/service_logs_state.dart';
-import 'package:trackify/core/common/models/vehicle_list_model.dart';
 import 'package:trackify/core/constants/app_images.dart';
 
 class DeviceDataScreen extends StatefulWidget {
@@ -42,7 +41,7 @@ class _DeviceDataScreenState extends State<DeviceDataScreen> {
     final state = context.watch<DeviceDataCubit>().state;
 
     if (state is DeviceDataLoading) {
-      return const Scaffold(body: const Center(child: TrackifyLoader()));
+      return const Scaffold(body: Center(child: TrackifyLoader()));
     }
 
     if (state is DeviceDataError) {

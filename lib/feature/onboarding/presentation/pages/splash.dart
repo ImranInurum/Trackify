@@ -7,7 +7,6 @@ import 'package:trackify/feature/auth/presentation/pages/signin_screen.dart';
 import 'package:trackify/feature/map/presentation/cubit/map_cubit.dart';
 import 'package:trackify/feature/map/presentation/cubit/map_state.dart';
 import 'package:trackify/feature/onboarding/presentation/cubit/splash_cubit.dart';
-import 'package:trackify/feature/onboarding/presentation/cubit/splash_state.dart';
 import 'package:trackify/feature/onboarding/presentation/pages/select_language_screen.dart';
 
 import '../../../../app/app_navigation.dart';

@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:trackify/feature/trips/presentation/view/widgets/all_rides/all_rides_view.dart';
 import 'package:trackify/feature/trips/presentation/view/widgets/trips/trips_view.dart';
-import 'package:trackify/feature/trips/presentation/view/saved_rides_screen.dart';
-import 'package:trackify/feature/record_via_phone/presentation/pages/shared_rides_screen.dart' as trackify_shared;
 import '../../../../l10n/app_localizations.dart';
 
 class TripScreen extends StatefulWidget {
@@ -49,6 +47,7 @@ class _TripScreenState extends State<TripScreen>
           ),
         ),
         actions: [
+          /*
           PopupMenuButton<String>(
             elevation: 8,
             color: Theme.of(context).cardColor,
@@ -96,6 +95,7 @@ class _TripScreenState extends State<TripScreen>
               ),
             ],
           ),
+          */
         ],
       ),
 

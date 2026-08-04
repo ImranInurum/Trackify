@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/services.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:trackify/l10n/app_localizations.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:gal/gal.dart';
@@ -19,14 +18,14 @@ class ShareRideBottomSheet extends StatefulWidget {
   final List<LatLng> routePoints;
 
   const ShareRideBottomSheet({
-    Key? key,
+    super.key,
     required this.title,
     required this.date,
     required this.distance,
     required this.duration,
     required this.avgSpeed,
     required this.routePoints,
-  }) : super(key: key);
+  });
 
   @override
   State<ShareRideBottomSheet> createState() => _ShareRideBottomSheetState();

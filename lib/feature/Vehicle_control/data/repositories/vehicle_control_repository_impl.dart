@@ -167,12 +167,14 @@ class VehicleControlRepositoryImpl implements VehicleControlRepository {
             if (tankCapacity.isEmpty) tankCapacity = match.tankCapacity ?? '';
             if (vehicleMileage.isEmpty) vehicleMileage = match.mileage ?? '';
             if (vehicleType.isEmpty) vehicleType = match.vehicleType ?? '';
-            if (vehicleMaker.isEmpty)
+            if (vehicleMaker.isEmpty) {
               vehicleMaker = match.vehicleMaker ?? match.brandId ?? '';
+            }
             if (vehicleModel.isEmpty) vehicleModel = match.vehicleModel ?? '';
             if (fuelType.isEmpty) fuelType = match.fuelType ?? '';
-            if (vehicleNumber.isEmpty)
+            if (vehicleNumber.isEmpty) {
               vehicleNumber = match.vehicleNumber ?? '';
+            }
           }
         });
       }

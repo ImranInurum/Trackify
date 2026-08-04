@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:trackify/feature/app_updates/presentiation/pages/update_screen.dart';
-import 'package:trackify/core/config/font_manager.dart';
 import 'package:trackify/core/utils/shared_preferences.dart';
 import 'package:trackify/feature/help_and_support/presentation/pages/app_web_view_screen.dart';
 import 'package:trackify/feature/help_and_support/presentation/pages/my_issue_screen.dart';
@@ -10,14 +9,12 @@ import 'package:trackify/l10n/app_localizations.dart';
 
 import 'package:trackify/feature/help_and_support/data/repository_impl/help_repository_impl.dart';
 import 'package:trackify/feature/help_and_support/presentation/cubit/help_cubit.dart';
-import 'package:trackify/feature/help_and_support/presentation/cubit/help_state.dart';
 import 'package:trackify/feature/help_and_support/presentation/cubit/help_support_cubit.dart';
 import 'package:trackify/feature/help_and_support/presentation/cubit/time_slot_cubit.dart';
 import 'package:trackify/feature/help_and_support/data/model/report_issue_model.dart';
 import 'package:trackify/feature/service_logs/presentation/cubit/service_logs_cubit.dart';
 import 'package:trackify/feature/service_logs/presentation/cubit/service_logs_state.dart';
 import 'package:trackify/feature/service_logs/presentation/widgets/vehicle_selection_app_bar.dart';
-import 'package:trackify/core/common/models/vehicle_list_model.dart';
 
 import '../../data/model/suggestion_model.dart';
 import '../cubit/suggestion_cubit.dart';

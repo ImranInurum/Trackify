@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:trackify/core/config/font_manager.dart';
-import 'package:trackify/l10n/app_localizations_ar.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../cubit/update_cubit.dart';
 import '../cubit/update_cubit_state.dart';

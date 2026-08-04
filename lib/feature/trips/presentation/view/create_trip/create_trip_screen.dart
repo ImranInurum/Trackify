@@ -373,7 +373,7 @@ class _SelectionGroupCardState extends State<_SelectionGroupCard> {
                   Expanded(child: _buildStatItem(
                     totalMinutes >= 60 
                       ? "${totalMinutes ~/ 60} ${l10n.hrLabel} ${totalMinutes % 60} ${l10n.minLabel}" 
-                      : "${totalMinutes} ${l10n.minLabel} ${widget.rides.isNotEmpty ? '00 ${l10n.secLabel}' : ''}", 
+                      : "$totalMinutes ${l10n.minLabel} ${widget.rides.isNotEmpty ? '00 ${l10n.secLabel}' : ''}", 
                     l10n.rideDurationLabel)),
                   Expanded(child: _buildStatItem("${avgSpeed.toStringAsFixed(1)}${context.displayKmh}", l10n.averageSpeed)),
                 ],
@@ -442,7 +442,7 @@ class _SelectionGroupCardState extends State<_SelectionGroupCard> {
                   textBaseline: TextBaseline.alphabetic,
                   children: [
                     Text(
-                      "${ride.distance.toStringAsFixed(1)}",
+                      ride.distance.toStringAsFixed(1),
                       style: TextStyle(
                         color: theme.colorScheme.onSurface,
                         fontSize: 24,
@@ -461,7 +461,7 @@ class _SelectionGroupCardState extends State<_SelectionGroupCard> {
                 const SizedBox(height: 16),
                 Row(
                   children: [
-                    Expanded(child: _buildSmallStat("${ride.duration}", l10n.rideDurationLabel)),
+                    Expanded(child: _buildSmallStat(ride.duration, l10n.rideDurationLabel)),
                     const SizedBox(width: 8),
                     Expanded(child: _buildSmallStat("${ride.avgSpeed.toStringAsFixed(1)} ${context.displayKmh}", l10n.averageSpeed)),
                   ],

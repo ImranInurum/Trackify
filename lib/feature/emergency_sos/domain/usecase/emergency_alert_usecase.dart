@@ -1,4 +1,3 @@
-import 'package:trackify/core/utils/typedefs.dart';
 import 'package:trackify/feature/emergency_sos/domain/entities/emergency_alert_entities.dart';
 import 'package:trackify/feature/emergency_sos/domain/repository/emergency_alert_repository.dart';
 

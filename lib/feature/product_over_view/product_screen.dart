@@ -4,7 +4,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:trackify/core/constants/app_images.dart';
 import 'package:trackify/core/utils/active_video_manager.dart';
 import 'package:trackify/core/widgets/trackify_loader.dart';
-import 'package:trackify/feature/map/data/entity/product_feature_model.dart';
 import 'package:trackify/feature/map/presentation/cubit/product_feature_cubit.dart';
 import 'package:trackify/feature/map/presentation/cubit/product_feature_state.dart';
 import 'package:trackify/feature/my_garage/presentation/view/checkout_screen.dart';
@@ -245,15 +244,13 @@ class _ProductOverviewScreenState extends State<ProductOverviewScreen> {
               else
                 GestureDetector(
                   onTap: () {
-                    if (_topYoutubeController == null) {
-                      _topYoutubeController = YoutubePlayerController(
+                    _topYoutubeController ??= YoutubePlayerController(
                         initialVideoId: 'l_q_4N59tN8',
                         flags: const YoutubePlayerFlags(
                           autoPlay: true,
                           mute: false,
                         ),
                       );
-                    }
                     setState(() {
                       _isTopPlaying = !_isTopPlaying;
                       if (_isTopPlaying) {
@@ -765,10 +762,9 @@ class _PromoTitleVideoPlayer extends StatefulWidget {
   final String title;
 
   const _PromoTitleVideoPlayer({
-    Key? key,
     required this.videoUrl,
     required this.title,
-  }) : super(key: key);
+  });
 
   @override
   State<_PromoTitleVideoPlayer> createState() => _PromoTitleVideoPlayerState();
@@ -1131,7 +1127,7 @@ class __FullScreenVideoPlayerDialogState
 }
 
 class ProductSelectionBottomSheet extends StatefulWidget {
-  const ProductSelectionBottomSheet({Key? key}) : super(key: key);
+  const ProductSelectionBottomSheet({super.key});
 
   @override
   State<ProductSelectionBottomSheet> createState() => _ProductSelectionBottomSheetState();

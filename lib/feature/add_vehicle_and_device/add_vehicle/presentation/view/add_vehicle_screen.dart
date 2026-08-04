@@ -6,7 +6,6 @@ import '../../../../../app/app_navigation.dart';
 import '../../../../map/presentation/cubit/map_cubit.dart';
 import '../../../../profile/presentation/cubit/profile_cubit.dart';
 import '../../../../../core/theme/app_theme_extension.dart';
-import '../../../../../core/widgets/custom_form_field.dart';
 import '../../../../../l10n/app_localizations.dart';
 import '../cubit/add_vehicle_cubit.dart';
 import '../cubit/add_vehicle_state.dart';
@@ -425,7 +424,7 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
                         if (state.isLoadingConfig && state.configs.isEmpty) {
                           return const Padding(
                             padding: EdgeInsets.only(top: 100),
-                            child: const Center(child: TrackifyLoader()),
+                            child: Center(child: TrackifyLoader()),
                           );
                         }
 

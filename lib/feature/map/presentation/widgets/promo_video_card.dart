@@ -24,7 +24,7 @@ bool _isYouTubeUrl(String url) {
 class PromoVideoCard extends StatefulWidget {
   final PromoVideoModel video;
 
-  const PromoVideoCard({Key? key, required this.video}) : super(key: key);
+  const PromoVideoCard({super.key, required this.video});
 
   @override
   State<PromoVideoCard> createState() => _PromoVideoCardState();

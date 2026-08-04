@@ -16,7 +16,6 @@ import '../../../map/presentation/cubit/map_cubit.dart';
 import '../../../map/presentation/cubit/map_state.dart';
 import '../../../onboarding/presentation/cubit/splash_cubit.dart';
 import '../../../onboarding/presentation/cubit/splash_state.dart';
-import '../../../onboarding/presentation/pages/select_language_screen.dart';
 import '../cubit/auth_cubit.dart';
 import '../cubit/auth_state.dart';
 import 'forgot_password_screen.dart';

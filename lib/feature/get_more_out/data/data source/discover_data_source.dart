@@ -2,8 +2,6 @@
 // discover_remote_data_source.dart
 // ===============================
 
-import 'dart:convert';
-import 'package:http/http.dart' as http;
 import 'package:trackify/core/config/network/api_host.dart';
 import 'package:trackify/core/config/network/network_api_service.dart';
 import '../models/discover_model.dart';

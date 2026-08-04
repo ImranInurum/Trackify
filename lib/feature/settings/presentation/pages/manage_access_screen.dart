@@ -9,7 +9,7 @@ class ManageAccessScreen extends StatefulWidget {
 
 class _ManageAccessScreenState extends State<ManageAccessScreen> {
   final TextEditingController _emailController = TextEditingController();
-  String _selectedRole = 'View Only';
+  final String _selectedRole = 'View Only';
 
   // Specific permissions
   final Map<String, bool> _permissions = {
@@ -167,7 +167,7 @@ class _ManageAccessScreenState extends State<ManageAccessScreen> {
                         });
                       },
                     );
-                  }).toList(),
+                  }),
                   const SizedBox(height: 8),
                   SizedBox(
                     width: double.infinity,

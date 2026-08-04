@@ -6,7 +6,6 @@ import 'package:trackify/feature/overspeed_alert/data/model/overspeed_alert_mode
 import '../cubit/overspeed_alert_cubit.dart';
 import '../cubit/overspeed_alert_state.dart';
 import '../widgets/vehicle_multi_selection_dialog.dart';
-import 'package:trackify/core/widgets/loading_screen_ol.dart';
 import 'package:trackify/core/utils/distance_utils.dart';
 
 class AddOverspeedAlertScreen extends StatefulWidget {
@@ -271,7 +270,7 @@ class _AddOverspeedAlertScreenState extends State<AddOverspeedAlertScreen> {
         Expanded(
           flex: 3,
           child: DropdownButtonFormField<int>(
-            value: value,
+            initialValue: value,
             icon: Icon(Icons.arrow_drop_down,
                 color: theme.colorScheme.primary),
             isExpanded: true,

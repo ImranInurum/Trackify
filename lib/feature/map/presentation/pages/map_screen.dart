@@ -1,12 +1,10 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:ui' as ui;
-import 'dart:math' as math;
 import 'package:trackify/core/utils/shared_preferences.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:trackify/core/widgets/loading_screen_ol.dart';
 import 'package:trackify/l10n/app_localizations.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
@@ -19,7 +17,6 @@ import 'package:trackify/core/theme/app_colors.dart';
 import 'package:trackify/core/utils/map_utils.dart';
 import 'package:trackify/core/widgets/bouncing_widget.dart';
 import 'package:trackify/core/widgets/draggable_app_bar.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:trackify/feature/add_vehicle_and_device/choice_selector.dart';
 import 'package:trackify/feature/app_updates/presentiation/pages/update_screen.dart';
 import 'package:trackify/feature/device_warranty/pages/device_warranty_page.dart';
@@ -38,8 +35,6 @@ import 'package:trackify/feature/safe_parking/presentation/pages/safe_parking_sc
 import 'package:trackify/feature/trips/presentation/view/ride_history_details/ride_history_details_screen.dart';
 import 'package:trackify/feature/trips/presentation/view/widgets/all_rides/widgets/ride_card.dart';
 import 'package:trackify/feature/video_tutorial/presentation/pages/category_screen.dart';
-import '../../../../core/services/socket_service.dart';
-import '../../../../core/utils/shared_preferences.dart';
 import '../../../device_data/presentation/pages/device_data_screen.dart';
 import '../../../fuel_logs/presentation/pages/fuel_logs_screen.dart';
 import '../../../geo_fence/presentation/pages/geo_fence_screen.dart';
@@ -51,14 +46,9 @@ import 'package:trackify/feature/trips/presentation/cubit/ride_history_cubit.dar
 import 'package:trackify/feature/trips/data/entity/ride_model.dart';
 import 'package:trackify/feature/trips/presentation/cubit/ride_history_state.dart';
 
-import 'package:trackify/feature/map/data/repository/promo_video_repository_impl.dart';
 import 'package:trackify/feature/map/presentation/cubit/promo_video_cubit.dart';
 import 'package:trackify/feature/map/presentation/cubit/promo_video_state.dart';
 import 'package:trackify/feature/map/presentation/widgets/promo_video_card.dart';
-import 'package:trackify/feature/map/presentation/cubit/product_feature_cubit.dart';
-import 'package:trackify/feature/map/presentation/cubit/product_feature_state.dart';
-import 'package:trackify/feature/map/data/entity/product_feature_model.dart';
-import 'package:trackify/feature/map/data/entity/promo_video_model.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:http/http.dart' as http;
 import 'package:trackify/feature/map/data/entity/promo_offer_model.dart';
@@ -68,7 +58,6 @@ import '../../../../core/config/style_manager.dart';
 import '../../../upgrade_to_plus/presentation/pages/upgrade_to_plus.dart';
 import '../cubit/map_cubit.dart';
 import '../cubit/map_state.dart';
-import '../../../../l10n/app_localizations.dart';
 import 'package:trackify/core/common/models/vehicle_list_model.dart';
 import 'package:trackify/core/utils/distance_utils.dart';
 import 'package:trackify/feature/geo_fence/presentation/cubit/geo_fence_cubit.dart';
@@ -442,8 +431,9 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin, Wi
       _filterOffers();
       if (_promoOffers.isEmpty ||
           !mounted ||
-          _offerPageController.hasClients == false)
+          _offerPageController.hasClients == false) {
         return;
+      }
       int nextIndex = _currentOfferIndex + 1;
       if (nextIndex >= _promoOffers.length) {
         nextIndex = 0;
@@ -464,8 +454,8 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin, Wi
 
   GeoFenceState? _lastGeoState;
   String? _lastImeiForGeoCircles;
-  Set<Circle> _cachedGeoCircles = {};
-  Set<Marker> _cachedGeoMarkers = {};
+  final Set<Circle> _cachedGeoCircles = {};
+  final Set<Marker> _cachedGeoMarkers = {};
 
   Future<void> _loadGeoFenceIcons(Color primaryColor) async {
     _homeIcon = await MapUtils.createGeoFenceMarkerIcon(
@@ -838,8 +828,9 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin, Wi
           _rideHistoryUpdateTimer = Timer.periodic(
             const Duration(seconds: 20),
             (_) {
-              if (mounted)
+              if (mounted) {
                 context.read<RideHistoryCubit>().getRideHistoryData();
+              }
             },
           );
         }
@@ -1727,9 +1718,9 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin, Wi
               );
               double endB = _normalizeBearing(bearing);
               double diff = endB - _animStartMarkerBearing;
-              if (diff > 180)
+              if (diff > 180) {
                 diff -= 360;
-              else if (diff < -180)
+              } else if (diff < -180)
                 diff += 360;
               _animEndMarkerBearing = _animStartMarkerBearing + diff;
 
@@ -1786,26 +1777,27 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin, Wi
                                 rotation: animBearing % 360,
                               ),
                             );
-                          } else if (currentPos != null) {
+                          } else {
                             markers.add(
-                              Marker(
-                                markerId: const MarkerId('current_location'),
-                                position: LatLng(
-                                  currentPos.latitude,
-                                  currentPos.longitude,
-                                ),
-                                icon:
-                                    _userLocationMarker ??
-                                    BitmapDescriptor.defaultMarkerWithHue(
-                                      BitmapDescriptor.hueAzure,
-                                    ),
-                                anchor: const Offset(0.5, 0.5),
-                                infoWindow: InfoWindow(
-                                  title: l10n.yourLocationLabel,
-                                ),
+                            Marker(
+                              markerId: const MarkerId('current_location'),
+                              position: LatLng(
+                                currentPos.latitude,
+                                currentPos.longitude,
                               ),
-                            );
+                              icon:
+                                  _userLocationMarker ??
+                                  BitmapDescriptor.defaultMarkerWithHue(
+                                    BitmapDescriptor.hueAzure,
+                                  ),
+                              anchor: const Offset(0.5, 0.5),
+                              infoWindow: InfoWindow(
+                                title: l10n.yourLocationLabel,
+                              ),
+                            ),
+                          );
                           }
+
 
                           final currentImei = _selectedDevice?.imei;
                           if (_lastGeoState != geoState ||
@@ -2111,10 +2103,10 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin, Wi
                     final int m = (totalSeconds % 3600) ~/ 60;
                     final int s = totalSeconds % 60;
                     if (h > 0) {
-                      durationStr = "${h}h ${m}${l10n.minutesShort}";
+                      durationStr = "${h}h $m${l10n.minutesShort}";
                     } else {
                       durationStr =
-                          "${m}${l10n.minutesShort} ${s}${l10n.secondsShort}";
+                          "$m${l10n.minutesShort} $s${l10n.secondsShort}";
                     }
                   }
                 }
@@ -2612,10 +2604,10 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin, Wi
                         currentPlan == null || currentPlan.daysLeft <= 0;
                     final String rechargeLabel = isRechargeExpired
                         ? l10n.rechargeExpired
-                        : l10n.expiresInDays(currentPlan!.daysLeft);
+                        : l10n.expiresInDays(currentPlan.daysLeft);
                     final Color rechargeColor = isRechargeExpired
                         ? Colors.red
-                        : currentPlan!.daysLeft <= 30
+                        : currentPlan.daysLeft <= 30
                         ? Colors.orange
                         : Colors.green;
 
@@ -3188,7 +3180,6 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin, Wi
             option["label"] == l10n.geoFenceAlert ||
             option["label"] == l10n.fuelLogs ||
             option["label"] == l10n.serviceLogs ||
-            option["label"] == l10n.recordViaPhone ||
             option["label"] == l10n.deviceDataPlanLabel ||
             (option["label"] == l10n.deviceWarrantyLabel &&
                 isDeviceNotInstalled));
@@ -3426,17 +3417,13 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin, Wi
   ) {
     final label = option["label"];
     if (label == l10n.recordViaPhone) {
-      if (selectedDevice?.imei == null || _isWarrantyExpired) {
-        _showUnlockDeviceDialog(context, label as String);
-      } else {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) =>
-                RecordViaPhoneScreen(imei: selectedDevice?.imei ?? ''),
-          ),
-        );
-      }
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) =>
+              RecordViaPhoneScreen(imei: selectedDevice?.imei ?? ''),
+        ),
+      );
     } else if (label == l10n.reachMeSticker) {
       Navigator.push(
         context,
@@ -3537,7 +3524,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin, Wi
         if (mounted &&
             selectedDevice?.imei != null &&
             selectedDevice!.imei!.isNotEmpty) {
-          context.read<GeoFenceCubit>().fetchGeoFences(selectedDevice!.imei!);
+          context.read<GeoFenceCubit>().fetchGeoFences(selectedDevice.imei!);
         }
       });
     } else if (label == l10n.upgradeToPlus.replaceFirst(' to ', ' to\n')) {

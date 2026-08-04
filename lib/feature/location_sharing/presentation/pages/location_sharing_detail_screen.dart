@@ -7,8 +7,6 @@ import '../cubit/live/location_sharing_live_cubit.dart';
 import '../cubit/live/location_sharing_live_state.dart';
 import '../cubit/history/location_sharing_history_cubit.dart';
 import '../cubit/history/location_sharing_history_state.dart';
-import '../../data/models/share_history_model.dart';
-import 'package:trackify/core/theme/app_colors.dart';
 import '../../../../l10n/app_localizations.dart';
 import 'package:intl/intl.dart';
 

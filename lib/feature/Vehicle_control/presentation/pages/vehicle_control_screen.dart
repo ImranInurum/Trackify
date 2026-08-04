@@ -33,7 +33,6 @@ import 'package:trackify/app/cubit/app_cubit.dart';
 import 'package:trackify/app/cubit/app_state.dart';
 import 'package:trackify/core/widgets/trackify_loader.dart';
 import 'package:trackify/feature/add_vehicle_and_device/choice_selector.dart';
-import 'package:trackify/feature/device_installation/presentation/pages/device_installation_screen.dart';
 import 'package:trackify/feature/map/presentation/cubit/map_cubit.dart';
 import 'package:trackify/feature/map/presentation/cubit/map_state.dart';
 import 'package:trackify/feature/my_garage/presentation/cubit/my_garage_cubit.dart';
