@@ -365,7 +365,7 @@ class _SelectionGroupCardState extends State<_SelectionGroupCard> {
                   ),
                 ],
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: 6),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -378,9 +378,9 @@ class _SelectionGroupCardState extends State<_SelectionGroupCard> {
                   Expanded(child: _buildStatItem("${avgSpeed.toStringAsFixed(1)}${context.displayKmh}", l10n.averageSpeed)),
                 ],
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 6),
               Divider(color: theme.dividerColor.withValues(alpha: 0.1), height: 1),
-              const SizedBox(height: 12),
+              const SizedBox(height: 4),
               GestureDetector(
                 onTap: () => setState(() => _isExpanded = !_isExpanded),
                 behavior: HitTestBehavior.opaque,

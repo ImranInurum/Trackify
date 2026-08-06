@@ -136,6 +136,7 @@ class _DraggableAppBarState extends State<DraggableAppBar>
         if (jsonResponse['success'] == true && jsonResponse['data'] != null) {
           final data = jsonResponse['data'] as Map<String, dynamic>;
           data['imei'] = imei; // Ensure imei is present for identification
+          data['is_device_status_api'] = true; // Mark to only use battery from here
           if (mounted) {
             setState(() {
               _deviceStatusMap[imei] = data;

@@ -79,10 +79,10 @@ class FullScreenMapUiCubit extends Cubit<FullScreenMapUiState> {
   void changeHeaderMetric(bool isUp) {
     int newIndex = state.headerMetricIndex;
     if (isUp) {
-      newIndex = (newIndex - 1) % 3;
-      if (newIndex < 0) newIndex = 2;
+      newIndex = (newIndex - 1) % 4;
+      if (newIndex < 0) newIndex = 3;
     } else {
-      newIndex = (newIndex + 1) % 3;
+      newIndex = (newIndex + 1) % 4;
     }
     emit(state.copyWith(
       isSlidingUp: isUp,

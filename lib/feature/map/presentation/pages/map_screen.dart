@@ -2113,39 +2113,16 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin, Wi
               }
             }
 
-            final batteryVal =
-                liveDevice['battery'] ??
-                liveDevice['batteryLevel'] ??
-                liveDevice['battery_level'] ??
-                liveDevice['bat'] ??
-                liveDevice['voltageLevel'] ??
-                liveDevice['voltage_level'] ??
-                (attrs is Map
-                    ? (attrs['battery'] ??
-                          attrs['batteryLevel'] ??
-                          attrs['voltageLevel'] ??
-                          attrs['battery_level'] ??
-                          attrs['voltage_level'])
-                    : null);
+            final batteryVal = liveDevice['api_battery'];
 
-            final voltageVal =
-                liveDevice['voltage'] ??
-                liveDevice['volts'] ??
-                liveDevice['battery_voltage'] ??
-                liveDevice['v_bat'] ??
-                liveDevice['power'] ??
-                (attrs is Map
-                    ? (attrs['voltage'] ??
-                          attrs['battery_voltage'] ??
-                          attrs['v_bat'])
-                    : null);
+            final voltageVal = null; // Ignored to strictly use DeviceStatus API battery
 
-            String batteryText = "";
+            String batteryText = "--";
             Color batteryColor = AppColors.paletteGreen;
             IconData batteryIcon = Icons.battery_charging_full;
 
             final rawVal = batteryVal ?? voltageVal;
-            if (rawVal != null) {
+            if (rawVal != null && rawVal.toString().trim().toLowerCase() != 'null' && rawVal.toString().trim() != '') {
               final rawStr = rawVal.toString().trim();
               int? intLevel;
 
@@ -2155,7 +2132,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin, Wi
                 intLevel = int.tryParse(rawStr);
               }
 
-              if (intLevel != null && intLevel >= 0 && intLevel <= 6) {
+              if (intLevel != null) {
                 switch (intLevel) {
                   case 0:
                     batteryText = "Disconnected";
@@ -2192,47 +2169,13 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin, Wi
                     batteryColor = Colors.green.shade400;
                     batteryIcon = Icons.battery_full;
                     break;
-                }
-              } else if (batteryVal != null) {
-                final batDouble = double.tryParse(
-                  batteryVal.toString().replaceAll(RegExp(r'[^0-9.]'), ''),
-                );
-                if (batDouble != null) {
-                  final String status = batDouble < 20 ? "Low" : "Normal";
-                  final displayVal = batDouble <= 1.0
-                      ? (batDouble * 100).round()
-                      : batDouble.round();
-                  batteryText = "$status ($displayVal%)";
-                  batteryColor = displayVal < 20
-                      ? Colors.red
-                      : AppColors.paletteGreen;
-                  batteryIcon = displayVal < 20
-                      ? Icons.battery_alert
-                      : Icons.battery_charging_full;
-                }
-              } else if (voltageVal != null) {
-                final voltDouble = double.tryParse(
-                  voltageVal.toString().replaceAll(RegExp(r'[^0-9.]'), ''),
-                );
-                if (voltDouble != null) {
-                  final String status = voltDouble < 11.5 ? "Low" : "Normal";
-                  batteryText = "$status (${voltDouble.toStringAsFixed(1)}V)";
-                  batteryColor = voltDouble < 11.5
-                      ? Colors.red
-                      : AppColors.paletteGreen;
-                  batteryIcon = voltDouble < 11.5
-                      ? Icons.battery_alert
-                      : Icons.battery_charging_full;
-                } else {
-                  batteryText = "Normal (${voltageVal.toString()})";
+                  default:
+                    batteryText = "--";
+                    batteryColor = AppColors.paletteGreen;
+                    batteryIcon = Icons.battery_charging_full;
+                    break;
                 }
               }
-            }
-
-            if (batteryText.isEmpty) {
-              batteryText = "Normal (13.6V)";
-              batteryColor = AppColors.paletteGreen;
-              batteryIcon = Icons.battery_charging_full;
             }
 
             String distance = "$todayDistanceStr ${context.displayKm}";
