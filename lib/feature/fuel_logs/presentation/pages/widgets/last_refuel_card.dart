@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:trackify/l10n/app_localizations.dart';
 
+import 'package:intl/intl.dart';
+
 import '../../cubit/fuel_logs_cubit.dart';
 import '../../cubit/fuel_logs_state.dart';
 import 'package:trackify/core/utils/distance_utils.dart';
@@ -11,6 +13,16 @@ class LastRefuelCard extends StatelessWidget {
   final AppLocalizations l10n;
 
   const LastRefuelCard({super.key, required this.state, required this.l10n});
+
+  String _formatDate(String dateStr) {
+    if (dateStr.isEmpty || dateStr == 'null') return '--';
+    try {
+      final parsedDate = DateTime.parse(dateStr);
+      return DateFormat('d MMM yyyy').format(parsedDate);
+    } catch (e) {
+      return dateStr;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -48,7 +60,7 @@ class LastRefuelCard extends StatelessWidget {
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      "${(state.lastRefuelDate.isEmpty || state.lastRefuelDate == 'null') ? '--' : state.lastRefuelDate} | ₹${(state.lastRefuelAmount.isEmpty || state.lastRefuelAmount == 'null') ? '0' : state.lastRefuelAmount} | ${(state.lastRefuelLiters.isEmpty || state.lastRefuelLiters == 'null') ? '0' : state.lastRefuelLiters} ${l10n.litersShort}",
+                      "${_formatDate(state.lastRefuelDate)} | ₹${(state.lastRefuelAmount.isEmpty || state.lastRefuelAmount == 'null') ? '0' : state.lastRefuelAmount} | ${(state.lastRefuelLiters.isEmpty || state.lastRefuelLiters == 'null') ? '0' : state.lastRefuelLiters} ${l10n.litersShort}",
                       style: TextStyle(
                         color: theme.colorScheme.onSurface,
                         fontSize: mediaQuery.textScaler.scale(10),
