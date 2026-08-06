@@ -186,7 +186,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                 ),
                 const SizedBox(height: 12),
                 if (state is StatisticsLoading)
-                  const Expanded(child: const Center(child: TrackifyLoader()))
+                  const Expanded(child: Center(child: TrackifyLoader()))
                 else if (state is StatisticsError)
                   Expanded(
                     child: Center(
@@ -286,7 +286,7 @@ class _DatePickerBar extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withValues(alpha: 0.1),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -306,7 +306,7 @@ class _DatePickerBar extends StatelessWidget {
                   size: 20,
                   color: Theme.of(
                     context,
-                  ).colorScheme.onSurface.withOpacity(0.6),
+                  ).colorScheme.onSurface.withValues(alpha: 0.6),
                 ),
                 const SizedBox(width: 12),
                 Text(
@@ -407,7 +407,7 @@ class _RidingBehaviourCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
+              color: Colors.black.withValues(alpha: 0.05),
               blurRadius: 8,
               offset: const Offset(0, 4),
             ),
@@ -441,7 +441,7 @@ class _RidingBehaviourCard extends StatelessWidget {
                     l10n.ridingBehaviourVacationDesc,
                     style: TextStyle(
                       fontSize: 14,
-                      color: theme.colorScheme.onSurface.withOpacity(0.8),
+                      color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
                       height: 1.4,
                     ),
                   ),
@@ -470,7 +470,7 @@ class _RidingBehaviourCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 8,
             offset: const Offset(0, 4),
           ),
@@ -499,8 +499,8 @@ class _RidingBehaviourCard extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
             decoration: BoxDecoration(
               color: theme.brightness == Brightness.dark
-                  ? theme.colorScheme.surfaceContainerHighest.withOpacity(0.2)
-                  : theme.colorScheme.surfaceContainerHighest.withOpacity(0.3),
+                  ? theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.2)
+                  : theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Row(
@@ -594,7 +594,7 @@ class _RidingBehaviourCard extends StatelessWidget {
                                   text: trendLabel,
                                   style: TextStyle(
                                     color: theme.colorScheme.onSurface
-                                        .withOpacity(0.6),
+                                        .withValues(alpha: 0.6),
                                     fontSize: 13,
                                   ),
                                 ),
@@ -732,7 +732,7 @@ class _StatSectionCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withValues(alpha: 0.1),
             blurRadius: 8,
             offset: const Offset(0, 4),
           ),
@@ -815,7 +815,7 @@ class _MetricItem extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(6),
                 decoration: BoxDecoration(
-                  color: color.withOpacity(0.4),
+                  color: color.withValues(alpha: 0.4),
                   shape: BoxShape.circle,
                 ),
                 child: Image.asset(
@@ -832,7 +832,7 @@ class _MetricItem extends StatelessWidget {
                   label,
                   style: TextStyle(
                     fontSize: 11,
-                    color: theme.colorScheme.onSurface.withOpacity(0.6),
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                     fontWeight: FontWeight.w400,
                   ),
                   maxLines: 2,
@@ -871,7 +871,7 @@ class _MetricItem extends StatelessWidget {
                     comparisonText,
                     style: TextStyle(
                       fontSize: 10,
-                      color: theme.colorScheme.onSurface.withOpacity(0.5),
+                      color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
                       fontWeight: FontWeight.w400,
                     ),
                     maxLines: 2,

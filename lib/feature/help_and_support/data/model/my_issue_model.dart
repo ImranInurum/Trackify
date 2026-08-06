@@ -34,9 +34,9 @@ class MyIssueModel {
       try {
         String colorStr = json['statusColor'].toString().replaceAll('#', '');
         if (colorStr.length == 6) {
-          colorStr = 'FF' + colorStr;
+          colorStr = 'FF$colorStr';
         }
-        parsedColor = Color(int.parse('0x' + colorStr));
+        parsedColor = Color(int.parse('0x$colorStr'));
       } catch (e) {
         // Fallback or ignore
       }

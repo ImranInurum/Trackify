@@ -4,10 +4,9 @@ import 'package:trackify/core/constants/app_images.dart';
 import 'package:trackify/l10n/app_localizations.dart';
 
 import '../cubit/safe_parking_cubit.dart';
-import '../cubit/safe_parking_state.dart';
 
 class SafeParkingScreen extends StatelessWidget {
-  const SafeParkingScreen({Key? key}) : super(key: key);
+  const SafeParkingScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +46,7 @@ class SafeParkingScreen extends StatelessWidget {
                   child: TextButton(
                     onPressed: () {},
                     style: TextButton.styleFrom(
-                      backgroundColor: color.primary.withOpacity(0.1),
+                      backgroundColor: color.primary.withValues(alpha: 0.1),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(20),
                       ),
@@ -119,7 +118,7 @@ class SafeParkingScreen extends StatelessWidget {
                     l10n.safeParkingSubtitle,
                     textAlign: TextAlign.center,
                     style: text.bodyMedium?.copyWith(
-                      color: color.onSurface.withOpacity(0.6),
+                      color: color.onSurface.withValues(alpha: 0.6),
                     ),
                   ),
                 ),
@@ -138,15 +137,15 @@ class SafeParkingScreen extends StatelessWidget {
                         colors: state.isActivated
                             ? [
                           color.primary,
-                          color.primary.withOpacity(0.7),
+                          color.primary.withValues(alpha: 0.7),
                         ]
                             : isDark
                             ? [
-                          color.surfaceVariant,
+                          color.surfaceContainerHighest,
                           color.surface,
                         ]
                             : [
-                          color.surfaceVariant,
+                          color.surfaceContainerHighest,
                           color.surface,
                         ],
                       ),

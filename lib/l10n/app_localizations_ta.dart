@@ -2150,7 +2150,7 @@ class AppLocalizationsTa extends AppLocalizations {
 
   @override
   String ridesSelectedSummary(String count, String distance, String duration) {
-    return '$count சவாரிகள் தேர்ந்தெடுக்கப்பட்டுள்ளன | $distance கிமீ • $duration';
+    return '$count சவாரிகள் தேர்ந்தெடுக்கப்பட்டுள்ளன | $distance • $duration';
   }
 
   @override

@@ -4,6 +4,7 @@ import 'create_trip_state.dart';
 import 'package:hive/hive.dart';
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
+import 'package:trackify/core/utils/shared_preferences.dart';
 
 class CreateTripCubit extends Cubit<CreateTripState> {
   CreateTripCubit() : super(CreateTripInitial());
@@ -101,14 +102,17 @@ class CreateTripCubit extends Cubit<CreateTripState> {
       
       final baseTitle = currentSuccess.tripTitle ?? "Trip 1";
       final tripTitle = await _getUniqueTitle(baseTitle);
+      final box = await Hive.openBox('saved_trips');
+      final distanceUnit = await AppPreference.instance.get(key: AppPreference.KEY_DISTANCE_UNIT);
+      final unit = distanceUnit.isNotEmpty ? distanceUnit : 'km';
       
       final tripData = {
         'title': tripTitle,
+        'unit': unit,
         'rides': currentSuccess.selectedRides.map((e) => e.toJson()).toList(),
       };
       
       try {
-        final box = await Hive.openBox('saved_trips');
         final trips = List<dynamic>.from(box.get('trips_list', defaultValue: []));
         trips.add(jsonEncode(tripData));
         await box.put('trips_list', trips);
@@ -120,6 +124,7 @@ class CreateTripCubit extends Cubit<CreateTripState> {
       emit(CreateTripSaved(
         title: tripTitle,
         rides: currentSuccess.selectedRides,
+        savedUnit: unit,
       ));
     }
   }

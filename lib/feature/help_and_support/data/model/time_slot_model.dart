@@ -6,7 +6,7 @@ class SlotResponse extends Equatable {
   final String importantDescription;
   final List<DayModel> days;
 
-  SlotResponse({
+  const SlotResponse({
     required this.screenTitle,
     required this.importantTitle,
     required this.importantDescription,
@@ -40,7 +40,7 @@ class DayModel extends Equatable {
   final int dayNumber;
   final List<TimeSlotModel> slots;
 
-  DayModel({
+  const DayModel({
     required this.date,
     required this.dayText,
     required this.monthText,
@@ -85,7 +85,7 @@ class TimeSlotModel extends Equatable {
 
   final bool isAvailable;
 
-  TimeSlotModel({
+  const TimeSlotModel({
     required this.id,
     required this.label,
     required this.starthour,

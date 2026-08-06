@@ -14,7 +14,7 @@ import 'package:trackify/app/cubit/app_state.dart';
 
 class OverSpeedAlertScreen extends StatefulWidget {
   final Vehicle? vehicle;
-  const OverSpeedAlertScreen({Key? key, this.vehicle}) : super(key: key);
+  const OverSpeedAlertScreen({super.key, this.vehicle});
 
   @override
   State<OverSpeedAlertScreen> createState() => _OverSpeedAlertScreenState();
@@ -67,13 +67,13 @@ class _OverSpeedAlertScreenState extends State<OverSpeedAlertScreen> {
 
           if (state is OverspeedAlertLoaded || state is OverspeedAlertLoading) {
             final isLoaded = state is OverspeedAlertLoaded;
-            final selectedVehicle = isLoaded ? (state as OverspeedAlertLoaded).selectedVehicle : widget.vehicle;
-            final alerts = isLoaded ? (state as OverspeedAlertLoaded).alerts : <OverspeedAlertModel>[];
+            final selectedVehicle = isLoaded ? (state).selectedVehicle : widget.vehicle;
+            final alerts = isLoaded ? (state).alerts : <OverspeedAlertModel>[];
 
             return Column(
               children: [
                 if (state is OverspeedAlertLoading)
-                  const Expanded(child: const Center(child: TrackifyLoader()))
+                  const Expanded(child: Center(child: TrackifyLoader()))
                 else if (alerts.isEmpty)
                   Expanded(
                     child: RefreshIndicator(
@@ -95,7 +95,7 @@ class _OverSpeedAlertScreenState extends State<OverSpeedAlertScreen> {
                               child: Text(
                                 l10n.noAlertsCreated,
                                 style: theme.textTheme.bodyLarge?.copyWith(
-                                  color: theme.colorScheme.onSurface.withOpacity(0.5),
+                                  color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
                                 ),
                               ),
                             ),
@@ -157,7 +157,7 @@ class _OverSpeedAlertScreenState extends State<OverSpeedAlertScreen> {
                                             child: Text(
                                               l10n.cancel,
                                               style: theme.textTheme.bodyMedium?.copyWith(
-                                                color: theme.colorScheme.onSurface.withOpacity(0.6),
+                                                color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                                               ),
                                             ),
                                         ),

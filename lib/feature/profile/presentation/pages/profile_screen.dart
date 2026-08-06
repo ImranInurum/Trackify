@@ -6,7 +6,6 @@ import 'package:trackify/app/cubit/app_state.dart';
 import 'package:trackify/core/constants/app_images.dart';
 import 'package:trackify/core/utils/shared_preferences.dart';
 import 'package:trackify/feature/add_vehicle_and_device/choice_selector.dart';
-import 'package:trackify/feature/auth/presentation/pages/signin_screen.dart';
 import 'package:trackify/feature/get_more_out/presentation/cubit/disocver_state.dart';
 import 'package:trackify/feature/help_and_support/presentation/pages/help_support_screen.dart';
 import 'package:trackify/feature/my_garage/presentation/view/my_garage_screen.dart';
@@ -16,10 +15,6 @@ import 'package:trackify/feature/profile/presentation/cubit/profile_state.dart';
 import 'package:trackify/feature/settings/presentation/pages/settings_screen.dart';
 import 'package:trackify/core/config/network/api_host.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:hive/hive.dart';
-import 'package:trackify/feature/map/presentation/cubit/map_cubit.dart';
-import 'package:trackify/feature/my_garage/presentation/cubit/my_garage_cubit.dart';
-import 'package:trackify/feature/my_profile/presentation/cubit/my_profile_cubit.dart';
 
 import '../../../../core/common/widgets/vehicle_card.dart';
 import '../../../../l10n/app_localizations.dart';
@@ -30,10 +25,8 @@ import '../../../device_warranty/pages/device_warranty_page.dart';
 import '../../../get_more_out/presentation/cubit/discover_cubit.dart';
 import '../../../get_more_out/presentation/pages/disover_screen.dart';
 import '../../../upgrade_to_plus/presentation/pages/upgrade_to_plus.dart';
-import '../../../notifications/presentation/screen/notification_timeline.dart';
 import 'package:trackify/core/common/models/vehicle_list_model.dart';
 import '../../../Vehicle_control/data/repositories/vehicle_control_repository_impl.dart';
-import 'package:trackify/core/utils/distance_utils.dart';
 import 'package:trackify/core/widgets/trackify_loader.dart';
 import 'package:trackify/core/widgets/logout_confirmation_dialog.dart';
 
@@ -254,7 +247,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 style: TextStyle(
                                   color: Theme.of(
                                     context,
-                                  ).colorScheme.onSurface.withOpacity(0.6),
+                                  ).colorScheme.onSurface.withValues(alpha: 0.6),
                                 ),
                               ),
                               const SizedBox(height: 2),
@@ -263,7 +256,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 style: TextStyle(
                                   color: Theme.of(
                                     context,
-                                  ).colorScheme.onSurface.withOpacity(0.6),
+                                  ).colorScheme.onSurface.withValues(alpha: 0.6),
                                 ),
                               ),
                             ],
@@ -274,7 +267,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           size: 40,
                           color: Theme.of(
                             context,
-                          ).colorScheme.onSurface.withOpacity(0.3),
+                          ).colorScheme.onSurface.withValues(alpha: 0.3),
                         ),
                       ],
                     ),
@@ -497,7 +490,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     style: TextStyle(
                                       color: Theme.of(
                                         context,
-                                      ).colorScheme.onSurface.withOpacity(0.6),
+                                      ).colorScheme.onSurface.withValues(alpha: 0.6),
                                       fontSize: 12,
                                     ),
                                   ),
@@ -508,7 +501,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               Icons.chevron_right,
                               color: Theme.of(
                                 context,
-                              ).colorScheme.onSurface.withOpacity(0.3),
+                              ).colorScheme.onSurface.withValues(alpha: 0.3),
                             ),
                           ],
                         ),
@@ -851,7 +844,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         style: TextStyle(
                           color: Theme.of(
                             context,
-                          ).colorScheme.onSurface.withOpacity(0.6),
+                          ).colorScheme.onSurface.withValues(alpha: 0.6),
                           fontSize: 13,
                         ),
                       ),
@@ -863,7 +856,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   size: 18,
                   color: Theme.of(
                     context,
-                  ).colorScheme.onSurface.withOpacity(0.3),
+                  ).colorScheme.onSurface.withValues(alpha: 0.3),
                 ),
               ],
             ),

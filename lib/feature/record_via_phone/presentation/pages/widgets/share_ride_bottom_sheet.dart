@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/services.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:trackify/l10n/app_localizations.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:gal/gal.dart';
@@ -19,14 +18,14 @@ class ShareRideBottomSheet extends StatefulWidget {
   final List<LatLng> routePoints;
 
   const ShareRideBottomSheet({
-    Key? key,
+    super.key,
     required this.title,
     required this.date,
     required this.distance,
     required this.duration,
     required this.avgSpeed,
     required this.routePoints,
-  }) : super(key: key);
+  });
 
   @override
   State<ShareRideBottomSheet> createState() => _ShareRideBottomSheetState();
@@ -259,7 +258,7 @@ class _ShareRideBottomSheetState extends State<ShareRideBottomSheet> {
               height: 380,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: Colors.white.withOpacity(0.05)),
+                border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
                 color: Colors.black, // fallback
               ),
               clipBehavior: Clip.antiAlias,
@@ -355,7 +354,7 @@ class _ShareRideBottomSheetState extends State<ShareRideBottomSheet> {
                           begin: Alignment.topCenter,
                           end: Alignment.bottomCenter,
                           colors: [
-                            Colors.black.withOpacity(0.8),
+                            Colors.black.withValues(alpha: 0.8),
                             Colors.transparent,
                           ],
                         ),
@@ -379,7 +378,7 @@ class _ShareRideBottomSheetState extends State<ShareRideBottomSheet> {
                                 Text(
                                   '${AppLocalizations.of(context)!.rideOnLabel} ${DateFormat('dd MMM yyyy').format(widget.date)}',
                                   style: TextStyle(
-                                    color: Colors.white.withOpacity(0.7),
+                                    color: Colors.white.withValues(alpha: 0.7),
                                     fontSize: 12,
                                   ),
                                 ),
@@ -422,8 +421,8 @@ class _ShareRideBottomSheetState extends State<ShareRideBottomSheet> {
                           begin: Alignment.bottomCenter,
                           end: Alignment.topCenter,
                           colors: [
-                            Colors.black.withOpacity(0.9),
-                            Colors.black.withOpacity(0.6),
+                            Colors.black.withValues(alpha: 0.9),
+                            Colors.black.withValues(alpha: 0.6),
                             Colors.transparent,
                           ],
                         ),
@@ -436,39 +435,39 @@ class _ShareRideBottomSheetState extends State<ShareRideBottomSheet> {
                             children: [
                               Row(
                                 children: [
-                                  Icon(Icons.add_road, size: 12, color: Colors.white.withOpacity(0.7)),
+                                  Icon(Icons.add_road, size: 12, color: Colors.white.withValues(alpha: 0.7)),
                                   const SizedBox(width: 4),
-                                  Text(AppLocalizations.of(context)!.distanceLabel, style: TextStyle(color: Colors.white.withOpacity(0.7), fontSize: 10)),
+                                  Text(AppLocalizations.of(context)!.distanceLabel, style: TextStyle(color: Colors.white.withValues(alpha: 0.7), fontSize: 10)),
                                 ],
                               ),
                               const SizedBox(height: 4),
                               Text('${widget.distance.toStringAsFixed(1)} ${AppLocalizations.of(context)!.kmLabel}', style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
                             ],
                           ),
-                          Container(width: 1, height: 24, color: Colors.white.withOpacity(0.2)),
+                          Container(width: 1, height: 24, color: Colors.white.withValues(alpha: 0.2)),
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Row(
                                 children: [
-                                  Icon(Icons.timer_outlined, size: 12, color: Colors.white.withOpacity(0.7)),
+                                  Icon(Icons.timer_outlined, size: 12, color: Colors.white.withValues(alpha: 0.7)),
                                   const SizedBox(width: 4),
-                                  Text(AppLocalizations.of(context)!.timeLabel, style: TextStyle(color: Colors.white.withOpacity(0.7), fontSize: 10)),
+                                  Text(AppLocalizations.of(context)!.timeLabel, style: TextStyle(color: Colors.white.withValues(alpha: 0.7), fontSize: 10)),
                                 ],
                               ),
                               const SizedBox(height: 4),
                               Text('${widget.duration.inMinutes}${AppLocalizations.of(context)!.minutesShort} ${widget.duration.inSeconds % 60}${AppLocalizations.of(context)!.secLabel}', style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
                             ],
                           ),
-                          Container(width: 1, height: 24, color: Colors.white.withOpacity(0.2)),
+                          Container(width: 1, height: 24, color: Colors.white.withValues(alpha: 0.2)),
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Row(
                                 children: [
-                                  Icon(Icons.speed, size: 12, color: Colors.white.withOpacity(0.7)),
+                                  Icon(Icons.speed, size: 12, color: Colors.white.withValues(alpha: 0.7)),
                                   const SizedBox(width: 4),
-                                  Text(AppLocalizations.of(context)!.avgSpeedLabel, style: TextStyle(color: Colors.white.withOpacity(0.7), fontSize: 10)),
+                                  Text(AppLocalizations.of(context)!.avgSpeedLabel, style: TextStyle(color: Colors.white.withValues(alpha: 0.7), fontSize: 10)),
                                 ],
                               ),
                               const SizedBox(height: 4),

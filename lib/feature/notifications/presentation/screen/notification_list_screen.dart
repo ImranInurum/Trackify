@@ -86,7 +86,7 @@ class NotificationListScreen extends StatelessWidget {
                             children: [
                               Icon(
                                 Icons.notifications_off_outlined,
-                                color: theme.hintColor.withOpacity(0.4),
+                                color: theme.hintColor.withValues(alpha: 0.4),
                                 size: 80,
                               ),
                               const SizedBox(height: 16),

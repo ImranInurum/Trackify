@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:trackify/core/constants/app_images.dart';
 import 'package:trackify/feature/document_folder/presentation/pages/accessory_bill_list_screen.dart';
 
 import '../../../../core/common/models/vehicle_list_model.dart';
@@ -1322,7 +1323,19 @@ class _VehicleSelectorSheet extends StatelessWidget {
                             shape: BoxShape.circle,
                           ),
                           child: Image.asset(
-                            'assets/icons/bike2.png',
+                            (() {
+                              final lower = vehicle.vehicleType?.toLowerCase() ?? '';
+                              if (lower.contains('auto rickshaw') || lower.contains('auto') || lower.contains('3_wheeler')) {
+                                return AppImages.rickshawImage;
+                              } else if (lower.contains('car') || lower.contains('4_wheeler') || lower.contains('commercial ev')) {
+                                return AppImages.carImage;
+                              } else if (lower.contains('bus')) {
+                                return AppImages.busImage;
+                              } else if (lower.contains('van') || lower.contains('truck') || lower.contains('pickup') || lower.contains('pick-up')) {
+                                return AppImages.vanImage;
+                              }
+                              return AppImages.bikeImage;
+                            })(),
                             width: 40,
                             height: 40,
                           ),

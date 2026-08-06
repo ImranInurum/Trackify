@@ -13,7 +13,6 @@ import 'package:trackify/feature/trips/presentation/view/widgets/trips/widgets/t
 import 'package:trackify/l10n/app_localizations.dart';
 
 import '../../../cubit/ride_history_cubit.dart';
-import '../../../cubit/ride_history_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../create_trip/create_trip_screen.dart';
 import 'package:intl/intl.dart';
@@ -72,11 +71,9 @@ class _TripsState extends State<Trips> {
     try {
       final box = await Hive.openBox('saved_trips');
 
-      if (_boxSubscription == null) {
-        _boxSubscription = box.watch().listen((_) {
+      _boxSubscription ??= box.watch().listen((_) {
           _updateTripsFromBox(box);
         });
-      }
 
       _updateTripsFromBox(box);
     } catch (e) {
@@ -352,6 +349,7 @@ class _TripsState extends State<Trips> {
                                 .map((e) => Ride.fromJson(e as Map<String, dynamic>))
                                 .toList();
 
+                            final savedUnit = trip['unit'] as String? ?? 'km';
                             final displayTitle = _getLocalizedTripTitle(
                               trip['title'] ?? l10n.tripLabel('${index + 1}'),
                               l10n,
@@ -359,6 +357,7 @@ class _TripsState extends State<Trips> {
                             return TripCard(
                               title: displayTitle,
                               rides: rides,
+                              savedUnit: savedUnit,
                               imagePath: trip['imagePath'] as String?,
                               onTap: () async {
                                 await Navigator.push(
@@ -367,6 +366,7 @@ class _TripsState extends State<Trips> {
                                     builder: (context) => TripDetailsScreen(
                                       tripName: displayTitle,
                                       rides: rides,
+                                      savedUnit: savedUnit,
                                     ),
                                   ),
                                 );

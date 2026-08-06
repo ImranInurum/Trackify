@@ -1,6 +1,4 @@
 import 'dart:async';
-import 'dart:ui';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../../main.dart';
@@ -23,7 +21,7 @@ class LoadingScreenOL {
         builder: (context) => Stack(
           children: [
             Positioned.fill(
-              child: Container(color: Colors.black.withOpacity(0.6)),
+              child: Container(color: Colors.black.withValues(alpha: 0.6)),
             ),
             const Center(
               child: Material(

@@ -194,7 +194,7 @@ class _SelectLanguageScreenState extends State<SelectLanguageScreen> {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 20,
             spreadRadius: 2,
           ),
@@ -217,8 +217,8 @@ class _SelectLanguageScreenState extends State<SelectLanguageScreen> {
   Widget _overlay() {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
-    final overlayTop = Colors.black.withOpacity(isDark ? 0.35 : 0.20);
-    final overlayBottom = Colors.black.withOpacity(isDark ? 0.55 : 0.35);
+    final overlayTop = Colors.black.withValues(alpha: isDark ? 0.35 : 0.20);
+    final overlayBottom = Colors.black.withValues(alpha: isDark ? 0.55 : 0.35);
     return DecoratedBox(
       decoration: BoxDecoration(
         gradient: LinearGradient(
@@ -226,7 +226,7 @@ class _SelectLanguageScreenState extends State<SelectLanguageScreen> {
           end: Alignment.bottomCenter,
           colors: [
             overlayTop,
-            Colors.black.withOpacity(isDark ? 0.20 : 0.70),
+            Colors.black.withValues(alpha: isDark ? 0.20 : 0.70),
             overlayBottom,
           ],
         ),

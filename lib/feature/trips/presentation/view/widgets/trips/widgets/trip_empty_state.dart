@@ -21,7 +21,7 @@ class TripEmptyState extends StatelessWidget {
             l10n.tripEmptyQuote,
             textAlign: TextAlign.center,
             style: TextStyle(
-              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
               fontSize: 13,
               fontStyle: FontStyle.italic,
             ),
@@ -39,12 +39,12 @@ class TripEmptyState extends StatelessWidget {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(Icons.lock, size: 18, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5)),
+              Icon(Icons.lock, size: 18, color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5)),
               const SizedBox(width: 10),
               Text(
                 l10n.ridesCompletedCount("0", "3"),
                 style: TextStyle(
-                  color: Theme.of(context).colorScheme.onSurface.withOpacity(0.8),
+                  color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.8),
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
                 ),
@@ -55,7 +55,7 @@ class TripEmptyState extends StatelessWidget {
         const SizedBox(height: 12),
         Text(
           l10n.unlockTripsRequirement,
-          style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5), fontSize: 12),
+          style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5), fontSize: 12),
         ),
         const SizedBox(height: 50),
       ],

@@ -16,7 +16,6 @@ import '../../../map/presentation/cubit/map_cubit.dart';
 import '../../../map/presentation/cubit/map_state.dart';
 import '../../../onboarding/presentation/cubit/splash_cubit.dart';
 import '../../../onboarding/presentation/cubit/splash_state.dart';
-import '../../../onboarding/presentation/pages/select_language_screen.dart';
 import '../cubit/auth_cubit.dart';
 import '../cubit/auth_state.dart';
 import 'forgot_password_screen.dart';
@@ -318,7 +317,7 @@ class _SignInScreenState extends State<SignInScreen> {
                                 fontWeight: FontWeight.bold,
                                 color: Theme.of(
                                   context,
-                                ).colorScheme.onSurface.withOpacity(0.6),
+                                ).colorScheme.onSurface.withValues(alpha: 0.6),
                               ),
                             ),
                           ),
@@ -344,7 +343,7 @@ class _SignInScreenState extends State<SignInScreen> {
                                 fontWeight: FontWeight.bold,
                                 color: Theme.of(
                                   context,
-                                ).colorScheme.onSurface.withOpacity(0.6),
+                                ).colorScheme.onSurface.withValues(alpha: 0.6),
                               ),
                             ),
                           ),
@@ -445,7 +444,7 @@ class _SignInScreenState extends State<SignInScreen> {
                                   l10n.or,
                                   style: TextStyle(color: Theme.of(
                                       context,
-                                    ).colorScheme.onSurface.withOpacity(0.5),
+                                    ).colorScheme.onSurface.withValues(alpha: 0.5),
                                   ),
                                 ),
                               ),
@@ -467,7 +466,7 @@ class _SignInScreenState extends State<SignInScreen> {
                                 color: Theme.of(context)
                                     .colorScheme
                                     .onSurface
-                                    .withOpacity(0.15),
+                                    .withValues(alpha: 0.15),
                                 width: 1.2,
                               ),
                               backgroundColor: Theme.of(context)

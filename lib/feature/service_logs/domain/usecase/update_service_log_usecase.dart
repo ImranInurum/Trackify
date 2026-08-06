@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'package:fpdart/fpdart.dart';
 import 'package:trackify/core/utils/typedefs.dart';
 import '../repository/service_logs_repository.dart';
 

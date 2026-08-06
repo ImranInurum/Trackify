@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:trackify/core/common/models/vehicle_list_model.dart';
 import 'package:trackify/core/common/usecase/get_user_vehicles_usecase.dart';
 import '../../domain/usecase/get_service_logs_usecase.dart';
 import '../../domain/usecase/save_service_log_usecase.dart';

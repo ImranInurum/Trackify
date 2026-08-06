@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:trackify/core/config/font_manager.dart';
@@ -218,7 +218,7 @@ class _WarrantyScreenState extends State<WarrantyScreen> {
         placeholder: (context, url) => const SizedBox(
           height: 100,
           width: 100,
-          child: const Center(child: TrackifyLoader()),
+          child: Center(child: TrackifyLoader()),
         ),
         errorWidget: (context, url, error) => Image.asset(
           AppImages.installDevices,

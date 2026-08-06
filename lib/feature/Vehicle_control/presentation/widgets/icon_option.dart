@@ -37,14 +37,14 @@ class IconOption extends StatelessWidget {
                   shape: BoxShape.circle,
                   color: isDark ? const Color(0xFF1E1E1E) : Colors.grey.shade100,
                   border: Border.all(
-                    color: isSelected ? theme.colorScheme.onSurface : theme.colorScheme.onSurface.withOpacity(0.1),
+                    color: isSelected ? theme.colorScheme.onSurface : theme.colorScheme.onSurface.withValues(alpha: 0.1),
                     width: 2,
                   ),
                 ),
                 child: Center(
                   child: Icon(
                     icon,
-                    color: isSelected ? theme.colorScheme.onSurface : theme.colorScheme.onSurface.withOpacity(0.2),
+                    color: isSelected ? theme.colorScheme.onSurface : theme.colorScheme.onSurface.withValues(alpha: 0.2),
                     size: 26,
                   ),
                 ),
@@ -66,7 +66,7 @@ class IconOption extends StatelessWidget {
             label,
             style: TextStyle(
               fontSize: 12,
-              color: isSelected ? theme.colorScheme.onSurface : theme.colorScheme.onSurface.withOpacity(0.4),
+              color: isSelected ? theme.colorScheme.onSurface : theme.colorScheme.onSurface.withValues(alpha: 0.4),
               fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
             ),
           ),

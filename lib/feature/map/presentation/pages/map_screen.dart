@@ -1,12 +1,10 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:ui' as ui;
-import 'dart:math' as math;
 import 'package:trackify/core/utils/shared_preferences.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:trackify/core/widgets/loading_screen_ol.dart';
 import 'package:trackify/l10n/app_localizations.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
@@ -19,7 +17,6 @@ import 'package:trackify/core/theme/app_colors.dart';
 import 'package:trackify/core/utils/map_utils.dart';
 import 'package:trackify/core/widgets/bouncing_widget.dart';
 import 'package:trackify/core/widgets/draggable_app_bar.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:trackify/feature/add_vehicle_and_device/choice_selector.dart';
 import 'package:trackify/feature/app_updates/presentiation/pages/update_screen.dart';
 import 'package:trackify/feature/device_warranty/pages/device_warranty_page.dart';
@@ -38,8 +35,6 @@ import 'package:trackify/feature/safe_parking/presentation/pages/safe_parking_sc
 import 'package:trackify/feature/trips/presentation/view/ride_history_details/ride_history_details_screen.dart';
 import 'package:trackify/feature/trips/presentation/view/widgets/all_rides/widgets/ride_card.dart';
 import 'package:trackify/feature/video_tutorial/presentation/pages/category_screen.dart';
-import '../../../../core/services/socket_service.dart';
-import '../../../../core/utils/shared_preferences.dart';
 import '../../../device_data/presentation/pages/device_data_screen.dart';
 import '../../../fuel_logs/presentation/pages/fuel_logs_screen.dart';
 import '../../../geo_fence/presentation/pages/geo_fence_screen.dart';
@@ -51,14 +46,9 @@ import 'package:trackify/feature/trips/presentation/cubit/ride_history_cubit.dar
 import 'package:trackify/feature/trips/data/entity/ride_model.dart';
 import 'package:trackify/feature/trips/presentation/cubit/ride_history_state.dart';
 
-import 'package:trackify/feature/map/data/repository/promo_video_repository_impl.dart';
 import 'package:trackify/feature/map/presentation/cubit/promo_video_cubit.dart';
 import 'package:trackify/feature/map/presentation/cubit/promo_video_state.dart';
 import 'package:trackify/feature/map/presentation/widgets/promo_video_card.dart';
-import 'package:trackify/feature/map/presentation/cubit/product_feature_cubit.dart';
-import 'package:trackify/feature/map/presentation/cubit/product_feature_state.dart';
-import 'package:trackify/feature/map/data/entity/product_feature_model.dart';
-import 'package:trackify/feature/map/data/entity/promo_video_model.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:http/http.dart' as http;
 import 'package:trackify/feature/map/data/entity/promo_offer_model.dart';
@@ -68,7 +58,6 @@ import '../../../../core/config/style_manager.dart';
 import '../../../upgrade_to_plus/presentation/pages/upgrade_to_plus.dart';
 import '../cubit/map_cubit.dart';
 import '../cubit/map_state.dart';
-import '../../../../l10n/app_localizations.dart';
 import 'package:trackify/core/common/models/vehicle_list_model.dart';
 import 'package:trackify/core/utils/distance_utils.dart';
 import 'package:trackify/feature/geo_fence/presentation/cubit/geo_fence_cubit.dart';
@@ -96,6 +85,10 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin, Wi
   String? _darkMapStyle;
   Vehicles? _selectedDevice;
   BitmapDescriptor? _customMarker;
+  BitmapDescriptor? _carMarker;
+  BitmapDescriptor? _rickshawMarker;
+  BitmapDescriptor? _busMarker;
+  BitmapDescriptor? _vanMarker;
   BitmapDescriptor? _userLocationMarker;
   final prefs = AppPreference.instance;
   bool _isExploreExpanded = false; // For Expandable Explore More section
@@ -438,8 +431,9 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin, Wi
       _filterOffers();
       if (_promoOffers.isEmpty ||
           !mounted ||
-          _offerPageController.hasClients == false)
+          _offerPageController.hasClients == false) {
         return;
+      }
       int nextIndex = _currentOfferIndex + 1;
       if (nextIndex >= _promoOffers.length) {
         nextIndex = 0;
@@ -460,8 +454,8 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin, Wi
 
   GeoFenceState? _lastGeoState;
   String? _lastImeiForGeoCircles;
-  Set<Circle> _cachedGeoCircles = {};
-  Set<Marker> _cachedGeoMarkers = {};
+  final Set<Circle> _cachedGeoCircles = {};
+  final Set<Marker> _cachedGeoMarkers = {};
 
   Future<void> _loadGeoFenceIcons(Color primaryColor) async {
     _homeIcon = await MapUtils.createGeoFenceMarkerIcon(
@@ -526,9 +520,29 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin, Wi
       AppImages.bikeImage,
       80,
     );
+    final Uint8List carIcon = await MapUtils.getBytesFromAsset(
+      AppImages.carImage,
+      80,
+    );
+    final Uint8List rickshawIcon = await MapUtils.getBytesFromAsset(
+      AppImages.rickshawImage,
+      80,
+    );
+    final Uint8List busIcon = await MapUtils.getBytesFromAsset(
+      AppImages.busImage,
+      80,
+    );
+    final Uint8List vanIcon = await MapUtils.getBytesFromAsset(
+      AppImages.vanImage,
+      80,
+    );
     if (mounted) {
       setState(() {
         _customMarker = BitmapDescriptor.fromBytes(markerIcon);
+        _carMarker = BitmapDescriptor.fromBytes(carIcon);
+        _rickshawMarker = BitmapDescriptor.fromBytes(rickshawIcon);
+        _busMarker = BitmapDescriptor.fromBytes(busIcon);
+        _vanMarker = BitmapDescriptor.fromBytes(vanIcon);
       });
       _mapRebuildNotifier.value++;
     }
@@ -547,7 +561,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin, Wi
 
     // Outer glow ring
     final Paint glowPaint = Paint()
-      ..color = Colors.white.withOpacity(0.22)
+      ..color = Colors.white.withValues(alpha: 0.22)
       ..style = PaintingStyle.fill;
     canvas.drawCircle(
       const Offset(center, center - tipHeight / 2),
@@ -814,8 +828,9 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin, Wi
           _rideHistoryUpdateTimer = Timer.periodic(
             const Duration(seconds: 20),
             (_) {
-              if (mounted)
+              if (mounted) {
                 context.read<RideHistoryCubit>().getRideHistoryData();
+              }
             },
           );
         }
@@ -1266,16 +1281,16 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin, Wi
                 height: 32, // Reduced height
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.95),
+                  color: Colors.white.withValues(alpha: 0.95),
                   borderRadius: BorderRadius.circular(16),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.1),
+                      color: Colors.black.withValues(alpha: 0.1),
                       blurRadius: 4,
                       offset: const Offset(0, 2),
                     ),
                   ],
-                  border: Border.all(color: Colors.grey.withOpacity(0.2)),
+                  border: Border.all(color: Colors.grey.withValues(alpha: 0.2)),
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
@@ -1424,7 +1439,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin, Wi
                 : Icons.keyboard_arrow_down,
             size: 14,
             color: isDark
-                ? theme.colorScheme.onSurface.withOpacity(0.7)
+                ? theme.colorScheme.onSurface.withValues(alpha: 0.7)
                 : Colors.black54,
           ),
         ],
@@ -1447,7 +1462,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin, Wi
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.1),
+              color: Colors.black.withValues(alpha: 0.1),
               blurRadius: 8,
               offset: const Offset(0, 4),
             ),
@@ -1546,7 +1561,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin, Wi
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.03),
+              color: Colors.black.withValues(alpha: 0.03),
               blurRadius: 4,
               offset: const Offset(0, 2),
             ),
@@ -1703,9 +1718,9 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin, Wi
               );
               double endB = _normalizeBearing(bearing);
               double diff = endB - _animStartMarkerBearing;
-              if (diff > 180)
+              if (diff > 180) {
                 diff -= 360;
-              else if (diff < -180)
+              } else if (diff < -180)
                 diff += 360;
               _animEndMarkerBearing = _animStartMarkerBearing + diff;
 
@@ -1743,34 +1758,46 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin, Wi
                               Marker(
                                 markerId: const MarkerId('vehicle_marker'),
                                 position: animPos,
-                                icon:
-                                    _customMarker ??
-                                    BitmapDescriptor.defaultMarker,
+                                icon: (() {
+                                        final type = _selectedDevice?.vehicleType.toLowerCase() ?? '';
+                                        if (type.contains('auto rickshaw') || type.contains('auto') || type.contains('3_wheeler')) {
+                                          return _rickshawMarker;
+                                        } else if (type.contains('car') || type.contains('4_wheeler') || type.contains('commercial ev')) {
+                                          return _carMarker;
+                                        } else if (type.contains('bus')) {
+                                          return _busMarker;
+                                        } else if (type.contains('van') || type.contains('truck') || type.contains('pickup') || type.contains('pick-up')) {
+                                          return _vanMarker;
+                                        }
+                                        return _customMarker;
+                                      })() ??
+                                      BitmapDescriptor.defaultMarker,
                                 anchor: const Offset(0.5, 0.5),
                                 flat: true,
                                 rotation: animBearing % 360,
                               ),
                             );
-                          } else if (currentPos != null) {
+                          } else {
                             markers.add(
-                              Marker(
-                                markerId: const MarkerId('current_location'),
-                                position: LatLng(
-                                  currentPos.latitude,
-                                  currentPos.longitude,
-                                ),
-                                icon:
-                                    _userLocationMarker ??
-                                    BitmapDescriptor.defaultMarkerWithHue(
-                                      BitmapDescriptor.hueAzure,
-                                    ),
-                                anchor: const Offset(0.5, 0.5),
-                                infoWindow: InfoWindow(
-                                  title: l10n.yourLocationLabel,
-                                ),
+                            Marker(
+                              markerId: const MarkerId('current_location'),
+                              position: LatLng(
+                                currentPos.latitude,
+                                currentPos.longitude,
                               ),
-                            );
+                              icon:
+                                  _userLocationMarker ??
+                                  BitmapDescriptor.defaultMarkerWithHue(
+                                    BitmapDescriptor.hueAzure,
+                                  ),
+                              anchor: const Offset(0.5, 0.5),
+                              infoWindow: InfoWindow(
+                                title: l10n.yourLocationLabel,
+                              ),
+                            ),
+                          );
                           }
+
 
                           final currentImei = _selectedDevice?.imei;
                           if (_lastGeoState != geoState ||
@@ -2076,49 +2103,26 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin, Wi
                     final int m = (totalSeconds % 3600) ~/ 60;
                     final int s = totalSeconds % 60;
                     if (h > 0) {
-                      durationStr = "${h}h ${m}${l10n.minutesShort}";
+                      durationStr = "${h}h $m${l10n.minutesShort}";
                     } else {
                       durationStr =
-                          "${m}${l10n.minutesShort} ${s}${l10n.secondsShort}";
+                          "$m${l10n.minutesShort} $s${l10n.secondsShort}";
                     }
                   }
                 }
               }
             }
 
-            final batteryVal =
-                liveDevice['battery'] ??
-                liveDevice['batteryLevel'] ??
-                liveDevice['battery_level'] ??
-                liveDevice['bat'] ??
-                liveDevice['voltageLevel'] ??
-                liveDevice['voltage_level'] ??
-                (attrs is Map
-                    ? (attrs['battery'] ??
-                          attrs['batteryLevel'] ??
-                          attrs['voltageLevel'] ??
-                          attrs['battery_level'] ??
-                          attrs['voltage_level'])
-                    : null);
+            final batteryVal = liveDevice['api_battery'];
 
-            final voltageVal =
-                liveDevice['voltage'] ??
-                liveDevice['volts'] ??
-                liveDevice['battery_voltage'] ??
-                liveDevice['v_bat'] ??
-                liveDevice['power'] ??
-                (attrs is Map
-                    ? (attrs['voltage'] ??
-                          attrs['battery_voltage'] ??
-                          attrs['v_bat'])
-                    : null);
+            final voltageVal = null; // Ignored to strictly use DeviceStatus API battery
 
-            String batteryText = "";
+            String batteryText = "--";
             Color batteryColor = AppColors.paletteGreen;
             IconData batteryIcon = Icons.battery_charging_full;
 
             final rawVal = batteryVal ?? voltageVal;
-            if (rawVal != null) {
+            if (rawVal != null && rawVal.toString().trim().toLowerCase() != 'null' && rawVal.toString().trim() != '') {
               final rawStr = rawVal.toString().trim();
               int? intLevel;
 
@@ -2128,7 +2132,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin, Wi
                 intLevel = int.tryParse(rawStr);
               }
 
-              if (intLevel != null && intLevel >= 0 && intLevel <= 6) {
+              if (intLevel != null) {
                 switch (intLevel) {
                   case 0:
                     batteryText = "Disconnected";
@@ -2165,47 +2169,13 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin, Wi
                     batteryColor = Colors.green.shade400;
                     batteryIcon = Icons.battery_full;
                     break;
-                }
-              } else if (batteryVal != null) {
-                final batDouble = double.tryParse(
-                  batteryVal.toString().replaceAll(RegExp(r'[^0-9.]'), ''),
-                );
-                if (batDouble != null) {
-                  final String status = batDouble < 20 ? "Low" : "Normal";
-                  final displayVal = batDouble <= 1.0
-                      ? (batDouble * 100).round()
-                      : batDouble.round();
-                  batteryText = "$status ($displayVal%)";
-                  batteryColor = displayVal < 20
-                      ? Colors.red
-                      : AppColors.paletteGreen;
-                  batteryIcon = displayVal < 20
-                      ? Icons.battery_alert
-                      : Icons.battery_charging_full;
-                }
-              } else if (voltageVal != null) {
-                final voltDouble = double.tryParse(
-                  voltageVal.toString().replaceAll(RegExp(r'[^0-9.]'), ''),
-                );
-                if (voltDouble != null) {
-                  final String status = voltDouble < 11.5 ? "Low" : "Normal";
-                  batteryText = "$status (${voltDouble.toStringAsFixed(1)}V)";
-                  batteryColor = voltDouble < 11.5
-                      ? Colors.red
-                      : AppColors.paletteGreen;
-                  batteryIcon = voltDouble < 11.5
-                      ? Icons.battery_alert
-                      : Icons.battery_charging_full;
-                } else {
-                  batteryText = "Normal (${voltageVal.toString()})";
+                  default:
+                    batteryText = "--";
+                    batteryColor = AppColors.paletteGreen;
+                    batteryIcon = Icons.battery_charging_full;
+                    break;
                 }
               }
-            }
-
-            if (batteryText.isEmpty) {
-              batteryText = "Normal (13.6V)";
-              batteryColor = AppColors.paletteGreen;
-              batteryIcon = Icons.battery_charging_full;
             }
 
             String distance = "$todayDistanceStr ${context.displayKm}";
@@ -2320,7 +2290,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin, Wi
         Text(
           l10n.labelColon(label),
           style: getRegularStyle(
-            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+            color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
             fontSize: 11,
           ),
         ),
@@ -2510,7 +2480,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin, Wi
                         style: getRegularStyle(
                           color: Theme.of(
                             context,
-                          ).colorScheme.onSurface.withOpacity(0.6),
+                          ).colorScheme.onSurface.withValues(alpha: 0.6),
                           fontSize: 11,
                         ),
                       ),
@@ -2577,10 +2547,10 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin, Wi
                         currentPlan == null || currentPlan.daysLeft <= 0;
                     final String rechargeLabel = isRechargeExpired
                         ? l10n.rechargeExpired
-                        : l10n.expiresInDays(currentPlan!.daysLeft);
+                        : l10n.expiresInDays(currentPlan.daysLeft);
                     final Color rechargeColor = isRechargeExpired
                         ? Colors.red
-                        : currentPlan!.daysLeft <= 30
+                        : currentPlan.daysLeft <= 30
                         ? Colors.orange
                         : Colors.green;
 
@@ -2672,12 +2642,12 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin, Wi
               color: Theme.of(context).cardColor,
               borderRadius: BorderRadius.circular(20),
               border: Border.all(
-                color: Theme.of(context).dividerColor.withOpacity(0.5),
+                color: Theme.of(context).dividerColor.withValues(alpha: 0.5),
                 width: 0.5, // Added 0.5 border width as requested
               ),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(isDark ? 0.3 : 0.05),
+                  color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.05),
                   blurRadius: 10,
                   offset: const Offset(0, 4),
                 ),
@@ -2710,7 +2680,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin, Wi
                     style: getRegularStyle(
                       color: Theme.of(
                         context,
-                      ).colorScheme.onSurface.withOpacity(0.7),
+                      ).colorScheme.onSurface.withValues(alpha: 0.7),
                       fontSize: 12, // Reduced by 2 as requested
                     ),
                   ),
@@ -2731,7 +2701,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin, Wi
                           width: double.infinity,
                           height: 250, // Increased height
                           color: isDark
-                              ? Colors.black.withOpacity(0.2)
+                              ? Colors.black.withValues(alpha: 0.2)
                               : Colors.transparent,
                         ),
                       ],
@@ -2770,7 +2740,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin, Wi
                                 style: getRegularStyle(
                                   color: Theme.of(
                                     context,
-                                  ).colorScheme.onSurface.withOpacity(0.6),
+                                  ).colorScheme.onSurface.withValues(alpha: 0.6),
                                   fontSize: 11,
                                 ),
                               ),
@@ -2811,11 +2781,11 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin, Wi
           color: Theme.of(context).cardColor,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: Theme.of(context).dividerColor.withOpacity(0.5),
+            color: Theme.of(context).dividerColor.withValues(alpha: 0.5),
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(isDark ? 0.3 : 0.05),
+              color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.05),
               blurRadius: 8,
               offset: const Offset(0, 2),
             ),
@@ -2859,7 +2829,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin, Wi
               ),
               child: Icon(
                 Icons.chevron_right,
-                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
                 size: 16,
               ),
             ),
@@ -2887,10 +2857,10 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin, Wi
         decoration: BoxDecoration(
           color: Theme.of(context).cardColor,
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: statusColor.withOpacity(0.35), width: 1),
+          border: Border.all(color: statusColor.withValues(alpha: 0.35), width: 1),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(isDark ? 0.3 : 0.05),
+              color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.05),
               blurRadius: 8,
               offset: const Offset(0, 2),
             ),
@@ -2901,7 +2871,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin, Wi
             Container(
               padding: const EdgeInsets.all(6),
               decoration: BoxDecoration(
-                color: statusColor.withOpacity(0.12),
+                color: statusColor.withValues(alpha: 0.12),
                 shape: BoxShape.circle,
               ),
               child: Icon(icon, color: statusColor, size: 20),
@@ -2917,7 +2887,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin, Wi
                     style: getRegularStyle(
                       color: Theme.of(
                         context,
-                      ).colorScheme.onSurface.withOpacity(0.55),
+                      ).colorScheme.onSurface.withValues(alpha: 0.55),
                       fontSize: 10,
                     ),
                     maxLines: 1,
@@ -3055,7 +3025,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin, Wi
             color: Theme.of(context).cardColor,
             borderRadius: BorderRadius.circular(18),
             boxShadow: [
-              BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10),
+              BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 10),
             ],
           ),
           child: Column(
@@ -3098,12 +3068,12 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin, Wi
               decoration: BoxDecoration(
                 color: Theme.of(context).cardColor,
                 border: Border.all(
-                  color: Theme.of(context).dividerColor.withOpacity(0.2),
+                  color: Theme.of(context).dividerColor.withValues(alpha: 0.2),
                 ),
                 borderRadius: BorderRadius.circular(24),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
+                    color: Colors.black.withValues(alpha: 0.05),
                     blurRadius: 4,
                     offset: const Offset(0, 2),
                   ),
@@ -3153,7 +3123,6 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin, Wi
             option["label"] == l10n.geoFenceAlert ||
             option["label"] == l10n.fuelLogs ||
             option["label"] == l10n.serviceLogs ||
-            option["label"] == l10n.recordViaPhone ||
             option["label"] == l10n.deviceDataPlanLabel ||
             (option["label"] == l10n.deviceWarrantyLabel &&
                 isDeviceNotInstalled));
@@ -3179,7 +3148,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin, Wi
             textAlign: TextAlign.center,
             maxLines: 2,
             style: getMediumStyle(
-              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7),
               fontSize: 10.5,
             ),
           ),
@@ -3220,7 +3189,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin, Wi
                       height: 120,
                       width: 120,
                       decoration: BoxDecoration(
-                        color: colorScheme.primary.withOpacity(0.1),
+                        color: colorScheme.primary.withValues(alpha: 0.1),
                         shape: BoxShape.circle,
                       ),
                       child: Icon(
@@ -3263,7 +3232,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin, Wi
                           : const Color(0xFFF9F7F2),
                       borderRadius: BorderRadius.circular(14),
                       border: Border.all(
-                        color: colorScheme.outline.withOpacity(0.3),
+                        color: colorScheme.outline.withValues(alpha: 0.3),
                         width: 1.5,
                       ),
                     ),
@@ -3293,7 +3262,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin, Wi
       height: 50,
       alignment: Alignment.center,
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.primary.withOpacity(0.08),
+        color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.08),
         borderRadius: BorderRadius.circular(16),
       ),
       child: Container(
@@ -3326,7 +3295,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin, Wi
           height: 50,
           alignment: Alignment.center,
           decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.primary.withOpacity(0.08),
+            color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.08),
             borderRadius: BorderRadius.circular(16),
           ),
           child: Icon(
@@ -3346,7 +3315,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin, Wi
                 shape: BoxShape.circle,
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
+                    color: Colors.black.withValues(alpha: 0.1),
                     blurRadius: 4,
                   ),
                 ],
@@ -3391,17 +3360,13 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin, Wi
   ) {
     final label = option["label"];
     if (label == l10n.recordViaPhone) {
-      if (selectedDevice?.imei == null || _isWarrantyExpired) {
-        _showUnlockDeviceDialog(context, label as String);
-      } else {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) =>
-                RecordViaPhoneScreen(imei: selectedDevice?.imei ?? ''),
-          ),
-        );
-      }
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) =>
+              RecordViaPhoneScreen(imei: selectedDevice?.imei ?? ''),
+        ),
+      );
     } else if (label == l10n.reachMeSticker) {
       Navigator.push(
         context,
@@ -3502,7 +3467,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin, Wi
         if (mounted &&
             selectedDevice?.imei != null &&
             selectedDevice!.imei!.isNotEmpty) {
-          context.read<GeoFenceCubit>().fetchGeoFences(selectedDevice!.imei!);
+          context.read<GeoFenceCubit>().fetchGeoFences(selectedDevice.imei!);
         }
       });
     } else if (label == l10n.upgradeToPlus.replaceFirst(' to ', ' to\n')) {

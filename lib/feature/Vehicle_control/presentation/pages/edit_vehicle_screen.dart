@@ -65,7 +65,20 @@ class _EditVehicleViewState extends State<_EditVehicleView> {
     VehicleConfig? matchConfig;
     try {
       matchConfig = state.configs.firstWhere(
-        (c) => c.type.trim().toLowerCase() == entityType || c.id == widget.vehicle.vehicleType,
+        (c) {
+          final cType = c.type.trim().toLowerCase();
+          if (cType == entityType || c.id == widget.vehicle.vehicleType) return true;
+          
+          if ((entityType == '2_wheeler' || entityType == 'two_wheeler' || entityType == 'bike') && 
+              (cType == 'bike' || cType == '2_wheeler' || cType == 'two wheeler' || cType.contains('2'))) {
+            return true;
+          }
+          if ((entityType == '3_wheeler' || entityType == 'auto rickshaw') &&
+              (cType == 'auto rickshaw' || cType == '3_wheeler' || cType == 'three wheeler' || cType.contains('3'))) {
+            return true;
+          }
+          return false;
+        },
       );
     } catch (_) {
       if (state.configs.isNotEmpty) matchConfig = state.configs.first;
@@ -337,7 +350,7 @@ class _EditVehicleViewState extends State<_EditVehicleView> {
                     children: state.configs.map((config) {
                       final isSelected = state.selectedConfig?.id == config.id;
                       final Color active = theme.colorScheme.secondary;
-                      final Color inactive = theme.colorScheme.onSurface.withOpacity(0.5);
+                      final Color inactive = theme.colorScheme.onSurface.withValues(alpha: 0.5);
                       return Padding(
                         padding: const EdgeInsets.only(right: 4),
                         child: GestureDetector(
@@ -400,7 +413,7 @@ class _EditVehicleViewState extends State<_EditVehicleView> {
                           children: state.selectedConfig!.supportedFuelTypes.map((fuel) {
                             final isSelected = state.selectedFuelType == fuel;
                             final Color active = theme.colorScheme.secondary;
-                            final Color inactive = theme.colorScheme.onSurface.withOpacity(0.5);
+                            final Color inactive = theme.colorScheme.onSurface.withValues(alpha: 0.5);
                             return Padding(
                               padding: const EdgeInsets.only(right: 4),
                               child: GestureDetector(
@@ -647,7 +660,7 @@ class _EditVehicleViewState extends State<_EditVehicleView> {
         color: Colors.transparent,
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
-          color: theme.colorScheme.onSurface.withOpacity(0.12),
+          color: theme.colorScheme.onSurface.withValues(alpha: 0.12),
         ),
       ),
       child: Theme(
@@ -669,7 +682,7 @@ class _EditVehicleViewState extends State<_EditVehicleView> {
                 Icon(Icons.arrow_drop_down, color: theme.colorScheme.primary),
             hint: Text(
               hint,
-              style: TextStyle(color: theme.colorScheme.onSurface.withOpacity(0.5),
+              style: TextStyle(color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
                 fontSize: 14,
               ),
             ),

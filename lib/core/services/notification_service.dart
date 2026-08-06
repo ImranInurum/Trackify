@@ -11,19 +11,32 @@ Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
     return;
   }
   final plugin = FlutterLocalNotificationsPlugin();
-  const android = AndroidNotificationDetails(
-    NotificationService._androidChannelId,
-    NotificationService._androidChannelName,
-    channelDescription: NotificationService._androidChannelDesc,
+  
+  final channelId = message.data['android_channel_id'] ?? NotificationService.androidChannelId;
+  AndroidNotificationSound? androidSound;
+  String? iosSound;
+  
+  if (channelId == 'motion_alerts') {
+    androidSound = const RawResourceAndroidNotificationSound('motion_alert');
+    iosSound = 'motion_alert.mp3';
+  }
+
+  final android = AndroidNotificationDetails(
+    channelId,
+    channelId.replaceAll('_', ' ').toUpperCase(),
     importance: Importance.max,
     priority: Priority.max,
+    playSound: true,
+    sound: androidSound,
   );
-  const ios = DarwinNotificationDetails(
+  
+  final ios = DarwinNotificationDetails(
     presentAlert: true,
     presentBadge: true,
     presentSound: true,
+    sound: iosSound,
   );
-  const details = NotificationDetails(android: android, iOS: ios);
+  final details = NotificationDetails(android: android, iOS: ios);
   final title = message.data['title'];
   final body = message.data['body'];
   if (title != null && body != null) {
@@ -35,7 +48,7 @@ class NotificationService {
   NotificationService._();
   static final FlutterLocalNotificationsPlugin _plugin = FlutterLocalNotificationsPlugin();
 
-  static const _androidChannelId = 'trackify_reminders';
+  static const androidChannelId = 'trackify_reminders';
   static const _androidChannelName = 'Trackify Reminders';
   static const _androidChannelDesc = 'General app notifications';
 
@@ -61,9 +74,16 @@ class NotificationService {
     
     // Create multiple channels for specific alerts
     final channels = [
-      const AndroidNotificationChannel(_androidChannelId, _androidChannelName, description: _androidChannelDesc, importance: Importance.max),
+      const AndroidNotificationChannel(androidChannelId, _androidChannelName, description: _androidChannelDesc, importance: Importance.max),
       const AndroidNotificationChannel('vibration_alerts', 'Vibration alerts', description: 'Notifications for Vibration Alerts', importance: Importance.max),
-      const AndroidNotificationChannel('motion_alerts', 'Motion alerts', description: 'Notifications for Motion Detected Alerts', importance: Importance.max),
+      const AndroidNotificationChannel(
+        'motion_alerts', 
+        'Motion alerts', 
+        description: 'Notifications for Motion Detected Alerts', 
+        importance: Importance.max,
+        playSound: true,
+        sound: RawResourceAndroidNotificationSound('motion_alert'),
+      ),
       const AndroidNotificationChannel('ignition_alerts', 'Ignition alerts', description: 'Notifications for Ignition Alerts', importance: Importance.max),
       const AndroidNotificationChannel('fall_alerts', 'Fall alerts', description: 'Notifications for Fall Alerts', importance: Importance.max),
       const AndroidNotificationChannel('battery_alerts', 'Battery alerts', description: 'Notifications for Battery Alerts', importance: Importance.max),
@@ -97,7 +117,7 @@ class NotificationService {
       final title = message.notification?.title ?? message.data['title'];
       final body = message.notification?.body ?? message.data['body'];
       if (title != null && body != null) {
-        await _plugin.show(DateTime.now().millisecondsSinceEpoch % 100000, title, body, _details());
+        await _plugin.show(DateTime.now().millisecondsSinceEpoch % 100000, title, body, _detailsForMessage(message));
       }
     });
 
@@ -129,9 +149,38 @@ class NotificationService {
     }
   }
 
+  static NotificationDetails _detailsForMessage(RemoteMessage message) {
+    final channelId = message.notification?.android?.channelId ?? message.data['android_channel_id'] ?? androidChannelId;
+    
+    AndroidNotificationSound? androidSound;
+    String? iosSound;
+    
+    if (channelId == 'motion_alerts') {
+      androidSound = const RawResourceAndroidNotificationSound('motion_alert');
+      iosSound = 'motion_alert.mp3';
+    }
+
+    final android = AndroidNotificationDetails(
+      channelId,
+      channelId.replaceAll('_', ' ').toUpperCase(),
+      importance: Importance.max,
+      priority: Priority.max,
+      playSound: true,
+      sound: androidSound,
+    );
+    
+    final ios = DarwinNotificationDetails(
+      presentAlert: true,
+      presentBadge: true,
+      presentSound: true,
+      sound: iosSound,
+    );
+    return NotificationDetails(android: android, iOS: ios);
+  }
+
   static NotificationDetails _details() {
     const android = AndroidNotificationDetails(
-      _androidChannelId,
+      androidChannelId,
       _androidChannelName,
       channelDescription: _androidChannelDesc,
       importance: Importance.max,

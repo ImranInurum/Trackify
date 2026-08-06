@@ -1,6 +1,5 @@
 import 'package:trackify/feature/fuel_logs/presentation/pages/widgets/spending_card.dart';
 
-import '../../presentation/cubit/fuel_logs_state.dart';
 
 class FuelCalculationModel {
 

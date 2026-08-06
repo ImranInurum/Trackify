@@ -1,7 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../data/data source/suggestion_data_source.dart';
-import '../../data/model/report_issue_model.dart';
 import '../../data/model/suggestion_model.dart';
 part 'suggestion_state.dart';
 

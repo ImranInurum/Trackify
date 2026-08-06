@@ -11,6 +11,7 @@ class VehicleOnMapCard extends StatefulWidget {
   final Color accentColor;
   final String selectedIcon;
   final String selectedColor;
+  final String vehicleType;
   final Function(String) onIconChanged;
   final Function(String) onColorChanged;
   final VoidCallback onSave;
@@ -27,6 +28,7 @@ class VehicleOnMapCard extends StatefulWidget {
     required this.accentColor,
     required this.selectedIcon,
     required this.selectedColor,
+    this.vehicleType = '',
     required this.onIconChanged,
     required this.onColorChanged,
     required this.onSave,
@@ -79,7 +81,7 @@ class _VehicleOnMapCardState extends State<VehicleOnMapCard>
       decoration: BoxDecoration(
         color: widget.cardColor,
         borderRadius: widget.borderRadius ?? BorderRadius.circular(20),
-        border: Border.all(color: Colors.grey.withOpacity(0.5), width: 0.5),
+        border: Border.all(color: Colors.grey.withValues(alpha: 0.5), width: 0.5),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -152,27 +154,58 @@ class _VehicleOnMapCardState extends State<VehicleOnMapCard>
           Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              if (widget.selectedIcon == 'Bike' || (widget.selectedIcon != 'Scooty' && widget.selectedIcon != 'My Vehicle'))
-                IconOption(
-                  label: AppLocalizations.of(context)!.bike,
-                  icon: Icons.motorcycle,
-                  isSelected: true,
-                  onTap: () {},
-                ),
-              if (widget.selectedIcon == 'Scooty')
-                IconOption(
-                  label: AppLocalizations.of(context)!.scooty,
-                  icon: Icons.moped,
-                  isSelected: true,
-                  onTap: () {},
-                ),
-              if (widget.selectedIcon == 'My Vehicle' || widget.selectedIcon == 'Car')
-                IconOption(
-                  label: AppLocalizations.of(context)!.myVehicle,
-                  icon: Icons.directions_car,
-                  isSelected: true,
-                  onTap: () {},
-                ),
+              Builder(
+                builder: (context) {
+                  String label = 'Bike';
+                  IconData iconData = Icons.motorcycle;
+
+                  final lower = widget.vehicleType.toLowerCase();
+                  if (lower.contains('car') ||
+                      lower.contains('4_wheeler') ||
+                      lower.contains('four_wheeler') ||
+                      widget.selectedIcon == 'Car' ||
+                      widget.selectedIcon == 'My Vehicle') {
+                    label = 'Car';
+                    iconData = Icons.directions_car;
+                  } else if (lower.contains('commercial ev')) {
+                    label = 'Commercial EV';
+                    iconData = Icons.directions_car;
+                  } else if (lower.contains('bus')) {
+                    label = 'Bus';
+                    iconData = Icons.directions_bus;
+                  } else if (lower.contains('van')) {
+                    label = 'Van';
+                    iconData = Icons.airport_shuttle;
+                  } else if (lower.contains('pickup') || 
+                      lower.contains('pick-up') || 
+                      widget.selectedIcon == 'Pickup') {
+                    label = 'Pickup';
+                    iconData = Icons.airport_shuttle;
+                  } else if (lower.contains('truck')) {
+                    label = 'Truck';
+                    iconData = Icons.airport_shuttle;
+                  } else if (lower.contains('auto rickshaw') ||
+                      lower.contains('auto') ||
+                      lower.contains('3_wheeler')) {
+                    label = 'Auto Rickshaw';
+                    iconData = Icons.electric_rickshaw;
+                  } else if (lower.contains('scoot') ||
+                      widget.selectedIcon == 'Scooty') {
+                    label = 'Scooter';
+                    iconData = Icons.moped;
+                  } else {
+                    label = 'Bike';
+                    iconData = Icons.motorcycle;
+                  }
+
+                  return IconOption(
+                    label: label,
+                    icon: iconData,
+                    isSelected: true,
+                    onTap: () {},
+                  );
+                },
+              ),
             ],
           ),
           const SizedBox(height: 16),
@@ -246,7 +279,10 @@ class _VehicleOnMapCardState extends State<VehicleOnMapCard>
                 ),
                 child: Text(
                   AppLocalizations.of(context)!.saveChanges,
-                  style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
             ),

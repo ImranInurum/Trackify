@@ -77,6 +77,7 @@ class _CreateTripScreenState extends State<CreateTripScreen> {
                 builder: (context) => TripDetailsScreen(
                   tripName: _getLocalizedTripTitle(state.title, l10n),
                   rides: state.rides,
+                  savedUnit: state.savedUnit,
                 ),
               ),
             );
@@ -219,7 +220,7 @@ class _CreateTripScreenState extends State<CreateTripScreen> {
               return _SelectionSummarySheet(
                 summary: l10n.ridesSelectedSummary(
                   selectedRides.length.toString(),
-                  totalDist.toStringAsFixed(0),
+                  '${totalDist.toStringAsFixed(0)} ${context.displayKms}',
                   durationStr,
                 ),
                 goldColor: goldColor,
@@ -364,7 +365,7 @@ class _SelectionGroupCardState extends State<_SelectionGroupCard> {
                   ),
                 ],
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: 6),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -372,14 +373,14 @@ class _SelectionGroupCardState extends State<_SelectionGroupCard> {
                   Expanded(child: _buildStatItem(
                     totalMinutes >= 60 
                       ? "${totalMinutes ~/ 60} ${l10n.hrLabel} ${totalMinutes % 60} ${l10n.minLabel}" 
-                      : "${totalMinutes} ${l10n.minLabel} ${widget.rides.isNotEmpty ? '00 ${l10n.secLabel}' : ''}", 
+                      : "$totalMinutes ${l10n.minLabel} ${widget.rides.isNotEmpty ? '00 ${l10n.secLabel}' : ''}", 
                     l10n.rideDurationLabel)),
                   Expanded(child: _buildStatItem("${avgSpeed.toStringAsFixed(1)}${context.displayKmh}", l10n.averageSpeed)),
                 ],
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 6),
               Divider(color: theme.dividerColor.withValues(alpha: 0.1), height: 1),
-              const SizedBox(height: 12),
+              const SizedBox(height: 4),
               GestureDetector(
                 onTap: () => setState(() => _isExpanded = !_isExpanded),
                 behavior: HitTestBehavior.opaque,
@@ -441,7 +442,7 @@ class _SelectionGroupCardState extends State<_SelectionGroupCard> {
                   textBaseline: TextBaseline.alphabetic,
                   children: [
                     Text(
-                      "${ride.distance.toStringAsFixed(1)}",
+                      ride.distance.toStringAsFixed(1),
                       style: TextStyle(
                         color: theme.colorScheme.onSurface,
                         fontSize: 24,
@@ -460,7 +461,7 @@ class _SelectionGroupCardState extends State<_SelectionGroupCard> {
                 const SizedBox(height: 16),
                 Row(
                   children: [
-                    Expanded(child: _buildSmallStat("${ride.duration}", l10n.rideDurationLabel)),
+                    Expanded(child: _buildSmallStat(ride.duration, l10n.rideDurationLabel)),
                     const SizedBox(width: 8),
                     Expanded(child: _buildSmallStat("${ride.avgSpeed.toStringAsFixed(1)} ${context.displayKmh}", l10n.averageSpeed)),
                   ],
@@ -559,7 +560,7 @@ class _SelectionTooltip extends StatelessWidget {
             borderRadius: BorderRadius.circular(16),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.15),
+                color: Colors.black.withValues(alpha: 0.15),
                 blurRadius: 15,
                 spreadRadius: 2,
                 offset: const Offset(0, 6),

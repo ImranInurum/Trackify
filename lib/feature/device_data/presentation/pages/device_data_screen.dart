@@ -11,7 +11,7 @@ import '../cubit/device_data_state.dart';
 import 'package:trackify/core/widgets/trackify_loader.dart';
 import 'package:trackify/feature/service_logs/presentation/cubit/service_logs_cubit.dart';
 import 'package:trackify/feature/service_logs/presentation/cubit/service_logs_state.dart';
-import 'package:trackify/core/common/models/vehicle_list_model.dart';
+import 'package:trackify/core/constants/app_images.dart';
 
 class DeviceDataScreen extends StatefulWidget {
   const DeviceDataScreen({super.key});
@@ -41,7 +41,7 @@ class _DeviceDataScreenState extends State<DeviceDataScreen> {
     final state = context.watch<DeviceDataCubit>().state;
 
     if (state is DeviceDataLoading) {
-      return const Scaffold(body: const Center(child: TrackifyLoader()));
+      return const Scaffold(body: Center(child: TrackifyLoader()));
     }
 
     if (state is DeviceDataError) {
@@ -164,7 +164,7 @@ class _DeviceDataScreenState extends State<DeviceDataScreen> {
                     Text(
                       l10n.vehicle,
                       style: text.bodySmall?.copyWith(
-                        color: color.onSurface.withOpacity(0.6),
+                        color: color.onSurface.withValues(alpha: 0.6),
                       ),
                     ),
                     const SizedBox(height: 4),
@@ -238,7 +238,7 @@ class _DeviceDataScreenState extends State<DeviceDataScreen> {
                 child: Text(
                   l10n.noDataAvailable,
                   style: text.bodyMedium?.copyWith(
-                    color: color.onSurface.withOpacity(0.5),
+                    color: color.onSurface.withValues(alpha: 0.5),
                   ),
                 ),
               ),
@@ -391,7 +391,7 @@ class _DeviceDataScreenState extends State<DeviceDataScreen> {
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: AppColors.shadowColor.withOpacity(0.5),
+          color: AppColors.shadowColor.withValues(alpha: 0.5),
           borderRadius: BorderRadius.circular(16),
           border: isSelected
               ? Border.all(color: color.primary, width: 1.2)
@@ -408,7 +408,7 @@ class _DeviceDataScreenState extends State<DeviceDataScreen> {
                       : Icons.radio_button_off,
                   color: isSelected
                       ? color.primary
-                      : color.onSurface.withOpacity(0.5),
+                      : color.onSurface.withValues(alpha: 0.5),
                   size: 18,
                 ),
                 const SizedBox(width: 6),
@@ -454,7 +454,7 @@ class _DeviceDataScreenState extends State<DeviceDataScreen> {
                         "${l10n.currencySymbol}${plan.originalPrice.toStringAsFixed(0)}",
                         style: text.bodySmall?.copyWith(
                           decoration: TextDecoration.lineThrough,
-                          color: color.onSurface.withOpacity(0.5),
+                          color: color.onSurface.withValues(alpha: 0.5),
                         ),
                       ),
                     ],
@@ -520,7 +520,7 @@ class _DeviceDataScreenState extends State<DeviceDataScreen> {
               isSelected ? Icons.radio_button_checked : Icons.radio_button_off,
               color: isSelected
                   ? color.primary
-                  : color.onSurface.withOpacity(0.5),
+                  : color.onSurface.withValues(alpha: 0.5),
             ),
             const SizedBox(width: 10),
 
@@ -544,7 +544,7 @@ class _DeviceDataScreenState extends State<DeviceDataScreen> {
                       Text(
                         l10n.validityLabel,
                         style: text.bodySmall?.copyWith(
-                          color: color.onSurface.withOpacity(0.6),
+                          color: color.onSurface.withValues(alpha: 0.6),
                           fontSize: 10,
                         ),
                       ),
@@ -590,7 +590,7 @@ class _DeviceDataScreenState extends State<DeviceDataScreen> {
                         "${l10n.currencySymbol}${plan.originalPrice.toStringAsFixed(0)}",
                         style: text.bodySmall?.copyWith(
                           decoration: TextDecoration.lineThrough,
-                          color: color.onSurface.withOpacity(0.5),
+                          color: color.onSurface.withValues(alpha: 0.5),
                         ),
                       ),
                     ],
@@ -601,7 +601,7 @@ class _DeviceDataScreenState extends State<DeviceDataScreen> {
                     l10n.plusGst,
                     style: text.bodySmall?.copyWith(
                       fontSize: 10,
-                      color: color.onSurface.withOpacity(0.55),
+                      color: color.onSurface.withValues(alpha: 0.55),
                     ),
                   ),
               ],
@@ -646,7 +646,7 @@ class _DeviceDataScreenState extends State<DeviceDataScreen> {
         Text(
           title,
           style: text.bodySmall?.copyWith(
-            color: color.onSurface.withOpacity(0.6),
+            color: color.onSurface.withValues(alpha: 0.6),
           ),
         ),
         const SizedBox(height: 4),
@@ -727,7 +727,7 @@ class _DeviceDataScreenState extends State<DeviceDataScreen> {
 
                   return Container(
                     color: isSelected
-                        ? theme.scaffoldBackgroundColor.withOpacity(1)
+                        ? theme.scaffoldBackgroundColor.withValues(alpha: 1)
                         : theme.cardColor,
                     child: Material(
                       type: MaterialType.transparency,
@@ -735,7 +735,19 @@ class _DeviceDataScreenState extends State<DeviceDataScreen> {
                         padding: const EdgeInsets.symmetric(vertical: 4.0),
                         child: ListTile(
                           leading: Image.asset(
-                            'assets/icons/bike2.png',
+                            (() {
+                              final lower = vehicle.vehicleType?.toLowerCase() ?? '';
+                              if (lower.contains('auto rickshaw') || lower.contains('auto') || lower.contains('3_wheeler')) {
+                                return AppImages.rickshawImage;
+                              } else if (lower.contains('car') || lower.contains('4_wheeler') || lower.contains('commercial ev')) {
+                                return AppImages.carImage;
+                              } else if (lower.contains('bus')) {
+                                return AppImages.busImage;
+                              } else if (lower.contains('van') || lower.contains('truck') || lower.contains('pickup') || lower.contains('pick-up')) {
+                                return AppImages.vanImage;
+                              }
+                              return AppImages.bikeImage;
+                            })(),
                             width: 50,
                             height: 50,
                           ),

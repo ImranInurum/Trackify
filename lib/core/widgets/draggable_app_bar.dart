@@ -3,14 +3,10 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:intl/intl.dart';
 import 'package:trackify/app/cubit/app_cubit.dart';
 import 'package:trackify/core/config/network/api_host.dart';
 import 'package:trackify/core/constants/app_images.dart';
-import 'package:trackify/core/theme/app_colors.dart';
 import 'package:trackify/feature/map/data/entity/user_vehicles.dart';
-import 'package:trackify/feature/trips/presentation/cubit/ride_history_cubit.dart';
-import 'package:trackify/feature/trips/presentation/cubit/ride_history_state.dart';
 import 'package:trackify/feature/device_warranty/data/model/warranty_status_model.dart';
 import 'package:trackify/feature/device_warranty/data/repository/device_warranty_repository_impl.dart';
 import 'package:trackify/feature/device_warranty/data/data_source/device_warranty_data_source.dart';
@@ -140,6 +136,7 @@ class _DraggableAppBarState extends State<DraggableAppBar>
         if (jsonResponse['success'] == true && jsonResponse['data'] != null) {
           final data = jsonResponse['data'] as Map<String, dynamic>;
           data['imei'] = imei; // Ensure imei is present for identification
+          data['is_device_status_api'] = true; // Mark to only use battery from here
           if (mounted) {
             setState(() {
               _deviceStatusMap[imei] = data;
@@ -253,7 +250,7 @@ class _DraggableAppBarState extends State<DraggableAppBar>
                 child: GestureDetector(
                   onTap: _collapse,
                   child: Container(
-                    color: Colors.black.withOpacity(_overlayOpacity.value),
+                    color: Colors.black.withValues(alpha: _overlayOpacity.value),
                   ),
                 ),
               ),
@@ -283,7 +280,7 @@ class _DraggableAppBarState extends State<DraggableAppBar>
                       ),
                       shadows: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.15),
+                          color: Colors.black.withValues(alpha: 0.15),
                           blurRadius: 1,
                           offset: const Offset(0, 1),
                         ),
@@ -485,7 +482,7 @@ class _DraggableAppBarState extends State<DraggableAppBar>
                                                       color: Theme.of(context)
                                                           .colorScheme
                                                           .onSurface
-                                                          .withOpacity(0.2),
+                                                          .withValues(alpha: 0.2),
                                                       borderRadius:
                                                           BorderRadius.circular(
                                                             24,
@@ -518,7 +515,7 @@ class _DraggableAppBarState extends State<DraggableAppBar>
                                   ),
                                   boxShadow: [
                                     BoxShadow(
-                                      color: Colors.black.withOpacity(0.1),
+                                      color: Colors.black.withValues(alpha: 0.1),
                                       blurRadius: 20,
                                       offset: const Offset(0, 0),
                                     ),
@@ -530,11 +527,11 @@ class _DraggableAppBarState extends State<DraggableAppBar>
                                       Theme.of(context)
                                           .colorScheme
                                           .primaryContainer
-                                          .withOpacity(0.75),
+                                          .withValues(alpha: 0.75),
                                       Theme.of(context)
                                           .colorScheme
                                           .primaryContainer
-                                          .withOpacity(0.05),
+                                          .withValues(alpha: 0.05),
                                     ],
                                   ),
                                 ),
@@ -603,7 +600,7 @@ class _DraggableAppBarState extends State<DraggableAppBar>
 
     return Material(
       color: isHighlighted
-          ? Theme.of(context).colorScheme.primary.withOpacity(0.08)
+          ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.08)
           : Colors.transparent,
       child: InkWell(
         onTap: isHeaderRow
@@ -646,7 +643,7 @@ class _DraggableAppBarState extends State<DraggableAppBar>
                             fontSize: 13,
                             color: Theme.of(
                               context,
-                            ).colorScheme.onSurface.withOpacity(0.5),
+                            ).colorScheme.onSurface.withValues(alpha: 0.5),
                             fontWeight: FontWeight.w500,
                           ),
                         ),
@@ -661,10 +658,10 @@ class _DraggableAppBarState extends State<DraggableAppBar>
                                     vertical: 2,
                                   ),
                                   decoration: BoxDecoration(
-                                    color: Colors.orange.withOpacity(0.1),
+                                    color: Colors.orange.withValues(alpha: 0.1),
                                     borderRadius: BorderRadius.circular(12),
                                     border: Border.all(
-                                      color: Colors.orange.withOpacity(0.3),
+                                      color: Colors.orange.withValues(alpha: 0.3),
                                       width: 1,
                                     ),
                                   ),
@@ -700,10 +697,10 @@ class _DraggableAppBarState extends State<DraggableAppBar>
                               vertical: 2,
                             ),
                             decoration: BoxDecoration(
-                              color: statusColor.withOpacity(0.1),
+                              color: statusColor.withValues(alpha: 0.1),
                               borderRadius: BorderRadius.circular(12),
                               border: Border.all(
-                                color: statusColor.withOpacity(0.3),
+                                color: statusColor.withValues(alpha: 0.3),
                                 width: 1,
                               ),
                             ),
@@ -823,7 +820,7 @@ class _DraggableAppBarState extends State<DraggableAppBar>
 
   Widget _buildTag(Vehicles device) {
     return Text(
-      "${device.fuelType}", // Default for now
+      device.fuelType, // Default for now
       style: TextStyle(
         fontSize: 11,
         color: Theme.of(context).colorScheme.primary,
@@ -835,17 +832,33 @@ class _DraggableAppBarState extends State<DraggableAppBar>
   Widget _buildVehicleImageOrIcon(BuildContext context, Vehicles device) {
     final type = device.vehicleType.toLowerCase();
 
-    if (type.contains('car')) {
-      return Icon(
-        Icons.directions_car,
-        size: 40,
-        color: Theme.of(context).colorScheme.primary,
+    if (type.contains('car') || type.contains('4_wheeler') || type.contains('commercial ev')) {
+      return Image.asset(
+        AppImages.carImage,
+        height: 60,
+        width: 60,
+        fit: BoxFit.contain,
       );
-    } else if (type.contains('truck')) {
-      return Icon(
-        Icons.local_shipping,
-        size: 40,
-        color: Theme.of(context).colorScheme.primary,
+    } else if (type.contains('auto rickshaw') || type.contains('auto') || type.contains('3_wheeler')) {
+      return Image.asset(
+        AppImages.rickshawImage,
+        height: 60,
+        width: 60,
+        fit: BoxFit.contain,
+      );
+    } else if (type.contains('bus')) {
+      return Image.asset(
+        AppImages.busImage,
+        height: 60,
+        width: 60,
+        fit: BoxFit.contain,
+      );
+    } else if (type.contains('van') || type.contains('truck') || type.contains('pickup') || type.contains('pick-up')) {
+      return Image.asset(
+        AppImages.vanImage,
+        height: 60,
+        width: 60,
+        fit: BoxFit.contain,
       );
     } else if (type.contains('bus')) {
       return Icon(

@@ -10,7 +10,6 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import '../../../../core/services/google_auth_service.dart';
 import '../../../../core/utils/shared_preferences.dart';
 import '../../../../core/widgets/loading_screen_ol.dart';
-import '../../../../core/config/network/exceptions.dart';
 import '../../domain/usecase/auth_case.dart';
 import 'auth_state.dart';
 

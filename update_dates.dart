@@ -1,4 +1,3 @@
-import 'package:intl/intl.dart';
 import 'dart:io';
 
 void main() {

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:trackify/core/theme/app_colors.dart';
 import 'package:trackify/feature/location_sharing/presentation/cubit/location_sharing_state.dart';
 import '../../../../../l10n/app_localizations.dart';
 
@@ -102,7 +101,7 @@ class LocationSharingCard extends StatelessWidget {
                       Icon(
                         Icons.arrow_forward_ios_rounded,
                         size: 16,
-                        color: theme.hintColor.withOpacity(0.5),
+                        color: theme.hintColor.withValues(alpha: 0.5),
                       ),
                     ],
                   ),

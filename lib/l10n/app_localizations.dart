@@ -4153,7 +4153,7 @@ abstract class AppLocalizations {
   /// No description provided for @ridesSelectedSummary.
   ///
   /// In en, this message translates to:
-  /// **'{count} rides selected | {distance} km • {duration}'**
+  /// **'{count} rides selected | {distance} • {duration}'**
   String ridesSelectedSummary(String count, String distance, String duration);
 
   /// No description provided for @clearSelection.

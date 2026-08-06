@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../core/common/models/vehicle_list_model.dart';
 import '../../../../l10n/app_localizations.dart';
+import '../../../../core/constants/app_images.dart';
 
 class VehicleSelectionAppBar extends StatelessWidget {
   final String title;
@@ -38,7 +39,7 @@ class VehicleSelectionAppBar extends StatelessWidget {
       decoration: isMinimal
           ? null
           : BoxDecoration(
-              color: theme.cardColor.withOpacity(0.8),
+              color: theme.cardColor.withValues(alpha: 0.8),
               border: Border(
                 left: BorderSide(color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5), width: 0.5),
                 right: BorderSide(color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5), width: 0.5),
@@ -86,7 +87,7 @@ class VehicleSelectionAppBar extends StatelessWidget {
               margin: EdgeInsets.symmetric(horizontal: screenWidth * 0.04),
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
               decoration: BoxDecoration(
-                color: theme.colorScheme.surfaceContainerHighest.withOpacity(
+                color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 
                   0.5,
                 ),
                 borderRadius: BorderRadius.circular(16),
@@ -96,9 +97,8 @@ class VehicleSelectionAppBar extends StatelessWidget {
                   Expanded(
                     child: Text(
                       selectedVehicle != null
-                          ? "${selectedVehicle!.vehicleMaker ?? ""} ${selectedVehicle!.vehicleModel ?? ""}"
-                                    .trim() +
-                                " (${selectedVehicle!.vehicleNumber ?? ""})"
+                          ? "${"${selectedVehicle!.vehicleMaker ?? ""} ${selectedVehicle!.vehicleModel ?? ""}"
+                                    .trim()} (${selectedVehicle!.vehicleNumber ?? ""})"
                           : l10n.selectVehicle,
                       style: theme.textTheme.bodyLarge?.copyWith(
                         fontWeight: FontWeight.w600,
@@ -163,7 +163,7 @@ void showDeviceNotInstalledDialog(BuildContext context, Vehicle vehicle) {
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Colors.orange.withOpacity(0.15),
+                color: Colors.orange.withValues(alpha: 0.15),
                 shape: BoxShape.circle,
               ),
               child: const Icon(
@@ -187,7 +187,7 @@ void showDeviceNotInstalledDialog(BuildContext context, Vehicle vehicle) {
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 14,
-                color: theme.colorScheme.onSurface.withOpacity(0.7),
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                 height: 1.4,
               ),
             ),
@@ -264,7 +264,7 @@ class _VehicleSelectorSheet extends StatelessWidget {
 
               return Container(
                 color: isSelected
-                    ? theme.scaffoldBackgroundColor.withOpacity(1)
+                    ? theme.scaffoldBackgroundColor.withValues(alpha: 1)
                     : theme.cardColor,
                 child: Material(
                   type: MaterialType.transparency,
@@ -272,7 +272,19 @@ class _VehicleSelectorSheet extends StatelessWidget {
                     padding: const EdgeInsets.symmetric(vertical: 4.0),
                     child: ListTile(
                       leading: Image.asset(
-                        'assets/icons/bike2.png',
+                        (() {
+                          final lower = vehicle.vehicleType?.toLowerCase() ?? '';
+                          if (lower.contains('auto rickshaw') || lower.contains('auto') || lower.contains('3_wheeler')) {
+                            return AppImages.rickshawImage;
+                          } else if (lower.contains('car') || lower.contains('4_wheeler') || lower.contains('commercial ev')) {
+                            return AppImages.carImage;
+                          } else if (lower.contains('bus')) {
+                            return AppImages.busImage;
+                          } else if (lower.contains('van') || lower.contains('truck') || lower.contains('pickup') || lower.contains('pick-up')) {
+                            return AppImages.vanImage;
+                          }
+                          return AppImages.bikeImage;
+                        })(),
                         width: 50,
                         height: 50,
                       ),
@@ -299,7 +311,7 @@ class _VehicleSelectorSheet extends StatelessWidget {
                                 vertical: 2,
                               ),
                               decoration: BoxDecoration(
-                                color: Colors.orange.withOpacity(0.15),
+                                color: Colors.orange.withValues(alpha: 0.15),
                                 borderRadius: BorderRadius.circular(4),
                               ),
                               child: const Text(

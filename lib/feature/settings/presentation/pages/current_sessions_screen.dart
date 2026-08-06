@@ -329,14 +329,14 @@ class _CurrentSessionsScreenState extends State<CurrentSessionsScreen> {
                           Icon(
                             Icons.devices_other,
                             size: 64,
-                            color: theme.colorScheme.onSurface.withOpacity(0.4),
+                            color: theme.colorScheme.onSurface.withValues(alpha: 0.4),
                           ),
                           const SizedBox(height: 16),
                           Text(
                             'No active sessions found',
                             style: TextStyle(
                               fontSize: 16,
-                              color: theme.colorScheme.onSurface.withOpacity(0.6),
+                              color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                             ),
                           ),
                         ],
@@ -351,7 +351,7 @@ class _CurrentSessionsScreenState extends State<CurrentSessionsScreen> {
                         if (currentSession != null) ...[
                           Container(
                             width: double.infinity,
-                            color: theme.dividerColor.withOpacity(0.3),
+                            color: theme.dividerColor.withValues(alpha: 0.3),
                             padding: const EdgeInsets.symmetric(
                               horizontal: 16,
                               vertical: 8,
@@ -374,7 +374,7 @@ class _CurrentSessionsScreenState extends State<CurrentSessionsScreen> {
                         if (otherSessions.isNotEmpty || currentSession == null) ...[
                           Container(
                             width: double.infinity,
-                            color: theme.dividerColor.withOpacity(0.3),
+                            color: theme.dividerColor.withValues(alpha: 0.3),
                             padding: const EdgeInsets.symmetric(
                               horizontal: 16,
                               vertical: 8,
@@ -430,7 +430,7 @@ class _CurrentSessionsScreenState extends State<CurrentSessionsScreen> {
         children: [
           Icon(
             Icons.android,
-            color: theme.colorScheme.onSurface.withOpacity(0.6),
+            color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
             size: 30,
           ),
           const SizedBox(width: 16),
@@ -457,7 +457,7 @@ class _CurrentSessionsScreenState extends State<CurrentSessionsScreen> {
                       Text(
                         timeAgo,
                         style: TextStyle(
-                          color: theme.colorScheme.onSurface.withOpacity(0.5),
+                          color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
                           fontSize: 12,
                         ),
                       ),
@@ -478,7 +478,7 @@ class _CurrentSessionsScreenState extends State<CurrentSessionsScreen> {
                   Text(
                     '${l10n.lastUsed} $formattedLastActive',
                     style: TextStyle(
-                      color: theme.colorScheme.onSurface.withOpacity(0.5),
+                      color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
                       fontSize: 12,
                     ),
                   ),
@@ -488,7 +488,7 @@ class _CurrentSessionsScreenState extends State<CurrentSessionsScreen> {
                   Text(
                     '${l10n.osLabel} $osVersion',
                     style: TextStyle(
-                      color: theme.colorScheme.onSurface.withOpacity(0.5),
+                      color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
                       fontSize: 12,
                     ),
                   ),

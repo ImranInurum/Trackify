@@ -8,13 +8,13 @@ class RegisterUserModel {
   RegisterUserModel.fromJson(Map<String, dynamic> json) {
     status = json['status'];
     message = json['message'];
-    data = json['data'] != null ? new Data.fromJson(json['data']) : null;
+    data = json['data'] != null ? Data.fromJson(json['data']) : null;
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['status'] = this.status;
-    data['message'] = this.message;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['status'] = status;
+    data['message'] = message;
     if (this.data != null) {
       data['data'] = this.data!.toJson();
     }
@@ -76,22 +76,22 @@ class Data {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['name'] = this.name;
-    data['email'] = this.email;
-    data['password'] = this.password;
-    data['role'] = this.role;
-    data['inOnline'] = this.inOnline;
-    data['isOtpVerified'] = this.isOtpVerified;
-    data['mobile_number'] = this.mobileNumber;
-    data['country'] = this.country;
-    data['state'] = this.state;
-    data['city'] = this.city;
-    data['userProfile'] = this.userProfile;
-    data['_id'] = this.sId;
-    data['createdAt'] = this.createdAt;
-    data['updatedAt'] = this.updatedAt;
-    data['__v'] = this.iV;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['name'] = name;
+    data['email'] = email;
+    data['password'] = password;
+    data['role'] = role;
+    data['inOnline'] = inOnline;
+    data['isOtpVerified'] = isOtpVerified;
+    data['mobile_number'] = mobileNumber;
+    data['country'] = country;
+    data['state'] = state;
+    data['city'] = city;
+    data['userProfile'] = userProfile;
+    data['_id'] = sId;
+    data['createdAt'] = createdAt;
+    data['updatedAt'] = updatedAt;
+    data['__v'] = iV;
     return data;
   }
 }

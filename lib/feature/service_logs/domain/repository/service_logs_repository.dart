@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'package:trackify/core/config/network/exceptions.dart';
 import 'package:trackify/core/utils/typedefs.dart';
 import '../entities/service_log_entity.dart';
 

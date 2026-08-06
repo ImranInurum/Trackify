@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:trackify/l10n/app_localizations.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:trackify/app/cubit/app_cubit.dart';
@@ -38,7 +38,7 @@ class DeleteAccountScreen extends StatelessWidget {
                     text: TextSpan(
                       style: TextStyle(
                         fontSize: 15,
-                        color: Theme.of(context).colorScheme.onSurface.withOpacity(0.8),
+                        color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.8),
                       ),
                       children: [
                         TextSpan(text: '${l10n.hi} '),
@@ -58,7 +58,7 @@ class DeleteAccountScreen extends StatelessWidget {
                 l10n.sorryToSeeYouGo,
                 style: TextStyle(
                   fontSize: 15,
-                  color: Theme.of(context).colorScheme.onSurface.withOpacity(0.8),
+                  color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.8),
                 ),
               ),
               const SizedBox(height: 32),
@@ -86,7 +86,7 @@ class DeleteAccountScreen extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 14,
                   height: 1.4,
-                  color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+                  color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7),
                 ),
               ),
               const SizedBox(height: 16),
@@ -96,18 +96,18 @@ class DeleteAccountScreen extends StatelessWidget {
                 decoration: InputDecoration(
                   hintText: l10n.explanationOptionalHint,
                   hintStyle: TextStyle(
-                    color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+                    color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7),
                     fontSize: 14,
                     fontWeight: FontWeight.bold,
                   ),
                   contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(4),
-                    borderSide: BorderSide(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.3)),
+                    borderSide: BorderSide(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.3)),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(4),
-                    borderSide: BorderSide(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6)),
+                    borderSide: BorderSide(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6)),
                   ),
                 ),
               ),
@@ -133,7 +133,7 @@ class DeleteAccountScreen extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 14,
                     height: 1.4,
-                    color: Theme.of(context).colorScheme.onSurface.withOpacity(0.8),
+                    color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.8),
                   ),
                   children: [
                     TextSpan(text: l10n.deleteWarningPart1),
@@ -161,7 +161,7 @@ class DeleteAccountScreen extends StatelessWidget {
           padding: const EdgeInsets.only(top: 6, right: 10, left: 4),
           child: CircleAvatar(
             radius: 3,
-            backgroundColor: Theme.of(context).colorScheme.onSurface.withOpacity(0.8),
+            backgroundColor: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.8),
           ),
         ),
         Expanded(
@@ -170,7 +170,7 @@ class DeleteAccountScreen extends StatelessWidget {
             style: TextStyle(
               fontSize: 14,
               height: 1.4,
-              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.8),
+              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.8),
             ),
           ),
         ),

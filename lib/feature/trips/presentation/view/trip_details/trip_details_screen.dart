@@ -1,5 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:trackify/app/cubit/app_cubit.dart';
 import 'package:trackify/feature/trips/data/entity/ride_model.dart';
 import 'package:trackify/feature/trips/presentation/view/create_trip/create_trip_screen.dart';
 import 'package:trackify/feature/trips/presentation/view/ride_history_details/ride_history_details_screen.dart';
@@ -17,11 +19,13 @@ import 'package:trackify/core/utils/distance_utils.dart';
 class TripDetailsScreen extends StatefulWidget {
   final String tripName;
   final List<Ride> rides;
+  final String savedUnit;
 
   const TripDetailsScreen({
     super.key,
     required this.tripName,
     required this.rides,
+    this.savedUnit = 'km',
   });
 
   @override
@@ -407,6 +411,8 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> {
     final goldColor = theme.colorScheme.primary;
     final cardBg = theme.cardColor;
     final isDark = theme.brightness == Brightness.dark;
+    
+    final currentUnit = context.watch<AppCubit>().state.distanceUnit;
 
     // Calculate aggregate stats
     double totalDist = 0;
@@ -415,10 +421,12 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> {
     double topSpeed = 0;
 
     for (var r in widget.rides) {
-      totalDist += r.distance;
+      totalDist += DistanceUnitExt.convertDistance(r.distance, widget.savedUnit, currentUnit);
       totalMinutes += int.tryParse(r.duration.replaceAll('m', '')) ?? 0;
-      avgSpeed += r.avgSpeed;
-      if (r.topSpeed > topSpeed) topSpeed = r.topSpeed;
+      avgSpeed += DistanceUnitExt.convertSpeed(r.avgSpeed, widget.savedUnit, currentUnit);
+      
+      final rideTopSpeed = DistanceUnitExt.convertSpeed(r.topSpeed, widget.savedUnit, currentUnit);
+      if (rideTopSpeed > topSpeed) topSpeed = rideTopSpeed;
     }
     if (widget.rides.isNotEmpty) avgSpeed /= widget.rides.length;
 
@@ -706,7 +714,7 @@ class _CircularButton extends StatelessWidget {
         width: size,
         height: size,
         decoration: BoxDecoration(
-          color: backgroundColor ?? Colors.black.withOpacity(0.5),
+          color: backgroundColor ?? Colors.black.withValues(alpha: 0.5),
           shape: BoxShape.circle,
         ),
         child: Icon(icon, color: iconColor ?? Colors.white, size: iconSize),

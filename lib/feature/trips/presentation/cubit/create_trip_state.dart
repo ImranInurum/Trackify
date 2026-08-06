@@ -47,9 +47,10 @@ class CreateTripFailure extends CreateTripState {
 class CreateTripSaved extends CreateTripState {
   final String title;
   final List<Ride> rides;
+  final String savedUnit;
 
-  const CreateTripSaved({required this.title, required this.rides});
+  const CreateTripSaved({required this.title, required this.rides, required this.savedUnit});
 
   @override
-  List<Object?> get props => [title, rides];
+  List<Object?> get props => [title, rides, savedUnit];
 }

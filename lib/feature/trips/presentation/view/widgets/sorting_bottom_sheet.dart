@@ -62,13 +62,13 @@ class _SortingBottomSheetState extends State<SortingBottomSheet> {
                 child: Container(
                   padding: const EdgeInsets.all(6),
                   decoration: BoxDecoration(
-                    color: theme.colorScheme.onSurface.withOpacity(0.1),
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.1),
                     shape: BoxShape.circle,
                   ),
                   child: Icon(
                     Icons.close,
                     size: 20,
-                    color: theme.colorScheme.onSurface.withOpacity(0.8),
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
                   ),
                 ),
               ),
@@ -78,7 +78,7 @@ class _SortingBottomSheetState extends State<SortingBottomSheet> {
           Container(
             padding: const EdgeInsets.all(24),
             decoration: BoxDecoration(
-              color: isDark ? const Color(0xFF1C1C1C) : Colors.grey.withOpacity(0.05),
+              color: isDark ? const Color(0xFF1C1C1C) : Colors.grey.withValues(alpha: 0.05),
               borderRadius: BorderRadius.circular(20),
             ),
             child: Column(
@@ -88,7 +88,7 @@ class _SortingBottomSheetState extends State<SortingBottomSheet> {
                   l10n.sortBy,
                   style: theme.textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.bold,
-                    color: theme.colorScheme.onSurface.withOpacity(0.9),
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.9),
                   ),
                 ),
                 const SizedBox(height: 20),
@@ -140,7 +140,7 @@ class _SortingBottomSheetState extends State<SortingBottomSheet> {
                   child: Text(
                     l10n.backToDefault,
                     style: TextStyle(
-                      color: theme.colorScheme.onSurface.withOpacity(0.5),
+                      color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
                       fontWeight: FontWeight.w600,
                       fontSize: 16,
                     ),
@@ -211,7 +211,7 @@ class _SortOptionChip extends StatelessWidget {
             child: Text(
               label,
               style: TextStyle(
-                color: isSelected ? theme.colorScheme.primary : theme.colorScheme.onSurface.withOpacity(0.5),
+                color: isSelected ? theme.colorScheme.primary : theme.colorScheme.onSurface.withValues(alpha: 0.5),
                 fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                 fontSize: 13,
               ),
@@ -247,7 +247,7 @@ class _RadioOption extends StatelessWidget {
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               border: Border.all(
-                color: isSelected ? theme.colorScheme.primary : theme.colorScheme.onSurface.withOpacity(0.3),
+                color: isSelected ? theme.colorScheme.primary : theme.colorScheme.onSurface.withValues(alpha: 0.3),
                 width: 2,
               ),
             ),
@@ -268,7 +268,7 @@ class _RadioOption extends StatelessWidget {
           Text(
             label,
             style: TextStyle(
-              color: theme.colorScheme.onSurface.withOpacity(0.8),
+              color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
               fontSize: 14,
               fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
             ),

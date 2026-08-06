@@ -38,7 +38,9 @@ class VehicleControlCubit extends Cubit<VehicleControlState> {
       tankCapacity: vehicle.tankCapacity ?? '',
       vehicleMileage: vehicle.mileage ?? '',
       bikeImage: null,
-      selectedIcon: 'Bike',
+      selectedIcon: (vehicle.vehicleType?.toLowerCase().contains('car') ?? false) || 
+                    (vehicle.vehicleType?.toLowerCase().contains('4_wheeler') ?? false) 
+                    ? 'Car' : 'Bike',
       selectedColor: 'White',
       vehicleLock: false,
       vehicleType: vehicle.vehicleType ?? '',

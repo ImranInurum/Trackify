@@ -23,7 +23,6 @@ import 'package:trackify/feature/map/data/entity/user_vehicles.dart';
 import '../../../../l10n/app_localizations.dart';
 import 'package:trackify/core/utils/distance_utils.dart';
 import '../cubit/map_cubit.dart';
-import '../cubit/map_state.dart';
 import 'package:trackify/feature/Vehicle_control/presentation/cubit/vehicle_control_cubit.dart';
 import 'package:trackify/feature/Vehicle_control/data/repositories/vehicle_control_repository_impl.dart';
 import 'package:trackify/feature/Vehicle_control/presentation/widgets/vehicle_on_map_card.dart';
@@ -55,6 +54,7 @@ class FullScreenMap extends StatefulWidget {
 
 class _FullScreenMapState extends State<FullScreenMap>
     with TickerProviderStateMixin, WidgetsBindingObserver {
+  static final Map<String, String> _lastKnownParkingDates = {};
   final bool _useDemoSimulation = false;
   Timer? _demoTimer;
   int _demoIndex = 0;
@@ -69,7 +69,7 @@ class _FullScreenMapState extends State<FullScreenMap>
     key: 'KEY_WARRANTY_EXPIRED',
     defaultValue: true,
   );
-  int _statsPageIndex = 0;
+  final int _statsPageIndex = 0;
   GoogleMapController? _mapController;
   String? _lightMapStyle;
   String? _darkMapStyle;
@@ -86,8 +86,8 @@ class _FullScreenMapState extends State<FullScreenMap>
   // Animation start/end states
   LatLng? _animStartTarget;
   LatLng? _animEndTarget;
-  double _animStartTargetLat = 0;
-  double _animStartTargetLng = 0;
+  final double _animStartTargetLat = 0;
+  final double _animStartTargetLng = 0;
   double _animStartZoom = 16.0;
   double _animEndZoom = 18.0;
   double _animStartTilt = 0.0;
@@ -111,6 +111,14 @@ class _FullScreenMapState extends State<FullScreenMap>
   String _currentMarkerLetter = '';
   Timer? _statusTimer;
   Timer? _autoFollowResumeTimer;
+  BitmapDescriptor? _carMarker;
+  BitmapDescriptor? _rickshawMarker;
+  BitmapDescriptor? _busMarker;
+  BitmapDescriptor? _vanMarker;
+
+  // Polyline & distance between phone location and vehicle
+  Set<Polyline> _polylines = {};
+  double _distanceToVehicleMeters = 0.0;
 
   late final FullScreenMapUiCubit _uiCubit;
 
@@ -221,6 +229,34 @@ class _FullScreenMapState extends State<FullScreenMap>
 
         if (hasMoved && now - _lastMarkerRebuildMs >= 50) {
           _lastMarkerRebuildMs = now;
+          // Update polyline & distance ONLY when showCurrentLocation is active
+          if (mounted && _uiCubit.state.showCurrentLocation) {
+            final appState = context.read<AppCubit>().state;
+            final phonePos = appState.currentLocation;
+            if (phonePos != null && _animatedMarkerPos != null) {
+              final phoneLng = LatLng(phonePos.latitude, phonePos.longitude);
+              final dist = Geolocator.distanceBetween(
+                phoneLng.latitude,
+                phoneLng.longitude,
+                _animatedMarkerPos!.latitude,
+                _animatedMarkerPos!.longitude,
+              );
+              _polylines = {
+                Polyline(
+                  polylineId: const PolylineId('vehicle_to_phone'),
+                  points: [phoneLng, _animatedMarkerPos!],
+                  color: const Color(0xFF2979FF),
+                  width: 4,
+                  geodesic: true,
+                  zIndex: 1,
+                ),
+              };
+              _distanceToVehicleMeters = dist;
+            }
+          } else if (mounted && !_uiCubit.state.showCurrentLocation) {
+            _polylines = {};
+            _distanceToVehicleMeters = 0.0;
+          }
           _mapRebuildNotifier.value++;
         }
 
@@ -423,7 +459,9 @@ class _FullScreenMapState extends State<FullScreenMap>
       if (mounted) {
         context.read<MapCubit>().fetchVehicles();
         if (_currentVehicle != null && _currentVehicle!.imei != null) {
-          context.read<AppCubit>().initializeSocket(imei: _currentVehicle!.imei);
+          context.read<AppCubit>().initializeSocket(
+            imei: _currentVehicle!.imei,
+          );
           _fetchDeviceStatus(_currentVehicle!.imei!);
         }
       }
@@ -447,6 +485,7 @@ class _FullScreenMapState extends State<FullScreenMap>
         if (jsonResponse['success'] == true && jsonResponse['data'] != null) {
           final data = jsonResponse['data'] as Map<String, dynamic>;
           data['imei'] = imei;
+          data['is_device_status_api'] = true; // Mark to only use battery from here
           if (mounted) {
             context.read<AppCubit>().handleDeviceData(data);
           }
@@ -487,7 +526,27 @@ class _FullScreenMapState extends State<FullScreenMap>
       assetPath,
       110,
     );
+    final Uint8List carIcon = await MapUtils.getBytesFromAsset(
+      AppImages.carImage,
+      110,
+    );
+    final Uint8List rickshawIcon = await MapUtils.getBytesFromAsset(
+      AppImages.rickshawImage,
+      110,
+    );
+    final Uint8List busIcon = await MapUtils.getBytesFromAsset(
+      AppImages.busImage,
+      110,
+    );
+    final Uint8List vanIcon = await MapUtils.getBytesFromAsset(
+      AppImages.vanImage,
+      110,
+    );
     if (mounted) {
+      _carMarker = BitmapDescriptor.fromBytes(carIcon);
+      _rickshawMarker = BitmapDescriptor.fromBytes(rickshawIcon);
+      _busMarker = BitmapDescriptor.fromBytes(busIcon);
+      _vanMarker = BitmapDescriptor.fromBytes(vanIcon);
       _uiCubit.setCustomMarker(BitmapDescriptor.fromBytes(markerIcon));
       _mapRebuildNotifier.value++;
     }
@@ -506,7 +565,7 @@ class _FullScreenMapState extends State<FullScreenMap>
 
     // Outer glow ring
     final Paint glowPaint = Paint()
-      ..color = Colors.white.withOpacity(0.22)
+      ..color = Colors.white.withValues(alpha: 0.22)
       ..style = PaintingStyle.fill;
     canvas.drawCircle(
       const Offset(center, center - tipHeight / 2),
@@ -738,7 +797,7 @@ class _FullScreenMapState extends State<FullScreenMap>
   }
 
   GeoFenceState? _lastGeoStateMarkers;
-  Set<Marker> _cachedGeoMarkers = {};
+  final Set<Marker> _cachedGeoMarkers = {};
 
   /// Builds the markers set — called from build so it always reads latest _showCurrentLocation.
   Set<Marker> _buildMarkers(
@@ -760,7 +819,20 @@ class _FullScreenMapState extends State<FullScreenMap>
         Marker(
           markerId: const MarkerId('vehicle_marker'),
           position: vehiclePos,
-          icon: _uiCubit.state.customMarker ?? BitmapDescriptor.defaultMarker,
+          icon: (() {
+                  final type = _currentVehicle?.vehicleType.toLowerCase() ?? '';
+                  if (type.contains('auto rickshaw') || type.contains('auto') || type.contains('3_wheeler')) {
+                    return _rickshawMarker;
+                  } else if (type.contains('car') || type.contains('4_wheeler') || type.contains('commercial ev')) {
+                    return _carMarker;
+                  } else if (type.contains('bus')) {
+                    return _busMarker;
+                  } else if (type.contains('van') || type.contains('truck') || type.contains('pickup') || type.contains('pick-up')) {
+                    return _vanMarker;
+                  }
+                  return _uiCubit.state.customMarker;
+                })() ??
+              BitmapDescriptor.defaultMarker,
           anchor: const Offset(0.5, 0.5),
           flat: true,
           rotation: bearing % 360,
@@ -872,7 +944,64 @@ class _FullScreenMapState extends State<FullScreenMap>
     return circles;
   }
 
+  /// Builds the polyline between the phone location and the vehicle.
+  /// Only shown when showCurrentLocation button is active.
+  Set<Polyline> _buildPolylines(LatLng? phonePos, LatLng? vehiclePos) {
+    if (!_uiCubit.state.showCurrentLocation) return {};
+    if (phonePos == null || vehiclePos == null) return {};
+    final bool hasDevice =
+        _currentVehicle?.imei != null &&
+        _currentVehicle!.imei!.isNotEmpty &&
+        !_isWarrantyExpired;
+    if (!hasDevice) return {};
+    return {
+      Polyline(
+        polylineId: const PolylineId('vehicle_to_phone'),
+        points: [phonePos, vehiclePos],
+        color: const Color(0xFF2979FF),
+        width: 4,
+        geodesic: true,
+        zIndex: 1,
+      ),
+    };
+  }
+
+  /// Immediately recalculates distance & polyline (called on button tap).
+  void _refreshDistanceAndPolyline() {
+    if (!mounted) return;
+    final appState = context.read<AppCubit>().state;
+    final phonePos = appState.currentLocation;
+    final vehiclePos = _animatedMarkerPos ?? _getBestPosition();
+    if (phonePos != null &&
+        vehiclePos != null &&
+        _uiCubit.state.showCurrentLocation) {
+      final phoneLng = LatLng(phonePos.latitude, phonePos.longitude);
+      final dist = Geolocator.distanceBetween(
+        phoneLng.latitude,
+        phoneLng.longitude,
+        vehiclePos.latitude,
+        vehiclePos.longitude,
+      );
+      _polylines = {
+        Polyline(
+          polylineId: const PolylineId('vehicle_to_phone'),
+          points: [phoneLng, vehiclePos],
+          color: const Color(0xFF2979FF),
+          width: 4,
+          geodesic: true,
+          zIndex: 1,
+        ),
+      };
+      _distanceToVehicleMeters = dist;
+    } else {
+      _polylines = {};
+      _distanceToVehicleMeters = 0.0;
+    }
+    _mapRebuildNotifier.value++;
+  }
+
   /// Applies the correct camera position based on _showCurrentLocation mode.
+
   void _applyCameraForCurrentMode() {
     final appState = context.read<AppCubit>().state;
     final vehiclePos = _getBestPosition();
@@ -1099,7 +1228,7 @@ class _FullScreenMapState extends State<FullScreenMap>
               decoration: BoxDecoration(
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
+                    color: Colors.black.withValues(alpha: 0.1),
                     blurRadius: 15,
                     spreadRadius: 2,
                   ),
@@ -1240,7 +1369,7 @@ class _FullScreenMapState extends State<FullScreenMap>
                   BoxShadow(
                     color: Theme.of(
                       context,
-                    ).colorScheme.primary.withOpacity(0.2),
+                    ).colorScheme.primary.withValues(alpha: 0.2),
                     blurRadius: 10,
                     offset: const Offset(0, 4),
                   ),
@@ -1292,7 +1421,7 @@ class _FullScreenMapState extends State<FullScreenMap>
                       : Border.all(color: Colors.transparent),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.05),
+                      color: Colors.black.withValues(alpha: 0.05),
                       blurRadius: 10,
                       offset: const Offset(0, 2),
                     ),
@@ -1500,6 +1629,7 @@ class _FullScreenMapState extends State<FullScreenMap>
                 _buildTopActions(),
                 _buildLeftSideActions(),
                 _buildRightSideActions(),
+                _buildDistanceBadge(),
                 _buildDraggableBottomCard(),
               ],
             ),
@@ -1613,8 +1743,9 @@ class _FullScreenMapState extends State<FullScreenMap>
                         onCameraMove: (position) {
                           if (_uiCubit.state.isAutoFollowing) return;
                           if (_cameraAnimationController != null &&
-                              _cameraAnimationController!.isAnimating)
+                              _cameraAnimationController!.isAnimating) {
                             return;
+                          }
 
                           _cameraTarget = position.target;
                           _cameraZoom = position.zoom;
@@ -1628,6 +1759,17 @@ class _FullScreenMapState extends State<FullScreenMap>
                           animBearing,
                           geoState,
                         ),
+                        polylines: _polylines.isNotEmpty
+                            ? _polylines
+                            : _buildPolylines(
+                                currentPos != null
+                                    ? LatLng(
+                                        currentPos.latitude,
+                                        currentPos.longitude,
+                                      )
+                                    : null,
+                                animPos,
+                              ),
                         circles: _buildCircles(geoState),
                         onMapCreated: (controller) async {
                           _mapController = controller;
@@ -1714,14 +1856,14 @@ class _FullScreenMapState extends State<FullScreenMap>
                           decoration: BoxDecoration(
                             color: Theme.of(
                               context,
-                            ).cardColor.withOpacity(0.95),
+                            ).cardColor.withValues(alpha: 0.95),
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(
                               color: Theme.of(context).dividerColor,
                             ),
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.black.withOpacity(0.3),
+                                color: Colors.black.withValues(alpha: 0.3),
                                 blurRadius: 10,
                                 spreadRadius: 1,
                               ),
@@ -1825,10 +1967,15 @@ class _FullScreenMapState extends State<FullScreenMap>
                     decoration: BoxDecoration(
                       color: Theme.of(context).cardColor,
                       shape: BoxShape.circle,
-                      border: Border.all(color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5), width: 0.5),
+                      border: Border.all(
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.outlineVariant.withValues(alpha: 0.5),
+                        width: 0.5,
+                      ),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.1),
+                          color: Colors.black.withValues(alpha: 0.1),
                           blurRadius: 4,
                           offset: const Offset(0, 2),
                         ),
@@ -1880,8 +2027,9 @@ class _FullScreenMapState extends State<FullScreenMap>
           final iconStr = cachedMap['selectedIcon']?.toString();
           if (iconStr != null) {
             if (iconStr == 'Scooty') return Icons.moped;
-            if (iconStr == 'My Vehicle' || iconStr == 'Car')
+            if (iconStr == 'My Vehicle' || iconStr == 'Car') {
               return Icons.directions_car;
+            }
             if (iconStr == 'Bike') return Icons.motorcycle;
           }
         }
@@ -1892,10 +2040,12 @@ class _FullScreenMapState extends State<FullScreenMap>
     final type = vehicle.vehicleType.toLowerCase();
     if (type.contains('scoot') || type.contains('moped')) {
       return Icons.moped;
-    } else if (type.contains('car') ||
-        type.contains('my vehicle') ||
-        type.contains('four')) {
+    } else if (type.contains('car') || type.contains('4_wheeler') || type.contains('commercial ev') || type.contains('my vehicle') || type.contains('four')) {
       return Icons.directions_car;
+    } else if (type.contains('bus')) {
+      return Icons.directions_bus;
+    } else if (type.contains('van') || type.contains('truck') || type.contains('pickup') || type.contains('pick-up')) {
+      return Icons.airport_shuttle;
     }
     return Icons.motorcycle;
   }
@@ -1925,44 +2075,40 @@ class _FullScreenMapState extends State<FullScreenMap>
 
     final type = (selectedIcon ?? vehicle.vehicleType).toLowerCase();
 
-    if (type.contains('car') || type.contains('four')) {
-      return Container(
+    if (type.contains('car') || type.contains('four') || type.contains('4_wheeler') || type.contains('commercial ev')) {
+      return Image.asset(
+        AppImages.carImage,
         height: 48,
         width: 48,
-        decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
-          shape: BoxShape.circle,
-        ),
-        child: Center(
-          child: Icon(
-            Icons.directions_car,
-            size: 28,
-            color: Theme.of(context).colorScheme.primary,
-          ),
-        ),
+        fit: BoxFit.contain,
       );
-    } else if (type.contains('truck')) {
-      return Container(
+    } else if (type.contains('auto rickshaw') || type.contains('auto') || type.contains('3_wheeler')) {
+      return Image.asset(
+        AppImages.rickshawImage,
         height: 48,
         width: 48,
-        decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
-          shape: BoxShape.circle,
-        ),
-        child: Center(
-          child: Icon(
-            Icons.local_shipping,
-            size: 28,
-            color: Theme.of(context).colorScheme.primary,
-          ),
-        ),
+        fit: BoxFit.contain,
+      );
+    } else if (type.contains('bus')) {
+      return Image.asset(
+        AppImages.busImage,
+        height: 48,
+        width: 48,
+        fit: BoxFit.contain,
+      );
+    } else if (type.contains('van') || type.contains('truck') || type.contains('pickup') || type.contains('pick-up')) {
+      return Image.asset(
+        AppImages.vanImage,
+        height: 48,
+        width: 48,
+        fit: BoxFit.contain,
       );
     } else if (type.contains('bus')) {
       return Container(
         height: 48,
         width: 48,
         decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+          color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
           shape: BoxShape.circle,
         ),
         child: Center(
@@ -1978,7 +2124,7 @@ class _FullScreenMapState extends State<FullScreenMap>
         height: 48,
         width: 48,
         decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+          color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
           shape: BoxShape.circle,
         ),
         child: Center(
@@ -1999,7 +2145,111 @@ class _FullScreenMapState extends State<FullScreenMap>
     }
   }
 
+  /// Distance badge shown on the map between phone and vehicle.
+  /// Only visible when the "current location" button is active.
+  Widget _buildDistanceBadge() {
+    final bool hasDevice =
+        _currentVehicle?.imei != null &&
+        _currentVehicle!.imei!.isNotEmpty &&
+        !_isWarrantyExpired;
+
+    if (!hasDevice) return const SizedBox.shrink();
+
+    return BlocBuilder<FullScreenMapUiCubit, FullScreenMapUiState>(
+      bloc: _uiCubit,
+      builder: (context, uiState) {
+        if (!uiState.showCurrentLocation) return const SizedBox.shrink();
+
+        return ValueListenableBuilder<int>(
+          valueListenable: _mapRebuildNotifier,
+          builder: (context, _, __) {
+            if (_distanceToVehicleMeters <= 0) return const SizedBox.shrink();
+
+            final distUnit = context.read<AppCubit>().state.distanceUnit;
+            final bool useKm = distUnit != 'miles';
+
+            String distLabel;
+            if (useKm) {
+              if (_distanceToVehicleMeters >= 1000) {
+                distLabel =
+                    '${(_distanceToVehicleMeters / 1000).toStringAsFixed(1)} km';
+              } else {
+                distLabel = '${_distanceToVehicleMeters.round()} m';
+              }
+            } else {
+              final miles = _distanceToVehicleMeters / 1609.34;
+              if (miles >= 1) {
+                distLabel = '${miles.toStringAsFixed(1)} mi';
+              } else {
+                distLabel = '${(_distanceToVehicleMeters * 3.281).round()} ft';
+              }
+            }
+
+            return Positioned(
+              top: MediaQuery.of(context).padding.top + 72,
+              left: 0,
+              right: 0,
+              child: Center(
+                child: TweenAnimationBuilder<double>(
+                  tween: Tween(begin: 0.8, end: 1.0),
+                  duration: const Duration(milliseconds: 300),
+                  curve: Curves.easeOut,
+                  builder: (context, scale, child) =>
+                      Transform.scale(scale: scale, child: child),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 14,
+                      vertical: 7,
+                    ),
+                    decoration: BoxDecoration(
+                      gradient: const LinearGradient(
+                        colors: [Color(0xFF1565C0), Color(0xFF2979FF)],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                      borderRadius: BorderRadius.circular(20),
+                      boxShadow: [
+                        BoxShadow(
+                          color: const Color(0xFF2979FF).withValues(alpha: 0.4),
+                          blurRadius: 10,
+                          spreadRadius: 1,
+                          offset: const Offset(0, 3),
+                        ),
+                      ],
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(
+                          Icons.social_distance,
+                          color: Colors.white,
+                          size: 16,
+                        ),
+                        const SizedBox(width: 6),
+                        Text(
+                          distLabel,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 13,
+                            fontWeight: FontWeight.w700,
+                            letterSpacing: 0.3,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
   Widget _buildRightSideActions() {
+
+
     return ValueListenableBuilder<double>(
       valueListenable: _sheetExtent,
       builder: (context, extent, child) {
@@ -2037,10 +2287,15 @@ class _FullScreenMapState extends State<FullScreenMap>
                           if (!hasDevice) return;
                           _uiCubit.toggleCurrentLocation();
                           _applyCameraForCurrentMode();
+                          // Compute polyline & distance immediately on toggle
+                          WidgetsBinding.instance.addPostFrameCallback((_) {
+                            _refreshDistanceAndPolyline();
+                          });
                         },
                         isActiveColor: uiState.showCurrentLocation,
                         isDisabled: !hasDevice,
                       ),
+
                       _buildMapActionButton(
                         Icons.my_location,
                         onTap: _recenterCamera,
@@ -2104,10 +2359,11 @@ class _FullScreenMapState extends State<FullScreenMap>
                           ).colorScheme.onSurface,
                           secondaryTextColor: Theme.of(
                             context,
-                          ).colorScheme.onSurface.withOpacity(0.6),
+                          ).colorScheme.onSurface.withValues(alpha: 0.6),
                           accentColor: Theme.of(context).colorScheme.primary,
                           selectedIcon: state.tempIcon,
                           selectedColor: state.tempColor,
+                          vehicleType: state.vehicle.vehicleType,
                           margin: EdgeInsets.zero,
                           borderRadius: const BorderRadius.vertical(
                             top: Radius.circular(20),
@@ -2256,12 +2512,12 @@ class _FullScreenMapState extends State<FullScreenMap>
         width: 48,
         decoration: BoxDecoration(
           color: isDisabled
-              ? theme.colorScheme.onSurface.withOpacity(0.08)
+              ? theme.colorScheme.onSurface.withValues(alpha: 0.08)
               : (isActiveColor ? theme.colorScheme.primary : theme.cardColor),
           shape: BoxShape.circle,
           border: Border.all(
             color: isDisabled
-                ? theme.dividerColor.withOpacity(0.3)
+                ? theme.dividerColor.withValues(alpha: 0.3)
                 : (isActiveColor
                       ? theme.colorScheme.primary
                       : theme.dividerColor),
@@ -2269,7 +2525,7 @@ class _FullScreenMapState extends State<FullScreenMap>
           boxShadow: [
             if (!isDisabled)
               BoxShadow(
-                color: Colors.black.withOpacity(0.1),
+                color: Colors.black.withValues(alpha: 0.1),
                 blurRadius: 4,
                 offset: const Offset(0, 2),
               ),
@@ -2278,10 +2534,10 @@ class _FullScreenMapState extends State<FullScreenMap>
         child: Icon(
           icon,
           color: isDisabled
-              ? theme.colorScheme.onSurface.withOpacity(0.3)
+              ? theme.colorScheme.onSurface.withValues(alpha: 0.3)
               : (isActiveColor
                     ? theme.colorScheme.onPrimary
-                    : theme.colorScheme.onSurface.withOpacity(0.85)),
+                    : theme.colorScheme.onSurface.withValues(alpha: 0.85)),
           size: 24,
         ),
       ),
@@ -2317,7 +2573,7 @@ class _FullScreenMapState extends State<FullScreenMap>
                   ),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.08),
+                      color: Colors.black.withValues(alpha: 0.08),
                       blurRadius: 15,
                       spreadRadius: 2,
                     ),
@@ -2522,60 +2778,72 @@ class _FullScreenMapState extends State<FullScreenMap>
               liveSpeed = "0";
             }
 
-            final stoppedAtStr = liveDevice['parking_date_time']?.toString();
+            String? stoppedAtStr = liveDevice['parking_date_time']?.toString();
+            final imei = liveDevice['imei']?.toString() ?? "";
+
+            if (stoppedAtStr != null &&
+                stoppedAtStr.isNotEmpty &&
+                stoppedAtStr.toLowerCase() != "null" &&
+                stoppedAtStr.toLowerCase() != "invalid date") {
+              if (imei.isNotEmpty) {
+                _lastKnownParkingDates[imei] = stoppedAtStr;
+              }
+            } else {
+              if (imei.isNotEmpty && _lastKnownParkingDates.containsKey(imei)) {
+                stoppedAtStr = _lastKnownParkingDates[imei];
+              }
+            }
 
             String parkedSince = "--";
             final speedVal = double.tryParse(liveSpeed) ?? 0.0;
 
-            if (speedVal <= 5) {
-              if (stoppedAtStr != null &&
-                  stoppedAtStr.isNotEmpty &&
-                  stoppedAtStr.toLowerCase() != "null" &&
-                  stoppedAtStr.toLowerCase() != "invalid date") {
-                try {
-                  DateTime stoppedAt;
-                  int? unixTime = int.tryParse(stoppedAtStr);
-                  if (unixTime != null && unixTime > 1000000000) {
-                    if (unixTime > 1000000000000) {
-                      stoppedAt = DateTime.fromMillisecondsSinceEpoch(
-                        unixTime,
-                      ).toLocal();
-                    } else {
-                      stoppedAt = DateTime.fromMillisecondsSinceEpoch(
-                        unixTime * 1000,
-                      ).toLocal();
-                    }
+            if (stoppedAtStr != null &&
+                stoppedAtStr.isNotEmpty &&
+                stoppedAtStr.toLowerCase() != "null" &&
+                stoppedAtStr.toLowerCase() != "invalid date") {
+              try {
+                DateTime stoppedAt;
+                int? unixTime = int.tryParse(stoppedAtStr);
+                if (unixTime != null && unixTime > 1000000000) {
+                  if (unixTime > 1000000000000) {
+                    stoppedAt = DateTime.fromMillisecondsSinceEpoch(
+                      unixTime,
+                    ).toLocal();
                   } else {
-                    stoppedAt = DateTime.parse(stoppedAtStr).toLocal();
+                    stoppedAt = DateTime.fromMillisecondsSinceEpoch(
+                      unixTime * 1000,
+                    ).toLocal();
                   }
-
-                  final now = DateTime.now();
-                  final isToday =
-                      stoppedAt.year == now.year &&
-                      stoppedAt.month == now.month &&
-                      stoppedAt.day == now.day;
-
-                  final yesterday = DateTime(now.year, now.month, now.day - 1);
-                  final isYesterday =
-                      stoppedAt.year == yesterday.year &&
-                      stoppedAt.month == yesterday.month &&
-                      stoppedAt.day == yesterday.day;
-
-                  final timeFormat = DateFormat('hh:mm a');
-                  if (isToday) {
-                    parkedSince = '${timeFormat.format(stoppedAt)}, Today';
-                  } else if (isYesterday) {
-                    parkedSince = '${timeFormat.format(stoppedAt)}, Yesterday';
-                  } else {
-                    final dateFormat = DateFormat('dd/MM/yyyy');
-                    parkedSince =
-                        '${timeFormat.format(stoppedAt)}, ${dateFormat.format(stoppedAt)}';
-                  }
-                } catch (e) {
-                  debugPrint(
-                    'Failed to parse parked since time: $stoppedAtStr. Error: $e',
-                  );
+                } else {
+                  stoppedAt = DateTime.parse(stoppedAtStr).toLocal();
                 }
+
+                final now = DateTime.now();
+                final isToday =
+                    stoppedAt.year == now.year &&
+                    stoppedAt.month == now.month &&
+                    stoppedAt.day == now.day;
+
+                final yesterday = DateTime(now.year, now.month, now.day - 1);
+                final isYesterday =
+                    stoppedAt.year == yesterday.year &&
+                    stoppedAt.month == yesterday.month &&
+                    stoppedAt.day == yesterday.day;
+
+                final timeFormat = DateFormat('hh:mm a');
+                if (isToday) {
+                  parkedSince = '${timeFormat.format(stoppedAt)}, Today';
+                } else if (isYesterday) {
+                  parkedSince = '${timeFormat.format(stoppedAt)}, Yesterday';
+                } else {
+                  final dateFormat = DateFormat('dd/MM/yyyy');
+                  parkedSince =
+                      '${timeFormat.format(stoppedAt)}, ${dateFormat.format(stoppedAt)}';
+                }
+              } catch (e) {
+                debugPrint(
+                  'Failed to parse parked since time: $stoppedAtStr. Error: $e',
+                );
               }
             }
 
@@ -2658,7 +2926,7 @@ class _FullScreenMapState extends State<FullScreenMap>
                             ),
                           );
                         },
-                        child: _buildHeaderMetric(liveDevice, liveSpeed),
+                        child: _buildHeaderMetric(liveDevice, liveSpeed, lastRide, isLastRideToday),
                       ),
                       const SizedBox(width: 12),
                       // Up/Down Arrows
@@ -2688,7 +2956,7 @@ class _FullScreenMapState extends State<FullScreenMap>
                       fontSize: 14,
                       color: Theme.of(
                         context,
-                      ).colorScheme.onSurface.withOpacity(0.5),
+                      ).colorScheme.onSurface.withValues(alpha: 0.5),
                       fontWeight: FontWeight.w500,
                     ),
                   ),
@@ -2700,7 +2968,8 @@ class _FullScreenMapState extends State<FullScreenMap>
     );
   }
 
-  Widget _buildHeaderMetric(Map<String, dynamic> liveDevice, String liveSpeed) {
+  Widget _buildHeaderMetric(
+      Map<String, dynamic> liveDevice, String liveSpeed, Ride? lastRide, bool isLastRideToday) {
     return BlocBuilder<FullScreenMapUiCubit, FullScreenMapUiState>(
       bloc: _uiCubit,
       builder: (context, uiState) {
@@ -2709,20 +2978,73 @@ class _FullScreenMapState extends State<FullScreenMap>
         String label = AppLocalizations.of(context)!.speedLabel;
 
         if (uiState.headerMetricIndex == 1) {
-          value = liveDevice['odometer']?.toString() ?? "0";
+          String todayDistanceStr = "0.00";
+          if (isLastRideToday && lastRide != null) {
+            todayDistanceStr = lastRide.distance.toStringAsFixed(2);
+          } else {
+            final todayDistanceRaw =
+                liveDevice['todayDistance'] ?? liveDevice['td'];
+            if (todayDistanceRaw != null &&
+                todayDistanceRaw.toString().isNotEmpty) {
+              double val = double.tryParse(todayDistanceRaw.toString()) ?? 0.0;
+              todayDistanceStr = val.toStringAsFixed(2);
+            }
+          }
+          value = todayDistanceStr;
           unit = context.displayKm;
           label = AppLocalizations.of(context)!.distanceLabel;
         } else if (uiState.headerMetricIndex == 2) {
-          final rangeValue =
-              liveDevice['range'] ??
-              liveDevice['kms_left'] ??
-              liveDevice['fuel_range'] ??
-              liveDevice['distance_remaining'] ??
-              liveDevice['remaining_distance'] ??
-              "0";
-          value = rangeValue.toString();
-          unit = context.displayKm;
-          label = "Range";
+          String durationStr =
+              "0${AppLocalizations.of(context)!.minutesShort} 0${AppLocalizations.of(context)!.secondsShort}";
+          if (isLastRideToday && lastRide != null) {
+            durationStr = lastRide.duration;
+          } else {
+            final todayDurationRaw = liveDevice['todayDuration'] ??
+                liveDevice['dur'] ??
+                liveDevice['duration'] ??
+                "0";
+            if (todayDurationRaw != null &&
+                todayDurationRaw.toString().isNotEmpty &&
+                todayDurationRaw.toString() != "0") {
+              final rawStr = todayDurationRaw.toString();
+              if (rawStr.contains('m') ||
+                  rawStr.contains('h') ||
+                  rawStr.contains(':')) {
+                durationStr = rawStr;
+              } else {
+                final double? numVal = double.tryParse(rawStr);
+                if (numVal != null && numVal > 0) {
+                  int totalSeconds = numVal.round();
+                  if (numVal > 100000) {
+                    totalSeconds = (numVal / 1000).round();
+                  } else if (numVal < 1440) {
+                    totalSeconds = (numVal * 60).round();
+                  }
+                  final int h = totalSeconds ~/ 3600;
+                  final int m = (totalSeconds % 3600) ~/ 60;
+                  final int s = totalSeconds % 60;
+                  if (h > 0) {
+                    durationStr =
+                        "${h}h $m${AppLocalizations.of(context)!.minutesShort}";
+                  } else {
+                    durationStr =
+                        "$m${AppLocalizations.of(context)!.minutesShort} $s${AppLocalizations.of(context)!.secondsShort}";
+                  }
+                }
+              }
+            }
+          }
+          value = durationStr;
+          unit = "";
+          label = AppLocalizations.of(context)!.durationLabel;
+        } else if (uiState.headerMetricIndex == 3) {
+          String topSpeedStr = "0";
+          if (isLastRideToday && lastRide != null) {
+            topSpeedStr = lastRide.topSpeed.toStringAsFixed(1);
+          }
+          value = topSpeedStr;
+          unit = context.displayKmh;
+          label = AppLocalizations.of(context)!.topSpeed;
         }
 
         return Column(
@@ -2759,7 +3081,7 @@ class _FullScreenMapState extends State<FullScreenMap>
               label,
               style: TextStyle(
                 fontSize: 12,
-                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.4),
+                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.4),
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -2782,11 +3104,11 @@ class _FullScreenMapState extends State<FullScreenMap>
           color: Theme.of(context).cardColor,
           borderRadius: BorderRadius.circular(4),
           border: Border.all(
-            color: Theme.of(context).dividerColor.withOpacity(0.5),
+            color: Theme.of(context).dividerColor.withValues(alpha: 0.5),
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
+              color: Colors.black.withValues(alpha: 0.05),
               blurRadius: 2,
               offset: const Offset(0, 1),
             ),
@@ -2795,7 +3117,7 @@ class _FullScreenMapState extends State<FullScreenMap>
         child: Icon(
           icon,
           size: 16,
-          color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+          color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
         ),
       ),
     );
@@ -2910,10 +3232,10 @@ class _FullScreenMapState extends State<FullScreenMap>
                     final int s = totalSeconds % 60;
                     if (h > 0) {
                       durationStr =
-                          "${h}h ${m}${AppLocalizations.of(context)!.minutesShort}";
+                          "${h}h $m${AppLocalizations.of(context)!.minutesShort}";
                     } else {
                       durationStr =
-                          "${m}${AppLocalizations.of(context)!.minutesShort} ${s}${AppLocalizations.of(context)!.secondsShort}";
+                          "$m${AppLocalizations.of(context)!.minutesShort} $s${AppLocalizations.of(context)!.secondsShort}";
                     }
                   }
                 }
@@ -2975,7 +3297,7 @@ class _FullScreenMapState extends State<FullScreenMap>
               borderRadius: BorderRadius.circular(6),
               boxShadow: [
                 BoxShadow(
-                  color: const Color(0xFFD4AF37).withOpacity(0.3),
+                  color: const Color(0xFFD4AF37).withValues(alpha: 0.3),
                   blurRadius: 4,
                   offset: const Offset(0, 2),
                 ),
@@ -3004,7 +3326,7 @@ class _FullScreenMapState extends State<FullScreenMap>
           label,
           style: TextStyle(
             fontSize: 13,
-            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.4),
+            color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.4),
             fontWeight: FontWeight.w500,
           ),
         ),
@@ -3064,39 +3386,16 @@ class _FullScreenMapState extends State<FullScreenMap>
           } catch (_) {}
         }
 
-        final batteryVal =
-            liveDevice['battery'] ??
-            liveDevice['batteryLevel'] ??
-            liveDevice['battery_level'] ??
-            liveDevice['bat'] ??
-            liveDevice['voltageLevel'] ??
-            liveDevice['voltage_level'] ??
-            (attrs is Map
-                ? (attrs['battery'] ??
-                      attrs['batteryLevel'] ??
-                      attrs['voltageLevel'] ??
-                      attrs['battery_level'] ??
-                      attrs['voltage_level'])
-                : null);
+        final batteryVal = liveDevice['api_battery'];
 
-        final voltageVal =
-            liveDevice['voltage'] ??
-            liveDevice['volts'] ??
-            liveDevice['battery_voltage'] ??
-            liveDevice['v_bat'] ??
-            liveDevice['power'] ??
-            (attrs is Map
-                ? (attrs['voltage'] ??
-                      attrs['battery_voltage'] ??
-                      attrs['v_bat'])
-                : null);
+        final voltageVal = null; // Ignored to strictly use DeviceStatus API battery
 
         String batteryText = "--";
         Color batteryColor = Colors.green;
         IconData batteryIcon = Icons.battery_charging_full;
 
         final rawVal = batteryVal ?? voltageVal;
-        if (rawVal != null) {
+        if (rawVal != null && rawVal.toString().trim().toLowerCase() != 'null' && rawVal.toString().trim() != '') {
           final rawStr = rawVal.toString().trim();
           int? intLevel;
 
@@ -3106,7 +3405,7 @@ class _FullScreenMapState extends State<FullScreenMap>
             intLevel = int.tryParse(rawStr);
           }
 
-          if (intLevel != null && intLevel >= 0 && intLevel <= 6) {
+          if (intLevel != null) {
             switch (intLevel) {
               case 0:
                 batteryText = "Disconnected";
@@ -3143,37 +3442,11 @@ class _FullScreenMapState extends State<FullScreenMap>
                 batteryColor = Colors.green.shade400;
                 batteryIcon = Icons.battery_full;
                 break;
-            }
-          } else if (batteryVal != null) {
-            final batDouble = double.tryParse(
-              batteryVal.toString().replaceAll(RegExp(r'[^0-9.]'), ''),
-            );
-            if (batDouble != null) {
-              final String status = batDouble < 20 ? "Low" : "Normal";
-              final displayVal = batDouble <= 1.0
-                  ? (batDouble * 100).round()
-                  : batDouble.round();
-              batteryText = "$status ($displayVal%)";
-              batteryColor = displayVal < 20 ? Colors.red : Colors.green;
-              batteryIcon = displayVal < 20
-                  ? Icons.battery_alert
-                  : Icons.battery_charging_full;
-            } else {
-              batteryText = "Normal (${batteryVal.toString()})";
-            }
-          } else if (voltageVal != null) {
-            final voltDouble = double.tryParse(
-              voltageVal.toString().replaceAll(RegExp(r'[^0-9.]'), ''),
-            );
-            if (voltDouble != null) {
-              final String status = voltDouble < 11.5 ? "Low" : "Normal";
-              batteryText = "$status (${voltDouble.toStringAsFixed(1)}V)";
-              batteryColor = voltDouble < 11.5 ? Colors.red : Colors.green;
-              batteryIcon = voltDouble < 11.5
-                  ? Icons.battery_alert
-                  : Icons.battery_charging_full;
-            } else {
-              batteryText = "Normal (${voltageVal.toString()})";
+              default:
+                batteryText = "--";
+                batteryColor = Colors.green;
+                batteryIcon = Icons.battery_charging_full;
+                break;
             }
           }
         }
@@ -3191,11 +3464,11 @@ class _FullScreenMapState extends State<FullScreenMap>
                   color: Theme.of(context).cardColor,
                   borderRadius: BorderRadius.circular(16),
                   border: Border.all(
-                    color: Theme.of(context).dividerColor.withOpacity(0.5),
+                    color: Theme.of(context).dividerColor.withValues(alpha: 0.5),
                   ),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.02),
+                      color: Colors.black.withValues(alpha: 0.02),
                       blurRadius: 10,
                       offset: const Offset(0, 4),
                     ),
@@ -3256,7 +3529,7 @@ class _FullScreenMapState extends State<FullScreenMap>
                         fontSize: 12,
                         color: Theme.of(
                           context,
-                        ).colorScheme.onSurface.withOpacity(0.4),
+                        ).colorScheme.onSurface.withValues(alpha: 0.4),
                         fontWeight: FontWeight.w500,
                       ),
                     ),
@@ -3276,11 +3549,11 @@ class _FullScreenMapState extends State<FullScreenMap>
                   color: Theme.of(context).cardColor,
                   borderRadius: BorderRadius.circular(16),
                   border: Border.all(
-                    color: Theme.of(context).dividerColor.withOpacity(0.5),
+                    color: Theme.of(context).dividerColor.withValues(alpha: 0.5),
                   ),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.02),
+                      color: Colors.black.withValues(alpha: 0.02),
                       blurRadius: 10,
                       offset: const Offset(0, 4),
                     ),
@@ -3303,7 +3576,7 @@ class _FullScreenMapState extends State<FullScreenMap>
                         Container(
                           padding: const EdgeInsets.all(4),
                           decoration: BoxDecoration(
-                            color: batteryColor.withOpacity(0.1),
+                            color: batteryColor.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(4),
                           ),
                           child: Icon(
@@ -3350,7 +3623,7 @@ class _FullScreenMapState extends State<FullScreenMap>
       icon,
       color: isSelected
           ? Theme.of(context).colorScheme.primary
-          : Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+          : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
       size: 28,
     );
   }

@@ -6,7 +6,6 @@ import 'package:trackify/feature/overspeed_alert/data/model/overspeed_alert_mode
 import '../cubit/overspeed_alert_cubit.dart';
 import '../cubit/overspeed_alert_state.dart';
 import '../widgets/vehicle_multi_selection_dialog.dart';
-import 'package:trackify/core/widgets/loading_screen_ol.dart';
 import 'package:trackify/core/utils/distance_utils.dart';
 
 class AddOverspeedAlertScreen extends StatefulWidget {
@@ -214,14 +213,14 @@ class _AddOverspeedAlertScreenState extends State<AddOverspeedAlertScreen> {
     return Row(
       children: [
         Icon(icon,
-            color: theme.colorScheme.onSurface.withOpacity(0.6), size: 20),
+            color: theme.colorScheme.onSurface.withValues(alpha: 0.6), size: 20),
         const SizedBox(width: 16),
         Expanded(
           flex: 2,
           child: Text(
             label,
             style: theme.textTheme.bodyMedium?.copyWith(
-                color: theme.colorScheme.onSurface.withOpacity(0.8)),
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.8)),
           ),
         ),
         Expanded(
@@ -258,20 +257,20 @@ class _AddOverspeedAlertScreenState extends State<AddOverspeedAlertScreen> {
     return Row(
       children: [
         Icon(icon,
-            color: theme.colorScheme.onSurface.withOpacity(0.6), size: 20),
+            color: theme.colorScheme.onSurface.withValues(alpha: 0.6), size: 20),
         const SizedBox(width: 16),
         Expanded(
           flex: 2,
           child: Text(
             label,
             style: theme.textTheme.bodyMedium?.copyWith(
-                color: theme.colorScheme.onSurface.withOpacity(0.8)),
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.8)),
           ),
         ),
         Expanded(
           flex: 3,
           child: DropdownButtonFormField<int>(
-            value: value,
+            initialValue: value,
             icon: Icon(Icons.arrow_drop_down,
                 color: theme.colorScheme.primary),
             isExpanded: true,
@@ -306,14 +305,14 @@ class _AddOverspeedAlertScreenState extends State<AddOverspeedAlertScreen> {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Icon(Icons.directions_car_filled_outlined,
-            color: theme.colorScheme.onSurface.withOpacity(0.6), size: 20),
+            color: theme.colorScheme.onSurface.withValues(alpha: 0.6), size: 20),
         const SizedBox(width: 16),
         Expanded(
           flex: 2,
           child: Text(
             l10n.selectYourVehicle,
             style: theme.textTheme.bodyMedium?.copyWith(
-                color: theme.colorScheme.onSurface.withOpacity(0.8)),
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.8)),
           ),
         ),
         Expanded(
@@ -360,7 +359,7 @@ class _AddOverspeedAlertScreenState extends State<AddOverspeedAlertScreen> {
                   const SizedBox(width: 8),
                   Icon(
                     Icons.open_in_new,
-                    color: theme.colorScheme.onSurface.withOpacity(0.6),
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                     size: 16,
                   ),
                 ],

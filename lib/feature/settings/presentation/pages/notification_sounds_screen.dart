@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:app_settings/app_settings.dart';
 import 'package:trackify/feature/settings/presentation/widgets/setting_list_tile.dart';
@@ -18,7 +18,7 @@ void _openChannel(String channelId) async {
 }
 
 class NotificationSoundsScreen extends StatefulWidget {
-  const NotificationSoundsScreen({Key? key}) : super(key: key);
+  const NotificationSoundsScreen({super.key});
 
   @override
   State<NotificationSoundsScreen> createState() => _NotificationSoundsScreenState();
@@ -98,8 +98,9 @@ class _NotificationSoundsScreenState extends State<NotificationSoundsScreen> {
                 
                 String title = alert['label'] ?? 'Unknown Alert';
                 final String type = alert['type']?.toString().toLowerCase() ?? '';
-                if (type == 'vibration') title = l10n.vibrationAlert;
-                else if (type == 'motion') title = l10n.motionAlert;
+                if (type == 'vibration') {
+                  title = l10n.vibrationAlert;
+                } else if (type == 'motion') title = l10n.motionAlert;
                 else if (type == 'ignition') title = l10n.ignitionAlert;
                 else if (type == 'fall') title = l10n.fallAlert;
                 else if (type == 'battery') title = l10n.batteryAlert;
@@ -135,7 +136,7 @@ class _NotificationSoundsScreenState extends State<NotificationSoundsScreen> {
                         break;
                     }
 
-                    if (channelId != null && channelId.toString().isNotEmpty) {
+                    if (channelId.toString().isNotEmpty) {
                       _openChannel(channelId.toString());
                     } else {
                       AppSettings.openAppSettings(type: AppSettingsType.notification);

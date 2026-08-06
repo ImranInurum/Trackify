@@ -631,7 +631,7 @@
   "save": "जतन करा",
   "deleteTrip": "ट्रिप हटवा",
   "hrLabel": "तास",
-  "ridesSelectedSummary": "{count} राइड्स निवडल्या | {distance} किमी • {duration}",
+  "ridesSelectedSummary": "{count} राइड्स निवडल्या | {distance} • {duration}",
   "@ridesSelectedSummary": {
     "placeholders": {
       "count": {

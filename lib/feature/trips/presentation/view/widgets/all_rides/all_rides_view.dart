@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:trackify/app/cubit/app_cubit.dart';
+import 'package:trackify/app/cubit/app_state.dart';
 import 'package:trackify/feature/trips/presentation/view/widgets/all_rides/widgets/all_rides_empty_state.dart';
 import 'package:trackify/feature/trips/presentation/view/widgets/all_rides/widgets/ride_card.dart';
 import 'package:trackify/l10n/app_localizations.dart';
@@ -59,7 +61,12 @@ class _AllRidesState extends State<AllRides> {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context)!;
 
-    return BlocBuilder<RideHistoryCubit, RideHistoryState>(
+    return BlocListener<AppCubit, AppState>(
+      listenWhen: (previous, current) => previous.distanceUnit != current.distanceUnit,
+      listener: (context, state) {
+        context.read<RideHistoryCubit>().getRideHistoryData();
+      },
+      child: BlocBuilder<RideHistoryCubit, RideHistoryState>(
       builder: (context, state) {
         return RefreshIndicator(
           onRefresh: () async {
@@ -112,7 +119,7 @@ class _AllRidesState extends State<AllRides> {
                           child: Container(
                             height: 48,
                             decoration: BoxDecoration(
-                              color: theme.colorScheme.onSurface.withOpacity(0.05),
+                              color: theme.colorScheme.onSurface.withValues(alpha: 0.05),
                               borderRadius: BorderRadius.circular(12),
                               border: Border.all(
                                 color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5),
@@ -124,7 +131,7 @@ class _AllRidesState extends State<AllRides> {
                                 const SizedBox(width: 16),
                                 Icon(
                                   _selectedDate != null ? Icons.calendar_today : Icons.calendar_today_outlined,
-                                  color: _selectedDate != null ? theme.primaryColor : theme.colorScheme.onSurface.withOpacity(0.5),
+                                  color: _selectedDate != null ? theme.primaryColor : theme.colorScheme.onSurface.withValues(alpha: 0.5),
                                   size: 20,
                                 ),
                                 const SizedBox(width: 12),
@@ -135,7 +142,7 @@ class _AllRidesState extends State<AllRides> {
                                     child: Text(
                                       _selectedDate != null ? DateFormat('dd MMM yyyy').format(_selectedDate!) : 'Select Date',
                                       style: TextStyle(
-                                        color: _selectedDate != null ? theme.primaryColor : theme.colorScheme.onSurface.withOpacity(0.4),
+                                        color: _selectedDate != null ? theme.primaryColor : theme.colorScheme.onSurface.withValues(alpha: 0.4),
                                         fontSize: 14,
                                         fontWeight: _selectedDate != null ? FontWeight.bold : FontWeight.normal,
                                       ),
@@ -179,7 +186,7 @@ class _AllRidesState extends State<AllRides> {
                           height: 48,
                           width: 48,
                           decoration: BoxDecoration(
-                            color: theme.colorScheme.onSurface.withOpacity(0.05),
+                            color: theme.colorScheme.onSurface.withValues(alpha: 0.05),
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(
                               color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5),
@@ -281,6 +288,7 @@ class _AllRidesState extends State<AllRides> {
           ),
         );
       },
+    ),
     );
   }
 }

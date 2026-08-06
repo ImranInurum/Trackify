@@ -772,11 +772,12 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
                             points: mapState.validRidePoints
                                 .map((p) => p.location)
                                 .toList(),
-                            color: Colors.yellow,
-                            width: 5,
+                            color: widget.ride.distance < 0.1 ? Colors.grey : Colors.yellow,
+                            width: widget.ride.distance < 0.1 ? 8 : 5,
                             startCap: Cap.roundCap,
                             endCap: Cap.roundCap,
                             jointType: JointType.round,
+                            patterns: widget.ride.distance < 0.1 ? [PatternItem.dot, PatternItem.gap(16.0)] : const <PatternItem>[],
                           ),
                       },
                       markers: {

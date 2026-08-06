@@ -738,7 +738,7 @@
   "tripQuoteDefault": "ஒவ்வொரு பயணத்திற்கும் ஒரு கதை உண்டு. உங்களுடையது இங்கே.",
   "deleteTrip": "பயணத்தை நீக்கு",
   "hrLabel": "மணி",
-  "ridesSelectedSummary": "{count} சவாரிகள் தேர்ந்தெடுக்கப்பட்டுள்ளன | {distance} கிமீ • {duration}",
+  "ridesSelectedSummary": "{count} சவாரிகள் தேர்ந்தெடுக்கப்பட்டுள்ளன | {distance} • {duration}",
   "@ridesSelectedSummary": {
     "placeholders": {
       "count": {

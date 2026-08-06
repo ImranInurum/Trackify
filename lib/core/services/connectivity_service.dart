@@ -18,7 +18,7 @@ class ConnectivityService {
 
   void initialize() {
     _subscription = _connectivity.onConnectivityChanged.listen((results) async {
-      final isConnected = await _hasConnection(results);
+      final isConnected = _hasConnection(results);
       _connectivityController.add(isConnected);
     });
   }

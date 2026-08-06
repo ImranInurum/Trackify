@@ -79,7 +79,7 @@ class RideCard extends StatelessWidget {
               borderRadius: const BorderRadius.vertical(
                 top: Radius.circular(16),
               ),
-              child: Container(
+              child: SizedBox(
                 height: 220,
                 width: double.infinity,
                 child: Stack(
@@ -90,6 +90,7 @@ class RideCard extends StatelessWidget {
                         startLabel: ride.startLocation,
                         endLabel: ride.endLocation,
                         rideId: ride.id,
+                        isDotted: ride.distance < 0.1,
                       ),
                     ),
                     Positioned(

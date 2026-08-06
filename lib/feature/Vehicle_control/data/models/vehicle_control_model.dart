@@ -29,6 +29,7 @@ class VehicleControlModel extends VehicleControlEntity {
     );
   }
 
+  @override
   Map<String, dynamic> toJson() {
     return {
       'id': id,

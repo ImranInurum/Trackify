@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:trackify/feature/trips/presentation/view/widgets/all_rides/all_rides_view.dart';
 import 'package:trackify/feature/trips/presentation/view/widgets/trips/trips_view.dart';
-import 'package:trackify/feature/trips/presentation/view/saved_rides_screen.dart';
-import 'package:trackify/feature/record_via_phone/presentation/pages/shared_rides_screen.dart' as trackify_shared;
 import '../../../../l10n/app_localizations.dart';
 
 class TripScreen extends StatefulWidget {
@@ -40,7 +38,7 @@ class _TripScreenState extends State<TripScreen>
       /// APP BAR
       appBar: AppBar(
         elevation: 1,
-        shadowColor: Colors.black.withOpacity(0.1),
+        shadowColor: Colors.black.withValues(alpha: 0.1),
         backgroundColor: Theme.of(context).cardColor,
         title: Text(
           l10n.journey,
@@ -49,6 +47,7 @@ class _TripScreenState extends State<TripScreen>
           ),
         ),
         actions: [
+          /*
           PopupMenuButton<String>(
             elevation: 8,
             color: Theme.of(context).cardColor,
@@ -96,6 +95,7 @@ class _TripScreenState extends State<TripScreen>
               ),
             ],
           ),
+          */
         ],
       ),
 
@@ -141,7 +141,7 @@ class _TripScreenState extends State<TripScreen>
           padding: const EdgeInsets.symmetric(vertical: 12),
           decoration: BoxDecoration(
             color: isSelected
-                ? theme.colorScheme.primary.withOpacity(0.12)
+                ? theme.colorScheme.primary.withValues(alpha: 0.12)
                 : Colors.transparent,
             borderRadius: BorderRadius.circular(25),
           ),
@@ -151,7 +151,7 @@ class _TripScreenState extends State<TripScreen>
               style: TextStyle(fontWeight: FontWeight.w700,
                 color: isSelected
                     ? theme.colorScheme.primary
-                    : theme.colorScheme.onSurface.withOpacity(0.5),
+                    : theme.colorScheme.onSurface.withValues(alpha: 0.5),
               ),
             ),
           ),

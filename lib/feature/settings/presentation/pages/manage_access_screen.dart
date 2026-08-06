@@ -9,7 +9,7 @@ class ManageAccessScreen extends StatefulWidget {
 
 class _ManageAccessScreenState extends State<ManageAccessScreen> {
   final TextEditingController _emailController = TextEditingController();
-  String _selectedRole = 'View Only';
+  final String _selectedRole = 'View Only';
 
   // Specific permissions
   final Map<String, bool> _permissions = {
@@ -120,7 +120,7 @@ class _ManageAccessScreenState extends State<ManageAccessScreen> {
               'Enter email/mobile and select the exact features they can access.',
               style: TextStyle(
                 fontSize: 14,
-                color: theme.colorScheme.onSurface.withOpacity(0.6),
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
               ),
             ),
             const SizedBox(height: 16),
@@ -142,7 +142,7 @@ class _ManageAccessScreenState extends State<ManageAccessScreen> {
                     decoration: InputDecoration(
                       hintText: 'Email or Mobile Number',
                       hintStyle: TextStyle(
-                        color: theme.colorScheme.onSurface.withOpacity(0.4),
+                        color: theme.colorScheme.onSurface.withValues(alpha: 0.4),
                       ),
                       border: InputBorder.none,
                       icon: Icon(Icons.person_add_alt_1, color: theme.colorScheme.primary),
@@ -167,7 +167,7 @@ class _ManageAccessScreenState extends State<ManageAccessScreen> {
                         });
                       },
                     );
-                  }).toList(),
+                  }),
                   const SizedBox(height: 8),
                   SizedBox(
                     width: double.infinity,
@@ -206,7 +206,7 @@ class _ManageAccessScreenState extends State<ManageAccessScreen> {
                       child: Text(
                         'No users have access yet.',
                         style: TextStyle(
-                          color: theme.colorScheme.onSurface.withOpacity(0.5),
+                          color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
                         ),
                       ),
                     )
@@ -224,7 +224,7 @@ class _ManageAccessScreenState extends State<ManageAccessScreen> {
                             ),
                           child: ListTile(
                             leading: CircleAvatar(
-                              backgroundColor: theme.colorScheme.primary.withOpacity(0.2),
+                              backgroundColor: theme.colorScheme.primary.withValues(alpha: 0.2),
                               child: Icon(Icons.person, color: theme.colorScheme.primary),
                             ),
                             title: Text(
@@ -234,7 +234,7 @@ class _ManageAccessScreenState extends State<ManageAccessScreen> {
                             subtitle: Text(
                               'Permissions: ${(user['permissions'] as List<String>).join(', ')}',
                               style: TextStyle(
-                                color: theme.colorScheme.onSurface.withOpacity(0.6),
+                                color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                                 fontSize: 12,
                               ),
                             ),

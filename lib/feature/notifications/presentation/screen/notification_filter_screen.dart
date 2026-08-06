@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../cubit/notification_timeline_cubit.dart';
@@ -197,7 +197,7 @@ class _NotificationFilterScreenState extends State<NotificationFilterScreen> {
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(4),
                 border: Border.all(
-                  color: isSelected ? activeColor : secondaryColor.withOpacity(0.5),
+                  color: isSelected ? activeColor : secondaryColor.withValues(alpha: 0.5),
                   width: 2,
                 ),
                 color: isSelected ? activeColor : Colors.transparent,

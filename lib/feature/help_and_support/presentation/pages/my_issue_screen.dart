@@ -231,7 +231,7 @@ class _MyIssueScreenState
                           style: TextStyle(color: theme
                                 .colorScheme
                                 .onSurface
-                                .withOpacity(
+                                .withValues(alpha: 
                               0.7,
                             ),
                           ),
@@ -323,7 +323,7 @@ class _MyIssueScreenState
                         style: TextStyle(color: theme
                               .colorScheme
                               .onSurface
-                              .withOpacity(
+                              .withValues(alpha: 
                             0.5,
                           ),
                         ),
@@ -383,12 +383,12 @@ class _MyIssueScreenState
           const SizedBox(height: 8),
           Text(
             suggestion.description,
-            style: TextStyle(color: theme.colorScheme.onSurface.withOpacity(0.7)),
+            style: TextStyle(color: theme.colorScheme.onSurface.withValues(alpha: 0.7)),
           ),
           const SizedBox(height: 14),
           Text(
             DateFormat('dd MMM yyyy').format(suggestion.createdAt),
-            style: TextStyle(color: theme.colorScheme.onSurface.withOpacity(0.5), fontSize: 12),
+            style: TextStyle(color: theme.colorScheme.onSurface.withValues(alpha: 0.5), fontSize: 12),
           ),
         ],
       ),

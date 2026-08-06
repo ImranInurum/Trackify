@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:trackify/core/config/font_manager.dart';
 import 'package:trackify/feature/health_insurance/presentation/cubit/health_insurance_cubit.dart';
@@ -102,7 +102,7 @@ class _HealthInsuranceScreenState extends State<HealthInsuranceScreen> {
                         style: TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeightManager.regular,
-                          color: colorScheme.onSurface.withOpacity(0.7),
+                          color: colorScheme.onSurface.withValues(alpha: 0.7),
                         ),
                       ),
                     ),
@@ -159,7 +159,7 @@ class _HealthInsuranceScreenState extends State<HealthInsuranceScreen> {
                         style: TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeightManager.medium,
-                          color: colorScheme.onSurface.withOpacity(0.7),
+                          color: colorScheme.onSurface.withValues(alpha: 0.7),
                         ),
                       ),
                     ),

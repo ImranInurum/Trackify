@@ -67,7 +67,13 @@ class VehicleControlEntity {
       tankCapacity: json['tankCapacity'] ?? '',
       vehicleMileage: json['vehicleMileage'] ?? '',
       bikeImage: json['bikeImage'],
-      selectedIcon: json['selectedIcon'] ?? 'Bike',
+      selectedIcon: (() {
+        final isCar = (json['vehicleType']?.toString().toLowerCase().contains('car') ?? false) ||
+                      (json['vehicleType']?.toString().toLowerCase().contains('4_wheeler') ?? false);
+        final icon = json['selectedIcon'];
+        if (isCar && (icon == null || icon == 'Bike')) return 'Car';
+        return icon ?? 'Bike';
+      })(),
       selectedColor: json['selectedColor'] ?? 'White',
       vehicleLock: json['vehicleLock'] ?? false,
       vehicleType: json['vehicleType'] ?? '',

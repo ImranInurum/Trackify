@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:trackify/app/app_navigation.dart';
 import 'package:trackify/feature/device_data/presentation/pages/device_data_screen.dart';
 import 'package:trackify/feature/device_warranty/pages/device_warranty_page.dart';
 import 'package:trackify/feature/my_garage/presentation/cubit/my_garage_cubit.dart';

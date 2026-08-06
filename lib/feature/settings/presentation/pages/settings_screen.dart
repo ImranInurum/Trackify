@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:trackify/feature/settings/presentation/pages/notification_settings.dart';
 import 'package:trackify/feature/settings/presentation/pages/privacy_screen.dart';
-import 'package:trackify/feature/settings/presentation/pages/manage_access_screen.dart';
 import 'package:trackify/feature/settings/presentation/widgets/setting_list_tile.dart';
 import 'package:trackify/l10n/app_localizations.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -11,11 +10,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../app/cubit/app_cubit.dart';
 import '../../../../app/cubit/app_state.dart';
 import '../../../../core/constants/app_languages.dart';
-import '../../../auth/presentation/pages/signin_screen.dart';
-import 'package:trackify/feature/profile/presentation/cubit/profile_cubit.dart';
-import 'package:trackify/feature/my_profile/presentation/cubit/my_profile_cubit.dart';
-import 'package:trackify/feature/map/presentation/cubit/map_cubit.dart';
-import 'package:trackify/feature/my_garage/presentation/cubit/my_garage_cubit.dart';
 import 'package:trackify/core/widgets/logout_confirmation_dialog.dart';
 
 class SettingsScreen extends StatefulWidget {
@@ -98,7 +92,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   border: Border.all(color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5), width: 0.5),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.03),
+                      color: Colors.black.withValues(alpha: 0.03),
                       blurRadius: 10,
                       offset: const Offset(0, 4),
                     ),
@@ -120,14 +114,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     hintStyle: TextStyle(
                       color: Theme.of(
                         context,
-                      ).colorScheme.onSurface.withOpacity(0.4),
+                      ).colorScheme.onSurface.withValues(alpha: 0.4),
                       fontSize: 14,
                     ),
                     prefixIcon: Icon(
                       Icons.search,
                       color: Theme.of(
                         context,
-                      ).colorScheme.onSurface.withOpacity(0.4),
+                      ).colorScheme.onSurface.withValues(alpha: 0.4),
                     ),
                     suffixIcon: _searchQuery.isNotEmpty
                         ? IconButton(
@@ -135,7 +129,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               Icons.clear,
                               color: Theme.of(
                                 context,
-                              ).colorScheme.onSurface.withOpacity(0.4),
+                              ).colorScheme.onSurface.withValues(alpha: 0.4),
                             ),
                             onPressed: () {
                               _searchController.clear();
@@ -325,7 +319,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   style: TextStyle(
                     color: Theme.of(
                       context,
-                    ).colorScheme.onSurface.withOpacity(0.5),
+                    ).colorScheme.onSurface.withValues(alpha: 0.5),
                     fontSize: 14,
                   ),
                 ),

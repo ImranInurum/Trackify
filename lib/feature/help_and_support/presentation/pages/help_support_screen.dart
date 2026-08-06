@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:trackify/feature/app_updates/presentiation/pages/update_screen.dart';
-import 'package:trackify/core/config/font_manager.dart';
 import 'package:trackify/core/utils/shared_preferences.dart';
 import 'package:trackify/feature/help_and_support/presentation/pages/app_web_view_screen.dart';
 import 'package:trackify/feature/help_and_support/presentation/pages/my_issue_screen.dart';
@@ -10,14 +9,12 @@ import 'package:trackify/l10n/app_localizations.dart';
 
 import 'package:trackify/feature/help_and_support/data/repository_impl/help_repository_impl.dart';
 import 'package:trackify/feature/help_and_support/presentation/cubit/help_cubit.dart';
-import 'package:trackify/feature/help_and_support/presentation/cubit/help_state.dart';
 import 'package:trackify/feature/help_and_support/presentation/cubit/help_support_cubit.dart';
 import 'package:trackify/feature/help_and_support/presentation/cubit/time_slot_cubit.dart';
 import 'package:trackify/feature/help_and_support/data/model/report_issue_model.dart';
 import 'package:trackify/feature/service_logs/presentation/cubit/service_logs_cubit.dart';
 import 'package:trackify/feature/service_logs/presentation/cubit/service_logs_state.dart';
 import 'package:trackify/feature/service_logs/presentation/widgets/vehicle_selection_app_bar.dart';
-import 'package:trackify/core/common/models/vehicle_list_model.dart';
 
 import '../../data/model/suggestion_model.dart';
 import '../cubit/suggestion_cubit.dart';
@@ -205,7 +202,7 @@ class _HelpSuggestionScreenState extends State<HelpSuggestionScreen> {
             height: 48,
             decoration: BoxDecoration(
               border: Border.all(
-                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
+                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
               ),
               borderRadius: BorderRadius.circular(4),
             ),
@@ -292,7 +289,7 @@ class _HelpSuggestionScreenState extends State<HelpSuggestionScreen> {
                 : l10n.iWantToProvideSuggestion,
             style: TextStyle(
               fontSize: 13,
-              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7),
             ),
           ),
 
@@ -373,7 +370,7 @@ class _HelpSuggestionScreenState extends State<HelpSuggestionScreen> {
                             style: TextStyle(
                               fontSize: 14,
                               color: selectedSuggestionType == null 
-                                  ? Theme.of(context).colorScheme.onSurface.withOpacity(0.5)
+                                  ? Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5)
                                   : Theme.of(context).colorScheme.onSurface,
                             ),
                           ),
@@ -400,7 +397,7 @@ class _HelpSuggestionScreenState extends State<HelpSuggestionScreen> {
                   ? l10n.whatIsYourIssueRelatedTo
                   : l10n.whatIsSuggestionSubject,
               hintStyle: TextStyle(
-                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.4),
+                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.4),
                 fontSize: 15,
               ),
               enabledBorder: UnderlineInputBorder(
@@ -431,7 +428,7 @@ class _HelpSuggestionScreenState extends State<HelpSuggestionScreen> {
                   ? l10n.giveShortDescription
                   : l10n.giveSuggestionFeedback,
               hintStyle: TextStyle(
-                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.4),
+                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.4),
                 fontSize: 15,
               ),
               enabledBorder: UnderlineInputBorder(
@@ -630,7 +627,7 @@ class _HelpSuggestionScreenState extends State<HelpSuggestionScreen> {
             Icon(
               Icons.arrow_forward_ios,
               size: 18,
-              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
             ),
           ],
         ),
@@ -679,7 +676,7 @@ class _HelpSuggestionScreenState extends State<HelpSuggestionScreen> {
         const SizedBox(height: 12),
         Text(
           l10n.forceMigrateDesc1,
-          style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+          style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
             fontSize: 13,
             height: 1.4,
           ),
@@ -687,7 +684,7 @@ class _HelpSuggestionScreenState extends State<HelpSuggestionScreen> {
         const SizedBox(height: 8),
         Text(
           l10n.forceMigrateDesc2,
-          style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+          style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
             fontSize: 13,
             height: 1.4,
           ),
@@ -786,7 +783,7 @@ class _HelpSuggestionScreenState extends State<HelpSuggestionScreen> {
             Icon(
               Icons.arrow_forward_ios,
               size: 14,
-              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.4),
+              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.4),
             ),
           ],
         ),
@@ -799,7 +796,7 @@ class _HelpSuggestionScreenState extends State<HelpSuggestionScreen> {
       alignment: Alignment.centerRight,
       child: Text(
         "B3000507.V19.7.1.J406",
-        style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.4),
+        style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.4),
           fontSize: 11,
         ),
       ),

@@ -1,5 +1,4 @@
 import 'package:bloc/bloc.dart';
-import 'package:flutter/animation.dart';
 import 'package:trackify/feature/video_tutorial/domain/usecase/tutorial_usecase.dart';
 import 'package:trackify/feature/video_tutorial/presentation/cubit/tutorial_state.dart';
 

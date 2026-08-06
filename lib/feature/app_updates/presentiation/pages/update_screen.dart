@@ -1,7 +1,6 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:trackify/core/config/font_manager.dart';
-import 'package:trackify/l10n/app_localizations_ar.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../cubit/update_cubit.dart';
 import '../cubit/update_cubit_state.dart';
@@ -77,8 +76,8 @@ class _UpdateScreenState extends State<UpdateScreen> {
                             begin: Alignment.centerLeft,
                             end: Alignment.centerRight,
                             colors: [
-                              colorScheme.onPrimaryContainer.withOpacity(0.7),
-                              colorScheme.onSurface.withOpacity(0.3),
+                              colorScheme.onPrimaryContainer.withValues(alpha: 0.7),
+                              colorScheme.onSurface.withValues(alpha: 0.3),
                             ]
                           ),
                         ),
@@ -90,7 +89,7 @@ class _UpdateScreenState extends State<UpdateScreen> {
                               style: TextStyle(
                                 fontSize: width * .046,
                                 fontWeight: FontWeightManager.semibold,
-                                color:Theme.of(context).colorScheme.onSurfaceVariant.withOpacity(0.9)
+                                color:Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.9)
                               ),
                             ),
                             const SizedBox(height: 4),
@@ -98,7 +97,7 @@ class _UpdateScreenState extends State<UpdateScreen> {
                               "Version : ${item.version}",
                               style: TextStyle(
                                 fontSize: width * .032,
-                                color: Theme.of(context).colorScheme.onSurfaceVariant.withOpacity(0.8),
+                                color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.8),
                               ),
                             ),
                           ],

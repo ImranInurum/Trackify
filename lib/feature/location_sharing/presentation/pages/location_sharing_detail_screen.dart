@@ -7,8 +7,6 @@ import '../cubit/live/location_sharing_live_cubit.dart';
 import '../cubit/live/location_sharing_live_state.dart';
 import '../cubit/history/location_sharing_history_cubit.dart';
 import '../cubit/history/location_sharing_history_state.dart';
-import '../../data/models/share_history_model.dart';
-import 'package:trackify/core/theme/app_colors.dart';
 import '../../../../l10n/app_localizations.dart';
 import 'package:intl/intl.dart';
 
@@ -49,7 +47,7 @@ class _LocationSharingDetailScreenState
       appBar: AppBar(
         backgroundColor: theme.scaffoldBackgroundColor,
         elevation: 1,
-        shadowColor: Colors.black.withOpacity(0.1),
+        shadowColor: Colors.black.withValues(alpha: 0.1),
         leading: IconButton(
           icon: Icon(
             Icons.arrow_back_ios_new,
@@ -92,7 +90,7 @@ class _LocationSharingDetailScreenState
                   decoration: BoxDecoration(
                     color: theme.brightness == Brightness.dark
                         ? theme.colorScheme.surfaceContainerHighest
-                        : theme.colorScheme.onSurface.withOpacity(0.05),
+                        : theme.colorScheme.onSurface.withValues(alpha: 0.05),
                     borderRadius: BorderRadius.circular(16),
                   ),
                   child: TabBar(
@@ -111,7 +109,7 @@ class _LocationSharingDetailScreenState
                       boxShadow: theme.brightness == Brightness.light
                           ? [
                               BoxShadow(
-                                color: theme.shadowColor.withOpacity(0.05),
+                                color: theme.shadowColor.withValues(alpha: 0.05),
                                 blurRadius: 4,
                                 offset: const Offset(0, 2),
                               ),
@@ -201,7 +199,7 @@ class _LocationSharingDetailScreenState
                     l10n.startSharingPhoneDesc,
                     textAlign: TextAlign.center,
                     style: theme.textTheme.bodyMedium?.copyWith(
-                      color: theme.hintColor.withOpacity(0.7),
+                      color: theme.hintColor.withValues(alpha: 0.7),
                       fontSize: 15,
                       height: 1.5,
                     ),
@@ -280,7 +278,7 @@ class _LocationSharingDetailScreenState
                   Icon(
                     Icons.history_toggle_off_rounded,
                     size: 80,
-                    color: theme.hintColor.withOpacity(0.2),
+                    color: theme.hintColor.withValues(alpha: 0.2),
                   ),
                   const SizedBox(height: 24),
                   Text(
@@ -295,7 +293,7 @@ class _LocationSharingDetailScreenState
                     l10n.historyDesc,
                     textAlign: TextAlign.center,
                     style: theme.textTheme.bodyMedium?.copyWith(
-                      color: theme.hintColor.withOpacity(0.6),
+                      color: theme.hintColor.withValues(alpha: 0.6),
                     ),
                   ),
                 ],
@@ -376,7 +374,7 @@ class _LocationSharingDetailScreenState
               child: Text(
                 AppLocalizations.of(context)!.cancel,
                 style: TextStyle(
-                  color: theme.colorScheme.onSurface.withOpacity(0.6),
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -469,7 +467,7 @@ class HistorySharingLinkCard extends StatelessWidget {
           Text(
             expiredText,
             style: theme.textTheme.bodyMedium?.copyWith(
-              color: theme.hintColor.withOpacity(0.7),
+              color: theme.hintColor.withValues(alpha: 0.7),
             ),
           ),
         ],
@@ -529,7 +527,7 @@ class LiveSharingLinkCard extends StatelessWidget {
                     Text(
                       expiresIn,
                       style: theme.textTheme.bodyMedium?.copyWith(
-                        color: theme.hintColor.withOpacity(0.7),
+                        color: theme.hintColor.withValues(alpha: 0.7),
                       ),
                     ),
                   ],

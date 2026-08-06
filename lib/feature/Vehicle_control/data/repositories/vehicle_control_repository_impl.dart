@@ -74,7 +74,11 @@ class VehicleControlRepositoryImpl implements VehicleControlRepository {
     if (controlData.containsKey('vehicleDetails') &&
         controlData['vehicleDetails'] != null) {
       final details = Map<String, dynamic>.from(controlData['vehicleDetails']);
-      vehicleId = details['_id']?.toString() ?? details['id']?.toString() ?? details['vehicleId']?.toString() ?? '';
+      vehicleId =
+          details['_id']?.toString() ??
+          details['id']?.toString() ??
+          details['vehicleId']?.toString() ??
+          '';
       brandId = _extractRawId(details['brandId']);
       modelId = _extractRawId(details['modelId']);
       final maker = details['vehicleMaker']?.toString() ?? '';
@@ -106,11 +110,16 @@ class VehicleControlRepositoryImpl implements VehicleControlRepository {
               vehicleId = match.id!;
               brandId = match.brandId ?? brandId;
               modelId = match.modelId ?? modelId;
-              vehicleMaker = match.vehicleMaker ?? match.brandId ?? vehicleMaker;
+              vehicleMaker =
+                  match.vehicleMaker ?? match.brandId ?? vehicleMaker;
               vehicleModel = match.vehicleModel ?? vehicleModel;
-              vehicleName = vehicleMaker.isNotEmpty && vehicleModel.isNotEmpty 
-                  ? '$vehicleMaker $vehicleModel' 
-                  : (vehicleModel.isNotEmpty ? vehicleModel : (vehicleMaker.isNotEmpty ? vehicleMaker : vehicleName));
+              vehicleName = vehicleMaker.isNotEmpty && vehicleModel.isNotEmpty
+                  ? '$vehicleMaker $vehicleModel'
+                  : (vehicleModel.isNotEmpty
+                        ? vehicleModel
+                        : (vehicleMaker.isNotEmpty
+                              ? vehicleMaker
+                              : vehicleName));
               vehicleNumber = match.vehicleNumber ?? vehicleNumber;
               fuelType = match.fuelType ?? fuelType;
               vehicleType = match.vehicleType ?? vehicleType;
@@ -122,9 +131,12 @@ class VehicleControlRepositoryImpl implements VehicleControlRepository {
     }
 
     if (vehicleId.isEmpty) {
-      if (controlData.containsKey('vehicleId') && controlData['vehicleId'] != null) {
+      if (controlData.containsKey('vehicleId') &&
+          controlData['vehicleId'] != null) {
         vehicleId = controlData['vehicleId']?.toString() ?? '';
-      } else if (controlData.containsKey('vehicle') && controlData['vehicle'] is Map && controlData['vehicle']['_id'] != null) {
+      } else if (controlData.containsKey('vehicle') &&
+          controlData['vehicle'] is Map &&
+          controlData['vehicle']['_id'] != null) {
         vehicleId = controlData['vehicle']['_id']?.toString() ?? '';
       } else if (controlData.containsKey('_id')) {
         vehicleId = controlData['_id']?.toString() ?? '';
@@ -135,9 +147,13 @@ class VehicleControlRepositoryImpl implements VehicleControlRepository {
     String vehicleMileage = '';
     // Try to load tankCapacity & mileage from vehicle list first as fallback
     try {
-      final userId = await AppPreference.instance.get(key: AppPreference.KEY_USER_ID);
+      final userId = await AppPreference.instance.get(
+        key: AppPreference.KEY_USER_ID,
+      );
       if (userId.isNotEmpty) {
-        final vehiclesRes = await _apiService.getGetApiResponse(ApiURL.getVehiclesByUserId(userId));
+        final vehiclesRes = await _apiService.getGetApiResponse(
+          ApiURL.getVehiclesByUserId(userId),
+        );
         vehiclesRes.fold((failure) => null, (data) {
           final list = VehicleListResponse.fromJson(data);
           final match = list.vehicles?.firstWhere(
@@ -151,23 +167,38 @@ class VehicleControlRepositoryImpl implements VehicleControlRepository {
             if (tankCapacity.isEmpty) tankCapacity = match.tankCapacity ?? '';
             if (vehicleMileage.isEmpty) vehicleMileage = match.mileage ?? '';
             if (vehicleType.isEmpty) vehicleType = match.vehicleType ?? '';
-            if (vehicleMaker.isEmpty) vehicleMaker = match.vehicleMaker ?? match.brandId ?? '';
+            if (vehicleMaker.isEmpty) {
+              vehicleMaker = match.vehicleMaker ?? match.brandId ?? '';
+            }
             if (vehicleModel.isEmpty) vehicleModel = match.vehicleModel ?? '';
             if (fuelType.isEmpty) fuelType = match.fuelType ?? '';
-            if (vehicleNumber.isEmpty) vehicleNumber = match.vehicleNumber ?? '';
+            if (vehicleNumber.isEmpty) {
+              vehicleNumber = match.vehicleNumber ?? '';
+            }
           }
         });
       }
     } catch (_) {}
 
     // Override with control API data if available
-    if (controlData.containsKey('tankCapacity') && controlData['tankCapacity'] != null) {
+    if (controlData.containsKey('tankCapacity') &&
+        controlData['tankCapacity'] != null) {
       tankCapacity = controlData['tankCapacity'].toString();
     }
-    if (controlData.containsKey('vehicleMileage') && controlData['vehicleMileage'] != null) {
+    if (controlData.containsKey('vehicleMileage') &&
+        controlData['vehicleMileage'] != null) {
       vehicleMileage = controlData['vehicleMileage'].toString();
     }
-    final selectedIcon = controlData['vehicleIcon'] ?? 'Bike';
+    final isCar =
+        vehicleType.toLowerCase().contains('car') ||
+        vehicleType.toLowerCase().contains('4_wheeler');
+    String selectedIcon = controlData['vehicleIcon']?.toString() ?? '';
+    if (isCar && (selectedIcon.isEmpty || selectedIcon == 'Bike')) {
+      selectedIcon = 'Car';
+    } else if (selectedIcon.isEmpty) {
+      selectedIcon = 'Bike';
+    }
+
     final selectedColor = controlData['vehicleColor'] ?? 'White';
     final vehicleLock = controlData['vehicleLock'] ?? false;
 
@@ -180,7 +211,9 @@ class VehicleControlRepositoryImpl implements VehicleControlRepository {
     if (vehicleMaker.isNotEmpty && vehicleModel.isNotEmpty) {
       vehicleName = '$vehicleMaker $vehicleModel';
     } else if (vehicleName.isEmpty) {
-      vehicleName = vehicleModel.isNotEmpty ? vehicleModel : (vehicleMaker.isNotEmpty ? vehicleMaker : vehicleName);
+      vehicleName = vehicleModel.isNotEmpty
+          ? vehicleModel
+          : (vehicleMaker.isNotEmpty ? vehicleMaker : vehicleName);
     }
 
     final entity = VehicleControlEntity(
@@ -233,20 +266,32 @@ class VehicleControlRepositoryImpl implements VehicleControlRepository {
   }
 
   @override
-  Future<void> updateTankCapacity(String vehicleId, String capacity, String currentMileage) async {
-    final response = await _apiService.getPutApiResponse(
-      ApiURL.updateVehicleControl(vehicleId),
-      {"vehicleId": vehicleId, "tankCapacity": capacity, "vehicleMileage": currentMileage},
-    );
+  Future<void> updateTankCapacity(
+    String vehicleId,
+    String capacity,
+    String currentMileage,
+  ) async {
+    final response = await _apiService
+        .getPutApiResponse(ApiURL.updateVehicleControl(vehicleId), {
+          "vehicleId": vehicleId,
+          "tankCapacity": capacity,
+          "vehicleMileage": currentMileage,
+        });
     response.fold((failure) => throw failure, (success) => null);
   }
 
   @override
-  Future<void> updateMileage(String vehicleId, String mileage, String currentCapacity) async {
-    final response = await _apiService.getPutApiResponse(
-      ApiURL.updateVehicleControl(vehicleId),
-      {"vehicleId": vehicleId, "vehicleMileage": mileage, "tankCapacity": currentCapacity},
-    );
+  Future<void> updateMileage(
+    String vehicleId,
+    String mileage,
+    String currentCapacity,
+  ) async {
+    final response = await _apiService
+        .getPutApiResponse(ApiURL.updateVehicleControl(vehicleId), {
+          "vehicleId": vehicleId,
+          "vehicleMileage": mileage,
+          "tankCapacity": currentCapacity,
+        });
     response.fold((failure) => throw failure, (success) => null);
   }
 
@@ -269,11 +314,20 @@ class VehicleControlRepositoryImpl implements VehicleControlRepository {
 
   String _formatVehicleType(String type) {
     final lower = type.trim().toLowerCase();
-    if (lower == 'car' || lower == '4_wheeler' || lower == '4 wheeler' || lower == 'four_wheeler') {
+    if (lower == 'car' ||
+        lower == '4_wheeler' ||
+        lower == '4 wheeler' ||
+        lower == 'four_wheeler') {
       return '4_wheeler';
-    } else if (lower == 'bike' || lower == 'scooter' || lower == '2_wheeler' || lower == '2 wheeler' || lower == 'two_wheeler') {
+    } else if (lower == 'bike' ||
+        lower == 'scooter' ||
+        lower == '2_wheeler' ||
+        lower == '2 wheeler' ||
+        lower == 'two_wheeler') {
       return '2_wheeler';
-    } else if (lower == '3_wheeler' || lower == '3 wheeler' || lower == 'three_wheeler') {
+    } else if (lower == '3_wheeler' ||
+        lower == '3 wheeler' ||
+        lower == 'three_wheeler') {
       return '3_wheeler';
     } else if (lower == 'commercial' || lower == 'tractor') {
       return '4_wheeler';
@@ -349,14 +403,11 @@ class VehicleControlRepositoryImpl implements VehicleControlRepository {
       ApiURL.vehicleModelDetails(vehicleId),
     );
     Map<String, dynamic>? resultData;
-    response.fold(
-      (failure) => throw failure,
-      (data) {
-        if (data is Map && data['data'] != null) {
-          resultData = Map<String, dynamic>.from(data['data']);
-        }
-      },
-    );
+    response.fold((failure) => throw failure, (data) {
+      if (data is Map && data['data'] != null) {
+        resultData = Map<String, dynamic>.from(data['data']);
+      }
+    });
     return resultData;
   }
 }

@@ -2140,7 +2140,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String ridesSelectedSummary(String count, String distance, String duration) {
-    return '$count rides selected | $distance km • $duration';
+    return '$count rides selected | $distance • $duration';
   }
 
   @override

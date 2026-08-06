@@ -1,6 +1,8 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:trackify/core/common/models/vehicle_list_model.dart';
+import 'package:trackify/feature/map/data/entity/user_vehicles.dart';
 
 import '../../../../l10n/app_localizations.dart';
 import '../cubit/geo_fenc_cubit.dart';
@@ -50,7 +52,7 @@ class _IntroDetailsScreenState extends State<IntroDetailsScreen> {
 
     String? vehicleName;
     String? imei;
-    var selectedDevice; // Using var or dynamic if we don't import Vehicle explicitly
+    Vehicles? selectedDevice;
 
     final mapState = context.read<MapCubit>().state;
     if (mapState is MapLoaded) {
@@ -80,19 +82,27 @@ class _IntroDetailsScreenState extends State<IntroDetailsScreen> {
       targetScreen = const EmergencyAlertScreen();
     } else if (titleLower.contains('overspeed') ||
         titleLower.contains('speed')) {
-      targetScreen = OverSpeedAlertScreen(vehicle: selectedDevice);
+      final vehicle = selectedDevice != null
+          ? Vehicle(
+              id: selectedDevice.id,
+              userId: selectedDevice.userId,
+              vehicleMaker: selectedDevice.vehicleMaker,
+              vehicleNumber: selectedDevice.vehicleNumber,
+              vehicleModel: selectedDevice.vehicleModel,
+              imei: selectedDevice.imei,
+            )
+          : null;
+      targetScreen = OverSpeedAlertScreen(vehicle: vehicle);
     } else {
       // Fallback if needed, just pop out or do nothing
       Navigator.pop(context);
       return;
     }
 
-    if (targetScreen != null) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (_) => targetScreen!),
-      );
-    }
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (_) => targetScreen!),
+    );
   }
 
   @override
@@ -154,7 +164,7 @@ class _IntroDetailsScreenState extends State<IntroDetailsScreen> {
                                 borderRadius: BorderRadius.circular(30),
                                 color: Theme.of(context).cardColor,
                                 border: Border.all(
-                                  color: colorScheme.outlineVariant.withOpacity(
+                                  color: colorScheme.outlineVariant.withValues(alpha: 
                                     0.1,
                                   ),
                                 ),
@@ -170,7 +180,7 @@ class _IntroDetailsScreenState extends State<IntroDetailsScreen> {
                                         Icons.image_not_supported,
                                         size: 50,
                                         color: colorScheme.onSurface
-                                            .withOpacity(0.5),
+                                            .withValues(alpha: 0.5),
                                       ),
                                     );
                                   },
@@ -193,7 +203,7 @@ class _IntroDetailsScreenState extends State<IntroDetailsScreen> {
 
                             Text(
                               slide.description,
-                              style: TextStyle(color: colorScheme.onSurface.withOpacity(0.7),
+                              style: TextStyle(color: colorScheme.onSurface.withValues(alpha: 0.7),
                                 fontSize: 16,
                                 height: 1.6,
                               ),
@@ -215,7 +225,7 @@ class _IntroDetailsScreenState extends State<IntroDetailsScreen> {
                         decoration: BoxDecoration(
                           color: currentIndex == index
                               ? colorScheme.primary
-                              : colorScheme.onSurface.withOpacity(0.2),
+                              : colorScheme.onSurface.withValues(alpha: 0.2),
                           borderRadius: BorderRadius.circular(20),
                         ),
                       );

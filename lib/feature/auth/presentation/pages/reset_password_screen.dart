@@ -4,7 +4,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:trackify/feature/onboarding/presentation/cubit/splash_cubit.dart';
 import 'package:trackify/feature/onboarding/presentation/cubit/splash_state.dart';
 
-import '../../../../core/constants/app_images.dart';
 import '../../../../core/widgets/custom_form_field.dart';
 import '../../../../core/widgets/square_flat_button.dart';
 import '../cubit/auth_cubit.dart';
@@ -118,7 +117,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
               l10n.passwordDesc,
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+                    color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
                   ),
             ),
             const SizedBox(height: 35),

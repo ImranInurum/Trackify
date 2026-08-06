@@ -2,7 +2,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:trackify/core/config/font_manager.dart';
 import 'package:trackify/feature/video_tutorial/presentation/cubit/tutorial_cubit.dart';
 import 'package:trackify/feature/video_tutorial/presentation/cubit/tutorial_state.dart';
 import 'package:video_player/video_player.dart';
@@ -87,7 +86,7 @@ class _TutorialScreenState
       int index,
       ) async {
 
-    print("VIDEO URL => $url");
+    print("VIDEO URL => $url"); 
 
     // =========================
     // YOUTUBE VIDEO
@@ -339,7 +338,7 @@ class _TutorialScreenState
                         decoration:
                         BoxDecoration(
                           color: Colors.black
-                              .withOpacity(0.7),
+                              .withValues(alpha: 0.7),
 
                           shape:
                           BoxShape.circle,

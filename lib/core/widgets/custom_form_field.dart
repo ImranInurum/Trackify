@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import '../theme/app_colors.dart';
 
 class CustomFormField extends StatefulWidget {
   final String header;
@@ -186,8 +185,8 @@ class _CustomFormFieldState extends State<CustomFormField> {
             boxShadow: [
               BoxShadow(
                 color: _effectiveFocusNode.hasFocus 
-                    ? primaryColor.withOpacity(0.15) 
-                    : Colors.black.withOpacity(0.05),
+                    ? primaryColor.withValues(alpha: 0.15) 
+                    : Colors.black.withValues(alpha: 0.05),
                 blurRadius: _effectiveFocusNode.hasFocus ? 12 : 8,
                 offset: const Offset(0, 4),
                 spreadRadius: _effectiveFocusNode.hasFocus ? 1 : 0,
@@ -225,7 +224,7 @@ class _CustomFormFieldState extends State<CustomFormField> {
               hintText: widget.hint,
               hintStyle: TextStyle(
                 overflow: TextOverflow.ellipsis,
-                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
+                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
                 fontSize: 14,
               ),
               filled: true,
@@ -294,7 +293,7 @@ class _CustomFormFieldState extends State<CustomFormField> {
             icon: Icon(
               Icons.clear_rounded,
               size: 14,
-              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
+              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
             ),
           ),
         ),
@@ -335,7 +334,7 @@ class _CustomFormFieldState extends State<CustomFormField> {
             icon: Icon(
               _isObscured ? Icons.visibility_off_outlined : Icons.visibility_outlined,
               size: 20,
-              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
+              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
             ),
           ),
         ),

@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'dart:async';
@@ -30,13 +30,13 @@ class _RideHistoryDetailsScreenState extends State<RideHistoryDetailsScreen>
   late AnimationController _playController;
   int _currentPointIndex = 0;
   bool _isPlaying = false;
-  LatLng? _currentVehiclePosition = null;
+  LatLng? _currentVehiclePosition;
 
   late List<LatLng> _validPoints;
   late List<RidePoint> _validRidePoints;
   final List<double> _cumulativeWeights = [];
   double _totalWeight = 0.0;
-  bool _useTimeForWeights = false;
+  final bool _useTimeForWeights = false;
   bool _isPlaybackActive = false;
   double _currentSpeedDisplay = 0.0;
   String _currentTimeDisplay = "--:--";
@@ -45,7 +45,7 @@ class _RideHistoryDetailsScreenState extends State<RideHistoryDetailsScreen>
   final List<double> _cumulativeDistances = [];
   DateTime? _rideStartTime;
   DateTime? _rideEndTime;
-  List<RidePoint> _interpolatedPoints = [];
+  final List<RidePoint> _interpolatedPoints = [];
 
   late AnimationController _orbitController;
   bool _isOrbiting = false;
@@ -553,11 +553,9 @@ class _RideHistoryDetailsScreenState extends State<RideHistoryDetailsScreen>
     try {
       final controller = await _controller.future;
       // Force dark map style by default as per user request
-      if (_darkMapStyle == null) {
-        _darkMapStyle = await rootBundle.loadString(
+      _darkMapStyle ??= await rootBundle.loadString(
           'assets/map_styles/dark_map.json',
         );
-      }
       controller.setMapStyle(_darkMapStyle);
     } catch (e) {
       debugPrint('Error loading map style: $e');

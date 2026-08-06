@@ -57,13 +57,59 @@ class LastRefuelCard extends StatelessWidget {
                   ],
                 ),
               ),
-              GestureDetector(
-                onTap: () => _showInfoDialog(context, l10n),
-                child: Icon(
-                  Icons.info_outline,
-                  size: mediaQuery.textScaler.scale(18),
-                  color: theme.colorScheme.onSurface,
-                ),
+              Row(
+                children: [
+                  GestureDetector(
+                    onTap: () {
+                      // TODO: Implement reset API call here
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Reset functionality coming soon!')),
+                      );
+                    },
+                    child: Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: screenWidth * 0.025,
+                        vertical: screenWidth * 0.015,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.redAccent.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(
+                          color: Colors.redAccent.withValues(alpha: 0.3),
+                          width: 0.5,
+                        ),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            Icons.restart_alt_rounded,
+                            size: mediaQuery.textScaler.scale(12),
+                            color: Colors.redAccent,
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            l10n.resetBtn,
+                            style: TextStyle(
+                              color: Colors.redAccent,
+                              fontSize: mediaQuery.textScaler.scale(10),
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: screenWidth * 0.03),
+                  GestureDetector(
+                    onTap: () => _showInfoDialog(context, l10n),
+                    child: Icon(
+                      Icons.info_outline,
+                      size: mediaQuery.textScaler.scale(18),
+                      color: theme.colorScheme.onSurface,
+                    ),
+                  ),
+                ],
               ),
             ],
           ),

@@ -1,6 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:trackify/feature/auth/presentation/pages/signin_screen.dart';
 import 'package:trackify/feature/onboarding/presentation/cubit/splash_cubit.dart';
@@ -71,7 +70,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
+              color: Colors.black.withValues(alpha: 0.05),
               blurRadius: 10,
               spreadRadius: 1,
             ),
@@ -108,7 +107,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
         label,
         style: textTheme.bodySmall?.copyWith(
           fontWeight: FontWeight.bold,
-          color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+          color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
         ),
       ),
     );
@@ -139,7 +138,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   width: 72,
                   height: 72,
                   decoration: BoxDecoration(
-                    color: colorScheme.primary.withOpacity(0.14),
+                    color: colorScheme.primary.withValues(alpha: 0.14),
                     shape: BoxShape.circle,
                   ),
                   child: Icon(
@@ -169,7 +168,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   l10n.thankYouForRegisteringDesc,
                   textAlign: TextAlign.center,
                   style: theme.textTheme.bodyMedium?.copyWith(
-                    color: colorScheme.onSurface.withOpacity(0.7),
+                    color: colorScheme.onSurface.withValues(alpha: 0.7),
                     height: 1.4,
                   ),
                 ),

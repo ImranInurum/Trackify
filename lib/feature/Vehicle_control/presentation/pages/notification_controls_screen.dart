@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:trackify/core/common/models/vehicle_list_model.dart';
 import 'package:trackify/feature/service_logs/presentation/widgets/vehicle_selection_app_bar.dart';
 import 'package:trackify/l10n/app_localizations.dart';
 import 'package:trackify/feature/service_logs/presentation/cubit/service_logs_cubit.dart';
@@ -71,8 +70,8 @@ class _NotificationControlsScreenState extends State<NotificationControlsScreen>
           if (dataMap != null && mounted) {
             setState(() {
               _ignitionNotification = dataMap!['ignition'] == true;
-              _motionNotification = dataMap!['motionWithIgnitionOff'] == true;
-              _powerSupplyNotification = dataMap!['powerSupply'] == true;
+              _motionNotification = dataMap['motionWithIgnitionOff'] == true;
+              _powerSupplyNotification = dataMap['powerSupply'] == true;
               _isLoadingControls = false;
             });
           } else if (mounted) {
@@ -133,7 +132,7 @@ class _NotificationControlsScreenState extends State<NotificationControlsScreen>
                   ),
                 ),
                 const Expanded(
-                  child: const Center(child: TrackifyLoader()),
+                  child: Center(child: TrackifyLoader()),
                 ),
               ],
             );
@@ -189,17 +188,17 @@ class _NotificationControlsScreenState extends State<NotificationControlsScreen>
                               horizontal: 24, vertical: 12),
                           padding: const EdgeInsets.all(16),
                           decoration: BoxDecoration(
-                            color: Colors.orange.withOpacity(0.1),
+                            color: Colors.orange.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(16),
                             border: Border.all(
-                                color: Colors.orange.withOpacity(0.3)),
+                                color: Colors.orange.withValues(alpha: 0.3)),
                           ),
                           child: Row(
                             children: [
                               Container(
                                 padding: const EdgeInsets.all(8),
                                 decoration: BoxDecoration(
-                                  color: Colors.orange.withOpacity(0.15),
+                                  color: Colors.orange.withValues(alpha: 0.15),
                                   shape: BoxShape.circle,
                                 ),
                                 child: const Icon(
@@ -227,7 +226,7 @@ class _NotificationControlsScreenState extends State<NotificationControlsScreen>
                                       style: TextStyle(
                                         fontSize: 12,
                                         color: theme.colorScheme.onSurface
-                                            .withOpacity(0.7),
+                                            .withValues(alpha: 0.7),
                                       ),
                                     ),
                                   ],
@@ -326,7 +325,7 @@ class _NotificationControlsScreenState extends State<NotificationControlsScreen>
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w600,
-              color: onSurface.withOpacity(0.9),
+              color: onSurface.withValues(alpha: 0.9),
             ),
           ),
           const SizedBox(height: 6),
@@ -355,7 +354,7 @@ class _NotificationControlsScreenState extends State<NotificationControlsScreen>
               ),
               Theme(
                 data: theme.copyWith(
-                  unselectedWidgetColor: onSurfaceVariant.withOpacity(0.5),
+                  unselectedWidgetColor: onSurfaceVariant.withValues(alpha: 0.5),
                 ),
                 child: Checkbox(
                   value: value,
@@ -378,7 +377,7 @@ class _NotificationControlsScreenState extends State<NotificationControlsScreen>
       padding: const EdgeInsets.symmetric(horizontal: 24),
       child: Divider(
         height: 1,
-        color: theme.colorScheme.onSurface.withOpacity(0.15),
+        color: theme.colorScheme.onSurface.withValues(alpha: 0.15),
       ),
     );
   }
