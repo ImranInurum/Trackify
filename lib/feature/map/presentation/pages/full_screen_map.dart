@@ -2949,7 +2949,11 @@ class _FullScreenMapState extends State<FullScreenMap>
                 ),
                 const SizedBox(height: 8),
                 // Parked Since Status
-                if (hasDevice && parkedSince.isNotEmpty)
+                if (hasDevice && 
+                    parkedSince.isNotEmpty && 
+                    parkedSince != "--" && 
+                    (liveDevice['status']?.toString().toLowerCase() == 'parked' || 
+                     liveDevice['status']?.toString().toLowerCase() == 'parking'))
                   Text(
                     AppLocalizations.of(context)!.parkedSinceTime(parkedSince),
                     style: TextStyle(
