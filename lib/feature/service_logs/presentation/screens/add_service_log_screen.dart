@@ -68,11 +68,22 @@ class _AddServiceLogScreenState extends State<AddServiceLogScreen> {
   }
 
   Future<void> _selectDate(BuildContext context) async {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day, 23, 59, 59);
+    
+    DateTime initDate = DateTime.now();
+    if (_dateController.text.isNotEmpty) {
+      try {
+        initDate = DateFormat('yyyy-MM-dd').parse(_dateController.text);
+      } catch (e) {}
+    }
+    if (initDate.isAfter(today)) initDate = today;
+
     final DateTime? picked = await showDatePicker(
       context: context,
-      initialDate: DateTime.now(),
+      initialDate: initDate,
       firstDate: DateTime(2000),
-      lastDate: DateTime(2101),
+      lastDate: today,
     );
     if (picked != null) {
       setState(() {

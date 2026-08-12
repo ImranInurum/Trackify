@@ -2994,7 +2994,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin, Wi
       {
         "icon": null,
         "label": l10n.upgradeToPlus.replaceFirst(' to ', ' to\n'),
-        "badge": null,
+        "badge": l10n.comingSoonOption,
         "isPlus": true,
       },
     ];
@@ -3139,7 +3139,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin, Wi
       child: Column(
         children: [
           if (option["isPlus"] == true)
-            _buildPlusBadge(l10n)
+            _buildPlusBadge(option, l10n)
           else
             _buildIconWithBadge(option, isLocked),
           const SizedBox(height: 8),
@@ -3256,32 +3256,59 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin, Wi
     );
   }
 
-  Widget _buildPlusBadge(AppLocalizations l10n) {
-    return Container(
-      width: 50,
-      height: 50,
-      alignment: Alignment.center,
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.08),
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-        decoration: BoxDecoration(
-          gradient: const LinearGradient(
-            colors: [Color(0xFFD4AF37), Color(0xFFE1D2B0), Color(0xFFE2C275)],
+  Widget _buildPlusBadge(Map<String, dynamic> option, AppLocalizations l10n) {
+    return Stack(
+      clipBehavior: Clip.none,
+      children: [
+        Container(
+          width: 50,
+          height: 50,
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.08),
+            borderRadius: BorderRadius.circular(16),
           ),
-          borderRadius: BorderRadius.circular(4),
-        ),
-        child: Text(
-          l10n.plusLabel,
-          style: const TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 11,
-            color: Colors.black87,
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+            decoration: BoxDecoration(
+              gradient: const LinearGradient(
+                colors: [Color(0xFFD4AF37), Color(0xFFE1D2B0), Color(0xFFE2C275)],
+              ),
+              borderRadius: BorderRadius.circular(4),
+            ),
+            child: Text(
+              l10n.plusLabel,
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 11,
+                color: Colors.black87,
+              ),
+            ),
           ),
         ),
-      ),
+        if (option["badge"] != null)
+          Positioned(
+            top: -8,
+            right: -24,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+              decoration: BoxDecoration(
+                color: option["badge"] == l10n.comingSoonOption
+                    ? Theme.of(context).disabledColor
+                    : Theme.of(context).colorScheme.primary,
+                borderRadius: BorderRadius.circular(4),
+              ),
+              child: Text(
+                option["badge"] as String,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 8,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ),
+      ],
     );
   }
 
