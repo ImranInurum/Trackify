@@ -2116,6 +2116,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin, Wi
             final batteryVal = liveDevice['api_battery'];
 
             final voltageVal = null; // Ignored to strictly use DeviceStatus API battery
+            final extVoltage = liveDevice['externalVoltage'];
 
             String batteryText = "--";
             Color batteryColor = AppColors.paletteGreen;
@@ -2213,38 +2214,54 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin, Wi
                             ),
                           ],
                         ),
-                        if (batteryText.isNotEmpty)
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 8,
-                              vertical: 3,
-                            ),
-                            decoration: BoxDecoration(
-                              color: batteryColor.withValues(alpha: 0.1),
-                              borderRadius: BorderRadius.circular(6),
-                              border: Border.all(
-                                color: batteryColor.withValues(alpha: 0.3),
-                                width: 1,
-                              ),
-                            ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Icon(
-                                  batteryIcon,
-                                  color: batteryColor,
-                                  size: 10,
+                        if (batteryText.isNotEmpty || extVoltage != null)
+                          Builder(
+                            builder: (context) {
+                              String combinedText = batteryText;
+                              if (extVoltage != null) {
+                                if (batteryText == "--" || batteryText.isEmpty) {
+                                  combinedText = "$extVoltage V";
+                                } else {
+                                  combinedText = "$batteryText | $extVoltage V";
+                                }
+                              }
+                              IconData finalIcon = (batteryText == "--" || batteryText.isEmpty) && extVoltage != null 
+                                  ? Icons.bolt 
+                                  : batteryIcon;
+
+                              return Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 8,
+                                  vertical: 3,
                                 ),
-                                const SizedBox(width: 4),
-                                Text(
-                                  batteryText,
-                                  style: getBoldStyle(
-                                    color: batteryColor,
-                                    fontSize: 10,
+                                decoration: BoxDecoration(
+                                  color: batteryColor.withValues(alpha: 0.1),
+                                  borderRadius: BorderRadius.circular(6),
+                                  border: Border.all(
+                                    color: batteryColor.withValues(alpha: 0.3),
+                                    width: 1,
                                   ),
                                 ),
-                              ],
-                            ),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(
+                                      finalIcon,
+                                      color: batteryColor,
+                                      size: 10,
+                                    ),
+                                    const SizedBox(width: 4),
+                                    Text(
+                                      combinedText,
+                                      style: getBoldStyle(
+                                        color: batteryColor,
+                                        fontSize: 10,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
                           ),
                       ],
                     ),

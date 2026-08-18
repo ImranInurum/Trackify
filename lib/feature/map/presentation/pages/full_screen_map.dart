@@ -3389,6 +3389,7 @@ class _FullScreenMapState extends State<FullScreenMap>
         final batteryVal = liveDevice['api_battery'];
 
         final voltageVal = null; // Ignored to strictly use DeviceStatus API battery
+        final extVoltage = liveDevice['externalVoltage'];
 
         String batteryText = "--";
         Color batteryColor = Colors.green;
@@ -3570,32 +3571,49 @@ class _FullScreenMapState extends State<FullScreenMap>
                       ),
                     ),
                     const SizedBox(height: 8),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.all(4),
-                          decoration: BoxDecoration(
-                            color: batteryColor.withValues(alpha: 0.1),
-                            borderRadius: BorderRadius.circular(4),
-                          ),
-                          child: Icon(
-                            batteryIcon,
-                            size: 14,
-                            color: batteryColor,
-                          ),
-                        ),
-                        const SizedBox(width: 6),
-                        Text(
-                          batteryText,
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: batteryColor,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
+                    if (batteryText.isNotEmpty || extVoltage != null)
+                      Builder(
+                        builder: (context) {
+                          String combinedText = batteryText;
+                          if (extVoltage != null) {
+                            if (batteryText == "--" || batteryText.isEmpty) {
+                              combinedText = "$extVoltage V";
+                            } else {
+                              combinedText = "$batteryText | $extVoltage V";
+                            }
+                          }
+                          IconData finalIcon = (batteryText == "--" || batteryText.isEmpty) && extVoltage != null 
+                              ? Icons.bolt 
+                              : batteryIcon;
+
+                          return Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.all(4),
+                                decoration: BoxDecoration(
+                                  color: batteryColor.withValues(alpha: 0.1),
+                                  borderRadius: BorderRadius.circular(4),
+                                ),
+                                child: Icon(
+                                  finalIcon,
+                                  size: 14,
+                                  color: batteryColor,
+                                ),
+                              ),
+                              const SizedBox(width: 6),
+                              Text(
+                                combinedText,
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: batteryColor,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          );
+                        },
+                      ),
                   ],
                 ),
               ),

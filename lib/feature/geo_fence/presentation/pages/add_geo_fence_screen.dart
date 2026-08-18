@@ -28,6 +28,7 @@ class _AddGeoFenceScreenState extends State<AddGeoFenceScreen> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _searchController = TextEditingController();
   double _radius = 500;
+  bool _showSuggestions = false;
   GoogleMapController? _mapController;
   Timer? _debounceTimer;
   final FocusNode _searchFocus = FocusNode();
@@ -43,6 +44,7 @@ class _AddGeoFenceScreenState extends State<AddGeoFenceScreen> {
       _selectedType = widget.initialFence!.type;
       _nameController.text = widget.initialFence!.name;
       _searchController.text = ""; // Will be updated by updateAddress
+      _showSuggestions = true;
     }
     
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -409,56 +411,58 @@ class _AddGeoFenceScreenState extends State<AddGeoFenceScreen> {
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    RichText(
-                      text: TextSpan(
-                        text: AppLocalizations.of(context)!.geoFenceSelectType,
-                        style: TextStyle(
-                          color: colorScheme.onSurface,
-                          fontSize: 16,
-                        ),
-                        children: [
-                          TextSpan(
-                            text: widget.vehicleName ?? "SP 125 MP09QV8269",
-                            style: TextStyle(
-                              color: colorScheme.primary,
-                              fontWeight: FontWeight.bold,
+                    if (_showSuggestions) ...[
+                      RichText(
+                        text: TextSpan(
+                          text: AppLocalizations.of(context)!.geoFenceSelectType,
+                          style: TextStyle(
+                            color: colorScheme.onSurface,
+                            fontSize: 16,
+                          ),
+                          children: [
+                            TextSpan(
+                              text: widget.vehicleName ?? "SP 125 MP09QV8269",
+                              style: TextStyle(
+                                color: colorScheme.primary,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          _buildTypeItem(
+                            Icons.home_outlined,
+                            AppLocalizations.of(context)!.geoFenceTypeHome,
+                            colorScheme,
+                          ),
+                          _buildTypeItem(
+                            Icons.apartment_outlined,
+                            AppLocalizations.of(context)!.geoFenceTypeOffice,
+                            colorScheme,
+                          ),
+                          _buildTypeItem(
+                            Icons.person_outline,
+                            AppLocalizations.of(context)!.geoFenceTypeFamily,
+                            colorScheme,
+                          ),
+                          _buildTypeItem(
+                            Icons.local_parking_outlined,
+                            AppLocalizations.of(context)!.geoFenceTypeParking,
+                            colorScheme,
+                          ),
+                          _buildTypeItem(
+                            Icons.location_on_outlined,
+                            AppLocalizations.of(context)!.geoFenceTypeOthers,
+                            colorScheme,
                           ),
                         ],
                       ),
-                    ),
-                    const SizedBox(height: 20),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        _buildTypeItem(
-                          Icons.home_outlined,
-                          AppLocalizations.of(context)!.geoFenceTypeHome,
-                          colorScheme,
-                        ),
-                        _buildTypeItem(
-                          Icons.apartment_outlined,
-                          AppLocalizations.of(context)!.geoFenceTypeOffice,
-                          colorScheme,
-                        ),
-                        _buildTypeItem(
-                          Icons.person_outline,
-                          AppLocalizations.of(context)!.geoFenceTypeFamily,
-                          colorScheme,
-                        ),
-                        _buildTypeItem(
-                          Icons.local_parking_outlined,
-                          AppLocalizations.of(context)!.geoFenceTypeParking,
-                          colorScheme,
-                        ),
-                        _buildTypeItem(
-                          Icons.location_on_outlined,
-                          AppLocalizations.of(context)!.geoFenceTypeOthers,
-                          colorScheme,
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 24),
+                      const SizedBox(height: 24),
+                    ],
                     Row(
                       children: [
                         Expanded(
@@ -497,7 +501,17 @@ class _AddGeoFenceScreenState extends State<AddGeoFenceScreen> {
                           builder: (context, state) {
                             bool isSubmitting = state is GeoFenceSubmitting;
                             return GestureDetector(
-                              onTap: isSubmitting ? null : _onSave,
+                              onTap: isSubmitting ? null : (_showSuggestions ? _onSave : () {
+                                if (_nameController.text.isNotEmpty) {
+                                  setState(() {
+                                    _showSuggestions = true;
+                                  });
+                                } else {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(content: Text(AppLocalizations.of(context)!.geoFenceNameRequired)),
+                                  );
+                                }
+                              }),
                               child: Container(
                                 height: 48,
                                 width: 80,
@@ -516,7 +530,7 @@ class _AddGeoFenceScreenState extends State<AddGeoFenceScreen> {
                                           ),
                                         )
                                       : Text(
-                                          AppLocalizations.of(context)!.save,
+                                          _showSuggestions ? AppLocalizations.of(context)!.save : "Next",
                                           style: TextStyle(
                                             color: colorScheme.onPrimary,
                                             fontWeight: FontWeight.bold,
