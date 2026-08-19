@@ -44,7 +44,7 @@ class _AddGeoFenceScreenState extends State<AddGeoFenceScreen> {
       _selectedType = widget.initialFence!.type;
       _nameController.text = widget.initialFence!.name;
       _searchController.text = ""; // Will be updated by updateAddress
-      _showSuggestions = true;
+      _showSuggestions = false;
     }
     
     WidgetsBinding.instance.addPostFrameCallback((_) {
