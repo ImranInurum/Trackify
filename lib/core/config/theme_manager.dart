@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:trackify/core/utils/flutter_compat_extensions.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../theme/app_colors.dart';
@@ -67,6 +68,8 @@ class ThemeManager {
         onSecondary: colors.onSecondary,
         surface: colors.surface,
         onSurface: colors.onSurface,
+        background: colors.background,
+        onBackground: colors.onSurface,
         error: colors.error,
         onError: colors.onError,
       ),
@@ -90,7 +93,7 @@ class ThemeManager {
         ),
       ),
       
-      cardTheme: CardThemeData(
+      cardTheme: CardTheme(
         color: config.card.color,
         elevation: config.card.elevation,
         shadowColor: colors.shadow,
@@ -180,7 +183,7 @@ class ThemeManager {
         color: Colors.black,
       ),
     ),
-    cardTheme: CardThemeData(
+    cardTheme: CardTheme(
       color: AppColors.cardLight,
       elevation: 2,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -243,7 +246,7 @@ class ThemeManager {
         color: Colors.white,
       ),
     ),
-    cardTheme: CardThemeData(
+    cardTheme: CardTheme(
       color: AppColors.cardDark,
       elevation: 2,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),

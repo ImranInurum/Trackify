@@ -1728,11 +1728,6 @@ class _FullScreenMapState extends State<FullScreenMap>
                         myLocationButtonEnabled: false,
                         mapToolbarEnabled: false,
                         buildingsEnabled: false,
-                        style: appState.mapType == 'satellite'
-                            ? null
-                            : (Theme.of(context).brightness == Brightness.dark
-                                  ? _darkMapStyle
-                                  : _lightMapStyle),
                         mapType: appState.mapType == 'satellite'
                             ? MapType.satellite
                             : MapType.normal,

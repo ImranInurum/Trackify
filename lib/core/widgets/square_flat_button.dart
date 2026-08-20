@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:trackify/core/utils/flutter_compat_extensions.dart';
 import 'package:trackify/core/config/style_manager.dart';
 
 class CommonButton extends StatelessWidget {
@@ -64,25 +65,25 @@ class CommonButton extends StatelessWidget {
       child: ElevatedButton(
         onPressed: onPressed,
         style: elevatedButtonStyle?.copyWith(
-          backgroundColor: WidgetStateProperty.resolveWith<Color>((states) {
-            if (states.contains(WidgetState.disabled)) {
+          backgroundColor: MaterialStateProperty.resolveWith<Color>((states) {
+            if (states.contains(MaterialState.disabled)) {
               return finalDisabledBackgroundColor;
             }
             return backgroundColor ?? defaultBackgroundColor;
           }),
-          foregroundColor: WidgetStateProperty.resolveWith<Color>((states) {
-            if (states.contains(WidgetState.disabled)) {
+          foregroundColor: MaterialStateProperty.resolveWith<Color>((states) {
+            if (states.contains(MaterialState.disabled)) {
               return finalDisabledForegroundColor;
             }
             return foregroundColor ?? defaultForegroundColor;
           }),
-          padding: WidgetStatePropertyAll(
+          padding: MaterialStateProperty.all(
             padding ?? const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
           ),
-          shape: WidgetStatePropertyAll(
+          shape: MaterialStateProperty.all(
             RoundedRectangleBorder(borderRadius: BorderRadius.circular(borderRadius)),
           ),
-          elevation: const WidgetStatePropertyAll(0), // Handled by boxshadow
+          elevation: MaterialStateProperty.all(0), // Handled by boxshadow
         ),
         child: isLoading
             ? SizedBox(

@@ -1913,7 +1913,6 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin, Wi
                             trafficEnabled: appState.isTrafficEnabled,
                             markers: markers,
                             circles: circles,
-                            style: _getMapStyle(appState, context),
                             onMapCreated:
                                 (GoogleMapController controller) async {
                                   _mapController = controller;

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:trackify/core/widgets/location_consent_dialog.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../cubit/geo_fence_cubit.dart';
 import '../cubit/geo_fence_state.dart';
@@ -83,6 +84,10 @@ class _AddGeoFenceScreenState extends State<AddGeoFenceScreen> {
 
     LocationPermission permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.denied) {
+      if (mounted) {
+        final bool userConsented = await LocationConsentDialog.show(context);
+        if (!userConsented) return;
+      }
       permission = await Geolocator.requestPermission();
       if (permission == LocationPermission.denied) return;
     }

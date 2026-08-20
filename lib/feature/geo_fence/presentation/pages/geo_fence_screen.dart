@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:trackify/core/utils/flutter_compat_extensions.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../l10n/app_localizations.dart';
 
@@ -154,7 +155,7 @@ class _GeoFenceScreenState extends State<GeoFenceScreen> {
                               context.read<GeoFenceCubit>().toggleGeoFenceStatus(fence.id, true);
                             }
                           },
-                          activeThumbColor: colorScheme.primary,
+                          activeColor: colorScheme.primary,
                           activeTrackColor: colorScheme.primary.withValues(
                             alpha: 0.3,
                           ),

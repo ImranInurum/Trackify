@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:trackify/core/utils/flutter_compat_extensions.dart';
 import '../../../../l10n/app_localizations.dart';
 
 class ImagePickerBox extends StatelessWidget {

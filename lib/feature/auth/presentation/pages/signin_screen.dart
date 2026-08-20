@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:trackify/core/utils/flutter_compat_extensions.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:trackify/feature/add_vehicle_and_device/choice_selector.dart';
 import 'package:trackify/feature/auth/presentation/pages/signup_screen.dart';
@@ -145,13 +146,12 @@ class _SignInScreenState extends State<SignInScreen> {
     final colorScheme = theme.colorScheme;
     final textTheme = theme.textTheme;
 
-    return PopScope(
-      canPop: Navigator.of(context).canPop(),
-      onPopInvokedWithResult: (didPop, result) {
-        if (didPop) return;
+    return WillPopScope(
+      onWillPop: () async {
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(builder: (_) => const SelectLanguageScreen()),
         );
+        return false;
       },
       child: Scaffold(
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,

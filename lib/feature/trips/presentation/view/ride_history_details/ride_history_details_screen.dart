@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:trackify/core/utils/flutter_compat_extensions.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -601,7 +602,7 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
     canvas.drawCircle(const Offset(22.5, 22.5), 15, borderPaint);
     final img = await pictureRecorder.endRecording().toImage(45, 45);
     final data = await img.toByteData(format: ui.ImageByteFormat.png);
-    return BitmapDescriptor.bytes(data!.buffer.asUint8List());
+    return BitmapDescriptor.fromBytes(data!.buffer.asUint8List());
   }
 
   Future<BitmapDescriptor> _createEndMarker() async {
@@ -619,7 +620,7 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
     canvas.drawCircle(const Offset(26, 18), 4, redPaint);
     final img = await pictureRecorder.endRecording().toImage(52, 52);
     final data = await img.toByteData(format: ui.ImageByteFormat.png);
-    return BitmapDescriptor.bytes(data!.buffer.asUint8List());
+    return BitmapDescriptor.fromBytes(data!.buffer.asUint8List());
   }
 
   Future<BitmapDescriptor> _createVehicleMarker(BuildContext context) async {
@@ -659,7 +660,7 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
       size.toInt(),
     );
     final data = await img.toByteData(format: ui.ImageByteFormat.png);
-    return BitmapDescriptor.bytes(data!.buffer.asUint8List());
+    return BitmapDescriptor.fromBytes(data!.buffer.asUint8List());
   }
 
   void _fitMapToBounds() async {
@@ -754,11 +755,6 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
                       mapType: appState.mapType == 'satellite'
                           ? MapType.satellite
                           : MapType.normal,
-                      style: appState.mapType == 'satellite'
-                          ? null
-                          : (Theme.of(context).brightness == Brightness.dark
-                                ? (_darkMapStyle ?? mapState.darkMapStyle)
-                                : _lightMapStyle),
                       trafficEnabled: appState.isTrafficEnabled,
                       zoomControlsEnabled: false,
                       myLocationButtonEnabled: false,
@@ -807,7 +803,7 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
                             anchor: const Offset(0.5, 0.5),
                             rotation: mapState.currentHeading,
                             flat: true,
-                            zIndexInt: 2,
+                            zIndex: 2.0,
                           ),
                       },
                       onMapCreated: _onMapCreated,

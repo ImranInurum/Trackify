@@ -4,6 +4,7 @@ import 'dart:ui' as ui;
 
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
+import 'package:trackify/core/utils/flutter_compat_extensions.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -1052,7 +1053,6 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
                     rotateGesturesEnabled: false,
                     polylines: polylines,
                     markers: markers,
-                    style: isDark ? _darkMapStyle : _lightMapStyle,
                   ),
                   Positioned.fill(
                     child: GestureDetector(
@@ -2755,7 +2755,6 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
           mapType: resolvedMapType,
           polylines: polylines,
           markers: allMarkers,
-          style: style,
           onMapCreated: (GoogleMapController googleMapController) async {
             if (!controller.isCompleted) {
               controller.complete(googleMapController);

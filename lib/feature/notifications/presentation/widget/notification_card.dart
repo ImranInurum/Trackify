@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:trackify/core/utils/flutter_compat_extensions.dart';
 import '../../../../core/theme/app_theme_extension.dart';
 import '../../data/entity/notification_model.dart';
 

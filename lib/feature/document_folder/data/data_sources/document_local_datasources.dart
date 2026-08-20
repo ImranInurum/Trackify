@@ -17,7 +17,7 @@ class DocumentLocalDataSource {
 
   Future<String?> pickFile(PickerType type) async {
     if (type == PickerType.pdf) {
-      final result = await FilePicker.pickFiles(
+      final result = await FilePicker.platform.pickFiles(
         type: FileType.custom,
         allowedExtensions: ['pdf'],
       );

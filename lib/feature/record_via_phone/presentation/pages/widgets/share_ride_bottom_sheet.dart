@@ -7,7 +7,6 @@ import 'package:intl/intl.dart';
 import 'package:flutter/services.dart';
 import 'package:trackify/l10n/app_localizations.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:gal/gal.dart';
 
 class ShareRideBottomSheet extends StatefulWidget {
   final String title;
@@ -95,17 +94,8 @@ class _ShareRideBottomSheetState extends State<ShareRideBottomSheet> {
       final tempDir = Directory.systemTemp;
       final file = File('${tempDir.path}/trackify_ride_${DateTime.now().millisecondsSinceEpoch}.png');
       await file.writeAsBytes(pngBytes);
-      
-      // Request access and save image
-      final hasAccess = await Gal.requestAccess();
-      if (hasAccess) {
-        await Gal.putImage(file.path);
-        debugPrint("✅ Ride image saved via gal.");
-        return true;
-      } else {
-        debugPrint("❌ No gallery access permission");
-        return false;
-      }
+      await Share.shareXFiles([XFile(file.path)], text: 'Trackify Ride Card');
+      return true;
     } catch (e) {
       debugPrint("❌ Error saving image to gallery: $e");
       return false;

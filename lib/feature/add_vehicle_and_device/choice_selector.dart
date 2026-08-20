@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:trackify/core/utils/flutter_compat_extensions.dart';
 import 'package:trackify/core/constants/app_images.dart';
 import 'package:trackify/l10n/app_localizations.dart';
 
@@ -19,8 +20,8 @@ class _ChoiceSelectorState extends State<ChoiceSelector> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final canPop = Navigator.of(context).canPop();
-    return PopScope(
-      canPop: canPop,
+    return WillPopScope(
+      onWillPop: () async => canPop,
       child: Scaffold(
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         appBar: AppBar(

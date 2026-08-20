@@ -15,9 +15,7 @@ class FuelStationsCubit extends Cubit<FuelStationsState> {
     try {
       // 1. Get current location
       Position position = await Geolocator.getCurrentPosition(
-        locationSettings: const LocationSettings(
-          accuracy: LocationAccuracy.high,
-        ),
+        desiredAccuracy: LocationAccuracy.high,
       );
 
       final latLng = LatLng(position.latitude, position.longitude);

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:trackify/core/utils/flutter_compat_extensions.dart';
 
 class TextFieldWidgets extends StatelessWidget {
   final TextEditingController controller;

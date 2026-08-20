@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:trackify/core/utils/flutter_compat_extensions.dart';
 
 class FeatureCard extends StatelessWidget {
   final IconData icon;

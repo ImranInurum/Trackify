@@ -1,5 +1,7 @@
 import 'dart:async';
+import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:trackify/core/widgets/location_consent_dialog.dart';
 
 class LocationService {
   static final LocationService _instance = LocationService._internal();
@@ -13,7 +15,7 @@ class LocationService {
 
   Stream<Position> get locationStream => _locationController.stream;
 
-  Future<void> initialize() async {
+  Future<void> initialize({BuildContext? context}) async {
     bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
       throw Exception('Location services are disabled.');
@@ -21,6 +23,12 @@ class LocationService {
 
     LocationPermission permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.denied) {
+      if (context != null && context.mounted) {
+        final bool userConsented = await LocationConsentDialog.show(context);
+        if (!userConsented) {
+          throw Exception('User declined location permission consent.');
+        }
+      }
       permission = await Geolocator.requestPermission();
       if (permission == LocationPermission.denied) {
         throw Exception('Location permissions are denied.');

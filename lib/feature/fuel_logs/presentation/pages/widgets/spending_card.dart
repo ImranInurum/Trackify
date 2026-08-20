@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:trackify/l10n/app_localizations.dart';
+import 'package:trackify/core/utils/flutter_compat_extensions.dart';
 import '../../cubit/fuel_logs_state.dart';
 
 class SpendingCard extends StatelessWidget {

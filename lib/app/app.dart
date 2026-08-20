@@ -52,7 +52,7 @@ class _MyAppState extends State<MyApp> {
 
     // Check initial link if app was in background and opened with a link
     try {
-      final initialUri = await _appLinks.getInitialLink();
+      final initialUri = await _appLinks.getInitialAppLink();
       if (initialUri != null) {
         _handleDeepLink(initialUri);
       }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:trackify/core/utils/flutter_compat_extensions.dart';
 import 'package:trackify/feature/fuel_logs/presentation/cubit/fuel_stations_cubit.dart';
 import 'package:trackify/feature/fuel_logs/presentation/cubit/fuel_stations_state.dart';
 import 'package:trackify/l10n/app_localizations.dart';

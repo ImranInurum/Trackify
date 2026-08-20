@@ -270,7 +270,7 @@ class _AddOverspeedAlertScreenState extends State<AddOverspeedAlertScreen> {
         Expanded(
           flex: 3,
           child: DropdownButtonFormField<int>(
-            initialValue: value,
+            value: value,
             icon: Icon(Icons.arrow_drop_down,
                 color: theme.colorScheme.primary),
             isExpanded: true,

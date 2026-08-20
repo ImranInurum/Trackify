@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:trackify/core/utils/flutter_compat_extensions.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:trackify/feature/settings/presentation/pages/notification_settings.dart';
 import 'package:trackify/feature/settings/presentation/pages/privacy_screen.dart';
@@ -203,7 +204,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           scale: 0.7,
                           child: Switch(
                             value: isDarkMode,
-                            activeThumbColor: Theme.of(
+                            activeColor: Theme.of(
                               context,
                             ).colorScheme.surface,
                             activeTrackColor: Theme.of(
