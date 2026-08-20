@@ -43,6 +43,8 @@ import 'package:trackify/feature/device_warranty/data/repository/device_warranty
 import 'package:trackify/feature/device_warranty/data/data_source/device_warranty_data_source.dart';
 import 'package:trackify/core/config/network/network_api_service.dart';
 import 'package:trackify/feature/device_warranty/pages/device_warranty_page.dart';
+import 'package:trackify/feature/fuel_logs/presentation/cubit/fuel_logs_cubit.dart';
+import 'package:trackify/feature/fuel_logs/presentation/cubit/fuel_logs_state.dart';
 
 class FullScreenMap extends StatefulWidget {
   final Vehicles? selectedVehicle;
@@ -121,13 +123,18 @@ class _FullScreenMapState extends State<FullScreenMap>
   double _distanceToVehicleMeters = 0.0;
 
   late final FullScreenMapUiCubit _uiCubit;
+  late final FuelLogsCubit _fuelLogsCubit;
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     _uiCubit = FullScreenMapUiCubit();
+    _fuelLogsCubit = FuelLogsCubit();
     _currentVehicle = widget.selectedVehicle;
+    if (_currentVehicle?.id != null && _currentVehicle!.id!.isNotEmpty) {
+      _fuelLogsCubit.loadFuelLogs(_currentVehicle!.id!);
+    }
     if (_currentVehicle?.imei != null && _currentVehicle!.imei!.isNotEmpty) {
       context.read<GeoFenceCubit>().fetchGeoFences(_currentVehicle!.imei!);
       _checkWarrantyStatus(_currentVehicle!.imei!);
@@ -447,6 +454,7 @@ class _FullScreenMapState extends State<FullScreenMap>
     _demoTimer?.cancel();
     _autoFollowResumeTimer?.cancel();
     _uiCubit.close();
+    _fuelLogsCubit.close();
     _mapRebuildNotifier.dispose();
     _cameraAnimationController?.dispose();
     _markerAnimController?.dispose();
@@ -2949,7 +2957,11 @@ class _FullScreenMapState extends State<FullScreenMap>
                 ),
                 const SizedBox(height: 8),
                 // Parked Since Status
-                if (hasDevice && parkedSince.isNotEmpty)
+                if (hasDevice && 
+                    parkedSince.isNotEmpty && 
+                    parkedSince != "--" && 
+                    (liveDevice['status']?.toString().toLowerCase() == 'parked' || 
+                     liveDevice['status']?.toString().toLowerCase() == 'parking'))
                   Text(
                     AppLocalizations.of(context)!.parkedSinceTime(parkedSince),
                     style: TextStyle(
@@ -3524,15 +3536,28 @@ class _FullScreenMapState extends State<FullScreenMap>
                       ],
                     ),
                     const SizedBox(height: 8),
-                    Text(
-                      rangeText,
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Theme.of(
-                          context,
-                        ).colorScheme.onSurface.withValues(alpha: 0.4),
-                        fontWeight: FontWeight.w500,
-                      ),
+                    BlocBuilder<FuelLogsCubit, FuelLogsState>(
+                      bloc: _fuelLogsCubit,
+                      builder: (context, fuelState) {
+                        String displayDistance = "--";
+                        if (fuelState is FuelLogsLoaded && fuelState.distanceRemaining != 'null') {
+                          displayDistance = fuelState.distanceRemaining;
+                        } else if (rangeValue != null) {
+                          displayDistance = rangeValue.toString();
+                        }
+                        
+                        final String finalRangeText = "$displayDistance kms more to go";
+                        return Text(
+                          finalRangeText,
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSurface.withValues(alpha: 0.4),
+                            fontWeight: FontWeight.w500,
+                          ),
+                        );
+                      }
                     ),
                   ],
                 ),

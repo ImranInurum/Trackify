@@ -28,11 +28,15 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
   }
 
   Future<void> _selectDate(BuildContext context, DateTime currentDate) async {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day, 23, 59, 59);
+    DateTime initDate = currentDate.isAfter(today) ? today : currentDate;
+
     final DateTime? picked = await showDatePicker(
       context: context,
-      initialDate: currentDate,
+      initialDate: initDate,
       firstDate: DateTime(2000),
-      lastDate: DateTime(2101),
+      lastDate: today,
       builder: (context, child) {
         final theme = Theme.of(context);
         return Theme(
@@ -178,7 +182,8 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                       context.read<StatisticsCubit>().selectDate(newDate);
                     },
                     onNext: () {
-                      final newDate = selectedDate.add(const Duration(days: 1));
+                      final newDate = DateTime(selectedDate.year, selectedDate.month, selectedDate.day + 1);
+                      if (newDate.isAfter(DateTime.now())) return;
                       context.read<StatisticsCubit>().selectDate(newDate);
                     },
                     onTap: () => _selectDate(context, selectedDate),
@@ -331,7 +336,9 @@ class _DatePickerBar extends StatelessWidget {
                       const SizedBox(width: 8),
                       _ArrowButton(
                         icon: Icons.chevron_right_rounded,
-                        onTap: onNext,
+                        onTap: DateUtils.isSameDay(selectedDate, DateTime.now()) 
+                            ? null 
+                            : onNext,
                       ),
                     ],
                   ),
@@ -347,7 +354,7 @@ class _DatePickerBar extends StatelessWidget {
 
 class _ArrowButton extends StatelessWidget {
   final IconData icon;
-  final VoidCallback onTap;
+  final VoidCallback? onTap;
 
   const _ArrowButton({required this.icon, required this.onTap});
 
@@ -365,7 +372,9 @@ class _ArrowButton extends StatelessWidget {
           child: Icon(
             icon,
             size: 28,
-            color: Theme.of(context).colorScheme.onSurface,
+            color: onTap == null
+                ? Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.3)
+                : Theme.of(context).colorScheme.onSurface,
           ),
         ),
       ),

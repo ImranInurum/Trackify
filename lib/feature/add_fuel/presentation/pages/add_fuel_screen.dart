@@ -33,6 +33,7 @@ class _AddFuelScreenState extends State<AddFuelScreen> with TickerProviderStateM
   final priceController = TextEditingController();
   final fuelBeforeRefuelController = TextEditingController();
   final fuelStationController = TextEditingController();
+  final otherStationController = TextEditingController();
 
   late final l10n = AppLocalizations.of(context)!;
   late final theme = Theme.of(context);
@@ -47,11 +48,15 @@ class _AddFuelScreenState extends State<AddFuelScreen> with TickerProviderStateM
   TimeOfDay _selectedTime = TimeOfDay.now();
 
   Future<void> _selectDate() async {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day, 23, 59, 59);
+    DateTime initDate = _selectedDate.isAfter(today) ? today : _selectedDate;
+
     final DateTime? picked = await showDatePicker(
       context: context,
-      initialDate: _selectedDate,
+      initialDate: initDate,
       firstDate: DateTime(2000),
-      lastDate: DateTime(2100),
+      lastDate: today,
     );
     if (picked != null && picked != _selectedDate) {
       setState(() {
@@ -82,6 +87,7 @@ class _AddFuelScreenState extends State<AddFuelScreen> with TickerProviderStateM
     if (odometerController.text.trim().isEmpty) return false;
     if (amountController.text.trim().isEmpty) return false;
     if (priceController.text.trim().isEmpty) return false;
+    if (fuelStationController.text == 'Other' && otherStationController.text.trim().isEmpty) return false;
     if (!isFullTankSelected && !isPartialTankSelected) return false;
     return true;
   }
@@ -98,7 +104,15 @@ class _AddFuelScreenState extends State<AddFuelScreen> with TickerProviderStateM
       priceController.text = log.rate;
       _selectedDate = log.dateTime;
       _selectedTime = TimeOfDay.fromDateTime(log.dateTime);
-      fuelStationController.text = log.location;
+      
+      final predefinedStations = ['Indian Oil', 'Bharat Petroleum', 'Hindustan Petroleum', 'Reliance', 'Nayara Energy', 'Shell', 'Jio-bp', 'Other'];
+      if (predefinedStations.contains(log.location)) {
+        fuelStationController.text = log.location;
+      } else {
+        fuelStationController.text = 'Other';
+        otherStationController.text = log.location;
+      }
+      
       isFullTankSelected = true; // Default since not in log model
     }
     
@@ -107,6 +121,7 @@ class _AddFuelScreenState extends State<AddFuelScreen> with TickerProviderStateM
     priceController.addListener(_validateForm);
     fuelBeforeRefuelController.addListener(_validateForm);
     fuelStationController.addListener(_validateForm);
+    otherStationController.addListener(_validateForm);
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
@@ -171,6 +186,8 @@ class _AddFuelScreenState extends State<AddFuelScreen> with TickerProviderStateM
     fuelBeforeRefuelController.removeListener(_validateForm);
     fuelStationController.removeListener(_validateForm);
     fuelStationController.dispose();
+    otherStationController.removeListener(_validateForm);
+    otherStationController.dispose();
     _tabController.dispose();
     super.dispose();
   }
@@ -216,7 +233,7 @@ class _AddFuelScreenState extends State<AddFuelScreen> with TickerProviderStateM
                       final entity = AddFuelEntity(
                         vehicle: currentServiceState.selectedVehicle?.id ?? '',
                         dateTime: combinedDateTime,
-                        fuelStation: fuelStationController.text.trim(),
+                        fuelStation: fuelStationController.text == 'Other' ? otherStationController.text.trim() : fuelStationController.text.trim(),
                         odometer: (double.tryParse(
                           odometerController.text,
                         ) ?? 0).toInt(),
@@ -421,14 +438,66 @@ class _AddFuelScreenState extends State<AddFuelScreen> with TickerProviderStateM
 
                       const SizedBox(height: 12),
 
-                      TextField(
-                        controller: fuelStationController,
-                        textInputAction: TextInputAction.next,
-                        decoration: _inputDecoration(
-                          l10n.fuelStationName,
-                          Icons.location_on,
-                        ),
+                      LayoutBuilder(
+                        builder: (context, constraints) {
+                          return DropdownMenu<String>(
+                            controller: fuelStationController,
+                            width: constraints.maxWidth,
+                            hintText: l10n.fuelStationName,
+                            leadingIcon: Icon(
+                              Icons.location_on, 
+                              size: 24, 
+                              color: theme.colorScheme.onSurfaceVariant,
+                            ),
+                            inputDecorationTheme: InputDecorationTheme(
+                              filled: true,
+                              fillColor: theme.cardColor,
+                              isDense: true,
+                              contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(20),
+                                borderSide: BorderSide(color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5), width: 0.5),
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(20),
+                                borderSide: BorderSide(color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5), width: 0.5),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(20),
+                                borderSide: BorderSide(color: theme.primaryColor, width: 1.5),
+                              ),
+                            ),
+                            dropdownMenuEntries: const [
+                              DropdownMenuEntry(value: 'Indian Oil', label: 'Indian Oil'),
+                              DropdownMenuEntry(value: 'Bharat Petroleum', label: 'Bharat Petroleum'),
+                              DropdownMenuEntry(value: 'Hindustan Petroleum', label: 'Hindustan Petroleum'),
+                              DropdownMenuEntry(value: 'Reliance', label: 'Reliance'),
+                              DropdownMenuEntry(value: 'Nayara Energy', label: 'Nayara Energy'),
+                              DropdownMenuEntry(value: 'Shell', label: 'Shell'),
+                              DropdownMenuEntry(value: 'Jio-bp', label: 'Jio-bp'),
+                              DropdownMenuEntry(value: 'Other', label: 'Other'),
+                            ],
+                            onSelected: (String? value) {
+                              if (value != null) {
+                                fuelStationController.text = value;
+                                _validateForm();
+                              }
+                            },
+                          );
+                        }
                       ),
+                      
+                      if (fuelStationController.text == 'Other') ...[
+                        const SizedBox(height: 12),
+                        TextField(
+                          controller: otherStationController,
+                          textInputAction: TextInputAction.next,
+                          decoration: _inputDecoration(
+                            l10n.fuelStationName,
+                            Icons.edit,
+                          ),
+                        ),
+                      ],
                     ],
                   ),
                 ),

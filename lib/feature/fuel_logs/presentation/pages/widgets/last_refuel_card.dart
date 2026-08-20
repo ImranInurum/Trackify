@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:trackify/l10n/app_localizations.dart';
 
+import 'package:intl/intl.dart';
+
 import '../../cubit/fuel_logs_cubit.dart';
 import '../../cubit/fuel_logs_state.dart';
 import 'package:trackify/core/utils/distance_utils.dart';
@@ -11,6 +13,28 @@ class LastRefuelCard extends StatelessWidget {
   final AppLocalizations l10n;
 
   const LastRefuelCard({super.key, required this.state, required this.l10n});
+
+  String _formatDate(String dateStr) {
+    if (dateStr.isEmpty || dateStr == 'null') return '--';
+    try {
+      final parsedDate = DateTime.parse(dateStr);
+      return DateFormat('d MMM yyyy').format(parsedDate);
+    } catch (e) {
+      return dateStr;
+    }
+  }
+
+  String _formatNumber(String val) {
+    if (val.isEmpty || val == 'null') return '0';
+    final parsed = double.tryParse(val);
+    if (parsed == null) return val;
+    String formatted = parsed.toStringAsFixed(3);
+    formatted = formatted.replaceAll(RegExp(r'0*$'), '');
+    if (formatted.endsWith('.')) {
+      formatted = formatted.substring(0, formatted.length - 1);
+    }
+    return formatted;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -48,7 +72,7 @@ class LastRefuelCard extends StatelessWidget {
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      "${(state.lastRefuelDate.isEmpty || state.lastRefuelDate == 'null') ? '--' : state.lastRefuelDate} | ₹${(state.lastRefuelAmount.isEmpty || state.lastRefuelAmount == 'null') ? '0' : state.lastRefuelAmount} | ${(state.lastRefuelLiters.isEmpty || state.lastRefuelLiters == 'null') ? '0' : state.lastRefuelLiters} ${l10n.litersShort}",
+                      "${_formatDate(state.lastRefuelDate)} | ₹${_formatNumber(state.lastRefuelAmount)} | ${_formatNumber(state.lastRefuelLiters)} ${l10n.litersShort}",
                       style: TextStyle(
                         color: theme.colorScheme.onSurface,
                         fontSize: mediaQuery.textScaler.scale(10),
@@ -120,7 +144,7 @@ class LastRefuelCard extends StatelessWidget {
                 child: _buildStatItem(
                   context,
                   l10n.fuelRemaining,
-                  "${state.fuelRemaining == 'null' ? '0' : state.fuelRemaining}L",
+                  "${_formatNumber(state.fuelRemaining)}L",
                   Icons.local_gas_station_outlined,
                 ),
               ),
@@ -128,7 +152,7 @@ class LastRefuelCard extends StatelessWidget {
                 child: _buildStatItem(
                   context,
                   l10n.distanceRemaining,
-                  "${state.distanceRemaining == 'null' ? '0' : state.distanceRemaining}km",
+                  "${_formatNumber(state.distanceRemaining)}km",
                   Icons.directions_car_outlined,
                 ),
               ),
@@ -141,7 +165,7 @@ class LastRefuelCard extends StatelessWidget {
                 child: _buildStatItem(
                   context,
                   l10n.mileageArai,
-                  "${state.mileageArai == 'null' ? '0' : state.mileageArai}km/L",
+                  "${_formatNumber(state.mileageArai)}km/L",
                   Icons.bolt_outlined,
                   isEditable: true,
                   onTap: () => _showUpdateMileageDialog(context, l10n),
@@ -151,7 +175,7 @@ class LastRefuelCard extends StatelessWidget {
                 child: _buildStatItem(
                   context,
                   l10n.distanceTravelled,
-                  "${state.distanceTravelled == 'null' ? '0' : state.distanceTravelled} ${context.displayKm}",
+                  "${_formatNumber(state.distanceTravelled)} ${context.displayKm}",
                   Icons.route_outlined,
                 ),
               ),

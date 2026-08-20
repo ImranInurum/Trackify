@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:map_route_animator/map_route_animator.dart';
+import '../lib/map_route_animator.dart';
+
 
 void main() {
   test('adds one to input values', () {
