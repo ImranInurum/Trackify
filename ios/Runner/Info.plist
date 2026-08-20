@@ -46,19 +46,19 @@
 	<true/>
 
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>This app needs access to location when open and in the background.</string>
+	<string>Trackify needs your location while open and in the background to show real-time vehicle tracking on the map, record trip routes, monitor safe parking, and send geofence alerts.</string>
 
 	<key>NSLocationAlwaysUsageDescription</key>
-	<string>This app needs access to location when in the background.</string>
+	<string>Trackify needs continuous background location to record your trip routes in real-time, send immediate safe parking and geofence breach alerts, and enable live location sharing even when the app is in the background.</string>
 
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>This app needs access to location in the background.</string>
+	<string>Trackify needs your location to display your position relative to your vehicles on the map, help you set up geofences, find nearby fuel stations, and navigate routes.</string>
 
 	<key>NSCameraUsageDescription</key>
-	<string>This app needs camera access to scan QR codes</string>
+	<string>Trackify requires camera access to scan QR codes on GPS tracking devices and Reach-Me stickers for quick pairing, and to capture vehicle documents.</string>
 
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>This app needs photos access to get QR code from photo library</string>
+	<string>Trackify requires photo library access to upload vehicle registration documents, profile pictures, and device QR code images from your gallery.</string>
 
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
@@ -91,10 +91,10 @@
 	</array>
 
 	<key>NSMicrophoneUsageDescription</key>
-	<string>This app needs microphone access for video recording.</string>
+	<string>Trackify requires microphone access for audio recording during in-app video feedback and customer support recordings.</string>
 
 	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>This app needs permission to save videos to your photo library.</string>
+	<string>Trackify requires permission to save generated trip reports, receipts, and vehicle documents to your photo library.</string>
 
 	<key>NSAppTransportSecurity</key>
 	<dict>
