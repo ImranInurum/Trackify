@@ -47,19 +47,21 @@ class VehicleControlRepositoryImpl implements VehicleControlRepository {
       } catch (_) {}
     }
 
-    // 1. Fetch details from vehicle-control GET api
     final targetId = vehicleId.isNotEmpty ? vehicleId : actualIMEI;
-    final controlResult = await _apiService.getGetApiResponse(
-      ApiURL.getVehicleControl(targetId),
-    );
-
     AppException? apiFailure;
     Map<String, dynamic> controlData = {};
-    controlResult.fold((failure) => apiFailure = failure, (data) {
-      if (data is Map && data['success'] == true && data['data'] != null) {
-        controlData = Map<String, dynamic>.from(data['data']);
-      }
-    });
+
+    if (targetId.isNotEmpty) {
+      final controlResult = await _apiService.getGetApiResponse(
+        ApiURL.getVehicleControl(targetId),
+      );
+
+      controlResult.fold((failure) => apiFailure = failure, (data) {
+        if (data is Map && data['success'] == true && data['data'] != null) {
+          controlData = Map<String, dynamic>.from(data['data']);
+        }
+      });
+    }
 
     String vehicleName = "";
     String vehicleNumber = "";
@@ -103,7 +105,11 @@ class VehicleControlRepositoryImpl implements VehicleControlRepository {
           vehiclesRes.fold((failure) => null, (data) {
             final list = VehicleListResponse.fromJson(data);
             final match = list.vehicles?.firstWhere(
-              (v) => v.imei == vehicleIMEI,
+              (v) {
+                if (vehicleId.isNotEmpty && v.id == vehicleId) return true;
+                if (actualIMEI.isNotEmpty && v.imei == actualIMEI) return true;
+                return false;
+              },
               orElse: () => Vehicle(),
             );
             if (match != null && match.id != null) {

@@ -5,7 +5,7 @@ void main() async {
   print('Connecting to TCP Socket...');
   try {
     var socket = await Socket.connect(
-      '139.59.1.109',
+      'trackifybackend.inurum.com',
       4000,
       timeout: Duration(seconds: 5),
     );

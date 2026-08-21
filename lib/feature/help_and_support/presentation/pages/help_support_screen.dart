@@ -723,7 +723,7 @@ class _HelpSuggestionScreenState extends State<HelpSuggestionScreen> {
             MaterialPageRoute(
               builder: (_) => AppWebViewScreen(
                 title: l10n.faq,
-                url: 'http://139.59.1.109/faq.html',
+                url: 'https://trackify.inurum.com/faq.html',
               ),
             ),
           );
@@ -734,7 +734,7 @@ class _HelpSuggestionScreenState extends State<HelpSuggestionScreen> {
             MaterialPageRoute(
               builder: (_) => AppWebViewScreen(
                 title: l10n.termsConditions,
-                url: 'http://139.59.1.109/terms.html',
+                url: 'https://trackify.inurum.com/terms.html',
               ),
             ),
           );
@@ -745,7 +745,7 @@ class _HelpSuggestionScreenState extends State<HelpSuggestionScreen> {
             MaterialPageRoute(
               builder: (_) => AppWebViewScreen(
                 title: l10n.privacyPolicy,
-                url: 'http://139.59.1.109/privacy_policy.html',
+                url: 'https://trackify.inurum.com/privacy_policy.html',
               ),
             ),
           );
