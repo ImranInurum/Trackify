@@ -666,7 +666,7 @@ class _FullScreenMapState extends State<FullScreenMap>
       if (liveData.isNotEmpty) {
         final lat = double.tryParse(liveData['lt']?.toString() ?? '');
         final lng = double.tryParse(liveData['lg']?.toString() ?? '');
-        if (lat != null && lng != null) {
+        if (lat != null && lng != null && !lat.isNaN && !lng.isNaN) {
           bestPos = LatLng(lat, lng);
         }
       }
@@ -676,16 +676,23 @@ class _FullScreenMapState extends State<FullScreenMap>
           _currentVehicle?.currentLocation != null &&
           _currentVehicle!.currentLocation!.lat != null &&
           _currentVehicle!.currentLocation!.lng != null) {
-        bestPos = LatLng(
-          _currentVehicle!.currentLocation!.lat!,
-          _currentVehicle!.currentLocation!.lng!,
-        );
+        final lat = _currentVehicle!.currentLocation!.lat!;
+        final lng = _currentVehicle!.currentLocation!.lng!;
+        if (!lat.isNaN && !lng.isNaN) {
+          bestPos = LatLng(lat, lng);
+        }
       }
     }
 
     // 3. Fallback to phone current location
-    if (bestPos == null && currentPos != null) {
-      bestPos = LatLng(currentPos.latitude, currentPos.longitude);
+    if (bestPos == null) {
+      print("====> Vehicle location not found or invalid (NaN). Falling back to phone location...");
+      if (currentPos != null) {
+        bestPos = LatLng(currentPos.latitude, currentPos.longitude);
+        print("====> Phone Location (Current): ${bestPos.latitude}, ${bestPos.longitude}");
+      } else {
+        print("====> Phone Location is also null!");
+      }
     }
     return bestPos;
   }
@@ -1668,17 +1675,22 @@ class _FullScreenMapState extends State<FullScreenMap>
           bestPos = LatLng(currentPos.latitude, currentPos.longitude);
         } else {
           // Prioritize Live Position from Socket
-          bestPos = appState.livePosition;
+          if (appState.livePosition != null &&
+              !appState.livePosition!.latitude.isNaN &&
+              !appState.livePosition!.longitude.isNaN) {
+            bestPos = appState.livePosition;
+          }
 
           // Fallback to selected vehicle's static location
           if (bestPos == null &&
               _currentVehicle?.currentLocation != null &&
               _currentVehicle!.currentLocation!.lat != null &&
               _currentVehicle!.currentLocation!.lng != null) {
-            bestPos = LatLng(
-              _currentVehicle!.currentLocation!.lat!,
-              _currentVehicle!.currentLocation!.lng!,
-            );
+            final lat = _currentVehicle!.currentLocation!.lat!;
+            final lng = _currentVehicle!.currentLocation!.lng!;
+            if (!lat.isNaN && !lng.isNaN) {
+              bestPos = LatLng(lat, lng);
+            }
           }
 
           // 1. Get live position specific to THIS device from socket data
@@ -2163,6 +2175,9 @@ class _FullScreenMapState extends State<FullScreenMap>
 
     if (!hasDevice) return const SizedBox.shrink();
 
+    final vehiclePos = _animatedMarkerPos ?? _getBestPosition();
+    print("====> Vehicle Latitude: ${vehiclePos?.latitude} | Longitude: ${vehiclePos?.longitude}");
+
     return BlocBuilder<FullScreenMapUiCubit, FullScreenMapUiState>(
       bloc: _uiCubit,
       builder: (context, uiState) {
@@ -2171,7 +2186,7 @@ class _FullScreenMapState extends State<FullScreenMap>
         return ValueListenableBuilder<int>(
           valueListenable: _mapRebuildNotifier,
           builder: (context, _, __) {
-            if (_distanceToVehicleMeters <= 0) return const SizedBox.shrink();
+            if (_distanceToVehicleMeters <= 0 || _distanceToVehicleMeters.isNaN || _distanceToVehicleMeters.isInfinite) return const SizedBox.shrink();
 
             final distUnit = context.read<AppCubit>().state.distanceUnit;
             final bool useKm = distUnit != 'miles';

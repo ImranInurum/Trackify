@@ -640,21 +640,32 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin, Wi
         _isWarrantyExpired;
 
     if (!isDeviceNotInstalledOrExpired) {
-      bestPos = appState.livePosition;
+      if (appState.livePosition != null &&
+          !appState.livePosition!.latitude.isNaN &&
+          !appState.livePosition!.longitude.isNaN) {
+        bestPos = appState.livePosition;
+      }
 
       if (bestPos == null &&
           _selectedDevice?.currentLocation != null &&
           _selectedDevice!.currentLocation!.lat != null &&
           _selectedDevice!.currentLocation!.lng != null) {
-        bestPos = LatLng(
-          _selectedDevice!.currentLocation!.lat!,
-          _selectedDevice!.currentLocation!.lng!,
-        );
+        final lat = _selectedDevice!.currentLocation!.lat!;
+        final lng = _selectedDevice!.currentLocation!.lng!;
+        if (!lat.isNaN && !lng.isNaN) {
+          bestPos = LatLng(lat, lng);
+        }
       }
     }
 
-    if (bestPos == null && currentPos != null) {
-      bestPos = LatLng(currentPos.latitude, currentPos.longitude);
+    if (bestPos == null) {
+      print("====> [Map Screen] Vehicle location not found or invalid (NaN). Falling back to phone location...");
+      if (currentPos != null) {
+        bestPos = LatLng(currentPos.latitude, currentPos.longitude);
+        print("====> [Map Screen] Phone Location (Current): ${bestPos.latitude}, ${bestPos.longitude}");
+      } else {
+        print("====> [Map Screen] Phone Location is also null!");
+      }
     }
     return bestPos;
   }
@@ -1603,7 +1614,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin, Wi
           if (liveData.isNotEmpty) {
             final lat = double.tryParse(liveData['lt']?.toString() ?? '');
             final lng = double.tryParse(liveData['lg']?.toString() ?? '');
-            if (lat != null && lng != null) {
+            if (lat != null && lng != null && !lat.isNaN && !lng.isNaN) {
               bestPos = LatLng(lat, lng);
             }
           }
