@@ -2976,7 +2976,9 @@ class _FullScreenMapState extends State<FullScreenMap>
                     parkedSince.isNotEmpty && 
                     parkedSince != "--" && 
                     (liveDevice['status']?.toString().toLowerCase() == 'parked' || 
-                     liveDevice['status']?.toString().toLowerCase() == 'parking'))
+                     liveDevice['status']?.toString().toLowerCase() == 'parking' ||
+                     liveDevice['status']?.toString().toLowerCase() == 'stopped' ||
+                     liveDevice['status']?.toString().toLowerCase() == 'stop'))
                   Text(
                     AppLocalizations.of(context)!.parkedSinceTime(parkedSince),
                     style: TextStyle(
