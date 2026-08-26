@@ -14,7 +14,7 @@ class NearbyFuelStationsDashboard extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
-    final textScaler = MediaQuery.textScalerOf(context);
+    final textScaler = MediaQuery.of(context).textScaler;
 
     return BlocBuilder<FuelStationsCubit, FuelStationsState>(
       builder: (context, state) {
@@ -106,7 +106,7 @@ class NearbyFuelStationsDashboard extends StatelessWidget {
 
   Widget _buildStationItem(BuildContext context, FuelStation station) {
     final theme = Theme.of(context);
-    final textScaler = MediaQuery.textScalerOf(context);
+    final textScaler = MediaQuery.of(context).textScaler;
 
     return Container(
       margin: const EdgeInsets.only(bottom: 10),

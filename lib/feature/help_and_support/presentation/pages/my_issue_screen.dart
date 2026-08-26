@@ -263,47 +263,39 @@ class _MyIssueScreenState
                           child: Column(
                             children: [
 
-                              Row(
-                                children: [
-
-                                  const Icon(
-                                    Icons
-                                        .calendar_today,
-                                    size: 18,
-                                  ),
-
-                                  const SizedBox(
-                                    width: 10,
-                                  ),
-
-                                  Text(
-                                      issue.callSlot?.dateText ?? ''
-                                  ),
-                                ],
-                              ),
-
-                              const SizedBox(
-                                height: 12,
-                              ),
-
-                              Row(
-                                children: [
-
-                                  const Icon(
-                                    Icons
-                                        .access_time,
-                                    size: 18,
-                                  ),
-
-                                  const SizedBox(
-                                    width: 10,
-                                  ),
-
-                                  Text(
-                                      issue.callSlot?.displayTime ?? ''
-                                  ),
-                                ],
-                              ),
+                              if (issue.callSlot?.dateText.isNotEmpty ?? false) ...[
+                                Row(
+                                  children: [
+                                    const Icon(
+                                      Icons.calendar_today_rounded,
+                                      size: 16,
+                                      color: Color(0xFF0284C7),
+                                    ),
+                                    const SizedBox(width: 10),
+                                    Text(
+                                      issue.callSlot!.dateText,
+                                      style: const TextStyle(fontWeight: FontWeight.w500),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 8),
+                              ],
+                              if (issue.callSlot?.displayTime.isNotEmpty ?? false) ...[
+                                Row(
+                                  children: [
+                                    const Icon(
+                                      Icons.access_time_rounded,
+                                      size: 16,
+                                      color: Color(0xFF0284C7),
+                                    ),
+                                    const SizedBox(width: 10),
+                                    Text(
+                                      issue.callSlot!.displayTime,
+                                      style: const TextStyle(fontWeight: FontWeight.w500),
+                                    ),
+                                  ],
+                                ),
+                              ],
                             ],
                           ),
                         ),

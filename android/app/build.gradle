@@ -34,15 +34,16 @@ if (keystorePropertiesFile.exists()) {
 android {
     namespace "com.trackify.mytrackmate.trackify"
     compileSdkVersion 35
-    ndkVersion flutter.ndkVersion
+    ndkVersion "25.1.8937393"
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        coreLibraryDesugaringEnabled true
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
 
     kotlinOptions {
-        jvmTarget = '1.8'
+        jvmTarget = '17'
     }
 
     sourceSets {
@@ -85,6 +86,7 @@ flutter {
 }
 
 dependencies {
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.0.4'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'com.google.android.recaptcha:recaptcha:18.5.1'
 }

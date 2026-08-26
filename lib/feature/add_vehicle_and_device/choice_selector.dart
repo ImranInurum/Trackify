@@ -6,6 +6,7 @@ import 'package:trackify/l10n/app_localizations.dart';
 import 'add_vehicle/presentation/view/add_vehicle_screen.dart';
 import '../device_installation/presentation/pages/device_installation_screen.dart';
 import '../reach_me_sticker/presentation/screens/scan_qr_screen.dart';
+import '../reach_me_sticker/presentation/widgets/dynamic_sticker_preview.dart';
 import 'package:trackify/core/widgets/logout_confirmation_dialog.dart';
 
 class ChoiceSelector extends StatefulWidget {
@@ -73,6 +74,11 @@ class _ChoiceSelectorState extends State<ChoiceSelector> {
                       title: l10n.activateSticker,
                       subtitle: l10n.activateStickerDesc,
                       imagePath: AppImages.activateContactSticker,
+                      customWidget: const DynamicStickerPreview(
+                        fitCompact: true,
+                        width: 70,
+                        height: 70,
+                      ),
                       imageWidth: 70,
                       imageHeight: 70,
                       onTap: () {
@@ -140,6 +146,7 @@ class _ChoiceSelectorState extends State<ChoiceSelector> {
     required String title,
     required String subtitle,
     required String imagePath,
+    Widget? customWidget,
     double imageWidth = 70,
     double imageHeight = 70,
     required VoidCallback onTap,
@@ -222,7 +229,7 @@ class _ChoiceSelectorState extends State<ChoiceSelector> {
                         child: SizedBox(
                           width: imageWidth,
                           height: imageHeight,
-                          child: Image.asset(
+                          child: customWidget ?? Image.asset(
                             imagePath,
                             fit: BoxFit.fill,
                             alignment: Alignment.bottomRight,

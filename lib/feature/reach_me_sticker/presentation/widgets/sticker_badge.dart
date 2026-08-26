@@ -6,30 +6,41 @@ class StickerBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12),
+        color: isDark ? const Color(0xFF0C2A40) : const Color(0xFFE0F2FE),
+        borderRadius: BorderRadius.circular(24),
         border: Border.all(
-          color: Theme.of(context).colorScheme.primary,
-          width: 1.5,
+          color: const Color(0xFF0284C7).withOpacity(0.4),
+          width: 1.2,
         ),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFF0284C7).withOpacity(0.12),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(
-            Icons.qr_code_2_outlined,
-            color: Theme.of(context).colorScheme.primary,
-            size: 28,
+          const Icon(
+            Icons.qr_code_2_rounded,
+            color: Color(0xFF0284C7),
+            size: 22,
           ),
-          const SizedBox(width: 12),
+          const SizedBox(width: 8),
           Text(
             text,
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-              color: Theme.of(context).colorScheme.primary,
+            style: const TextStyle(
+              color: Color(0xFF0284C7),
               fontWeight: FontWeight.bold,
-              fontStyle: FontStyle.italic,
+              fontSize: 14,
+              letterSpacing: 0.2,
             ),
           ),
         ],

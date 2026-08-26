@@ -12,10 +12,16 @@ class ApiURL {
   }
 
   static const String baseURL = 'https://trackifybackend.inurum.com';
-  static const String socketURL = 'ws://139.59.1.109:4000';
+  static const String socketURL = String.fromEnvironment(
+    'SOCKET_URL',
+    defaultValue: 'wss://trackifybackend.inurum.com:4000',
+  );
 
   // Razorpay
-  static const String razorpayKey = 'rzp_test_TEWNN1rk9drG2x';
+  static const String razorpayKey = String.fromEnvironment(
+    'RAZORPAY_KEY',
+    defaultValue: 'rzp_test_TEWNN1rk9drG2x',
+  );
 
   static String authToken = '';
   static void updateAuthToken(String token) {

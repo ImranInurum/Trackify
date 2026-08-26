@@ -518,15 +518,22 @@ class _DeviceWarrantyConfirmScreenState
 
         return Container(
           width: double.infinity,
-          height: 45,
+          height: 52,
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(8),
-            gradient: LinearGradient(
+            borderRadius: BorderRadius.circular(14),
+            gradient: const LinearGradient(
               colors: [
-                colorScheme.tertiary.withValues(alpha: 0.8),
-                colorScheme.tertiary,
+                Color(0xFF0284C7),
+                Color(0xFF0369A1),
               ],
             ),
+            boxShadow: [
+              BoxShadow(
+                color: const Color(0xFF0284C7).withOpacity(0.35),
+                blurRadius: 14,
+                offset: const Offset(0, 4),
+              ),
+            ],
           ),
           child: Material(
             color: Colors.transparent,
@@ -547,16 +554,16 @@ class _DeviceWarrantyConfirmScreenState
                         amountPaid: selectedPlan.offerPrice,
                       );
                     },
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: BorderRadius.circular(14),
               child: Center(
                 child: isExtending
-                    ? SizedBox(
-                        height: 20,
-                        width: 20,
+                    ? const SizedBox(
+                        height: 22,
+                        width: 22,
                         child: CircularProgressIndicator(
-                          strokeWidth: 2,
+                          strokeWidth: 2.5,
                           valueColor: AlwaysStoppedAnimation<Color>(
-                            colorScheme.onTertiary,
+                            Colors.white,
                           ),
                         ),
                       )
@@ -566,10 +573,11 @@ class _DeviceWarrantyConfirmScreenState
                             : l10n.amountPayable(
                                 '${l10n.currencySymbol}${selectedPlan?.offerPrice.toInt() ?? 365}',
                               ),
-                        style: TextStyle(
-                          color: colorScheme.onTertiary,
+                        style: const TextStyle(
+                          color: Colors.white,
                           fontWeight: FontWeight.bold,
-                          fontSize: 13,
+                          fontSize: 16,
+                          letterSpacing: 0.2,
                         ),
                       ),
               ),

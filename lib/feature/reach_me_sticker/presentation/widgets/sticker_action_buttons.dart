@@ -16,48 +16,69 @@ class StickerActionButtons extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Column(
       children: [
-        SizedBox(
-          width: double.infinity,
-          height: 48,
-          child: ElevatedButton(
-            onPressed: onActivate,
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Theme.of(context).colorScheme.primary,
-              foregroundColor: Theme.of(context).scaffoldBackgroundColor,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
+        GestureDetector(
+          onTap: onActivate,
+          child: Container(
+            width: double.infinity,
+            height: 48,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(14),
+              gradient: const LinearGradient(
+                colors: [
+                  Color(0xFF0284C7),
+                  Color(0xFF0369A1),
+                ],
               ),
-              elevation: 0,
+              boxShadow: [
+                BoxShadow(
+                  color: const Color(0xFF0284C7).withOpacity(0.3),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
+                ),
+              ],
             ),
-            child: Text(
-              activateLabel,
-              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+            child: Center(
+              child: Text(
+                activateLabel,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 0.2,
+                ),
+              ),
             ),
           ),
         ),
-        const SizedBox(height: 12),
-        SizedBox(
-          width: double.infinity,
-          height: 48,
-          child: OutlinedButton(
-            onPressed: onBuy,
-            style: OutlinedButton.styleFrom(
-              side: BorderSide(
-                color: Theme.of(context).colorScheme.primary,
+        const SizedBox(height: 10),
+        GestureDetector(
+          onTap: onBuy,
+          child: Container(
+            width: double.infinity,
+            height: 48,
+            decoration: BoxDecoration(
+              color: isDark
+                  ? Theme.of(context).colorScheme.surface
+                  : const Color(0xFFF8FAFC),
+              borderRadius: BorderRadius.circular(14),
+              border: Border.all(
+                color: const Color(0xFF0284C7).withOpacity(0.6),
                 width: 1.5,
               ),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
             ),
-            child: Text(
-              buyLabel,
-              style: TextStyle(
-                color: Theme.of(context).colorScheme.primary,
-                fontSize: 14,
-                fontWeight: FontWeight.bold,
+            child: Center(
+              child: Text(
+                buyLabel,
+                style: const TextStyle(
+                  color: Color(0xFF0284C7),
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 0.2,
+                ),
               ),
             ),
           ),

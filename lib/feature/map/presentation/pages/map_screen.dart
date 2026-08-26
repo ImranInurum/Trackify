@@ -171,6 +171,12 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin, Wi
 
   Brightness? _currentBrightness;
 
+  // Persistent memory cache for Today stats so UI never resets to 0/-- on background/foreground or API re-fetch
+  String _cachedTodayDistanceStr = "";
+  String _cachedDurationStr = "";
+  String _cachedTopSpeedStr = "";
+  String _cachedStartTimeStr = "";
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -2112,17 +2118,45 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin, Wi
               }
             }
 
-            final batteryVal = liveDevice['api_battery'];
+            final batteryVal = liveDevice['api_battery'] ?? liveDevice['battery'] ?? liveDevice['internalBatteryLevel'];
 
-            final voltageVal = null; // Ignored to strictly use DeviceStatus API battery
+            // Extract external voltage or raw voltage from liveDevice dictionary
+            final rawVoltage = liveDevice['externalVoltage'] ??
+                liveDevice['external_voltage'] ??
+                liveDevice['voltage'] ??
+                liveDevice['extVoltage'] ??
+                (attrs is Map ? (attrs['externalVoltage'] ?? attrs['voltage']) : null);
+
+            String bracketText = "";
+            if (rawVoltage != null &&
+                rawVoltage.toString().trim().toLowerCase() != 'null' &&
+                rawVoltage.toString().trim().isNotEmpty) {
+              final v = rawVoltage.toString().trim();
+              if (v.toLowerCase().endsWith('v')) {
+                bracketText = " ($v)";
+              } else {
+                final double? numV = double.tryParse(v);
+                if (numV != null) {
+                  bracketText = " (${numV.toStringAsFixed(1)}V)";
+                } else {
+                  bracketText = " (${v}V)";
+                }
+              }
+            } else if (batteryVal != null &&
+                batteryVal.toString().trim().toLowerCase() != 'null' &&
+                batteryVal.toString().trim().isNotEmpty) {
+              final b = batteryVal.toString().trim();
+              if (b.isNotEmpty && b != 'null') {
+                bracketText = " ($b)";
+              }
+            }
 
             String batteryText = "--";
             Color batteryColor = AppColors.paletteGreen;
             IconData batteryIcon = Icons.battery_charging_full;
 
-            final rawVal = batteryVal ?? voltageVal;
-            if (rawVal != null && rawVal.toString().trim().toLowerCase() != 'null' && rawVal.toString().trim() != '') {
-              final rawStr = rawVal.toString().trim();
+            if (batteryVal != null && batteryVal.toString().trim().toLowerCase() != 'null' && batteryVal.toString().trim() != '') {
+              final rawStr = batteryVal.toString().trim();
               int? intLevel;
 
               if (rawStr.toLowerCase().startsWith('0x')) {
@@ -2169,12 +2203,49 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin, Wi
                     batteryIcon = Icons.battery_full;
                     break;
                   default:
-                    batteryText = "--";
+                    batteryText = "Normal";
                     batteryColor = AppColors.paletteGreen;
                     batteryIcon = Icons.battery_charging_full;
                     break;
                 }
+              } else {
+                batteryText = rawStr;
               }
+            }
+
+            if (batteryText != "--" && bracketText.isNotEmpty) {
+              batteryText += bracketText;
+            }
+
+            // Apply persistent memory caching so stats values retain their last known value during background/foreground or API re-fetches
+            if (todayDistanceStr != "0.00" && todayDistanceStr != "0.0" && todayDistanceStr != "0") {
+              _cachedTodayDistanceStr = todayDistanceStr;
+            } else if (_cachedTodayDistanceStr.isNotEmpty) {
+              todayDistanceStr = _cachedTodayDistanceStr;
+            }
+
+            if (durationStr != "0${l10n.minutesShort} 0${l10n.secondsShort}" &&
+                durationStr != "0${l10n.minutesShort}" &&
+                durationStr != "0${l10n.secondsShort}" &&
+                durationStr != "0m 0s" &&
+                durationStr != "0s") {
+              _cachedDurationStr = durationStr;
+            } else if (_cachedDurationStr.isNotEmpty) {
+              durationStr = _cachedDurationStr;
+            }
+
+            if (topSpeed != "0 ${context.displayKmh}" &&
+                topSpeed != "0.0 ${context.displayKmh}" &&
+                topSpeed != "0") {
+              _cachedTopSpeedStr = topSpeed;
+            } else if (_cachedTopSpeedStr.isNotEmpty) {
+              topSpeed = _cachedTopSpeedStr;
+            }
+
+            if (startTimeStr.isNotEmpty && startTimeStr != "--:--") {
+              _cachedStartTimeStr = startTimeStr;
+            } else if (_cachedStartTimeStr.isNotEmpty) {
+              startTimeStr = _cachedStartTimeStr;
             }
 
             String distance = "$todayDistanceStr ${context.displayKm}";
@@ -2182,8 +2253,6 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin, Wi
             String headerText = l10n.todayText;
             if (startTimeStr.isNotEmpty && startTimeStr != "--:--") {
               headerText += " | $startTimeStr";
-            } else {
-              headerText += " | --";
             }
 
             return Padding(
@@ -3012,41 +3081,69 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin, Wi
             left: 16,
             right: 16,
             top: 6,
-            bottom: 16,
+            bottom: 20,
           ),
           padding: const EdgeInsets.fromLTRB(
             16,
+            18,
             16,
-            16,
-            24,
-          ), // Extra bottom padding for button
+            26,
+          ),
           decoration: BoxDecoration(
             color: Theme.of(context).cardColor,
-            borderRadius: BorderRadius.circular(18),
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(
+              color: Theme.of(context).brightness == Brightness.dark
+                  ? Theme.of(context).colorScheme.outline.withOpacity(0.2)
+                  : const Color(0xFFE2E8F0),
+            ),
             boxShadow: [
-              BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 10),
+              BoxShadow(
+                color: Colors.black.withOpacity(
+                  Theme.of(context).brightness == Brightness.dark ? 0.3 : 0.04,
+                ),
+                blurRadius: 14,
+                offset: const Offset(0, 4),
+              ),
             ],
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                l10n.exploreMore,
-                style: getBoldStyle(
-                  color: Theme.of(context).colorScheme.onSurface,
-                  fontSize: 17,
-                ),
+              Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(6),
+                    decoration: const BoxDecoration(
+                      color: Color(0xFFE0F2FE),
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(
+                      Icons.grid_view_rounded,
+                      color: Color(0xFF0284C7),
+                      size: 16,
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Text(
+                    l10n.exploreMore,
+                    style: getBoldStyle(
+                      color: Theme.of(context).colorScheme.onSurface,
+                      fontSize: 16,
+                    ),
+                  ),
+                ],
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: 20),
               GridView.builder(
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
                 padding: EdgeInsets.zero,
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 4,
-                  mainAxisSpacing: 12,
-                  crossAxisSpacing: 8,
-                  childAspectRatio: 0.8,
+                  mainAxisSpacing: 16,
+                  crossAxisSpacing: 10,
+                  childAspectRatio: 0.78,
                 ),
                 itemCount: displayItems.length,
                 itemBuilder: (context, index) {
@@ -3058,23 +3155,30 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin, Wi
           ),
         ),
         Positioned(
-          bottom: -4, // Floats exactly on the border
+          bottom: -2,
           child: InkWell(
             onTap: () =>
                 setState(() => _isExploreExpanded = !_isExploreExpanded),
+            borderRadius: BorderRadius.circular(24),
             child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 8),
               decoration: BoxDecoration(
-                color: Theme.of(context).cardColor,
+                color: Theme.of(context).brightness == Brightness.dark
+                    ? Theme.of(context).colorScheme.surface
+                    : Colors.white,
                 border: Border.all(
-                  color: Theme.of(context).dividerColor.withValues(alpha: 0.2),
+                  color: Theme.of(context).brightness == Brightness.dark
+                      ? Theme.of(context).colorScheme.outline.withOpacity(0.3)
+                      : const Color(0xFFE2E8F0),
                 ),
                 borderRadius: BorderRadius.circular(24),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.05),
-                    blurRadius: 4,
-                    offset: const Offset(0, 2),
+                    color: Colors.black.withOpacity(
+                      Theme.of(context).brightness == Brightness.dark ? 0.3 : 0.08,
+                    ),
+                    blurRadius: 10,
+                    offset: const Offset(0, 3),
                   ),
                 ],
               ),
@@ -3083,18 +3187,19 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin, Wi
                 children: [
                   Text(
                     _isExploreExpanded ? l10n.viewLess : l10n.viewMore,
-                    style: TextStyle(
-                      color: Theme.of(context).colorScheme.primary,
+                    style: const TextStyle(
+                      color: Color(0xFF0284C7),
                       fontSize: 12,
                       fontWeight: FontWeight.bold,
+                      letterSpacing: 0.2,
                     ),
                   ),
-                  const SizedBox(width: 6),
+                  const SizedBox(width: 4),
                   Icon(
                     _isExploreExpanded
-                        ? Icons.keyboard_arrow_up
-                        : Icons.keyboard_arrow_down,
-                    color: Theme.of(context).colorScheme.primary,
+                        ? Icons.keyboard_arrow_up_rounded
+                        : Icons.keyboard_arrow_down_rounded,
+                    color: const Color(0xFF0284C7),
                     size: 18,
                   ),
                 ],
@@ -3135,20 +3240,24 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin, Wi
         if (option["badge"] == l10n.comingSoonOption) return;
         _handleExploreTap(option, selectedDevice, l10n);
       },
+      borderRadius: BorderRadius.circular(16),
       child: Column(
         children: [
           if (option["isPlus"] == true)
             _buildPlusBadge(l10n)
           else
             _buildIconWithBadge(option, isLocked),
-          const SizedBox(height: 8),
+          const SizedBox(height: 6),
           Text(
             option["label"] as String,
             textAlign: TextAlign.center,
             maxLines: 2,
-            style: getMediumStyle(
-              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7),
-              fontSize: 10.5,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(
+              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.85),
+              fontSize: 11,
+              fontWeight: FontWeight.w500,
+              height: 1.15,
             ),
           ),
         ],
@@ -3256,21 +3365,32 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin, Wi
   }
 
   Widget _buildPlusBadge(AppLocalizations l10n) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
-      width: 50,
-      height: 50,
+      width: 48,
+      height: 48,
       alignment: Alignment.center,
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.08),
-        borderRadius: BorderRadius.circular(16),
+        color: isDark ? const Color(0xFF332A15) : const Color(0xFFFEFCE8),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(
+          color: const Color(0xFFEAB308).withOpacity(0.3),
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(isDark ? 0.2 : 0.03),
+            blurRadius: 6,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+        padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
         decoration: BoxDecoration(
           gradient: const LinearGradient(
-            colors: [Color(0xFFD4AF37), Color(0xFFE1D2B0), Color(0xFFE2C275)],
+            colors: [Color(0xFFD4AF37), Color(0xFFFACC15), Color(0xFFE2C275)],
           ),
-          borderRadius: BorderRadius.circular(4),
+          borderRadius: BorderRadius.circular(6),
         ),
         child: Text(
           l10n.plusLabel,
@@ -3286,21 +3406,37 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin, Wi
 
   Widget _buildIconWithBadge(Map<String, dynamic> option, bool isLocked) {
     final l10n = AppLocalizations.of(context)!;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Stack(
       clipBehavior: Clip.none,
       children: [
         Container(
-          width: 50,
-          height: 50,
+          width: 48,
+          height: 48,
           alignment: Alignment.center,
           decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.08),
-            borderRadius: BorderRadius.circular(16),
+            color: isDark
+                ? Theme.of(context).colorScheme.onSurface.withOpacity(0.08)
+                : const Color(0xFFF0F7FF),
+            borderRadius: BorderRadius.circular(14),
+            border: Border.all(
+              color: isDark
+                  ? Theme.of(context).colorScheme.outline.withOpacity(0.15)
+                  : const Color(0xFFE2E8F0),
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(isDark ? 0.2 : 0.03),
+                blurRadius: 6,
+                offset: const Offset(0, 2),
+              ),
+            ],
           ),
           child: Icon(
             option["icon"] as IconData,
-            size: 26,
-            color: Theme.of(context).colorScheme.primary,
+            size: 24,
+            color: const Color(0xFF0284C7),
           ),
         ),
         if (isLocked)
@@ -3314,35 +3450,41 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin, Wi
                 shape: BoxShape.circle,
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.1),
+                    color: Colors.black.withOpacity(0.12),
                     blurRadius: 4,
                   ),
                 ],
               ),
-              child: Icon(
+              child: const Icon(
                 Icons.lock,
-                size: 12,
-                color: Theme.of(context).colorScheme.primary,
+                size: 11,
+                color: Color(0xFF0284C7),
               ),
             ),
           )
         else if (option["badge"] != null)
           Positioned(
-            top: -8,
-            right: -24,
+            top: -6,
+            right: -10,
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
               decoration: BoxDecoration(
                 color: option["badge"] == l10n.comingSoonOption
-                    ? Theme.of(context).disabledColor
-                    : Theme.of(context).colorScheme.primary,
-                borderRadius: BorderRadius.circular(4),
+                    ? const Color(0xFF64748B)
+                    : const Color(0xFF0284C7),
+                borderRadius: BorderRadius.circular(6),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.1),
+                    blurRadius: 4,
+                  ),
+                ],
               ),
               child: Text(
                 option["badge"] as String,
                 style: const TextStyle(
                   color: Colors.white,
-                  fontSize: 8,
+                  fontSize: 7.5,
                   fontWeight: FontWeight.bold,
                 ),
               ),

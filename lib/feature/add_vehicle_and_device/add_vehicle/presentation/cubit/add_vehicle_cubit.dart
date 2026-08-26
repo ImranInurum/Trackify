@@ -21,9 +21,18 @@ class AddVehicleCubit extends Cubit<AddVehicleState> {
       (success) {
         final List<dynamic> data = success['data'] ?? [];
         final configs = data.map((e) => VehicleConfig.fromJson(e)).toList();
+        configs.sort((a, b) {
+          final tA = a.type.toLowerCase();
+          final tB = b.type.toLowerCase();
+          final aBike = tA.contains('bike') || tA.contains('2') || tA.contains('two') || tA.contains('motorcycle') || tA.contains('scooter');
+          final bBike = tB.contains('bike') || tB.contains('2') || tB.contains('two') || tB.contains('motorcycle') || tB.contains('scooter');
+          if (aBike && !bBike) return -1;
+          if (!aBike && bBike) return 1;
+          return 0;
+        });
         emit(state.copyWith(isLoadingConfig: false, configs: configs));
 
-        // Auto-select first vehicle type if nothing is selected yet
+        // Auto-select Bike (first vehicle type) if nothing is selected yet
         if (configs.isNotEmpty && state.selectedConfig == null) {
           selectVehicleType(configs.first);
         }

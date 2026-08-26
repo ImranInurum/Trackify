@@ -120,6 +120,11 @@ class _FullScreenMapState extends State<FullScreenMap>
   Set<Polyline> _polylines = {};
   double _distanceToVehicleMeters = 0.0;
 
+  // Persistent memory cache for Today stats so UI never resets to 0 during background/foreground or API re-fetches
+  String _cachedTodayDistanceStr = "";
+  String _cachedDurationStr = "";
+  String _cachedTopSpeedStr = "";
+
   late final FullScreenMapUiCubit _uiCubit;
 
   @override
@@ -1048,7 +1053,7 @@ class _FullScreenMapState extends State<FullScreenMap>
     }
   }
 
-  /// Calculates midpoint + zoom to fit both points on screen.
+  /// Calculates midpoint + dynamic distance-based zoom to fit both points on screen.
   void _fitBothMarkersOnMap(
     LatLng vehiclePos,
     LatLng phonePos,
@@ -1058,35 +1063,40 @@ class _FullScreenMapState extends State<FullScreenMap>
     final double midLng = (vehiclePos.longitude + phonePos.longitude) / 2;
     final LatLng midpoint = LatLng(midLat, midLng);
 
-    // Calculate distance between points to determine zoom
-    final double latDiff = (vehiclePos.latitude - phonePos.latitude).abs();
-    final double lngDiff = (vehiclePos.longitude - phonePos.longitude).abs();
-    final double maxDiff = latDiff > lngDiff ? latDiff : lngDiff;
+    // Calculate actual geodesic distance in meters between user phone and vehicle
+    final double distMeters = Geolocator.distanceBetween(
+      vehiclePos.latitude,
+      vehiclePos.longitude,
+      phonePos.latitude,
+      phonePos.longitude,
+    );
 
-    // Map degree difference to zoom level (approximate)
+    // Dynamic zoom based on distance to vehicle (higher zoom when close to see walking movement)
     double zoom = 15.0;
-    if (maxDiff > 60.0) {
-      zoom = 2.0;
-    } else if (maxDiff > 30.0) {
-      zoom = 3.0;
-    } else if (maxDiff > 10.0) {
-      zoom = 4.5;
-    } else if (maxDiff > 5.0) {
-      zoom = 6.0;
-    } else if (maxDiff > 2.0) {
-      zoom = 7.5;
-    } else if (maxDiff > 1.0) {
-      zoom = 8.5;
-    } else if (maxDiff > 0.5) {
-      zoom = 10.0;
-    } else if (maxDiff > 0.2) {
-      zoom = 11.5;
-    } else if (maxDiff > 0.1) {
-      zoom = 12.5;
-    } else if (maxDiff > 0.05) {
-      zoom = 13.5;
-    } else if (maxDiff > 0.01) {
-      zoom = 14.5;
+    if (distMeters <= 30) {
+      zoom = 19.2; // Right next to vehicle / parking spot
+    } else if (distMeters <= 75) {
+      zoom = 18.5; // Same parking aisle / mall section
+    } else if (distMeters <= 150) {
+      zoom = 17.8; // Walking inside parking / mall
+    } else if (distMeters <= 300) {
+      zoom = 17.0; // Short walk (~1 block)
+    } else if (distMeters <= 600) {
+      zoom = 16.2; // ~2-3 blocks
+    } else if (distMeters <= 1200) {
+      zoom = 15.5; // ~1 km
+    } else if (distMeters <= 2500) {
+      zoom = 14.8; // ~2.5 km
+    } else if (distMeters <= 5000) {
+      zoom = 14.0; // ~5 km
+    } else if (distMeters <= 10000) {
+      zoom = 13.0; // ~10 km
+    } else if (distMeters <= 25000) {
+      zoom = 11.8; // ~25 km
+    } else if (distMeters <= 50000) {
+      zoom = 10.8;
+    } else {
+      zoom = 9.5;
     }
 
     _animateCameraTo(
@@ -1094,7 +1104,7 @@ class _FullScreenMapState extends State<FullScreenMap>
       zoom: zoom,
       tilt: 0.0,
       bearing: bearing,
-      duration: const Duration(milliseconds: 1400),
+      duration: const Duration(milliseconds: 1200),
       curve: Curves.easeInOutCubic,
     );
   }
@@ -1797,92 +1807,100 @@ class _FullScreenMapState extends State<FullScreenMap>
   }
 
   Widget _buildTopActions() {
-    return Positioned(
-      top: MediaQuery.of(context).padding.top + 10,
-      left: 10,
-      right: 10,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _buildRoundButton(
-            Icons.arrow_back_ios_new,
-            onTap: () => Navigator.pop(context),
-          ),
-          BlocBuilder<FullScreenMapUiCubit, FullScreenMapUiState>(
-            bloc: _uiCubit,
-            builder: (context, uiState) {
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  _buildRoundButton(
-                    Icons.more_vert,
-                    onTap: () => _uiCubit.toggleSharedWithMe(),
-                  ),
-                  if (uiState.showSharedWithMe)
-                    TweenAnimationBuilder<double>(
-                      tween: Tween(begin: 0.0, end: 1.0),
-                      duration: const Duration(milliseconds: 200),
-                      builder: (context, value, child) {
-                        return Opacity(
-                          opacity: value,
-                          child: Transform.translate(
-                            offset: Offset(0, 10 * value - 10),
-                            child: child,
-                          ),
-                        );
-                      },
-                      child: GestureDetector(
-                        onTap: () {
-                          _uiCubit.toggleSharedWithMe(); // Close the menu
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const SharedWithMeScreen(),
-                            ),
-                          );
-                        },
-                        child: Container(
-                          margin: const EdgeInsets.only(top: 8),
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 10,
-                          ),
-                          decoration: BoxDecoration(
-                            color: Theme.of(
-                              context,
-                            ).cardColor.withValues(alpha: 0.95),
-                            borderRadius: BorderRadius.circular(12),
-                            border: Border.all(
-                              color: Theme.of(context).dividerColor,
-                            ),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withValues(alpha: 0.3),
-                                blurRadius: 10,
-                                spreadRadius: 1,
+    return BlocBuilder<FullScreenMapUiCubit, FullScreenMapUiState>(
+      bloc: _uiCubit,
+      builder: (context, uiState) {
+        if (uiState.isMapFullScreen) return const SizedBox.shrink();
+        return Positioned(
+          top: MediaQuery.of(context).padding.top + 10,
+          left: 10,
+          right: 10,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildRoundButton(
+                Icons.arrow_back_ios_new,
+                onTap: () => Navigator.pop(context),
+              ),
+              BlocBuilder<FullScreenMapUiCubit, FullScreenMapUiState>(
+                bloc: _uiCubit,
+                builder: (context, uiState) {
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      _buildRoundButton(
+                        Icons.more_vert,
+                        onTap: () => _uiCubit.toggleSharedWithMe(),
+                      ),
+                      if (uiState.showSharedWithMe)
+                        TweenAnimationBuilder<double>(
+                          tween: Tween(begin: 0.0, end: 1.0),
+                          duration: const Duration(milliseconds: 200),
+                          builder: (context, value, child) {
+                            return Opacity(
+                              opacity: value,
+                              child: Transform.translate(
+                                offset: Offset(0, 10 * value - 10),
+                                child: child,
                               ),
-                            ],
-                          ),
-                          child: Text(
-                            AppLocalizations.of(context)!.sharedWithMe,
-                            style: TextStyle(
-                              color: Theme.of(context).colorScheme.onSurface,
-                              fontSize: 13,
-                              fontWeight: FontWeight.w500,
+                            );
+                          },
+                          child: GestureDetector(
+                            onTap: () {
+                              _uiCubit.toggleSharedWithMe(); // Close the menu
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const SharedWithMeScreen(),
+                                ),
+                              );
+                            },
+                            child: Container(
+                              margin: const EdgeInsets.only(top: 8),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 10,
+                              ),
+                              decoration: BoxDecoration(
+                                color: Theme.of(
+                                  context,
+                                ).cardColor.withValues(alpha: 0.95),
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(
+                                  color: Theme.of(context).dividerColor,
+                                ),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withValues(alpha: 0.3),
+                                    blurRadius: 10,
+                                    spreadRadius: 1,
+                                  ),
+                                ],
+                              ),
+                              child: Text(
+                                AppLocalizations.of(context)!.sharedWithMe,
+                                style: TextStyle(
+                                  color: Theme.of(context).colorScheme.onSurface,
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                    ),
-                ],
-              );
-            },
+                    ],
+                  );
+                },
+              ),
+            ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
+
+
 
   Widget _buildLeftSideActions() {
     return ValueListenableBuilder<double>(
@@ -2193,8 +2211,8 @@ class _FullScreenMapState extends State<FullScreenMap>
                       Transform.scale(scale: scale, child: child),
                   child: Container(
                     padding: const EdgeInsets.symmetric(
-                      horizontal: 14,
-                      vertical: 7,
+                      horizontal: 20,
+                      vertical: 10,
                     ),
                     decoration: BoxDecoration(
                       gradient: const LinearGradient(
@@ -2202,13 +2220,13 @@ class _FullScreenMapState extends State<FullScreenMap>
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
                       ),
-                      borderRadius: BorderRadius.circular(20),
+                      borderRadius: BorderRadius.circular(24),
                       boxShadow: [
                         BoxShadow(
-                          color: const Color(0xFF2979FF).withValues(alpha: 0.4),
-                          blurRadius: 10,
-                          spreadRadius: 1,
-                          offset: const Offset(0, 3),
+                          color: const Color(0xFF2979FF).withValues(alpha: 0.45),
+                          blurRadius: 14,
+                          spreadRadius: 2,
+                          offset: const Offset(0, 4),
                         ),
                       ],
                     ),
@@ -2218,16 +2236,16 @@ class _FullScreenMapState extends State<FullScreenMap>
                         const Icon(
                           Icons.social_distance,
                           color: Colors.white,
-                          size: 16,
+                          size: 20,
                         ),
-                        const SizedBox(width: 6),
+                        const SizedBox(width: 8),
                         Text(
                           distLabel,
                           style: const TextStyle(
                             color: Colors.white,
-                            fontSize: 13,
-                            fontWeight: FontWeight.w700,
-                            letterSpacing: 0.3,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 0.5,
                           ),
                         ),
                       ],
@@ -2243,70 +2261,67 @@ class _FullScreenMapState extends State<FullScreenMap>
   }
 
   Widget _buildRightSideActions() {
-
-
-    return ValueListenableBuilder<double>(
-      valueListenable: _sheetExtent,
-      builder: (context, extent, child) {
-        final screenHeight = MediaQuery.of(context).size.height;
-        final bottomMargin = (extent * screenHeight) + 16.0;
-        final bool hasDevice =
-            _currentVehicle?.imei != null &&
-            _currentVehicle!.imei!.isNotEmpty &&
-            !_isWarrantyExpired;
-        return Positioned(
-          right: 16,
-          bottom: bottomMargin,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              _buildMapActionButton(
-                _getVehicleIcon(_currentVehicle),
-                badgeIcon: Icons.edit,
-                onTap: _showVehicleIconPicker,
-                isDisabled: !hasDevice,
+    return BlocBuilder<FullScreenMapUiCubit, FullScreenMapUiState>(
+      bloc: _uiCubit,
+      builder: (context, uiState) {
+        return ValueListenableBuilder<double>(
+          valueListenable: _sheetExtent,
+          builder: (context, extent, child) {
+            final screenHeight = MediaQuery.of(context).size.height;
+            final bottomMargin = uiState.isMapFullScreen
+                ? MediaQuery.of(context).padding.bottom + 20.0
+                : (extent * screenHeight) + 16.0;
+            final bool hasDevice =
+                _currentVehicle?.imei != null &&
+                _currentVehicle!.imei!.isNotEmpty &&
+                !_isWarrantyExpired;
+            return Positioned(
+              right: 16,
+              bottom: bottomMargin,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  _buildMapActionButton(
+                    _getVehicleIcon(_currentVehicle),
+                    badgeIcon: Icons.edit,
+                    onTap: _showVehicleIconPicker,
+                    isDisabled: !hasDevice,
+                  ),
+                  _buildMapActionButton(
+                    Icons.map_outlined,
+                    onTap: _showMapStyleSheet,
+                  ),
+                  _buildMapActionButton(
+                    Icons.person_pin_circle_outlined,
+                    onTap: () {
+                      if (!hasDevice) return;
+                      _uiCubit.toggleCurrentLocation();
+                      _applyCameraForCurrentMode();
+                      // Compute polyline & distance immediately on toggle
+                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                        _refreshDistanceAndPolyline();
+                      });
+                    },
+                    isActiveColor: uiState.showCurrentLocation,
+                    isDisabled: !hasDevice,
+                  ),
+                  _buildMapActionButton(
+                    Icons.my_location,
+                    onTap: _recenterCamera,
+                    isActiveColor: uiState.isAutoFollowing,
+                  ),
+                  _buildMapActionButton(
+                    uiState.isMapFullScreen
+                        ? Icons.fullscreen_exit
+                        : Icons.fullscreen,
+                    onTap: () => _uiCubit.toggleMapFullScreen(),
+                    isActiveColor: uiState.isMapFullScreen,
+                  ),
+                ],
               ),
-              _buildMapActionButton(
-                Icons.map_outlined,
-                onTap: _showMapStyleSheet,
-              ),
-              BlocBuilder<FullScreenMapUiCubit, FullScreenMapUiState>(
-                bloc: _uiCubit,
-                builder: (context, uiState) {
-                  return Column(
-                    children: [
-                      _buildMapActionButton(
-                        Icons.person_pin_circle_outlined,
-                        onTap: () {
-                          if (!hasDevice) return;
-                          _uiCubit.toggleCurrentLocation();
-                          _applyCameraForCurrentMode();
-                          // Compute polyline & distance immediately on toggle
-                          WidgetsBinding.instance.addPostFrameCallback((_) {
-                            _refreshDistanceAndPolyline();
-                          });
-                        },
-                        isActiveColor: uiState.showCurrentLocation,
-                        isDisabled: !hasDevice,
-                      ),
-
-                      _buildMapActionButton(
-                        Icons.my_location,
-                        onTap: _recenterCamera,
-                        isActiveColor: uiState.isAutoFollowing,
-                      ),
-                    ],
-                  );
-                },
-              ),
-              _buildMapActionButton(
-                Icons.fullscreen,
-                onTap: _focusOnBike,
-                isDisabled: !hasDevice,
-              ),
-            ],
-          ),
+            );
+          },
         );
       },
     );
@@ -2540,16 +2555,18 @@ class _FullScreenMapState extends State<FullScreenMap>
   }
 
   Widget _buildDraggableBottomCard() {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final screenHeight = constraints.maxHeight;
-        // Consistent initial and max heights across all devices
-        final double initialExtent = (115.0 / screenHeight).clamp(0.05, 0.50);
-        final double maxExtent = (310.0 / screenHeight).clamp(0.15, 0.85);
+    return BlocBuilder<FullScreenMapUiCubit, FullScreenMapUiState>(
+      bloc: _uiCubit,
+      builder: (context, uiState) {
+        if (uiState.isMapFullScreen) return const SizedBox.shrink();
+        return LayoutBuilder(
+          builder: (context, constraints) {
+            final screenHeight = constraints.maxHeight;
+            // Consistent initial and max heights across all devices
+            final double initialExtent = (142.0 / screenHeight).clamp(0.10, 0.40);
+            final double maxExtent = (395.0 / screenHeight).clamp(0.35, 0.75);
 
-        final double maxPixels = maxExtent * screenHeight;
-
-        return DraggableScrollableSheet(
+            return DraggableScrollableSheet(
           initialChildSize: initialExtent,
           minChildSize: initialExtent,
           maxChildSize: maxExtent,
@@ -2563,14 +2580,15 @@ class _FullScreenMapState extends State<FullScreenMap>
                 decoration: BoxDecoration(
                   color: Theme.of(context).scaffoldBackgroundColor,
                   borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(36),
-                    topRight: Radius.circular(36),
+                    topLeft: Radius.circular(32),
+                    topRight: Radius.circular(32),
                   ),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.08),
-                      blurRadius: 15,
+                      color: Colors.black.withValues(alpha: 0.10),
+                      blurRadius: 20,
                       spreadRadius: 2,
+                      offset: const Offset(0, -2),
                     ),
                   ],
                 ),
@@ -2588,7 +2606,7 @@ class _FullScreenMapState extends State<FullScreenMap>
                           width: 44,
                           height: 5,
                           decoration: BoxDecoration(
-                            color: Theme.of(context).dividerColor,
+                            color: Theme.of(context).dividerColor.withValues(alpha: 0.8),
                             borderRadius: BorderRadius.circular(3),
                           ),
                         ),
@@ -2609,14 +2627,15 @@ class _FullScreenMapState extends State<FullScreenMap>
                               if (_currentVehicle?.imei != null &&
                                   _currentVehicle!.imei!.isNotEmpty &&
                                   !_isWarrantyExpired) ...[
-                                const SizedBox(height: 8),
-                                _buildStatsGrid(),
                                 const SizedBox(height: 12),
+                                _buildStatsGrid(),
+                                const SizedBox(height: 10),
                                 _buildBottomInfoCards(),
+                                SizedBox(height: MediaQuery.of(context).padding.bottom + 8),
                               ] else ...[
                                 const SizedBox(height: 40),
                                 _buildBuyDeviceButton(),
-                                const SizedBox(height: 40),
+                                SizedBox(height: MediaQuery.of(context).padding.bottom + 20),
                               ],
                             ],
                           ),
@@ -2631,7 +2650,9 @@ class _FullScreenMapState extends State<FullScreenMap>
         );
       },
     );
-  }
+  },
+);
+}
 
   Widget _buildBuyDeviceButton() {
     final l10n = AppLocalizations.of(context)!;
@@ -2844,7 +2865,7 @@ class _FullScreenMapState extends State<FullScreenMap>
 
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.end,
+              mainAxisSize: MainAxisSize.min,
               children: [
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -2856,7 +2877,6 @@ class _FullScreenMapState extends State<FullScreenMap>
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
-
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Text(
@@ -2865,11 +2885,14 @@ class _FullScreenMapState extends State<FullScreenMap>
                                   context,
                                 )!.vehicleNamePlaceholder,
                             style: TextStyle(
-                              fontSize: 18,
+                              fontSize: 17,
                               fontWeight: FontWeight.bold,
                               color: Theme.of(context).colorScheme.onSurface,
                             ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                           ),
+                          const SizedBox(height: 2),
                           Text(
                             _currentVehicle?.vehicleNumber ??
                                 AppLocalizations.of(
@@ -2877,84 +2900,57 @@ class _FullScreenMapState extends State<FullScreenMap>
                                 )!.vehicleNumberPlaceholder,
                             style: const TextStyle(
                               fontSize: 14,
-                              color: Color(
-                                0xFF4A90A4,
-                              ), // Matched blue from screenshot
-                              fontWeight: FontWeight.w600,
+                              color: Color(0xFF4A90A4),
+                              fontWeight: FontWeight.w700,
+                              letterSpacing: 0.3,
                             ),
                           ),
                         ],
                       ),
                     ),
                     if (hasDevice) ...[
-                      // Speed Info with Animated Switcher
-                      AnimatedSwitcher(
-                        duration: const Duration(milliseconds: 400),
-                        layoutBuilder:
-                            (
-                              Widget? currentChild,
-                              List<Widget> previousChildren,
-                            ) {
-                              return Stack(
-                                alignment: Alignment.centerRight,
-                                children: <Widget>[
-                                  ...previousChildren,
-                                  if (currentChild != null) currentChild,
-                                ],
-                              );
-                            },
-                        switchInCurve: Curves.easeOutBack,
-                        switchOutCurve: Curves.easeInQuint,
-                        transitionBuilder: (child, animation) {
-                          final offsetAnimation = Tween<Offset>(
-                            begin: Offset(
-                              0.0,
-                              _uiCubit.state.isSlidingUp ? -0.5 : 0.5,
-                            ),
-                            end: Offset.zero,
-                          ).animate(animation);
-                          return FadeTransition(
-                            opacity: animation,
-                            child: SlideTransition(
-                              position: offsetAnimation,
-                              child: child,
-                            ),
-                          );
-                        },
-                        child: _buildHeaderMetric(liveDevice, liveSpeed, lastRide, isLastRideToday),
-                      ),
-                      const SizedBox(width: 12),
-                      // Up/Down Arrows
-                      Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          _buildSmallArrowButton(
-                            Icons.keyboard_arrow_up,
-                            onTap: () => _changeHeaderMetric(context, true),
-                          ),
-                          const SizedBox(height: 12),
-                          _buildSmallArrowButton(
-                            Icons.keyboard_arrow_down,
-                            onTap: () => _changeHeaderMetric(context, false),
-                          ),
-                        ],
-                      ),
+                      // Compact Animated Metric Pill with Stepper Arrows
+                      _buildHeaderMetricPill(liveDevice, liveSpeed, lastRide, isLastRideToday),
                     ],
                   ],
                 ),
-                const SizedBox(height: 8),
-                // Parked Since Status
-                if (hasDevice && parkedSince.isNotEmpty)
-                  Text(
-                    AppLocalizations.of(context)!.parkedSinceTime(parkedSince),
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Theme.of(
-                        context,
-                      ).colorScheme.onSurface.withValues(alpha: 0.5),
-                      fontWeight: FontWeight.w500,
-                    ),
+                if (hasDevice && parkedSince.isNotEmpty) ...[
+                  const SizedBox(height: 6),
+                  Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.08),
+                          borderRadius: BorderRadius.circular(6),
+                          border: Border.all(
+                            color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.2),
+                            width: 1,
+                          ),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.access_time_rounded,
+                              size: 12,
+                              color: Theme.of(context).colorScheme.primary,
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              AppLocalizations.of(context)!.parkedSinceTime(parkedSince),
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.75),
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
+                ],
               ],
             );
           },
@@ -2963,126 +2959,236 @@ class _FullScreenMapState extends State<FullScreenMap>
     );
   }
 
-  Widget _buildHeaderMetric(
-      Map<String, dynamic> liveDevice, String liveSpeed, Ride? lastRide, bool isLastRideToday) {
+  Widget _buildHeaderMetricPill(
+    Map<String, dynamic> liveDevice,
+    String liveSpeed,
+    Ride? lastRide,
+    bool isLastRideToday,
+  ) {
     return BlocBuilder<FullScreenMapUiCubit, FullScreenMapUiState>(
       bloc: _uiCubit,
       builder: (context, uiState) {
-        String value = liveSpeed;
-        String unit = context.displayKmh;
-        String label = AppLocalizations.of(context)!.speedLabel;
+        return Container(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.06),
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.15),
+              width: 1,
+            ),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              // Animated Metric Display
+              ClipRect(
+                child: AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 350),
+                  switchInCurve: Curves.easeOutCubic,
+                  switchOutCurve: Curves.easeInCubic,
+                  transitionBuilder: (child, animation) {
+                    final isUp = uiState.isSlidingUp;
+                    final offsetAnimation = Tween<Offset>(
+                      begin: Offset(0.0, isUp ? 0.9 : -0.9),
+                      end: Offset.zero,
+                    ).animate(animation);
+                    return FadeTransition(
+                      opacity: animation,
+                      child: SlideTransition(
+                        position: offsetAnimation,
+                        child: child,
+                      ),
+                    );
+                  },
+                  child: _buildHeaderMetric(
+                    liveDevice,
+                    liveSpeed,
+                    lastRide,
+                    isLastRideToday,
+                    uiState.headerMetricIndex,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 8),
+              // Compact Up / Down Stepper Column
+              Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  BouncingWidget(
+                    onTap: () => _changeHeaderMetric(context, true),
+                    child: Container(
+                      padding: const EdgeInsets.all(2),
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).cardColor,
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.08),
+                            blurRadius: 3,
+                            offset: const Offset(0, 1),
+                          ),
+                        ],
+                      ),
+                      child: Icon(
+                        Icons.keyboard_arrow_up_rounded,
+                        size: 15,
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 3),
+                  BouncingWidget(
+                    onTap: () => _changeHeaderMetric(context, false),
+                    child: Container(
+                      padding: const EdgeInsets.all(2),
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).cardColor,
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.08),
+                            blurRadius: 3,
+                            offset: const Offset(0, 1),
+                          ),
+                        ],
+                      ),
+                      child: Icon(
+                        Icons.keyboard_arrow_down_rounded,
+                        size: 15,
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
 
-        if (uiState.headerMetricIndex == 1) {
-          String todayDistanceStr = "0.00";
-          if (isLastRideToday && lastRide != null) {
-            todayDistanceStr = lastRide.distance.toStringAsFixed(2);
+  Widget _buildHeaderMetric(
+    Map<String, dynamic> liveDevice,
+    String liveSpeed,
+    Ride? lastRide,
+    bool isLastRideToday,
+    int headerMetricIndex,
+  ) {
+    String value = liveSpeed;
+    String unit = context.displayKmh;
+    String label = AppLocalizations.of(context)!.speedLabel;
+
+    if (headerMetricIndex == 1) {
+      String todayDistanceStr = "0.00";
+      if (isLastRideToday && lastRide != null) {
+        todayDistanceStr = lastRide.distance.toStringAsFixed(2);
+      } else {
+        final todayDistanceRaw = liveDevice['todayDistance'] ?? liveDevice['td'];
+        if (todayDistanceRaw != null && todayDistanceRaw.toString().isNotEmpty) {
+          double val = double.tryParse(todayDistanceRaw.toString()) ?? 0.0;
+          todayDistanceStr = val.toStringAsFixed(2);
+        }
+      }
+      value = todayDistanceStr;
+      unit = context.displayKm;
+      label = AppLocalizations.of(context)!.distanceLabel;
+    } else if (headerMetricIndex == 2) {
+      String durationStr = "0${AppLocalizations.of(context)!.minutesShort}";
+      if (isLastRideToday && lastRide != null) {
+        durationStr = lastRide.duration;
+      } else {
+        final todayDurationRaw = liveDevice['todayDuration'] ??
+            liveDevice['dur'] ??
+            liveDevice['duration'] ??
+            "0";
+        if (todayDurationRaw != null &&
+            todayDurationRaw.toString().isNotEmpty &&
+            todayDurationRaw.toString() != "0") {
+          final rawStr = todayDurationRaw.toString();
+          if (rawStr.contains('m') ||
+              rawStr.contains('h') ||
+              rawStr.contains(':')) {
+            durationStr = rawStr;
           } else {
-            final todayDistanceRaw =
-                liveDevice['todayDistance'] ?? liveDevice['td'];
-            if (todayDistanceRaw != null &&
-                todayDistanceRaw.toString().isNotEmpty) {
-              double val = double.tryParse(todayDistanceRaw.toString()) ?? 0.0;
-              todayDistanceStr = val.toStringAsFixed(2);
-            }
-          }
-          value = todayDistanceStr;
-          unit = context.displayKm;
-          label = AppLocalizations.of(context)!.distanceLabel;
-        } else if (uiState.headerMetricIndex == 2) {
-          String durationStr =
-              "0${AppLocalizations.of(context)!.minutesShort} 0${AppLocalizations.of(context)!.secondsShort}";
-          if (isLastRideToday && lastRide != null) {
-            durationStr = lastRide.duration;
-          } else {
-            final todayDurationRaw = liveDevice['todayDuration'] ??
-                liveDevice['dur'] ??
-                liveDevice['duration'] ??
-                "0";
-            if (todayDurationRaw != null &&
-                todayDurationRaw.toString().isNotEmpty &&
-                todayDurationRaw.toString() != "0") {
-              final rawStr = todayDurationRaw.toString();
-              if (rawStr.contains('m') ||
-                  rawStr.contains('h') ||
-                  rawStr.contains(':')) {
-                durationStr = rawStr;
+            final double? numVal = double.tryParse(rawStr);
+            if (numVal != null && numVal > 0) {
+              int totalSeconds = numVal.round();
+              if (numVal > 100000) {
+                totalSeconds = (numVal / 1000).round();
+              } else if (numVal < 1440) {
+                totalSeconds = (numVal * 60).round();
+              }
+              final int h = totalSeconds ~/ 3600;
+              final int m = (totalSeconds % 3600) ~/ 60;
+              final int s = totalSeconds % 60;
+              if (h > 0) {
+                durationStr =
+                    "${h}h $m${AppLocalizations.of(context)!.minutesShort}";
               } else {
-                final double? numVal = double.tryParse(rawStr);
-                if (numVal != null && numVal > 0) {
-                  int totalSeconds = numVal.round();
-                  if (numVal > 100000) {
-                    totalSeconds = (numVal / 1000).round();
-                  } else if (numVal < 1440) {
-                    totalSeconds = (numVal * 60).round();
-                  }
-                  final int h = totalSeconds ~/ 3600;
-                  final int m = (totalSeconds % 3600) ~/ 60;
-                  final int s = totalSeconds % 60;
-                  if (h > 0) {
-                    durationStr =
-                        "${h}h $m${AppLocalizations.of(context)!.minutesShort}";
-                  } else {
-                    durationStr =
-                        "$m${AppLocalizations.of(context)!.minutesShort} $s${AppLocalizations.of(context)!.secondsShort}";
-                  }
-                }
+                durationStr =
+                    "$m${AppLocalizations.of(context)!.minutesShort} $s${AppLocalizations.of(context)!.secondsShort}";
               }
             }
           }
-          value = durationStr;
-          unit = "";
-          label = AppLocalizations.of(context)!.durationLabel;
-        } else if (uiState.headerMetricIndex == 3) {
-          String topSpeedStr = "0";
-          if (isLastRideToday && lastRide != null) {
-            topSpeedStr = lastRide.topSpeed.toStringAsFixed(1);
-          }
-          value = topSpeedStr;
-          unit = context.displayKmh;
-          label = AppLocalizations.of(context)!.topSpeed;
         }
+      }
+      value = durationStr;
+      unit = "";
+      label = AppLocalizations.of(context)!.durationLabel;
+    } else if (headerMetricIndex == 3) {
+      String topSpeedStr = "0";
+      if (isLastRideToday && lastRide != null) {
+        topSpeedStr = lastRide.topSpeed.toStringAsFixed(1);
+      }
+      value = topSpeedStr;
+      unit = context.displayKmh;
+      label = AppLocalizations.of(context)!.topSpeed;
+    }
 
-        return Column(
-          key: ValueKey<int>(uiState.headerMetricIndex),
-          crossAxisAlignment: CrossAxisAlignment.end,
+    return Column(
+      key: ValueKey<int>(headerMetricIndex),
+      crossAxisAlignment: CrossAxisAlignment.end,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Row(
           mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.end,
+          crossAxisAlignment: CrossAxisAlignment.baseline,
+          textBaseline: TextBaseline.alphabetic,
           children: [
-            Row(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.end,
-              crossAxisAlignment: CrossAxisAlignment.baseline,
-              textBaseline: TextBaseline.alphabetic,
-              children: [
-                Text(
-                  value,
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: Theme.of(context).colorScheme.onSurface,
-                  ),
-                ),
-                const SizedBox(width: 2),
-                Text(
-                  unit,
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                    color: Theme.of(context).colorScheme.onSurface,
-                  ),
-                ),
-              ],
-            ),
             Text(
-              label,
+              value,
               style: TextStyle(
-                fontSize: 12,
-                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.4),
-                fontWeight: FontWeight.w500,
+                fontSize: 19,
+                fontWeight: FontWeight.bold,
+                color: Theme.of(context).colorScheme.onSurface,
               ),
             ),
+            if (unit.isNotEmpty) ...[
+              const SizedBox(width: 2),
+              Text(
+                unit,
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+              ),
+            ],
           ],
-        );
-      },
+        ),
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: 11,
+            color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      ],
     );
   }
 
@@ -3237,37 +3343,88 @@ class _FullScreenMapState extends State<FullScreenMap>
               }
             }
 
+            // Apply persistent memory caching so stats values retain their last known value during background/foreground or API re-fetches
+            if (todayDistanceStr != "0.00" && todayDistanceStr != "0.0" && todayDistanceStr != "0") {
+              _cachedTodayDistanceStr = todayDistanceStr;
+            } else if (_cachedTodayDistanceStr.isNotEmpty) {
+              todayDistanceStr = _cachedTodayDistanceStr;
+            }
+
+            if (durationStr != "0${AppLocalizations.of(context)!.minutesShort} 0${AppLocalizations.of(context)!.secondsShort}" &&
+                durationStr != "0m 0s" &&
+                durationStr != "0s") {
+              _cachedDurationStr = durationStr;
+            } else if (_cachedDurationStr.isNotEmpty) {
+              durationStr = _cachedDurationStr;
+            }
+
+            if (topSpeedStr != "0 ${context.displayKmh}" &&
+                topSpeedStr != "0.0 ${context.displayKmh}" &&
+                topSpeedStr != "0") {
+              _cachedTopSpeedStr = topSpeedStr;
+            } else if (_cachedTopSpeedStr.isNotEmpty) {
+              topSpeedStr = _cachedTopSpeedStr;
+            }
+
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  AppLocalizations.of(context)!.todaysStats,
-                  style: const TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.grey,
-                  ),
-                ),
-                const SizedBox(height: 10),
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    _buildGridItem(
-                      "$todayDistanceStr ${context.displayKm}",
-                      AppLocalizations.of(context)!.distanceLabel,
+                    Icon(
+                      Icons.auto_graph_rounded,
+                      size: 18,
+                      color: Theme.of(context).colorScheme.primary,
                     ),
-                    _buildGridItem(
-                      durationStr,
-                      AppLocalizations.of(context)!.durationLabel,
+                    const SizedBox(width: 6),
+                    Text(
+                      AppLocalizations.of(context)!.todaysStats,
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.bold,
+                        color: Theme.of(context).colorScheme.onSurface,
+                      ),
                     ),
-                    _buildGridItem(
-                      "$liveSpeed ${context.displayKmh}",
-                      AppLocalizations.of(context)!.speedLabel,
+                  ],
+                ),
+                const SizedBox(height: 12),
+                Row(
+                  children: [
+                    Expanded(
+                      child: _buildGridItem(
+                        icon: Icons.straighten_rounded,
+                        iconColor: const Color(0xFF2196F3),
+                        value: "$todayDistanceStr ${context.displayKm}",
+                        label: AppLocalizations.of(context)!.distanceLabel,
+                      ),
                     ),
-                    _buildGridItem(
-                      topSpeedStr,
-                      AppLocalizations.of(context)!.topSpeed,
-                      isPlus: topSpeedStr == "Plus",
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: _buildGridItem(
+                        icon: Icons.timer_outlined,
+                        iconColor: const Color(0xFFFF9800),
+                        value: durationStr,
+                        label: AppLocalizations.of(context)!.durationLabel,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: _buildGridItem(
+                        icon: Icons.speed_rounded,
+                        iconColor: const Color(0xFF4CAF50),
+                        value: "$liveSpeed ${context.displayKmh}",
+                        label: AppLocalizations.of(context)!.speedLabel,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: _buildGridItem(
+                        icon: Icons.bolt_rounded,
+                        iconColor: const Color(0xFF9C27B0),
+                        value: topSpeedStr,
+                        label: AppLocalizations.of(context)!.topSpeed,
+                        isPlus: topSpeedStr == "Plus",
+                      ),
                     ),
                   ],
                 ),
@@ -3279,53 +3436,86 @@ class _FullScreenMapState extends State<FullScreenMap>
     );
   }
 
-  Widget _buildGridItem(String value, String label, {bool isPlus = false}) {
-    return Column(
-      children: [
-        if (isPlus)
+  Widget _buildGridItem({
+    required IconData icon,
+    required Color iconColor,
+    required String value,
+    required String label,
+    bool isPlus = false,
+  }) {
+    final cardBg = Theme.of(context).cardColor;
+    final dividerColor = Theme.of(context).dividerColor.withValues(alpha: 0.4);
+
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 4),
+      decoration: BoxDecoration(
+        color: cardBg,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: dividerColor),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.03),
+            blurRadius: 6,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+            padding: const EdgeInsets.all(5),
             decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                colors: [Color(0xFFE6BE75), Color(0xFFD4AF37)],
-              ),
-              borderRadius: BorderRadius.circular(6),
-              boxShadow: [
-                BoxShadow(
-                  color: const Color(0xFFD4AF37).withValues(alpha: 0.3),
-                  blurRadius: 4,
-                  offset: const Offset(0, 2),
+              color: iconColor.withValues(alpha: 0.12),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(icon, size: 14, color: iconColor),
+          ),
+          const SizedBox(height: 6),
+          if (isPlus)
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(
+                  colors: [Color(0xFFE6BE75), Color(0xFFD4AF37)],
                 ),
-              ],
-            ),
-            child: Text(
-              AppLocalizations.of(context)!.plusLabel,
-              style: const TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 1,
-                color: Colors.black87,
+                borderRadius: BorderRadius.circular(6),
+              ),
+              child: Text(
+                AppLocalizations.of(context)!.plusLabel,
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 10,
+                  color: Colors.black87,
+                ),
+              ),
+            )
+          else
+            FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Text(
+                value,
+                maxLines: 1,
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 13,
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
               ),
             ),
-          )
-        else
+          const SizedBox(height: 4),
           Text(
-            value,
+            label,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
             style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 17,
-              color: Theme.of(context).colorScheme.onSurface,
+              fontSize: 10,
+              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
+              fontWeight: FontWeight.w600,
             ),
           ),
-        const SizedBox(height: 8),
-        Text(
-          label,
-          style: TextStyle(
-            fontSize: 13,
-            color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.4),
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
@@ -3381,17 +3571,45 @@ class _FullScreenMapState extends State<FullScreenMap>
           } catch (_) {}
         }
 
-        final batteryVal = liveDevice['api_battery'];
+        final batteryVal = liveDevice['api_battery'] ?? liveDevice['battery'] ?? liveDevice['internalBatteryLevel'];
 
-        final voltageVal = null; // Ignored to strictly use DeviceStatus API battery
+        // Extract external voltage or raw voltage from liveDevice dictionary
+        final rawVoltage = liveDevice['externalVoltage'] ??
+            liveDevice['external_voltage'] ??
+            liveDevice['voltage'] ??
+            liveDevice['extVoltage'] ??
+            (attrs is Map ? (attrs['externalVoltage'] ?? attrs['voltage']) : null);
+
+        String bracketText = "";
+        if (rawVoltage != null &&
+            rawVoltage.toString().trim().toLowerCase() != 'null' &&
+            rawVoltage.toString().trim().isNotEmpty) {
+          final v = rawVoltage.toString().trim();
+          if (v.toLowerCase().endsWith('v')) {
+            bracketText = " ($v)";
+          } else {
+            final double? numV = double.tryParse(v);
+            if (numV != null) {
+              bracketText = " (${numV.toStringAsFixed(1)}V)";
+            } else {
+              bracketText = " (${v}V)";
+            }
+          }
+        } else if (batteryVal != null &&
+            batteryVal.toString().trim().toLowerCase() != 'null' &&
+            batteryVal.toString().trim().isNotEmpty) {
+          final b = batteryVal.toString().trim();
+          if (b.isNotEmpty && b != 'null') {
+            bracketText = " ($b)";
+          }
+        }
 
         String batteryText = "--";
         Color batteryColor = Colors.green;
         IconData batteryIcon = Icons.battery_charging_full;
 
-        final rawVal = batteryVal ?? voltageVal;
-        if (rawVal != null && rawVal.toString().trim().toLowerCase() != 'null' && rawVal.toString().trim() != '') {
-          final rawStr = rawVal.toString().trim();
+        if (batteryVal != null && batteryVal.toString().trim().toLowerCase() != 'null' && batteryVal.toString().trim() != '') {
+          final rawStr = batteryVal.toString().trim();
           int? intLevel;
 
           if (rawStr.toLowerCase().startsWith('0x')) {
@@ -3438,12 +3656,18 @@ class _FullScreenMapState extends State<FullScreenMap>
                 batteryIcon = Icons.battery_full;
                 break;
               default:
-                batteryText = "--";
+                batteryText = "Normal";
                 batteryColor = Colors.green;
                 batteryIcon = Icons.battery_charging_full;
                 break;
             }
+          } else {
+            batteryText = rawStr;
           }
+        }
+
+        if (batteryText != "--" && bracketText.isNotEmpty) {
+          batteryText += bracketText;
         }
 
         return Row(

@@ -79,8 +79,21 @@ class DeviceWarrantyDetailsModel extends DeviceWarrantyDetailsEntity {
                        json['end_date']?.toString() ?? '';
     
     final daysLeftVal = json['daysLeft'] ?? json['days_left'] ?? json['remainingDays'] ?? json['remaining_days'];
-    final daysLeft = (daysLeftVal is num) ? daysLeftVal.toInt() : (int.tryParse(daysLeftVal?.toString() ?? '') ?? 0);
+    int daysLeft = (daysLeftVal is num) ? daysLeftVal.toInt() : (int.tryParse(daysLeftVal?.toString() ?? '') ?? 0);
     
+    if (expiryDate.isNotEmpty) {
+      try {
+        final expiry = DateTime.parse(expiryDate);
+        final now = DateTime.now();
+        final today = DateTime(now.year, now.month, now.day);
+        final expiryDay = DateTime(expiry.year, expiry.month, expiry.day);
+        final diff = expiryDay.difference(today).inDays;
+        if (diff >= 0) {
+          daysLeft = diff;
+        }
+      } catch (_) {}
+    }
+
     String expiryDateText = json['expiryDateText']?.toString() ?? json['expiry_date_text']?.toString() ?? '';
     if (expiryDateText.isEmpty && expiryDate.isNotEmpty) {
       try {
@@ -93,8 +106,8 @@ class DeviceWarrantyDetailsModel extends DeviceWarrantyDetailsEntity {
     }
     
     String daysLeftText = json['daysLeftText']?.toString() ?? json['days_left_text']?.toString() ?? '';
-    if (daysLeftText.isEmpty) {
-      daysLeftText = "$daysLeft Days Left";
+    if (daysLeftText.isEmpty || daysLeftText.contains('Days Left') || daysLeftText.contains('days left')) {
+      daysLeftText = "$daysLeft days left";
     }
 
     return DeviceWarrantyDetailsModel(

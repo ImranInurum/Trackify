@@ -42,14 +42,31 @@ class WarrantyStatusData {
   });
 
   factory WarrantyStatusData.fromJson(Map<String, dynamic> json) {
+    final expiryDate = json['expiryDate']?.toString() ?? json['expiry_date']?.toString() ?? '';
+    final daysLeftVal = json['daysLeft'] ?? json['days_left'] ?? 0;
+    int daysLeft = (daysLeftVal is num) ? daysLeftVal.toInt() : (int.tryParse(daysLeftVal?.toString() ?? '') ?? 0);
+
+    if (expiryDate.isNotEmpty) {
+      try {
+        final expiry = DateTime.parse(expiryDate);
+        final now = DateTime.now();
+        final today = DateTime(now.year, now.month, now.day);
+        final expiryDay = DateTime(expiry.year, expiry.month, expiry.day);
+        final diff = expiryDay.difference(today).inDays;
+        if (diff >= 0) {
+          daysLeft = diff;
+        }
+      } catch (_) {}
+    }
+
     return WarrantyStatusData(
-      startDate: json['startDate'] ?? '',
-      expiryDate: json['expiryDate'] ?? '',
-      durationMonths: json['durationMonths'] ?? 0,
-      daysLeft: json['daysLeft'] ?? 0,
-      isExpired: json['isExpired'] ?? false,
-      status: json['status'] ?? '',
-      paymentMethod: json['paymentMethod'] ?? '',
+      startDate: json['startDate']?.toString() ?? '',
+      expiryDate: expiryDate,
+      durationMonths: (json['durationMonths'] as num?)?.toInt() ?? 0,
+      daysLeft: daysLeft,
+      isExpired: json['isExpired'] ?? (daysLeft <= 0),
+      status: json['status']?.toString() ?? '',
+      paymentMethod: json['paymentMethod']?.toString() ?? '',
       amountPaid: json['amountPaid'] ?? 0,
     );
   }

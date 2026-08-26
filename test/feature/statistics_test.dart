@@ -1,6 +1,9 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:fpdart/fpdart.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:trackify/core/utils/shared_preferences.dart';
 import 'package:trackify/core/config/network/base_api_service.dart';
 import 'package:trackify/core/common/models/vehicle_list_model.dart';
 import 'package:trackify/core/common/usecase/get_user_vehicles_usecase.dart';
@@ -17,7 +20,14 @@ class MockGetUserVehiclesUsecase extends Mock
     implements GetUserVehiclesUsecase {}
 
 void main() {
-  setUpAll(() {
+  setUpAll(() async {
+    TestWidgetsFlutterBinding.ensureInitialized();
+    SharedPreferences.setMockInitialValues({});
+    await AppPreference.instance.init();
+    Hive.init('./test_hive');
+    if (!Hive.isBoxOpen('map_cache')) {
+      await Hive.openBox('map_cache');
+    }
     registerFallbackValue(
       const StatisticsRequestModel(imei: '123456789012345', date: '2026-05-21'),
     );

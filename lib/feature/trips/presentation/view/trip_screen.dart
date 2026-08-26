@@ -32,71 +32,25 @@ class _TripScreenState extends State<TripScreen>
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     return Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      backgroundColor: theme.scaffoldBackgroundColor,
 
       /// APP BAR
       appBar: AppBar(
-        elevation: 1,
-        shadowColor: Colors.black.withValues(alpha: 0.1),
-        backgroundColor: Theme.of(context).cardColor,
+        elevation: 0,
+        surfaceTintColor: Colors.transparent,
+        backgroundColor: theme.scaffoldBackgroundColor,
         title: Text(
           l10n.journey,
-          style: TextStyle(fontSize: 20.0, color: Theme.of(context).colorScheme.onSurface,
-            fontWeight: FontWeight.w600,
+          style: TextStyle(
+            fontSize: 20.0,
+            color: colorScheme.onSurface,
+            fontWeight: FontWeight.bold,
           ),
         ),
-        actions: [
-          /*
-          PopupMenuButton<String>(
-            elevation: 8,
-            color: Theme.of(context).cardColor,
-            surfaceTintColor: Colors.transparent,
-            onSelected: (value) {
-              if (value == l10n.savedRides) {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const SavedRidesScreen()),
-                );
-              } else if (value == l10n.sharedRides) {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const trackify_shared.SharedRidesScreen()),
-                );
-              } else {
-                ScaffoldMessenger.of(
-                  context,
-                ).showSnackBar(SnackBar(content: Text(l10n.clicked(value))));
-              }
-            },
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
-            icon: Icon(
-              Icons.more_vert,
-              color: Theme.of(context).colorScheme.onSurface,
-            ),
-            itemBuilder: (context) => [
-              PopupMenuItem(
-                value: l10n.sharedRides,
-                child: Text(
-                  l10n.sharedRides,
-                  style: TextStyle(color: Theme.of(context).colorScheme.onSurface,
-                  ),
-                ),
-              ),
-              PopupMenuItem(
-                value: l10n.savedRides,
-                child: Text(
-                  l10n.savedRides,
-                  style: TextStyle(color: Theme.of(context).colorScheme.onSurface,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          */
-        ],
       ),
 
       body: Column(
@@ -117,13 +71,16 @@ class _TripScreenState extends State<TripScreen>
 
   Widget _buildCustomTabBar() {
     final l10n = AppLocalizations.of(context)!;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Container(
-      margin: const EdgeInsets.all(16),
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       padding: const EdgeInsets.all(4),
       decoration: BoxDecoration(
-        color: Theme.of(context).cardColor,
-        borderRadius: BorderRadius.circular(30),
-        border: Border.all(color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5), width: 0.5),
+        color: isDark
+            ? Theme.of(context).colorScheme.onSurface.withOpacity(0.08)
+            : const Color(0xFFF1F5F9),
+        borderRadius: BorderRadius.circular(24),
       ),
       child: Row(
         children: [_buildTab(l10n.allRides, 0), _buildTab(l10n.trips, 1)],
@@ -133,25 +90,39 @@ class _TripScreenState extends State<TripScreen>
 
   Widget _buildTab(String label, int index) {
     final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
     final isSelected = _tabController.index == index;
+
     return Expanded(
       child: GestureDetector(
         onTap: () => _tabController.animateTo(index),
-        child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 12),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          padding: const EdgeInsets.symmetric(vertical: 10),
           decoration: BoxDecoration(
             color: isSelected
-                ? theme.colorScheme.primary.withValues(alpha: 0.12)
+                ? (isDark ? theme.colorScheme.surface : Colors.white)
                 : Colors.transparent,
-            borderRadius: BorderRadius.circular(25),
+            borderRadius: BorderRadius.circular(20),
+            boxShadow: isSelected
+                ? [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(isDark ? 0.3 : 0.06),
+                      blurRadius: 6,
+                      offset: const Offset(0, 2),
+                    ),
+                  ]
+                : [],
           ),
           child: Center(
             child: Text(
               label,
-              style: TextStyle(fontWeight: FontWeight.w700,
+              style: TextStyle(
+                fontWeight: isSelected ? FontWeight.bold : FontWeight.w600,
+                fontSize: 13,
                 color: isSelected
-                    ? theme.colorScheme.primary
-                    : theme.colorScheme.onSurface.withValues(alpha: 0.5),
+                    ? const Color(0xFF0284C7)
+                    : theme.colorScheme.onSurface.withOpacity(0.55),
               ),
             ),
           ),
