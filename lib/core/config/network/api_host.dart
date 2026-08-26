@@ -101,7 +101,12 @@ class ApiURL {
   static String updateOnlinePastRideTag(String rideId) => "$baseURL/api/ride-mode/update-tag/$rideId";
   static String deleteOnlinePastRide(String rideId) => "$baseURL/api/ride-mode/delete/$rideId";
   static String rateOnlinePastRide(String rideId) => "$baseURL/api/ride-mode/rate/$rideId";
-  static String promoVideos(String imei) => "$baseURL/api/global-video/imei-videos/$imei";
+  static String promoVideos(String imei) {
+    if (imei == 'null' || imei.isEmpty) {
+      return "$baseURL/api/global-video/imei-videos";
+    }
+    return "$baseURL/api/global-video/imei-videos/$imei";
+  }
   static const String promoOffers = "$baseURL/api/banner/all";
   static const String productFeatures = "$baseURL/api/product-features";
 

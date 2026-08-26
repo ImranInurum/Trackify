@@ -30,6 +30,7 @@ class _AddGeoFenceScreenState extends State<AddGeoFenceScreen> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _searchController = TextEditingController();
   double _radius = 500;
+  bool _showSuggestions = false;
   GoogleMapController? _mapController;
   Timer? _debounceTimer;
   final FocusNode _searchFocus = FocusNode();

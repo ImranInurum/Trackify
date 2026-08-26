@@ -646,21 +646,32 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin, Wi
         _isWarrantyExpired;
 
     if (!isDeviceNotInstalledOrExpired) {
-      bestPos = appState.livePosition;
+      if (appState.livePosition != null &&
+          !appState.livePosition!.latitude.isNaN &&
+          !appState.livePosition!.longitude.isNaN) {
+        bestPos = appState.livePosition;
+      }
 
       if (bestPos == null &&
           _selectedDevice?.currentLocation != null &&
           _selectedDevice!.currentLocation!.lat != null &&
           _selectedDevice!.currentLocation!.lng != null) {
-        bestPos = LatLng(
-          _selectedDevice!.currentLocation!.lat!,
-          _selectedDevice!.currentLocation!.lng!,
-        );
+        final lat = _selectedDevice!.currentLocation!.lat!;
+        final lng = _selectedDevice!.currentLocation!.lng!;
+        if (!lat.isNaN && !lng.isNaN) {
+          bestPos = LatLng(lat, lng);
+        }
       }
     }
 
-    if (bestPos == null && currentPos != null) {
-      bestPos = LatLng(currentPos.latitude, currentPos.longitude);
+    if (bestPos == null) {
+      print("====> [Map Screen] Vehicle location not found or invalid (NaN). Falling back to phone location...");
+      if (currentPos != null) {
+        bestPos = LatLng(currentPos.latitude, currentPos.longitude);
+        print("====> [Map Screen] Phone Location (Current): ${bestPos.latitude}, ${bestPos.longitude}");
+      } else {
+        print("====> [Map Screen] Phone Location is also null!");
+      }
     }
     return bestPos;
   }
@@ -1609,7 +1620,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin, Wi
           if (liveData.isNotEmpty) {
             final lat = double.tryParse(liveData['lt']?.toString() ?? '');
             final lng = double.tryParse(liveData['lg']?.toString() ?? '');
-            if (lat != null && lng != null) {
+            if (lat != null && lng != null && !lat.isNaN && !lng.isNaN) {
               bestPos = LatLng(lat, lng);
             }
           }
@@ -2281,38 +2292,54 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin, Wi
                             ),
                           ],
                         ),
-                        if (batteryText.isNotEmpty)
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 8,
-                              vertical: 3,
-                            ),
-                            decoration: BoxDecoration(
-                              color: batteryColor.withValues(alpha: 0.1),
-                              borderRadius: BorderRadius.circular(6),
-                              border: Border.all(
-                                color: batteryColor.withValues(alpha: 0.3),
-                                width: 1,
-                              ),
-                            ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Icon(
-                                  batteryIcon,
-                                  color: batteryColor,
-                                  size: 10,
+                        if (batteryText.isNotEmpty || extVoltage != null)
+                          Builder(
+                            builder: (context) {
+                              String combinedText = batteryText;
+                              if (extVoltage != null) {
+                                if (batteryText == "--" || batteryText.isEmpty) {
+                                  combinedText = "$extVoltage V";
+                                } else {
+                                  combinedText = "$batteryText | $extVoltage V";
+                                }
+                              }
+                              IconData finalIcon = (batteryText == "--" || batteryText.isEmpty) && extVoltage != null 
+                                  ? Icons.bolt 
+                                  : batteryIcon;
+
+                              return Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 8,
+                                  vertical: 3,
                                 ),
-                                const SizedBox(width: 4),
-                                Text(
-                                  batteryText,
-                                  style: getBoldStyle(
-                                    color: batteryColor,
-                                    fontSize: 10,
+                                decoration: BoxDecoration(
+                                  color: batteryColor.withValues(alpha: 0.1),
+                                  borderRadius: BorderRadius.circular(6),
+                                  border: Border.all(
+                                    color: batteryColor.withValues(alpha: 0.3),
+                                    width: 1,
                                   ),
                                 ),
-                              ],
-                            ),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(
+                                      finalIcon,
+                                      color: batteryColor,
+                                      size: 10,
+                                    ),
+                                    const SizedBox(width: 4),
+                                    Text(
+                                      combinedText,
+                                      style: getBoldStyle(
+                                        color: batteryColor,
+                                        fontSize: 10,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
                           ),
                       ],
                     ),
@@ -3062,7 +3089,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin, Wi
       {
         "icon": null,
         "label": l10n.upgradeToPlus.replaceFirst(' to ', ' to\n'),
-        "badge": null,
+        "badge": l10n.comingSoonOption,
         "isPlus": true,
       },
     ];
@@ -3244,7 +3271,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin, Wi
       child: Column(
         children: [
           if (option["isPlus"] == true)
-            _buildPlusBadge(l10n)
+            _buildPlusBadge(option, l10n)
           else
             _buildIconWithBadge(option, isLocked),
           const SizedBox(height: 6),
@@ -3400,7 +3427,29 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin, Wi
             color: Colors.black87,
           ),
         ),
-      ),
+        if (option["badge"] != null)
+          Positioned(
+            top: -8,
+            right: -24,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+              decoration: BoxDecoration(
+                color: option["badge"] == l10n.comingSoonOption
+                    ? Theme.of(context).disabledColor
+                    : Theme.of(context).colorScheme.primary,
+                borderRadius: BorderRadius.circular(4),
+              ),
+              child: Text(
+                option["badge"] as String,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 8,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ),
+      ],
     );
   }
 
