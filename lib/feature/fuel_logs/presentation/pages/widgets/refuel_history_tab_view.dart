@@ -1,9 +1,11 @@
 import 'dart:convert';
+import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:trackify/core/utils/flutter_compat_extensions.dart';
 import 'package:trackify/l10n/app_localizations.dart';
 
 import '../../cubit/fuel_logs_cubit.dart';
@@ -590,7 +592,7 @@ class _RefuelHistoryTabViewState extends State<RefuelHistoryTabView> {
                       scrollDirection: Axis.horizontal,
                       child: SingleChildScrollView(
                         child: DataTable(
-                          headingRowColor: WidgetStateProperty.all(
+                          headingRowColor: MaterialStateProperty.all(
                             Theme.of(context).primaryColor.withValues(alpha: 0.1),
                           ),
                           columns: [
@@ -688,13 +690,17 @@ class _RefuelHistoryTabViewState extends State<RefuelHistoryTabView> {
 
       final Uint8List bytes = Uint8List.fromList(utf8.encode(sb.toString()));
 
-      String? outputFile = await FilePicker.saveFile(
+      String? outputFile = await FilePicker.platform.saveFile(
         dialogTitle: 'Save Refuel History',
         fileName: 'refuel_history.csv',
         type: FileType.custom,
         allowedExtensions: ['csv'],
-        bytes: bytes,
       );
+
+      if (outputFile != null) {
+        final file = File(outputFile);
+        await file.writeAsBytes(bytes);
+      }
 
       if (outputFile != null && context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(

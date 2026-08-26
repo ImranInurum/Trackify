@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:trackify/core/utils/flutter_compat_extensions.dart';
 import 'package:trackify/feature/add_fuel/presentation/pages/add_fuel_screen.dart';
 import 'package:trackify/feature/fuel_logs/presentation/pages/widgets/refuel_history_tab_view.dart';
 import 'package:trackify/l10n/app_localizations.dart';

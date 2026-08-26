@@ -12,7 +12,7 @@ class ConnectivityService {
   final StreamController<bool> _connectivityController =
   StreamController<bool>.broadcast();
 
-  StreamSubscription<List<ConnectivityResult>>? _subscription;
+  StreamSubscription<dynamic>? _subscription;
 
   Stream<bool> get connectivityStream => _connectivityController.stream;
 
@@ -33,12 +33,20 @@ class ConnectivityService {
     _connectivityController.close();
   }
 
-  bool _hasConnection(List<ConnectivityResult> results) {
-    if (results.isEmpty) return false;
-    return results.any((r) =>
-    r == ConnectivityResult.mobile ||
-        r == ConnectivityResult.wifi ||
-        r == ConnectivityResult.ethernet ||
-        r == ConnectivityResult.vpn);
+  bool _hasConnection(dynamic results) {
+    if (results is List<ConnectivityResult>) {
+      if (results.isEmpty) return false;
+      return results.any((r) =>
+          r == ConnectivityResult.mobile ||
+          r == ConnectivityResult.wifi ||
+          r == ConnectivityResult.ethernet ||
+          r == ConnectivityResult.vpn);
+    } else if (results is ConnectivityResult) {
+      return results == ConnectivityResult.mobile ||
+          results == ConnectivityResult.wifi ||
+          results == ConnectivityResult.ethernet ||
+          results == ConnectivityResult.vpn;
+    }
+    return false;
   }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:trackify/core/utils/flutter_compat_extensions.dart';
 import 'package:flutter/services.dart';
 
 import 'package:trackify/core/constants/app_images.dart';
@@ -227,20 +228,18 @@ class _AppNavigationState extends State<AppNavigation> {
       _currentIndex = screens.length - 1;
     }
 
-    return PopScope(
-      canPop: false,
-      onPopInvokedWithResult: (didPop, result) async {
-        if (didPop) return;
-
-        final navigator =
-            _getNavigatorKey(_currentIndex).currentState;
+    return WillPopScope(
+      onWillPop: () async {
+        final navigator = _getNavigatorKey(_currentIndex).currentState;
         if (navigator != null && navigator.canPop()) {
           navigator.pop();
+          return false;
         } else {
           if (_currentIndex != 0) {
             _onTabTap(0);
+            return false;
           } else {
-            SystemNavigator.pop();
+            return true;
           }
         }
       },

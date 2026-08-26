@@ -59,7 +59,7 @@ class SocketService {
       _port = parts.length > 1 ? int.tryParse(parts[1]) : 4000;
     } catch (e) {
       print('[SocketService] Error parsing URL: $e');
-      _host = '139.59.1.109';
+      _host = 'trackifybackend.inurum.com';
       _port = 4000;
     }
 

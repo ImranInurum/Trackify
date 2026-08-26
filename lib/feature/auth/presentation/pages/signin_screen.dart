@@ -1,10 +1,16 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:trackify/core/utils/flutter_compat_extensions.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:trackify/feature/add_vehicle_and_device/choice_selector.dart';
 import 'package:trackify/feature/auth/presentation/pages/signup_screen.dart';
 import 'package:trackify/feature/onboarding/presentation/pages/select_language_screen.dart';
-
+import 'package:trackify/feature/inventory/presentation/pages/add_inventory_screen.dart';
+import 'package:trackify/feature/inventory/presentation/cubit/inventory_cubit.dart';
+import 'package:trackify/feature/inventory/domain/usecase/add_inventory_usecase.dart';
+import 'package:trackify/feature/inventory/data/repository/inventory_repository_impl.dart';
+import 'package:trackify/feature/inventory/data/data_source/inventory_remote_data_source.dart';
+import 'package:trackify/core/config/network/network_api_service.dart';
 import '../../../../app/app_navigation.dart';
 import '../../../../app/cubit/app_cubit.dart';
 import '../../../../core/utils/shared_preferences.dart';
@@ -145,13 +151,12 @@ class _SignInScreenState extends State<SignInScreen> {
     final colorScheme = theme.colorScheme;
     final textTheme = theme.textTheme;
 
-    return PopScope(
-      canPop: Navigator.of(context).canPop(),
-      onPopInvokedWithResult: (didPop, result) {
-        if (didPop) return;
+    return WillPopScope(
+      onWillPop: () async {
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(builder: (_) => const SelectLanguageScreen()),
         );
+        return false;
       },
       child: Scaffold(
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
@@ -252,7 +257,25 @@ class _SignInScreenState extends State<SignInScreen> {
               if (!context.mounted) return;
 
               final mapState = context.read<MapCubit>().state;
-              if (mapState is MapLoaded &&
+              
+              if (_emailController.text.trim().toLowerCase() == 'inventory@gmail.com') {
+
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => BlocProvider(
+                      create: (context) => InventoryCubit(
+                        AddInventoryUseCase(
+                          InventoryRepositoryImpl(
+                            InventoryRemoteDataSourceImpl(NetworkApiService()),
+                          ),
+                        ),
+                      ),
+                      child: const AddInventoryScreen(),
+                    ),
+                  ),
+                );
+              } else if (mapState is MapLoaded &&
                   (mapState.vehicleList.vehicles?.isNotEmpty ?? false)) {
                 Navigator.pushReplacement(
                   context,

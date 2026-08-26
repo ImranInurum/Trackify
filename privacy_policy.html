@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy Policy - Trackify</title>
+    <meta name="description" content="Privacy Policy for Trackify - Live GPS Vehicle Tracking & Management App. Compliant with Google Play Store and Apple App Store guidelines.">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --primary-light: #eff6ff;
+            --text-dark: #0f172a;
+            --text-muted: #475569;
+            --bg-light: #f8fafc;
+            --card-bg: #ffffff;
+            --border-color: #e2e8f0;
+            --accent: #3b82f6;
+            --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01);
+            --radius: 12px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+            line-height: 1.7;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Header */
+        header {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: #ffffff;
+            padding: 3rem 1.5rem;
+            text-align: center;
+            position: relative;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+
+        .header-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .logo-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 6px 16px;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            margin-bottom: 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(90deg, #ffffff, #93c5fd);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        header p {
+            color: #94a3b8;
+            font-size: 1rem;
+        }
+
+        /* Container & Layout */
+        .container {
+            max-width: 1000px;
+            margin: -30px auto 4rem auto;
+            padding: 0 1.5rem;
+            position: relative;
+            z-index: 10;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 2.5rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .meta-info {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            padding-bottom: 1.5rem;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .meta-item strong {
+            color: var(--text-dark);
+        }
+
+        /* Typography & Content Structure */
+        h2 {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin: 2rem 0 1rem 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        h2::before {
+            content: '';
+            display: inline-block;
+            width: 4px;
+            height: 20px;
+            background: var(--primary);
+            border-radius: 2px;
+        }
+
+        h3 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin: 1.2rem 0 0.6rem 0;
+        }
+
+        p {
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+            font-size: 0.98rem;
+        }
+
+        ul {
+            margin: 0 0 1.5rem 1.5rem;
+            color: var(--text-muted);
+        }
+
+        li {
+            margin-bottom: 0.5rem;
+            font-size: 0.98rem;
+        }
+
+        /* Highlight Boxes */
+        .highlight-box {
+            background-color: var(--primary-light);
+            border-left: 4px solid var(--primary);
+            padding: 1.25rem;
+            border-radius: 0 var(--radius) var(--radius) 0;
+            margin: 1.5rem 0;
+        }
+
+        .highlight-box p {
+            color: #1e40af;
+            margin-bottom: 0;
+            font-weight: 500;
+        }
+
+        .warning-box {
+            background-color: #fef2f2;
+            border-left: 4px solid #ef4444;
+            padding: 1.25rem;
+            border-radius: 0 var(--radius) var(--radius) 0;
+            margin: 1.5rem 0;
+        }
+
+        .warning-box p {
+            color: #991b1b;
+            margin-bottom: 0;
+            font-weight: 500;
+        }
+
+        /* Contact & Table */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+        }
+
+        th, td {
+            padding: 12px 16px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 0.95rem;
+        }
+
+        th {
+            background-color: #f8fafc;
+            color: var(--text-dark);
+            font-weight: 600;
+        }
+
+        td {
+            color: var(--text-muted);
+        }
+
+        a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 2rem 1.5rem;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 1.8rem;
+            }
+
+            .card {
+                padding: 1.5rem;
+            }
+
+            .meta-info {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="header-content">
+            <div class="logo-badge">
+                📍 Trackify - GPS & Fleet Management
+            </div>
+            <h1>Privacy Policy</h1>
+            <p>गोपनीयता नीति | Last Updated & Effective Date</p>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="card">
+            
+            <div class="meta-info">
+                <div class="meta-item">
+                    <strong>App Name:</strong> Trackify
+                </div>
+                <div class="meta-item">
+                    <strong>Effective Date:</strong> August 19, 2026
+                </div>
+                <div class="meta-item">
+                    <strong>Contact Email:</strong> <a href="mailto:support@trackify.com">support@trackify.com</a>
+                </div>
+            </div>
+
+            <div class="highlight-box">
+                <p>Welcome to <strong>Trackify</strong>. Your privacy and the security of your personal data are extremely important to us. This Privacy Policy explains how we collect, use, store, and protect your information when you use our mobile application and related services.</p>
+            </div>
+
+            <h2>1. Introduction (परिचय)</h2>
+            <p>Trackify ("we", "our", or "us") provides live GPS vehicle tracking, route monitoring, fleet management, document storage, and device installation services. This Privacy Policy applies to all users of our Android and iOS applications.</p>
+
+            <h2>2. Information We Collect (हम कौन सी जानकारी एकत्र करते हैं)</h2>
+            <p>To provide accurate vehicle tracking and management services, Trackify collects the following types of information:</p>
+
+            <h3>A. Location Data (स्थान डेटा) - High Priority</h3>
+            <div class="warning-box">
+                <p><strong>Background & Foreground Location Notice:</strong> Trackify collects precise location data (GPS coordinates) to enable real-time vehicle tracking, speed monitoring, trip playback, and geofence alerts even when the app is closed or not in active use, if location permissions are granted.</p>
+            </div>
+            <ul>
+                <li><strong>Precise Location (GPS):</strong> Used for live map tracking, distance calculation, geofence, and route navigation.</li>
+                <li><strong>Background Location:</strong> Used to provide continuous tracking and safety alerts while the vehicle is in motion.</li>
+            </ul>
+
+            <h3>B. Account & Profile Information</h3>
+            <ul>
+                <li><strong>Registration Details:</strong> Name, Email Address, Phone Number, and Password.</li>
+                <li><strong>Vehicle Information:</strong> Vehicle registration number, model, device serial number, and vehicle documents.</li>
+            </ul>
+
+            <h3>C. Device & Technical Information</h3>
+            <ul>
+                <li><strong>Device Identifier:</strong> Device model, OS version, unique device identifier (ID), and IP address.</li>
+                <li><strong>App Usage & Diagnostics:</strong> Crash reports, system performance, and connection logs via Firebase Analytics & Crashlytics.</li>
+            </ul>
+
+            <h3>D. Camera, Photos & File Storage</h3>
+            <ul>
+                <li><strong>Camera & Photos:</strong> Accessed only when you capture or upload photos for vehicle installation, profile picture, or document registration.</li>
+                <li><strong>Barcode / QR Scanner:</strong> Access to camera to scan QR codes for device pairing and installation.</li>
+                <li><strong>Document Storage:</strong> Uploaded vehicle papers (RC, Insurance, Driving License, etc.) stored securely for user access.</li>
+            </ul>
+
+            <h3>E. Payment Information</h3>
+            <ul>
+                <li>Payments for subscriptions or services are processed through secure third-party payment gateways (e.g., <strong>Razorpay</strong>). We do not store your full Credit/Debit card numbers or net banking passwords on our servers.</li>
+            </ul>
+
+            <h2>3. How We Use Your Information (जानकारी का उपयोग)</h2>
+            <p>We use the collected information for the following purposes:</p>
+            <ul>
+                <li>To display live vehicle location and route history on interactive maps (Google Maps API).</li>
+                <li>To send push notifications and alerts (Geofence breaches, overspeeding, engine ignition status, maintenance reminders).</li>
+                <li>To manage your account, verify your identity, and provide customer support.</li>
+                <li>To facilitate secure subscription billing via payment gateways.</li>
+                <li>To improve app stability, troubleshoot bugs, and enhance user experience.</li>
+            </ul>
+
+            <h2>4. Third-Party Services & Data Sharing (तृतीय पक्ष सेवाएं)</h2>
+            <p>We do not sell, rent, or trade your personal information to third parties. However, we integrate trusted third-party SDKs and services to enable app features:</p>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Service Provider</th>
+                        <th>Purpose</th>
+                        <th>Privacy Link</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Google Maps API & Location Services</strong></td>
+                        <td>Map rendering, geocoding & location tracking</td>
+                        <td><a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Google Privacy Policy</a></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Firebase (Google)</strong></td>
+                        <td>Authentication, push notifications & analytics</td>
+                        <td><a href="https://firebase.google.com/support/privacy" target="_blank" rel="noopener">Firebase Privacy Policy</a></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Razorpay</strong></td>
+                        <td>Secure payment processing</td>
+                        <td><a href="https://razorpay.com/privacy/" target="_blank" rel="noopener">Razorpay Privacy Policy</a></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h2>5. Data Retention & Security (डेटा सुरक्षा और भंडारण)</h2>
+            <p>We implement industry-standard encryption (SSL/HTTPS) and security measures to protect your data against unauthorized access, alteration, or disclosure. Location history and personal data are retained only as long as necessary to fulfill service requirements or as required by law.</p>
+
+            <h2>6. Account & Data Deletion Request (खाता एवं डेटा हटाने का अधिकार)</h2>
+            <p>In compliance with Google Play Store and Apple App Store policies, users have full control over their personal data.</p>
+            <div class="highlight-box">
+                <p><strong>Requesting Data Deletion:</strong> If you wish to delete your Trackify account and all associated personal and location data, you can request account deletion by emailing us at <a href="mailto:support@trackify.com">support@trackify.com</a> with your registered phone number or email ID. Your data will be deleted within 30 days of verification.</p>
+            </div>
+
+            <h2>7. Children's Privacy (बच्चों की गोपनीयता)</h2>
+            <p>Trackify services are not intended for use by children under the age of 13. We do not knowingly collect personal information from children.</p>
+
+            <h2>8. Changes to This Privacy Policy (नीति में बदलाव)</h2>
+            <p>We may update our Privacy Policy from time to time. Any updates will be posted on this page with an updated effective date.</p>
+
+            <h2>9. Contact Us (संपर्क करें)</h2>
+            <p>If you have any questions, feedback, or privacy concerns regarding Trackify, please contact us at:</p>
+            <ul>
+                <li><strong>App Name:</strong> Trackify</li>
+                <li><strong>Email:</strong> <a href="mailto:support@trackify.com">support@trackify.com</a></li>
+                <li><strong>Website / Portal:</strong> <a href="#" target="_blank">https://trackify.com</a></li>
+            </ul>
+
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 Trackify. All Rights Reserved.</p>
+    </footer>
+
+</body>
+</html>

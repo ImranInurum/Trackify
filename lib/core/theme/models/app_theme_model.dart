@@ -347,6 +347,6 @@ class HexColor extends Color {
 
 extension ColorToHex on Color {
   String toHex() {
-    return '#${(toARGB32() & 0xFFFFFF).toRadixString(16).padLeft(6, '0').toUpperCase()}';
+    return '#${(value & 0xFFFFFF).toRadixString(16).padLeft(6, '0').toUpperCase()}';
   }
 }

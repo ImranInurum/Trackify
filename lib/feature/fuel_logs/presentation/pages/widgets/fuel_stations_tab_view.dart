@@ -191,7 +191,6 @@ class _FuelStationsTabViewState extends State<FuelStationsTabView> {
                                 children: [
                                   TabBar(
                                     isScrollable: true,
-                                    tabAlignment: TabAlignment.start,
                                     indicatorColor: theme.primaryColor,
                                     labelColor: theme.primaryColor,
                                     unselectedLabelColor: theme.colorScheme.onSurface,

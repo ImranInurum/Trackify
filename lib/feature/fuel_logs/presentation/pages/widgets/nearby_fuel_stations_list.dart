@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:trackify/core/utils/flutter_compat_extensions.dart';
 import 'package:trackify/feature/fuel_logs/presentation/cubit/fuel_stations_cubit.dart';
 import 'package:trackify/feature/fuel_logs/presentation/cubit/fuel_stations_state.dart';
 import 'package:trackify/l10n/app_localizations.dart';
@@ -13,7 +14,7 @@ class NearbyFuelStationsDashboard extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
-    final textScaler = MediaQuery.textScalerOf(context);
+    final textScaler = MediaQuery.of(context).textScaler;
 
     return BlocBuilder<FuelStationsCubit, FuelStationsState>(
       builder: (context, state) {
@@ -105,7 +106,7 @@ class NearbyFuelStationsDashboard extends StatelessWidget {
 
   Widget _buildStationItem(BuildContext context, FuelStation station) {
     final theme = Theme.of(context);
-    final textScaler = MediaQuery.textScalerOf(context);
+    final textScaler = MediaQuery.of(context).textScaler;
 
     return Container(
       margin: const EdgeInsets.only(bottom: 10),

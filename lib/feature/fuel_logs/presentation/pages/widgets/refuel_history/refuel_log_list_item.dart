@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:trackify/l10n/app_localizations.dart';
+import 'package:trackify/core/utils/flutter_compat_extensions.dart';
 import 'package:trackify/core/utils/distance_utils.dart';
 
 class RefuelLogListItem extends StatelessWidget {

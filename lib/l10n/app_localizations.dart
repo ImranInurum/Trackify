@@ -11,6 +11,7 @@ import 'app_localizations_hi.dart';
 import 'app_localizations_kn.dart';
 import 'app_localizations_mr.dart';
 import 'app_localizations_ta.dart';
+export 'package:trackify/core/utils/flutter_compat_extensions.dart';
 
 // ignore_for_file: type=lint
 

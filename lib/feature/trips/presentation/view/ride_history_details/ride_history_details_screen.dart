@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:trackify/core/utils/flutter_compat_extensions.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -601,7 +602,7 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
     canvas.drawCircle(const Offset(22.5, 22.5), 15, borderPaint);
     final img = await pictureRecorder.endRecording().toImage(45, 45);
     final data = await img.toByteData(format: ui.ImageByteFormat.png);
-    return BitmapDescriptor.bytes(data!.buffer.asUint8List());
+    return BitmapDescriptor.fromBytes(data!.buffer.asUint8List());
   }
 
   Future<BitmapDescriptor> _createEndMarker() async {
@@ -619,7 +620,7 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
     canvas.drawCircle(const Offset(26, 18), 4, redPaint);
     final img = await pictureRecorder.endRecording().toImage(52, 52);
     final data = await img.toByteData(format: ui.ImageByteFormat.png);
-    return BitmapDescriptor.bytes(data!.buffer.asUint8List());
+    return BitmapDescriptor.fromBytes(data!.buffer.asUint8List());
   }
 
   Future<BitmapDescriptor> _createVehicleMarker(BuildContext context) async {
@@ -659,7 +660,7 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
       size.toInt(),
     );
     final data = await img.toByteData(format: ui.ImageByteFormat.png);
-    return BitmapDescriptor.bytes(data!.buffer.asUint8List());
+    return BitmapDescriptor.fromBytes(data!.buffer.asUint8List());
   }
 
   void _fitMapToBounds() async {
@@ -754,11 +755,6 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
                       mapType: appState.mapType == 'satellite'
                           ? MapType.satellite
                           : MapType.normal,
-                      style: appState.mapType == 'satellite'
-                          ? null
-                          : (Theme.of(context).brightness == Brightness.dark
-                                ? (_darkMapStyle ?? mapState.darkMapStyle)
-                                : _lightMapStyle),
                       trafficEnabled: appState.isTrafficEnabled,
                       zoomControlsEnabled: false,
                       myLocationButtonEnabled: false,
@@ -807,7 +803,7 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
                             anchor: const Offset(0.5, 0.5),
                             rotation: mapState.currentHeading,
                             flat: true,
-                            zIndexInt: 2,
+                            zIndex: 2.0,
                           ),
                       },
                       onMapCreated: _onMapCreated,
@@ -1381,51 +1377,61 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
                       ),
 
                       Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
                         child: Column(
                           children: [
                             Row(
                               children: [
                                 Expanded(
                                   child: _buildPanelStat(
-                                    Icons.route_outlined,
+                                    Icons.route_rounded,
                                     "${widget.ride.distance.toStringAsFixed(1)} ${context.displayKm}",
+                                    l10n.distanceLabel,
                                   ),
                                 ),
+                                const SizedBox(width: 8),
                                 Expanded(
                                   child: _buildPanelStat(
-                                    Icons.timer_outlined,
+                                    Icons.timer_rounded,
                                     widget.ride.duration,
+                                    l10n.durationLabel,
                                   ),
                                 ),
+                                const SizedBox(width: 8),
                                 Expanded(
                                   child: _buildPanelStat(
-                                    Icons.currency_rupee,
+                                    Icons.currency_rupee_rounded,
                                     "${l10n.currencySymbol}${(widget.ride.distance * fuelRate).toStringAsFixed(0)}",
+                                    "Fuel Cost",
                                   ),
                                 ),
                               ],
                             ),
-                            const SizedBox(height: 16),
+                            const SizedBox(height: 8),
                             Row(
                               children: [
                                 Expanded(
                                   child: _buildPanelStat(
-                                    Icons.speed,
-                                    "${widget.ride.avgSpeed.toStringAsFixed(1)} ${context.displayKmh} ${l10n.averageSpeed.split(' ')[0]}",
+                                    Icons.speed_rounded,
+                                    "${widget.ride.avgSpeed.toStringAsFixed(1)} ${context.displayKmh}",
+                                    l10n.averageSpeed,
                                   ),
                                 ),
+                                const SizedBox(width: 8),
                                 Expanded(
                                   child: _buildPanelStat(
-                                    Icons.bolt,
-                                    "${widget.ride.topSpeed.toStringAsFixed(1)} ${l10n.topSpeed.split(' ')[0]}",
+                                    Icons.bolt_rounded,
+                                    "${widget.ride.topSpeed.toStringAsFixed(1)} ${context.displayKmh}",
+                                    l10n.topSpeed,
                                     isHighlight: true,
                                   ),
                                 ),
+                                const SizedBox(width: 8),
                                 Expanded(
                                   child: _buildPanelStat(
-                                    Icons.water_drop_outlined,
-                                    "${l10n.currencySymbol} ${fuelRate.toStringAsFixed(1)}/${context.displayKm}",
+                                    Icons.local_gas_station_rounded,
+                                    "${l10n.currencySymbol}${fuelRate.toStringAsFixed(1)}/${context.displayKm}",
+                                    "Cost / ${context.displayKm}",
                                   ),
                                 ),
                               ],
@@ -1587,35 +1593,77 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
 
   Widget _buildPanelStat(
     IconData icon,
-    String value, {
+    String value,
+    String label, {
     bool isHighlight = false,
   }) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Icon(
-          icon,
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+      decoration: BoxDecoration(
+        color: isDark
+            ? theme.colorScheme.onSurface.withOpacity(0.05)
+            : const Color(0xFFF8FAFC),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
           color: isHighlight
-              ? Theme.of(context).colorScheme.primary
-              : Colors.grey,
-          size: 16,
+              ? const Color(0xFF0284C7).withOpacity(0.4)
+              : (isDark
+                  ? theme.colorScheme.outline.withOpacity(0.15)
+                  : const Color(0xFFE2E8F0)),
         ),
-        const SizedBox(width: 6),
-        Flexible(
-          child: Text(
-            value,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(4),
+                decoration: BoxDecoration(
+                  color: isHighlight
+                      ? const Color(0xFF0284C7).withOpacity(0.15)
+                      : const Color(0xFFE0F2FE),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  icon,
+                  color: const Color(0xFF0284C7),
+                  size: 13,
+                ),
+              ),
+              const SizedBox(width: 6),
+              Expanded(
+                child: Text(
+                  value,
+                  style: TextStyle(
+                    color: isHighlight
+                        ? const Color(0xFF0284C7)
+                        : theme.colorScheme.onSurface,
+                    fontSize: 12.5,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 4),
+          Text(
+            label,
             style: TextStyle(
-              color: isHighlight
-                  ? Theme.of(context).colorScheme.primary
-                  : Theme.of(context).colorScheme.onSurface,
-              fontSize: 13,
-              fontWeight: FontWeight.w600,
+              color: theme.colorScheme.onSurface.withOpacity(0.55),
+              fontSize: 10,
+              fontWeight: FontWeight.w500,
             ),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 

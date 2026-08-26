@@ -589,7 +589,9 @@ class _DraggableAppBarState extends State<DraggableAppBar>
           } else if (statusStr.toLowerCase() == 'idle') {
             statusColor = Colors.red;
           } else if (statusStr.toLowerCase() == 'parking' ||
-              statusStr.toLowerCase() == 'parked') {
+              statusStr.toLowerCase() == 'parked' ||
+              statusStr.toLowerCase() == 'stopped' ||
+              statusStr.toLowerCase() == 'stop') {
             statusColor = Colors.blue;
           } else {
             statusColor = Colors.grey;

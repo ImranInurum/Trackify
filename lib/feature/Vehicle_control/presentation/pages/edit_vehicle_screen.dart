@@ -542,9 +542,7 @@ class _EditVehicleViewState extends State<_EditVehicleView> {
                 const SizedBox(height: 24),
 
                 // ── Vehicle Number ────────────────────────────────
-                _sectionTitle(l10n.vehicleNumber, theme),
-                const SizedBox(height: 12),
-                _buildTextField(_numberController, l10n.vehicleNumberHint, theme, isDark),
+                VehicleNumberField(controller: _numberController),
 
                 const SizedBox(height: 48),
 

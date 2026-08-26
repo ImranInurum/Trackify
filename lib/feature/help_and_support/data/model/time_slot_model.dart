@@ -99,7 +99,13 @@ class TimeSlotModel extends Equatable {
     required this.isAvailable,
   });
 
-  String get dateText => "$dayNumber $monthText ($dayText)";
+  String get dateText {
+    if (dayNumber > 0 && monthText.isNotEmpty) {
+      return dayText.isNotEmpty ? "$dayNumber $monthText ($dayText)" : "$dayNumber $monthText";
+    }
+    if (date.isNotEmpty) return date;
+    return '';
+  }
   String get displayTime => label;
 
   factory TimeSlotModel.fromJson(Map<String, dynamic> json) {

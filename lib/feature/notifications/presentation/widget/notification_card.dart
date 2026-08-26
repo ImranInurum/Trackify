@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:trackify/core/utils/flutter_compat_extensions.dart';
 import '../../../../core/theme/app_theme_extension.dart';
 import '../../data/entity/notification_model.dart';
 
@@ -84,12 +85,17 @@ class NotificationCard extends StatelessWidget {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
 
                               children: [
-                                Text(
-                                  notification.title ?? "Notification",
-                                  style: theme.textTheme.titleMedium?.copyWith(
-                                    fontWeight: FontWeight.bold,
+                                Expanded(
+                                  child: Text(
+                                    notification.title ?? "Notification",
+                                    style: theme.textTheme.titleMedium?.copyWith(
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
                                   ),
                                 ),
+                                const SizedBox(width: 8),
                                 Text(
                                   notification.vehicleId?.vehicleNumber != null ? ' (${notification.vehicleId!.vehicleNumber})' : '',
                                   style: theme.textTheme.titleSmall?.copyWith(

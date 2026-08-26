@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:trackify/core/utils/flutter_compat_extensions.dart';
 import 'package:flutter/services.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'dart:async';
@@ -253,7 +254,6 @@ class _PolylineThumbnailState extends State<PolylineThumbnail> {
                 // Disable liteMode so the dark theme correctly applies on Android
                 liteModeEnabled: false,
                 mapType: MapType.normal,
-                style: Theme.of(context).brightness == Brightness.dark ? _darkMapStyle : null, // Provide the loaded dark style conditionally
                 zoomControlsEnabled: false,
                 mapToolbarEnabled: false,
                 myLocationButtonEnabled: false,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:trackify/core/utils/flutter_compat_extensions.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:trackify/app/cubit/app_cubit.dart';
@@ -336,7 +337,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                   child: DropdownButtonHideUnderline(
                                     child: DropdownButton2<String>(
                                       isExpanded: true,
-                                      valueListenable: phoneCodeNotifier,
+                                      value: phoneCodeNotifier.value,
                                       items: uniqueCodes.map((code) {
                                         final country = codeToCountryMap[code];
                                         final flag = country?.flag ?? '';
@@ -344,7 +345,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                         final displayText = name.isNotEmpty
                                             ? "$flag $name ($code)".trim()
                                             : code;
-                                        return DropdownItem<String>(
+                                        return DropdownMenuItem<String>(
                                           value: code,
                                           child: Text(
                                             displayText,
@@ -405,8 +406,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                       ),
                                       dropdownSearchData: DropdownSearchData(
                                         searchController: searchCtrl,
-                                        searchBarWidgetHeight: 48,
-                                        searchBarWidget: Container(
+                                        searchInnerWidgetHeight: 48,
+                                        searchInnerWidget: Container(
                                           height: 48,
                                           padding: const EdgeInsets.only(top: 6, bottom: 4, right: 8, left: 8),
                                           child: TextFormField(

@@ -13,6 +13,8 @@ class RideCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
 
     String displayDate = ride.date;
     try {
@@ -20,7 +22,6 @@ class RideCard extends StatelessWidget {
       if (ride.rawStartTime.isNotEmpty) {
         parsedDate = DateTime.parse(ride.rawStartTime).toLocal();
       } else {
-        // Fallback parsing if rawStartTime is empty but date is present
         try {
           parsedDate = DateFormat('dd/MM/yyyy').parse(ride.date);
         } catch (_) {
@@ -29,7 +30,7 @@ class RideCard extends StatelessWidget {
           } catch (_) {}
         }
       }
-      
+
       if (parsedDate != null) {
         final now = DateTime.now();
         if (parsedDate.year == now.year &&
@@ -51,36 +52,34 @@ class RideCard extends StatelessWidget {
 
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
-      onTap: () {
-        debugPrint(
-          "Card tapped! Polyline points: ${ride.polylinePoints.length}",
-        );
-        debugPrint("Ride id: ${ride.id}");
-        onTap?.call();
-      },
+      onTap: onTap,
       child: Container(
-        margin: const EdgeInsets.only(bottom: 8),
+        margin: const EdgeInsets.only(bottom: 16),
         decoration: BoxDecoration(
-          color: Theme.of(context).cardColor,
-          border: Border.all(color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5), width: 0.5),
-          borderRadius: BorderRadius.circular(16),
+          color: theme.cardColor,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: isDark
+                ? theme.colorScheme.outline.withOpacity(0.2)
+                : const Color(0xFFE2E8F0),
+          ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.1),
-              blurRadius: 10,
+              color: Colors.black.withOpacity(isDark ? 0.3 : 0.05),
+              blurRadius: 14,
               offset: const Offset(0, 4),
             ),
           ],
         ),
         child: Column(
           children: [
-            /// MAP SNIPPET (Placeholder for map route)
+            /// MAP THUMBNAIL PREVIEW
             ClipRRect(
               borderRadius: const BorderRadius.vertical(
-                top: Radius.circular(16),
+                top: Radius.circular(20),
               ),
               child: SizedBox(
-                height: 220,
+                height: 200,
                 width: double.infinity,
                 child: Stack(
                   children: [
@@ -98,22 +97,42 @@ class RideCard extends StatelessWidget {
                       right: 12,
                       child: Container(
                         padding: const EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 4,
+                          horizontal: 10,
+                          vertical: 5,
                         ),
                         decoration: BoxDecoration(
-                          color: Theme.of(
-                            context,
-                          ).cardColor.withValues(alpha: 0.9),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Text(
-                          "${ride.distance.toStringAsFixed(1)} ${context.displayKm}",
-                          style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.bold,
-                            color: Theme.of(context).colorScheme.primary,
+                          color: isDark
+                              ? const Color(0xFF0F172A).withOpacity(0.9)
+                              : Colors.white.withOpacity(0.95),
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(
+                            color: const Color(0xFF0284C7).withOpacity(0.3),
                           ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.1),
+                              blurRadius: 6,
+                            ),
+                          ],
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(
+                              Icons.straighten_rounded,
+                              size: 13,
+                              color: Color(0xFF0284C7),
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              "${ride.distance.toStringAsFixed(1)} ${context.displayKm}",
+                              style: const TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                                color: Color(0xFF0284C7),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ),
@@ -123,114 +142,133 @@ class RideCard extends StatelessWidget {
             ),
 
             Padding(
-              padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+              padding: const EdgeInsets.all(16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  /// DATE AND TIME ROW
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
-                        displayDate,
-                        style: TextStyle(
-                          fontWeight: FontWeight.w700,
-                          fontSize: 15,
-                          color: Theme.of(context).colorScheme.onSurface,
-                        ),
+                      Row(
+                        children: [
+                          Container(
+                            width: 8,
+                            height: 8,
+                            decoration: const BoxDecoration(
+                              color: Color(0xFF0284C7),
+                              shape: BoxShape.circle,
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          Text(
+                            displayDate,
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 15,
+                              color: theme.colorScheme.onSurface,
+                            ),
+                          ),
+                        ],
                       ),
-                      Text(
-                        "${ride.startTime} - ${ride.endTime}",
-                        style: TextStyle(
-                          color: Theme.of(
-                            context,
-                          ).colorScheme.onSurface.withValues(alpha: 0.6),
-                          fontSize: 13,
-                          fontWeight: FontWeight.w500,
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 4,
+                        ),
+                        decoration: BoxDecoration(
+                          color: isDark
+                              ? theme.colorScheme.onSurface.withOpacity(0.06)
+                              : const Color(0xFFF1F5F9),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.access_time_rounded,
+                              size: 13,
+                              color: theme.colorScheme.onSurface.withOpacity(0.6),
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              "${ride.startTime} - ${ride.endTime}",
+                              style: TextStyle(
+                                color: theme.colorScheme.onSurface.withOpacity(0.7),
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 8),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                        child: _buildStat(
-                          context,
-                          Icons.route_outlined,
-                          "${ride.distance.toStringAsFixed(1)} ${context.displayKm}",
-                          l10n.distanceLabel,
-                        ),
+
+                  const SizedBox(height: 14),
+
+                  /// UNIFIED STATS PANEL
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 12,
+                      horizontal: 8,
+                    ),
+                    decoration: BoxDecoration(
+                      color: isDark
+                          ? theme.colorScheme.onSurface.withOpacity(0.05)
+                          : const Color(0xFFF8FAFC),
+                      borderRadius: BorderRadius.circular(14),
+                      border: Border.all(
+                        color: isDark
+                            ? theme.colorScheme.outline.withOpacity(0.15)
+                            : const Color(0xFFE2E8F0),
                       ),
-                      Expanded(
-                        child: _buildStat(
-                          context,
-                          Icons.timer_outlined,
-                          ride.duration,
-                          l10n.durationLabel,
+                    ),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: _buildStatItem(
+                            context: context,
+                            icon: Icons.route_rounded,
+                            value:
+                                "${ride.distance.toStringAsFixed(1)} ${context.displayKm}",
+                            label: l10n.distanceLabel,
+                          ),
                         ),
-                      ),
-                      Expanded(
-                        child: _buildStat(
-                          context,
-                          Icons.speed,
-                          "${ride.avgSpeed.toStringAsFixed(1)} ${context.displayKmh}",
-                          l10n.averageSpeed,
+                        Container(
+                          height: 28,
+                          width: 1,
+                          color: isDark
+                              ? theme.colorScheme.outline.withOpacity(0.2)
+                              : const Color(0xFFE2E8F0),
                         ),
-                      ),
-                    ],
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 8),
-                    child: Divider(
-                      height: 1,
-                      color: Theme.of(context).dividerColor,
+                        Expanded(
+                          child: _buildStatItem(
+                            context: context,
+                            icon: Icons.timer_rounded,
+                            value: ride.duration,
+                            label: l10n.durationLabel,
+                          ),
+                        ),
+                        Container(
+                          height: 28,
+                          width: 1,
+                          color: isDark
+                              ? theme.colorScheme.outline.withOpacity(0.2)
+                              : const Color(0xFFE2E8F0),
+                        ),
+                        Expanded(
+                          child: _buildStatItem(
+                            context: context,
+                            icon: Icons.speed_rounded,
+                            value:
+                                "${ride.avgSpeed.toStringAsFixed(1)} ${context.displayKmh}",
+                            label: l10n.averageSpeed,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                  // Row(
-                  //   children: [
-                  //     const Icon(Icons.circle, size: 8, color: Colors.green),
-                  //     const SizedBox(width: 8),
-                  //     Expanded(
-                  //       child: Text(
-                  //         ride.startLocation.replaceAll(' ', '') == '0.0000,0.0000' ? l10n.notAvailable : ride.startLocation,
-                  //         style: TextStyle(
-                  //           fontSize: 12,
-                  //           color: Theme.of(
-                  //             context,
-                  //           ).colorScheme.onSurface.withValues(alpha: 0.7),
-                  //           overflow: TextOverflow.ellipsis,
-                  //         ),
-                  //       ),
-                  //     ),
-                  // const Padding(
-                  //   padding: EdgeInsets.symmetric(horizontal: 8),
-                  //   child: Icon(
-                  //     Icons.arrow_forward,
-                  //     size: 12,
-                  //     color: Colors.grey,
-                  //   ),
-                  // ),
-                  // const Icon(
-                  //   Icons.location_on,
-                  //   size: 10,
-                  //   color: Colors.red,
-                  // ),
-                  // const SizedBox(width: 4),
-                  // Expanded(
-                  //   child: Text(
-                  //     ride.endLocation.replaceAll(' ', '') == '0.0000,0.0000' ? l10n.notAvailable : ride.endLocation,
-                  //     style: TextStyle(
-                  //       fontSize: 12,
-                  //       color: Theme.of(
-                  //         context,
-                  //       ).colorScheme.onSurface.withValues(alpha: 0.7),
-                  //       overflow: TextOverflow.ellipsis,
-                  //     ),
-                  //   ),
-                  // ),
-                  //   ],
-                  // ),
                 ],
               ),
             ),
@@ -240,42 +278,48 @@ class RideCard extends StatelessWidget {
     );
   }
 
-  Widget _buildStat(
-    BuildContext context,
-    IconData icon,
-    String value,
-    String label,
-  ) {
+  Widget _buildStatItem({
+    required BuildContext context,
+    required IconData icon,
+    required String value,
+    required String label,
+  }) {
+    final theme = Theme.of(context);
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, size: 14, color: Theme.of(context).colorScheme.primary),
+            Icon(
+              icon,
+              size: 14,
+              color: const Color(0xFF0284C7),
+            ),
             const SizedBox(width: 4),
-            Expanded(
+            Flexible(
               child: Text(
                 value,
                 style: TextStyle(
-                  fontWeight: FontWeight.w700,
+                  fontWeight: FontWeight.bold,
                   fontSize: 13,
-                  color: Theme.of(context).colorScheme.onSurface,
+                  color: theme.colorScheme.onSurface,
                 ),
+                maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
             ),
           ],
         ),
-        const SizedBox(height: 2),
+        const SizedBox(height: 3),
         Text(
           label,
           style: TextStyle(
-            color: Theme.of(
-              context,
-            ).colorScheme.onSurface.withValues(alpha: 0.5),
-            fontSize: 10,
+            color: theme.colorScheme.onSurface.withOpacity(0.55),
+            fontSize: 10.5,
             fontWeight: FontWeight.w500,
           ),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
         ),
       ],
     );

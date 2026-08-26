@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:trackify/core/utils/flutter_compat_extensions.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../cubit/location_sharing_cubit.dart';
 import 'package:share_plus/share_plus.dart';

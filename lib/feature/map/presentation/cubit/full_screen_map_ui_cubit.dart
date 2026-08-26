@@ -11,6 +11,7 @@ class FullScreenMapUiState extends Equatable {
   final BitmapDescriptor? customMarker;
   final BitmapDescriptor? currentLocationMarker;
   final bool isInitialFocusDone;
+  final bool isMapFullScreen;
 
   const FullScreenMapUiState({
     this.isAutoFollowing = true,
@@ -21,6 +22,7 @@ class FullScreenMapUiState extends Equatable {
     this.customMarker,
     this.currentLocationMarker,
     this.isInitialFocusDone = false,
+    this.isMapFullScreen = false,
   });
 
   FullScreenMapUiState copyWith({
@@ -32,6 +34,7 @@ class FullScreenMapUiState extends Equatable {
     BitmapDescriptor? customMarker,
     BitmapDescriptor? currentLocationMarker,
     bool? isInitialFocusDone,
+    bool? isMapFullScreen,
   }) {
     return FullScreenMapUiState(
       isAutoFollowing: isAutoFollowing ?? this.isAutoFollowing,
@@ -42,6 +45,7 @@ class FullScreenMapUiState extends Equatable {
       customMarker: customMarker ?? this.customMarker,
       currentLocationMarker: currentLocationMarker ?? this.currentLocationMarker,
       isInitialFocusDone: isInitialFocusDone ?? this.isInitialFocusDone,
+      isMapFullScreen: isMapFullScreen ?? this.isMapFullScreen,
     );
   }
 
@@ -55,6 +59,7 @@ class FullScreenMapUiState extends Equatable {
         customMarker,
         currentLocationMarker,
         isInitialFocusDone,
+        isMapFullScreen,
       ];
 }
 
@@ -74,6 +79,10 @@ class FullScreenMapUiCubit extends Cubit<FullScreenMapUiState> {
       showCurrentLocation: !state.showCurrentLocation,
       isAutoFollowing: true, // Recenter camera when toggled
     ));
+  }
+
+  void toggleMapFullScreen() {
+    emit(state.copyWith(isMapFullScreen: !state.isMapFullScreen));
   }
 
   void changeHeaderMetric(bool isUp) {

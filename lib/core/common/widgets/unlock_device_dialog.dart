@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:trackify/core/utils/flutter_compat_extensions.dart';
 import 'package:trackify/feature/my_garage/presentation/view/products_screen.dart';
 
 void showUnlockDeviceDialog(BuildContext context, String featureTitle) {

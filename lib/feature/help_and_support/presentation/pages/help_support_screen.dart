@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:trackify/core/config/font_manager.dart';
+import 'package:trackify/core/config/network/api_host.dart';
 import 'package:trackify/feature/app_updates/presentiation/pages/update_screen.dart';
 import 'package:trackify/core/utils/shared_preferences.dart';
 import 'package:trackify/feature/help_and_support/presentation/pages/app_web_view_screen.dart';
@@ -15,6 +17,8 @@ import 'package:trackify/feature/help_and_support/data/model/report_issue_model.
 import 'package:trackify/feature/service_logs/presentation/cubit/service_logs_cubit.dart';
 import 'package:trackify/feature/service_logs/presentation/cubit/service_logs_state.dart';
 import 'package:trackify/feature/service_logs/presentation/widgets/vehicle_selection_app_bar.dart';
+
+import 'package:package_info_plus/package_info_plus.dart';
 
 import '../../data/model/suggestion_model.dart';
 import '../cubit/suggestion_cubit.dart';
@@ -34,9 +38,9 @@ class _HelpSuggestionScreenState extends State<HelpSuggestionScreen> {
   String? selectedVehicleImei;
   String? selectedCallSlotId;
   String? selectedSuggestionType;
+  String _appVersion = 'v19.7.1';
 
   final TextEditingController issueController = TextEditingController();
-
   final TextEditingController descriptionController = TextEditingController();
 
   bool _showValidationError = false;
@@ -45,8 +49,8 @@ class _HelpSuggestionScreenState extends State<HelpSuggestionScreen> {
   void initState() {
     super.initState();
     isReportIssue = widget.isReportIssue;
+    _loadAppVersion();
 
-    // Load fresh vehicles for current user session
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
         context.read<ServiceLogsCubit>().loadVehicles();
@@ -54,25 +58,53 @@ class _HelpSuggestionScreenState extends State<HelpSuggestionScreen> {
     });
   }
 
+  Future<void> _loadAppVersion() async {
+    try {
+      final info = await PackageInfo.fromPlatform();
+      if (mounted) {
+        setState(() {
+          _appVersion = 'v${info.version}';
+        });
+      }
+    } catch (_) {}
+  }
+
+  @override
+  void dispose() {
+    issueController.dispose();
+    descriptionController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        backgroundColor: theme.scaffoldBackgroundColor,
         elevation: 0,
         surfaceTintColor: Colors.transparent,
         leading: IconButton(
           icon: Icon(
             Icons.arrow_back_ios_new,
-            color: Theme.of(context).colorScheme.onSurface,
+            color: theme.colorScheme.onSurface,
+            size: 18,
           ),
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: Text(
-          l10n.helpAndSuggestion, ),
+          l10n.helpAndSuggestion,
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            fontFamily: FontFamilyManager.fontFamily,
+            color: theme.colorScheme.onSurface,
+          ),
+        ),
       ),
       body: GestureDetector(
         behavior: HitTestBehavior.opaque,
@@ -81,37 +113,34 @@ class _HelpSuggestionScreenState extends State<HelpSuggestionScreen> {
         },
         child: SingleChildScrollView(
           child: Padding(
-            padding: const EdgeInsets.all(16.0),
+            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _buildIssueCard(l10n),
+                _buildIssueCard(l10n, theme, isDark),
                 const SizedBox(height: 16),
                 _buildMenuRow(
                   isReportIssue ? l10n.myIssues : l10n.mySuggestions,
+                  icon: isReportIssue ? Icons.assignment_outlined : Icons.lightbulb_outline,
+                  theme: theme,
+                  isDark: isDark,
                   onTap: () {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
                         builder: (_) => BlocProvider(
-                          create: (_) {
-                            return HelpCubit(HelpRepositoryImpl());
-                          },
+                          create: (_) => HelpCubit(HelpRepositoryImpl()),
                           child: MyIssueScreen(isSuggestion: !isReportIssue),
                         ),
                       ),
                     );
                   },
                 ),
-                const SizedBox(height: 24),
-                // _buildWhatsAppButton(l10n),
-                // const SizedBox(height: 24),
-                // _buildForceMigrateSection(l10n),
-                // const SizedBox(height: 24),
-                _buildBottomMenu(l10n),
-                const SizedBox(height: 48),
-                _buildVersionInfo(),
                 const SizedBox(height: 20),
+                _buildBottomMenu(l10n, theme, isDark),
+                const SizedBox(height: 40),
+                _buildVersionInfo(theme, isDark),
+                const SizedBox(height: 24),
               ],
             ),
           ),
@@ -121,7 +150,7 @@ class _HelpSuggestionScreenState extends State<HelpSuggestionScreen> {
   }
 
   void _showSuggestionTypeSelector(BuildContext context, AppLocalizations l10n) {
-    FocusScope.of(context).unfocus(); // Close keyboard before showing sheet
+    FocusScope.of(context).unfocus();
     
     final types = [
       {"value": "design", "label": l10n.designOption},
@@ -163,11 +192,11 @@ class _HelpSuggestionScreenState extends State<HelpSuggestionScreen> {
                       type["label"]!,
                       style: theme.textTheme.bodyLarge?.copyWith(
                         fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                        color: isSelected ? theme.colorScheme.primary : theme.colorScheme.onSurface,
+                        color: isSelected ? const Color(0xFF0284C7) : theme.colorScheme.onSurface,
                       ),
                     ),
                     trailing: isSelected
-                        ? Icon(Icons.check_circle, color: theme.colorScheme.primary)
+                        ? const Icon(Icons.check_circle, color: Color(0xFF0284C7))
                         : null,
                     onTap: () {
                       setState(() {
@@ -186,31 +215,41 @@ class _HelpSuggestionScreenState extends State<HelpSuggestionScreen> {
     );
   }
 
-  Widget _buildIssueCard(AppLocalizations l10n) {
+  Widget _buildIssueCard(AppLocalizations l10n, ThemeData theme, bool isDark) {
+    final colorScheme = theme.colorScheme;
+
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Theme.of(context).cardColor,
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5), width: 0.5),
+        color: isDark ? theme.cardColor : Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: isDark ? colorScheme.outline.withOpacity(0.15) : const Color(0xFFE2E8F0),
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(isDark ? 0.3 : 0.04),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          /// TOGGLE
+          /// MODERN SEGMENTED TAB SWITCHER
           Container(
-            height: 48,
+            height: 44,
+            padding: const EdgeInsets.all(3),
             decoration: BoxDecoration(
-              border: Border.all(
-                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
-              ),
-              borderRadius: BorderRadius.circular(4),
+              color: isDark ? colorScheme.onSurface.withOpacity(0.08) : const Color(0xFFF1F5F9),
+              borderRadius: BorderRadius.circular(24),
             ),
             child: Row(
               children: [
-                /// REPORT ISSUE
+                /// REPORT ISSUE TAB
                 Expanded(
-                  child: InkWell(
+                  child: GestureDetector(
                     onTap: () {
                       setState(() {
                         isReportIssue = true;
@@ -219,30 +258,35 @@ class _HelpSuggestionScreenState extends State<HelpSuggestionScreen> {
                     child: Container(
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
-                        borderRadius: const BorderRadius.horizontal(
-                          left: Radius.circular(3),
-                        ),
+                        color: isReportIssue
+                            ? (isDark ? colorScheme.surface : Colors.white)
+                            : Colors.transparent,
+                        borderRadius: BorderRadius.circular(22),
+                        boxShadow: isReportIssue
+                            ? [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.06),
+                                  blurRadius: 6,
+                                  offset: const Offset(0, 2),
+                                ),
+                              ]
+                            : [],
                       ),
                       child: Text(
                         l10n.reportAnIssue,
-                        style: TextStyle(color: isReportIssue
-                              ? Theme.of(context).colorScheme.primary
-                              : Theme.of(context).colorScheme.onSurface,
-                          fontWeight: FontWeight.bold,
+                        style: TextStyle(
+                          color: isReportIssue ? const Color(0xFF0284C7) : colorScheme.onSurface.withOpacity(0.6),
+                          fontWeight: isReportIssue ? FontWeight.bold : FontWeight.w500,
+                          fontSize: 13,
                         ),
                       ),
                     ),
                   ),
                 ),
 
-                VerticalDivider(
-                  width: 1,
-                  color: Theme.of(context).dividerColor,
-                ),
-
-                /// SUGGESTION
+                /// SUGGESTION TAB
                 Expanded(
-                  child: InkWell(
+                  child: GestureDetector(
                     onTap: () {
                       setState(() {
                         isReportIssue = false;
@@ -251,16 +295,26 @@ class _HelpSuggestionScreenState extends State<HelpSuggestionScreen> {
                     child: Container(
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
-                        borderRadius: const BorderRadius.horizontal(
-                          right: Radius.circular(3),
-                        ),
+                        color: !isReportIssue
+                            ? (isDark ? colorScheme.surface : Colors.white)
+                            : Colors.transparent,
+                        borderRadius: BorderRadius.circular(22),
+                        boxShadow: !isReportIssue
+                            ? [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.06),
+                                  blurRadius: 6,
+                                  offset: const Offset(0, 2),
+                                ),
+                              ]
+                            : [],
                       ),
                       child: Text(
                         l10n.suggestion,
-                        style: TextStyle(color: !isReportIssue
-                              ? Theme.of(context).colorScheme.primary
-                              : Theme.of(context).colorScheme.onSurface,
-                          fontWeight: FontWeight.bold,
+                        style: TextStyle(
+                          color: !isReportIssue ? const Color(0xFF0284C7) : colorScheme.onSurface.withOpacity(0.6),
+                          fontWeight: !isReportIssue ? FontWeight.bold : FontWeight.w500,
+                          fontSize: 13,
                         ),
                       ),
                     ),
@@ -270,32 +324,53 @@ class _HelpSuggestionScreenState extends State<HelpSuggestionScreen> {
             ),
           ),
 
-          const SizedBox(height: 28),
+          const SizedBox(height: 24),
 
-          /// TITLE
-          Text(
-            isReportIssue
-                ? l10n.reportAnIssue
-                : l10n.suggestion, // Or another key if available
-            style: const TextStyle(fontSize: 21, fontWeight: FontWeight.bold),
+          /// HEADER TITLE WITH ICON BADGE
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFE0F2FE),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Icon(
+                  isReportIssue ? Icons.bug_report_outlined : Icons.lightbulb_outline,
+                  color: const Color(0xFF0284C7),
+                  size: 20,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    isReportIssue ? l10n.reportAnIssue : l10n.suggestion,
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: colorScheme.onSurface,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    isReportIssue
+                        ? l10n.iHaveAnIssueWith
+                        : l10n.iWantToProvideSuggestion,
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: colorScheme.onSurface.withOpacity(0.55),
+                    ),
+                  ),
+                ],
+              ),
+            ],
           ),
 
-          const SizedBox(height: 18),
+          const SizedBox(height: 16),
 
-          /// SUBTITLE
-          Text(
-            isReportIssue
-                ? l10n.iHaveAnIssueWith
-                : l10n.iWantToProvideSuggestion,
-            style: TextStyle(
-              fontSize: 13,
-              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7),
-            ),
-          ),
-
-          const SizedBox(height: 14),
-
-          /// DROPDOWN CONTAINER
+          /// DROPDOWN CONTAINER / VEHICLE SELECTOR
           isReportIssue
               ? BlocBuilder<ServiceLogsCubit, ServiceLogsState>(
                   builder: (context, serviceState) {
@@ -307,12 +382,13 @@ class _HelpSuggestionScreenState extends State<HelpSuggestionScreen> {
                       }
 
                       return Container(
-                        padding: const EdgeInsets.symmetric(vertical: 1.2),
+                        padding: const EdgeInsets.symmetric(vertical: 2),
                         decoration: BoxDecoration(
+                          color: isDark ? colorScheme.onSurface.withOpacity(0.05) : const Color(0xFFF8FAFC),
                           border: Border.all(
-                            color: Theme.of(context).dividerColor,
+                            color: isDark ? colorScheme.outline.withOpacity(0.2) : const Color(0xFFE2E8F0),
                           ),
-                          borderRadius: BorderRadius.circular(8),
+                          borderRadius: BorderRadius.circular(12),
                         ),
                         child: VehicleSelectionAppBar(
                           isMinimal: true,
@@ -326,8 +402,7 @@ class _HelpSuggestionScreenState extends State<HelpSuggestionScreen> {
                             );
                             setState(() {
                               selectedVehicleId = vehicle.id;
-                              selectedVehicleImei =
-                                  vehicle.imei;
+                              selectedVehicleImei = vehicle.imei;
                             });
                           },
                         ),
@@ -337,10 +412,11 @@ class _HelpSuggestionScreenState extends State<HelpSuggestionScreen> {
                       height: 54,
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
+                        color: isDark ? colorScheme.onSurface.withOpacity(0.05) : const Color(0xFFF8FAFC),
                         border: Border.all(
-                          color: Theme.of(context).dividerColor,
+                          color: isDark ? colorScheme.outline.withOpacity(0.2) : const Color(0xFFE2E8F0),
                         ),
-                        borderRadius: BorderRadius.circular(4),
+                        borderRadius: BorderRadius.circular(12),
                       ),
                       child: const SizedBox(
                         height: 20,
@@ -353,11 +429,14 @@ class _HelpSuggestionScreenState extends State<HelpSuggestionScreen> {
               : GestureDetector(
                   onTap: () => _showSuggestionTypeSelector(context, l10n),
                   child: Container(
-                    height: 54,
-                    padding: const EdgeInsets.symmetric(horizontal: 14),
+                    height: 52,
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(8),
-                      border: Border.all(color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5), width: 0.5),
+                      color: isDark ? colorScheme.onSurface.withOpacity(0.05) : const Color(0xFFF8FAFC),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: isDark ? colorScheme.outline.withOpacity(0.2) : const Color(0xFFE2E8F0),
+                      ),
                     ),
                     child: Row(
                       children: [
@@ -369,91 +448,127 @@ class _HelpSuggestionScreenState extends State<HelpSuggestionScreen> {
                             l10n.selectType,
                             style: TextStyle(
                               fontSize: 14,
+                              fontWeight: FontWeight.w500,
                               color: selectedSuggestionType == null 
-                                  ? Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5)
-                                  : Theme.of(context).colorScheme.onSurface,
+                                  ? colorScheme.onSurface.withOpacity(0.4)
+                                  : colorScheme.onSurface,
                             ),
                           ),
                         ),
-                        Icon(
-                          Icons.keyboard_arrow_down,
-                          color: Theme.of(context).colorScheme.primary,
+                        const Icon(
+                          Icons.keyboard_arrow_down_rounded,
+                          color: Color(0xFF0284C7),
                         ),
                       ],
                     ),
                   ),
                 ),
 
-          const SizedBox(height: 26),
+          const SizedBox(height: 16),
 
-          /// SUBJECT FIELD
+          /// SUBJECT INPUT FIELD
           TextField(
             controller: issueController,
             textInputAction: TextInputAction.next,
             onEditingComplete: () => FocusScope.of(context).nextFocus(),
-            style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
+            style: TextStyle(
+              color: colorScheme.onSurface,
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+            ),
             decoration: InputDecoration(
+              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
               hintText: isReportIssue
                   ? l10n.whatIsYourIssueRelatedTo
                   : l10n.whatIsSuggestionSubject,
               hintStyle: TextStyle(
-                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.4),
-                fontSize: 15,
+                color: colorScheme.onSurface.withOpacity(0.4),
+                fontSize: 14,
               ),
-              enabledBorder: UnderlineInputBorder(
-                borderSide: BorderSide(color: Theme.of(context).dividerColor),
-              ),
-              focusedBorder: UnderlineInputBorder(
+              filled: true,
+              fillColor: isDark ? colorScheme.onSurface.withOpacity(0.05) : const Color(0xFFF8FAFC),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
                 borderSide: BorderSide(
-                  color: Theme.of(context).colorScheme.primary,
+                  color: isDark ? colorScheme.outline.withOpacity(0.2) : const Color(0xFFE2E8F0),
                 ),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(
+                  color: isDark ? colorScheme.outline.withOpacity(0.2) : const Color(0xFFE2E8F0),
+                ),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: const BorderSide(color: Color(0xFF0284C7), width: 1.5),
               ),
             ),
           ),
 
-          const SizedBox(height: 30),
+          const SizedBox(height: 14),
 
-          /// DESCRIPTION FIELD
+          /// DESCRIPTION INPUT FIELD
           TextField(
             controller: descriptionController,
-            minLines: 1,
+            minLines: 3,
             maxLines: 5,
             keyboardType: TextInputType.multiline,
             textInputAction: TextInputAction.done,
             onEditingComplete: () => FocusScope.of(context).unfocus(),
-            style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
+            style: TextStyle(
+              color: colorScheme.onSurface,
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+            ),
             decoration: InputDecoration(
               counterText: "",
+              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
               hintText: isReportIssue
                   ? l10n.giveShortDescription
                   : l10n.giveSuggestionFeedback,
               hintStyle: TextStyle(
-                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.4),
-                fontSize: 15,
+                color: colorScheme.onSurface.withOpacity(0.4),
+                fontSize: 14,
               ),
-              enabledBorder: UnderlineInputBorder(
-                borderSide: BorderSide(color: Theme.of(context).dividerColor),
-              ),
-              focusedBorder: UnderlineInputBorder(
+              filled: true,
+              fillColor: isDark ? colorScheme.onSurface.withOpacity(0.05) : const Color(0xFFF8FAFC),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
                 borderSide: BorderSide(
-                  color: Theme.of(context).colorScheme.primary,
+                  color: isDark ? colorScheme.outline.withOpacity(0.2) : const Color(0xFFE2E8F0),
                 ),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(
+                  color: isDark ? colorScheme.outline.withOpacity(0.2) : const Color(0xFFE2E8F0),
+                ),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: const BorderSide(color: Color(0xFF0284C7), width: 1.5),
               ),
             ),
           ),
 
+          if (_showValidationError) ...[
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                const Icon(Icons.error_outline, color: Colors.red, size: 14),
+                const SizedBox(width: 4),
+                Text(
+                  l10n.allFieldsMandatory,
+                  style: const TextStyle(color: Colors.red, fontSize: 12, fontWeight: FontWeight.w500),
+                ),
+              ],
+            ),
+          ],
+
           const SizedBox(height: 20),
 
-          if (_showValidationError)
-            Padding(
-              padding: const EdgeInsets.only(bottom: 16),
-              child: Text(
-                l10n.allFieldsMandatory,
-                style: const TextStyle(color: Colors.red, fontSize: 12),
-              ),
-            ),
-
-
+          /// SUBMIT / SELECT CALL SLOT GRADIENT CTA BUTTON
           BlocListener<SuggestionCubit, SuggestionState>(
             listener: (context, suggestionState) {
               if (suggestionState is SuggestionSuccess) {
@@ -475,9 +590,9 @@ class _HelpSuggestionScreenState extends State<HelpSuggestionScreen> {
             child: BlocConsumer<ReportIssueCubit, ReportIssueState>(
               listener: (context, state) {
                 if (state is ReportIssueSuccess) {
-                  ScaffoldMessenger.of(
-                    context,
-                  ).showSnackBar(SnackBar(content: Text(state.message)));
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text(state.message)),
+                  );
                   setState(() {
                     selectedCallSlotId = null;
                   });
@@ -486,113 +601,122 @@ class _HelpSuggestionScreenState extends State<HelpSuggestionScreen> {
                 }
 
                 if (state is ReportIssueError) {
-                  ScaffoldMessenger.of(
-                    context,
-                  ).showSnackBar(SnackBar(content: Text(state.error)));
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text(state.error)),
+                  );
                 }
               },
-
               builder: (context, state) {
                 final isSuggestionLoading = context.watch<SuggestionCubit>().state is SuggestionLoading;
                 final isLoading = state is ReportIssueLoading || isSuggestionLoading;
-                return Align(
-                  alignment: Alignment.centerRight,
 
-                  child: TextButton(
-                    onPressed: isLoading
-                        ? null
-                        : () async {
+                return GestureDetector(
+                  onTap: isLoading
+                      ? null
+                      : () async {
+                          final token = AppPreference.instance.getSync(
+                            key: AppPreference.KEY_TOKEN,
+                          );
 
-                            final token = AppPreference.instance.getSync(
-                              key: AppPreference.KEY_TOKEN,
+                          if (isReportIssue) {
+                            if (selectedVehicleId == null ||
+                                selectedVehicleId!.isEmpty ||
+                                issueController.text.trim().isEmpty ||
+                                descriptionController.text.trim().isEmpty) {
+                              setState(() => _showValidationError = true);
+                              return;
+                            }
+                            setState(() => _showValidationError = false);
+
+                            final result = await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => BlocProvider(
+                                  create: (_) => BookingSlotCubit()..getSlots(),
+                                  child: const BookCallSlotScreen(),
+                                ),
+                              ),
                             );
 
-                            if (isReportIssue) {
-                              if (selectedVehicleId == null ||
-                                  selectedVehicleId!.isEmpty ||
-                                  issueController.text.trim().isEmpty ||
-                                  descriptionController.text.trim().isEmpty) {
-                                setState(() => _showValidationError = true);
-                                return;
-                              }
-                              setState(() => _showValidationError = false);
-
-                              final result = await Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (_) => BlocProvider(
-                                    create: (_) =>
-                                        BookingSlotCubit()..getSlots(),
-                                    child: const BookCallSlotScreen(),
-                                  ),
-                                ),
-                              );
-
-                              if (result != null) {
-                                context.read<ReportIssueCubit>().submitIssue(
-                                  token: token,
-                                  request: ReportIssueRequest(
-                                    userId: AppPreference.instance.getSync(
-                                      key: AppPreference.KEY_USER_ID,
-                                    ) ?? "",
-                                    vehicleId: (selectedVehicleId != null && selectedVehicleId!.isNotEmpty)
-                                        ? selectedVehicleId!
-                                        : (selectedVehicleImei ?? ""),
-                                    issueType: "report_issue",
-                                    issueRelatedTo: issueController.text,
-                                    description: descriptionController.text,
-                                    callSlotId: result,
-                                  ),
-                                );
-                              }
-                            } else {
-                              if (selectedSuggestionType == null ||
-                                  selectedSuggestionType!.isEmpty ||
-                                  issueController.text.trim().isEmpty ||
-                                  descriptionController.text.trim().isEmpty) {
-                                setState(() => _showValidationError = true);
-                                return;
-                              }
-                              setState(() => _showValidationError = false);
-
-                              print("BUTTON CLICKED");
-                              print(selectedSuggestionType);
-                              context.read<SuggestionCubit>().submitSuggestion(
+                            if (result != null) {
+                              context.read<ReportIssueCubit>().submitIssue(
                                 token: token,
-
-                                request: SuggestionRequest(
+                                request: ReportIssueRequest(
                                   userId: AppPreference.instance.getSync(
                                     key: AppPreference.KEY_USER_ID,
-                                  ),
-                                  suggestionType: selectedSuggestionType ?? "other",
-                                  subject: issueController.text,
+                                  ) ?? "",
+                                  vehicleId: (selectedVehicleId != null && selectedVehicleId!.isNotEmpty)
+                                      ? selectedVehicleId!
+                                      : (selectedVehicleImei ?? ""),
+                                  issueType: "report_issue",
+                                  issueRelatedTo: issueController.text,
                                   description: descriptionController.text,
-
-
+                                  callSlotId: result,
                                 ),
                               );
                             }
-                          },
+                          } else {
+                            if (selectedSuggestionType == null ||
+                                selectedSuggestionType!.isEmpty ||
+                                issueController.text.trim().isEmpty ||
+                                descriptionController.text.trim().isEmpty) {
+                              setState(() => _showValidationError = true);
+                              return;
+                            }
+                            setState(() => _showValidationError = false);
 
-                    child: isLoading
-                        ? const SizedBox(
-                            height: 20,
-                            width: 20,
-
-                            child: CircularProgressIndicator(strokeWidth: 2),
-                          )
-                        : Text(
-                            isReportIssue
-                                ? l10n.selectCallSlot
-                                : l10n.send,
-
-                            style: TextStyle(color: Theme.of(context).colorScheme.primary,
-
-                              fontWeight: FontWeight.bold,
-
-                              fontSize: 15,
+                            context.read<SuggestionCubit>().submitSuggestion(
+                              token: token,
+                              request: SuggestionRequest(
+                                userId: AppPreference.instance.getSync(
+                                  key: AppPreference.KEY_USER_ID,
+                                ),
+                                suggestionType: selectedSuggestionType ?? "other",
+                                subject: issueController.text,
+                                description: descriptionController.text,
+                              ),
+                            );
+                          }
+                        },
+                  child: Container(
+                    height: 48,
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12),
+                      gradient: const LinearGradient(
+                        colors: [
+                          Color(0xFF0284C7),
+                          Color(0xFF0369A1),
+                        ],
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: const Color(0xFF0284C7).withOpacity(0.3),
+                          blurRadius: 8,
+                          offset: const Offset(0, 3),
+                        ),
+                      ],
+                    ),
+                    child: Center(
+                      child: isLoading
+                          ? const SizedBox(
+                              height: 20,
+                              width: 20,
+                              child: CircularProgressIndicator(
+                                color: Colors.white,
+                                strokeWidth: 2,
+                              ),
+                            )
+                          : Text(
+                              isReportIssue ? l10n.selectCallSlot : l10n.send,
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 15,
+                                letterSpacing: 0.2,
+                              ),
                             ),
-                          ),
+                    ),
                   ),
                 );
               },
@@ -603,31 +727,63 @@ class _HelpSuggestionScreenState extends State<HelpSuggestionScreen> {
     );
   }
 
-  Widget _buildMenuRow(String title, {required VoidCallback onTap}) {
+  Widget _buildMenuRow(
+    String title, {
+    required IconData icon,
+    required ThemeData theme,
+    required bool isDark,
+    required VoidCallback onTap,
+  }) {
+    final colorScheme = theme.colorScheme;
+
     return InkWell(
       onTap: onTap,
+      borderRadius: BorderRadius.circular(16),
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
         decoration: BoxDecoration(
-          color: Theme.of(context).cardColor,
-          borderRadius: BorderRadius.circular(8),
-          border: Border.all(color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5), width: 0.5),
+          color: isDark ? theme.cardColor : Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: isDark ? colorScheme.outline.withOpacity(0.15) : const Color(0xFFE2E8F0),
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(isDark ? 0.3 : 0.04),
+              blurRadius: 10,
+              offset: const Offset(0, 2),
+            ),
+          ],
         ),
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(
-              title,
-              style: TextStyle(
-                fontSize: 15,
-                fontWeight: FontWeight.w500,
-                color: Theme.of(context).colorScheme.onSurface,
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: const BoxDecoration(
+                color: Color(0xFFE0F2FE),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                icon,
+                color: const Color(0xFF0284C7),
+                size: 20,
+              ),
+            ),
+            const SizedBox(width: 14),
+            Expanded(
+              child: Text(
+                title,
+                style: TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w600,
+                  color: colorScheme.onSurface,
+                ),
               ),
             ),
             Icon(
-              Icons.arrow_forward_ios,
-              size: 18,
-              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+              Icons.arrow_forward_ios_rounded,
+              size: 16,
+              color: colorScheme.onSurface.withOpacity(0.4),
             ),
           ],
         ),
@@ -635,169 +791,163 @@ class _HelpSuggestionScreenState extends State<HelpSuggestionScreen> {
     );
   }
 
-  Widget _buildWhatsAppButton(AppLocalizations l10n) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.symmetric(vertical: 14),
-      decoration: BoxDecoration(
-        color: Theme.of(context).cardColor,
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5), width: 0.5),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Icon(
-            Icons.chat_bubble_outline,
-            color: Color(0xFF25D366),
-            size: 20,
-          ),
-          const SizedBox(width: 8),
-          Text(
-            l10n.whatsApp,
-            style: TextStyle(
-              fontSize: 15,
-              color: Theme.of(context).colorScheme.onSurface,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+  Widget _buildBottomMenu(AppLocalizations l10n, ThemeData theme, bool isDark) {
+    final colorScheme = theme.colorScheme;
 
-  Widget _buildForceMigrateSection(AppLocalizations l10n) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          l10n.forceMigrate,
-          style: const TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
-        ),
-        const SizedBox(height: 12),
-        Text(
-          l10n.forceMigrateDesc1,
-          style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
-            fontSize: 13,
-            height: 1.4,
-          ),
-        ),
-        const SizedBox(height: 8),
-        Text(
-          l10n.forceMigrateDesc2,
-          style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
-            fontSize: 13,
-            height: 1.4,
-          ),
-        ),
-        const SizedBox(height: 20),
-        SizedBox(
-          width: double.infinity,
-          height: 50,
-          child: ElevatedButton(
-            onPressed: () {},
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Theme.of(context).colorScheme.primary,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
-              ),
-            ),
-            child: Text(
-              l10n.forceMigrate,
-              style: TextStyle(color: Theme.of(context).colorScheme.onPrimary,
-                fontWeight: FontWeight.bold,
-                fontSize: 15,
-              ),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildBottomMenu(AppLocalizations l10n) {
-    return Column(
-      children: [
-        _buildSimplifiedMenuRow(l10n.faq, onTap: () {
+    final menuItems = [
+      {
+        "title": l10n.faq,
+        "icon": Icons.help_outline_rounded,
+        "onTap": () {
           Navigator.push(
             context,
             MaterialPageRoute(
               builder: (_) => AppWebViewScreen(
                 title: l10n.faq,
-                url: 'http://139.59.1.109/faq.html',
+                url: '${ApiURL.baseURL}/faq.html',
               ),
             ),
           );
-        }),
-        _buildSimplifiedMenuRow(l10n.termsConditions, onTap: () {
+        }
+      },
+      {
+        "title": l10n.termsConditions,
+        "icon": Icons.description_outlined,
+        "onTap": () {
           Navigator.push(
             context,
             MaterialPageRoute(
               builder: (_) => AppWebViewScreen(
                 title: l10n.termsConditions,
-                url: 'http://139.59.1.109/terms.html',
+                url: '${ApiURL.baseURL}/terms.html',
               ),
             ),
           );
-        }),
-        _buildSimplifiedMenuRow(l10n.privacyPolicy, onTap: () {
+        }
+      },
+      {
+        "title": l10n.privacyPolicy,
+        "icon": Icons.shield_outlined,
+        "onTap": () {
           Navigator.push(
             context,
             MaterialPageRoute(
               builder: (_) => AppWebViewScreen(
                 title: l10n.privacyPolicy,
-                url: 'http://139.59.1.109/privacy_policy.html',
+                url: '${ApiURL.baseURL}/privacy_policy.html',
               ),
             ),
           );
-        }),
-        _buildSimplifiedMenuRow(l10n.changeLog, onTap: () {
+        }
+      },
+      {
+        "title": l10n.changeLog,
+        "icon": Icons.system_update_outlined,
+        "onTap": () {
           Navigator.push(
             context,
             MaterialPageRoute(
               builder: (_) => const UpdateScreen(),
             ),
           );
-        }),
-      ],
-    );
-  }
+        }
+      },
+    ];
 
-  Widget _buildSimplifiedMenuRow(String title, {VoidCallback? onTap}) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(8),
-      child: Container(
-        width: double.infinity,
-        color: Colors.transparent,
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              title,
-              style: TextStyle(
-                fontSize: 15,
-                color: Theme.of(context).colorScheme.onSurface,
-              ),
-            ),
-            Icon(
-              Icons.arrow_forward_ios,
-              size: 14,
-              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.4),
-            ),
-          ],
+    return Container(
+      decoration: BoxDecoration(
+        color: isDark ? theme.cardColor : Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: isDark ? colorScheme.outline.withOpacity(0.15) : const Color(0xFFE2E8F0),
         ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(isDark ? 0.3 : 0.04),
+            blurRadius: 10,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        children: List.generate(menuItems.length, (index) {
+          final item = menuItems[index];
+          final isLast = index == menuItems.length - 1;
+
+          return InkWell(
+            onTap: item["onTap"] as VoidCallback,
+            borderRadius: BorderRadius.vertical(
+              top: index == 0 ? const Radius.circular(16) : Radius.zero,
+              bottom: isLast ? const Radius.circular(16) : Radius.zero,
+            ),
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                  child: Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFF1F5F9),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Icon(
+                          item["icon"] as IconData,
+                          color: const Color(0xFF0284C7),
+                          size: 18,
+                        ),
+                      ),
+                      const SizedBox(width: 14),
+                      Expanded(
+                        child: Text(
+                          item["title"] as String,
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                            color: colorScheme.onSurface,
+                          ),
+                        ),
+                      ),
+                      Icon(
+                        Icons.arrow_forward_ios_rounded,
+                        size: 14,
+                        color: colorScheme.onSurface.withOpacity(0.4),
+                      ),
+                    ],
+                  ),
+                ),
+                if (!isLast)
+                  Divider(
+                    height: 1,
+                    indent: 52,
+                    endIndent: 16,
+                    color: isDark ? colorScheme.outline.withOpacity(0.15) : const Color(0xFFF1F5F9),
+                  ),
+              ],
+            ),
+          );
+        }),
       ),
     );
   }
 
-  Widget _buildVersionInfo() {
-    return Align(
-      alignment: Alignment.centerRight,
-      child: Text(
-        "B3000507.V19.7.1.J406",
-        style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.4),
-          fontSize: 11,
+  Widget _buildVersionInfo(ThemeData theme, bool isDark) {
+    return Center(
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+        decoration: BoxDecoration(
+          color: isDark ? theme.colorScheme.onSurface.withOpacity(0.06) : const Color(0xFFF1F5F9),
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Text(
+          "Trackify  •  $_appVersion",
+          style: TextStyle(
+            color: theme.colorScheme.onSurface.withOpacity(0.5),
+            fontSize: 12,
+            fontWeight: FontWeight.w600,
+            letterSpacing: 0.3,
+          ),
         ),
       ),
     );

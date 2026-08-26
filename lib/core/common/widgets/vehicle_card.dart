@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:trackify/feature/device_installation/presentation/pages/device_installation_screen.dart';
 import 'package:trackify/feature/notifications/presentation/screen/notification_timeline.dart';
 
+import '../../../feature/device_warranty/domain/entities/device_warranty_entity.dart';
 import '../../../feature/device_warranty/data/model/warranty_status_model.dart';
 import '../../../feature/device_warranty/data/repository/device_warranty_repository_impl.dart';
 import '../../../feature/device_warranty/data/data_source/device_warranty_data_source.dart';
@@ -58,10 +59,10 @@ class _VehicleCardState extends State<VehicleCard> {
       );
 
       final wFuture = warrantyRepo
-          .getDeviceWarrantyStatus(widget.vehicle.imei!)
+          .getDeviceWarranty(widget.vehicle.imei!)
           .then(
             (result) =>
-                result.fold((l) => null as WarrantyStatusModel?, (r) => r),
+                result.fold((l) => null as DeviceWarrantyEntity?, (r) => r),
           );
       final dFuture = dataRepo
           .getCurrentDataPlan(widget.vehicle.imei!)
@@ -319,8 +320,8 @@ class _VehicleCardState extends State<VehicleCard> {
                         );
                       }
 
-                      WarrantyStatusModel? warrantyData =
-                          snapshot.data?[0] as WarrantyStatusModel?;
+                      DeviceWarrantyEntity? warrantyData =
+                          snapshot.data?[0] as DeviceWarrantyEntity?;
                       CurrentPlanEntity? dataPlanData =
                           snapshot.data?[1] as CurrentPlanEntity?;
 

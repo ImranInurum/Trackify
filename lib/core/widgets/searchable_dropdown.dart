@@ -114,7 +114,7 @@ class _SearchableDropdownState<T> extends State<SearchableDropdown<T>> {
                     ),
                   ),
                   items: widget.items
-                      .map((e) => DropdownItem<T>(
+                      .map((e) => DropdownMenuItem<T>(
                             value: e,
                             child: Text(
                               widget.itemLabel(e),
@@ -125,7 +125,7 @@ class _SearchableDropdownState<T> extends State<SearchableDropdown<T>> {
                             ),
                           ))
                       .toList(),
-                  valueListenable: selectedValueNotifier,
+                  value: widget.value,
                   onChanged: widget.isLoading ? null : widget.onChanged,
                   buttonStyleData: const ButtonStyleData(
                     padding: EdgeInsets.zero,
@@ -145,8 +145,8 @@ class _SearchableDropdownState<T> extends State<SearchableDropdown<T>> {
                   ),
                   dropdownSearchData: DropdownSearchData(
                     searchController: textEditingController,
-                    searchBarWidgetHeight: 50,
-                    searchBarWidget: Container(
+                    searchInnerWidgetHeight: 50,
+                    searchInnerWidget: Container(
                       height: 50,
                       padding: const EdgeInsets.only(
                         top: 8,

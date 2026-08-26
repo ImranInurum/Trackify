@@ -165,7 +165,7 @@ class _DocumentLicenseState extends State<DocumentLicense> {
     });
 
     try {
-      final result = await FilePicker.pickFiles(
+      final result = await FilePicker.platform.pickFiles(
         type: FileType.custom,
         allowedExtensions: ['pdf'],
       );

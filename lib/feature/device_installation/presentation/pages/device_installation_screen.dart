@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:trackify/core/utils/flutter_compat_extensions.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:trackify/feature/add_vehicle_and_device/add_vehicle/data/repository/add_vehicle_repository_impl.dart';
 import 'package:trackify/feature/add_vehicle_and_device/add_vehicle/domain/use_case/add_vehicle_use_case.dart';
@@ -43,7 +44,7 @@ class _DeviceInstallationScreenState extends State<DeviceInstallationScreen>
       BarcodeFormat.code93,
       BarcodeFormat.ean13,
       BarcodeFormat.ean8,
-      BarcodeFormat.itf14,
+      BarcodeFormat.itf,
       BarcodeFormat.upcA,
       BarcodeFormat.upcE,
       BarcodeFormat.dataMatrix,

@@ -117,41 +117,49 @@ class _AllRidesState extends State<AllRides> {
                             }
                           },
                           child: Container(
-                            height: 48,
+                            height: 46,
                             decoration: BoxDecoration(
-                              color: theme.colorScheme.onSurface.withValues(alpha: 0.05),
+                              color: Theme.of(context).brightness == Brightness.dark
+                                  ? theme.colorScheme.onSurface.withOpacity(0.06)
+                                  : const Color(0xFFF8FAFC),
                               borderRadius: BorderRadius.circular(12),
                               border: Border.all(
-                                color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5),
-                                width: 0.5,
+                                color: Theme.of(context).brightness == Brightness.dark
+                                    ? theme.colorScheme.outline.withOpacity(0.2)
+                                    : const Color(0xFFE2E8F0),
                               ),
                             ),
                             child: Row(
                               children: [
-                                const SizedBox(width: 16),
+                                const SizedBox(width: 14),
                                 Icon(
-                                  _selectedDate != null ? Icons.calendar_today : Icons.calendar_today_outlined,
-                                  color: _selectedDate != null ? theme.primaryColor : theme.colorScheme.onSurface.withValues(alpha: 0.5),
-                                  size: 20,
+                                  _selectedDate != null
+                                      ? Icons.calendar_today_rounded
+                                      : Icons.calendar_today_outlined,
+                                  color: const Color(0xFF0284C7),
+                                  size: 18,
                                 ),
-                                const SizedBox(width: 12),
+                                const SizedBox(width: 10),
                                 Expanded(
-                                  child: Container(
-                                    alignment: Alignment.centerLeft,
-                                    padding: const EdgeInsets.symmetric(vertical: 14),
-                                    child: Text(
-                                      _selectedDate != null ? DateFormat('dd MMM yyyy').format(_selectedDate!) : 'Select Date',
-                                      style: TextStyle(
-                                        color: _selectedDate != null ? theme.primaryColor : theme.colorScheme.onSurface.withValues(alpha: 0.4),
-                                        fontSize: 14,
-                                        fontWeight: _selectedDate != null ? FontWeight.bold : FontWeight.normal,
-                                      ),
+                                  child: Text(
+                                    _selectedDate != null
+                                        ? DateFormat('dd MMM yyyy').format(_selectedDate!)
+                                        : 'Select Date',
+                                    style: TextStyle(
+                                      color: _selectedDate != null
+                                          ? const Color(0xFF0284C7)
+                                          : theme.colorScheme.onSurface.withOpacity(0.5),
+                                      fontSize: 13.5,
+                                      fontWeight: _selectedDate != null
+                                          ? FontWeight.bold
+                                          : FontWeight.w500,
                                     ),
                                   ),
                                 ),
                                 if (_selectedDate != null)
                                   IconButton(
-                                    icon: const Icon(Icons.clear, size: 20),
+                                    icon: const Icon(Icons.close_rounded, size: 18),
+                                    color: theme.colorScheme.onSurface.withOpacity(0.6),
                                     onPressed: () {
                                       setState(() {
                                         _selectedDate = null;
@@ -163,7 +171,7 @@ class _AllRidesState extends State<AllRides> {
                           ),
                         ),
                       ),
-                      const SizedBox(width: 12),
+                      const SizedBox(width: 10),
                       GestureDetector(
                         onTap: () {
                           showModalBottomSheet(
@@ -174,7 +182,8 @@ class _AllRidesState extends State<AllRides> {
                               final cubit = context.read<RideHistoryCubit>();
                               return SortingBottomSheet(
                                 initialSortBy: cubit.currentSortBy,
-                                initialIsRecentToOldest: cubit.currentIsRecentToOldest,
+                                initialIsRecentToOldest:
+                                    cubit.currentIsRecentToOldest,
                                 onApply: (sortBy, isRecentToOldest) {
                                   cubit.sortRides(sortBy, isRecentToOldest);
                                 },
@@ -183,17 +192,24 @@ class _AllRidesState extends State<AllRides> {
                           );
                         },
                         child: Container(
-                          height: 48,
-                          width: 48,
+                          height: 46,
+                          width: 46,
                           decoration: BoxDecoration(
-                            color: theme.colorScheme.onSurface.withValues(alpha: 0.05),
+                            color: Theme.of(context).brightness == Brightness.dark
+                                ? theme.colorScheme.onSurface.withOpacity(0.06)
+                                : const Color(0xFFF8FAFC),
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(
-                              color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5),
-                              width: 0.5,
+                              color: Theme.of(context).brightness == Brightness.dark
+                                  ? theme.colorScheme.outline.withOpacity(0.2)
+                                  : const Color(0xFFE2E8F0),
                             ),
                           ),
-                          child: Icon(Icons.sort, color: theme.colorScheme.primary),
+                          child: const Icon(
+                            Icons.tune_rounded,
+                            color: Color(0xFF0284C7),
+                            size: 20,
+                          ),
                         ),
                       ),
                     ],

@@ -12,10 +12,16 @@ class ApiURL {
   }
 
   static const String baseURL = 'https://trackifybackend.inurum.com';
-  static const String socketURL = 'ws://139.59.1.109:4000';
+  static const String socketURL = String.fromEnvironment(
+    'SOCKET_URL',
+    defaultValue: 'wss://trackifybackend.inurum.com:4000',
+  );
 
   // Razorpay
-  static const String razorpayKey = 'rzp_test_TEWNN1rk9drG2x';
+  static const String razorpayKey = String.fromEnvironment(
+    'RAZORPAY_KEY',
+    defaultValue: 'rzp_test_TEWNN1rk9drG2x',
+  );
 
   static String authToken = '';
   static void updateAuthToken(String token) {
@@ -95,7 +101,12 @@ class ApiURL {
   static String updateOnlinePastRideTag(String rideId) => "$baseURL/api/ride-mode/update-tag/$rideId";
   static String deleteOnlinePastRide(String rideId) => "$baseURL/api/ride-mode/delete/$rideId";
   static String rateOnlinePastRide(String rideId) => "$baseURL/api/ride-mode/rate/$rideId";
-  static String promoVideos(String imei) => "$baseURL/api/global-video/imei-videos/$imei";
+  static String promoVideos(String imei) {
+    if (imei == 'null' || imei.isEmpty) {
+      return "$baseURL/api/global-video/imei-videos";
+    }
+    return "$baseURL/api/global-video/imei-videos/$imei";
+  }
   static const String promoOffers = "$baseURL/api/banner/all";
   static const String productFeatures = "$baseURL/api/product-features";
 

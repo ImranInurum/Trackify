@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
+import 'package:trackify/core/utils/flutter_compat_extensions.dart';
 import 'package:trackify/core/utils/active_video_manager.dart';
 import 'package:trackify/feature/map/data/entity/promo_video_model.dart';
 import 'package:video_player/video_player.dart';
