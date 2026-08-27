@@ -32,9 +32,8 @@ class VehicleSelectorSheet extends StatelessWidget {
       decoration: BoxDecoration(
         color: theme.cardColor.withValues(alpha: 0.8),
         border: Border.all(color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5), width: 0.5),
-        borderRadius: const BorderRadius.only(
-          bottomLeft: Radius.circular(30),
-          bottomRight: Radius.circular(30),
+        borderRadius: const BorderRadius.vertical(
+          bottom: Radius.circular(30),
         ),
       ),
       child: Column(

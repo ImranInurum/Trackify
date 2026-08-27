@@ -58,6 +58,61 @@ class RideTripModel {
   }
 }
 
+class IgnitionTimelineModel {
+  final String status;
+  final String startTime;
+  final String endTime;
+  final int durationMinutes;
+
+  IgnitionTimelineModel({
+    required this.status,
+    required this.startTime,
+    required this.endTime,
+    required this.durationMinutes,
+  });
+
+  factory IgnitionTimelineModel.fromJson(Map<String, dynamic> json) {
+    return IgnitionTimelineModel(
+      status: json['status'] ?? 'OFF',
+      startTime: json['startTime'] ?? '',
+      endTime: json['endTime'] ?? '',
+      durationMinutes: (json['durationMinutes'] as num?)?.toInt() ?? 0,
+    );
+  }
+}
+
+class TripSegmentModel {
+  final int tripNumber;
+  final String startTime;
+  final String endTime;
+  final int durationMinutes;
+  final String durationText;
+  final double distance;
+  final double topSpeed;
+
+  TripSegmentModel({
+    required this.tripNumber,
+    required this.startTime,
+    required this.endTime,
+    required this.durationMinutes,
+    required this.durationText,
+    required this.distance,
+    required this.topSpeed,
+  });
+
+  factory TripSegmentModel.fromJson(Map<String, dynamic> json) {
+    return TripSegmentModel(
+      tripNumber: json['tripNumber'] ?? 1,
+      startTime: json['startTime'] ?? '',
+      endTime: json['endTime'] ?? '',
+      durationMinutes: (json['durationMinutes'] as num?)?.toInt() ?? 0,
+      durationText: json['durationText'] ?? '',
+      distance: (json['distance'] as num?)?.toDouble() ?? 0.0,
+      topSpeed: (json['topSpeed'] as num?)?.toDouble() ?? 0.0,
+    );
+  }
+}
+
 class RideSummaryModel {
   final String? startTime;
   final String? endTime;
@@ -67,6 +122,9 @@ class RideSummaryModel {
   final double? avgSpeed;
   final double? topSpeed;
   final double? totalDistanceKm;
+  final int? tripsCount;
+  final List<TripSegmentModel>? trips;
+  final List<IgnitionTimelineModel>? ignitionTimeline;
 
   RideSummaryModel({
     this.startTime,
@@ -77,6 +135,9 @@ class RideSummaryModel {
     this.avgSpeed,
     this.topSpeed,
     this.totalDistanceKm,
+    this.tripsCount,
+    this.trips,
+    this.ignitionTimeline,
   });
 
   factory RideSummaryModel.fromJson(Map<String, dynamic> json) {
@@ -89,6 +150,13 @@ class RideSummaryModel {
       avgSpeed: (json['avgSpeed'] as num?)?.toDouble(),
       topSpeed: (json['topSpeed'] as num?)?.toDouble(),
       totalDistanceKm: (json['totalDistanceKm'] as num?)?.toDouble(),
+      tripsCount: json['tripsCount'] as int?,
+      trips: (json['trips'] as List<dynamic>?)
+          ?.map((e) => TripSegmentModel.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      ignitionTimeline: (json['ignitionTimeline'] as List<dynamic>?)
+          ?.map((e) => IgnitionTimelineModel.fromJson(e as Map<String, dynamic>))
+          .toList(),
     );
   }
 }

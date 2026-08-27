@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:trackify/core/utils/flutter_compat_extensions.dart';
 import 'package:trackify/core/constants/app_images.dart';
 import 'package:trackify/l10n/app_localizations.dart';
 
 import 'add_vehicle/presentation/view/add_vehicle_screen.dart';
 import '../device_installation/presentation/pages/device_installation_screen.dart';
-import '../reach_me_sticker/presentation/screens/scan_qr_screen.dart';
-import '../reach_me_sticker/presentation/widgets/dynamic_sticker_preview.dart';
 import 'package:trackify/core/widgets/logout_confirmation_dialog.dart';
 
 class ChoiceSelector extends StatefulWidget {
@@ -21,18 +18,20 @@ class _ChoiceSelectorState extends State<ChoiceSelector> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final canPop = Navigator.of(context).canPop();
+    final theme = Theme.of(context);
+
     return WillPopScope(
       onWillPop: () async => canPop,
       child: Scaffold(
-        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        backgroundColor: theme.scaffoldBackgroundColor,
         appBar: AppBar(
-          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+          backgroundColor: theme.scaffoldBackgroundColor,
           elevation: 0,
           leading: canPop
               ? IconButton(
                   icon: Icon(
                     Icons.arrow_back_ios_new,
-                    color: Theme.of(context).colorScheme.onSurface,
+                    color: theme.colorScheme.onSurface,
                   ),
                   onPressed: () {
                     if (Navigator.of(context).canPop()) {
@@ -43,212 +42,199 @@ class _ChoiceSelectorState extends State<ChoiceSelector> {
               : null,
         ),
         body: SafeArea(
-        child: Column(
-          children: [
-            Expanded(
-              child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    const SizedBox(height: 16),
+          child: Column(
+            children: [
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                  child: Column(
+                    children: [
+                      const SizedBox(height: 12),
 
-                    // Cards
-                    _buildChoiceCard(
-                      context: context,
-                      title: l10n.installDevice,
-                      subtitle: l10n.installDeviceDesc,
-                      imagePath: AppImages.installDevices,
-                      imageWidth: 90,
-                      imageHeight: 90,
-                      onTap: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                const DeviceInstallationScreen(),
-                          ),
-                        );
-                      },
-                    ),
-
-                    _buildChoiceCard(
-                      context: context,
-                      title: l10n.activateSticker,
-                      subtitle: l10n.activateStickerDesc,
-                      imagePath: AppImages.activateContactSticker,
-                      customWidget: const DynamicStickerPreview(
-                        fitCompact: true,
-                        width: 70,
-                        height: 70,
+                      // Install Trackify Device Card
+                      _buildEnhancedChoiceCard(
+                        context: context,
+                        title: l10n.installDevice,
+                        subtitle: l10n.installDeviceDesc,
+                        imagePath: AppImages.installDevices,
+                        imageWidth: 95,
+                        imageHeight: 95,
+                        accentColor: theme.colorScheme.primary,
+                        onTap: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => const DeviceInstallationScreen(),
+                            ),
+                          );
+                        },
                       ),
-                      imageWidth: 70,
-                      imageHeight: 70,
-                      onTap: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => const ScanQrScreen(),
-                          ),
-                        );
-                      },
-                    ),
 
-                    _buildChoiceCard(
-                      context: context,
-                      title: l10n.exploreFreeApp,
-                      subtitle: l10n.exploreFreeAppDesc,
-                      imagePath: AppImages.exploreApp,
-                      imageWidth: 70,
-                      imageHeight: 90,
-                      onTap: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => const AddVehicleScreen(),
-                          ),
-                        );
-                      },
-                    ),
-                    const SizedBox(height: 30),
-                  ],
-                ),
-              ),
-            ),
+                      const SizedBox(height: 20),
 
-            // Logout Button
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 20),
-              child: TextButton.icon(
-                onPressed: () => LogoutConfirmationDialog.show(context),
-                icon: Icon(
-                  Icons.logout,
-                  color: Theme.of(
-                    context,
-                  ).colorScheme.onSurface.withValues(alpha: 0.5),
-                  size: 20,
-                ),
-                label: Text(
-                  l10n.logout,
-                  style: TextStyle(color: Theme.of(
-                      context,
-                    ).colorScheme.onSurface.withValues(alpha: 0.5),
-                    fontSize: 15,
-                    fontWeight: FontWeight.w500,
+                      // Explore Our Free App Card
+                      _buildEnhancedChoiceCard(
+                        context: context,
+                        title: l10n.exploreFreeApp,
+                        subtitle: l10n.exploreFreeAppDesc,
+                        imagePath: AppImages.exploreApp,
+                        imageWidth: 85,
+                        imageHeight: 95,
+                        accentColor: const Color(0xFF00B4D8),
+                        onTap: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => const AddVehicleScreen(),
+                            ),
+                          );
+                        },
+                      ),
+
+                      const SizedBox(height: 40),
+                    ],
                   ),
                 ),
               ),
-            ),
-          ],
+
+              // Logout Button
+              Padding(
+                padding: const EdgeInsets.only(bottom: 24),
+                child: TextButton.icon(
+                  onPressed: () => LogoutConfirmationDialog.show(context),
+                  icon: Icon(
+                    Icons.logout,
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
+                    size: 20,
+                  ),
+                  label: Text(
+                    l10n.logout,
+                    style: TextStyle(
+                      color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
+                      fontSize: 15,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
-    ),
     );
   }
 
-  Widget _buildChoiceCard({
+  Widget _buildEnhancedChoiceCard({
     required BuildContext context,
     required String title,
     required String subtitle,
     required String imagePath,
-    Widget? customWidget,
-    double imageWidth = 70,
-    double imageHeight = 70,
+    required Color accentColor,
+    double imageWidth = 85,
+    double imageHeight = 85,
     required VoidCallback onTap,
   }) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5), width: 0.5),
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              Theme.of(context).colorScheme.surface,
-              Theme.of(context).colorScheme.primary.withValues(alpha: 0.15),
-            ],
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: Theme.of(context).shadowColor.withValues(alpha: 0.1),
-              blurRadius: 4,
-              offset: const Offset(0, 2),
-            ),
+    final theme = Theme.of(context);
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: theme.colorScheme.outlineVariant.withValues(alpha: 0.4),
+          width: 0.8,
+        ),
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            theme.colorScheme.surface,
+            theme.colorScheme.primaryContainer.withValues(alpha: 0.25),
           ],
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            const SizedBox(
-              height: 8,
-            ), // Replaced padding with slight spacing from top
-            Icon(
-              Icons.arrow_forward,
-              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.4),
-              size: 20,
-            ),
-            Padding(
-              padding: const EdgeInsets.only(
-                left: 12.0,
-                bottom: 20.0,
-              ), // Removed right padding, reduced bottom
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.only(right: 12.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            title,
-                            style: TextStyle(color: Theme.of(context).colorScheme.onSurface,
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            subtitle,
-                            style: TextStyle(color: Theme.of(
-                                context,
-                              ).colorScheme.onSurface.withValues(alpha: 0.6),
-                              fontSize: 13,
-                              height: 1.4,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.end,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.12),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(20),
+          onTap: onTap,
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(14),
-                        child: SizedBox(
-                          width: imageWidth,
-                          height: imageHeight,
-                          child: customWidget ?? Image.asset(
-                            imagePath,
-                            fit: BoxFit.fill,
-                            alignment: Alignment.bottomRight,
-                            errorBuilder: (context, error, stackTrace) => Icon(
-                              Icons.inventory_2_outlined,
-                              size: 40,
-                              color: Theme.of(
-                                context,
-                              ).hintColor.withValues(alpha: 0.5),
-                            ),
-                          ),
+                      Text(
+                        title,
+                        style: TextStyle(
+                          color: theme.colorScheme.onSurface,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          height: 1.2,
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      Text(
+                        subtitle,
+                        style: TextStyle(
+                          color: theme.colorScheme.onSurface.withValues(alpha: 0.65),
+                          fontSize: 13.5,
+                          height: 1.4,
                         ),
                       ),
                     ],
                   ),
-                ],
-              ),
+                ),
+                const SizedBox(width: 14),
+                Stack(
+                  alignment: Alignment.topRight,
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(16),
+                      child: Container(
+                        width: imageWidth,
+                        height: imageHeight,
+                        decoration: BoxDecoration(
+                          color: accentColor.withValues(alpha: 0.08),
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        child: Image.asset(
+                          imagePath,
+                          fit: BoxFit.contain,
+                          errorBuilder: (context, error, stackTrace) => Icon(
+                            Icons.devices_other_outlined,
+                            size: 40,
+                            color: theme.hintColor.withValues(alpha: 0.5),
+                          ),
+                        ),
+                      ),
+                    ),
+                    Positioned(
+                      top: 4,
+                      right: 4,
+                      child: Container(
+                        padding: const EdgeInsets.all(4),
+                        decoration: BoxDecoration(
+                          color: theme.colorScheme.surface.withValues(alpha: 0.85),
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          Icons.arrow_forward_ios_rounded,
+                          size: 12,
+                          color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );

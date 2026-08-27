@@ -2817,7 +2817,22 @@ class _FullScreenMapState extends State<FullScreenMap>
               liveSpeed = "0";
             }
 
-            String? stoppedAtStr = liveDevice['parking_date_time']?.toString();
+            String? stoppedAtStr = liveDevice['parking_date_time']?.toString() ??
+                liveDevice['acc_off_time']?.toString() ??
+                liveDevice['updatedAt']?.toString() ??
+                liveDevice['time']?.toString() ??
+                liveDevice['createdAt']?.toString() ??
+                _currentVehicle?.currentLocation?.time;
+
+            if (stoppedAtStr == null ||
+                stoppedAtStr.isEmpty ||
+                stoppedAtStr.toLowerCase() == "null" ||
+                stoppedAtStr.toLowerCase() == "invalid date") {
+              if (lastRide != null && lastRide.rawStartTime.isNotEmpty) {
+                stoppedAtStr = lastRide.rawStartTime;
+              }
+            }
+
             final imei = liveDevice['imei']?.toString() ?? "";
 
             if (stoppedAtStr != null &&
@@ -2903,10 +2918,22 @@ class _FullScreenMapState extends State<FullScreenMap>
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Text(
-                            _currentVehicle?.vehicleMaker ??
-                                AppLocalizations.of(
-                                  context,
-                                )!.vehicleNamePlaceholder,
+                            () {
+                              String title = [
+                                _currentVehicle?.vehicleMaker,
+                                _currentVehicle?.vehicleModel
+                              ].where((s) => s != null && s.isNotEmpty && s != '?').join(' ');
+
+                              title = title.replaceAll(RegExp(r'Honda Motorcycle & Scooter India', caseSensitive: false), 'Honda');
+                              title = title.replaceAll(RegExp(r'Honda Motorcycle & Scooter', caseSensitive: false), 'Honda');
+                              title = title.replaceAll(RegExp(r'Hero MotoCorp', caseSensitive: false), 'Hero');
+                              title = title.replaceAll(RegExp(r'Suzuki Motorcycle India', caseSensitive: false), 'Suzuki');
+                              title = title.replaceAll(RegExp(r'Jawa Yezdi Motorcycles', caseSensitive: false), 'Jawa');
+                              title = title.replaceAll(RegExp(r'Bajaj Auto', caseSensitive: false), 'Bajaj');
+                              title = title.replaceAll(RegExp(r'TVS Motor', caseSensitive: false), 'TVS');
+                              title = title.replaceAll(RegExp(r'Tata Motors', caseSensitive: false), 'Tata');
+                              return title.isEmpty ? AppLocalizations.of(context)!.vehicleNamePlaceholder : title;
+                            }(),
                             style: TextStyle(
                               fontSize: 17,
                               fontWeight: FontWeight.bold,
@@ -3622,7 +3649,7 @@ class _FullScreenMapState extends State<FullScreenMap>
             batteryVal.toString().trim().toLowerCase() != 'null' &&
             batteryVal.toString().trim().isNotEmpty) {
           final b = batteryVal.toString().trim();
-          if (b.isNotEmpty && b != 'null') {
+          if (b.endsWith('%') || b.toLowerCase().endsWith('v')) {
             bracketText = " ($b)";
           }
         }
@@ -3825,20 +3852,11 @@ class _FullScreenMapState extends State<FullScreenMap>
                       ),
                     ),
                     const SizedBox(height: 8),
-                    if (batteryText.isNotEmpty || extVoltage != null)
+                    if (batteryText.isNotEmpty)
                       Builder(
                         builder: (context) {
                           String combinedText = batteryText;
-                          if (extVoltage != null) {
-                            if (batteryText == "--" || batteryText.isEmpty) {
-                              combinedText = "$extVoltage V";
-                            } else {
-                              combinedText = "$batteryText | $extVoltage V";
-                            }
-                          }
-                          IconData finalIcon = (batteryText == "--" || batteryText.isEmpty) && extVoltage != null 
-                              ? Icons.bolt 
-                              : batteryIcon;
+                          IconData finalIcon = batteryIcon;
 
                           return Row(
                             mainAxisAlignment: MainAxisAlignment.center,

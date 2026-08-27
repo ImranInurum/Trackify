@@ -163,22 +163,20 @@ class _VehicleCardState extends State<VehicleCard> {
                             children: [
                               Text(
                                 () {
-                                  final maker = widget.vehicle.vehicleMaker
-                                      ?.trim();
-                                  final model = widget.vehicle.vehicleModel
-                                      ?.trim();
-                                  final m =
-                                      (maker == null ||
-                                          maker == '?' ||
-                                          maker.toLowerCase() == 'null')
-                                      ? ''
-                                      : maker;
-                                  final mod =
-                                      (model == null ||
-                                          model == '?' ||
-                                          model.toLowerCase() == 'null')
-                                      ? ''
-                                      : model;
+                                  String maker = widget.vehicle.vehicleMaker?.trim() ?? '';
+                                  maker = maker.replaceAll(RegExp(r'Honda Motorcycle & Scooter India', caseSensitive: false), 'Honda');
+                                  maker = maker.replaceAll(RegExp(r'Honda Motorcycle & Scooter', caseSensitive: false), 'Honda');
+                                  maker = maker.replaceAll(RegExp(r'Hero MotoCorp', caseSensitive: false), 'Hero');
+                                  maker = maker.replaceAll(RegExp(r'Suzuki Motorcycle India', caseSensitive: false), 'Suzuki');
+                                  maker = maker.replaceAll(RegExp(r'Jawa Yezdi Motorcycles', caseSensitive: false), 'Jawa');
+                                  maker = maker.replaceAll(RegExp(r'Bajaj Auto', caseSensitive: false), 'Bajaj');
+                                  maker = maker.replaceAll(RegExp(r'TVS Motor', caseSensitive: false), 'TVS');
+                                  maker = maker.replaceAll(RegExp(r'Tata Motors', caseSensitive: false), 'Tata');
+                                  maker = maker.replaceAll(RegExp(r'Maruti Suzuki India', caseSensitive: false), 'Maruti Suzuki');
+
+                                  final model = widget.vehicle.vehicleModel?.trim();
+                                  final m = (maker == '?' || maker.toLowerCase() == 'null') ? '' : maker;
+                                  final mod = (model == null || model == '?' || model.toLowerCase() == 'null') ? '' : model;
                                   final combined = '$m $mod'.trim();
                                   return combined.isEmpty ? '--' : combined;
                                 }(),

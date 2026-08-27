@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:trackify/core/utils/flutter_compat_extensions.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:trackify/feature/add_vehicle_and_device/add_vehicle/data/repository/add_vehicle_repository_impl.dart';
 import 'package:trackify/feature/add_vehicle_and_device/add_vehicle/domain/use_case/add_vehicle_use_case.dart';
@@ -703,23 +702,14 @@ class _DeviceInstallationScreenState extends State<DeviceInstallationScreen>
     await context.read<ProfileCubit>().fetchVehicles();
 
     if (!mounted) return;
-    final profileState = context.read<ProfileCubit>().state;
     final appState = context.read<AppCubit>().state;
-    final currentUserId = appState.userData?.id;
 
-    bool hasVehicle = false;
-    if (profileState is VehiclesLoaded && profileState.vehicles.isNotEmpty) {
-      // Ensure the cached vehicles belong to the current user
-      final firstVehicleUserId = profileState.vehicles.first.userId;
-      if (currentUserId == null ||
-          firstVehicleUserId == null ||
-          firstVehicleUserId == currentUserId) {
-        hasVehicle = true;
-      }
-    }
-
+    // If no specific vehicleId was passed to this screen (i.e. user tapped "Install Trackify Device"),
+    // ALWAYS open the Add Vehicle screen so the user enters details for their new vehicle!
+    final bool shouldPromptNewVehicle = (widget.vehicleId == null || widget.vehicleId!.trim().isEmpty);
     bool addedNewVehicle = false;
-    if (!hasVehicle) {
+
+    if (shouldPromptNewVehicle) {
       final added = await showDialog<bool>(
         context: context,
         barrierDismissible: false,
@@ -730,11 +720,18 @@ class _DeviceInstallationScreenState extends State<DeviceInstallationScreen>
           child: const AddVehicleDialog(),
         ),
       );
-      if (added != true) return;
+      if (added != true) {
+        setState(() {
+          _hasScanned = false;
+          _scannedImei = null;
+        });
+        _cameraController.start();
+        return;
+      }
 
       if (!mounted) return;
 
-      // Await fetch to ensure state is updated
+      // Await fetch to ensure state is updated with newly created vehicle
       await context.read<ProfileCubit>().fetchVehicles();
       addedNewVehicle = true;
     }

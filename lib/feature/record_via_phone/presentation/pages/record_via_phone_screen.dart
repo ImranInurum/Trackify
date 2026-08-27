@@ -40,7 +40,9 @@ class RecordViaPhoneScreen extends StatefulWidget {
   State<RecordViaPhoneScreen> createState() => _RecordViaPhoneScreenState();
 }
 
-class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
+class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen>
+    with SingleTickerProviderStateMixin {
+  late TabController _tabController;
   final Completer<GoogleMapController> _rideMapController =
       Completer<GoogleMapController>();
   final Completer<GoogleMapController> _pastMapController =
@@ -66,6 +68,12 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
   @override
   void initState() {
     super.initState();
+    _tabController = TabController(length: 3, vsync: this);
+    _tabController.addListener(() {
+      if (mounted) {
+        setState(() {});
+      }
+    });
     _loadMapStyles();
     _fetchMobileDeviceName();
     _initStartEndMarkers();
@@ -76,12 +84,23 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
     _statsStartDate = DateTime(now.year, now.month, now.day);
     _statsEndDate = DateTime(now.year, now.month, now.day, 23, 59, 59);
 
-    // Pre-fetch today's history
+    // Pre-fetch today's history and refresh current phone location
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _initCustomMarker();
+      context.read<AppCubit>().getCurrentLocation().then((_) {
+        if (mounted) {
+          setState(() {});
+        }
+      }).catchError((_) {});
     });
 
     _refreshPastRides();
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
   }
 
   void _refreshPastRides() {
@@ -1336,99 +1355,97 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
           },
         ),
       ],
-      child: DefaultTabController(
-        length: 3,
-        child: Scaffold(
-          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-          appBar: _isFullScreen
-              ? null
-              : AppBar(
-                  elevation: 0,
-                  backgroundColor: Colors.transparent,
-            leading: IconButton(
-              icon: Icon(
-                Icons.arrow_back_ios_new,
-                size: 20,
-                color: color.onSurface,
-              ),
-              onPressed: () => Navigator.pop(context),
+      child: Scaffold(
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        appBar: _isFullScreen
+            ? null
+            : AppBar(
+                elevation: 0,
+                backgroundColor: Colors.transparent,
+          leading: IconButton(
+            icon: Icon(
+              Icons.arrow_back_ios_new,
+              size: 20,
+              color: color.onSurface,
             ),
-            title: Text(AppLocalizations.of(context)!.recordViaPhoneTitle),
-            actions: [
-              if (widget.imei.isEmpty || context.read<AppCubit>().state.devices.isEmpty)
-                PopupMenuButton<String>(
-                  elevation: 8,
-                  color: Theme.of(context).cardColor,
-                  surfaceTintColor: Colors.transparent,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  icon: Icon(
-                    Icons.more_vert,
-                    color: Theme.of(context).colorScheme.onSurface,
-                  ),
-                  onSelected: (value) {
-                    if (value == 'Shared Locations') {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const SharedWithMeScreen(),
-                        ),
-                      );
-                    } else if (value == 'Shared Rides') {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const SharedRidesScreen(),
-                        ),
-                      );
-                    }
-                  },
-                  itemBuilder: (context) => [
-                    PopupMenuItem(
-                      value: 'Shared Locations',
-                      child: Text(
-                        'Shared Locations',
-                        style: TextStyle(color: Theme.of(context).colorScheme.onSurface,
-                        ),
-                      ),
-                    ),
-                    PopupMenuItem(
-                      value: 'Shared Rides',
-                      child: Text(
-                        'Shared Rides',
-                        style: TextStyle(color: Theme.of(context).colorScheme.onSurface,
-                        ),
-                      ),
-                    ),
-                  ],
+            onPressed: () => Navigator.pop(context),
+          ),
+          title: Text(AppLocalizations.of(context)!.recordViaPhoneTitle),
+          actions: [
+            if (widget.imei.isEmpty || context.read<AppCubit>().state.devices.isEmpty)
+              PopupMenuButton<String>(
+                elevation: 8,
+                color: Theme.of(context).cardColor,
+                surfaceTintColor: Colors.transparent,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
                 ),
-            ],
-            bottom: TabBar(
-              indicatorColor: Theme.of(context).colorScheme.primary,
-              indicatorWeight: 3,
-              labelColor: Theme.of(context).colorScheme.primary,
-              unselectedLabelColor: Theme.of(
-                context,
-              ).colorScheme.onSurface.withValues(alpha: 0.5),
-              labelStyle: theme.textTheme.titleSmall?.copyWith(
-                fontWeight: FontWeight.bold,
+                icon: Icon(
+                  Icons.more_vert,
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
+                onSelected: (value) {
+                  if (value == 'Shared Locations') {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const SharedWithMeScreen(),
+                      ),
+                    );
+                  } else if (value == 'Shared Rides') {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const SharedRidesScreen(),
+                      ),
+                    );
+                  }
+                },
+                itemBuilder: (context) => [
+                  PopupMenuItem(
+                    value: 'Shared Locations',
+                    child: Text(
+                      'Shared Locations',
+                      style: TextStyle(color: Theme.of(context).colorScheme.onSurface,
+                      ),
+                    ),
+                  ),
+                  PopupMenuItem(
+                    value: 'Shared Rides',
+                    child: Text(
+                      'Shared Rides',
+                      style: TextStyle(color: Theme.of(context).colorScheme.onSurface,
+                      ),
+                    ),
+                  ),
+                ],
               ),
-              tabs: [
-                Tab(text: AppLocalizations.of(context)!.recordRidesTab),
-                Tab(text: AppLocalizations.of(context)!.pastRidesTab),
-                Tab(text: AppLocalizations.of(context)!.statisticsTab),
-              ],
+          ],
+          bottom: TabBar(
+            controller: _tabController,
+            indicatorColor: Theme.of(context).colorScheme.primary,
+            indicatorWeight: 3,
+            labelColor: Theme.of(context).colorScheme.primary,
+            unselectedLabelColor: Theme.of(
+              context,
+            ).colorScheme.onSurface.withValues(alpha: 0.5),
+            labelStyle: theme.textTheme.titleSmall?.copyWith(
+              fontWeight: FontWeight.bold,
             ),
-          ),
-          body: TabBarView(
-            physics: const NeverScrollableScrollPhysics(),
-            children: [
-              _KeepAliveWrapper(child: _buildLiveRecordView()),
-              _KeepAliveWrapper(child: _buildHistoryView()),
-              _KeepAliveWrapper(child: _buildStatisticsView()),
+            tabs: [
+              Tab(text: AppLocalizations.of(context)!.recordRidesTab),
+              Tab(text: AppLocalizations.of(context)!.pastRidesTab),
+              Tab(text: AppLocalizations.of(context)!.statisticsTab),
             ],
           ),
+        ),
+        body: IndexedStack(
+          index: _tabController.index,
+          children: [
+            _KeepAliveWrapper(child: _buildLiveRecordView()),
+            _KeepAliveWrapper(child: _buildHistoryView()),
+            _KeepAliveWrapper(child: _buildStatisticsView()),
+          ],
         ),
       ),
     );
@@ -1673,10 +1690,15 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen> {
     } else {
       final currentLoc = appState.currentLocation;
       if (currentLoc != null) {
-        final timeFormat = DateFormat('h:mm a');
-        final formattedTime = timeFormat.format(currentLoc.timestamp);
+        final dt = currentLoc.timestamp;
+        final now = DateTime.now();
+        final isToday = dt.year == now.year && dt.month == now.month && dt.day == now.day;
+        final String datePart = isToday
+            ? AppLocalizations.of(context)!.today
+            : DateFormat('dd MMM yyyy').format(dt);
+        final formattedTime = DateFormat('h:mm a').format(dt);
         lastUpdatedText =
-            "${AppLocalizations.of(context)!.lastUpdated} ${AppLocalizations.of(context)!.today}, $formattedTime";
+            "${AppLocalizations.of(context)!.lastUpdated} $datePart, $formattedTime";
       }
     }
 

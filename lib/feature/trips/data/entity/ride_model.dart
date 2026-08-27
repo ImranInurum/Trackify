@@ -45,6 +45,9 @@ class Ride {
   final List<LatLng> polylinePoints;
   final List<RidePoint> points;
   final String rawStartTime;
+  final int tripsCount;
+  final List<TripSegmentModel> trips;
+  final List<IgnitionTimelineModel> ignitionTimeline;
 
   Ride({
     required this.id,
@@ -61,6 +64,9 @@ class Ride {
     required this.polylinePoints,
     required this.points,
     this.rawStartTime = "",
+    this.tripsCount = 0,
+    this.trips = const [],
+    this.ignitionTimeline = const [],
   });
 
   Map<String, dynamic> toJson() {
@@ -333,6 +339,9 @@ class Ride {
       polylinePoints: polylinePoints,
       points: ridePoints,
       rawStartTime: summary?.startTime ?? "",
+      tripsCount: summary?.tripsCount ?? 0,
+      trips: summary?.trips ?? [],
+      ignitionTimeline: summary?.ignitionTimeline ?? [],
     );
   }
 }

@@ -28,6 +28,8 @@ Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
     priority: Priority.max,
     playSound: true,
     sound: androidSound,
+    icon: '@drawable/ic_notification',
+    color: const Color(0xFF0284C7),
   );
   
   final ios = DarwinNotificationDetails(
@@ -53,7 +55,7 @@ class NotificationService {
   static const _androidChannelDesc = 'General app notifications';
 
   static Future<void> initialize() async {
-    const androidInit = AndroidInitializationSettings('@mipmap/ic_launcher');
+    const androidInit = AndroidInitializationSettings('@drawable/ic_notification');
     const iosInit = DarwinInitializationSettings(
       requestAlertPermission: true,
       requestBadgePermission: true,
@@ -167,6 +169,8 @@ class NotificationService {
       priority: Priority.max,
       playSound: true,
       sound: androidSound,
+      icon: '@drawable/ic_notification',
+      color: const Color(0xFF0284C7),
     );
     
     final ios = DarwinNotificationDetails(
@@ -185,6 +189,8 @@ class NotificationService {
       channelDescription: _androidChannelDesc,
       importance: Importance.max,
       priority: Priority.max,
+      icon: '@drawable/ic_notification',
+      color: Color(0xFF0284C7),
     );
     const ios = DarwinNotificationDetails(
       presentAlert: true,

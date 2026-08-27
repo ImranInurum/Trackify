@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:ui' as ui;
+import 'package:intl/intl.dart';
 import 'package:trackify/core/utils/shared_preferences.dart';
 
 import 'package:flutter/material.dart';
@@ -2064,11 +2065,14 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin, Wi
                 }
 
                 final now = DateTime.now();
-                if (updateDate.year == now.year &&
+                final isToday = updateDate.year == now.year &&
                     updateDate.month == now.month &&
-                    updateDate.day == now.day) {
-                  startTimeStr =
-                      "${updateDate.hour > 12 ? updateDate.hour - 12 : (updateDate.hour == 0 ? 12 : updateDate.hour)}:${updateDate.minute.toString().padLeft(2, '0')} ${updateDate.hour >= 12 ? 'PM' : 'AM'}";
+                    updateDate.day == now.day;
+                final formattedTime = DateFormat('h:mm a').format(updateDate);
+                if (isToday) {
+                  startTimeStr = "${l10n.todayText} | $formattedTime";
+                } else {
+                  startTimeStr = "${DateFormat('dd/MM/yyyy').format(updateDate)} | $formattedTime";
                 }
               } catch (_) {}
             }
@@ -2157,7 +2161,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin, Wi
                 batteryVal.toString().trim().toLowerCase() != 'null' &&
                 batteryVal.toString().trim().isNotEmpty) {
               final b = batteryVal.toString().trim();
-              if (b.isNotEmpty && b != 'null') {
+              if (b.endsWith('%') || b.toLowerCase().endsWith('v')) {
                 bracketText = " ($b)";
               }
             }
@@ -2261,10 +2265,9 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin, Wi
 
             String distance = "$todayDistanceStr ${context.displayKm}";
 
-            String headerText = l10n.todayText;
-            if (startTimeStr.isNotEmpty && startTimeStr != "--:--") {
-              headerText += " | $startTimeStr";
-            }
+            String headerText = startTimeStr.isNotEmpty
+                ? startTimeStr
+                : "${l10n.todayText} | ${DateFormat('h:mm a').format(DateTime.now())}";
 
             return Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
@@ -2292,20 +2295,11 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin, Wi
                             ),
                           ],
                         ),
-                        if (batteryText.isNotEmpty || extVoltage != null)
+                        if (batteryText.isNotEmpty)
                           Builder(
                             builder: (context) {
                               String combinedText = batteryText;
-                              if (extVoltage != null) {
-                                if (batteryText == "--" || batteryText.isEmpty) {
-                                  combinedText = "$extVoltage V";
-                                } else {
-                                  combinedText = "$batteryText | $extVoltage V";
-                                }
-                              }
-                              IconData finalIcon = (batteryText == "--" || batteryText.isEmpty) && extVoltage != null 
-                                  ? Icons.bolt 
-                                  : batteryIcon;
+                              IconData finalIcon = batteryIcon;
 
                               return Container(
                                 padding: const EdgeInsets.symmetric(
@@ -3012,11 +3006,6 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin, Wi
     final l10n = AppLocalizations.of(context)!;
     final options = [
       {
-        "icon": Icons.qr_code_scanner,
-        "label": l10n.reachMeSticker,
-        "badge": l10n.exploreNow,
-      },
-      {
         "icon": Icons.phone_android_rounded,
         "label": l10n.recordViaPhone,
         "badge": null,
@@ -3030,11 +3019,6 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin, Wi
         "icon": Icons.share_outlined,
         "label": l10n.locationSharing,
         "badge": null,
-      },
-      {
-        "icon": Icons.local_parking_rounded,
-        "label": l10n.safeParking,
-        "badge": l10n.comingSoonOption,
       },
       {
         "icon": Icons.campaign_outlined,
@@ -3085,12 +3069,6 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin, Wi
         "icon": Icons.play_arrow_outlined,
         "label": l10n.videoTutorials,
         "badge": null,
-      },
-      {
-        "icon": null,
-        "label": l10n.upgradeToPlus.replaceFirst(' to ', ' to\n'),
-        "badge": l10n.comingSoonOption,
-        "isPlus": true,
       },
     ];
 
@@ -3391,40 +3369,45 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin, Wi
     );
   }
 
-  Widget _buildPlusBadge(AppLocalizations l10n) {
+  Widget _buildPlusBadge(Map<String, dynamic> option, AppLocalizations l10n) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    return Container(
-      width: 48,
-      height: 48,
-      alignment: Alignment.center,
-      decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF332A15) : const Color(0xFFFEFCE8),
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(
-          color: const Color(0xFFEAB308).withOpacity(0.3),
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(isDark ? 0.2 : 0.03),
-            blurRadius: 6,
-            offset: const Offset(0, 2),
+    return Stack(
+      clipBehavior: Clip.none,
+      children: [
+        Container(
+          width: 48,
+          height: 48,
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            color: isDark ? const Color(0xFF332A15) : const Color(0xFFFEFCE8),
+            borderRadius: BorderRadius.circular(14),
+            border: Border.all(
+              color: const Color(0xFFEAB308).withOpacity(0.3),
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(isDark ? 0.2 : 0.03),
+                blurRadius: 6,
+                offset: const Offset(0, 2),
+              ),
+            ],
           ),
-        ],
-      ),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
-        decoration: BoxDecoration(
-          gradient: const LinearGradient(
-            colors: [Color(0xFFD4AF37), Color(0xFFFACC15), Color(0xFFE2C275)],
-          ),
-          borderRadius: BorderRadius.circular(6),
-        ),
-        child: Text(
-          l10n.plusLabel,
-          style: const TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 11,
-            color: Colors.black87,
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
+            decoration: BoxDecoration(
+              gradient: const LinearGradient(
+                colors: [Color(0xFFD4AF37), Color(0xFFFACC15), Color(0xFFE2C275)],
+              ),
+              borderRadius: BorderRadius.circular(6),
+            ),
+            child: Text(
+              l10n.plusLabel,
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 11,
+                color: Colors.black87,
+              ),
+            ),
           ),
         ),
         if (option["badge"] != null)

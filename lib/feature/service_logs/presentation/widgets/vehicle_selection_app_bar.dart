@@ -29,25 +29,55 @@ class VehicleSelectionAppBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context)!;
-    final screenWidth = MediaQuery.of(context).size.width;
+    final isDark = theme.brightness == Brightness.dark;
+
+    String vehicleTitle = l10n.selectVehicle;
+    String? vehicleSubtitle;
+    String vehicleTypeStr = '';
+
+    if (selectedVehicle != null) {
+      final maker = selectedVehicle!.vehicleMaker?.trim() ?? "";
+      final model = selectedVehicle!.vehicleModel?.trim() ?? "";
+      final makerModel = "$maker $model".trim();
+      final number = selectedVehicle!.vehicleNumber?.trim() ?? "";
+      vehicleTypeStr = selectedVehicle!.vehicleType?.toLowerCase() ?? '';
+
+      if (makerModel.isNotEmpty && number.isNotEmpty) {
+        vehicleTitle = makerModel;
+        vehicleSubtitle = number;
+      } else if (number.isNotEmpty) {
+        vehicleTitle = number;
+      } else if (makerModel.isNotEmpty) {
+        vehicleTitle = makerModel;
+      } else if (selectedVehicle!.vehicleType != null &&
+          selectedVehicle!.vehicleType!.isNotEmpty) {
+        vehicleTitle = selectedVehicle!.vehicleType!;
+      } else {
+        vehicleTitle = "Selected Vehicle";
+      }
+    }
+
+    final textColor = isDark ? Colors.white : Colors.black87;
+    final cardBgColor = isDark ? const Color(0xFF1E293B) : const Color(0xFFF1F5F9);
+    final cardBorderColor = isDark ? const Color(0xFF334155) : const Color(0xFFCBD5E1);
+    final containerBgColor = isDark ? const Color(0xFF0F172A) : theme.cardColor;
 
     return Container(
       padding: EdgeInsets.only(
         top: MediaQuery.of(context).padding.top + (isMinimal ? 10 : 0),
-        bottom: isMinimal ? 10 : 20,
+        bottom: isMinimal ? 10 : 16,
       ),
       decoration: isMinimal
           ? null
           : BoxDecoration(
-              color: theme.cardColor.withValues(alpha: 0.8),
+              color: containerBgColor,
               border: Border(
-                left: BorderSide(color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5), width: 0.5),
-                right: BorderSide(color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5), width: 0.5),
-                bottom: BorderSide(color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5), width: 0.5),
-              ),
-              borderRadius: const BorderRadius.only(
-                bottomLeft: Radius.circular(30),
-                bottomRight: Radius.circular(30),
+                bottom: BorderSide(
+                  color: isDark
+                      ? const Color(0xFF334155)
+                      : const Color(0xFFE2E8F0),
+                  width: 1,
+                ),
               ),
             ),
       child: Column(
@@ -62,54 +92,113 @@ class VehicleSelectionAppBar extends StatelessWidget {
                     IconButton(
                       icon: Icon(
                         Icons.arrow_back_ios_new,
-                        color: theme.colorScheme.onSurface,
+                        color: textColor,
+                        size: 18,
                       ),
                       onPressed: onBack,
                     )
                   else
-                    const SizedBox(width: 8),
+                    const SizedBox(width: 16),
                   Text(
                     title,
-                    style: theme.appBarTheme.titleTextStyle ??
-                        const TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.w600,
-                        ),
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: textColor,
+                    ),
                   ),
                 ],
               ),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 10),
           ],
           GestureDetector(
             onTap: () => _showVehicleSelector(context),
             child: Container(
-              margin: EdgeInsets.symmetric(horizontal: screenWidth * 0.04),
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+              margin: const EdgeInsets.symmetric(horizontal: 16),
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
               decoration: BoxDecoration(
-                color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 
-                  0.5,
+                color: cardBgColor,
+                borderRadius: BorderRadius.circular(14),
+                border: Border.all(
+                  color: cardBorderColor,
                 ),
-                borderRadius: BorderRadius.circular(16),
               ),
               child: Row(
                 children: [
-                  Expanded(
-                    child: Text(
-                      selectedVehicle != null
-                          ? "${"${selectedVehicle!.vehicleMaker ?? ""} ${selectedVehicle!.vehicleModel ?? ""}"
-                                    .trim()} (${selectedVehicle!.vehicleNumber ?? ""})"
-                          : l10n.selectVehicle,
-                      style: theme.textTheme.bodyLarge?.copyWith(
-                        fontWeight: FontWeight.w600,
-                        color: theme.colorScheme.onSurface,
+                  Container(
+                    width: 38,
+                    height: 38,
+                    padding: const EdgeInsets.all(6),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF0284C7).withOpacity(0.2),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Center(
+                      child: Image.asset(
+                        (() {
+                          if (vehicleTypeStr.contains('auto') ||
+                              vehicleTypeStr.contains('3_wheeler')) {
+                            return AppImages.rickshawImage;
+                          } else if (vehicleTypeStr.contains('car') ||
+                              vehicleTypeStr.contains('4_wheeler')) {
+                            return AppImages.carImage;
+                          } else if (vehicleTypeStr.contains('bus')) {
+                            return AppImages.busImage;
+                          } else if (vehicleTypeStr.contains('van') ||
+                              vehicleTypeStr.contains('truck')) {
+                            return AppImages.vanImage;
+                          }
+                          return AppImages.bikeImage;
+                        })(),
+                        fit: BoxFit.contain,
                       ),
-                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
-                  Icon(
-                    Icons.keyboard_arrow_down,
-                    color: theme.colorScheme.onSurface,
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          vehicleTitle,
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14.5,
+                            color: textColor,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        if (vehicleSubtitle != null) ...[
+                          const SizedBox(height: 2),
+                          Text(
+                            vehicleSubtitle,
+                            style: const TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                              color: Color(0xFF0284C7),
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ],
+                      ],
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Container(
+                    padding: const EdgeInsets.all(4),
+                    decoration: BoxDecoration(
+                      color: isDark
+                          ? const Color(0xFF334155)
+                          : const Color(0xFFE2E8F0),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Icon(
+                      Icons.keyboard_arrow_down_rounded,
+                      color: textColor,
+                      size: 20,
+                    ),
                   ),
                 ],
               ),

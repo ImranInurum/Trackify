@@ -274,54 +274,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                 ),
 
-                const SizedBox(height: 20),
-
-                /// 🔹 UPGRADE BUTTON
-                GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const UpgradeToPlusScreen(),
-                      ),
-                    );
-                  },
-                  child: Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 68),
-                    padding: const EdgeInsets.symmetric(vertical: 14),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(30),
-                      gradient: const LinearGradient(
-                        colors: [
-                          Color(0xFFD6B57B),
-                          Color(0xFFE7D0B7),
-                          Color(0xFFD6B57B),
-                        ],
-                      ),
-                    ),
-                    child: Center(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Image.asset(
-                            AppImages.kingIcon,
-                            height: 20,
-                            width: 20,
-                          ),
-                          Text(
-                            " ${l10n.upgradeToPlus}",
-                            style: TextStyle(
-                              fontWeight: FontWeight.w600,
-                              color: Colors.black87,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-
-                const SizedBox(height: 16),
+                const SizedBox(height: 12),
 
                 BlocBuilder<ProfileCubit, ProfileState>(
                   builder: (context, profileState) {

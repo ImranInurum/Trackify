@@ -8,6 +8,7 @@ import 'dart:async';
 import 'dart:math' as math;
 import 'dart:ui' as ui;
 import 'package:trackify/feature/trips/data/entity/ride_model.dart';
+import 'package:trackify/feature/trips/data/entity/ride_history_response_model.dart';
 import 'package:trackify/feature/trips/presentation/cubit/ride_history_details_cubit.dart';
 import 'package:trackify/feature/trips/presentation/cubit/ride_history_details_state.dart';
 import 'package:trackify/l10n/app_localizations.dart';
@@ -1440,6 +1441,9 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
                         ),
                       ),
 
+                      _buildIgnitionTimelineBar(context, widget.ride.ignitionTimeline),
+                      _buildTripsList(context, widget.ride.tripsCount, widget.ride.trips),
+
                       const SizedBox(height: 12),
 
                       // Isolated Bottom Slider driven locally by AnimatedBuilder (Buttery 60 FPS slider movement)
@@ -1943,5 +1947,224 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
     }
 
     await MapUtils.setStyle(controller, style);
+  }
+
+  Widget _buildIgnitionTimelineBar(BuildContext context, List<IgnitionTimelineModel> timeline) {
+    final List<IgnitionTimelineModel> displayTimeline = timeline.isNotEmpty
+        ? timeline
+        : [
+            IgnitionTimelineModel(
+              status: 'ON',
+              startTime: widget.ride.startTime,
+              endTime: widget.ride.endTime,
+              durationMinutes: math.max(1, Ride.parseDurationToMinutes(widget.ride.duration)),
+            )
+          ];
+
+    final theme = Theme.of(context);
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+      padding: const EdgeInsets.all(12.0),
+      decoration: BoxDecoration(
+        color: theme.cardColor.withValues(alpha: 0.8),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5),
+          width: 0.5,
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                children: [
+                  Icon(Icons.power_settings_new, size: 16, color: theme.colorScheme.primary),
+                  const SizedBox(width: 6),
+                  Text(
+                    "24-Hour Ignition Activity",
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                      color: theme.colorScheme.onSurface,
+                    ),
+                  ),
+                ],
+              ),
+              Row(
+                children: [
+                  Container(width: 8, height: 8, decoration: const BoxDecoration(color: Colors.green, shape: BoxShape.circle)),
+                  const SizedBox(width: 4),
+                  const Text("ON", style: TextStyle(fontSize: 10, color: Colors.grey)),
+                  const SizedBox(width: 10),
+                  Container(width: 8, height: 8, decoration: const BoxDecoration(color: Colors.grey, shape: BoxShape.circle)),
+                  const SizedBox(width: 4),
+                  const Text("OFF", style: TextStyle(fontSize: 10, color: Colors.grey)),
+                ],
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(6),
+            child: SizedBox(
+              height: 14,
+              child: Row(
+                children: displayTimeline.map((seg) {
+                  final int flexVal = math.max<int>(1, seg.durationMinutes);
+                  return Expanded(
+                    flex: flexVal,
+                    child: Tooltip(
+                      message: "${seg.status}: ${seg.durationMinutes} min",
+                      child: Container(
+                        color: seg.status == 'ON' ? Colors.green : Colors.grey.withValues(alpha: 0.3),
+                      ),
+                    ),
+                  );
+                }).toList(),
+              ),
+            ),
+          ),
+          const SizedBox(height: 6),
+          const Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text("00:00", style: TextStyle(fontSize: 9, color: Colors.grey)),
+              Text("06:00", style: TextStyle(fontSize: 9, color: Colors.grey)),
+              Text("12:00", style: TextStyle(fontSize: 9, color: Colors.grey)),
+              Text("18:00", style: TextStyle(fontSize: 9, color: Colors.grey)),
+              Text("24:00", style: TextStyle(fontSize: 9, color: Colors.grey)),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTripsList(BuildContext context, int tripsCount, List<TripSegmentModel> trips) {
+    final List<TripSegmentModel> displayTrips = trips.isNotEmpty
+        ? trips
+        : [
+            TripSegmentModel(
+              tripNumber: 1,
+              startTime: widget.ride.startTime,
+              endTime: widget.ride.endTime,
+              durationMinutes: math.max(1, Ride.parseDurationToMinutes(widget.ride.duration)),
+              durationText: widget.ride.duration,
+              distance: widget.ride.distance,
+              topSpeed: widget.ride.topSpeed,
+            )
+          ];
+
+    final theme = Theme.of(context);
+    final displayCount = tripsCount > 0 ? tripsCount : displayTrips.length;
+
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(Icons.directions_car, size: 18, color: theme.colorScheme.primary),
+              const SizedBox(width: 8),
+              Text(
+                "Trips Completed: $displayCount",
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                  color: theme.colorScheme.onSurface,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          ...displayTrips.map((trip) {
+            String formatTripTime(String iso) {
+              try {
+                final d = DateTime.parse(iso).toLocal();
+                final h = d.hour > 12 ? d.hour - 12 : (d.hour == 0 ? 12 : d.hour);
+                final ampm = d.hour >= 12 ? 'PM' : 'AM';
+                return "$h:${d.minute.toString().padLeft(2, '0')} $ampm";
+              } catch (_) {
+                return iso;
+              }
+            }
+
+            return Container(
+              margin: const EdgeInsets.only(bottom: 8.0),
+              padding: const EdgeInsets.all(12.0),
+              decoration: BoxDecoration(
+                color: theme.cardColor.withValues(alpha: 0.8),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5),
+                  width: 0.5,
+                ),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: theme.colorScheme.primary.withValues(alpha: 0.15),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Text(
+                          "Trip #${trip.tripNumber}",
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                            color: theme.colorScheme.primary,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      Text(
+                        "${formatTripTime(trip.startTime)} - ${formatTripTime(trip.endTime)}",
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                          color: theme.colorScheme.onSurface,
+                        ),
+                      ),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      Icon(Icons.route, size: 14, color: theme.hintColor),
+                      const SizedBox(width: 4),
+                      Text(
+                        "${trip.distance.toStringAsFixed(1)} km",
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                          color: theme.colorScheme.onSurface,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Icon(Icons.access_time, size: 14, color: theme.hintColor),
+                      const SizedBox(width: 4),
+                      Text(
+                        trip.durationText,
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: theme.hintColor,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            );
+          }).toList(),
+        ],
+      ),
+    );
   }
 }

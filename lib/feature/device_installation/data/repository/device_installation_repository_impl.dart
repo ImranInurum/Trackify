@@ -43,35 +43,30 @@ class DeviceInstallationRepositoryImpl implements DeviceInstallationRepository {
       response.fold(
         (error) {
           debugPrint('API Error: $error');
-          if (error is BadRequestException) {
-            errorMessage = error.message;
-          }
+          errorMessage = error.message.isNotEmpty 
+              ? error.message 
+              : "Invalid device or IMEI not found in system inventory.";
         },
         (data) {
           if (data is Map) {
-            // New logic: if status is true, it's available (no error message)
-            // if status is false, it's unavailable or assigned (has error message)
+            // If status is true, it's available (no error message)
+            // If status is false, it's unavailable or assigned (has error message)
             if (data['status'] == true || data['status'] == 'true' || data['success'] == true) {
               errorMessage = null; // proceed
             } else {
-              errorMessage = data['message']?.toString() ?? "";
+              errorMessage = data['message']?.toString() ?? "This device/IMEI is not available for registration.";
             }
           } else if (data is bool) {
-            // Fallback for boolean response
             errorMessage = data ? "Already assigned" : null;
           }
         }
       );
 
-      if (response.isLeft() && errorMessage == null) {
-        return Left(response.getLeft().toNullable()!);
-      }
-      
       return Right(errorMessage);
     } on AppException catch (e) {
-      return Left(e);
+      return Right(e.message.isNotEmpty ? e.message : "Invalid device or IMEI.");
     } catch (e) {
-      return Left(FetchDataException('Unexpected error: $e'));
+      return Right('Invalid device code: $e');
     }
   }
 }
