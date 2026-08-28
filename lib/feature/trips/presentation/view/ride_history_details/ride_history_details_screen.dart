@@ -1173,339 +1173,361 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
               ),
             ),
 
-            // Bottom Panel Container sheet
-            Align(
-              alignment: Alignment.bottomCenter,
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Theme.of(context).cardColor,
-                  border: Border.all(color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5), width: 0.5),
-                  borderRadius: const BorderRadius.vertical(
-                    top: Radius.circular(24),
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.5),
-                      blurRadius: 10,
-                      offset: const Offset(0, -2),
+            // Draggable Bottom Sheet for Playback & Details
+            DraggableScrollableSheet(
+              initialChildSize: 0.18,
+              minChildSize: 0.14,
+              maxChildSize: 0.82,
+              snap: true,
+              snapSizes: const [0.18, 0.82],
+              builder: (BuildContext context, ScrollController scrollController) {
+                return Container(
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).cardColor,
+                    border: Border.all(color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5), width: 0.5),
+                    borderRadius: const BorderRadius.vertical(
+                      top: Radius.circular(24),
                     ),
-                  ],
-                ),
-                child: SafeArea(
-                  top: false,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      // Isolated Bottom Controls (Play/Pause, Speed controls)
-                      BlocBuilder<
-                        RideHistoryDetailsCubit,
-                        RideHistoryDetailsState
-                      >(
-                        buildWhen: (previous, current) {
-                          return previous.isPlaying != current.isPlaying ||
-                              previous.isPlaybackStarted !=
-                                  current.isPlaybackStarted ||
-                              previous.playbackSpeed != current.playbackSpeed;
-                        },
-                        builder: (context, controlState) {
-                          return Transform.translate(
-                            offset: const Offset(0, -24),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.5),
+                        blurRadius: 10,
+                        offset: const Offset(0, -2),
+                      ),
+                    ],
+                  ),
+                  child: SingleChildScrollView(
+                    controller: scrollController,
+                    child: SafeArea(
+                      top: false,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const SizedBox(height: 8),
+                          // Drag Handle Pill
+                          Center(
                             child: Container(
-                              height: 60,
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 16,
+                              width: 38,
+                              height: 4,
+                              decoration: BoxDecoration(
+                                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.3),
+                                borderRadius: BorderRadius.circular(2),
                               ),
-                              child: Row(
-                                children: [
-                                  const Expanded(child: SizedBox()),
-                                  // Play Button strictly in the center
-                                  GestureDetector(
-                                    onTap: _togglePlayback,
-                                    child: Container(
-                                      width: 56,
-                                      height: 56,
-                                      decoration: BoxDecoration(
-                                        color: Theme.of(
-                                          context,
-                                        ).colorScheme.primary,
-                                        shape: BoxShape.circle,
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color: Colors.black.withValues(
-                                              alpha: 0.4,
-                                            ),
-                                            blurRadius: 8,
-                                            offset: const Offset(0, 4),
-                                          ),
-                                        ],
-                                      ),
-                                      child: Icon(
-                                        controlState.isPlaying
-                                            ? Icons.pause
-                                            : Icons.play_arrow,
-                                        color: Colors.white,
-                                        size: 32,
-                                      ),
-                                    ),
-                                  ),
+                            ),
+                          ),
+                          const SizedBox(height: 8),
 
-                                  // Right-side controls (Close & Playback Speed selectors)
-                                  Expanded(
-                                    child: Align(
-                                      alignment: Alignment.centerRight,
-                                      child: FittedBox(
-                                        fit: BoxFit.scaleDown,
-                                        alignment: Alignment.centerRight,
-                                        child: Row(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            if (controlState
-                                                .isPlaybackStarted) ...[
-                                              GestureDetector(
-                                                onTap: _stopPlayback,
-                                                child: Container(
-                                                  width: 38,
-                                                  height: 38,
-                                                  decoration: BoxDecoration(
-                                                    color: Theme.of(context)
-                                                        .cardColor
-                                                        .withValues(alpha: 0.9),
-                                                    shape: BoxShape.circle,
-                                                    border: Border.all(
-                                                      color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5),
-                                                      width: 0.5,
-                                                    ),
-                                                  ),
-                                                  child: Icon(
-                                                    Icons.close,
-                                                    color: Theme.of(
-                                                      context,
-                                                    ).colorScheme.onSurface,
-                                                    size: 18,
-                                                  ),
-                                                ),
+                          // Isolated Bottom Controls (Play/Pause, Speed controls)
+                          BlocBuilder<
+                            RideHistoryDetailsCubit,
+                            RideHistoryDetailsState
+                          >(
+                            buildWhen: (previous, current) {
+                              return previous.isPlaying != current.isPlaying ||
+                                  previous.isPlaybackStarted !=
+                                      current.isPlaybackStarted ||
+                                  previous.playbackSpeed != current.playbackSpeed;
+                            },
+                            builder: (context, controlState) {
+                              return Container(
+                                height: 52,
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 16,
+                                ),
+                                child: Row(
+                                  children: [
+                                    const Expanded(child: SizedBox()),
+                                    // Play Button strictly in the center
+                                    GestureDetector(
+                                      onTap: _togglePlayback,
+                                      child: Container(
+                                        width: 52,
+                                        height: 52,
+                                        decoration: BoxDecoration(
+                                          color: Theme.of(
+                                            context,
+                                          ).colorScheme.primary,
+                                          shape: BoxShape.circle,
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color: Colors.black.withValues(
+                                                alpha: 0.4,
                                               ),
-                                              const SizedBox(width: 10),
-                                            ],
-                                            Container(
-                                              padding: const EdgeInsets.all(2),
-                                              decoration: BoxDecoration(
-                                                color: Theme.of(context)
-                                                    .cardColor
-                                                    .withValues(alpha: 0.95),
-                                                borderRadius:
-                                                    BorderRadius.circular(20),
-                                                border: Border.all(
-                                                  color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5),
-                                                  width: 0.5,
-                                                ),
-                                              ),
-                                              child: Row(
-                                                mainAxisSize: MainAxisSize.min,
-                                                children: [1, 2, 3, 4].map((
-                                                  speed,
-                                                ) {
-                                                  final isSelected =
-                                                      controlState
-                                                          .playbackSpeed ==
-                                                      speed;
-                                                  return GestureDetector(
-                                                    onTap: () =>
-                                                        _updatePlaybackSpeed(
-                                                          speed,
-                                                        ),
-                                                    child: Container(
-                                                      padding:
-                                                          const EdgeInsets.symmetric(
-                                                            horizontal: 8,
-                                                            vertical: 4,
-                                                          ),
-                                                      decoration: BoxDecoration(
-                                                        color: isSelected
-                                                            ? Theme.of(context)
-                                                                  .colorScheme
-                                                                  .primary
-                                                            : Colors
-                                                                  .transparent,
-                                                        borderRadius:
-                                                            BorderRadius.circular(
-                                                              16,
-                                                            ),
-                                                      ),
-                                                      child: Text(
-                                                        "${speed}x",
-                                                        style: TextStyle(
-                                                          color: isSelected
-                                                              ? Colors.white
-                                                              : Theme.of(
-                                                                      context,
-                                                                    )
-                                                                    .colorScheme
-                                                                    .onSurface,
-                                                          fontSize: 10,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  );
-                                                }).toList(),
-                                              ),
+                                              blurRadius: 8,
+                                              offset: const Offset(0, 4),
                                             ),
-                                            const SizedBox(width: 8),
                                           ],
+                                        ),
+                                        child: Icon(
+                                          controlState.isPlaying
+                                              ? Icons.pause
+                                              : Icons.play_arrow,
+                                          color: Colors.white,
+                                          size: 30,
                                         ),
                                       ),
                                     ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          );
-                        },
-                      ),
 
-                      Transform.translate(
-                        offset: const Offset(0, -16),
-                        child: Text(
-                          "${l10n.rideDuration}: ${widget.ride.duration}",
-                          style: TextStyle(
-                            color: Theme.of(context).colorScheme.onSurface,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w500,
+                                    // Right-side controls (Close & Playback Speed selectors)
+                                    Expanded(
+                                      child: Align(
+                                        alignment: Alignment.centerRight,
+                                        child: FittedBox(
+                                          fit: BoxFit.scaleDown,
+                                          alignment: Alignment.centerRight,
+                                          child: Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              if (controlState
+                                                  .isPlaybackStarted) ...[
+                                                GestureDetector(
+                                                  onTap: _stopPlayback,
+                                                  child: Container(
+                                                    width: 36,
+                                                    height: 36,
+                                                    decoration: BoxDecoration(
+                                                      color: Theme.of(context)
+                                                          .cardColor
+                                                          .withValues(alpha: 0.9),
+                                                      shape: BoxShape.circle,
+                                                      border: Border.all(
+                                                        color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5),
+                                                        width: 0.5,
+                                                      ),
+                                                    ),
+                                                    child: Icon(
+                                                      Icons.close,
+                                                      color: Theme.of(
+                                                        context,
+                                                      ).colorScheme.onSurface,
+                                                      size: 16,
+                                                    ),
+                                                  ),
+                                                ),
+                                                const SizedBox(width: 8),
+                                              ],
+                                              Container(
+                                                padding: const EdgeInsets.all(2),
+                                                decoration: BoxDecoration(
+                                                  color: Theme.of(context)
+                                                      .cardColor
+                                                      .withValues(alpha: 0.95),
+                                                  borderRadius:
+                                                      BorderRadius.circular(20),
+                                                  border: Border.all(
+                                                    color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5),
+                                                    width: 0.5,
+                                                  ),
+                                                ),
+                                                child: Row(
+                                                  mainAxisSize: MainAxisSize.min,
+                                                  children: [1, 2, 3, 4].map((
+                                                    speed,
+                                                  ) {
+                                                    final isSelected =
+                                                        controlState
+                                                            .playbackSpeed ==
+                                                        speed;
+                                                    return GestureDetector(
+                                                      onTap: () =>
+                                                          _updatePlaybackSpeed(
+                                                            speed,
+                                                          ),
+                                                      child: Container(
+                                                        padding:
+                                                            const EdgeInsets.symmetric(
+                                                              horizontal: 8,
+                                                              vertical: 4,
+                                                            ),
+                                                        decoration: BoxDecoration(
+                                                          color: isSelected
+                                                              ? Theme.of(context)
+                                                                    .colorScheme
+                                                                    .primary
+                                                              : Colors
+                                                                    .transparent,
+                                                          borderRadius:
+                                                              BorderRadius.circular(
+                                                                16,
+                                                              ),
+                                                        ),
+                                                        child: Text(
+                                                          "${speed}x",
+                                                          style: TextStyle(
+                                                            color: isSelected
+                                                                ? Colors.white
+                                                                : Theme.of(
+                                                                        context,
+                                                                      )
+                                                                      .colorScheme
+                                                                      .onSurface,
+                                                            fontSize: 10,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    );
+                                                  }).toList(),
+                                                ),
+                                              ),
+                                              const SizedBox(width: 8),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
                           ),
-                        ),
-                      ),
 
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                        child: Column(
-                          children: [
-                            Row(
+                          const SizedBox(height: 4),
+
+                          // Isolated Bottom Slider driven locally by AnimatedBuilder (Always visible in collapsed & expanded state)
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                            child: Row(
                               children: [
-                                Expanded(
-                                  child: _buildPanelStat(
-                                    Icons.route_rounded,
-                                    "${widget.ride.distance.toStringAsFixed(1)} ${context.displayKm}",
-                                    l10n.distanceLabel,
+                                Text(
+                                  widget.ride.startTime,
+                                  style: TextStyle(
+                                    color: Theme.of(context).colorScheme.onSurface,
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.bold,
                                   ),
                                 ),
-                                const SizedBox(width: 8),
                                 Expanded(
-                                  child: _buildPanelStat(
-                                    Icons.timer_rounded,
-                                    widget.ride.duration,
-                                    l10n.durationLabel,
+                                  child: SliderTheme(
+                                    data: SliderThemeData(
+                                      activeTrackColor: Theme.of(
+                                        context,
+                                      ).colorScheme.primary,
+                                      inactiveTrackColor: Theme.of(context)
+                                          .colorScheme
+                                          .onSurface
+                                          .withValues(alpha: 0.2),
+                                      thumbColor: Theme.of(
+                                        context,
+                                      ).colorScheme.primary,
+                                      trackHeight: 4.0,
+                                      thumbShape: const RoundSliderThumbShape(
+                                        enabledThumbRadius: 6.0,
+                                      ),
+                                    ),
+                                    child: AnimatedBuilder(
+                                      animation: _playController,
+                                      builder: (context, child) {
+                                        return Slider(
+                                          value: _playController.value,
+                                          onChanged: _onSliderChanged,
+                                          onChangeStart: _onSliderChangeStart,
+                                          onChangeEnd: _onSliderChangeEnd,
+                                        );
+                                      },
+                                    ),
                                   ),
                                 ),
-                                const SizedBox(width: 8),
-                                Expanded(
-                                  child: _buildPanelStat(
-                                    Icons.currency_rupee_rounded,
-                                    "${l10n.currencySymbol}${(widget.ride.distance * fuelRate).toStringAsFixed(0)}",
-                                    "Fuel Cost",
+                                Text(
+                                  widget.ride.endTime,
+                                  style: TextStyle(
+                                    color: Theme.of(context).colorScheme.onSurface,
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.bold,
                                   ),
                                 ),
                               ],
                             ),
-                            const SizedBox(height: 8),
-                            Row(
+                          ),
+
+                          const SizedBox(height: 8),
+
+                          Text(
+                            "${l10n.rideDuration}: ${widget.ride.duration}",
+                            style: TextStyle(
+                              color: Theme.of(context).colorScheme.onSurface,
+                              fontSize: 15,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+
+                          const SizedBox(height: 12),
+
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                            child: Column(
                               children: [
-                                Expanded(
-                                  child: _buildPanelStat(
-                                    Icons.speed_rounded,
-                                    "${widget.ride.avgSpeed.toStringAsFixed(1)} ${context.displayKmh}",
-                                    l10n.averageSpeed,
-                                  ),
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: _buildPanelStat(
+                                        Icons.route_rounded,
+                                        "${widget.ride.distance.toStringAsFixed(1)} ${context.displayKm}",
+                                        l10n.distanceLabel,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 8),
+                                    Expanded(
+                                      child: _buildPanelStat(
+                                        Icons.timer_rounded,
+                                        widget.ride.duration,
+                                        l10n.durationLabel,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 8),
+                                    Expanded(
+                                      child: _buildPanelStat(
+                                        Icons.currency_rupee_rounded,
+                                        "${l10n.currencySymbol}${(widget.ride.distance * fuelRate).toStringAsFixed(0)}",
+                                        "Fuel Cost",
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                                const SizedBox(width: 8),
-                                Expanded(
-                                  child: _buildPanelStat(
-                                    Icons.bolt_rounded,
-                                    "${widget.ride.topSpeed.toStringAsFixed(1)} ${context.displayKmh}",
-                                    l10n.topSpeed,
-                                    isHighlight: true,
-                                  ),
-                                ),
-                                const SizedBox(width: 8),
-                                Expanded(
-                                  child: _buildPanelStat(
-                                    Icons.local_gas_station_rounded,
-                                    "${l10n.currencySymbol}${fuelRate.toStringAsFixed(1)}/${context.displayKm}",
-                                    "Cost / ${context.displayKm}",
-                                  ),
+                                const SizedBox(height: 8),
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: _buildPanelStat(
+                                        Icons.speed_rounded,
+                                        "${widget.ride.avgSpeed.toStringAsFixed(1)} ${context.displayKmh}",
+                                        l10n.averageSpeed,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 8),
+                                    Expanded(
+                                      child: _buildPanelStat(
+                                        Icons.bolt_rounded,
+                                        "${widget.ride.topSpeed.toStringAsFixed(1)} ${context.displayKmh}",
+                                        l10n.topSpeed,
+                                        isHighlight: true,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 8),
+                                    Expanded(
+                                      child: _buildPanelStat(
+                                        Icons.local_gas_station_rounded,
+                                        "${l10n.currencySymbol}${fuelRate.toStringAsFixed(1)}/${context.displayKm}",
+                                        "Cost / ${context.displayKm}",
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ],
                             ),
-                          ],
-                        ),
+                          ),
+
+                          _buildIgnitionTimelineBar(context, widget.ride.ignitionTimeline),
+                          _buildTripsList(context, widget.ride.tripsCount, widget.ride.trips),
+
+                          const SizedBox(height: 24),
+                        ],
                       ),
-
-                      _buildIgnitionTimelineBar(context, widget.ride.ignitionTimeline),
-                      _buildTripsList(context, widget.ride.tripsCount, widget.ride.trips),
-
-                      const SizedBox(height: 12),
-
-                      // Isolated Bottom Slider driven locally by AnimatedBuilder (Buttery 60 FPS slider movement)
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                        child: Row(
-                          children: [
-                            Text(
-                              widget.ride.startTime,
-                              style: TextStyle(
-                                color: Theme.of(context).colorScheme.onSurface,
-                                fontSize: 12,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            Expanded(
-                              child: SliderTheme(
-                                data: SliderThemeData(
-                                  activeTrackColor: Theme.of(
-                                    context,
-                                  ).colorScheme.primary,
-                                  inactiveTrackColor: Theme.of(context)
-                                      .colorScheme
-                                      .onSurface
-                                      .withValues(alpha: 0.2),
-                                  thumbColor: Theme.of(
-                                    context,
-                                  ).colorScheme.primary,
-                                  trackHeight: 4.0,
-                                  thumbShape: const RoundSliderThumbShape(
-                                    enabledThumbRadius: 6.0,
-                                  ),
-                                ),
-                                child: AnimatedBuilder(
-                                  animation: _playController,
-                                  builder: (context, child) {
-                                    return Slider(
-                                      value: _playController.value,
-                                      onChanged: _onSliderChanged,
-                                      onChangeStart: _onSliderChangeStart,
-                                      onChangeEnd: _onSliderChangeEnd,
-                                    );
-                                  },
-                                ),
-                              ),
-                            ),
-                            Text(
-                              widget.ride.endTime,
-                              style: TextStyle(
-                                color: Theme.of(context).colorScheme.onSurface,
-                                fontSize: 12,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                    ],
+                    ),
                   ),
-                ),
-              ),
+                );
+              },
             ),
             BlocBuilder<RideHistoryDetailsCubit, RideHistoryDetailsState>(
               buildWhen: (previous, current) =>
