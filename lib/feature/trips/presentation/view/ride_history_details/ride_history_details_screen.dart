@@ -1177,9 +1177,9 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
             DraggableScrollableSheet(
               initialChildSize: 0.18,
               minChildSize: 0.14,
-              maxChildSize: 0.82,
+              maxChildSize: 0.62,
               snap: true,
-              snapSizes: const [0.18, 0.82],
+              snapSizes: const [0.18, 0.62],
               builder: (BuildContext context, ScrollController scrollController) {
                 return Container(
                   decoration: BoxDecoration(
@@ -1521,7 +1521,7 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
                           _buildIgnitionTimelineBar(context, widget.ride.ignitionTimeline),
                           _buildTripsList(context, widget.ride.tripsCount, widget.ride.trips),
 
-                          const SizedBox(height: 24),
+                          const SizedBox(height: 12),
                         ],
                       ),
                     ),
