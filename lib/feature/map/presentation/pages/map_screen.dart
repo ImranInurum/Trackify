@@ -218,8 +218,8 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin, Wi
         if (elapsed > 15000) {
           // Stop moving if no data received for 15 seconds
         } else {
-          // Linear constant interpolation for steady movement
-          double t = elapsed / 10000.0; // Assume 10 seconds between updates
+          // Linear constant interpolation for steady continuous movement matching 5s data updates
+          double t = elapsed / 4800.0;
           if (t > 1.0) t = 1.0; // Prevent overshooting
 
           final double lat =
