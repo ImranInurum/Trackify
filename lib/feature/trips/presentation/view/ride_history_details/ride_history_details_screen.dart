@@ -189,7 +189,7 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
     RideHistoryDetailsState state, {
     bool force = false,
   }) async {
-    if (_isGliding) {
+    if (_isGliding && !force) {
       return; // Ignore regular updates during dynamic cinematic glides
     }
     if (state.currentVehiclePosition != null) {
