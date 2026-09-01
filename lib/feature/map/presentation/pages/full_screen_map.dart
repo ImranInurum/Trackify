@@ -671,32 +671,64 @@ class _FullScreenMapState extends State<FullScreenMap>
       if (liveData.isNotEmpty) {
         final lat = double.tryParse(liveData['lt']?.toString() ?? '');
         final lng = double.tryParse(liveData['lg']?.toString() ?? '');
-        if (lat != null && lng != null && !lat.isNaN && !lng.isNaN) {
+        if (lat != null &&
+            lng != null &&
+            !lat.isNaN &&
+            !lng.isNaN &&
+            lat != 0.0 &&
+            lng != 0.0) {
           bestPos = LatLng(lat, lng);
         }
       }
 
-      // 2. Fallback to API static location
+      // 2. Fallback to appState.livePosition
+      if (bestPos == null &&
+          appState.livePosition != null &&
+          !appState.livePosition!.latitude.isNaN &&
+          !appState.livePosition!.longitude.isNaN &&
+          appState.livePosition!.latitude != 0.0 &&
+          appState.livePosition!.longitude != 0.0) {
+        bestPos = appState.livePosition;
+      }
+
+      // 3. Fallback to API static location
       if (bestPos == null &&
           _currentVehicle?.currentLocation != null &&
           _currentVehicle!.currentLocation!.lat != null &&
           _currentVehicle!.currentLocation!.lng != null) {
         final lat = _currentVehicle!.currentLocation!.lat!;
         final lng = _currentVehicle!.currentLocation!.lng!;
-        if (!lat.isNaN && !lng.isNaN) {
+        if (!lat.isNaN && !lng.isNaN && lat != 0.0 && lng != 0.0) {
           bestPos = LatLng(lat, lng);
+        }
+      }
+
+      // 4. Fallback to persistent cached last known location for this vehicle
+      if (bestPos == null &&
+          _currentVehicle?.imei != null &&
+          _currentVehicle!.imei!.isNotEmpty) {
+        final savedLatStr = AppPreference.instance.getSync(key: 'last_lat_${_currentVehicle!.imei}');
+        final savedLngStr = AppPreference.instance.getSync(key: 'last_lng_${_currentVehicle!.imei}');
+        final savedLat = double.tryParse(savedLatStr);
+        final savedLng = double.tryParse(savedLngStr);
+        if (savedLat != null &&
+            savedLng != null &&
+            savedLat != 0.0 &&
+            savedLng != 0.0) {
+          bestPos = LatLng(savedLat, savedLng);
         }
       }
     }
 
-    // 3. Fallback to phone current location
-    if (bestPos == null) {
-      print("====> Vehicle location not found or invalid (NaN). Falling back to phone location...");
-      if (currentPos != null) {
+    // 5. Fallback to phone location (ensuring never 0,0 / ocean)
+    if (bestPos == null ||
+        (bestPos.latitude == 0.0 && bestPos.longitude == 0.0)) {
+      if (currentPos != null &&
+          currentPos.latitude != 0.0 &&
+          currentPos.longitude != 0.0) {
         bestPos = LatLng(currentPos.latitude, currentPos.longitude);
-        print("====> Phone Location (Current): ${bestPos.latitude}, ${bestPos.longitude}");
       } else {
-        print("====> Phone Location is also null!");
+        bestPos = const LatLng(20.5937, 78.9629);
       }
     }
     return bestPos;
@@ -1530,6 +1562,8 @@ class _FullScreenMapState extends State<FullScreenMap>
         }
         final target = _getBestPosition();
         if (target != null) {
+          final timeStr = DateTime.now().toLocal().toString();
+          print("====> [$timeStr] 📍 Live Latitude Updated: ${target.latitude} | Longitude: ${target.longitude}");
           // Extract bearing for this specific device
           final currData = state.devices.firstWhere(
             (d) =>
@@ -1682,12 +1716,39 @@ class _FullScreenMapState extends State<FullScreenMap>
         double bearing = 0.0;
 
         if (isDeviceNotInstalledOrExpired) {
-          bestPos = LatLng(currentPos.latitude, currentPos.longitude);
+          bestPos = (currentPos.latitude != 0.0 && currentPos.longitude != 0.0)
+              ? LatLng(currentPos.latitude, currentPos.longitude)
+              : null;
         } else {
+          // 1. Get live position specific to THIS device from socket data
+          final liveData = appState.devices.firstWhere(
+            (d) =>
+                d['imei'] == _currentVehicle?.imei ||
+                d['_id'] == _currentVehicle?.id ||
+                d['id'] == _currentVehicle?.id,
+            orElse: () => <String, dynamic>{},
+          );
+
+          if (liveData.isNotEmpty) {
+            final lat = double.tryParse(liveData['lt']?.toString() ?? '');
+            final lng = double.tryParse(liveData['lg']?.toString() ?? '');
+            if (lat != null &&
+                lng != null &&
+                !lat.isNaN &&
+                !lng.isNaN &&
+                lat != 0.0 &&
+                lng != 0.0) {
+              bestPos = LatLng(lat, lng);
+            }
+          }
+
           // Prioritize Live Position from Socket
-          if (appState.livePosition != null &&
+          if (bestPos == null &&
+              appState.livePosition != null &&
               !appState.livePosition!.latitude.isNaN &&
-              !appState.livePosition!.longitude.isNaN) {
+              !appState.livePosition!.longitude.isNaN &&
+              appState.livePosition!.latitude != 0.0 &&
+              appState.livePosition!.longitude != 0.0) {
             bestPos = appState.livePosition;
           }
 
@@ -1698,19 +1759,26 @@ class _FullScreenMapState extends State<FullScreenMap>
               _currentVehicle!.currentLocation!.lng != null) {
             final lat = _currentVehicle!.currentLocation!.lat!;
             final lng = _currentVehicle!.currentLocation!.lng!;
-            if (!lat.isNaN && !lng.isNaN) {
+            if (!lat.isNaN && !lng.isNaN && lat != 0.0 && lng != 0.0) {
               bestPos = LatLng(lat, lng);
             }
           }
 
-          // 1. Get live position specific to THIS device from socket data
-          final liveData = appState.devices.firstWhere(
-            (d) =>
-                d['imei'] == _currentVehicle?.imei ||
-                d['_id'] == _currentVehicle?.id ||
-                d['id'] == _currentVehicle?.id,
-            orElse: () => <String, dynamic>{},
-          );
+          // Fallback to persistent cached last known location for this vehicle
+          if (bestPos == null &&
+              _currentVehicle?.imei != null &&
+              _currentVehicle!.imei!.isNotEmpty) {
+            final savedLatStr = AppPreference.instance.getSync(key: 'last_lat_${_currentVehicle!.imei}');
+            final savedLngStr = AppPreference.instance.getSync(key: 'last_lng_${_currentVehicle!.imei}');
+            final savedLat = double.tryParse(savedLatStr);
+            final savedLng = double.tryParse(savedLngStr);
+            if (savedLat != null &&
+                savedLng != null &&
+                savedLat != 0.0 &&
+                savedLng != 0.0) {
+              bestPos = LatLng(savedLat, savedLng);
+            }
+          }
 
           if (liveData.isNotEmpty) {
             bearing =
@@ -1726,8 +1794,15 @@ class _FullScreenMapState extends State<FullScreenMap>
           }
         }
 
-        // Final fallback to phone location
-        bestPos ??= LatLng(currentPos.latitude, currentPos.longitude);
+        // Final fallback to phone location (ensuring never 0,0 / ocean)
+        if (bestPos == null ||
+            (bestPos.latitude == 0.0 && bestPos.longitude == 0.0)) {
+          if (currentPos.latitude != 0.0 && currentPos.longitude != 0.0) {
+            bestPos = LatLng(currentPos.latitude, currentPos.longitude);
+          } else {
+            bestPos = const LatLng(20.5937, 78.9629);
+          }
+        }
 
         double startBearing = _normalizeBearing(bearing - 120.0);
 
@@ -2189,7 +2264,8 @@ class _FullScreenMapState extends State<FullScreenMap>
     if (!hasDevice) return const SizedBox.shrink();
 
     final vehiclePos = _animatedMarkerPos ?? _getBestPosition();
-    print("====> Vehicle Latitude: ${vehiclePos?.latitude} | Longitude: ${vehiclePos?.longitude}");
+    final timeStr = DateTime.now().toLocal().toString();
+    print("====> [$timeStr] Vehicle Latitude: ${vehiclePos?.latitude} | Longitude: ${vehiclePos?.longitude}");
 
     return BlocBuilder<FullScreenMapUiCubit, FullScreenMapUiState>(
       bloc: _uiCubit,
@@ -2808,19 +2884,80 @@ class _FullScreenMapState extends State<FullScreenMap>
               } catch (_) {}
             }
 
-            String liveSpeed =
-                liveDevice['sp']?.toString() ??
-                _currentVehicle?.currentLocation?.speed?.toString() ??
-                "0";
+            final String statusStr = (liveDevice['status'] ?? '')
+                .toString()
+                .toLowerCase()
+                .trim();
 
-            if (!isLastRideToday) {
+            String liveSpeed = "0";
+            if (liveDevice['sp'] != null && liveDevice['sp'].toString().isNotEmpty) {
+              liveSpeed = liveDevice['sp'].toString();
+            } else if (liveDevice['speed'] != null && liveDevice['speed'].toString().isNotEmpty) {
+              liveSpeed = liveDevice['speed'].toString();
+            }
+
+            if (statusStr == 'parked' || statusStr == 'offline' || statusStr == 'stopped') {
               liveSpeed = "0";
+            }
+
+            final double speedVal = double.tryParse(liveSpeed) ?? 0.0;
+
+            final imei = liveDevice['imei']?.toString() ?? _currentVehicle?.imei ?? "";
+
+            dynamic attrs = liveDevice['attributes'];
+            if (attrs is String) {
+              try {
+                attrs = jsonDecode(attrs);
+              } catch (_) {}
+            }
+
+            final dynamic accVal = liveDevice['acc'] ??
+                liveDevice['ignition'] ??
+                (attrs is Map ? (attrs['ignition'] ?? attrs['acc']) : null);
+
+            bool isIgnitionOn = false;
+            if (accVal != null) {
+              if (accVal == true ||
+                  accVal == 1 ||
+                  accVal == '1' ||
+                  accVal.toString().toLowerCase() == 'true' ||
+                  accVal.toString().toLowerCase() == 'on') {
+                isIgnitionOn = true;
+              }
+            }
+
+            // Determine whether vehicle is moving or parked
+            final bool isMoving = speedVal > 2.0 || statusStr == 'moving';
+
+            // Parked ONLY when NOT moving AND ignition is OFF (won't show at signal with engine on)
+            bool isParked = false;
+            if (!isMoving) {
+              if (accVal != null) {
+                isParked = !isIgnitionOn;
+              } else {
+                if (statusStr == 'parked' ||
+                    statusStr == 'parking' ||
+                    statusStr == 'stopped' ||
+                    statusStr == 'stop') {
+                  isParked = true;
+                } else if (statusStr != 'idle') {
+                  isParked = speedVal <= 2.0;
+                }
+              }
+            }
+
+            if (isMoving && imei.isNotEmpty) {
+              _lastKnownParkingDates.remove(imei);
             }
 
             String? stoppedAtStr = liveDevice['parking_date_time']?.toString() ??
                 liveDevice['acc_off_time']?.toString() ??
+                liveDevice['last_update']?.toString() ??
+                liveDevice['lastUpdate']?.toString() ??
+                liveDevice['gps_time']?.toString() ??
                 liveDevice['updatedAt']?.toString() ??
                 liveDevice['time']?.toString() ??
+                liveDevice['deviceTime']?.toString() ??
                 liveDevice['createdAt']?.toString() ??
                 _currentVehicle?.currentLocation?.time;
 
@@ -2833,25 +2970,25 @@ class _FullScreenMapState extends State<FullScreenMap>
               }
             }
 
-            final imei = liveDevice['imei']?.toString() ?? "";
-
-            if (stoppedAtStr != null &&
+            if (!isMoving &&
+                stoppedAtStr != null &&
                 stoppedAtStr.isNotEmpty &&
                 stoppedAtStr.toLowerCase() != "null" &&
                 stoppedAtStr.toLowerCase() != "invalid date") {
               if (imei.isNotEmpty) {
                 _lastKnownParkingDates[imei] = stoppedAtStr;
               }
-            } else {
+            } else if (!isMoving) {
               if (imei.isNotEmpty && _lastKnownParkingDates.containsKey(imei)) {
                 stoppedAtStr = _lastKnownParkingDates[imei];
               }
             }
 
-            String parkedSince = "--";
-            final speedVal = double.tryParse(liveSpeed) ?? 0.0;
+            String parkedSince = "";
 
-            if (stoppedAtStr != null &&
+            if (!isMoving &&
+                isParked &&
+                stoppedAtStr != null &&
                 stoppedAtStr.isNotEmpty &&
                 stoppedAtStr.toLowerCase() != "null" &&
                 stoppedAtStr.toLowerCase() != "invalid date") {
@@ -2869,7 +3006,7 @@ class _FullScreenMapState extends State<FullScreenMap>
                     ).toLocal();
                   }
                 } else {
-                  stoppedAt = DateTime.parse(stoppedAtStr).toLocal();
+                  stoppedAt = DateTime.parse(stoppedAtStr.replaceAll(' ', 'T')).toLocal();
                 }
 
                 final now = DateTime.now();
@@ -2964,7 +3101,7 @@ class _FullScreenMapState extends State<FullScreenMap>
                     ],
                   ],
                 ),
-                if (hasDevice && parkedSince.isNotEmpty) ...[
+                if (hasDevice && !isMoving && isParked && parkedSince.isNotEmpty && parkedSince != "--") ...[
                   const SizedBox(height: 6),
                   Row(
                     children: [
@@ -3293,11 +3430,6 @@ class _FullScreenMapState extends State<FullScreenMap>
               orElse: () => <String, dynamic>{},
             );
 
-            String liveSpeed =
-                liveDevice['sp']?.toString() ??
-                _currentVehicle?.currentLocation?.speed?.toString() ??
-                "0";
-
             final odometer = liveDevice['odometer']?.toString() ?? "0";
 
             dynamic attrs = liveDevice['attributes'];
@@ -3335,7 +3467,19 @@ class _FullScreenMapState extends State<FullScreenMap>
               } catch (_) {}
             }
 
-            if (!isLastRideToday) {
+            final String statusStrCard = (liveDevice['status'] ?? '')
+                .toString()
+                .toLowerCase()
+                .trim();
+
+            String liveSpeed = "0";
+            if (liveDevice['sp'] != null && liveDevice['sp'].toString().isNotEmpty) {
+              liveSpeed = liveDevice['sp'].toString();
+            } else if (liveDevice['speed'] != null && liveDevice['speed'].toString().isNotEmpty) {
+              liveSpeed = liveDevice['speed'].toString();
+            }
+
+            if (statusStrCard == 'parked' || statusStrCard == 'offline' || statusStrCard == 'stopped') {
               liveSpeed = "0";
             }
 

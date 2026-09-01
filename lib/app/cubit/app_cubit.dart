@@ -557,14 +557,24 @@ class AppCubit extends Cubit<AppState> with WidgetsBindingObserver {
     print("[AppCubit] 🔄 Data Received for IMEI: ${deviceData['imei']}");
 
     if (deviceId != null) {
-      // Handle persistent parking_date_time
-      final pDate = deviceData['parking_date_time']?.toString();
-      if (pDate != null && pDate.isNotEmpty && pDate != "null") {
-        AppPreference.instance.set(key: 'parking_date_time_$deviceId', value: pDate);
+      // Determine movement state
+      final double sp = double.tryParse(deviceData['sp']?.toString() ?? deviceData['speed']?.toString() ?? '') ?? 0.0;
+      final String status = deviceData['status']?.toString().toLowerCase().trim() ?? '';
+      final bool isMoving = sp > 2.0 || status == 'moving';
+
+      if (isMoving) {
+        AppPreference.instance.set(key: 'parking_date_time_$deviceId', value: '');
+        deviceData['parking_date_time'] = null;
       } else {
-        final savedPDate = AppPreference.instance.getSync(key: 'parking_date_time_$deviceId');
-        if (savedPDate.isNotEmpty) {
-          deviceData['parking_date_time'] = savedPDate;
+        // Handle persistent parking_date_time when parked/stopped
+        final pDate = deviceData['parking_date_time']?.toString();
+        if (pDate != null && pDate.isNotEmpty && pDate != "null") {
+          AppPreference.instance.set(key: 'parking_date_time_$deviceId', value: pDate);
+        } else {
+          final savedPDate = AppPreference.instance.getSync(key: 'parking_date_time_$deviceId');
+          if (savedPDate.isNotEmpty) {
+            deviceData['parking_date_time'] = savedPDate;
+          }
         }
       }
 
@@ -619,7 +629,22 @@ class AppCubit extends Cubit<AppState> with WidgetsBindingObserver {
       final lat = double.tryParse(deviceData['lt']?.toString() ?? '');
       final lng = double.tryParse(deviceData['lg']?.toString() ?? '');
 
-      if (lat != null && lng != null) {
+      final bool isValidCoordinate = lat != null &&
+          lng != null &&
+          !lat.isNaN &&
+          !lng.isNaN &&
+          lat != 0.0 &&
+          lng != 0.0 &&
+          lat >= -90.0 &&
+          lat <= 90.0 &&
+          lng >= -180.0 &&
+          lng <= 180.0;
+
+      if (isValidCoordinate) {
+        // Cache valid coordinates for persistent fallback
+        AppPreference.instance.set(key: 'last_lat_$deviceId', value: lat.toString());
+        AppPreference.instance.set(key: 'last_lng_$deviceId', value: lng.toString());
+
         // Extract bearing/heading (common keys: course, bearing, angle, dir)
         double bearing =
             double.tryParse(
@@ -633,7 +658,9 @@ class AppCubit extends Cubit<AppState> with WidgetsBindingObserver {
             0.0;
 
         // Calculate actual movement bearing for accurate camera/marker rotation
-        if (state.livePosition != null) {
+        if (state.livePosition != null &&
+            state.livePosition!.latitude != 0.0 &&
+            state.livePosition!.longitude != 0.0) {
           final double distance = Geolocator.distanceBetween(
             state.livePosition!.latitude,
             state.livePosition!.longitude,
@@ -657,8 +684,9 @@ class AppCubit extends Cubit<AppState> with WidgetsBindingObserver {
           }
         }
 
+        final timeStr = DateTime.now().toLocal().toString();
         print(
-          "[AppCubit] 📍 Updating Live Position: $lat, $lng | Bearing: $bearing",
+          "[AppCubit] 📍 [$timeStr] Updating Live Position: $lat, $lng | Bearing: $bearing",
         );
         emit(
           state.copyWith(
@@ -668,7 +696,27 @@ class AppCubit extends Cubit<AppState> with WidgetsBindingObserver {
           ),
         );
       } else {
-        emit(state.copyWith(devices: currentDevices));
+        // If coordinate is 0.0 or invalid, DO NOT overwrite livePosition with (0,0)
+        // Recover last known position from cache if current livePosition is missing
+        LatLng? fallbackPos = state.livePosition;
+        if (fallbackPos == null ||
+            (fallbackPos.latitude == 0.0 && fallbackPos.longitude == 0.0)) {
+          final savedLatStr = AppPreference.instance.getSync(key: 'last_lat_$deviceId');
+          final savedLngStr = AppPreference.instance.getSync(key: 'last_lng_$deviceId');
+          final savedLat = double.tryParse(savedLatStr);
+          final savedLng = double.tryParse(savedLngStr);
+          if (savedLat != null &&
+              savedLng != null &&
+              savedLat != 0.0 &&
+              savedLng != 0.0) {
+            fallbackPos = LatLng(savedLat, savedLng);
+          }
+        }
+
+        emit(state.copyWith(
+          devices: currentDevices,
+          livePosition: fallbackPos,
+        ));
       }
     }
   }

@@ -649,7 +649,9 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin, Wi
     if (!isDeviceNotInstalledOrExpired) {
       if (appState.livePosition != null &&
           !appState.livePosition!.latitude.isNaN &&
-          !appState.livePosition!.longitude.isNaN) {
+          !appState.livePosition!.longitude.isNaN &&
+          appState.livePosition!.latitude != 0.0 &&
+          appState.livePosition!.longitude != 0.0) {
         bestPos = appState.livePosition;
       }
 
@@ -659,19 +661,37 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin, Wi
           _selectedDevice!.currentLocation!.lng != null) {
         final lat = _selectedDevice!.currentLocation!.lat!;
         final lng = _selectedDevice!.currentLocation!.lng!;
-        if (!lat.isNaN && !lng.isNaN) {
+        if (!lat.isNaN && !lng.isNaN && lat != 0.0 && lng != 0.0) {
           bestPos = LatLng(lat, lng);
+        }
+      }
+
+      // Check persistent cached last known location for this vehicle
+      if (bestPos == null &&
+          _selectedDevice?.imei != null &&
+          _selectedDevice!.imei!.isNotEmpty) {
+        final savedLatStr = AppPreference.instance.getSync(key: 'last_lat_${_selectedDevice!.imei}');
+        final savedLngStr = AppPreference.instance.getSync(key: 'last_lng_${_selectedDevice!.imei}');
+        final savedLat = double.tryParse(savedLatStr);
+        final savedLng = double.tryParse(savedLngStr);
+        if (savedLat != null &&
+            savedLng != null &&
+            savedLat != 0.0 &&
+            savedLng != 0.0) {
+          bestPos = LatLng(savedLat, savedLng);
         }
       }
     }
 
-    if (bestPos == null) {
-      print("====> [Map Screen] Vehicle location not found or invalid (NaN). Falling back to phone location...");
-      if (currentPos != null) {
+    // Fallback to phone location (ensuring never 0,0 / ocean)
+    if (bestPos == null ||
+        (bestPos.latitude == 0.0 && bestPos.longitude == 0.0)) {
+      if (currentPos != null &&
+          currentPos.latitude != 0.0 &&
+          currentPos.longitude != 0.0) {
         bestPos = LatLng(currentPos.latitude, currentPos.longitude);
-        print("====> [Map Screen] Phone Location (Current): ${bestPos.latitude}, ${bestPos.longitude}");
       } else {
-        print("====> [Map Screen] Phone Location is also null!");
+        bestPos = const LatLng(20.5937, 78.9629);
       }
     }
     return bestPos;
@@ -1607,7 +1627,11 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin, Wi
             _isWarrantyExpired;
 
         if (isDeviceNotInstalledOrExpired) {
-          bestPos = LatLng(currentPos.latitude, currentPos.longitude);
+          bestPos = (currentPos != null &&
+                  currentPos.latitude != 0.0 &&
+                  currentPos.longitude != 0.0)
+              ? LatLng(currentPos.latitude, currentPos.longitude)
+              : null;
         } else {
           // 1. Get live position specific to THIS device from socket data
           final liveData = appState.devices.firstWhere(
@@ -1621,9 +1645,24 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin, Wi
           if (liveData.isNotEmpty) {
             final lat = double.tryParse(liveData['lt']?.toString() ?? '');
             final lng = double.tryParse(liveData['lg']?.toString() ?? '');
-            if (lat != null && lng != null && !lat.isNaN && !lng.isNaN) {
+            if (lat != null &&
+                lng != null &&
+                !lat.isNaN &&
+                !lng.isNaN &&
+                lat != 0.0 &&
+                lng != 0.0) {
               bestPos = LatLng(lat, lng);
             }
+          }
+
+          // Fallback to appState.livePosition
+          if (bestPos == null &&
+              appState.livePosition != null &&
+              !appState.livePosition!.latitude.isNaN &&
+              !appState.livePosition!.longitude.isNaN &&
+              appState.livePosition!.latitude != 0.0 &&
+              appState.livePosition!.longitude != 0.0) {
+            bestPos = appState.livePosition;
           }
 
           double rawCourse =
@@ -1646,10 +1685,27 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin, Wi
               _selectedDevice?.currentLocation != null &&
               _selectedDevice!.currentLocation!.lat != null &&
               _selectedDevice!.currentLocation!.lng != null) {
-            bestPos = LatLng(
-              _selectedDevice!.currentLocation!.lat!,
-              _selectedDevice!.currentLocation!.lng!,
-            );
+            final sLat = _selectedDevice!.currentLocation!.lat!;
+            final sLng = _selectedDevice!.currentLocation!.lng!;
+            if (!sLat.isNaN && !sLng.isNaN && sLat != 0.0 && sLng != 0.0) {
+              bestPos = LatLng(sLat, sLng);
+            }
+          }
+
+          // 3. Fallback to cached last known location for this vehicle
+          if (bestPos == null &&
+              _selectedDevice?.imei != null &&
+              _selectedDevice!.imei!.isNotEmpty) {
+            final savedLatStr = AppPreference.instance.getSync(key: 'last_lat_${_selectedDevice!.imei}');
+            final savedLngStr = AppPreference.instance.getSync(key: 'last_lng_${_selectedDevice!.imei}');
+            final savedLat = double.tryParse(savedLatStr);
+            final savedLng = double.tryParse(savedLngStr);
+            if (savedLat != null &&
+                savedLng != null &&
+                savedLat != 0.0 &&
+                savedLng != 0.0) {
+              bestPos = LatLng(savedLat, savedLng);
+            }
           }
 
           if (bestPos != null && _animatedMarkerPos != null) {
@@ -1680,8 +1736,17 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin, Wi
           }
         }
 
-        // 3. Fallback to phone current location
-        bestPos ??= LatLng(currentPos.latitude, currentPos.longitude);
+        // 4. Fallback to phone current location (or default safe coordinate)
+        if (bestPos == null ||
+            (bestPos.latitude == 0.0 && bestPos.longitude == 0.0)) {
+          if (currentPos != null &&
+              currentPos.latitude != 0.0 &&
+              currentPos.longitude != 0.0) {
+            bestPos = LatLng(currentPos.latitude, currentPos.longitude);
+          } else {
+            bestPos = const LatLng(20.5937, 78.9629);
+          }
+        }
 
         // Marker Animation Logic
         if (_animatedMarkerPos == null) {
@@ -2029,11 +2094,24 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin, Wi
               } catch (_) {}
             }
 
-            String speed =
-                "${liveDevice['sp'] ?? _selectedDevice?.currentLocation?.speed ?? 0} ${context.displayKmh}";
-            if (!isLastRideToday) {
-              speed = "0 ${context.displayKmh}";
+            final String statusStr = (liveDevice['status'] ?? '')
+                .toString()
+                .toLowerCase()
+                .trim();
+
+            String liveSpeed = "0";
+            if (liveDevice['sp'] != null && liveDevice['sp'].toString().isNotEmpty) {
+              liveSpeed = liveDevice['sp'].toString();
+            } else if (liveDevice['speed'] != null && liveDevice['speed'].toString().isNotEmpty) {
+              liveSpeed = liveDevice['speed'].toString();
             }
+
+            if (statusStr == 'parked' || statusStr == 'offline' || statusStr == 'stopped') {
+              liveSpeed = "0";
+            }
+
+            final double speedVal = double.tryParse(liveSpeed) ?? 0.0;
+            String speed = "${speedVal > 0 ? (speedVal % 1 == 0 ? speedVal.toInt() : speedVal.toStringAsFixed(1)) : 0} ${context.displayKmh}";
 
             String todayDistanceStr = "0.0";
             String durationStr = "0${l10n.minutesShort} 0${l10n.secondsShort}";
