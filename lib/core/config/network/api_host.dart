@@ -20,7 +20,7 @@ class ApiURL {
   // Razorpay
   static const String razorpayKey = String.fromEnvironment(
     'RAZORPAY_KEY',
-    defaultValue: 'rzp_test_TEWNN1rk9drG2x',
+    defaultValue: 'rzp_live_TWnjz52KBoRTQj',
   );
 
   static String authToken = '';
