@@ -76,52 +76,13 @@ class LastRefuelCard extends StatelessWidget {
                   ],
                 ),
               ),
-              Row(
-                children: [
-                  GestureDetector(
-                    onTap: () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Reset functionality coming soon!')),
-                      );
-                    },
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFFEF2F2),
-                        borderRadius: BorderRadius.circular(10),
-                        border: Border.all(color: const Color(0xFFFECACA)),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const Icon(
-                            Icons.restart_alt_rounded,
-                            size: 14,
-                            color: Color(0xFFEF4444),
-                          ),
-                          const SizedBox(width: 4),
-                          Text(
-                            l10n.resetBtn,
-                            style: const TextStyle(
-                              color: Color(0xFFEF4444),
-                              fontSize: 11,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  GestureDetector(
-                    onTap: () => _showInfoDialog(context, l10n),
-                    child: Icon(
-                      Icons.info_outline_rounded,
-                      size: 20,
-                      color: colorScheme.onSurface.withOpacity(0.6),
-                    ),
-                  ),
-                ],
+              GestureDetector(
+                onTap: () => _showInfoDialog(context, l10n),
+                child: Icon(
+                  Icons.info_outline_rounded,
+                  size: 20,
+                  color: colorScheme.onSurface.withOpacity(0.6),
+                ),
               ),
             ],
           ),
