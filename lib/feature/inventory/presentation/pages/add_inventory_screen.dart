@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import '../../../../core/theme/app_theme_extension.dart';
 import '../../../../core/widgets/square_flat_button.dart';
-import '../../../../l10n/app_localizations.dart';
 import '../cubit/inventory_cubit.dart';
 import '../cubit/inventory_state.dart';
 import '../../../../feature/auth/presentation/pages/signin_screen.dart';
@@ -293,7 +292,16 @@ class _AddInventoryScreenState extends State<AddInventoryScreen>
           backgroundColor: theme.scaffoldBackgroundColor,
           elevation: 0,
           centerTitle: false,
-          leading: const SizedBox.shrink(),
+          leading: Navigator.canPop(context)
+              ? IconButton(
+                  icon: Icon(
+                    Icons.arrow_back_ios_new_rounded,
+                    color: theme.colorScheme.onSurface,
+                    size: 20,
+                  ),
+                  onPressed: () => Navigator.of(context).pop(),
+                )
+              : const SizedBox.shrink(),
           title: const Text('Add Inventory'),
           actions: [
             IconButton(

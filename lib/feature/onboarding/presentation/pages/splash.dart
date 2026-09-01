@@ -12,12 +12,7 @@ import 'package:trackify/feature/onboarding/presentation/pages/select_language_s
 import 'dart:convert';
 import '../../../../app/app_navigation.dart';
 import '../../../../app/cubit/app_cubit.dart';
-import '../../../../core/config/network/network_api_service.dart';
-import '../../../inventory/data/data_source/inventory_remote_data_source.dart';
-import '../../../inventory/data/repository/inventory_repository_impl.dart';
-import '../../../inventory/domain/usecase/add_inventory_usecase.dart';
-import '../../../inventory/presentation/cubit/inventory_cubit.dart';
-import '../../../inventory/presentation/pages/add_inventory_screen.dart';
+import '../../../inventory/presentation/pages/inventory_option_screen.dart';
 
 import 'dart:async';
 import '../../../../core/widgets/trackify_splash.dart';
@@ -94,20 +89,13 @@ class _SplashScreenState extends State<SplashScreen> {
       }
     }
 
+    if (!mounted) return;
+
     if (userEmail?.toLowerCase() == 'inventory@gmail.com') {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (_) => BlocProvider(
-            create: (context) => InventoryCubit(
-              AddInventoryUseCase(
-                InventoryRepositoryImpl(
-                  InventoryRemoteDataSourceImpl(NetworkApiService()),
-                ),
-              ),
-            ),
-            child: const AddInventoryScreen(),
-          ),
+          builder: (_) => const InventoryOptionScreen(),
         ),
       );
       return;
