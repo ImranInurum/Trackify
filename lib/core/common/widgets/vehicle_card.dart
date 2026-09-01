@@ -262,11 +262,60 @@ class _VehicleCardState extends State<VehicleCard> {
                 ),
                 const SizedBox(height: 16),
                 if (widget.isDeviceInstalled) ...[
-                  InteractiveSwipeButton(
-                    onSwipe: widget.onLock,
-                    isLocked: widget.isLocked,
+                  Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 16),
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).cardColor,
+                      borderRadius: BorderRadius.circular(50),
+                      border: Border.all(
+                        color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5),
+                        width: 1,
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                color: widget.isLocked 
+                                    ? Colors.red.withValues(alpha: 0.1) 
+                                    : Colors.green.withValues(alpha: 0.1),
+                                shape: BoxShape.circle,
+                              ),
+                              child: Icon(
+                                widget.isLocked ? Icons.lock_outline : Icons.lock_open,
+                                color: widget.isLocked ? Colors.red : Colors.green,
+                                size: 20,
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            Text(
+                              widget.isLocked ? "Engine Locked" : "Engine Unlocked",
+                              style: TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.bold,
+                                color: widget.isLocked ? Colors.red : Colors.green,
+                              ),
+                            ),
+                          ],
+                        ),
+                        Switch(
+                          value: widget.isLocked,
+                          activeColor: Colors.red,
+                          inactiveThumbColor: Colors.green,
+                          inactiveTrackColor: Colors.green.withValues(alpha: 0.3),
+                          onChanged: (val) {
+                            widget.onLock();
+                          },
+                        ),
+                      ],
+                    ),
                   ),
-                  const SizedBox(height: 6),
+                  const SizedBox(height: 8),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 24),
                     child: Row(
@@ -280,7 +329,7 @@ class _VehicleCardState extends State<VehicleCard> {
                         const SizedBox(width: 4),
                         Expanded(
                           child: Text(
-                            "Swipe to lock or unlock the vehicle using your secure PIN.",
+                            "Toggle the switch to lock or unlock the vehicle engine using your secure PIN.",
                             style: TextStyle(
                               fontSize: 11,
                               height: 1.2,
