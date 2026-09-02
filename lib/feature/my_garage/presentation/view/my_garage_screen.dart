@@ -235,14 +235,22 @@ class _MyGarageScreenState extends State<MyGarageScreen> {
 
     final brandAndModel = [vehicle.vehicleMaker ?? '', vehicle.vehicleModel ?? ''].where((s) => s.isNotEmpty).join(' ');
     
-    final success = await VehiclePinDialog.show(context, currentLockState, brandAndModel.isNotEmpty ? brandAndModel : 'Vehicle', vehicle.imei!);
-    if (!success) {
-      if (context.mounted) {
-        setState(() {
-          _vehicleCardRefreshCount++;
-        });
+    // Require PIN only when UNLOCKING (currentLockState == true). Skip PIN when LOCKING.
+    if (currentLockState) {
+      final success = await VehiclePinDialog.show(
+        context,
+        currentLockState,
+        brandAndModel.isNotEmpty ? brandAndModel : 'Vehicle',
+        vehicle.imei!,
+      );
+      if (!success) {
+        if (context.mounted) {
+          setState(() {
+            _vehicleCardRefreshCount++;
+          });
+        }
+        return;
       }
-      return;
     }
 
     try {

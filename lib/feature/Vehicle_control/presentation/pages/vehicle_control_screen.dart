@@ -1040,15 +1040,20 @@ class _VehicleControlViewState extends State<VehicleControlView> {
                                 vehicle.vehicleModel,
                               ].where((s) => s.isNotEmpty).join(' ');
 
-                              final success = await VehiclePinDialog.show(
-                                context,
-                                vehicle.vehicleLock,
-                                brandAndModel.isNotEmpty
-                                    ? brandAndModel
-                                    : 'Vehicle',
-                                vehicle.imei,
-                              );
-                              if (success) {
+                              bool proceed = true;
+                              if (vehicle.vehicleLock) {
+                                // Vehicle is currently locked -> Unlocking requires PIN
+                                proceed = await VehiclePinDialog.show(
+                                  context,
+                                  vehicle.vehicleLock,
+                                  brandAndModel.isNotEmpty
+                                      ? brandAndModel
+                                      : 'Vehicle',
+                                  vehicle.imei,
+                                );
+                              }
+
+                              if (proceed) {
                                 if (context.mounted) {
                                   context
                                       .read<VehicleControlCubit>()
@@ -1058,9 +1063,6 @@ class _VehicleControlViewState extends State<VehicleControlView> {
                                       );
                                 }
                               } else {
-                                // Force a fake state update in cubit to reset the button state
-                                // since we canceled. The quickest way is to just let the user tap the X,
-                                // or we can refresh the list. We will just load current vehicle details to refresh.
                                 if (context.mounted) {
                                   context
                                       .read<VehicleControlCubit>()

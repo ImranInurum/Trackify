@@ -558,13 +558,22 @@ class AppCubit extends Cubit<AppState> with WidgetsBindingObserver {
 
     if (deviceId != null) {
       // Handle persistent parking_date_time
-      final pDate = deviceData['parking_date_time']?.toString();
-      if (pDate != null && pDate.isNotEmpty && pDate != "null") {
-        AppPreference.instance.set(key: 'parking_date_time_$deviceId', value: pDate);
+      final speedRaw = deviceData['sp'] ?? deviceData['speed'];
+      final speedNum = double.tryParse(speedRaw?.toString() ?? '0') ?? 0.0;
+
+      if (speedNum > 0) {
+        // Vehicle moving -> clear stored parking timestamp
+        AppPreference.instance.set(key: 'parking_date_time_$deviceId', value: '');
+        deviceData['parking_date_time'] = null;
       } else {
-        final savedPDate = AppPreference.instance.getSync(key: 'parking_date_time_$deviceId');
-        if (savedPDate.isNotEmpty) {
-          deviceData['parking_date_time'] = savedPDate;
+        final pDate = deviceData['parking_date_time']?.toString() ?? deviceData['acc_off_time']?.toString();
+        if (pDate != null && pDate.isNotEmpty && pDate != "null" && pDate != "invalid date") {
+          AppPreference.instance.set(key: 'parking_date_time_$deviceId', value: pDate);
+        } else {
+          final savedPDate = AppPreference.instance.getSync(key: 'parking_date_time_$deviceId');
+          if (savedPDate.isNotEmpty) {
+            deviceData['parking_date_time'] = savedPDate;
+          }
         }
       }
 
@@ -615,11 +624,16 @@ class AppCubit extends Cubit<AppState> with WidgetsBindingObserver {
         currentDevices.add(deviceData);
       }
 
-      // Extract coordinates (lt = latitude, lg = longitude)
-      final lat = double.tryParse(deviceData['lt']?.toString() ?? '');
-      final lng = double.tryParse(deviceData['lg']?.toString() ?? '');
+      // Extract coordinates supporting multiple keys
+      final rawLat = deviceData['lt'] ?? deviceData['lat'] ?? deviceData['latitude'];
+      final rawLng = deviceData['lg'] ?? deviceData['lng'] ?? deviceData['longitude'];
+      final lat = double.tryParse(rawLat?.toString() ?? '');
+      final lng = double.tryParse(rawLng?.toString() ?? '');
 
       if (lat != null && lng != null) {
+        // Standardize the keys so that the rest of the app (like map screens) can rely on 'lt' and 'lg'
+        deviceData['lt'] = lat;
+        deviceData['lg'] = lng;
         // Extract bearing/heading (common keys: course, bearing, angle, dir)
         double bearing =
             double.tryParse(

@@ -329,7 +329,7 @@ class _VehicleCardState extends State<VehicleCard> {
                         const SizedBox(width: 4),
                         Expanded(
                           child: Text(
-                            "Toggle the switch to lock or unlock the vehicle engine using your secure PIN.",
+                            "Toggle the switch to lock or unlock the vehicle engine (PIN required to unlock).",
                             style: TextStyle(
                               fontSize: 11,
                               height: 1.2,

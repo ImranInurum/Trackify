@@ -2817,41 +2817,56 @@ class _FullScreenMapState extends State<FullScreenMap>
               liveSpeed = "0";
             }
 
-            String? stoppedAtStr = liveDevice['parking_date_time']?.toString() ??
-                liveDevice['acc_off_time']?.toString() ??
-                liveDevice['updatedAt']?.toString() ??
-                liveDevice['time']?.toString() ??
-                liveDevice['createdAt']?.toString() ??
-                _currentVehicle?.currentLocation?.time;
+            final speedVal = double.tryParse(liveSpeed) ?? 0.0;
+            final bool isMoving = speedVal > 0;
+            final imei = liveDevice['imei']?.toString() ?? _currentVehicle?.imei ?? "";
 
-            if (stoppedAtStr == null ||
-                stoppedAtStr.isEmpty ||
-                stoppedAtStr.toLowerCase() == "null" ||
-                stoppedAtStr.toLowerCase() == "invalid date") {
-              if (lastRide != null && lastRide.rawStartTime.isNotEmpty) {
-                stoppedAtStr = lastRide.rawStartTime;
-              }
-            }
-
-            final imei = liveDevice['imei']?.toString() ?? "";
-
-            if (stoppedAtStr != null &&
-                stoppedAtStr.isNotEmpty &&
-                stoppedAtStr.toLowerCase() != "null" &&
-                stoppedAtStr.toLowerCase() != "invalid date") {
+            String? stoppedAtStr;
+            if (isMoving) {
               if (imei.isNotEmpty) {
-                _lastKnownParkingDates[imei] = stoppedAtStr;
+                _lastKnownParkingDates.remove(imei);
               }
             } else {
-              if (imei.isNotEmpty && _lastKnownParkingDates.containsKey(imei)) {
-                stoppedAtStr = _lastKnownParkingDates[imei];
+              // Extract REAL stop timestamp ONLY from stop event parameters
+              // (DO NOT use heartbeat fields like updatedAt, time, createdAt, or currentLocation.time!)
+              stoppedAtStr = liveDevice['parking_date_time']?.toString() ??
+                  liveDevice['acc_off_time']?.toString() ??
+                  liveDevice['stop_time']?.toString() ??
+                  liveDevice['last_stop_time']?.toString();
+
+              if (stoppedAtStr == null ||
+                  stoppedAtStr.isEmpty ||
+                  stoppedAtStr.toLowerCase() == "null" ||
+                  stoppedAtStr.toLowerCase() == "invalid date") {
+                if (lastRide != null && lastRide.rawStartTime.isNotEmpty) {
+                  stoppedAtStr = lastRide.rawStartTime;
+                }
+              }
+
+              if (stoppedAtStr != null &&
+                  stoppedAtStr.isNotEmpty &&
+                  stoppedAtStr.toLowerCase() != "null" &&
+                  stoppedAtStr.toLowerCase() != "invalid date") {
+                if (imei.isNotEmpty) {
+                  _lastKnownParkingDates[imei] = stoppedAtStr;
+                }
+              } else {
+                if (imei.isNotEmpty && _lastKnownParkingDates.containsKey(imei)) {
+                  stoppedAtStr = _lastKnownParkingDates[imei];
+                } else if (imei.isNotEmpty) {
+                  // Lock in current time ONCE when vehicle first stopped if no API stop time exists
+                  stoppedAtStr = DateTime.now().toIso8601String();
+                  _lastKnownParkingDates[imei] = stoppedAtStr;
+                }
               }
             }
 
-            String parkedSince = "--";
-            final speedVal = double.tryParse(liveSpeed) ?? 0.0;
+            String statusPillText = "";
+            bool isParkedState = false;
+            bool isIdleState = false;
 
-            if (stoppedAtStr != null &&
+            if (!isMoving &&
+                stoppedAtStr != null &&
                 stoppedAtStr.isNotEmpty &&
                 stoppedAtStr.toLowerCase() != "null" &&
                 stoppedAtStr.toLowerCase() != "invalid date") {
@@ -2873,6 +2888,13 @@ class _FullScreenMapState extends State<FullScreenMap>
                 }
 
                 final now = DateTime.now();
+                final idleDuration = now.difference(stoppedAt);
+                // 10 MINUTES THRESHOLD:
+                // >= 10 mins -> Parked State
+                // < 10 mins -> Idle State
+                isParkedState = idleDuration.inMinutes >= 10;
+                isIdleState = !isParkedState;
+
                 final isToday =
                     stoppedAt.year == now.year &&
                     stoppedAt.month == now.month &&
@@ -2885,20 +2907,29 @@ class _FullScreenMapState extends State<FullScreenMap>
                     stoppedAt.day == yesterday.day;
 
                 final timeFormat = DateFormat('hh:mm a');
+                String formattedTime = "";
                 if (isToday) {
-                  parkedSince = '${timeFormat.format(stoppedAt)}, Today';
+                  formattedTime = '${timeFormat.format(stoppedAt)}, Today';
                 } else if (isYesterday) {
-                  parkedSince = '${timeFormat.format(stoppedAt)}, Yesterday';
+                  formattedTime = '${timeFormat.format(stoppedAt)}, Yesterday';
                 } else {
                   final dateFormat = DateFormat('dd/MM/yyyy');
-                  parkedSince =
+                  formattedTime =
                       '${timeFormat.format(stoppedAt)}, ${dateFormat.format(stoppedAt)}';
+                }
+
+                if (isParkedState) {
+                  statusPillText = AppLocalizations.of(context)!.parkedSinceTime(formattedTime);
+                } else {
+                  statusPillText = 'Idle Since: $formattedTime';
                 }
               } catch (e) {
                 debugPrint(
-                  'Failed to parse parked since time: $stoppedAtStr. Error: $e',
+                  'Failed to parse stop time: $stoppedAtStr. Error: $e',
                 );
               }
+            } else if (isMoving) {
+              statusPillText = 'Moving';
             }
 
             return Column(
@@ -2964,17 +2995,25 @@ class _FullScreenMapState extends State<FullScreenMap>
                     ],
                   ],
                 ),
-                if (hasDevice && parkedSince.isNotEmpty) ...[
+                if (hasDevice && statusPillText.isNotEmpty) ...[
                   const SizedBox(height: 6),
                   Row(
                     children: [
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                         decoration: BoxDecoration(
-                          color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.08),
+                          color: isParkedState
+                              ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.08)
+                              : isIdleState
+                                  ? Colors.amber.withValues(alpha: 0.12)
+                                  : Colors.green.withValues(alpha: 0.12),
                           borderRadius: BorderRadius.circular(6),
                           border: Border.all(
-                            color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.2),
+                            color: isParkedState
+                                ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.2)
+                                : isIdleState
+                                    ? Colors.amber.withValues(alpha: 0.3)
+                                    : Colors.green.withValues(alpha: 0.3),
                             width: 1,
                           ),
                         ),
@@ -2982,16 +3021,28 @@ class _FullScreenMapState extends State<FullScreenMap>
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Icon(
-                              Icons.access_time_rounded,
+                              isParkedState
+                                  ? Icons.access_time_rounded
+                                  : isIdleState
+                                      ? Icons.timer_outlined
+                                      : Icons.navigation_rounded,
                               size: 12,
-                              color: Theme.of(context).colorScheme.primary,
+                              color: isParkedState
+                                  ? Theme.of(context).colorScheme.primary
+                                  : isIdleState
+                                      ? Colors.amber.shade800
+                                      : Colors.green.shade700,
                             ),
                             const SizedBox(width: 4),
                             Text(
-                              AppLocalizations.of(context)!.parkedSinceTime(parkedSince),
+                              statusPillText,
                               style: TextStyle(
                                 fontSize: 12,
-                                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.75),
+                                color: isParkedState
+                                    ? Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.75)
+                                    : isIdleState
+                                        ? Colors.amber.shade900
+                                        : Colors.green.shade800,
                                 fontWeight: FontWeight.w600,
                               ),
                             ),
