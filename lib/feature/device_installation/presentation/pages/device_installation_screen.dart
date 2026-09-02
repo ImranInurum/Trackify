@@ -12,10 +12,8 @@ import '../cubit/device_installation_cubit.dart';
 import '../cubit/device_installation_state.dart';
 import 'widgets/manual_entry_dialog.dart';
 import 'widgets/add_vehicle_dialog.dart';
-import 'widgets/personal_details_dialog.dart';
 import '../../../../feature/profile/presentation/cubit/profile_cubit.dart';
 import '../../../../feature/profile/presentation/cubit/profile_state.dart';
-import '../../../../app/cubit/app_cubit.dart';
 import '../../../../app/app_navigation.dart';
 import '../../../../feature/map/presentation/cubit/map_cubit.dart';
 import '../../../../core/utils/shared_preferences.dart';
@@ -694,7 +692,6 @@ class _DeviceInstallationScreenState extends State<DeviceInstallationScreen>
     await context.read<ProfileCubit>().fetchVehicles();
 
     if (!mounted) return;
-    final appState = context.read<AppCubit>().state;
 
     final state = context.read<ProfileCubit>().state;
     List<Vehicle> userVehicles = [];
@@ -721,7 +718,6 @@ class _DeviceInstallationScreenState extends State<DeviceInstallationScreen>
     }
 
     // ONLY prompt AddVehicleDialog if user has NO vehicles in their profile/garage at all!
-    bool addedNewVehicle = false;
     if (vId.isEmpty) {
       final added = await showDialog<bool>(
         context: context,
@@ -746,7 +742,6 @@ class _DeviceInstallationScreenState extends State<DeviceInstallationScreen>
 
       // Await fetch to ensure state is updated with newly created vehicle
       await context.read<ProfileCubit>().fetchVehicles();
-      addedNewVehicle = true;
 
       final updatedState = context.read<ProfileCubit>().state;
       if (updatedState is VehiclesLoaded && updatedState.vehicles.isNotEmpty) {
@@ -756,31 +751,6 @@ class _DeviceInstallationScreenState extends State<DeviceInstallationScreen>
           value: vId,
         );
       }
-    }
-
-    if (!mounted) return;
-
-    // Check if personal details are already filled
-    bool hasPersonalDetails = false;
-    final userData = appState.userData;
-    if (userData != null) {
-      if ((userData.lastName?.trim().isNotEmpty ?? false) &&
-          (userData.mobileNumber?.trim().isNotEmpty ?? false) &&
-          (userData.country?.trim().isNotEmpty ?? false) &&
-          (userData.state?.trim().isNotEmpty ?? false) &&
-          (userData.city?.trim().isNotEmpty ?? false)) {
-        hasPersonalDetails = true;
-      }
-    }
-
-    if (!hasPersonalDetails) {
-      final detailsUpdated = await showDialog<bool>(
-        context: context,
-        barrierDismissible: false,
-        builder: (_) => const PersonalDetailsDialog(),
-      );
-      if (detailsUpdated != true) return;
-      if (!mounted) return;
     }
 
     if (!mounted) return;
