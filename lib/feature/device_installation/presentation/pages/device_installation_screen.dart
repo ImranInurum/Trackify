@@ -696,12 +696,33 @@ class _DeviceInstallationScreenState extends State<DeviceInstallationScreen>
     if (!mounted) return;
     final appState = context.read<AppCubit>().state;
 
-    // If no specific vehicleId was passed to this screen (i.e. user tapped "Install Trackify Device"),
-    // ALWAYS open the Add Vehicle screen so the user enters details for their new vehicle!
-    final bool shouldPromptNewVehicle = (widget.vehicleId == null || widget.vehicleId!.trim().isEmpty);
-    bool addedNewVehicle = false;
+    final state = context.read<ProfileCubit>().state;
+    List<Vehicle> userVehicles = [];
+    if (state is VehiclesLoaded) {
+      userVehicles = state.vehicles;
+    }
 
-    if (shouldPromptNewVehicle) {
+    final prefsId = await AppPreference.instance.get(
+      key: AppPreference.KEY_SELECTED_UID,
+    );
+
+    // Determine target vehicle ID:
+    // 1. If explicit vehicleId was passed to DeviceInstallationScreen, use it!
+    // 2. Otherwise if user has a selected vehicle in AppPreference or userVehicles, use it!
+    String vId = '';
+    if (widget.vehicleId != null &&
+        widget.vehicleId!.trim().isNotEmpty &&
+        userVehicles.any((v) => v.id == widget.vehicleId)) {
+      vId = widget.vehicleId!.trim();
+    } else if (prefsId.isNotEmpty && userVehicles.any((v) => v.id == prefsId)) {
+      vId = prefsId;
+    } else if (userVehicles.isNotEmpty) {
+      vId = userVehicles.first.id ?? '';
+    }
+
+    // ONLY prompt AddVehicleDialog if user has NO vehicles in their profile/garage at all!
+    bool addedNewVehicle = false;
+    if (vId.isEmpty) {
       final added = await showDialog<bool>(
         context: context,
         barrierDismissible: false,
@@ -726,6 +747,15 @@ class _DeviceInstallationScreenState extends State<DeviceInstallationScreen>
       // Await fetch to ensure state is updated with newly created vehicle
       await context.read<ProfileCubit>().fetchVehicles();
       addedNewVehicle = true;
+
+      final updatedState = context.read<ProfileCubit>().state;
+      if (updatedState is VehiclesLoaded && updatedState.vehicles.isNotEmpty) {
+        vId = updatedState.vehicles.first.id ?? '';
+        await AppPreference.instance.set(
+          key: AppPreference.KEY_SELECTED_UID,
+          value: vId,
+        );
+      }
     }
 
     if (!mounted) return;
@@ -751,39 +781,6 @@ class _DeviceInstallationScreenState extends State<DeviceInstallationScreen>
       );
       if (detailsUpdated != true) return;
       if (!mounted) return;
-    }
-
-    if (!mounted) return;
-    String vId = '';
-    
-    final state = context.read<ProfileCubit>().state;
-    List<Vehicle> userVehicles = [];
-    if (state is VehiclesLoaded) {
-      userVehicles = state.vehicles;
-    }
-
-    final prefsId = await AppPreference.instance.get(
-      key: AppPreference.KEY_SELECTED_UID,
-    );
-
-    if (addedNewVehicle && userVehicles.isNotEmpty) {
-      vId = userVehicles.first.id ?? '';
-      await AppPreference.instance.set(
-        key: AppPreference.KEY_SELECTED_UID,
-        value: vId,
-      );
-    } else if (prefsId.isNotEmpty && userVehicles.any((v) => v.id == prefsId)) {
-      vId = prefsId;
-    } else if (widget.vehicleId != null && widget.vehicleId!.isNotEmpty && userVehicles.any((v) => v.id == widget.vehicleId)) {
-      vId = widget.vehicleId!;
-    } else {
-      if (userVehicles.isNotEmpty) {
-        vId = userVehicles.first.id ?? '';
-        await AppPreference.instance.set(
-          key: AppPreference.KEY_SELECTED_UID,
-          value: vId,
-        );
-      }
     }
 
     if (!mounted) return;

@@ -2735,7 +2735,9 @@ class _FullScreenMapState extends State<FullScreenMap>
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => const DeviceInstallationScreen(),
+                      builder: (context) => DeviceInstallationScreen(
+                        vehicleId: _currentVehicle?.id,
+                      ),
                     ),
                   );
                 }

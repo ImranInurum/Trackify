@@ -2691,7 +2691,9 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin, Wi
                         Navigator.of(context).push(
                           MaterialPageRoute(
                             builder: (context) =>
-                                const DeviceInstallationScreen(),
+                                DeviceInstallationScreen(
+                                  vehicleId: _selectedDevice?.id,
+                                ),
                           ),
                         );
                       },
