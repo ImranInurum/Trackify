@@ -518,21 +518,21 @@ class _VehiclePinDialogState extends State<VehiclePinDialog> {
                 margin: const EdgeInsets.symmetric(horizontal: 6),
                 decoration: BoxDecoration(
                   color: isFilled
-                      ? theme.colorScheme.primary.withValues(alpha: 0.12)
+                      ? theme.colorScheme.primary.withOpacity(0.12)
                       : isFocusedSlot
-                          ? theme.colorScheme.primary.withValues(alpha: 0.06)
+                          ? theme.colorScheme.primary.withOpacity(0.06)
                           : theme.cardColor,
                   borderRadius: BorderRadius.circular(14),
                   border: Border.all(
                     color: isFilled || isFocusedSlot
                         ? theme.colorScheme.primary
-                        : theme.dividerColor.withValues(alpha: 0.5),
+                        : theme.dividerColor.withOpacity(0.5),
                     width: isFocusedSlot || isFilled ? 2 : 1,
                   ),
                   boxShadow: [
                     if (isFilled || isFocusedSlot)
                       BoxShadow(
-                        color: theme.colorScheme.primary.withValues(alpha: 0.25),
+                        color: theme.colorScheme.primary.withOpacity(0.25),
                         blurRadius: 10,
                         spreadRadius: 0,
                       ),
@@ -603,7 +603,7 @@ class _VehiclePinDialogState extends State<VehiclePinDialog> {
                 color: theme.colorScheme.surface,
                 borderRadius: BorderRadius.circular(28),
                 border: Border.all(
-                  color: theme.colorScheme.primary.withValues(alpha: 0.2),
+                  color: theme.colorScheme.primary.withOpacity(0.2),
                   width: 1.2,
                 ),
               ),
@@ -619,13 +619,13 @@ class _VehiclePinDialogState extends State<VehiclePinDialog> {
                           padding: const EdgeInsets.all(16),
                           decoration: BoxDecoration(
                             color: isUnlocking
-                                ? Colors.green.withValues(alpha: 0.12)
-                                : theme.colorScheme.primary.withValues(alpha: 0.12),
+                                ? Colors.green.withOpacity(0.12)
+                                : theme.colorScheme.primary.withOpacity(0.12),
                             shape: BoxShape.circle,
                             border: Border.all(
                               color: isUnlocking
-                                  ? Colors.green.withValues(alpha: 0.3)
-                                  : theme.colorScheme.primary.withValues(alpha: 0.3),
+                                  ? Colors.green.withOpacity(0.3)
+                                  : theme.colorScheme.primary.withOpacity(0.3),
                               width: 2,
                             ),
                           ),
@@ -657,7 +657,7 @@ class _VehiclePinDialogState extends State<VehiclePinDialog> {
                           _getSubtitle(),
                           textAlign: TextAlign.center,
                           style: theme.textTheme.bodyMedium?.copyWith(
-                            color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+                            color: theme.colorScheme.onSurface.withOpacity(0.7),
                             fontSize: 13,
                           ),
                         ),
@@ -741,7 +741,7 @@ class _VehiclePinDialogState extends State<VehiclePinDialog> {
                       constraints: const BoxConstraints(),
                       icon: Icon(
                         Icons.close_rounded,
-                        color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                        color: theme.colorScheme.onSurface.withOpacity(0.6),
                       ),
                       onPressed: () => Navigator.of(context).pop(false),
                     ),
