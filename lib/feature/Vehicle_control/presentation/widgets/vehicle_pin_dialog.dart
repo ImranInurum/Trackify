@@ -474,182 +474,281 @@ class _VehiclePinDialogState extends State<VehiclePinDialog> {
     }
   }
 
+  Widget _build4DigitPinInput(ThemeData theme) {
+    final text = _pinController.text;
+    return GestureDetector(
+      onTap: () => _focusNode.requestFocus(),
+      behavior: HitTestBehavior.opaque,
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          // Hidden TextField to receive native keyboard inputs
+          Opacity(
+            opacity: 0.0,
+            child: SizedBox(
+              width: 240,
+              height: 56,
+              child: TextField(
+                enabled: !_isSubmitting,
+                controller: _pinController,
+                focusNode: _focusNode,
+                keyboardType: TextInputType.number,
+                maxLength: 4,
+                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                onChanged: (val) {
+                  _onPinChanged(val);
+                  if (val.length == 4 && !_isSubmitting) {
+                    _processPin(val);
+                  }
+                },
+              ),
+            ),
+          ),
+
+          // 4 Premium Animated OTP-Style PIN Digit Boxes
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: List.generate(4, (index) {
+              final isFilled = index < text.length;
+              final isFocusedSlot = index == text.length && _focusNode.hasFocus;
+
+              return Container(
+                width: 48,
+                height: 56,
+                margin: const EdgeInsets.symmetric(horizontal: 6),
+                decoration: BoxDecoration(
+                  color: isFilled
+                      ? theme.colorScheme.primary.withValues(alpha: 0.12)
+                      : isFocusedSlot
+                          ? theme.colorScheme.primary.withValues(alpha: 0.06)
+                          : theme.cardColor,
+                  borderRadius: BorderRadius.circular(14),
+                  border: Border.all(
+                    color: isFilled || isFocusedSlot
+                        ? theme.colorScheme.primary
+                        : theme.dividerColor.withValues(alpha: 0.5),
+                    width: isFocusedSlot || isFilled ? 2 : 1,
+                  ),
+                  boxShadow: [
+                    if (isFilled || isFocusedSlot)
+                      BoxShadow(
+                        color: theme.colorScheme.primary.withValues(alpha: 0.25),
+                        blurRadius: 10,
+                        spreadRadius: 0,
+                      ),
+                  ],
+                ),
+                child: Center(
+                  child: AnimatedSwitcher(
+                    duration: const Duration(milliseconds: 150),
+                    child: isFilled
+                        ? Container(
+                            key: ValueKey('filled_$index'),
+                            width: 14,
+                            height: 14,
+                            decoration: BoxDecoration(
+                              color: theme.colorScheme.primary,
+                              shape: BoxShape.circle,
+                            ),
+                          )
+                        : isFocusedSlot
+                            ? Container(
+                                key: ValueKey('cursor_$index'),
+                                width: 2,
+                                height: 22,
+                                decoration: BoxDecoration(
+                                  color: theme.colorScheme.primary,
+                                  borderRadius: BorderRadius.circular(1),
+                                ),
+                              )
+                            : const SizedBox.shrink(),
+                  ),
+                ),
+              );
+            }),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+    final isUnlocking = widget.isLocked && _currentState == PinDialogState.enterPin;
+
     return Dialog(
       backgroundColor: theme.colorScheme.surface,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-      elevation: 10,
-      child: _isInitialLoading 
-        ? Padding(
-            padding: const EdgeInsets.symmetric(vertical: 40.0, horizontal: 32.0),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                SizedBox(
-                  width: 24,
-                  height: 24,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2.5,
-                    color: theme.colorScheme.primary,
-                  ),
-                ),
-              ],
-            ),
-          )
-        : Container(
-            decoration: BoxDecoration(
-              color: theme.colorScheme.surface,
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Stack(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                    Icon(
-                      widget.isLocked && _currentState == PinDialogState.enterPin ? Icons.lock_open : Icons.lock,
-                      size: 48,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
+      elevation: 16,
+      child: _isInitialLoading
+          ? Padding(
+              padding: const EdgeInsets.symmetric(vertical: 48.0, horizontal: 32.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  SizedBox(
+                    width: 32,
+                    height: 32,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 3,
                       color: theme.colorScheme.primary,
                     ),
-                    const SizedBox(height: 16),
-                    Text(
-                      _getTitle(),
-                      style: theme.textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: theme.colorScheme.onSurface,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      widget.vehicleName,
-                      style: theme.textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.w600,
-                        color: theme.colorScheme.primary,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      _getSubtitle(),
-                      textAlign: TextAlign.center,
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
-                      ),
-                    ),
-                    const SizedBox(height: 32),
-                    
-                    // PIN Input Field
-                    SizedBox(
-                      width: 200,
-                      child: TextField(
-                        enabled: !_isSubmitting,
-                        controller: _pinController,
-                        focusNode: _focusNode,
-                        keyboardType: TextInputType.number,
-                        obscureText: true,
-                        maxLength: 4,
-                        textAlign: TextAlign.center,
-                        obscuringCharacter: '●',
-                        inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                        style: theme.textTheme.headlineMedium?.copyWith(
-                          letterSpacing: 24,
-                          fontWeight: FontWeight.bold,
-                          color: theme.colorScheme.onSurface,
-                        ),
-                        decoration: InputDecoration(
-                          counterText: "",
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            borderSide: BorderSide(color: theme.colorScheme.outline),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            borderSide: BorderSide(color: theme.colorScheme.outline.withValues(alpha: 0.5)),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            borderSide: BorderSide(color: theme.colorScheme.primary, width: 2),
-                          ),
-                          contentPadding: const EdgeInsets.symmetric(vertical: 16),
-                        ),
-                        onChanged: _onPinChanged,
-                      ),
-                    ),
-                    
-                    if (_errorText.isNotEmpty)
-                      Padding(
-                        padding: const EdgeInsets.only(top: 12),
-                        child: Text(
-                          _errorText,
-                          style: TextStyle(
-                            color: theme.colorScheme.error,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ),
-                    
-                    const SizedBox(height: 32),
-                    
-                    if (_pinController.text.length == 4)
-                      SizedBox(
-                        width: double.infinity,
-                        height: 48,
-                        child: ElevatedButton(
-                          onPressed: _isSubmitting ? null : () => _processPin(_pinController.text),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: theme.colorScheme.primary,
-                            foregroundColor: theme.colorScheme.onPrimary,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
+                  ),
+                ],
+              ),
+            )
+          : Container(
+              decoration: BoxDecoration(
+                color: theme.colorScheme.surface,
+                borderRadius: BorderRadius.circular(28),
+                border: Border.all(
+                  color: theme.colorScheme.primary.withValues(alpha: 0.2),
+                  width: 1.2,
+                ),
+              ),
+              child: Stack(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        // Glowing Header Icon
+                        Container(
+                          padding: const EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            color: isUnlocking
+                                ? Colors.green.withValues(alpha: 0.12)
+                                : theme.colorScheme.primary.withValues(alpha: 0.12),
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: isUnlocking
+                                  ? Colors.green.withValues(alpha: 0.3)
+                                  : theme.colorScheme.primary.withValues(alpha: 0.3),
+                              width: 2,
                             ),
                           ),
-                          child: _isSubmitting
-                              ? SizedBox(
-                                  height: 20,
-                                  width: 20,
-                                  child: CircularProgressIndicator(
-                                    color: theme.colorScheme.onPrimary,
-                                    strokeWidth: 2,
-                                  ),
-                                )
-                              : const Text(
-                                  'Submit',
-                                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                                ),
-                        ),
-                      ),
-                    
-                    if (_currentState == PinDialogState.enterPin)
-                      Padding(
-                        padding: const EdgeInsets.only(top: 8.0),
-                        child: TextButton(
-                          onPressed: _isSubmitting ? null : _onForgotPin,
-                          style: TextButton.styleFrom(
-                            foregroundColor: theme.colorScheme.primary,
+                          child: Icon(
+                            isUnlocking ? Icons.lock_open_rounded : Icons.lock_rounded,
+                            size: 36,
+                            color: isUnlocking ? Colors.green : theme.colorScheme.primary,
                           ),
-                          child: Text(AppLocalizations.of(context)!.forgotPin),
                         ),
+                        const SizedBox(height: 16),
+                        Text(
+                          _getTitle(),
+                          style: theme.textTheme.titleLarge?.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: theme.colorScheme.onSurface,
+                            fontSize: 20,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          widget.vehicleName,
+                          style: theme.textTheme.titleMedium?.copyWith(
+                            fontWeight: FontWeight.w700,
+                            color: theme.colorScheme.primary,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          _getSubtitle(),
+                          textAlign: TextAlign.center,
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+                            fontSize: 13,
+                          ),
+                        ),
+                        const SizedBox(height: 28),
+
+                        // 4 Individual OTP Box Inputs
+                        _build4DigitPinInput(theme),
+
+                        if (_errorText.isNotEmpty)
+                          Padding(
+                            padding: const EdgeInsets.only(top: 14),
+                            child: Text(
+                              _errorText,
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: theme.colorScheme.error,
+                                fontWeight: FontWeight.w600,
+                                fontSize: 13,
+                              ),
+                            ),
+                          ),
+
+                        const SizedBox(height: 24),
+
+                        if (_pinController.text.length == 4)
+                          SizedBox(
+                            width: double.infinity,
+                            height: 48,
+                            child: ElevatedButton(
+                              onPressed: _isSubmitting ? null : () => _processPin(_pinController.text),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: theme.colorScheme.primary,
+                                foregroundColor: theme.colorScheme.onPrimary,
+                                elevation: 2,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(14),
+                                ),
+                              ),
+                              child: _isSubmitting
+                                  ? SizedBox(
+                                      height: 20,
+                                      width: 20,
+                                      child: CircularProgressIndicator(
+                                        color: theme.colorScheme.onPrimary,
+                                        strokeWidth: 2,
+                                      ),
+                                    )
+                                  : const Text(
+                                      'Submit',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16,
+                                        letterSpacing: 0.5,
+                                      ),
+                                    ),
+                            ),
+                          ),
+
+                        if (_currentState == PinDialogState.enterPin)
+                          Padding(
+                            padding: const EdgeInsets.only(top: 6.0),
+                            child: TextButton(
+                              onPressed: _isSubmitting ? null : _onForgotPin,
+                              style: TextButton.styleFrom(
+                                foregroundColor: theme.colorScheme.primary,
+                              ),
+                              child: Text(
+                                AppLocalizations.of(context)!.forgotPin,
+                                style: const TextStyle(fontWeight: FontWeight.w600),
+                              ),
+                            ),
+                          ),
+                      ],
+                    ),
+                  ),
+                  Positioned(
+                    right: 12,
+                    top: 12,
+                    child: IconButton(
+                      padding: EdgeInsets.zero,
+                      constraints: const BoxConstraints(),
+                      icon: Icon(
+                        Icons.close_rounded,
+                        color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                       ),
-                  ],
+                      onPressed: () => Navigator.of(context).pop(false),
+                    ),
                   ),
-                ),
-                Positioned(
-                  right: 12,
-                  top: 12,
-                  child: IconButton(
-                    padding: EdgeInsets.zero,
-                    constraints: const BoxConstraints(),
-                    icon: Icon(Icons.close, color: theme.colorScheme.onSurface.withValues(alpha: 0.6)),
-                    onPressed: () => Navigator.of(context).pop(false),
-                  ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
     );
   }
 }
