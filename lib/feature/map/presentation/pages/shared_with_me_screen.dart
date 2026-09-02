@@ -45,7 +45,7 @@ class SharedWithMeScreen extends StatelessWidget {
                 textAlign: TextAlign.center,
                 style: theme.textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.w500,
-                  color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+                  color: theme.colorScheme.onSurface.withOpacity( 0.7),
                   fontSize: 13,
                 ),
               ),
@@ -54,7 +54,7 @@ class SharedWithMeScreen extends StatelessWidget {
                 l10n.noOneSharedLocationSub,
                 textAlign: TextAlign.center,
                 style: theme.textTheme.bodyMedium?.copyWith(
-                  color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
+                  color: theme.colorScheme.onSurface.withOpacity( 0.5),
                   fontSize: 11,
                 ),
               ),

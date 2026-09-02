@@ -173,7 +173,7 @@ class _DiscoverFeaturesScreenState extends State<DiscoverFeaturesScreen> {
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(24),
                       border: Border.all(
-                        color: colorScheme.outlineVariant.withValues(alpha: 0.2),
+                        color: colorScheme.outlineVariant.withOpacity( 0.2),
                       ),
                       image: DecorationImage(
                         image: NetworkImage(feature.image),
@@ -188,8 +188,8 @@ class _DiscoverFeaturesScreenState extends State<DiscoverFeaturesScreen> {
                           begin: Alignment.centerLeft,
                           end: Alignment.centerRight,
                           colors: [
-                            colorScheme.surface.withValues(alpha: 0.95),
-                            colorScheme.surface.withValues(alpha: 0.65),
+                            colorScheme.surface.withOpacity( 0.95),
+                            colorScheme.surface.withOpacity( 0.65),
                             Colors.transparent,
                           ],
                         ),
@@ -208,11 +208,11 @@ class _DiscoverFeaturesScreenState extends State<DiscoverFeaturesScreen> {
                                   vertical: 6,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: colorScheme.surface.withValues(alpha: 0.54),
+                                  color: colorScheme.surface.withOpacity( 0.54),
                                   borderRadius: BorderRadius.circular(12),
                                   border: Border.all(
                                     color: colorScheme.outlineVariant
-                                        .withValues(alpha: 0.2),
+                                        .withOpacity( 0.2),
                                   ),
                                 ),
                                 child: Builder(
@@ -239,7 +239,7 @@ class _DiscoverFeaturesScreenState extends State<DiscoverFeaturesScreen> {
                                 height: 24,
                                 width: 24,
                                 decoration: BoxDecoration(
-                                  color: colorScheme.surface.withValues(alpha: 0.45),
+                                  color: colorScheme.surface.withOpacity( 0.45),
                                   shape: BoxShape.circle,
                                 ),
                                 child: Icon(
@@ -268,7 +268,7 @@ class _DiscoverFeaturesScreenState extends State<DiscoverFeaturesScreen> {
                           /// ================= SUBTITLE =================
                           Text(
                             feature.subtitle,
-                            style: TextStyle(color: colorScheme.onSurface.withValues(alpha: 0.7),
+                            style: TextStyle(color: colorScheme.onSurface.withOpacity( 0.7),
                               fontSize: 14,
                               height: 1.4,
                             ),

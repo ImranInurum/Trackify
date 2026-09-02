@@ -212,7 +212,7 @@ class _AddServiceLogScreenState extends State<AddServiceLogScreen> {
                         Text(
                           l10n.maxFileSizeNote,
                           style: theme.textTheme.bodySmall?.copyWith(
-                            color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
+                            color: theme.colorScheme.onSurface.withOpacity( 0.5),
                           ),
                         ),
                         const SizedBox(height: 24),
@@ -380,12 +380,12 @@ class _AddServiceLogScreenState extends State<AddServiceLogScreen> {
             counterText: "",
             labelText: "$label${isRequired ? "*" : ""}",
             labelStyle: theme.textTheme.bodyMedium?.copyWith(
-              color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
+              color: theme.colorScheme.onSurface.withOpacity( 0.5),
             ),
             prefixText: prefixText,
             suffixIcon: suffixIcon != null ? Icon(suffixIcon, size: 20) : null,
             filled: true,
-            fillColor: theme.cardColor.withValues(alpha: 0.5),
+            fillColor: theme.cardColor.withOpacity( 0.5),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
               borderSide: BorderSide(color: theme.dividerColor),

@@ -68,7 +68,7 @@ class OrderSummaryScreen extends StatelessWidget {
                     Text(
                       l10n.selectedPlan,
                       style: text.bodyLarge?.copyWith(
-                        color: color.onSurface.withValues(alpha: 0.5),
+                        color: color.onSurface.withOpacity( 0.5),
                         fontWeight: FontWeightManager.regular,
                       ),
                     ),
@@ -85,7 +85,7 @@ class OrderSummaryScreen extends StatelessWidget {
                             color: Theme.of(context).cardColor,
                             borderRadius: BorderRadius.circular(16),
                             border: Border.all(
-                              color: color.primary.withValues(alpha: 0.4),
+                              color: color.primary.withOpacity( 0.4),
                               width: 1.5,
                             ),
                           ),
@@ -113,7 +113,7 @@ class OrderSummaryScreen extends StatelessWidget {
                                             TextSpan(
                                               text: " ${l10n.validity}",
                                               style: text.bodyMedium?.copyWith(
-                                                color: color.onSurface.withValues(alpha: 0.5),
+                                                color: color.onSurface.withOpacity( 0.5),
                                                 fontWeight: FontWeight.w500,
                                               ),
                                             ),
@@ -137,7 +137,7 @@ class OrderSummaryScreen extends StatelessWidget {
                                         "${l10n.currencySymbol}${plan.originalPrice}",
                                         style: text.bodySmall?.copyWith(
                                           decoration: TextDecoration.lineThrough,
-                                          color: color.onSurface.withValues(alpha: 0.4),
+                                          color: color.onSurface.withOpacity( 0.4),
                                         ),
                                       ),
                                     ],
@@ -154,7 +154,7 @@ class OrderSummaryScreen extends StatelessWidget {
                                         Text(
                                           benefit,
                                           style: text.bodyMedium?.copyWith(
-                                            color: color.onSurface.withValues(alpha: 0.7),
+                                            color: color.onSurface.withOpacity( 0.7),
                                             fontWeight: FontWeightManager.regular,
                                           ),
                                         ),
@@ -214,7 +214,7 @@ class OrderSummaryScreen extends StatelessWidget {
                         borderRadius: BorderRadius.circular(20),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.03),
+                            color: Colors.black.withOpacity( 0.03),
                             blurRadius: 10,
                             offset: const Offset(0, 4),
                           ),
@@ -239,7 +239,7 @@ class OrderSummaryScreen extends StatelessWidget {
                           const SizedBox(height: 16),
                           _billRow(l10n.total, "${l10n.currencySymbol}${plan.price}", text, color, isBold: true),
                           const SizedBox(height: 12),
-                          _billRow(l10n.gstTaxes, "${l10n.currencySymbol}${plan.gst}", text, color, labelColor: color.onSurface.withValues(alpha: 0.5)),
+                          _billRow(l10n.gstTaxes, "${l10n.currencySymbol}${plan.gst}", text, color, labelColor: color.onSurface.withOpacity( 0.5)),
                           const SizedBox(height: 16),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -337,7 +337,7 @@ class OrderSummaryScreen extends StatelessWidget {
         Text(
           label,
           style: text.bodyMedium?.copyWith(
-            color: labelColor ?? color.onSurface.withValues(alpha: 0.6),
+            color: labelColor ?? color.onSurface.withOpacity( 0.6),
             fontWeight: isBold ? FontWeightManager.bold : FontWeightManager.regular
           ),
         ),

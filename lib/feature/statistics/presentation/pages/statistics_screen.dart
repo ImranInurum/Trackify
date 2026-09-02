@@ -285,13 +285,13 @@ class _DatePickerBar extends StatelessWidget {
         border: Border.all(
           color: Theme.of(
             context,
-          ).colorScheme.outlineVariant.withValues(alpha: 0.5),
+          ).colorScheme.outlineVariant.withOpacity( 0.5),
           width: 0.5,
         ),
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.1),
+            color: Colors.black.withOpacity( 0.1),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -311,7 +311,7 @@ class _DatePickerBar extends StatelessWidget {
                   size: 20,
                   color: Theme.of(
                     context,
-                  ).colorScheme.onSurface.withValues(alpha: 0.6),
+                  ).colorScheme.onSurface.withOpacity( 0.6),
                 ),
                 const SizedBox(width: 12),
                 Text(
@@ -373,7 +373,7 @@ class _ArrowButton extends StatelessWidget {
             icon,
             size: 28,
             color: onTap == null
-                ? Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.3)
+                ? Theme.of(context).colorScheme.onSurface.withOpacity( 0.3)
                 : Theme.of(context).colorScheme.onSurface,
           ),
         ),
@@ -410,13 +410,13 @@ class _RidingBehaviourCard extends StatelessWidget {
         decoration: BoxDecoration(
           color: theme.cardColor,
           border: Border.all(
-            color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5),
+            color: theme.colorScheme.outlineVariant.withOpacity( 0.5),
             width: 0.5,
           ),
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.05),
+              color: Colors.black.withOpacity( 0.05),
               blurRadius: 8,
               offset: const Offset(0, 4),
             ),
@@ -450,7 +450,7 @@ class _RidingBehaviourCard extends StatelessWidget {
                     l10n.ridingBehaviourVacationDesc,
                     style: TextStyle(
                       fontSize: 14,
-                      color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
+                      color: theme.colorScheme.onSurface.withOpacity( 0.8),
                       height: 1.4,
                     ),
                   ),
@@ -473,13 +473,13 @@ class _RidingBehaviourCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: theme.cardColor,
         border: Border.all(
-          color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5),
+          color: theme.colorScheme.outlineVariant.withOpacity( 0.5),
           width: 0.5,
         ),
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
+            color: Colors.black.withOpacity( 0.05),
             blurRadius: 8,
             offset: const Offset(0, 4),
           ),
@@ -509,7 +509,7 @@ class _RidingBehaviourCard extends StatelessWidget {
                       child: Icon(
                         Icons.info_outline,
                         size: 18,
-                        color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
+                        color: theme.colorScheme.onSurface.withOpacity( 0.5),
                       ),
                     ),
                   ),
@@ -524,8 +524,8 @@ class _RidingBehaviourCard extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
             decoration: BoxDecoration(
               color: theme.brightness == Brightness.dark
-                  ? theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.2)
-                  : theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
+                  ? theme.colorScheme.surfaceVariant.withOpacity( 0.2)
+                  : theme.colorScheme.surfaceVariant.withOpacity( 0.3),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Row(
@@ -570,7 +570,7 @@ class _RidingBehaviourCard extends StatelessWidget {
                         ),
                         decoration: BoxDecoration(
                           color: theme.brightness == Brightness.dark
-                              ? theme.colorScheme.surfaceContainerHighest
+                              ? theme.colorScheme.surfaceVariant
                               : Colors.white,
                           borderRadius: const BorderRadius.only(
                             topRight: Radius.circular(6),
@@ -619,7 +619,7 @@ class _RidingBehaviourCard extends StatelessWidget {
                                   text: trendLabel,
                                   style: TextStyle(
                                     color: theme.colorScheme.onSurface
-                                        .withValues(alpha: 0.6),
+                                        .withOpacity( 0.6),
                                     fontSize: 13,
                                   ),
                                 ),
@@ -685,7 +685,7 @@ class _RidingBehaviourCard extends StatelessWidget {
                 'The Riding Behaviour score starts at 100% and decreases based on the following driving parameters over the selected time period:',
                 style: TextStyle(
                   fontSize: 14,
-                  color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
+                  color: theme.colorScheme.onSurface.withOpacity( 0.8),
                   height: 1.5,
                 ),
               ),
@@ -740,7 +740,7 @@ class _RidingBehaviourCard extends StatelessWidget {
                 desc,
                 style: TextStyle(
                   fontSize: 13,
-                  color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                  color: theme.colorScheme.onSurface.withOpacity( 0.6),
                 ),
               ),
             ],
@@ -782,7 +782,7 @@ class _RidingBehaviourCard extends StatelessWidget {
             style: TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.bold,
-              color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
+              color: theme.colorScheme.onSurface.withOpacity( 0.8),
             ),
           ),
         ],
@@ -903,13 +903,13 @@ class _StatSectionCard extends StatelessWidget {
         border: Border.all(
           color: Theme.of(
             context,
-          ).colorScheme.outlineVariant.withValues(alpha: 0.5),
+          ).colorScheme.outlineVariant.withOpacity( 0.5),
           width: 0.5,
         ),
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.1),
+            color: Colors.black.withOpacity( 0.1),
             blurRadius: 8,
             offset: const Offset(0, 4),
           ),
@@ -992,7 +992,7 @@ class _MetricItem extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(6),
                 decoration: BoxDecoration(
-                  color: color.withValues(alpha: 0.4),
+                  color: color.withOpacity( 0.4),
                   shape: BoxShape.circle,
                 ),
                 child: Image.asset(
@@ -1009,7 +1009,7 @@ class _MetricItem extends StatelessWidget {
                   label,
                   style: TextStyle(
                     fontSize: 11,
-                    color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                    color: theme.colorScheme.onSurface.withOpacity( 0.6),
                     fontWeight: FontWeight.w400,
                   ),
                   maxLines: 2,
@@ -1048,7 +1048,7 @@ class _MetricItem extends StatelessWidget {
                     comparisonText,
                     style: TextStyle(
                       fontSize: 10,
-                      color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
+                      color: theme.colorScheme.onSurface.withOpacity( 0.5),
                       fontWeight: FontWeight.w400,
                     ),
                     maxLines: 2,

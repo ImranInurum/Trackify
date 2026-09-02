@@ -109,7 +109,7 @@ class _MyGarageScreenState extends State<MyGarageScreen> {
                   l10n.noVehiclesInGarage,
                   style: TextStyle(color: Theme.of(
                       context,
-                    ).colorScheme.onSurface.withValues(alpha: 0.6),
+                    ).colorScheme.onSurface.withOpacity( 0.6),
                   ),
                 ),
               );

@@ -165,7 +165,7 @@ class _FeatureDetailsScreenState
 
                         color: colorScheme
                             .outlineVariant
-                            .withValues(alpha: 0.1),
+                            .withOpacity( 0.1),
                       ),
                     ),
 
@@ -186,7 +186,7 @@ class _FeatureDetailsScreenState
 
                             color: colorScheme
                                 .surface
-                                .withValues(alpha: 0.54),
+                                .withOpacity( 0.54),
 
                             borderRadius:
                             BorderRadius.circular(
@@ -197,7 +197,7 @@ class _FeatureDetailsScreenState
 
                               color: colorScheme
                                   .outlineVariant
-                                  .withValues(alpha: 0.1),
+                                  .withOpacity( 0.1),
                             ),
                           ),
 
@@ -266,7 +266,7 @@ class _FeatureDetailsScreenState
 
                                 style: TextStyle(color: colorScheme
                                       .onSurface
-                                      .withValues(alpha: 0.7),
+                                      .withOpacity( 0.7),
 
                                   fontSize: 13,
 

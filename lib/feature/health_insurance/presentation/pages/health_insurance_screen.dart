@@ -102,7 +102,7 @@ class _HealthInsuranceScreenState extends State<HealthInsuranceScreen> {
                         style: TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeightManager.regular,
-                          color: colorScheme.onSurface.withValues(alpha: 0.7),
+                          color: colorScheme.onSurface.withOpacity( 0.7),
                         ),
                       ),
                     ),
@@ -159,7 +159,7 @@ class _HealthInsuranceScreenState extends State<HealthInsuranceScreen> {
                         style: TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeightManager.medium,
-                          color: colorScheme.onSurface.withValues(alpha: 0.7),
+                          color: colorScheme.onSurface.withOpacity( 0.7),
                         ),
                       ),
                     ),

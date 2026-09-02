@@ -54,7 +54,7 @@ class ServiceLogCard extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: theme.colorScheme.onSurface.withValues(alpha: 0.1), width: 1),
+                    border: Border.all(color: theme.colorScheme.onSurface.withOpacity( 0.1), width: 1),
                     image: log.billImages != null && log.billImages!.isNotEmpty
                         ? DecorationImage(
                             image: NetworkImage(log.billImages!.first),
@@ -65,7 +65,7 @@ class ServiceLogCard extends StatelessWidget {
                   child: log.billImages == null || log.billImages!.isEmpty
                       ? Icon(
                           Icons.image_not_supported_outlined,
-                          color: Colors.grey.withValues(alpha: 0.5),
+                          color: Colors.grey.withOpacity( 0.5),
                           size: 28,
                         )
                       : null,
@@ -83,7 +83,7 @@ class ServiceLogCard extends StatelessWidget {
                           Icon(
                             Icons.edit_document,
                             size: 18,
-                            color: theme.colorScheme.onSurface.withValues(alpha: 0.9),
+                            color: theme.colorScheme.onSurface.withOpacity( 0.9),
                           ),
                           const SizedBox(width: 6),
                           Expanded(
@@ -92,7 +92,7 @@ class ServiceLogCard extends StatelessWidget {
                               style: TextStyle(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w600,
-                                color: theme.colorScheme.onSurface.withValues(alpha: 0.9),
+                                color: theme.colorScheme.onSurface.withOpacity( 0.9),
                               ),
                               overflow: TextOverflow.ellipsis,
                             ),
@@ -105,7 +105,7 @@ class ServiceLogCard extends StatelessWidget {
                           Icon(
                             Icons.sell,
                             size: 18,
-                            color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
+                            color: theme.colorScheme.onSurface.withOpacity( 0.5),
                           ),
                           const SizedBox(width: 6),
                           Text(
@@ -113,7 +113,7 @@ class ServiceLogCard extends StatelessWidget {
                             style: TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.w500,
-                              color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
+                              color: theme.colorScheme.onSurface.withOpacity( 0.5),
                             ),
                           ),
                         ],
@@ -126,7 +126,7 @@ class ServiceLogCard extends StatelessWidget {
                 Icon(
                   Icons.arrow_forward_ios_rounded,
                   size: 16,
-                  color: theme.colorScheme.onSurface.withValues(alpha: 0.4),
+                  color: theme.colorScheme.onSurface.withOpacity( 0.4),
                 ),
               ],
             ),

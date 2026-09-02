@@ -55,7 +55,7 @@ class ThemeManager {
       primaryColor: colors.primary,
       scaffoldBackgroundColor: colors.background,
       dividerColor: colors.divider,
-      shadowColor: colors.shadow ?? Colors.black.withValues(alpha: 0.1),
+      shadowColor: colors.shadow ?? Colors.black.withOpacity( 0.1),
       cardColor: config.card.color,
       hintColor: colors.textTertiary,
       
@@ -93,7 +93,7 @@ class ThemeManager {
         ),
       ),
       
-      cardTheme: CardThemeData(
+      cardTheme: CardTheme(
         color: config.card.color,
         elevation: config.card.elevation,
         shadowColor: colors.shadow,
@@ -183,7 +183,7 @@ class ThemeManager {
         color: Colors.black,
       ),
     ),
-    cardTheme: CardThemeData(
+    cardTheme: CardTheme(
       color: AppColors.cardLight,
       elevation: 2,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -246,7 +246,7 @@ class ThemeManager {
         color: Colors.white,
       ),
     ),
-    cardTheme: CardThemeData(
+    cardTheme: CardTheme(
       color: AppColors.cardDark,
       elevation: 2,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),

@@ -223,7 +223,7 @@ class _ShareRideBottomSheetState extends State<ShareRideBottomSheet> {
     return Container(
       decoration: BoxDecoration(
         color: Theme.of(context).cardColor,
-        border: Border.all(color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5), width: 0.5),
+        border: Border.all(color: Theme.of(context).colorScheme.outlineVariant.withOpacity( 0.5), width: 0.5),
         borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
       ),
       padding: const EdgeInsets.fromLTRB(24, 12, 24, 24),
@@ -248,7 +248,7 @@ class _ShareRideBottomSheetState extends State<ShareRideBottomSheet> {
               height: 380,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
+                border: Border.all(color: Colors.white.withOpacity( 0.05)),
                 color: Colors.black, // fallback
               ),
               clipBehavior: Clip.antiAlias,
@@ -344,7 +344,7 @@ class _ShareRideBottomSheetState extends State<ShareRideBottomSheet> {
                           begin: Alignment.topCenter,
                           end: Alignment.bottomCenter,
                           colors: [
-                            Colors.black.withValues(alpha: 0.8),
+                            Colors.black.withOpacity( 0.8),
                             Colors.transparent,
                           ],
                         ),
@@ -368,7 +368,7 @@ class _ShareRideBottomSheetState extends State<ShareRideBottomSheet> {
                                 Text(
                                   '${AppLocalizations.of(context)!.rideOnLabel} ${DateFormat('dd MMM yyyy').format(widget.date)}',
                                   style: TextStyle(
-                                    color: Colors.white.withValues(alpha: 0.7),
+                                    color: Colors.white.withOpacity( 0.7),
                                     fontSize: 12,
                                   ),
                                 ),
@@ -411,8 +411,8 @@ class _ShareRideBottomSheetState extends State<ShareRideBottomSheet> {
                           begin: Alignment.bottomCenter,
                           end: Alignment.topCenter,
                           colors: [
-                            Colors.black.withValues(alpha: 0.9),
-                            Colors.black.withValues(alpha: 0.6),
+                            Colors.black.withOpacity( 0.9),
+                            Colors.black.withOpacity( 0.6),
                             Colors.transparent,
                           ],
                         ),
@@ -425,39 +425,39 @@ class _ShareRideBottomSheetState extends State<ShareRideBottomSheet> {
                             children: [
                               Row(
                                 children: [
-                                  Icon(Icons.add_road, size: 12, color: Colors.white.withValues(alpha: 0.7)),
+                                  Icon(Icons.add_road, size: 12, color: Colors.white.withOpacity( 0.7)),
                                   const SizedBox(width: 4),
-                                  Text(AppLocalizations.of(context)!.distanceLabel, style: TextStyle(color: Colors.white.withValues(alpha: 0.7), fontSize: 10)),
+                                  Text(AppLocalizations.of(context)!.distanceLabel, style: TextStyle(color: Colors.white.withOpacity( 0.7), fontSize: 10)),
                                 ],
                               ),
                               const SizedBox(height: 4),
                               Text('${widget.distance.toStringAsFixed(1)} ${AppLocalizations.of(context)!.kmLabel}', style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
                             ],
                           ),
-                          Container(width: 1, height: 24, color: Colors.white.withValues(alpha: 0.2)),
+                          Container(width: 1, height: 24, color: Colors.white.withOpacity( 0.2)),
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Row(
                                 children: [
-                                  Icon(Icons.timer_outlined, size: 12, color: Colors.white.withValues(alpha: 0.7)),
+                                  Icon(Icons.timer_outlined, size: 12, color: Colors.white.withOpacity( 0.7)),
                                   const SizedBox(width: 4),
-                                  Text(AppLocalizations.of(context)!.timeLabel, style: TextStyle(color: Colors.white.withValues(alpha: 0.7), fontSize: 10)),
+                                  Text(AppLocalizations.of(context)!.timeLabel, style: TextStyle(color: Colors.white.withOpacity( 0.7), fontSize: 10)),
                                 ],
                               ),
                               const SizedBox(height: 4),
                               Text('${widget.duration.inMinutes}${AppLocalizations.of(context)!.minutesShort} ${widget.duration.inSeconds % 60}${AppLocalizations.of(context)!.secLabel}', style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
                             ],
                           ),
-                          Container(width: 1, height: 24, color: Colors.white.withValues(alpha: 0.2)),
+                          Container(width: 1, height: 24, color: Colors.white.withOpacity( 0.2)),
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Row(
                                 children: [
-                                  Icon(Icons.speed, size: 12, color: Colors.white.withValues(alpha: 0.7)),
+                                  Icon(Icons.speed, size: 12, color: Colors.white.withOpacity( 0.7)),
                                   const SizedBox(width: 4),
-                                  Text(AppLocalizations.of(context)!.avgSpeedLabel, style: TextStyle(color: Colors.white.withValues(alpha: 0.7), fontSize: 10)),
+                                  Text(AppLocalizations.of(context)!.avgSpeedLabel, style: TextStyle(color: Colors.white.withOpacity( 0.7), fontSize: 10)),
                                 ],
                               ),
                               const SizedBox(height: 4),

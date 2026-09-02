@@ -21,7 +21,7 @@ class MetricCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final primaryTextColor = theme.colorScheme.onSurface;
-    final secondaryTextColor = theme.colorScheme.onSurface.withValues(alpha: 0.5);
+    final secondaryTextColor = theme.colorScheme.onSurface.withOpacity( 0.5);
 
     return GestureDetector(
       onTap: onEdit,
@@ -30,7 +30,7 @@ class MetricCard extends StatelessWidget {
         decoration: BoxDecoration(
           color: cardColor,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: Colors.grey.withValues(alpha: 0.5), width: 0.5),
+          border: Border.all(color: Colors.grey.withOpacity( 0.5), width: 0.5),
         ),
         child: Stack(
           children: [
@@ -39,12 +39,12 @@ class MetricCard extends StatelessWidget {
               child: Container(
                 padding: const EdgeInsets.all(4),
                 decoration: BoxDecoration(
-                  color: theme.colorScheme.onSurface.withValues(alpha: 0.05),
+                  color: theme.colorScheme.onSurface.withOpacity( 0.05),
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
                   Icons.edit,
-                  color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+                  color: theme.colorScheme.onSurface.withOpacity( 0.7),
                   size: 14,
                 ),
               ),

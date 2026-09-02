@@ -32,13 +32,13 @@ class LocationSharingCard extends StatelessWidget {
       elevation: 0,
 
       color: theme.brightness == Brightness.dark
-          ? theme.colorScheme.surfaceContainerHighest
+          ? theme.colorScheme.surfaceVariant
           : theme.cardColor,
 
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(14),
         side: BorderSide(
-          color: colorScheme.outlineVariant.withValues(alpha: 0.5),
+          color: colorScheme.outlineVariant.withOpacity( 0.5),
           width: 0.5,
         ),
       ),
@@ -101,7 +101,7 @@ class LocationSharingCard extends StatelessWidget {
                       Icon(
                         Icons.arrow_forward_ios_rounded,
                         size: 16,
-                        color: theme.hintColor.withValues(alpha: 0.5),
+                        color: theme.hintColor.withOpacity( 0.5),
                       ),
                     ],
                   ),

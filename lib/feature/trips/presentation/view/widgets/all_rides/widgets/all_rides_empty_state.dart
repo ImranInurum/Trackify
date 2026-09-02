@@ -17,7 +17,7 @@ class AllRidesEmptyState extends StatelessWidget {
             Icon(
               Icons.map_outlined,
               size: 100,
-              color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.4),
+              color: Theme.of(context).colorScheme.primary.withOpacity( 0.4),
             ),
             const SizedBox(height: 30),
             Text(
@@ -32,7 +32,7 @@ class AllRidesEmptyState extends StatelessWidget {
             Text(
               l10n.getStartedFirstRide,
               style: TextStyle(
-                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+                color: Theme.of(context).colorScheme.onSurface.withOpacity( 0.6),
               ),
             ),
           ],

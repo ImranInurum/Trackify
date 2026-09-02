@@ -32,7 +32,7 @@ class JourneyCard extends StatelessWidget {
         decoration: BoxDecoration(
           color: cardColor,
           borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: Colors.grey.withValues(alpha: 0.5), width: 0.5),
+          border: Border.all(color: Colors.grey.withOpacity( 0.5), width: 0.5),
         ),
         child: Column(
           children: [
@@ -77,7 +77,7 @@ class JourneyCard extends StatelessWidget {
                 Container(
                   height: 40,
                   width: 1,
-                  color: Colors.white.withValues(alpha: 0.1),
+                  color: Colors.white.withOpacity( 0.1),
                 ),
                 Expanded(
                   child: _buildMetric(

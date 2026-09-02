@@ -266,7 +266,7 @@ class _VehiclePinDialogState extends State<VehiclePinDialog> {
                 children: [
                   Text(
                     "An OTP will be sent to your registered email to reset the PIN.",
-                    style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.8)),
+                    style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity( 0.8)),
                   ),
                   if (localError.isNotEmpty) ...[
                     const SizedBox(height: 8),
@@ -280,7 +280,7 @@ class _VehiclePinDialogState extends State<VehiclePinDialog> {
               actions: [
                 TextButton(
                   onPressed: sendingOtp ? null : () => Navigator.pop(ctx),
-                  child: Text(AppLocalizations.of(context)!.cancel, style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6))),
+                  child: Text(AppLocalizations.of(context)!.cancel, style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity( 0.6))),
                 ),
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
@@ -361,7 +361,7 @@ class _VehiclePinDialogState extends State<VehiclePinDialog> {
                 children: [
                   Text(
                     "Please enter the OTP sent to your registered email address.",
-                    style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.8), fontSize: 13),
+                    style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity( 0.8), fontSize: 13),
                   ),
                   const SizedBox(height: 16),
                   TextField(
@@ -379,7 +379,7 @@ class _VehiclePinDialogState extends State<VehiclePinDialog> {
               actions: [
                 TextButton(
                   onPressed: verifying ? null : () => Navigator.pop(ctx),
-                  child: Text(AppLocalizations.of(context)!.cancel, style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6))),
+                  child: Text(AppLocalizations.of(context)!.cancel, style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity( 0.6))),
                 ),
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(

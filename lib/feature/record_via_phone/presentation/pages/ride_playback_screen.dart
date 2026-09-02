@@ -789,11 +789,11 @@ class _RidePlaybackScreenState extends State<RidePlaybackScreen> {
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         margin: const EdgeInsets.symmetric(horizontal: 16),
         decoration: BoxDecoration(
-          color: Theme.of(context).cardColor.withValues(alpha: 0.95),
-          border: Border.all(color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5), width: 0.5),
+          color: Theme.of(context).cardColor.withOpacity( 0.95),
+          border: Border.all(color: Theme.of(context).colorScheme.outlineVariant.withOpacity( 0.5), width: 0.5),
           borderRadius: BorderRadius.circular(30),
           boxShadow: [
-            BoxShadow(color: Colors.black.withValues(alpha: 0.12), blurRadius: 10)
+            BoxShadow(color: Colors.black.withOpacity( 0.12), blurRadius: 10)
           ]
         ),
         child: FittedBox(
@@ -811,47 +811,47 @@ class _RidePlaybackScreenState extends State<RidePlaybackScreen> {
                 ],
               ),
               const SizedBox(width: 14),
-              Container(width: 1, height: 28, color: Colors.grey.withValues(alpha: 0.3)),
+              Container(width: 1, height: 28, color: Colors.grey.withOpacity( 0.3)),
               const SizedBox(width: 14),
               Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(AppLocalizations.of(context)!.speedLabel, style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onSurface)),
-                  Text('km/h', style: TextStyle(fontSize: 9, color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6))),
+                  Text('km/h', style: TextStyle(fontSize: 9, color: Theme.of(context).colorScheme.onSurface.withOpacity( 0.6))),
                   Text(_currentSpeed.toStringAsFixed(1), style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onSurface)),
                 ],
               ),
               const SizedBox(width: 14),
-              Container(width: 1, height: 28, color: Colors.grey.withValues(alpha: 0.3)),
+              Container(width: 1, height: 28, color: Colors.grey.withOpacity( 0.3)),
               const SizedBox(width: 14),
               Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(AppLocalizations.of(context)!.timeLabel, style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onSurface)),
-                  Text(l10n.hrMinLabel, style: TextStyle(fontSize: 9, color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6))),
+                  Text(l10n.hrMinLabel, style: TextStyle(fontSize: 9, color: Theme.of(context).colorScheme.onSurface.withOpacity( 0.6))),
                   Text(formattedTime, style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onSurface)),
                 ],
               ),
               if (!isInitial) ...[
                 const SizedBox(width: 14),
-                Container(width: 1, height: 28, color: Colors.grey.withValues(alpha: 0.3)),
+                Container(width: 1, height: 28, color: Colors.grey.withOpacity( 0.3)),
                 const SizedBox(width: 14),
                 Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(AppLocalizations.of(context)!.distanceLabel, style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onSurface)),
-                    Text(l10n.kmLabel, style: TextStyle(fontSize: 9, color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6))),
+                    Text(l10n.kmLabel, style: TextStyle(fontSize: 9, color: Theme.of(context).colorScheme.onSurface.withOpacity( 0.6))),
                     Text((widget.totalDistance * _currentProgress).toStringAsFixed(1), style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onSurface)),
                   ],
                 ),
                 const SizedBox(width: 14),
-                Container(width: 1, height: 28, color: Colors.grey.withValues(alpha: 0.3)),
+                Container(width: 1, height: 28, color: Colors.grey.withOpacity( 0.3)),
                 const SizedBox(width: 14),
                 Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(AppLocalizations.of(context)!.avgSpeedLabel, style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onSurface)),
-                    Text('km/h', style: TextStyle(fontSize: 9, color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6))),
+                    Text('km/h', style: TextStyle(fontSize: 9, color: Theme.of(context).colorScheme.onSurface.withOpacity( 0.6))),
                     Text(widget.avgSpeed.toStringAsFixed(1), style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onSurface)),
                   ],
                 ),
@@ -870,7 +870,7 @@ class _RidePlaybackScreenState extends State<RidePlaybackScreen> {
       padding: const EdgeInsets.fromLTRB(16, 32, 16, 32),
       decoration: BoxDecoration(
         color: Theme.of(context).cardColor,
-        border: Border.all(color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5), width: 0.5),
+        border: Border.all(color: Theme.of(context).colorScheme.outlineVariant.withOpacity( 0.5), width: 0.5),
         borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
       ),
       child: Column(
@@ -882,7 +882,7 @@ class _RidePlaybackScreenState extends State<RidePlaybackScreen> {
               Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(Icons.add_road, color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6), size: 16),
+                  Icon(Icons.add_road, color: Theme.of(context).colorScheme.onSurface.withOpacity( 0.6), size: 16),
                   const SizedBox(width: 4),
                   Text('${widget.totalDistance.toStringAsFixed(1)} ${AppLocalizations.of(context)!.meterLabel}', style: TextStyle(fontSize: 16, color: Theme.of(context).colorScheme.onSurface)),
                 ],
@@ -890,7 +890,7 @@ class _RidePlaybackScreenState extends State<RidePlaybackScreen> {
               Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(Icons.timer_outlined, color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6), size: 16),
+                  Icon(Icons.timer_outlined, color: Theme.of(context).colorScheme.onSurface.withOpacity( 0.6), size: 16),
                   const SizedBox(width: 4),
                   Text('${widget.totalDuration.inSeconds} ${AppLocalizations.of(context)!.secLabel}', style: TextStyle(fontSize: 16, color: Theme.of(context).colorScheme.onSurface)),
                 ],
@@ -904,9 +904,9 @@ class _RidePlaybackScreenState extends State<RidePlaybackScreen> {
               Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(Icons.speed, color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6), size: 16),
+                  Icon(Icons.speed, color: Theme.of(context).colorScheme.onSurface.withOpacity( 0.6), size: 16),
                   const SizedBox(width: 4),
-                  Text('${widget.avgSpeed.toStringAsFixed(1)} ${AppLocalizations.of(context)!.kmhLabel} ${AppLocalizations.of(context)!.avgLabel}', style: TextStyle(fontSize: 14, color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7))),
+                  Text('${widget.avgSpeed.toStringAsFixed(1)} ${AppLocalizations.of(context)!.kmhLabel} ${AppLocalizations.of(context)!.avgLabel}', style: TextStyle(fontSize: 14, color: Theme.of(context).colorScheme.onSurface.withOpacity( 0.7))),
                 ],
               ),
               Row(
@@ -978,7 +978,7 @@ class _RidePlaybackScreenState extends State<RidePlaybackScreen> {
                         activeTrackColor: Colors.transparent,
                         inactiveTrackColor: Colors.transparent,
                         thumbColor: isInitial ? Colors.transparent : Theme.of(context).colorScheme.primary,
-                        overlayColor: isInitial ? Colors.transparent : Theme.of(context).colorScheme.primary.withValues(alpha: 0.2),
+                        overlayColor: isInitial ? Colors.transparent : Theme.of(context).colorScheme.primary.withOpacity( 0.2),
                         thumbShape: isInitial ? const RoundSliderThumbShape(enabledThumbRadius: 0) : _CustomThumbShape(),
                       ),
                       child: Slider(
@@ -1037,7 +1037,7 @@ class _RidePlaybackScreenState extends State<RidePlaybackScreen> {
                 const SizedBox(height: 24),
                 Text(
                   AppLocalizations.of(context)!.chooseNicknameHint,
-                  style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7),
+                  style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity( 0.7),
                     fontSize: 14,
                   ),
                 ),
@@ -1048,10 +1048,10 @@ class _RidePlaybackScreenState extends State<RidePlaybackScreen> {
                   cursorColor: Theme.of(context).colorScheme.primary,
                   decoration: InputDecoration(
                     filled: true,
-                    fillColor: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.08),
+                    fillColor: Theme.of(context).colorScheme.onSurface.withOpacity( 0.08),
                     contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
                     enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.3)),
+                      borderSide: BorderSide(color: Theme.of(context).colorScheme.onSurface.withOpacity( 0.3)),
                       borderRadius: BorderRadius.circular(6),
                     ),
                     focusedBorder: OutlineInputBorder(
@@ -1063,12 +1063,12 @@ class _RidePlaybackScreenState extends State<RidePlaybackScreen> {
                 const SizedBox(height: 24),
                 Container(
                   height: 1,
-                  color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.2),
+                  color: Theme.of(context).colorScheme.onSurface.withOpacity( 0.2),
                 ),
                 const SizedBox(height: 16),
                 Text(
                   AppLocalizations.of(context)!.exportRideVideoDesc,
-                  style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7),
+                  style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity( 0.7),
                     fontSize: 12,
                     height: 1.4,
                   ),
@@ -1081,7 +1081,7 @@ class _RidePlaybackScreenState extends State<RidePlaybackScreen> {
                       onPressed: () => Navigator.pop(ctx),
                       child: Text(
                         AppLocalizations.of(context)!.cancelBtn,
-                        style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7),
+                        style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity( 0.7),
                           fontSize: 15,
                           fontWeight: FontWeight.bold,
                         ),

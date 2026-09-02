@@ -838,11 +838,11 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
                   bottom: 8.0,
                 ),
                 decoration: BoxDecoration(
-                  color: Theme.of(context).cardColor.withValues(alpha: 0.8),
-                  border: Border.all(color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5), width: 0.5),
+                  color: Theme.of(context).cardColor.withOpacity( 0.8),
+                  border: Border.all(color: Theme.of(context).colorScheme.outlineVariant.withOpacity( 0.5), width: 0.5),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.1),
+                      color: Colors.black.withOpacity( 0.1),
                       blurRadius: 10,
                       offset: const Offset(0, 2),
                     ),
@@ -942,10 +942,10 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
                       decoration: BoxDecoration(
                         color: Theme.of(
                           context,
-                        ).cardColor.withValues(alpha: 0.85),
+                        ).cardColor.withOpacity( 0.85),
                         borderRadius: BorderRadius.circular(30),
                         border: Border.all(
-                          color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5),
+                          color: Theme.of(context).colorScheme.outlineVariant.withOpacity( 0.5),
                           width: 0.5,
                         ),
                       ),
@@ -960,7 +960,7 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
                                 decoration: BoxDecoration(
                                   color: Theme.of(
                                     context,
-                                  ).colorScheme.primary.withValues(alpha: 0.2),
+                                  ).colorScheme.primary.withOpacity( 0.2),
                                   shape: BoxShape.circle,
                                 ),
                                 child: Center(
@@ -1026,7 +1026,7 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
                             height: 30,
                             color: Theme.of(
                               context,
-                            ).colorScheme.onSurface.withValues(alpha: 0.2),
+                            ).colorScheme.onSurface.withOpacity( 0.2),
                           ),
                           const SizedBox(width: 12),
                           Column(
@@ -1080,10 +1080,10 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
                       decoration: BoxDecoration(
                         color: Theme.of(
                           context,
-                        ).cardColor.withValues(alpha: 0.85),
+                        ).cardColor.withOpacity( 0.85),
                         borderRadius: BorderRadius.circular(16),
                         border: Border.all(
-                          color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5),
+                          color: Theme.of(context).colorScheme.outlineVariant.withOpacity( 0.5),
                           width: 0.5,
                         ),
                       ),
@@ -1100,7 +1100,7 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
                             height: 30,
                             color: Theme.of(
                               context,
-                            ).colorScheme.onSurface.withValues(alpha: 0.2),
+                            ).colorScheme.onSurface.withOpacity( 0.2),
                           ),
                           Expanded(
                             child: _buildLiveStatColumn(
@@ -1114,7 +1114,7 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
                             height: 30,
                             color: Theme.of(
                               context,
-                            ).colorScheme.onSurface.withValues(alpha: 0.2),
+                            ).colorScheme.onSurface.withOpacity( 0.2),
                           ),
                           Expanded(
                             child: _buildLiveStatColumn(
@@ -1127,7 +1127,7 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
                             height: 30,
                             color: Theme.of(
                               context,
-                            ).colorScheme.onSurface.withValues(alpha: 0.2),
+                            ).colorScheme.onSurface.withOpacity( 0.2),
                           ),
                           Expanded(
                             child: _buildLiveStatColumn(
@@ -1184,13 +1184,13 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
                 return Container(
                   decoration: BoxDecoration(
                     color: Theme.of(context).cardColor,
-                    border: Border.all(color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5), width: 0.5),
+                    border: Border.all(color: Theme.of(context).colorScheme.outlineVariant.withOpacity( 0.5), width: 0.5),
                     borderRadius: const BorderRadius.vertical(
                       top: Radius.circular(24),
                     ),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.5),
+                        color: Colors.black.withOpacity( 0.5),
                         blurRadius: 10,
                         offset: const Offset(0, -2),
                       ),
@@ -1210,7 +1210,7 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
                               width: 38,
                               height: 4,
                               decoration: BoxDecoration(
-                                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.3),
+                                color: Theme.of(context).colorScheme.onSurface.withOpacity( 0.3),
                                 borderRadius: BorderRadius.circular(2),
                               ),
                             ),
@@ -1250,9 +1250,7 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
                                           shape: BoxShape.circle,
                                           boxShadow: [
                                             BoxShadow(
-                                              color: Colors.black.withValues(
-                                                alpha: 0.4,
-                                              ),
+                                              color: Colors.black.withOpacity(0.4),
                                               blurRadius: 8,
                                               offset: const Offset(0, 4),
                                             ),
@@ -1288,10 +1286,10 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
                                                     decoration: BoxDecoration(
                                                       color: Theme.of(context)
                                                           .cardColor
-                                                          .withValues(alpha: 0.9),
+                                                          .withOpacity( 0.9),
                                                       shape: BoxShape.circle,
                                                       border: Border.all(
-                                                        color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5),
+                                                        color: Theme.of(context).colorScheme.outlineVariant.withOpacity( 0.5),
                                                         width: 0.5,
                                                       ),
                                                     ),
@@ -1311,11 +1309,11 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
                                                 decoration: BoxDecoration(
                                                   color: Theme.of(context)
                                                       .cardColor
-                                                      .withValues(alpha: 0.95),
+                                                      .withOpacity( 0.95),
                                                   borderRadius:
                                                       BorderRadius.circular(20),
                                                   border: Border.all(
-                                                    color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5),
+                                                    color: Theme.of(context).colorScheme.outlineVariant.withOpacity( 0.5),
                                                     width: 0.5,
                                                   ),
                                                 ),
@@ -1407,7 +1405,7 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
                                       inactiveTrackColor: Theme.of(context)
                                           .colorScheme
                                           .onSurface
-                                          .withValues(alpha: 0.2),
+                                          .withOpacity( 0.2),
                                       thumbColor: Theme.of(
                                         context,
                                       ).colorScheme.primary,
@@ -1537,7 +1535,7 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
                   return Container(
                     color: Theme.of(
                       context,
-                    ).colorScheme.surface.withValues(alpha: 0.7),
+                    ).colorScheme.surface.withOpacity( 0.7),
                     child: const Center(child: TrackifyLoader()),
                   );
                 }
@@ -1588,17 +1586,17 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
         width: 44,
         height: 44,
         decoration: BoxDecoration(
-          color: Theme.of(context).cardColor.withValues(alpha: 0.9),
+          color: Theme.of(context).cardColor.withOpacity( 0.9),
           shape: BoxShape.circle,
           border: Border.all(
             color: isActive
                 ? Theme.of(context).colorScheme.primary
-                : Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5),
+                : Theme.of(context).colorScheme.outlineVariant.withOpacity( 0.5),
             width: isActive ? 2 : 0.5,
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.15),
+              color: Colors.black.withOpacity( 0.15),
               blurRadius: 6,
               offset: const Offset(0, 3),
             ),
@@ -1710,7 +1708,7 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
               decoration: BoxDecoration(
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.1),
+                    color: Colors.black.withOpacity( 0.1),
                     blurRadius: 15,
                     spreadRadius: 2,
                   ),
@@ -1851,7 +1849,7 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
                   BoxShadow(
                     color: Theme.of(
                       context,
-                    ).colorScheme.primary.withValues(alpha: 0.2),
+                    ).colorScheme.primary.withOpacity( 0.2),
                     blurRadius: 10,
                     offset: const Offset(0, 4),
                   ),
@@ -1903,7 +1901,7 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
                       : Border.all(color: Colors.transparent),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.05),
+                      color: Colors.black.withOpacity( 0.05),
                       blurRadius: 10,
                       offset: const Offset(0, 2),
                     ),
@@ -1988,10 +1986,10 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
       margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
       padding: const EdgeInsets.all(12.0),
       decoration: BoxDecoration(
-        color: theme.cardColor.withValues(alpha: 0.8),
+        color: theme.cardColor.withOpacity( 0.8),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5),
+          color: theme.colorScheme.outlineVariant.withOpacity( 0.5),
           width: 0.5,
         ),
       ),
@@ -2041,7 +2039,7 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
                     child: Tooltip(
                       message: "${seg.status}: ${seg.durationMinutes} min",
                       child: Container(
-                        color: seg.status == 'ON' ? Colors.green : Colors.grey.withValues(alpha: 0.3),
+                        color: seg.status == 'ON' ? Colors.green : Colors.grey.withOpacity( 0.3),
                       ),
                     ),
                   );
@@ -2119,10 +2117,10 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
               margin: const EdgeInsets.only(bottom: 8.0),
               padding: const EdgeInsets.all(12.0),
               decoration: BoxDecoration(
-                color: theme.cardColor.withValues(alpha: 0.8),
+                color: theme.cardColor.withOpacity( 0.8),
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                  color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5),
+                  color: theme.colorScheme.outlineVariant.withOpacity( 0.5),
                   width: 0.5,
                 ),
               ),
@@ -2134,7 +2132,7 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                         decoration: BoxDecoration(
-                          color: theme.colorScheme.primary.withValues(alpha: 0.15),
+                          color: theme.colorScheme.primary.withOpacity( 0.15),
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Text(

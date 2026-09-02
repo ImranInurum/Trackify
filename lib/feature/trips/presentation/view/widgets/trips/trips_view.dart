@@ -176,12 +176,10 @@ class _TripsState extends State<Trips> {
                           child: Container(
                             height: 48,
                             decoration: BoxDecoration(
-                              color: theme.colorScheme.onSurface.withValues(
-                                alpha: 0.05,
-                              ),
+                              color: theme.colorScheme.onSurface.withOpacity(0.05),
                               borderRadius: BorderRadius.circular(12),
                               border: Border.all(
-                                color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5),
+                                color: theme.colorScheme.outlineVariant.withOpacity( 0.5),
                                 width: 0.5,
                               ),
                             ),
@@ -190,9 +188,7 @@ class _TripsState extends State<Trips> {
                                 const SizedBox(width: 16),
                                 Icon(
                                   _selectedDate != null ? Icons.calendar_today : Icons.calendar_today_outlined,
-                                  color: _selectedDate != null ? theme.primaryColor : theme.colorScheme.onSurface.withValues(
-                                    alpha: 0.5,
-                                  ),
+                                  color: _selectedDate != null ? theme.primaryColor : theme.colorScheme.onSurface.withOpacity(0.5),
                                   size: 20,
                                 ),
                                 const SizedBox(width: 12),
@@ -206,7 +202,7 @@ class _TripsState extends State<Trips> {
                                       _selectedDate != null ? DateFormat('dd MMM yyyy').format(_selectedDate!) : 'Select Date',
                                       style: TextStyle(
                                         color: _selectedDate != null ? theme.primaryColor : theme.colorScheme.onSurface
-                                            .withValues(alpha: 0.4),
+                                            .withOpacity( 0.4),
                                         fontSize: 14,
                                         fontWeight: _selectedDate != null ? FontWeight.bold : FontWeight.normal,
                                       ),
@@ -251,12 +247,10 @@ class _TripsState extends State<Trips> {
                           height: 48,
                           width: 48,
                           decoration: BoxDecoration(
-                            color: theme.colorScheme.onSurface.withValues(
-                              alpha: 0.05,
-                            ),
+                            color: theme.colorScheme.onSurface.withOpacity(0.05),
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(
-                              color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5),
+                              color: theme.colorScheme.outlineVariant.withOpacity( 0.5),
                               width: 0.5,
                             ),
                           ),
@@ -387,7 +381,7 @@ class _TripsState extends State<Trips> {
             /// SEMI-TRANSPARENT OVERLAY
             GestureDetector(
               onTap: () => setState(() => _showOverlay = false),
-              child: Container(color: Colors.black.withValues(alpha: 0.35)),
+              child: Container(color: Colors.black.withOpacity( 0.35)),
             ),
 
             /// FLOATING TOOLTIP

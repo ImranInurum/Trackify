@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:trackify/core/utils/flutter_compat_extensions.dart';
 import 'package:trackify/core/config/font_manager.dart';
 import 'package:trackify/feature/video_tutorial/presentation/pages/tutorial_screen.dart';
 
@@ -117,7 +118,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
         margin: EdgeInsets.only(bottom: 16),
         padding: EdgeInsets.all(15),
         decoration: BoxDecoration(
-          border: Border.all(color: colorScheme.onSurfaceVariant.withValues(alpha: 0.2)),
+          border: Border.all(color: colorScheme.onSurfaceVariant.withOpacity( 0.2)),
           color: Theme.of(context).cardColor,
 
         ),

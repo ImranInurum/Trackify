@@ -164,7 +164,7 @@ class _IntroDetailsScreenState extends State<IntroDetailsScreen> {
                                 borderRadius: BorderRadius.circular(30),
                                 color: Theme.of(context).cardColor,
                                 border: Border.all(
-                                  color: colorScheme.outlineVariant.withValues(alpha: 
+                                  color: colorScheme.outlineVariant.withOpacity( 
                                     0.1,
                                   ),
                                 ),
@@ -180,7 +180,7 @@ class _IntroDetailsScreenState extends State<IntroDetailsScreen> {
                                         Icons.image_not_supported,
                                         size: 50,
                                         color: colorScheme.onSurface
-                                            .withValues(alpha: 0.5),
+                                            .withOpacity( 0.5),
                                       ),
                                     );
                                   },
@@ -203,7 +203,7 @@ class _IntroDetailsScreenState extends State<IntroDetailsScreen> {
 
                             Text(
                               slide.description,
-                              style: TextStyle(color: colorScheme.onSurface.withValues(alpha: 0.7),
+                              style: TextStyle(color: colorScheme.onSurface.withOpacity( 0.7),
                                 fontSize: 16,
                                 height: 1.6,
                               ),
@@ -225,7 +225,7 @@ class _IntroDetailsScreenState extends State<IntroDetailsScreen> {
                         decoration: BoxDecoration(
                           color: currentIndex == index
                               ? colorScheme.primary
-                              : colorScheme.onSurface.withValues(alpha: 0.2),
+                              : colorScheme.onSurface.withOpacity( 0.2),
                           borderRadius: BorderRadius.circular(20),
                         ),
                       );

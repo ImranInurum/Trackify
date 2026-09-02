@@ -180,7 +180,7 @@ class _CreateTripScreenState extends State<CreateTripScreen> {
                           child: GestureDetector(
                             onTap: _markTooltipAsSeen,
                             child: Container(
-                              color: Colors.black.withValues(alpha: 0.35),
+                              color: Colors.black.withOpacity( 0.35),
                             ),
                           ),
                         ),
@@ -330,7 +330,7 @@ class _SelectionGroupCardState extends State<_SelectionGroupCard> {
           margin: const EdgeInsets.only(bottom: 16),
           decoration: BoxDecoration(
             color: theme.cardColor,
-            border: Border.all(color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5), width: 0.5),
+            border: Border.all(color: theme.colorScheme.outlineVariant.withOpacity( 0.5), width: 0.5),
             borderRadius: BorderRadius.circular(16),
           ),
           padding: const EdgeInsets.all(20),
@@ -379,7 +379,7 @@ class _SelectionGroupCardState extends State<_SelectionGroupCard> {
                 ],
               ),
               const SizedBox(height: 6),
-              Divider(color: theme.dividerColor.withValues(alpha: 0.1), height: 1),
+              Divider(color: theme.dividerColor.withOpacity( 0.1), height: 1),
               const SizedBox(height: 4),
               GestureDetector(
                 onTap: () => setState(() => _isExpanded = !_isExpanded),
@@ -399,7 +399,7 @@ class _SelectionGroupCardState extends State<_SelectionGroupCard> {
                     const Spacer(),
                     Icon(
                       _isExpanded ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
-                      color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
+                      color: theme.colorScheme.onSurface.withOpacity( 0.5),
                       size: 24,
                     ),
                   ],
@@ -431,7 +431,7 @@ class _SelectionGroupCardState extends State<_SelectionGroupCard> {
               children: [
                 Text(
                   "${ride.startTime} - ${ride.endTime}",
-                  style: TextStyle(color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
+                  style: TextStyle(color: theme.colorScheme.onSurface.withOpacity( 0.5),
                     fontSize: 13,
                     fontWeight: FontWeight.w500,
                   ),
@@ -452,7 +452,7 @@ class _SelectionGroupCardState extends State<_SelectionGroupCard> {
                     const SizedBox(width: 4),
                     Text(
                       context.displayKms,
-                      style: TextStyle(color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+                      style: TextStyle(color: theme.colorScheme.onSurface.withOpacity( 0.7),
                         fontSize: 14,
                       ),
                     ),
@@ -500,7 +500,7 @@ class _SelectionGroupCardState extends State<_SelectionGroupCard> {
         const SizedBox(height: 4),
         Text(
           label,
-          style: TextStyle(color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
+          style: TextStyle(color: theme.colorScheme.onSurface.withOpacity( 0.5),
             fontSize: 11,
           ),
         ),
@@ -524,7 +524,7 @@ class _SelectionGroupCardState extends State<_SelectionGroupCard> {
         const SizedBox(height: 6),
         Text(
           label,
-          style: TextStyle(color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
+          style: TextStyle(color: theme.colorScheme.onSurface.withOpacity( 0.5),
             fontSize: 11,
             fontWeight: FontWeight.w500,
           ),
@@ -556,11 +556,11 @@ class _SelectionTooltip extends StatelessWidget {
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
             color: theme.cardColor,
-            border: Border.all(color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5), width: 0.5),
+            border: Border.all(color: theme.colorScheme.outlineVariant.withOpacity( 0.5), width: 0.5),
             borderRadius: BorderRadius.circular(16),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: 0.15),
+                color: Colors.black.withOpacity( 0.15),
                 blurRadius: 15,
                 spreadRadius: 2,
                 offset: const Offset(0, 6),
@@ -581,7 +581,7 @@ class _SelectionTooltip extends StatelessWidget {
               const SizedBox(height: 8),
               Text(
                 l10n.selectionTooltipMessage,
-                style: TextStyle(color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+                style: TextStyle(color: theme.colorScheme.onSurface.withOpacity( 0.7),
                   fontSize: 13,
                   fontWeight: FontWeight.w500,
                   height: 1.4,
@@ -654,7 +654,7 @@ class _SelectionSummarySheet extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: theme.cardColor,
-        border: Border.all(color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5), width: 0.5),
+        border: Border.all(color: theme.colorScheme.outlineVariant.withOpacity( 0.5), width: 0.5),
         borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
       ),
       padding: const EdgeInsets.fromLTRB(20, 20, 20, 30),
@@ -681,7 +681,7 @@ class _SelectionSummarySheet extends StatelessWidget {
                   onPressed: onClear,
                   style: OutlinedButton.styleFrom(
                     foregroundColor: theme.colorScheme.onSurface,
-                    side: BorderSide(color: theme.dividerColor.withValues(alpha: 0.2)),
+                    side: BorderSide(color: theme.dividerColor.withOpacity( 0.2)),
                     padding: const EdgeInsets.symmetric(vertical: 16),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),

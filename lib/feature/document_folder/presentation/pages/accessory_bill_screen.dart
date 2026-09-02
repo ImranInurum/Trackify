@@ -513,7 +513,7 @@ class _AccessoryBillScreenState extends State<AccessoryBillScreen> {
                               padding: const EdgeInsets.symmetric(horizontal: 14),
                               decoration: BoxDecoration(
                                 color: Theme.of(context).cardColor,
-                                border: Border.all(color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5), width: 0.5),
+                                border: Border.all(color: Theme.of(context).colorScheme.outlineVariant.withOpacity( 0.5), width: 0.5),
                                 borderRadius: BorderRadius.circular(10),
                               
                                 ),
@@ -598,7 +598,7 @@ class _AccessoryBillScreenState extends State<AccessoryBillScreen> {
                         padding: const EdgeInsets.symmetric(horizontal: 14),
                         decoration: BoxDecoration(
                           color: Theme.of(context).cardColor,
-                          border: Border.all(color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5), width: 0.5),
+                          border: Border.all(color: Theme.of(context).colorScheme.outlineVariant.withOpacity( 0.5), width: 0.5),
                           borderRadius: BorderRadius.circular(10),
                     
                           ),
@@ -649,7 +649,7 @@ class _AccessoryBillScreenState extends State<AccessoryBillScreen> {
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeightManager.medium,
-                        color: colorScheme.onSurface.withValues(alpha: 0.7),
+                        color: colorScheme.onSurface.withOpacity( 0.7),
                       ),
                     ),
 
@@ -718,7 +718,7 @@ class _AccessoryBillScreenState extends State<AccessoryBillScreen> {
         height: size.width * 0.32,
         decoration: BoxDecoration(
           color: Theme.of(context).cardColor,
-          border: Border.all(color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5), width: 0.5),
+          border: Border.all(color: Theme.of(context).colorScheme.outlineVariant.withOpacity( 0.5), width: 0.5),
           borderRadius: BorderRadius.circular(12),
           ),
       

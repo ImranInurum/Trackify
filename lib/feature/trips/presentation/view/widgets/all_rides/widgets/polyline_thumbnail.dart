@@ -192,13 +192,13 @@ class _PolylineThumbnailState extends State<PolylineThumbnail> {
     if (validPoints.isEmpty) {
       return Container(
         decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.surfaceContainerLow,
+          color: Theme.of(context).colorScheme.surfaceVariant,
           borderRadius: BorderRadius.circular(12),
         ),
         child: Center(
           child: Icon(
             Icons.map_outlined,
-            color: Colors.white.withValues(alpha: 0.2),
+            color: Colors.white.withOpacity( 0.2),
             size: 40,
           ),
         ),
@@ -238,9 +238,9 @@ class _PolylineThumbnailState extends State<PolylineThumbnail> {
 
     return Container(
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surfaceContainerLow,
+        color: Theme.of(context).colorScheme.surfaceVariant,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.05)),
+        border: Border.all(color: Theme.of(context).colorScheme.onSurface.withOpacity( 0.05)),
       ),
       clipBehavior: Clip.antiAlias,
       child: Stack(

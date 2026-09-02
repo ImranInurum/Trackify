@@ -503,13 +503,13 @@ class _DocumentOtherdocumentScreenState extends State<DocumentOtherdocumentScree
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(10),
                             borderSide: BorderSide(
-                              color: colorScheme.outlineVariant.withValues(alpha: 0.2),
+                              color: colorScheme.outlineVariant.withOpacity( 0.2),
                             ),
                           ),
                           enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(10),
                             borderSide: BorderSide(
-                              color: colorScheme.outlineVariant.withValues(alpha: 0.2),
+                              color: colorScheme.outlineVariant.withOpacity( 0.2),
                             ),
                           ),
                           focusedBorder: OutlineInputBorder(
@@ -536,7 +536,7 @@ class _DocumentOtherdocumentScreenState extends State<DocumentOtherdocumentScree
                           decoration: BoxDecoration(
                             color: Theme.of(context).cardColor,
                             borderRadius: BorderRadius.circular(10),
-                            border: Border.all(color: colorScheme.outlineVariant.withValues(alpha: 0.2)),
+                            border: Border.all(color: colorScheme.outlineVariant.withOpacity( 0.2)),
                           ),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -585,7 +585,7 @@ class _DocumentOtherdocumentScreenState extends State<DocumentOtherdocumentScree
                         l10n.fileSizeNote,style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeightManager.medium,
-                        color: colorScheme.onSurface.withValues(alpha: 0.7),
+                        color: colorScheme.onSurface.withOpacity( 0.7),
                       ),
                       ),
 
@@ -596,7 +596,7 @@ class _DocumentOtherdocumentScreenState extends State<DocumentOtherdocumentScree
                       Text(
                         l10n.commitmentText,
                         style: TextStyle(
-                            color: colorScheme.onSurface.withValues(alpha: 0.5),
+                            color: colorScheme.onSurface.withOpacity( 0.5),
                             fontSize: 14),
                       ),
 
@@ -695,7 +695,7 @@ class _DocumentOtherdocumentScreenState extends State<DocumentOtherdocumentScree
         height: size.width * 0.32,
         decoration: BoxDecoration(
           color: Theme.of(context).cardColor,
-          border: Border.all(color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5), width: 0.5),
+          border: Border.all(color: Theme.of(context).colorScheme.outlineVariant.withOpacity( 0.5), width: 0.5),
           borderRadius: BorderRadius.circular(12),
     
           ),

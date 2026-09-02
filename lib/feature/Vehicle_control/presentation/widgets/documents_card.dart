@@ -35,7 +35,7 @@ class DocumentsCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: colorScheme.outlineVariant.withValues(alpha: 0.5), width: 0.5),
+        border: Border.all(color: colorScheme.outlineVariant.withOpacity( 0.5), width: 0.5),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -147,12 +147,12 @@ class DocumentsCard extends StatelessWidget {
             decoration: BoxDecoration(
               color: Theme.of(context).cardColor,
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: colorScheme.outlineVariant.withValues(alpha: 0.5)),
+              border: Border.all(color: colorScheme.outlineVariant.withOpacity( 0.5)),
             ),
             child: customContent ??
                 Center(
                   child: Icon(Icons.note_add_outlined,
-                      color: colorScheme.onSurfaceVariant.withValues(alpha: 0.5), size: 24),
+                      color: colorScheme.onSurfaceVariant.withOpacity( 0.5), size: 24),
                 ),
           ),
           const SizedBox(height: 8),

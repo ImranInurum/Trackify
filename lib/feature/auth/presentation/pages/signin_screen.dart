@@ -342,7 +342,7 @@ class _SignInScreenState extends State<SignInScreen> {
                                 fontWeight: FontWeight.bold,
                                 color: Theme.of(
                                   context,
-                                ).colorScheme.onSurface.withValues(alpha: 0.6),
+                                ).colorScheme.onSurface.withOpacity( 0.6),
                               ),
                             ),
                           ),
@@ -368,7 +368,7 @@ class _SignInScreenState extends State<SignInScreen> {
                                 fontWeight: FontWeight.bold,
                                 color: Theme.of(
                                   context,
-                                ).colorScheme.onSurface.withValues(alpha: 0.6),
+                                ).colorScheme.onSurface.withOpacity( 0.6),
                               ),
                             ),
                           ),
@@ -469,7 +469,7 @@ class _SignInScreenState extends State<SignInScreen> {
                                   l10n.or,
                                   style: TextStyle(color: Theme.of(
                                       context,
-                                    ).colorScheme.onSurface.withValues(alpha: 0.5),
+                                    ).colorScheme.onSurface.withOpacity( 0.5),
                                   ),
                                 ),
                               ),
@@ -496,7 +496,7 @@ class _SignInScreenState extends State<SignInScreen> {
                                 color: Theme.of(context)
                                     .colorScheme
                                     .onSurface
-                                    .withValues(alpha: 0.15),
+                                    .withOpacity( 0.15),
                                 width: 1.2,
                               ),
                               backgroundColor: Theme.of(context)
@@ -558,7 +558,7 @@ class _SignInScreenState extends State<SignInScreen> {
                                 color: Theme.of(context)
                                     .colorScheme
                                     .onSurface
-                                    .withValues(alpha: 0.15),
+                                    .withOpacity( 0.15),
                                 width: 1.2,
                               ),
                               backgroundColor: Theme.of(context)

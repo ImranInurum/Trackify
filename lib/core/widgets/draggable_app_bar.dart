@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
+import 'package:trackify/core/utils/flutter_compat_extensions.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:trackify/app/cubit/app_cubit.dart';
 import 'package:trackify/core/config/network/api_host.dart';
@@ -250,7 +251,7 @@ class _DraggableAppBarState extends State<DraggableAppBar>
                 child: GestureDetector(
                   onTap: _collapse,
                   child: Container(
-                    color: Colors.black.withValues(alpha: _overlayOpacity.value),
+                    color: Colors.black.withOpacity( _overlayOpacity.value),
                   ),
                 ),
               ),
@@ -280,7 +281,7 @@ class _DraggableAppBarState extends State<DraggableAppBar>
                       ),
                       shadows: [
                         BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.15),
+                          color: Colors.black.withOpacity( 0.15),
                           blurRadius: 1,
                           offset: const Offset(0, 1),
                         ),
@@ -482,7 +483,7 @@ class _DraggableAppBarState extends State<DraggableAppBar>
                                                       color: Theme.of(context)
                                                           .colorScheme
                                                           .onSurface
-                                                          .withValues(alpha: 0.2),
+                                                          .withOpacity( 0.2),
                                                       borderRadius:
                                                           BorderRadius.circular(
                                                             24,
@@ -515,7 +516,7 @@ class _DraggableAppBarState extends State<DraggableAppBar>
                                   ),
                                   boxShadow: [
                                     BoxShadow(
-                                      color: Colors.black.withValues(alpha: 0.1),
+                                      color: Colors.black.withOpacity( 0.1),
                                       blurRadius: 20,
                                       offset: const Offset(0, 0),
                                     ),
@@ -527,11 +528,11 @@ class _DraggableAppBarState extends State<DraggableAppBar>
                                       Theme.of(context)
                                           .colorScheme
                                           .primaryContainer
-                                          .withValues(alpha: 0.75),
+                                          .withOpacity( 0.75),
                                       Theme.of(context)
                                           .colorScheme
                                           .primaryContainer
-                                          .withValues(alpha: 0.05),
+                                          .withOpacity( 0.05),
                                     ],
                                   ),
                                 ),
@@ -602,7 +603,7 @@ class _DraggableAppBarState extends State<DraggableAppBar>
 
     return Material(
       color: isHighlighted
-          ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.08)
+          ? Theme.of(context).colorScheme.primary.withOpacity( 0.08)
           : Colors.transparent,
       child: InkWell(
         onTap: isHeaderRow
@@ -645,7 +646,7 @@ class _DraggableAppBarState extends State<DraggableAppBar>
                             fontSize: 13,
                             color: Theme.of(
                               context,
-                            ).colorScheme.onSurface.withValues(alpha: 0.5),
+                            ).colorScheme.onSurface.withOpacity( 0.5),
                             fontWeight: FontWeight.w500,
                           ),
                         ),
@@ -660,10 +661,10 @@ class _DraggableAppBarState extends State<DraggableAppBar>
                                     vertical: 2,
                                   ),
                                   decoration: BoxDecoration(
-                                    color: Colors.orange.withValues(alpha: 0.1),
+                                    color: Colors.orange.withOpacity( 0.1),
                                     borderRadius: BorderRadius.circular(12),
                                     border: Border.all(
-                                      color: Colors.orange.withValues(alpha: 0.3),
+                                      color: Colors.orange.withOpacity( 0.3),
                                       width: 1,
                                     ),
                                   ),
@@ -699,10 +700,10 @@ class _DraggableAppBarState extends State<DraggableAppBar>
                               vertical: 2,
                             ),
                             decoration: BoxDecoration(
-                              color: statusColor.withValues(alpha: 0.1),
+                              color: statusColor.withOpacity( 0.1),
                               borderRadius: BorderRadius.circular(12),
                               border: Border.all(
-                                color: statusColor.withValues(alpha: 0.3),
+                                color: statusColor.withOpacity( 0.3),
                                 width: 1,
                               ),
                             ),

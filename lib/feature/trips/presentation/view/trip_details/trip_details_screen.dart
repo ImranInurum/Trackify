@@ -155,12 +155,12 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> {
                 decoration: InputDecoration(
                   labelText: l10n.tripNameLabel,
                   labelStyle: TextStyle(
-                    color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
+                    color: theme.colorScheme.onSurface.withOpacity( 0.5),
                   ),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                     borderSide: BorderSide(
-                      color: theme.dividerColor.withValues(alpha: 0.2),
+                      color: theme.dividerColor.withOpacity( 0.2),
                     ),
                   ),
                   focusedBorder: OutlineInputBorder(
@@ -177,12 +177,12 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> {
                 decoration: InputDecoration(
                   labelText: l10n.tripQuoteLabel,
                   labelStyle: TextStyle(
-                    color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
+                    color: theme.colorScheme.onSurface.withOpacity( 0.5),
                   ),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                     borderSide: BorderSide(
-                      color: theme.dividerColor.withValues(alpha: 0.2),
+                      color: theme.dividerColor.withOpacity( 0.2),
                     ),
                   ),
                   focusedBorder: OutlineInputBorder(
@@ -201,9 +201,7 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> {
                     child: Text(
                       l10n.cancel,
                       style: TextStyle(
-                        color: theme.colorScheme.onSurface.withValues(
-                          alpha: 0.7,
-                        ),
+                        color: theme.colorScheme.onSurface.withOpacity(0.7),
                       ),
                     ),
                   ),
@@ -347,7 +345,7 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> {
                 width: 40,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: Colors.grey.withValues(alpha: 0.3),
+                  color: Colors.grey.withOpacity( 0.3),
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
@@ -387,7 +385,7 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> {
             height: 64,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              border: Border.all(color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5), width: 0.5),
+              border: Border.all(color: Theme.of(context).colorScheme.outlineVariant.withOpacity( 0.5), width: 0.5),
             ),
             child: Icon(icon, color: Colors.grey[700], size: 28),
           ),
@@ -395,7 +393,7 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> {
           Text(
             label,
             style: TextStyle(
-              color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+              color: theme.colorScheme.onSurface.withOpacity( 0.7),
               fontSize: 12,
             ),
           ),
@@ -472,11 +470,11 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> {
                         colors: [
                           Colors.transparent,
                           isDark
-                              ? const Color(0xFF0A0D14).withValues(alpha: 0.4)
-                              : Colors.white.withValues(alpha: 0.4),
+                              ? const Color(0xFF0A0D14).withOpacity( 0.4)
+                              : Colors.white.withOpacity( 0.4),
                           isDark
-                              ? theme.colorScheme.shadow.withValues(alpha: 0.9)
-                              : Colors.white.withValues(alpha: 0.9),
+                              ? theme.colorScheme.shadow.withOpacity( 0.9)
+                              : Colors.white.withOpacity( 0.9),
                         ],
                       ),
                     ),
@@ -526,16 +524,16 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> {
                         icon: Icons.arrow_back_ios_new,
                         onPressed: () => Navigator.pop(context),
                         backgroundColor: isDark
-                            ? Colors.black.withValues(alpha: 0.6)
-                            : Colors.white.withValues(alpha: 0.6),
+                            ? Colors.black.withOpacity( 0.6)
+                            : Colors.white.withOpacity( 0.6),
                         iconColor: isDark ? Colors.white : Colors.black87,
                       ),
                       _CircularButton(
                         icon: Icons.delete_outline,
                         onPressed: _showDeleteDialog,
                         backgroundColor: isDark
-                            ? Colors.black.withValues(alpha: 0.6)
-                            : Colors.white.withValues(alpha: 0.6),
+                            ? Colors.black.withOpacity( 0.6)
+                            : Colors.white.withOpacity( 0.6),
                         iconColor: isDark ? Colors.white : Colors.black87,
                       ),
                     ],
@@ -551,8 +549,8 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> {
                     size: 46,
                     iconSize: 22,
                     backgroundColor: isDark
-                        ? Colors.black.withValues(alpha: 0.6)
-                        : Colors.white.withValues(alpha: 0.6),
+                        ? Colors.black.withOpacity( 0.6)
+                        : Colors.white.withOpacity( 0.6),
                     iconColor: isDark ? Colors.white : Colors.black87,
                   ),
                 ),
@@ -566,7 +564,7 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> {
                 "\"${_currentTripQuote.isNotEmpty ? _currentTripQuote : l10n.tripQuoteDefault}\"",
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
+                  color: theme.colorScheme.onSurface.withOpacity( 0.5),
                   fontSize: 14,
                   fontStyle: FontStyle.italic,
                 ),
@@ -714,7 +712,7 @@ class _CircularButton extends StatelessWidget {
         width: size,
         height: size,
         decoration: BoxDecoration(
-          color: backgroundColor ?? Colors.black.withValues(alpha: 0.5),
+          color: backgroundColor ?? Colors.black.withOpacity( 0.5),
           shape: BoxShape.circle,
         ),
         child: Icon(icon, color: iconColor ?? Colors.white, size: iconSize),
@@ -745,7 +743,7 @@ class _StatCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: cardBg,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5), width: 0.5),
+        border: Border.all(color: theme.colorScheme.outlineVariant.withOpacity( 0.5), width: 0.5),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -786,7 +784,7 @@ class _StatCard extends StatelessWidget {
           Text(
             s.label,
             style: TextStyle(
-              color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
+              color: theme.colorScheme.onSurface.withOpacity( 0.5),
               fontSize: 11,
               fontWeight: FontWeight.w500,
             ),
@@ -827,7 +825,7 @@ class _BehaviourCard extends StatelessWidget {
         color: cardBg,
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5),
+          color: theme.colorScheme.outlineVariant.withOpacity( 0.5),
           width: 0.5,
         ),
       ),
@@ -864,7 +862,7 @@ class _BehaviourCard extends StatelessWidget {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
-          color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5),
+          color: theme.colorScheme.outlineVariant.withOpacity( 0.5),
           width: 0.5,
         ),
       ),
@@ -877,8 +875,8 @@ class _BehaviourCard extends StatelessWidget {
             child: Container(
               decoration: BoxDecoration(
                 color: isDark
-                    ? Colors.white.withValues(alpha: 0.9)
-                    : Colors.black.withValues(alpha: 0.1),
+                    ? Colors.white.withOpacity( 0.9)
+                    : Colors.black.withOpacity( 0.1),
               ),
               alignment: Alignment.center,
               child: Text(
@@ -941,7 +939,7 @@ class _MapCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: theme.cardColor,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5), width: 0.5),
+        border: Border.all(color: theme.colorScheme.outlineVariant.withOpacity( 0.5), width: 0.5),
       ),
       clipBehavior: Clip.antiAlias,
       child: Column(
@@ -966,7 +964,7 @@ class _MapCard extends StatelessWidget {
                       vertical: 6,
                     ),
                     decoration: BoxDecoration(
-                      color: theme.colorScheme.surface.withValues(alpha: 0.8),
+                      color: theme.colorScheme.surface.withOpacity( 0.8),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Row(

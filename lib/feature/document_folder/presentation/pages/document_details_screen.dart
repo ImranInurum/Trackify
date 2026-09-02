@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:trackify/core/utils/flutter_compat_extensions.dart';
 import 'package:trackify/feature/document_folder/domain/entities/doucment_entity.dart';
 import 'package:trackify/l10n/app_localizations.dart';
 import 'package:trackify/core/config/network/api_host.dart';
@@ -105,7 +106,7 @@ class DocumentDetailsScreen extends StatelessWidget {
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
                 color: theme.cardColor,
-                border: Border.all(color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5), width: 0.5),
+                border: Border.all(color: theme.colorScheme.outlineVariant.withOpacity( 0.5), width: 0.5),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Column(

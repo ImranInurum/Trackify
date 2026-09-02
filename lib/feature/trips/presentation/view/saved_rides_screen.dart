@@ -45,7 +45,7 @@ class SavedRidesScreen extends StatelessWidget {
                 l10n.noSavedRidesYet,
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
+                  color: theme.colorScheme.onSurface.withOpacity( 0.8),
                   fontSize: 15,
                   fontWeight: FontWeight.w500,
                 ),

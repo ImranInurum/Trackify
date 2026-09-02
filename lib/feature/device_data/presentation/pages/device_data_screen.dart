@@ -155,7 +155,7 @@ class _DeviceDataScreenState extends State<DeviceDataScreen> {
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
                   color: theme.cardColor,
-                  border: Border.all(color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5), width: 0.5),
+                  border: Border.all(color: theme.colorScheme.outlineVariant.withOpacity( 0.5), width: 0.5),
                   borderRadius: BorderRadius.circular(14),
                 ),
                 child: Column(
@@ -164,7 +164,7 @@ class _DeviceDataScreenState extends State<DeviceDataScreen> {
                     Text(
                       l10n.vehicle,
                       style: text.bodySmall?.copyWith(
-                        color: color.onSurface.withValues(alpha: 0.6),
+                        color: color.onSurface.withOpacity( 0.6),
                       ),
                     ),
                     const SizedBox(height: 4),
@@ -238,7 +238,7 @@ class _DeviceDataScreenState extends State<DeviceDataScreen> {
                 child: Text(
                   l10n.noDataAvailable,
                   style: text.bodyMedium?.copyWith(
-                    color: color.onSurface.withValues(alpha: 0.5),
+                    color: color.onSurface.withOpacity( 0.5),
                   ),
                 ),
               ),
@@ -391,7 +391,7 @@ class _DeviceDataScreenState extends State<DeviceDataScreen> {
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: AppColors.shadowColor.withValues(alpha: 0.5),
+          color: AppColors.shadowColor.withOpacity( 0.5),
           borderRadius: BorderRadius.circular(16),
           border: isSelected
               ? Border.all(color: color.primary, width: 1.2)
@@ -408,7 +408,7 @@ class _DeviceDataScreenState extends State<DeviceDataScreen> {
                       : Icons.radio_button_off,
                   color: isSelected
                       ? color.primary
-                      : color.onSurface.withValues(alpha: 0.5),
+                      : color.onSurface.withOpacity( 0.5),
                   size: 18,
                 ),
                 const SizedBox(width: 6),
@@ -454,7 +454,7 @@ class _DeviceDataScreenState extends State<DeviceDataScreen> {
                         "${l10n.currencySymbol}${plan.originalPrice.toStringAsFixed(0)}",
                         style: text.bodySmall?.copyWith(
                           decoration: TextDecoration.lineThrough,
-                          color: color.onSurface.withValues(alpha: 0.5),
+                          color: color.onSurface.withOpacity( 0.5),
                         ),
                       ),
                     ],
@@ -520,7 +520,7 @@ class _DeviceDataScreenState extends State<DeviceDataScreen> {
               isSelected ? Icons.radio_button_checked : Icons.radio_button_off,
               color: isSelected
                   ? color.primary
-                  : color.onSurface.withValues(alpha: 0.5),
+                  : color.onSurface.withOpacity( 0.5),
             ),
             const SizedBox(width: 10),
 
@@ -544,7 +544,7 @@ class _DeviceDataScreenState extends State<DeviceDataScreen> {
                       Text(
                         l10n.validityLabel,
                         style: text.bodySmall?.copyWith(
-                          color: color.onSurface.withValues(alpha: 0.6),
+                          color: color.onSurface.withOpacity( 0.6),
                           fontSize: 10,
                         ),
                       ),
@@ -590,7 +590,7 @@ class _DeviceDataScreenState extends State<DeviceDataScreen> {
                         "${l10n.currencySymbol}${plan.originalPrice.toStringAsFixed(0)}",
                         style: text.bodySmall?.copyWith(
                           decoration: TextDecoration.lineThrough,
-                          color: color.onSurface.withValues(alpha: 0.5),
+                          color: color.onSurface.withOpacity( 0.5),
                         ),
                       ),
                     ],
@@ -601,7 +601,7 @@ class _DeviceDataScreenState extends State<DeviceDataScreen> {
                     l10n.plusGst,
                     style: text.bodySmall?.copyWith(
                       fontSize: 10,
-                      color: color.onSurface.withValues(alpha: 0.55),
+                      color: color.onSurface.withOpacity( 0.55),
                     ),
                   ),
               ],
@@ -646,7 +646,7 @@ class _DeviceDataScreenState extends State<DeviceDataScreen> {
         Text(
           title,
           style: text.bodySmall?.copyWith(
-            color: color.onSurface.withValues(alpha: 0.6),
+            color: color.onSurface.withOpacity( 0.6),
           ),
         ),
         const SizedBox(height: 4),
@@ -699,7 +699,7 @@ class _DeviceDataScreenState extends State<DeviceDataScreen> {
         return Container(
           decoration: BoxDecoration(
             color: theme.cardColor,
-            border: Border.all(color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5), width: 0.5),
+            border: Border.all(color: theme.colorScheme.outlineVariant.withOpacity( 0.5), width: 0.5),
             borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
           ),
           child: Column(
@@ -727,7 +727,7 @@ class _DeviceDataScreenState extends State<DeviceDataScreen> {
 
                   return Container(
                     color: isSelected
-                        ? theme.scaffoldBackgroundColor.withValues(alpha: 1)
+                        ? theme.scaffoldBackgroundColor.withOpacity( 1)
                         : theme.cardColor,
                     child: Material(
                       type: MaterialType.transparency,

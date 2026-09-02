@@ -124,7 +124,7 @@ class _DeviceInstallationScreenState extends State<DeviceInstallationScreen>
       child: Container(
         width: double.infinity,
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        color: isSelected ? Colors.cyan.withValues(alpha: 0.3) : Colors.transparent,
+        color: isSelected ? Colors.cyan.withOpacity( 0.3) : Colors.transparent,
         child: Text(
           title,
           style: TextStyle(color: theme.colorScheme.onSurface, fontSize: 14),
@@ -216,19 +216,19 @@ class _DeviceInstallationScreenState extends State<DeviceInstallationScreen>
                   gradient: LinearGradient(
                     colors: [
                       theme.colorScheme.surface,
-                      theme.colorScheme.surface.withValues(alpha: 0.95),
+                      theme.colorScheme.surface.withOpacity( 0.95),
                     ],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                   ),
                   borderRadius: BorderRadius.circular(24),
                   border: Border.all(
-                    color: Colors.redAccent.withValues(alpha: 0.2),
+                    color: Colors.redAccent.withOpacity( 0.2),
                     width: 1.5,
                   ),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.redAccent.withValues(alpha: 0.1),
+                      color: Colors.redAccent.withOpacity( 0.1),
                       blurRadius: 24,
                       offset: const Offset(0, 8),
                     ),
@@ -242,8 +242,8 @@ class _DeviceInstallationScreenState extends State<DeviceInstallationScreen>
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
                           colors: [
-                            Colors.redAccent.withValues(alpha: 0.2),
-                            Colors.orangeAccent.withValues(alpha: 0.1),
+                            Colors.redAccent.withOpacity( 0.2),
+                            Colors.orangeAccent.withOpacity( 0.1),
                           ],
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
@@ -284,9 +284,7 @@ class _DeviceInstallationScreenState extends State<DeviceInstallationScreen>
                         borderRadius: BorderRadius.circular(14),
                         boxShadow: [
                           BoxShadow(
-                            color: theme.colorScheme.primary.withValues(
-                              alpha: 0.3,
-                            ),
+                            color: theme.colorScheme.primary.withOpacity(0.3),
                             blurRadius: 12,
                             offset: const Offset(0, 4),
                           ),
@@ -497,9 +495,7 @@ class _DeviceInstallationScreenState extends State<DeviceInstallationScreen>
                                                             color: theme
                                                                 .colorScheme
                                                                 .secondary
-                                                                .withValues(
-                                                                alpha: 0.6,
-                                                              ),
+                                                                .withOpacity(0.6),
                                                             blurRadius: 12,
                                                             spreadRadius: 3,
                                                           ),
@@ -529,7 +525,7 @@ class _DeviceInstallationScreenState extends State<DeviceInstallationScreen>
                                                 ),
                                                 decoration: BoxDecoration(
                                                   color: Colors.green
-                                                      .withValues(alpha: 0.2),
+                                                      .withOpacity( 0.2),
                                                   shape: BoxShape.circle,
                                                 ),
                                                 child: const Icon(
@@ -547,7 +543,7 @@ class _DeviceInstallationScreenState extends State<DeviceInstallationScreen>
                                                     ),
                                                 decoration: BoxDecoration(
                                                   color: Colors.white
-                                                      .withValues(alpha: 0.1),
+                                                      .withOpacity( 0.1),
                                                   borderRadius:
                                                       BorderRadius.circular(20),
                                                   border: Border.all(
@@ -579,7 +575,7 @@ class _DeviceInstallationScreenState extends State<DeviceInstallationScreen>
                                           return Container(
                                             decoration: BoxDecoration(
                                               color: theme.colorScheme.surface
-                                                  .withValues(alpha: 0.8),
+                                                  .withOpacity( 0.8),
                                               borderRadius:
                                                   BorderRadius.circular(12),
                                             ),
@@ -600,9 +596,7 @@ class _DeviceInstallationScreenState extends State<DeviceInstallationScreen>
                                                           color: theme
                                                               .colorScheme
                                                               .onSurface
-                                                              .withValues(
-                                                                alpha: 0.7,
-                                                              ),
+                                                              .withOpacity(0.7),
                                                         ),
                                                   ),
                                                 ],
@@ -658,16 +652,14 @@ class _DeviceInstallationScreenState extends State<DeviceInstallationScreen>
                     Text(
                       l10n.openTrackifyBoxInstruction,
                       style: theme.textTheme.bodyMedium?.copyWith(
-                        color: theme.colorScheme.onSurface.withValues(
-                          alpha: 0.54,
-                        ),
+                        color: theme.colorScheme.onSurface.withOpacity(0.54),
                       ),
                     ),
                     const SizedBox(height: 16),
                     CommonButton(
                       text: l10n.continueText,
                       backgroundColor: theme.colorScheme.secondary,
-                      disabledBackgroundColor: theme.hintColor.withValues(alpha: 0.3),
+                      disabledBackgroundColor: theme.hintColor.withOpacity( 0.3),
                       disabledForegroundColor: Colors.white54,
                       foregroundColor: theme.colorScheme.onSecondary,
                       borderRadius: 8,
@@ -806,7 +798,7 @@ class _DeviceInstallationScreenState extends State<DeviceInstallationScreen>
       context: context,
       useRootNavigator: false,
       barrierDismissible: true,
-      barrierColor: Colors.black.withValues(alpha: 0.8),
+      barrierColor: Colors.black.withOpacity( 0.8),
       builder: (dialogContext) => BlocProvider.value(
         value: context.read<DeviceInstallationCubit>(),
         child: ManualEntryDialog(vehicleId: widget.vehicleId ?? ''),
@@ -838,7 +830,7 @@ class _ScanZoneOverlayPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    final paint = Paint()..color = Colors.black.withValues(alpha: 0.35);
+    final paint = Paint()..color = Colors.black.withOpacity( 0.35);
 
     // Full overlay
     canvas.drawRect(Rect.fromLTWH(0, 0, size.width, size.height), paint);

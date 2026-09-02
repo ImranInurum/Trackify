@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:trackify/core/utils/flutter_compat_extensions.dart';
 import 'package:trackify/feature/my_garage/presentation/view/products_screen.dart';
 import '../../../core/constants/app_images.dart';
 import '../../../l10n/app_localizations.dart';
@@ -22,19 +23,19 @@ class SecureBanner extends StatelessWidget {
           borderRadius: BorderRadius.circular(22),
           gradient: LinearGradient(
             colors: [
-              colorScheme.secondary.withValues(alpha: 0.7),
-              colorScheme.surfaceBright.withValues(alpha: 0.5),
+              colorScheme.secondary.withOpacity(0.7),
+              colorScheme.surfaceVariant.withOpacity(0.5),
             ],
             begin: Alignment.centerLeft,
             end: Alignment.centerRight,
           ),
           border: Border.all(
-            color: colorScheme.secondary.withValues(alpha: 0.6),
+            color: colorScheme.secondary.withOpacity( 0.6),
             width: 1.5,
           ),
           boxShadow: [
             BoxShadow(
-              color: colorScheme.secondary.withValues(alpha: 0.25),
+              color: colorScheme.secondary.withOpacity( 0.25),
               blurRadius: 12,
               offset: const Offset(0, 6),
             ),
@@ -46,7 +47,7 @@ class SecureBanner extends StatelessWidget {
               width: 72,
               height: 72,
               decoration: BoxDecoration(
-                color: colorScheme.surface.withValues(alpha: 0.12),
+                color: colorScheme.surface.withOpacity( 0.12),
                 borderRadius: BorderRadius.circular(18),
               ),
               child: Padding(
@@ -79,7 +80,7 @@ class SecureBanner extends StatelessWidget {
                   Text(
                     l10n.secureYourVehicleDesc,
                     style: TextStyle(
-                      color: colorScheme.onSurfaceVariant.withValues(alpha: 0.9),
+                      color: colorScheme.onSurfaceVariant.withOpacity( 0.9),
                       fontSize: 14,
                       height: 1.2,
                       fontWeight: FontWeight.w400,

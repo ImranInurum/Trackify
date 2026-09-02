@@ -248,9 +248,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                                   if (_isUploading)
                                     Positioned.fill(
                                       child: Container(
-                                        color: Colors.black.withValues(
-                                          alpha: 0.4,
-                                        ),
+                                        color: Colors.black.withOpacity(0.4),
                                         child: const Center(child: TrackifyLoader()),
                                       ),
                                     ),
@@ -310,7 +308,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                           l10n.profileCompleteness,
                           style: TextStyle(color: Theme.of(
                               context,
-                            ).colorScheme.onSurface.withValues(alpha: 0.6),
+                            ).colorScheme.onSurface.withOpacity( 0.6),
                             fontSize: 13,
                           ),
                         ),
@@ -348,7 +346,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                               size: 24,
                               color: completeness == 100
                                   ? Colors.green
-                                  : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.3),
+                                  : Theme.of(context).colorScheme.onSurface.withOpacity( 0.3),
                             ),
                             const SizedBox(width: 4),
                             Text(
@@ -582,7 +580,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                             Icon(
                               Icons.arrow_forward_ios,
                               size: 14,
-                              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.4),
+                              color: Theme.of(context).colorScheme.onSurface.withOpacity( 0.4),
                             ),
                           ],
                         ),
@@ -591,7 +589,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                           l10n.editViewVehicleInsuranceDesc,
                           style: TextStyle(color: Theme.of(
                               context,
-                            ).colorScheme.onSurface.withValues(alpha: 0.5),
+                            ).colorScheme.onSurface.withOpacity( 0.5),
                             fontSize: 13,
                           ),
                         ),
@@ -599,7 +597,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                           l10n.myGarageVehiclePath,
                           style: TextStyle(color: Theme.of(
                               context,
-                            ).colorScheme.onSurface.withValues(alpha: 0.5),
+                            ).colorScheme.onSurface.withOpacity( 0.5),
                             fontSize: 13,
                           ),
                         ),
@@ -657,7 +655,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                             Icon(
                               Icons.arrow_forward_ios,
                               size: 14,
-                              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.4),
+                              color: Theme.of(context).colorScheme.onSurface.withOpacity( 0.4),
                             ),
                           ],
                         ),
@@ -666,7 +664,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                           l10n.addEditEmergencyContactDesc,
                           style: TextStyle(color: Theme.of(
                               context,
-                            ).colorScheme.onSurface.withValues(alpha: 0.5),
+                            ).colorScheme.onSurface.withOpacity( 0.5),
                             fontSize: 13,
                           ),
                         ),
@@ -674,7 +672,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                           l10n.myGarageVehiclePath,
                           style: TextStyle(color: Theme.of(
                               context,
-                            ).colorScheme.onSurface.withValues(alpha: 0.5),
+                            ).colorScheme.onSurface.withOpacity( 0.5),
                             fontSize: 13,
                           ),
                         ),
@@ -732,12 +730,12 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
           color: Theme.of(context).cardColor,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5),
+            color: Theme.of(context).colorScheme.outlineVariant.withOpacity( 0.5),
             width: 0.5,
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.02),
+              color: Colors.black.withOpacity( 0.02),
               blurRadius: 8,
               offset: const Offset(0, 4),
             ),
@@ -760,7 +758,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
               label,
               style: TextStyle(color: Theme.of(
                   context,
-                ).colorScheme.onSurface.withValues(alpha: 0.5),
+                ).colorScheme.onSurface.withOpacity( 0.5),
                 fontSize: 14,
               ),
             ),

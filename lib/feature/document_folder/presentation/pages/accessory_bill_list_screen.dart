@@ -109,7 +109,7 @@ class AccessoryBillListScreen extends StatelessWidget {
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
                     color: theme.cardColor,
-                    border: Border.all(color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5), width: 0.5),
+                    border: Border.all(color: theme.colorScheme.outlineVariant.withOpacity( 0.5), width: 0.5),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Row(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:trackify/core/utils/flutter_compat_extensions.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 
@@ -231,7 +232,7 @@ class _MyIssueScreenState
                           style: TextStyle(color: theme
                                 .colorScheme
                                 .onSurface
-                                .withValues(alpha: 
+                                .withOpacity( 
                               0.7,
                             ),
                           ),
@@ -315,7 +316,7 @@ class _MyIssueScreenState
                         style: TextStyle(color: theme
                               .colorScheme
                               .onSurface
-                              .withValues(alpha: 
+                              .withOpacity( 
                             0.5,
                           ),
                         ),
@@ -340,7 +341,7 @@ class _MyIssueScreenState
       decoration: BoxDecoration(
         color: theme.cardColor,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5), width: 0.5),
+        border: Border.all(color: theme.colorScheme.outlineVariant.withOpacity( 0.5), width: 0.5),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -375,12 +376,12 @@ class _MyIssueScreenState
           const SizedBox(height: 8),
           Text(
             suggestion.description,
-            style: TextStyle(color: theme.colorScheme.onSurface.withValues(alpha: 0.7)),
+            style: TextStyle(color: theme.colorScheme.onSurface.withOpacity( 0.7)),
           ),
           const SizedBox(height: 14),
           Text(
             DateFormat('dd MMM yyyy').format(suggestion.createdAt),
-            style: TextStyle(color: theme.colorScheme.onSurface.withValues(alpha: 0.5), fontSize: 12),
+            style: TextStyle(color: theme.colorScheme.onSurface.withOpacity( 0.5), fontSize: 12),
           ),
         ],
       ),

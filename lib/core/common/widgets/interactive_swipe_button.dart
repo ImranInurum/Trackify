@@ -107,6 +107,7 @@
 // }
 
 import 'package:flutter/material.dart';
+import 'package:trackify/core/utils/flutter_compat_extensions.dart';
 import 'package:trackify/l10n/app_localizations.dart';
 
 class InteractiveSwipeButton extends StatefulWidget {
@@ -145,9 +146,9 @@ class _InteractiveSwipeButtonState extends State<InteractiveSwipeButton> {
           height: _sliderHeight,
           margin: const EdgeInsets.symmetric(horizontal: 16),
           decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.primaryContainer.withValues(alpha: 0.5),
+            color: Theme.of(context).colorScheme.primaryContainer.withOpacity( 0.5),
             borderRadius: BorderRadius.circular(_sliderHeight / 2),
-            border: Border.all(color: Colors.white.withValues(alpha: 0.2), width: 1.5),
+            border: Border.all(color: Colors.white.withOpacity( 0.2), width: 1.5),
           ),
           child: Stack(
             alignment: Alignment.center,
@@ -160,9 +161,9 @@ class _InteractiveSwipeButtonState extends State<InteractiveSwipeButton> {
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(Icons.chevron_right, color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.2), size: 20),
-                        Icon(Icons.chevron_right, color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.3), size: 20),
-                        Icon(Icons.chevron_right, color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.4), size: 20),
+                        Icon(Icons.chevron_right, color: Theme.of(context).colorScheme.onSurface.withOpacity( 0.2), size: 20),
+                        Icon(Icons.chevron_right, color: Theme.of(context).colorScheme.onSurface.withOpacity( 0.3), size: 20),
+                        Icon(Icons.chevron_right, color: Theme.of(context).colorScheme.onSurface.withOpacity( 0.4), size: 20),
                       ],
                     ),
                   ),
@@ -179,7 +180,7 @@ class _InteractiveSwipeButtonState extends State<InteractiveSwipeButton> {
                       style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.bold,
-                        color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7),
+                        color: Theme.of(context).colorScheme.onSurface.withOpacity( 0.7),
                         letterSpacing: 0.5,
                       ),
                     ),
@@ -204,7 +205,7 @@ class _InteractiveSwipeButtonState extends State<InteractiveSwipeButton> {
                             ),
                             child: Icon(
                               Icons.close,
-                              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
+                              color: Theme.of(context).colorScheme.onSurface.withOpacity( 0.5),
                               size: 20,
                             ),
                           ),
@@ -215,7 +216,7 @@ class _InteractiveSwipeButtonState extends State<InteractiveSwipeButton> {
                                 style: TextStyle(
                                   fontSize: 11,
                                   fontWeight: FontWeight.bold,
-                                  color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7),
+                                  color: Theme.of(context).colorScheme.onSurface.withOpacity( 0.7),
                                 ),
                               ),
                             ),
@@ -249,7 +250,7 @@ class _InteractiveSwipeButtonState extends State<InteractiveSwipeButton> {
                             },
                             child: Icon(
                               Icons.close,
-                              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
+                              color: Theme.of(context).colorScheme.onSurface.withOpacity( 0.5),
                               size: 20,
                             ),
                           ),
@@ -262,7 +263,7 @@ class _InteractiveSwipeButtonState extends State<InteractiveSwipeButton> {
                             style: TextStyle(
                               fontSize: 12,
                               fontWeight: FontWeight.bold,
-                              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7),
+                              color: Theme.of(context).colorScheme.onSurface.withOpacity( 0.7),
                               letterSpacing: 0.5,
                             ),
                           ),
@@ -275,7 +276,7 @@ class _InteractiveSwipeButtonState extends State<InteractiveSwipeButton> {
                           color: Theme.of(context).colorScheme.surface,
                           shape: BoxShape.circle,
                           border: Border.all(
-                            color: widget.isLocked ? Colors.green.withValues(alpha: 0.3) : const Color(0xFFC7514D).withValues(alpha: 0.3),
+                            color: widget.isLocked ? Colors.green.withOpacity( 0.3) : const Color(0xFFC7514D).withOpacity( 0.3),
                           ),
                         ),
                         child: Icon(
@@ -318,7 +319,7 @@ class _InteractiveSwipeButtonState extends State<InteractiveSwipeButton> {
                       decoration: BoxDecoration(
                         color: Theme.of(context).colorScheme.surface,
                         shape: BoxShape.circle,
-                        border: Border.all(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5), width: 1.5),
+                        border: Border.all(color: Theme.of(context).colorScheme.onSurface.withOpacity( 0.5), width: 1.5),
                       ),
                       child: Icon(
                         widget.isLocked ? Icons.lock_rounded : Icons.lock_open_rounded,

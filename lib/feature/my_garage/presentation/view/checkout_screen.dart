@@ -198,13 +198,13 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                       Container(
                         decoration: BoxDecoration(
                           color: isDark
-                              ? colorScheme.surfaceContainerHighest.withValues(alpha: 
+                              ? colorScheme.surfaceVariant.withOpacity( 
                                   0.4,
                                 )
-                              : colorScheme.surfaceContainerLowest,
+                              : colorScheme.surfaceVariant,
                           borderRadius: BorderRadius.circular(14),
                           border: Border.all(
-                            color: colorScheme.outlineVariant.withValues(alpha: 0.5),
+                            color: colorScheme.outlineVariant.withOpacity( 0.5),
                           ),
                         ),
                         child: TextField(
@@ -220,7 +220,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                           decoration: InputDecoration(
                             hintText: "Search $title...",
                             hintStyle: TextStyle(
-                              color: colorScheme.onSurfaceVariant.withValues(alpha: 
+                              color: colorScheme.onSurfaceVariant.withOpacity( 
                                 0.6,
                               ),
                               fontSize: 13.5,
@@ -264,7 +264,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                                 controller: scrollController,
                                 itemCount: filteredList.length,
                                 separatorBuilder: (_, __) => Divider(
-                                  color: colorScheme.outlineVariant.withValues(alpha: 
+                                  color: colorScheme.outlineVariant.withOpacity( 
                                     0.3,
                                   ),
                                   height: 1,
@@ -461,15 +461,15 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
           Container(
             decoration: BoxDecoration(
               color: isDark
-                  ? colorScheme.surfaceContainerHighest.withValues(alpha: 0.35)
-                  : colorScheme.surfaceContainerLowest,
+                  ? colorScheme.surfaceVariant.withOpacity( 0.35)
+                  : colorScheme.surfaceVariant,
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
                 color: hasError
                     ? Colors.red.shade400
                     : (isDark
-                          ? colorScheme.outline.withValues(alpha: 0.2)
-                          : colorScheme.outlineVariant.withValues(alpha: 0.6)),
+                          ? colorScheme.outline.withOpacity( 0.2)
+                          : colorScheme.outlineVariant.withOpacity( 0.6)),
                 width: hasError ? 1.5 : 1,
               ),
             ),
@@ -497,14 +497,14 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                             prefixIcon,
                             color: hasError
                                 ? Colors.red.shade400
-                                : colorScheme.primary.withValues(alpha: 0.8),
+                                : colorScheme.primary.withOpacity( 0.8),
                             size: 20,
                           )
                         : null),
                 suffixIcon: suffix,
                 hintText: hint,
                 hintStyle: TextStyle(
-                  color: colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
+                  color: colorScheme.onSurfaceVariant.withOpacity( 0.6),
                   fontSize: 14,
                 ),
                 border: InputBorder.none,
@@ -578,15 +578,15 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                 ),
                 decoration: BoxDecoration(
                   color: isDark
-                      ? colorScheme.surfaceContainerHighest.withValues(alpha: 0.35)
-                      : colorScheme.surfaceContainerLowest,
+                      ? colorScheme.surfaceVariant.withOpacity( 0.35)
+                      : colorScheme.surfaceVariant,
                   borderRadius: BorderRadius.circular(16),
                   border: Border.all(
                     color: hasError
                         ? Colors.red.shade400
                         : (isDark
-                              ? colorScheme.outline.withValues(alpha: 0.2)
-                              : colorScheme.outlineVariant.withValues(alpha: 0.6)),
+                              ? colorScheme.outline.withOpacity( 0.2)
+                              : colorScheme.outlineVariant.withOpacity( 0.6)),
                     width: hasError ? 1.5 : 1,
                   ),
                 ),
@@ -596,7 +596,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                       prefixIcon,
                       color: hasError
                           ? Colors.red.shade400
-                          : colorScheme.primary.withValues(alpha: 0.8),
+                          : colorScheme.primary.withOpacity( 0.8),
                       size: 20,
                     ),
                     const SizedBox(width: 12),
@@ -606,7 +606,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                         style: TextStyle(
                           color: value != null
                               ? colorScheme.onSurface
-                              : colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
+                              : colorScheme.onSurfaceVariant.withOpacity( 0.6),
                           fontSize: 14.5,
                           fontWeight: value != null
                               ? FontWeight.w500
@@ -682,7 +682,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             padding: const EdgeInsets.all(8.0),
             child: Container(
               decoration: BoxDecoration(
-                color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
+                color: colorScheme.surfaceVariant.withOpacity( 0.5),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: IconButton(
@@ -733,7 +733,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                       decoration: BoxDecoration(
                         color: _currentStep >= 1
                             ? colorScheme.primary
-                            : colorScheme.outlineVariant.withValues(alpha: 0.4),
+                            : colorScheme.outlineVariant.withOpacity( 0.4),
                         borderRadius: BorderRadius.circular(2),
                       ),
                     ),
@@ -772,7 +772,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                   color: colorScheme.surface,
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.05),
+                      color: Colors.black.withOpacity( isDark ? 0.2 : 0.05),
                       blurRadius: 8,
                       offset: const Offset(0, -3),
                     ),
@@ -788,7 +788,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                     borderRadius: BorderRadius.circular(14),
                     boxShadow: [
                       BoxShadow(
-                        color: colorScheme.primary.withValues(alpha: 0.3),
+                        color: colorScheme.primary.withOpacity( 0.3),
                         blurRadius: 8,
                         offset: const Offset(0, 3),
                       ),
@@ -884,13 +884,13 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
         decoration: BoxDecoration(
           color: isActive
-              ? colorScheme.primary.withValues(alpha: 0.12)
-              : colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
+              ? colorScheme.primary.withOpacity( 0.12)
+              : colorScheme.surfaceVariant.withOpacity( 0.3),
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
             color: isActive
                 ? colorScheme.primary
-                : colorScheme.outlineVariant.withValues(alpha: 0.4),
+                : colorScheme.outlineVariant.withOpacity( 0.4),
             width: isCurrent ? 1.4 : 1,
           ),
         ),
@@ -977,7 +977,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                     Icons.phone_android_rounded,
                     color: _mobileError != null
                         ? Colors.red.shade400
-                        : colorScheme.primary.withValues(alpha: 0.8),
+                        : colorScheme.primary.withOpacity( 0.8),
                     size: 20,
                   ),
                   const SizedBox(width: 6),
@@ -987,7 +987,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                       vertical: 3,
                     ),
                     decoration: BoxDecoration(
-                      color: colorScheme.primary.withValues(alpha: 0.08),
+                      color: colorScheme.primary.withOpacity( 0.08),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Row(
@@ -1018,7 +1018,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                   Container(
                     width: 1,
                     height: 18,
-                    color: colorScheme.outlineVariant.withValues(alpha: 0.6),
+                    color: colorScheme.outlineVariant.withOpacity( 0.6),
                   ),
                   const SizedBox(width: 4),
                 ],
@@ -1203,15 +1203,15 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         height: 52,
         decoration: BoxDecoration(
           color: isSelected
-              ? colorScheme.primary.withValues(alpha: 0.1)
+              ? colorScheme.primary.withOpacity( 0.1)
               : (isDark
-                    ? colorScheme.surfaceContainerHighest.withValues(alpha: 0.3)
-                    : colorScheme.surfaceContainerLowest),
+                    ? colorScheme.surfaceVariant.withOpacity( 0.3)
+                    : colorScheme.surfaceVariant),
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
             color: isSelected
                 ? colorScheme.primary
-                : colorScheme.outlineVariant.withValues(alpha: 0.5),
+                : colorScheme.outlineVariant.withOpacity( 0.5),
             width: isSelected ? 1.8 : 1,
           ),
         ),
@@ -1274,11 +1274,11 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
             color: isDark
-                ? colorScheme.surfaceContainerHighest.withValues(alpha: 0.3)
-                : colorScheme.surfaceContainerLowest,
+                ? colorScheme.surfaceVariant.withOpacity( 0.3)
+                : colorScheme.surfaceVariant,
             borderRadius: BorderRadius.circular(18),
             border: Border.all(
-              color: colorScheme.outlineVariant.withValues(alpha: 0.5),
+              color: colorScheme.outlineVariant.withOpacity( 0.5),
             ),
           ),
           child: Row(
@@ -1286,7 +1286,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
               Container(
                 padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
-                  color: colorScheme.primary.withValues(alpha: 0.1),
+                  color: colorScheme.primary.withOpacity( 0.1),
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
@@ -1355,15 +1355,15 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
           padding: const EdgeInsets.all(18),
           decoration: BoxDecoration(
             color: isDark
-                ? colorScheme.surfaceContainerHigh.withValues(alpha: 0.6)
+                ? colorScheme.surfaceVariant.withOpacity( 0.6)
                 : colorScheme.surface,
             borderRadius: BorderRadius.circular(20),
             border: Border.all(
-              color: colorScheme.outlineVariant.withValues(alpha: 0.6),
+              color: colorScheme.outlineVariant.withOpacity( 0.6),
             ),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.04),
+                color: Colors.black.withOpacity( isDark ? 0.2 : 0.04),
                 blurRadius: 12,
                 offset: const Offset(0, 4),
               ),
@@ -1397,7 +1397,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                 valueColor: Colors.green.shade600,
               ),
               const SizedBox(height: 14),
-              Divider(color: colorScheme.outlineVariant.withValues(alpha: 0.6)),
+              Divider(color: colorScheme.outlineVariant.withOpacity( 0.6)),
               const SizedBox(height: 10),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -1504,15 +1504,15 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
           color: isSelected
-              ? colorScheme.primary.withValues(alpha: 0.08)
+              ? colorScheme.primary.withOpacity( 0.08)
               : (isDark
-                    ? colorScheme.surfaceContainerHighest.withValues(alpha: 0.3)
-                    : colorScheme.surfaceContainerLowest),
+                    ? colorScheme.surfaceVariant.withOpacity( 0.3)
+                    : colorScheme.surfaceVariant),
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
             color: isSelected
                 ? colorScheme.primary
-                : colorScheme.outlineVariant.withValues(alpha: 0.5),
+                : colorScheme.outlineVariant.withOpacity( 0.5),
             width: isSelected ? 1.8 : 1,
           ),
         ),

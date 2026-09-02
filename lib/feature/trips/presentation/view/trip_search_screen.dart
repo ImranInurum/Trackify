@@ -97,9 +97,9 @@ class _TripSearchScreenState extends State<TripSearchScreen> {
             child: Container(
               height: 52,
               decoration: BoxDecoration(
-                color: isDark ? const Color(0xFF11141B) : theme.colorScheme.onSurface.withValues(alpha: 0.05),
+                color: isDark ? const Color(0xFF11141B) : theme.colorScheme.onSurface.withOpacity( 0.05),
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: theme.colorScheme.onSurface.withValues(alpha: 0.1)),
+                border: Border.all(color: theme.colorScheme.onSurface.withOpacity( 0.1)),
               ),
               child: TextField(
                 controller: _searchController,
@@ -108,12 +108,12 @@ class _TripSearchScreenState extends State<TripSearchScreen> {
                 decoration: InputDecoration(
                   hintText: widget.isTripSearch ? l10n.searchTripsHint : l10n.searchRidesHint,
                   hintStyle: TextStyle(
-                    color: theme.colorScheme.onSurface.withValues(alpha: 0.4),
+                    color: theme.colorScheme.onSurface.withOpacity( 0.4),
                     fontSize: 14,
                   ),
                   prefixIcon: Icon(
                     Icons.search, 
-                    color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
+                    color: theme.colorScheme.onSurface.withOpacity( 0.5),
                     size: 20,
                   ),
                   suffixIcon: Row(
@@ -133,7 +133,7 @@ class _TripSearchScreenState extends State<TripSearchScreen> {
                       IconButton(
                         icon: Icon(
                           _selectedDate != null ? Icons.calendar_today : Icons.calendar_today_outlined,
-                          color: _selectedDate != null ? theme.primaryColor : theme.colorScheme.onSurface.withValues(alpha: 0.5),
+                          color: _selectedDate != null ? theme.primaryColor : theme.colorScheme.onSurface.withOpacity( 0.5),
                           size: 20,
                         ),
                         onPressed: () async {
@@ -185,7 +185,7 @@ class _TripSearchScreenState extends State<TripSearchScreen> {
                     return Center(
                       child: Text(
                         l10n.noTripsFound(_query),
-                        style: TextStyle(color: theme.colorScheme.onSurface.withValues(alpha: 0.5)),
+                        style: TextStyle(color: theme.colorScheme.onSurface.withOpacity( 0.5)),
                       ),
                     );
                   }
@@ -193,7 +193,7 @@ class _TripSearchScreenState extends State<TripSearchScreen> {
                     return Center(
                       child: Text(
                         l10n.noDataAvailable,
-                        style: TextStyle(color: theme.colorScheme.onSurface.withValues(alpha: 0.5)),
+                        style: TextStyle(color: theme.colorScheme.onSurface.withOpacity( 0.5)),
                       ),
                     );
                   }
@@ -202,7 +202,7 @@ class _TripSearchScreenState extends State<TripSearchScreen> {
                       return Center(
                         child: Text(
                           l10n.noDataAvailable,
-                          style: TextStyle(color: theme.colorScheme.onSurface.withValues(alpha: 0.5)),
+                          style: TextStyle(color: theme.colorScheme.onSurface.withOpacity( 0.5)),
                         ),
                       );
                     }
@@ -218,7 +218,7 @@ class _TripSearchScreenState extends State<TripSearchScreen> {
                   return Center(
                     child: Text(
                       l10n.noDataAvailable,
-                      style: TextStyle(color: theme.colorScheme.onSurface.withValues(alpha: 0.5)),
+                      style: TextStyle(color: theme.colorScheme.onSurface.withOpacity( 0.5)),
                     ),
                   );
                 }
@@ -250,13 +250,13 @@ class _TripSearchScreenState extends State<TripSearchScreen> {
           children: [
             Text(
               l10n.extraordinaryTrips,
-              style: TextStyle(color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+              style: TextStyle(color: theme.colorScheme.onSurface.withOpacity( 0.6),
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
               ),
             ),
             const SizedBox(width: 12),
-            Expanded(child: Divider(color: theme.colorScheme.onSurface.withValues(alpha: 0.1))),
+            Expanded(child: Divider(color: theme.colorScheme.onSurface.withOpacity( 0.1))),
           ],
         ),
         const SizedBox(height: 16),
@@ -323,7 +323,7 @@ class _TripSearchScreenState extends State<TripSearchScreen> {
         decoration: BoxDecoration(
           color: isDark ? const Color(0xFF15181F) : theme.cardColor,
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: theme.colorScheme.onSurface.withValues(alpha: 0.05)),
+          border: Border.all(color: theme.colorScheme.onSurface.withOpacity( 0.05)),
         ),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -331,7 +331,7 @@ class _TripSearchScreenState extends State<TripSearchScreen> {
             Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: iconColor.withValues(alpha: 0.1),
+                color: iconColor.withOpacity( 0.1),
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Icon(icon, color: iconColor, size: 24),
@@ -352,14 +352,14 @@ class _TripSearchScreenState extends State<TripSearchScreen> {
                   const SizedBox(height: 4),
                   Text(
                     dateRange,
-                    style: TextStyle(color: theme.colorScheme.onSurface.withValues(alpha: 0.4),
+                    style: TextStyle(color: theme.colorScheme.onSurface.withOpacity( 0.4),
                       fontSize: 12,
                     ),
                   ),
                   const SizedBox(height: 12),
                   RichText(
                     text: TextSpan(
-                      style: TextStyle(color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                      style: TextStyle(color: theme.colorScheme.onSurface.withOpacity( 0.6),
                         fontSize: 12,
                       ),
                       children: [
@@ -387,7 +387,7 @@ class _TripSearchScreenState extends State<TripSearchScreen> {
         TextSpan(text: "${parts[0]}- "),
         TextSpan(
           text: parts[1],
-          style: TextStyle(color: highlightColor ?? Colors.white.withValues(alpha: 0.9),
+          style: TextStyle(color: highlightColor ?? Colors.white.withOpacity( 0.9),
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -437,7 +437,7 @@ class _TripSearchScreenState extends State<TripSearchScreen> {
         return Center(
           child: Text(
             l10n.noTripsFound(_query),
-            style: TextStyle(color: theme.colorScheme.onSurface.withValues(alpha: 0.5)),
+            style: TextStyle(color: theme.colorScheme.onSurface.withOpacity( 0.5)),
           ),
         );
       }
@@ -491,7 +491,7 @@ class _TripSearchScreenState extends State<TripSearchScreen> {
         return Center(
           child: Text(
             l10n.noRidesFound(_query),
-            style: TextStyle(color: theme.colorScheme.onSurface.withValues(alpha: 0.5)),
+            style: TextStyle(color: theme.colorScheme.onSurface.withOpacity( 0.5)),
           ),
         );
       }

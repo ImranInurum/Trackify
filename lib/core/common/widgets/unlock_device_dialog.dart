@@ -13,7 +13,7 @@ void showUnlockDeviceDialog(BuildContext context, String featureTitle) {
       return Dialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
         backgroundColor: isDark
-            ? colorScheme.surfaceContainerHigh
+            ? colorScheme.surfaceVariant
             : Colors.white,
         elevation: 8,
         child: Padding(
@@ -32,7 +32,7 @@ void showUnlockDeviceDialog(BuildContext context, String featureTitle) {
                     height: 120,
                     width: 120,
                     decoration: BoxDecoration(
-                      color: colorScheme.primary.withValues(alpha: 0.1),
+                      color: colorScheme.primary.withOpacity( 0.1),
                       shape: BoxShape.circle,
                     ),
                     child: Icon(
@@ -71,11 +71,11 @@ void showUnlockDeviceDialog(BuildContext context, String featureTitle) {
                   padding: const EdgeInsets.symmetric(vertical: 14),
                   decoration: BoxDecoration(
                     color: isDark
-                        ? colorScheme.surfaceContainerHighest
+                        ? colorScheme.surfaceVariant
                         : const Color(0xFFF9F7F2),
                     borderRadius: BorderRadius.circular(14),
                     border: Border.all(
-                      color: colorScheme.outline.withValues(alpha: 0.3),
+                      color: colorScheme.outline.withOpacity( 0.3),
                       width: 1.5,
                     ),
                   ),
@@ -98,7 +98,7 @@ void showUnlockDeviceDialog(BuildContext context, String featureTitle) {
                 style: TextStyle(
                   fontSize: 12.5,
                   fontWeight: FontWeight.w500,
-                  color: colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
+                  color: colorScheme.onSurfaceVariant.withOpacity( 0.7),
                 ),
               ),
               const SizedBox(height: 4),

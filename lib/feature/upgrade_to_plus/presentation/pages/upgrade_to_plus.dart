@@ -39,7 +39,7 @@ class _UpgradeToPlusScreenState extends State<UpgradeToPlusScreen> {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
             side: BorderSide(
-              color: AppColors.goldStart.withValues(alpha: 0.4),
+              color: AppColors.goldStart.withOpacity( 0.4),
             ),
           ),
           title: const Row(
@@ -175,8 +175,8 @@ class _UpgradeToPlusScreenState extends State<UpgradeToPlusScreen> {
                           begin: Alignment.topCenter,
                           end: Alignment.bottomCenter,
                           colors: [
-                            Colors.black.withValues(alpha: 0.85),
-                            AppColors.backgroundDark.withValues(alpha: 0.95),
+                            Colors.black.withOpacity( 0.85),
+                            AppColors.backgroundDark.withOpacity( 0.95),
                           ],
                         ),
                       ),
@@ -190,7 +190,7 @@ class _UpgradeToPlusScreenState extends State<UpgradeToPlusScreen> {
                         builder: (context, show, child) {
                           return SliverAppBar(
                             backgroundColor: show
-                                ? AppColors.backgroundDark.withValues(alpha: 0.9)
+                                ? AppColors.backgroundDark.withOpacity( 0.9)
                                 : Colors.transparent,
                             elevation: 0,
                             pinned: true,
@@ -249,7 +249,7 @@ class _UpgradeToPlusScreenState extends State<UpgradeToPlusScreen> {
                               Text(
                                 details.usersCountMessage,
                                 style: TextStyle(
-                                  color: Colors.white.withValues(alpha: 0.7),
+                                  color: Colors.white.withOpacity( 0.7),
                                   fontSize: 13,
                                 ),
                               ),
@@ -455,7 +455,7 @@ class _UpgradeToPlusScreenState extends State<UpgradeToPlusScreen> {
           AppLocalizations.of(context)!.footerMotto,
           textAlign: TextAlign.center,
           style: TextStyle(
-            color: Colors.white.withValues(alpha: 0.6),
+            color: Colors.white.withOpacity( 0.6),
             fontSize: 13,
             height: 1.5,
             fontWeight: FontWeight.w500,
@@ -550,12 +550,12 @@ class _UpgradeToPlusScreenState extends State<UpgradeToPlusScreen> {
             color: const Color(0xFF1A1A1A),
             borderRadius: BorderRadius.circular(20),
             border: Border.all(
-              color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
+              color: Theme.of(context).colorScheme.primary.withOpacity( 0.1),
               width: 1.5,
             ),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: 0.3),
+                color: Colors.black.withOpacity( 0.3),
                 blurRadius: 15,
                 offset: const Offset(0, 8),
               ),
@@ -596,7 +596,7 @@ class _UpgradeToPlusScreenState extends State<UpgradeToPlusScreen> {
                         "₹${details.originalPrice.toInt()}",
                         style: TextStyle(
                           fontSize: screenWidth * 0.04,
-                          color: Colors.white.withValues(alpha: 0.6),
+                          color: Colors.white.withOpacity( 0.6),
                           decoration: TextDecoration.lineThrough,
                         ),
                       ),
@@ -604,7 +604,7 @@ class _UpgradeToPlusScreenState extends State<UpgradeToPlusScreen> {
                         details.duration,
                         style: TextStyle(
                           fontSize: screenWidth * 0.035,
-                          color: Colors.white.withValues(alpha: 0.6),
+                          color: Colors.white.withOpacity( 0.6),
                         ),
                       ),
                     ],
@@ -671,7 +671,7 @@ class _UpgradeToPlusScreenState extends State<UpgradeToPlusScreen> {
         boxShadow: isSticky
             ? [
                 BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.3),
+                  color: Colors.black.withOpacity( 0.3),
                   blurRadius: 10,
                   offset: const Offset(0, 4),
                 ),
@@ -709,7 +709,7 @@ class _UpgradeToPlusScreenState extends State<UpgradeToPlusScreen> {
               gradient: LinearGradient(
                 colors: [
                   Colors.transparent,
-                  AppColors.goldStart.withValues(alpha: 0.5),
+                  AppColors.goldStart.withOpacity( 0.5),
                 ],
               ),
             ),
@@ -742,7 +742,7 @@ class _UpgradeToPlusScreenState extends State<UpgradeToPlusScreen> {
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [
-                  AppColors.goldStart.withValues(alpha: 0.5),
+                  AppColors.goldStart.withOpacity( 0.5),
                   Colors.transparent,
                 ],
               ),
@@ -768,7 +768,7 @@ class _UpgradeToPlusScreenState extends State<UpgradeToPlusScreen> {
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+              border: Border.all(color: Colors.white.withOpacity( 0.1)),
               color: Colors.black,
             ),
             child: Icon(icon, color: AppColors.goldStart, size: 22),
@@ -799,7 +799,7 @@ class _UpgradeToPlusScreenState extends State<UpgradeToPlusScreen> {
                 Text(
                   subtitle,
                   style: TextStyle(
-                    color: Colors.white.withValues(alpha: 0.7),
+                    color: Colors.white.withOpacity( 0.7),
                     fontSize: 14,
                     height: 1.4,
                   ),
@@ -816,15 +816,15 @@ class _UpgradeToPlusScreenState extends State<UpgradeToPlusScreen> {
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey.withValues(alpha: 0.2)),
-        color: Colors.white.withValues(alpha: 0.02),
+        border: Border.all(color: Colors.grey.withOpacity( 0.2)),
+        color: Colors.white.withOpacity( 0.02),
       ),
       child: Column(
         children: [
           Container(
             padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 12),
             decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.05),
+              color: Colors.white.withOpacity( 0.05),
               borderRadius: const BorderRadius.only(
                 topLeft: Radius.circular(12),
                 topRight: Radius.circular(12),
@@ -898,7 +898,7 @@ class _UpgradeToPlusScreenState extends State<UpgradeToPlusScreen> {
       decoration: BoxDecoration(
         border: isLast
             ? null
-            : Border(bottom: BorderSide(color: Colors.grey.withValues(alpha: 0.1))),
+            : Border(bottom: BorderSide(color: Colors.grey.withOpacity( 0.1))),
       ),
       child: Row(
         children: [
@@ -937,7 +937,7 @@ class _UpgradeToPlusScreenState extends State<UpgradeToPlusScreen> {
 
   Widget _buildTableValue(String value, bool isPlus) {
     if (value == "Check") {
-      return Icon(Icons.check, color: Colors.grey.withValues(alpha: 0.5), size: 22);
+      return Icon(Icons.check, color: Colors.grey.withOpacity( 0.5), size: 22);
     }
     if (value == "CheckGold") {
       return const Icon(Icons.check, color: AppColors.goldStart, size: 22);
@@ -967,7 +967,7 @@ class _UpgradeToPlusScreenState extends State<UpgradeToPlusScreen> {
             children: [
               CircleAvatar(
                 radius: 22,
-                backgroundColor: Colors.grey.withValues(alpha: 0.2),
+                backgroundColor: Colors.grey.withOpacity( 0.2),
                 child: const Icon(Icons.person, color: Colors.white54),
               ),
               const SizedBox(width: 12),
@@ -986,7 +986,7 @@ class _UpgradeToPlusScreenState extends State<UpgradeToPlusScreen> {
                   Text(
                     duration,
                     style: TextStyle(
-                      color: Colors.white.withValues(alpha: 0.5),
+                      color: Colors.white.withOpacity( 0.5),
                       fontSize: 12,
                     ),
                   ),
@@ -998,7 +998,7 @@ class _UpgradeToPlusScreenState extends State<UpgradeToPlusScreen> {
           Text(
             review,
             style: TextStyle(
-              color: Colors.white.withValues(alpha: 0.8),
+              color: Colors.white.withOpacity( 0.8),
               fontStyle: FontStyle.italic,
               fontSize: 14,
               height: 1.5,

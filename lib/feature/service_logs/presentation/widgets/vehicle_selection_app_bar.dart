@@ -252,7 +252,7 @@ void showDeviceNotInstalledDialog(BuildContext context, Vehicle vehicle) {
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Colors.orange.withValues(alpha: 0.15),
+                color: Colors.orange.withOpacity( 0.15),
                 shape: BoxShape.circle,
               ),
               child: const Icon(
@@ -276,7 +276,7 @@ void showDeviceNotInstalledDialog(BuildContext context, Vehicle vehicle) {
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 14,
-                color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+                color: theme.colorScheme.onSurface.withOpacity( 0.7),
                 height: 1.4,
               ),
             ),
@@ -326,7 +326,7 @@ class _VehicleSelectorSheet extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: theme.cardColor,
-        border: Border.all(color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5), width: 0.5),
+        border: Border.all(color: theme.colorScheme.outlineVariant.withOpacity( 0.5), width: 0.5),
         borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
       ),
       child: Column(
@@ -353,7 +353,7 @@ class _VehicleSelectorSheet extends StatelessWidget {
 
               return Container(
                 color: isSelected
-                    ? theme.scaffoldBackgroundColor.withValues(alpha: 1)
+                    ? theme.scaffoldBackgroundColor.withOpacity( 1)
                     : theme.cardColor,
                 child: Material(
                   type: MaterialType.transparency,
@@ -400,7 +400,7 @@ class _VehicleSelectorSheet extends StatelessWidget {
                                 vertical: 2,
                               ),
                               decoration: BoxDecoration(
-                                color: Colors.orange.withValues(alpha: 0.15),
+                                color: Colors.orange.withOpacity( 0.15),
                                 borderRadius: BorderRadius.circular(4),
                               ),
                               child: const Text(

@@ -82,10 +82,10 @@ class _GeoFenceScreenState extends State<GeoFenceScreen> {
                     margin: const EdgeInsets.only(bottom: 12),
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      color: colorScheme.onSurface.withValues(alpha: 0.05),
+                      color: colorScheme.onSurface.withOpacity( 0.05),
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(
-                        color: colorScheme.outlineVariant.withValues(alpha: 0.5),
+                        color: colorScheme.outlineVariant.withOpacity( 0.5),
                         width: 0.5,
                       ),
                     ),
@@ -95,14 +95,12 @@ class _GeoFenceScreenState extends State<GeoFenceScreen> {
                         Container(
                           padding: const EdgeInsets.all(10),
                           decoration: BoxDecoration(
-                            color: colorScheme.onSurface.withValues(
-                              alpha: 0.05,
-                            ),
+                            color: colorScheme.onSurface.withOpacity(0.05),
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: Icon(
                             _getIconForType(fence.type),
-                            color: colorScheme.onSurface.withValues(alpha: 0.7),
+                            color: colorScheme.onSurface.withOpacity( 0.7),
                             size: 28,
                           ),
                         ),
@@ -125,9 +123,7 @@ class _GeoFenceScreenState extends State<GeoFenceScreen> {
                                 AppLocalizations.of(context)!.geoFenceRadius(
                                   fence.radius.toInt().toString(),
                                 ),
-                                style: TextStyle(color: colorScheme.onSurface.withValues(
-                                    alpha: 0.6,
-                                  ),
+                                style: TextStyle(color: colorScheme.onSurface.withOpacity(0.6),
                                   fontSize: 13,
                                 ),
                               ),
@@ -135,9 +131,7 @@ class _GeoFenceScreenState extends State<GeoFenceScreen> {
                                 const SizedBox(height: 2),
                                 Text(
                                   fence.vehicleName!,
-                                  style: TextStyle(color: colorScheme.onSurface.withValues(
-                                      alpha: 0.6,
-                                    ),
+                                  style: TextStyle(color: colorScheme.onSurface.withOpacity(0.6),
                                     fontSize: 13,
                                   ),
                                 ),
@@ -156,15 +150,13 @@ class _GeoFenceScreenState extends State<GeoFenceScreen> {
                             }
                           },
                           activeColor: colorScheme.primary,
-                          activeTrackColor: colorScheme.primary.withValues(
-                            alpha: 0.3,
-                          ),
+                          activeTrackColor: colorScheme.primary.withOpacity(0.3),
                         ),
                         // Popup Menu
                         PopupMenuButton<String>(
                           icon: Icon(
                             Icons.more_vert,
-                            color: colorScheme.onSurface.withValues(alpha: 0.7),
+                            color: colorScheme.onSurface.withOpacity( 0.7),
                           ),
                           onSelected: (value) {
                             if (value == 'edit') {
@@ -251,7 +243,7 @@ class _GeoFenceScreenState extends State<GeoFenceScreen> {
             onPressed: () => Navigator.pop(dialogContext),
             child: Text(
               l10n.cancel,
-              style: TextStyle(color: colorScheme.onSurface.withValues(alpha: 0.6),
+              style: TextStyle(color: colorScheme.onSurface.withOpacity( 0.6),
               ),
             ),
           ),
@@ -295,7 +287,7 @@ class _GeoFenceScreenState extends State<GeoFenceScreen> {
             onPressed: () => Navigator.pop(dialogContext),
             child: Text(
               l10n.cancel,
-              style: TextStyle(color: colorScheme.onSurface.withValues(alpha: 0.6),
+              style: TextStyle(color: colorScheme.onSurface.withOpacity( 0.6),
               ),
             ),
           ),

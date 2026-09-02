@@ -53,7 +53,7 @@ class RefuelLogListItem extends StatelessWidget {
             color: theme.cardColor,
             borderRadius: BorderRadius.circular(20),
             border: Border.all(
-              color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5),
+              color: theme.colorScheme.outlineVariant.withOpacity( 0.5),
               width: 0.5,
             ),
           ),

@@ -77,7 +77,7 @@ class _SharedRidesScreenState extends State<SharedRidesScreen> {
                           : "All live location and rides shared by you will show up here",
                       textAlign: TextAlign.center,
                       style: theme.textTheme.bodyLarge?.copyWith(
-                        color: colorScheme.onSurface.withValues(alpha: 0.7),
+                        color: colorScheme.onSurface.withOpacity( 0.7),
                         fontSize: 16,
                         height: 1.4,
                       ),
@@ -93,7 +93,7 @@ class _SharedRidesScreenState extends State<SharedRidesScreen> {
               color: bottomBarColor,
               border: Border(
                 top: BorderSide(
-                  color: theme.dividerColor.withValues(alpha: 0.1),
+                  color: theme.dividerColor.withOpacity( 0.1),
                   width: 1,
                 ),
               ),

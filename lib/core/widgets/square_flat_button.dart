@@ -42,10 +42,10 @@ class CommonButton extends StatelessWidget {
     final defaultBackgroundColor = theme.colorScheme.primary;
     final defaultForegroundColor = theme.colorScheme.onPrimary;
     final finalDisabledBackgroundColor = disabledBackgroundColor ??
-        theme.disabledColor.withValues(alpha: 0.2);
+        theme.disabledColor.withOpacity( 0.2);
     final finalDisabledForegroundColor = disabledForegroundColor ??
-        theme.textTheme.bodyMedium?.color?.withValues(alpha: 0.5) ??
-        theme.colorScheme.onSurface.withValues(alpha: 0.5);
+        theme.textTheme.bodyMedium?.color?.withOpacity( 0.5) ??
+        theme.colorScheme.onSurface.withOpacity( 0.5);
 
     return Container(
       height: height,
@@ -56,7 +56,7 @@ class CommonButton extends StatelessWidget {
             ? []
             : [
                 BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.05),
+                  color: Colors.black.withOpacity( 0.05),
                   blurRadius: 8,
                   offset: const Offset(0, 4),
                 ),

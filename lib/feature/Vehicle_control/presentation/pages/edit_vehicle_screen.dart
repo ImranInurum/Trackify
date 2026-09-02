@@ -350,7 +350,7 @@ class _EditVehicleViewState extends State<_EditVehicleView> {
                     children: state.configs.map((config) {
                       final isSelected = state.selectedConfig?.id == config.id;
                       final Color active = theme.colorScheme.secondary;
-                      final Color inactive = theme.colorScheme.onSurface.withValues(alpha: 0.5);
+                      final Color inactive = theme.colorScheme.onSurface.withOpacity( 0.5);
                       return Padding(
                         padding: const EdgeInsets.only(right: 4),
                         child: GestureDetector(
@@ -370,7 +370,7 @@ class _EditVehicleViewState extends State<_EditVehicleView> {
                                       width: isSelected ? 2 : 1.5,
                                     ),
                                     color: isSelected
-                                        ? active.withValues(alpha: 0.06)
+                                        ? active.withOpacity( 0.06)
                                         : Colors.transparent,
                                   ),
                                   child: Center(
@@ -413,7 +413,7 @@ class _EditVehicleViewState extends State<_EditVehicleView> {
                           children: state.selectedConfig!.supportedFuelTypes.map((fuel) {
                             final isSelected = state.selectedFuelType == fuel;
                             final Color active = theme.colorScheme.secondary;
-                            final Color inactive = theme.colorScheme.onSurface.withValues(alpha: 0.5);
+                            final Color inactive = theme.colorScheme.onSurface.withOpacity( 0.5);
                             return Padding(
                               padding: const EdgeInsets.only(right: 4),
                               child: GestureDetector(
@@ -433,7 +433,7 @@ class _EditVehicleViewState extends State<_EditVehicleView> {
                                             width: isSelected ? 2 : 1.5,
                                           ),
                                           color: isSelected
-                                              ? active.withValues(alpha: 0.06)
+                                              ? active.withOpacity( 0.06)
                                               : Colors.transparent,
                                         ),
                                         child: Center(
@@ -628,7 +628,7 @@ class _EditVehicleViewState extends State<_EditVehicleView> {
         title,
         style: TextStyle(
           fontSize: 15,
-          color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+          color: theme.colorScheme.onSurface.withOpacity( 0.6),
           fontWeight: FontWeight.w500,
         ),
       );
@@ -658,7 +658,7 @@ class _EditVehicleViewState extends State<_EditVehicleView> {
         color: Colors.transparent,
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
-          color: theme.colorScheme.onSurface.withValues(alpha: 0.12),
+          color: theme.colorScheme.onSurface.withOpacity( 0.12),
         ),
       ),
       child: Theme(
@@ -680,7 +680,7 @@ class _EditVehicleViewState extends State<_EditVehicleView> {
                 Icon(Icons.arrow_drop_down, color: theme.colorScheme.primary),
             hint: Text(
               hint,
-              style: TextStyle(color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
+              style: TextStyle(color: theme.colorScheme.onSurface.withOpacity( 0.5),
                 fontSize: 14,
               ),
             ),
@@ -710,10 +710,10 @@ class _EditVehicleViewState extends State<_EditVehicleView> {
     return Container(
       decoration: BoxDecoration(
         color: isDark
-            ? theme.colorScheme.onSurface.withValues(alpha: 0.05)
+            ? theme.colorScheme.onSurface.withOpacity( 0.05)
             : theme.cardColor,
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: theme.colorScheme.onSurface.withValues(alpha: 0.1)),
+        border: Border.all(color: theme.colorScheme.onSurface.withOpacity( 0.1)),
       ),
       child: TextField(
         controller: controller,
@@ -726,7 +726,7 @@ class _EditVehicleViewState extends State<_EditVehicleView> {
         decoration: InputDecoration(
           hintText: hint,
           hintStyle:
-              TextStyle(color: theme.colorScheme.onSurface.withValues(alpha: 0.3)),
+              TextStyle(color: theme.colorScheme.onSurface.withOpacity( 0.3)),
           contentPadding:
               const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
           border: InputBorder.none,

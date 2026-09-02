@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:trackify/core/utils/flutter_compat_extensions.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:trackify/app/cubit/app_cubit.dart';
 import 'package:trackify/feature/auth/presentation/pages/signin_screen.dart';
@@ -35,7 +36,7 @@ class LogoutConfirmationDialog {
                   width: 64,
                   height: 64,
                   decoration: BoxDecoration(
-                    color: colorScheme.error.withValues(alpha: 0.12),
+                    color: colorScheme.error.withOpacity( 0.12),
                     shape: BoxShape.circle,
                   ),
                   child: Icon(
@@ -63,7 +64,7 @@ class LogoutConfirmationDialog {
                   l10n.logoutDesc,
                   textAlign: TextAlign.center,
                   style: theme.textTheme.bodyMedium?.copyWith(
-                    color: colorScheme.onSurface.withValues(alpha: 0.7),
+                    color: colorScheme.onSurface.withOpacity( 0.7),
                     height: 1.4,
                   ),
                 ),
@@ -73,9 +74,9 @@ class LogoutConfirmationDialog {
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: colorScheme.error.withValues(alpha: 0.08),
+                    color: colorScheme.error.withOpacity( 0.08),
                     borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: colorScheme.error.withValues(alpha: 0.3)),
+                    border: Border.all(color: colorScheme.error.withOpacity( 0.3)),
                   ),
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -110,7 +111,7 @@ class LogoutConfirmationDialog {
                             borderRadius: BorderRadius.circular(12),
                           ),
                           side: BorderSide(
-                            color: colorScheme.outline.withValues(alpha: 0.3),
+                            color: colorScheme.outline.withOpacity( 0.3),
                           ),
                         ),
                         child: Text(

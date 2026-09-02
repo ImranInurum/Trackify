@@ -26,7 +26,7 @@ class LocationConsentDialog {
                   width: 64,
                   height: 64,
                   decoration: BoxDecoration(
-                    color: colorScheme.primary.withValues(alpha: 0.12),
+                    color: colorScheme.primary.withOpacity( 0.12),
                     shape: BoxShape.circle,
                   ),
                   child: Icon(
@@ -54,7 +54,7 @@ class LocationConsentDialog {
                   "Trackify collects location data to enable live vehicle tracking, route & trip playback, geofence safety alerts, and nearby fuel station search even when the app is in use or running in the background.",
                   textAlign: TextAlign.center,
                   style: theme.textTheme.bodyMedium?.copyWith(
-                    color: colorScheme.onSurface.withValues(alpha: 0.8),
+                    color: colorScheme.onSurface.withOpacity( 0.8),
                     height: 1.4,
                   ),
                 ),
@@ -64,10 +64,10 @@ class LocationConsentDialog {
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: colorScheme.primary.withValues(alpha: 0.06),
+                    color: colorScheme.primary.withOpacity( 0.06),
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
-                      color: colorScheme.primary.withValues(alpha: 0.2),
+                      color: colorScheme.primary.withOpacity( 0.2),
                     ),
                   ),
                   child: Column(
@@ -107,7 +107,7 @@ class LocationConsentDialog {
                             borderRadius: BorderRadius.circular(12),
                           ),
                           side: BorderSide(
-                            color: colorScheme.outline.withValues(alpha: 0.3),
+                            color: colorScheme.outline.withOpacity( 0.3),
                           ),
                         ),
                         child: Text(

@@ -30,8 +30,8 @@ class VehicleSelectorSheet extends StatelessWidget {
         bottom: 20,
       ),
       decoration: BoxDecoration(
-        color: theme.cardColor.withValues(alpha: 0.8),
-        border: Border.all(color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5), width: 0.5),
+        color: theme.cardColor.withOpacity( 0.8),
+        border: Border.all(color: theme.colorScheme.outlineVariant.withOpacity( 0.5), width: 0.5),
         borderRadius: const BorderRadius.vertical(
           bottom: Radius.circular(30),
         ),
@@ -68,7 +68,7 @@ class VehicleSelectorSheet extends StatelessWidget {
               decoration: BoxDecoration(
                 color: theme.scaffoldBackgroundColor,
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5), width: 0.5),
+                border: Border.all(color: theme.colorScheme.outlineVariant.withOpacity( 0.5), width: 0.5),
               ),
               child: Row(
                 children: [
@@ -85,7 +85,7 @@ class VehicleSelectorSheet extends StatelessWidget {
                   ),
                   Icon(
                     Icons.keyboard_arrow_down,
-                    color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                    color: theme.colorScheme.onSurface.withOpacity( 0.6),
                   ),
                 ],
               ),
@@ -130,7 +130,7 @@ class _VehicleSelectorSheet extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: theme.cardColor,
-        border: Border.all(color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5), width: 0.5),
+        border: Border.all(color: theme.colorScheme.outlineVariant.withOpacity( 0.5), width: 0.5),
         borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
       ),
       child: Column(

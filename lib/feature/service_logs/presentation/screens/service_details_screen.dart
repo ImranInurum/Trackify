@@ -61,14 +61,14 @@ class ServiceDetailsScreen extends StatelessWidget {
           Container(
             margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
             decoration: BoxDecoration(
-              color: colorScheme.onSurface.withValues(alpha: 0.06),
+              color: colorScheme.onSurface.withOpacity( 0.06),
               shape: BoxShape.circle,
             ),
             child: IconButton(
               icon: Icon(
                 Icons.delete_rounded,
                 size: 20,
-                color: colorScheme.onSurface.withValues(alpha: 0.75),
+                color: colorScheme.onSurface.withOpacity( 0.75),
               ),
               onPressed: () {
                 final outerNavigator = Navigator.of(context);
@@ -90,7 +90,7 @@ class ServiceDetailsScreen extends StatelessWidget {
                           onPressed: () => Navigator.pop(dialogContext),
                           child: Text(
                             l10n.cancel,
-                            style: TextStyle(color: colorScheme.onSurface.withValues(alpha: 0.6),
+                            style: TextStyle(color: colorScheme.onSurface.withOpacity( 0.6),
                               fontWeight: FontWeight.w600,
                             ),
                           ),
@@ -122,14 +122,14 @@ class ServiceDetailsScreen extends StatelessWidget {
           Container(
             margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
             decoration: BoxDecoration(
-              color: colorScheme.onSurface.withValues(alpha: 0.06),
+              color: colorScheme.onSurface.withOpacity( 0.06),
               shape: BoxShape.circle,
             ),
             child: IconButton(
               icon: Icon(
                 Icons.edit_rounded,
                 size: 20,
-                color: colorScheme.onSurface.withValues(alpha: 0.75),
+                color: colorScheme.onSurface.withOpacity( 0.75),
               ),
               onPressed: () {
                 Navigator.push(
@@ -157,7 +157,7 @@ class ServiceDetailsScreen extends StatelessWidget {
                 borderRadius: BorderRadius.circular(12),
                 boxShadow: [
                   BoxShadow(
-                    color: theme.shadowColor.withValues(alpha: 0.05),
+                    color: theme.shadowColor.withOpacity( 0.05),
                     blurRadius: 10,
                     offset: const Offset(0, 4),
                   ),
@@ -175,7 +175,7 @@ class ServiceDetailsScreen extends StatelessWidget {
                             Text(
                               l10n.date,
                               style: theme.textTheme.bodySmall?.copyWith(
-                                color: colorScheme.onSurface.withValues(alpha: 0.5),
+                                color: colorScheme.onSurface.withOpacity( 0.5),
                                 fontWeight: FontWeight.w600,
                               ),
                             ),
@@ -196,7 +196,7 @@ class ServiceDetailsScreen extends StatelessWidget {
                             Text(
                               l10n.amountText,
                               style: theme.textTheme.bodySmall?.copyWith(
-                                color: colorScheme.onSurface.withValues(alpha: 0.5),
+                                color: colorScheme.onSurface.withOpacity( 0.5),
                                 fontWeight: FontWeight.w600,
                               ),
                             ),
@@ -216,7 +216,7 @@ class ServiceDetailsScreen extends StatelessWidget {
                   Text(
                     l10n.serviceCenterName,
                     style: theme.textTheme.bodySmall?.copyWith(
-                      color: colorScheme.onSurface.withValues(alpha: 0.5),
+                      color: colorScheme.onSurface.withOpacity( 0.5),
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -231,7 +231,7 @@ class ServiceDetailsScreen extends StatelessWidget {
                   Text(
                     l10n.serviceCenterContact,
                     style: theme.textTheme.bodySmall?.copyWith(
-                      color: colorScheme.onSurface.withValues(alpha: 0.5),
+                      color: colorScheme.onSurface.withOpacity( 0.5),
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -272,7 +272,7 @@ class ServiceDetailsScreen extends StatelessWidget {
               l10n.serviceLogs,
               style: theme.textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.bold,
-                color: colorScheme.onSurface.withValues(alpha: 0.6),
+                color: colorScheme.onSurface.withOpacity( 0.6),
               ),
             ),
             const SizedBox(height: 16),
@@ -288,7 +288,7 @@ class ServiceDetailsScreen extends StatelessWidget {
                       color: theme.cardColor,
                       borderRadius: BorderRadius.circular(8),
                       border: Border.all(
-                        color: colorScheme.onSurface.withValues(alpha: 0.1),
+                        color: colorScheme.onSurface.withOpacity( 0.1),
                         width: 1,
                       ),
                       image: DecorationImage(
@@ -307,7 +307,7 @@ class ServiceDetailsScreen extends StatelessWidget {
                   color: theme.cardColor,
                   borderRadius: BorderRadius.circular(8),
                   border: Border.all(
-                    color: colorScheme.onSurface.withValues(alpha: 0.1),
+                    color: colorScheme.onSurface.withOpacity( 0.1),
                     width: 1,
                   ),
                 ),
@@ -316,14 +316,14 @@ class ServiceDetailsScreen extends StatelessWidget {
                   children: [
                     Icon(
                       Icons.image_not_supported_outlined,
-                      color: colorScheme.onSurface.withValues(alpha: 0.3),
+                      color: colorScheme.onSurface.withOpacity( 0.3),
                       size: 40,
                     ),
                     const SizedBox(height: 8),
                     Text(
                       l10n.noImage,
                       style: theme.textTheme.bodySmall?.copyWith(
-                        color: colorScheme.onSurface.withValues(alpha: 0.4),
+                        color: colorScheme.onSurface.withOpacity( 0.4),
                         fontWeight: FontWeight.w600,
                       ),
                     ),

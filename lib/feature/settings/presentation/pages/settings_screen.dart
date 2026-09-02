@@ -92,10 +92,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 decoration: BoxDecoration(
                   color: Theme.of(context).cardColor,
                   borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5), width: 0.5),
+                  border: Border.all(color: Theme.of(context).colorScheme.outlineVariant.withOpacity( 0.5), width: 0.5),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.03),
+                      color: Colors.black.withOpacity( 0.03),
                       blurRadius: 10,
                       offset: const Offset(0, 4),
                     ),
@@ -117,14 +117,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     hintStyle: TextStyle(
                       color: Theme.of(
                         context,
-                      ).colorScheme.onSurface.withValues(alpha: 0.4),
+                      ).colorScheme.onSurface.withOpacity( 0.4),
                       fontSize: 14,
                     ),
                     prefixIcon: Icon(
                       Icons.search,
                       color: Theme.of(
                         context,
-                      ).colorScheme.onSurface.withValues(alpha: 0.4),
+                      ).colorScheme.onSurface.withOpacity( 0.4),
                     ),
                     suffixIcon: _searchQuery.isNotEmpty
                         ? IconButton(
@@ -132,7 +132,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               Icons.clear,
                               color: Theme.of(
                                 context,
-                              ).colorScheme.onSurface.withValues(alpha: 0.4),
+                              ).colorScheme.onSurface.withOpacity( 0.4),
                             ),
                             onPressed: () {
                               _searchController.clear();
@@ -375,7 +375,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   style: TextStyle(
                     color: Theme.of(
                       context,
-                    ).colorScheme.onSurface.withValues(alpha: 0.5),
+                    ).colorScheme.onSurface.withOpacity( 0.5),
                     fontSize: 14,
                   ),
                 ),

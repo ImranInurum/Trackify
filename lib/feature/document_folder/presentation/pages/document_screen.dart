@@ -436,7 +436,7 @@ class _DocumentFolderScreenState extends State<DocumentFolderScreen> {
                         padding: const EdgeInsets.all(15),
                         decoration: BoxDecoration(
                           color: Theme.of(context).cardColor,
-                          border: Border.all(color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5), width: 0.5),
+                          border: Border.all(color: Theme.of(context).colorScheme.outlineVariant.withOpacity( 0.5), width: 0.5),
                           borderRadius: BorderRadius.circular(16),
                           
                           ),
@@ -536,7 +536,7 @@ class _DocumentFolderScreenState extends State<DocumentFolderScreen> {
                                 child: DecoratedBox(
                                   decoration: BoxDecoration(
                                     color: colorScheme.outlineVariant
-                                        .withValues(alpha: 0.5),
+                                        .withOpacity( 0.5),
                                   ),
                                 ),
                               );
@@ -601,7 +601,7 @@ class _DocumentFolderScreenState extends State<DocumentFolderScreen> {
                               height: screenHeight * 0.07,
                               decoration: BoxDecoration(
                                 color: Theme.of(context).cardColor,
-                                border: Border.all(color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5), width: 0.5),
+                                border: Border.all(color: Theme.of(context).colorScheme.outlineVariant.withOpacity( 0.5), width: 0.5),
                                 borderRadius: BorderRadius.circular(12),
                                  
                                 ),
@@ -714,7 +714,7 @@ class _DocumentFolderScreenState extends State<DocumentFolderScreen> {
                                 ),
                                 decoration: BoxDecoration(
                                   color: Theme.of(context).cardColor,
-                                  border: Border.all(color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5), width: 0.5),
+                                  border: Border.all(color: Theme.of(context).colorScheme.outlineVariant.withOpacity( 0.5), width: 0.5),
                                   borderRadius: BorderRadius.circular(12),
                                
                                   ),
@@ -754,7 +754,7 @@ class _DocumentFolderScreenState extends State<DocumentFolderScreen> {
                         padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
                           color: Theme.of(context).cardColor,
-                          border: Border.all(color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5), width: 0.5),
+                          border: Border.all(color: Theme.of(context).colorScheme.outlineVariant.withOpacity( 0.5), width: 0.5),
                           borderRadius: BorderRadius.circular(16),
                      
                           ),
@@ -875,7 +875,7 @@ class _DocumentFolderScreenState extends State<DocumentFolderScreen> {
                         padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
                           color: Theme.of(context).cardColor,
-                          border: Border.all(color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5), width: 0.5),
+                          border: Border.all(color: Theme.of(context).colorScheme.outlineVariant.withOpacity( 0.5), width: 0.5),
                           borderRadius: BorderRadius.circular(16),
                       
                           ),
@@ -919,9 +919,7 @@ class _DocumentFolderScreenState extends State<DocumentFolderScreen> {
                                     },
                                     customContent: Container(
                                       decoration: BoxDecoration(
-                                        color: Colors.black.withValues(
-                                          alpha: 0.3,
-                                        ),
+                                        color: Colors.black.withOpacity(0.3),
                                         borderRadius: BorderRadius.circular(12),
                                       ),
                                       child: Column(
@@ -1180,7 +1178,7 @@ class _DocumentFolderScreenState extends State<DocumentFolderScreen> {
             height: screenWidth * 0.30,
             decoration: BoxDecoration(
               color: Theme.of(context).cardColor,
-              border: Border.all(color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5), width: 0.5),
+              border: Border.all(color: Theme.of(context).colorScheme.outlineVariant.withOpacity( 0.5), width: 0.5),
               borderRadius: BorderRadius.circular(12),
            
               ),
@@ -1299,13 +1297,13 @@ class _VehicleSelectorSheet extends StatelessWidget {
                     ),
                     decoration: BoxDecoration(
                       color: isSelected
-                          ? colorScheme.primaryContainer.withValues(alpha: 0.15)
+                          ? colorScheme.primaryContainer.withOpacity( 0.15)
                           : theme.cardColor,
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(
                         color: isSelected
                             ? colorScheme.primary
-                            : colorScheme.outlineVariant.withValues(alpha: 0.4),
+                            : colorScheme.outlineVariant.withOpacity( 0.4),
                         width: isSelected ? 1.5 : 1,
                       ),
                     ),

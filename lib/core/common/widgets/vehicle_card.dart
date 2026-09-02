@@ -102,11 +102,11 @@ class _VehicleCardState extends State<VehicleCard> {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.05),
+        color: Theme.of(context).colorScheme.onSurface.withOpacity( 0.05),
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.1),
+            color: Colors.black.withOpacity( 0.1),
             blurRadius: 0.5,
             offset: const Offset(0, 0.5),
           ),
@@ -117,11 +117,11 @@ class _VehicleCardState extends State<VehicleCard> {
           Container(
             decoration: BoxDecoration(
               color: Theme.of(context).cardColor,
-              border: Border.all(color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5), width: 0.5),
+              border: Border.all(color: Theme.of(context).colorScheme.outlineVariant.withOpacity( 0.5), width: 0.5),
               borderRadius: BorderRadius.circular(20),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.05),
+                  color: Colors.black.withOpacity( 0.05),
                   blurRadius: 4,
                   offset: const Offset(0, 2),
                 ),
@@ -209,7 +209,7 @@ class _VehicleCardState extends State<VehicleCard> {
                                       fontSize: 14,
                                       color: Theme.of(
                                         context,
-                                      ).colorScheme.onSurface.withValues(alpha: 0.6),
+                                      ).colorScheme.onSurface.withOpacity( 0.6),
                                       fontWeight: FontWeight.w500,
                                     ),
                                   ),
@@ -253,7 +253,7 @@ class _VehicleCardState extends State<VehicleCard> {
                           Icons.chevron_right,
                           color: Theme.of(
                             context,
-                          ).colorScheme.onSurface.withValues(alpha: 0.3),
+                          ).colorScheme.onSurface.withOpacity( 0.3),
                           size: 24,
                         ),
                       ],
@@ -269,7 +269,7 @@ class _VehicleCardState extends State<VehicleCard> {
                       color: Theme.of(context).cardColor,
                       borderRadius: BorderRadius.circular(50),
                       border: Border.all(
-                        color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5),
+                        color: Theme.of(context).colorScheme.outlineVariant.withOpacity( 0.5),
                         width: 1,
                       ),
                     ),
@@ -282,8 +282,8 @@ class _VehicleCardState extends State<VehicleCard> {
                               padding: const EdgeInsets.all(8),
                               decoration: BoxDecoration(
                                 color: widget.isLocked 
-                                    ? Colors.red.withValues(alpha: 0.1) 
-                                    : Colors.green.withValues(alpha: 0.1),
+                                    ? Colors.red.withOpacity( 0.1) 
+                                    : Colors.green.withOpacity( 0.1),
                                 shape: BoxShape.circle,
                               ),
                               child: Icon(
@@ -307,7 +307,7 @@ class _VehicleCardState extends State<VehicleCard> {
                           value: widget.isLocked,
                           activeColor: Colors.red,
                           inactiveThumbColor: Colors.green,
-                          inactiveTrackColor: Colors.green.withValues(alpha: 0.3),
+                          inactiveTrackColor: Colors.green.withOpacity( 0.3),
                           onChanged: (val) {
                             widget.onLock();
                           },
@@ -324,7 +324,7 @@ class _VehicleCardState extends State<VehicleCard> {
                         Icon(
                           Icons.info_outline,
                           size: 13,
-                          color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
+                          color: Theme.of(context).colorScheme.onSurface.withOpacity( 0.5),
                         ),
                         const SizedBox(width: 4),
                         Expanded(
@@ -333,7 +333,7 @@ class _VehicleCardState extends State<VehicleCard> {
                             style: TextStyle(
                               fontSize: 11,
                               height: 1.2,
-                              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
+                              color: Theme.of(context).colorScheme.onSurface.withOpacity( 0.5),
                             ),
                           ),
                         ),
@@ -526,7 +526,7 @@ class _VehicleCardState extends State<VehicleCard> {
                   fontSize: 13,
                   color:
                       subtitleColor ??
-                      Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
+                      Theme.of(context).colorScheme.onSurface.withOpacity( 0.5),
                 ),
               ),
             ],
@@ -539,7 +539,7 @@ class _VehicleCardState extends State<VehicleCard> {
                 side: BorderSide(
                   color: Theme.of(
                     context,
-                  ).colorScheme.onSurface.withValues(alpha: 0.12),
+                  ).colorScheme.onSurface.withOpacity( 0.12),
                 ),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20),
@@ -571,7 +571,7 @@ class _VehicleCardState extends State<VehicleCard> {
           l10n.boughtDeviceInstallNow,
           style: TextStyle(
             fontSize: 14,
-            color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+            color: Theme.of(context).colorScheme.onSurface.withOpacity( 0.6),
           ),
         ),
         InkWell(

@@ -43,7 +43,7 @@ class _AddVehicleDialogState extends State<AddVehicleDialog> {
   }) {
     final theme = Theme.of(context);
     final Color active = theme.colorScheme.secondary;
-    final Color inactive = theme.colorScheme.onSurface.withValues(alpha: 0.5);
+    final Color inactive = theme.colorScheme.onSurface.withOpacity( 0.5);
 
     return GestureDetector(
       onTap: () => context.read<AddVehicleCubit>().selectVehicleType(config),
@@ -61,7 +61,7 @@ class _AddVehicleDialogState extends State<AddVehicleDialog> {
                   color: selected ? active : inactive,
                   width: selected ? 2 : 1.5,
                 ),
-                color: selected ? active.withValues(alpha: 0.06) : Colors.transparent,
+                color: selected ? active.withOpacity( 0.06) : Colors.transparent,
               ),
               child: Icon(icon, color: selected ? active : inactive, size: 22),
             ),
@@ -89,7 +89,7 @@ class _AddVehicleDialogState extends State<AddVehicleDialog> {
   }) {
     final theme = Theme.of(context);
     final Color active = theme.colorScheme.secondary;
-    final Color inactive = theme.colorScheme.onSurface.withValues(alpha: 0.5);
+    final Color inactive = theme.colorScheme.onSurface.withOpacity( 0.5);
 
     return GestureDetector(
       onTap: () => context.read<AddVehicleCubit>().selectFuelType(type),
@@ -107,7 +107,7 @@ class _AddVehicleDialogState extends State<AddVehicleDialog> {
                   color: selected ? active : inactive,
                   width: selected ? 2 : 1.5,
                 ),
-                color: selected ? active.withValues(alpha: 0.06) : Colors.transparent,
+                color: selected ? active.withOpacity( 0.06) : Colors.transparent,
               ),
               child: Icon(icon, color: selected ? active : inactive, size: 22),
             ),
@@ -353,7 +353,7 @@ class _AddVehicleDialogState extends State<AddVehicleDialog> {
                                         child: Text(
                                           l10n.selectVehicleTypeForFuel,
                                           style: TextStyle(
-                                            color: theme.hintColor.withValues(alpha: 0.7),
+                                            color: theme.hintColor.withOpacity( 0.7),
                                             fontSize: 12,
                                             fontStyle: FontStyle.italic,
                                           ),

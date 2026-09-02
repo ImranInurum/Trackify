@@ -463,7 +463,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                       hintText: l10n.mobileNumber,
                                       hintStyle: TextStyle(
                                         fontSize: 14,
-                                        color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.4),
+                                        color: Theme.of(context).colorScheme.onSurface.withOpacity( 0.4),
                                       ),
                                       isDense: true,
                                       contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 14),
@@ -502,7 +502,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 child: Text(
                   l10n.cancel,
                   style: TextStyle(
-                    color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
+                    color: Theme.of(context).colorScheme.onSurface.withOpacity( 0.5),
                   ),
                 ),
               ),
@@ -591,7 +591,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                           labelText: l10n.emailAddress,
                           labelStyle: TextStyle(
                             fontSize: 12.5,
-                            color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+                            color: Theme.of(context).colorScheme.onSurface.withOpacity( 0.6),
                           ),
                           floatingLabelBehavior: FloatingLabelBehavior.auto,
                           isDense: true,
@@ -631,7 +631,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                             labelText: l10n.otp,
                             labelStyle: TextStyle(
                               fontSize: 12.5,
-                              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+                              color: Theme.of(context).colorScheme.onSurface.withOpacity( 0.6),
                             ),
                             floatingLabelBehavior: FloatingLabelBehavior.auto,
                             isDense: true,
@@ -672,7 +672,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     child: Text(
                       l10n.cancel,
                       style: TextStyle(
-                        color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
+                        color: Theme.of(context).colorScheme.onSurface.withOpacity( 0.5),
                       ),
                     ),
                   ),
@@ -739,7 +739,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     // Label style (small, dimmed)
     final labelStyle = TextStyle(
       fontSize: 12.5,
-      color: onSurface.withValues(alpha: 0.55),
+      color: onSurface.withOpacity( 0.55),
       fontWeight: FontWeight.w400,
     );
 
@@ -836,7 +836,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     dividerColor: dividerColor,
                     optionalStyle: TextStyle(
                       fontSize: 13,
-                      color: onSurface.withValues(alpha: 0.45),
+                      color: onSurface.withOpacity( 0.45),
                     ),
                   ),
                   const SizedBox(height: 24),
@@ -1022,7 +1022,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     decoration: InputDecoration(
                       hintText: l10n.enterAddress,
                       hintStyle: TextStyle(
-                        color: onSurface.withValues(alpha: 0.4),
+                        color: onSurface.withOpacity( 0.4),
                         fontSize: 15,
                       ),
                       counterText: '',
@@ -1214,7 +1214,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               onTap: onTap,
               child: Icon(
                 Icons.calendar_month_outlined,
-                color: onSurface.withValues(alpha: 0.55),
+                color: onSurface.withOpacity( 0.55),
                 size: 22,
               ),
             ),
@@ -1223,7 +1223,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               l10n.optional,
               style: TextStyle(
                 fontSize: 13,
-                color: onSurface.withValues(alpha: 0.45),
+                color: onSurface.withOpacity( 0.45),
               ),
             ),
           ],

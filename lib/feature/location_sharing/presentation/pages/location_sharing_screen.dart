@@ -64,7 +64,7 @@ class _LocationSharingScreenState extends State<LocationSharingScreen> {
                 height: 150,
                 width: 110,
                 decoration: BoxDecoration(
-                  color: theme.colorScheme.surfaceContainerHighest,
+                  color: theme.colorScheme.surfaceVariant,
                   borderRadius: BorderRadius.circular(18),
                   border: Border.all(color: theme.colorScheme.outlineVariant, width: 4),
                 ),
@@ -89,7 +89,7 @@ class _LocationSharingScreenState extends State<LocationSharingScreen> {
                       ),
                       height: 16,
                       decoration: BoxDecoration(
-                        color: theme.colorScheme.onSurface.withValues(alpha: 0.1),
+                        color: theme.colorScheme.onSurface.withOpacity( 0.1),
                         borderRadius: BorderRadius.circular(4),
                       ),
                     ),
@@ -100,7 +100,7 @@ class _LocationSharingScreenState extends State<LocationSharingScreen> {
                       ),
                       height: 16,
                       decoration: BoxDecoration(
-                        color: theme.colorScheme.onSurface.withValues(alpha: 0.1),
+                        color: theme.colorScheme.onSurface.withOpacity( 0.1),
                         borderRadius: BorderRadius.circular(4),
                       ),
                     ),
@@ -111,7 +111,7 @@ class _LocationSharingScreenState extends State<LocationSharingScreen> {
                       ),
                       height: 18,
                       decoration: BoxDecoration(
-                        color: theme.colorScheme.onSurface.withValues(alpha: 0.2),
+                        color: theme.colorScheme.onSurface.withOpacity( 0.2),
                         borderRadius: BorderRadius.circular(4),
                       ),
                       child: Center(
@@ -306,7 +306,7 @@ class _LocationSharingScreenState extends State<LocationSharingScreen> {
         appBar: AppBar(
           backgroundColor: theme.cardColor,
           elevation: 1,
-          shadowColor: theme.shadowColor.withValues(alpha: 0.1),
+          shadowColor: theme.shadowColor.withOpacity( 0.1),
           leading: IconButton(
             icon: Icon(
               Icons.arrow_back_ios_new,

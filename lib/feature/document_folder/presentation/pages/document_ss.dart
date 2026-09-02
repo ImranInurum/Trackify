@@ -458,7 +458,7 @@ class _DocumentSubScreenState extends State<DocumentSubScreen> {
                         padding: const EdgeInsets.symmetric(horizontal: 14),
                         decoration: BoxDecoration(
                           color: Theme.of(context).cardColor,
-                          border: Border.all(color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5), width: 0.5),
+                          border: Border.all(color: Theme.of(context).colorScheme.outlineVariant.withOpacity( 0.5), width: 0.5),
                           borderRadius: BorderRadius.circular(10),
                      
                           ),
@@ -510,7 +510,7 @@ class _DocumentSubScreenState extends State<DocumentSubScreen> {
                     Text(
                       l10n.commitmentText,
                       style: TextStyle(
-                        color: colorScheme.onSurface.withValues(alpha: 0.5),
+                        color: colorScheme.onSurface.withOpacity( 0.5),
                         fontSize: 14,
                       ),
                     ),
@@ -614,7 +614,7 @@ class _DocumentSubScreenState extends State<DocumentSubScreen> {
         height: size.width * 0.42,
         decoration: BoxDecoration(
           color: Theme.of(context).cardColor,
-          border: Border.all(color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5), width: 0.5),
+          border: Border.all(color: Theme.of(context).colorScheme.outlineVariant.withOpacity( 0.5), width: 0.5),
           borderRadius: BorderRadius.circular(12),
           
           ),

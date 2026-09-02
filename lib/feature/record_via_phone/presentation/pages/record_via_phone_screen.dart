@@ -590,7 +590,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen>
                     controller: textController,
                     decoration: InputDecoration(
                       hintText: l10n.enterCustomTag,
-                      hintStyle: TextStyle(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.4)),
+                      hintStyle: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity( 0.4)),
                       enabledBorder: UnderlineInputBorder(
                         borderSide: BorderSide(color: Theme.of(context).dividerColor),
                       ),
@@ -616,8 +616,8 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen>
                           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                           decoration: BoxDecoration(
                             color: isSelected
-                                ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.2)
-                                : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.05),
+                                ? Theme.of(context).colorScheme.primary.withOpacity( 0.2)
+                                : Theme.of(context).colorScheme.onSurface.withOpacity( 0.05),
                             borderRadius: BorderRadius.circular(8),
                             border: Border.all(
                               color: isSelected
@@ -629,7 +629,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen>
                             tag,
                             style: TextStyle(color: isSelected
                                   ? Theme.of(context).colorScheme.primary
-                                  : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.8),
+                                  : Theme.of(context).colorScheme.onSurface.withOpacity( 0.8),
                               fontSize: 13,
                             ),
                           ),
@@ -644,7 +644,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen>
                   onPressed: () => Navigator.pop(ctx),
                   child: Text(
                     "Cancel",
-                    style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6)),
+                    style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity( 0.6)),
                   ),
                 ),
                 TextButton(
@@ -812,7 +812,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen>
                   width: 40,
                   height: 4,
                   decoration: BoxDecoration(
-                    color: Colors.grey.withValues(alpha: 0.3),
+                    color: Colors.grey.withOpacity( 0.3),
                     borderRadius: BorderRadius.circular(2),
                   ),
                 ),
@@ -845,8 +845,8 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen>
                       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                       decoration: BoxDecoration(
                         color: isSelected
-                            ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.2)
-                            : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.05),
+                            ? Theme.of(context).colorScheme.primary.withOpacity( 0.2)
+                            : Theme.of(context).colorScheme.onSurface.withOpacity( 0.05),
                         borderRadius: BorderRadius.circular(8),
                         border: Border.all(
                           color: isSelected
@@ -858,7 +858,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen>
                         tag,
                         style: TextStyle(color: isSelected
                               ? Theme.of(context).colorScheme.primary
-                              : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.8),
+                              : Theme.of(context).colorScheme.onSurface.withOpacity( 0.8),
                           fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                         ),
                       ),
@@ -943,12 +943,12 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen>
         
         borderRadius: BorderRadius.circular(24),
         border: Border.all(
-          color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5),
+          color: theme.colorScheme.outlineVariant.withOpacity( 0.5),
           width: 0.5,
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.05),
+            color: Colors.black.withOpacity( isDark ? 0.2 : 0.05),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -1004,7 +1004,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen>
                     padding: const EdgeInsets.all(4),
                     child: Icon(
                       isFav ? Icons.favorite : Icons.favorite_border,
-                      color: isFav ? Colors.red : (isDark ? Colors.white.withValues(alpha: 0.6) : Colors.black54),
+                      color: isFav ? Colors.red : (isDark ? Colors.white.withOpacity( 0.6) : Colors.black54),
                       size: 24,
                     ),
                   ),
@@ -1027,12 +1027,12 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen>
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
               decoration: BoxDecoration(
-                color: isDark ? Colors.white.withValues(alpha: 0.08) : Colors.black.withValues(alpha: 0.05),
+                color: isDark ? Colors.white.withOpacity( 0.08) : Colors.black.withOpacity( 0.05),
                 borderRadius: BorderRadius.circular(6),
               ),
               child: Text(
                 ride.tag,
-                style: TextStyle(color: isDark ? Colors.white.withValues(alpha: 0.7) : Colors.black54,
+                style: TextStyle(color: isDark ? Colors.white.withOpacity( 0.7) : Colors.black54,
                   fontSize: 11,
                   fontWeight: FontWeight.w500,
                 ),
@@ -1049,7 +1049,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen>
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
-                color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.05),
+                color: isDark ? Colors.white.withOpacity( 0.05) : Colors.black.withOpacity( 0.05),
                 width: 1,
               ),
             ),
@@ -1113,7 +1113,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen>
                           border: Border.all(color: Colors.amber, width: 1.5),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withValues(alpha: 0.3),
+                              color: Colors.black.withOpacity( 0.3),
                               blurRadius: 4,
                             ),
                           ],
@@ -1193,7 +1193,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen>
         const SizedBox(height: 4),
         Text(
           label,
-          style: TextStyle(color: isDark ? Colors.white.withValues(alpha: 0.5) : Colors.black45,
+          style: TextStyle(color: isDark ? Colors.white.withOpacity( 0.5) : Colors.black45,
             fontSize: 12,
             fontWeight: FontWeight.w500,
           ),
@@ -1214,7 +1214,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen>
 
     // Outer glow ring
     final Paint glowPaint = Paint()
-      ..color = Colors.black.withValues(alpha: 0.1)
+      ..color = Colors.black.withOpacity( 0.1)
       ..style = PaintingStyle.fill;
     canvas.drawCircle(Offset(center, center), center, glowPaint);
 
@@ -1428,7 +1428,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen>
             labelColor: Theme.of(context).colorScheme.primary,
             unselectedLabelColor: Theme.of(
               context,
-            ).colorScheme.onSurface.withValues(alpha: 0.5),
+            ).colorScheme.onSurface.withOpacity( 0.5),
             labelStyle: theme.textTheme.titleSmall?.copyWith(
               fontWeight: FontWeight.bold,
             ),
@@ -1709,11 +1709,11 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen>
       padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
       decoration: BoxDecoration(
         color: Theme.of(context).cardColor,
-        border: Border.all(color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5), width: 0.5),
+        border: Border.all(color: Theme.of(context).colorScheme.outlineVariant.withOpacity( 0.5), width: 0.5),
         borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
+            color: Colors.black.withOpacity( 0.05),
             blurRadius: 10,
             offset: const Offset(0, -5),
           ),
@@ -1726,7 +1726,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen>
             width: 40,
             height: 4,
             decoration: BoxDecoration(
-              color: Colors.grey.withValues(alpha: 0.3),
+              color: Colors.grey.withOpacity( 0.3),
               borderRadius: BorderRadius.circular(2),
             ),
           ),
@@ -1742,7 +1742,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen>
                   border: Border.all(color: Colors.white, width: 2),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.1),
+                      color: Colors.black.withOpacity( 0.1),
                       blurRadius: 4,
                     ),
                   ],
@@ -1786,7 +1786,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen>
                         fontSize: 12,
                         color: Theme.of(
                           context,
-                        ).colorScheme.onSurface.withValues(alpha: 0.5),
+                        ).colorScheme.onSurface.withOpacity( 0.5),
                       ),
                     ),
                   ],
@@ -1831,7 +1831,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen>
                             fontSize: 12,
                             color: Theme.of(
                               context,
-                            ).colorScheme.onSurface.withValues(alpha: 0.5),
+                            ).colorScheme.onSurface.withOpacity( 0.5),
                           ),
                         ),
                       ],
@@ -1845,7 +1845,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen>
                           decoration: BoxDecoration(
                             color: Theme.of(
                               context,
-                            ).colorScheme.onSurface.withValues(alpha: 0.05),
+                            ).colorScheme.onSurface.withOpacity( 0.05),
                             borderRadius: BorderRadius.circular(4),
                           ),
                           child: Icon(
@@ -1860,7 +1860,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen>
                           decoration: BoxDecoration(
                             color: Theme.of(
                               context,
-                            ).colorScheme.onSurface.withValues(alpha: 0.05),
+                            ).colorScheme.onSurface.withOpacity( 0.05),
                             borderRadius: BorderRadius.circular(4),
                           ),
                           child: Icon(
@@ -1877,7 +1877,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen>
           ),
           if (showStats) ...[
             const SizedBox(height: 16),
-            Divider(color: Colors.grey.withValues(alpha: 0.2)),
+            Divider(color: Colors.grey.withOpacity( 0.2)),
             const SizedBox(height: 16),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -1952,7 +1952,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen>
           label,
           style: TextStyle(
             fontSize: 12,
-            color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
+            color: Theme.of(context).colorScheme.onSurface.withOpacity( 0.5),
           ),
         ),
       ],
@@ -1984,11 +1984,11 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen>
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
         decoration: BoxDecoration(
           color: Theme.of(context).cardColor,
-          border: Border.all(color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5), width: 0.5),
+          border: Border.all(color: Theme.of(context).colorScheme.outlineVariant.withOpacity( 0.5), width: 0.5),
           borderRadius: BorderRadius.circular(40),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.1),
+              color: Colors.black.withOpacity( 0.1),
               blurRadius: 10,
               offset: const Offset(0, 4),
             ),
@@ -2125,7 +2125,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen>
                                     width: 1.5,
                                   )
                                 : Border.all(
-                                    color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5),
+                                    color: Theme.of(context).colorScheme.outlineVariant.withOpacity( 0.5),
                                     width: 0.5,
                                   ),
                           ),
@@ -2137,14 +2137,14 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen>
                                 size: 16,
                                 color: _selectedFilterTag != null
                                     ? Theme.of(context).colorScheme.primary
-                                    : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+                                    : Theme.of(context).colorScheme.onSurface.withOpacity( 0.6),
                               ),
                               const SizedBox(width: 8),
                               Text(
                                 _selectedFilterTag != null ? 'Tag: $_selectedFilterTag' : 'Filter by tags',
                                 style: TextStyle(color: _selectedFilterTag != null
                                       ? Theme.of(context).colorScheme.primary
-                                      : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+                                      : Theme.of(context).colorScheme.onSurface.withOpacity( 0.6),
                                   fontSize: 13,
                                   fontWeight: FontWeight.w500,
                                 ),
@@ -2167,7 +2167,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen>
                                     width: 1.5,
                                   )
                                 : Border.all(
-                                    color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5),
+                                    color: Theme.of(context).colorScheme.outlineVariant.withOpacity( 0.5),
                                     width: 0.5,
                                   ),
                           ),
@@ -2179,7 +2179,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen>
                                 size: 14,
                                 color: _activeDateFilter != "All"
                                     ? Theme.of(context).colorScheme.primary
-                                    : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+                                    : Theme.of(context).colorScheme.onSurface.withOpacity( 0.6),
                               ),
                               const SizedBox(width: 8),
                               Text(
@@ -2187,7 +2187,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen>
                                 style: TextStyle(
                                   color: _activeDateFilter != "All"
                                       ? Theme.of(context).colorScheme.primary
-                                      : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+                                      : Theme.of(context).colorScheme.onSurface.withOpacity( 0.6),
                                   fontSize: 13,
                                   fontWeight: FontWeight.w500,
                                 ),
@@ -2222,7 +2222,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen>
                                         ? "No past rides found"
                                         : "No rides found for '$_activeDateFilter'",
                                     style: TextStyle(
-                                      color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+                                      color: Theme.of(context).colorScheme.onSurface.withOpacity( 0.6),
                                     ),
                                   ),
                                 ),
@@ -2399,7 +2399,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen>
                      
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(
-                          color: theme.dividerColor.withValues(alpha: 0.1),
+                          color: theme.dividerColor.withOpacity( 0.1),
                           width: 1,
                         ),
                       ),
@@ -2407,7 +2407,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen>
                         children: [
                           Icon(
                             Icons.calendar_today_outlined,
-                            color: colorScheme.onSurface.withValues(alpha: 0.7),
+                            color: colorScheme.onSurface.withOpacity( 0.7),
                             size: 20,
                           ),
                           const SizedBox(width: 12),
@@ -2456,7 +2456,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen>
                                   child: Icon(
                                     Icons.chevron_right,
                                     color: isToday
-                                        ? colorScheme.onSurface.withValues(alpha: 0.25)
+                                        ? colorScheme.onSurface.withOpacity( 0.25)
                                         : colorScheme.onSurface,
                                     size: 24,
                                   ),
@@ -2484,7 +2484,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen>
                             border: Border.all(
                               color: _selectedFilterTag != null
                                   ? colorScheme.primary
-                                  : theme.dividerColor.withValues(alpha: 0.1),
+                                  : theme.dividerColor.withOpacity( 0.1),
                               width: 1.5,
                             ),
                           ),
@@ -2496,14 +2496,14 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen>
                                 size: 16,
                                 color: _selectedFilterTag != null
                                     ? colorScheme.primary
-                                    : colorScheme.onSurface.withValues(alpha: 0.6),
+                                    : colorScheme.onSurface.withOpacity( 0.6),
                               ),
                               const SizedBox(width: 8),
                               Text(
                                 _selectedFilterTag != null ? 'Tag: $_selectedFilterTag' : 'Filter by tags',
                                 style: TextStyle(color: _selectedFilterTag != null
                                       ? colorScheme.primary
-                                      : colorScheme.onSurface.withValues(alpha: 0.6),
+                                      : colorScheme.onSurface.withOpacity( 0.6),
                                   fontSize: 13,
                                   fontWeight: FontWeight.w500,
                                 ),
@@ -2586,7 +2586,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen>
         gradient: LinearGradient(
           colors: [
             Theme.of(context).colorScheme.primary,
-            Theme.of(context).colorScheme.primary.withValues(alpha: 0.8),
+            Theme.of(context).colorScheme.primary.withOpacity( 0.8),
           ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
@@ -2594,7 +2594,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen>
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3),
+            color: Theme.of(context).colorScheme.primary.withOpacity( 0.3),
             blurRadius: 20,
             offset: const Offset(0, 10),
           ),
@@ -2659,10 +2659,10 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen>
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Theme.of(context).cardColor,
-        border: Border.all(color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5), width: 0.5),
+        border: Border.all(color: Theme.of(context).colorScheme.outlineVariant.withOpacity( 0.5), width: 0.5),
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
-          BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 10),
+          BoxShadow(color: Colors.black.withOpacity( 0.05), blurRadius: 10),
         ],
       ),
       child: Column(
@@ -2671,7 +2671,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen>
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: color.withValues(alpha: 0.1),
+              color: color.withOpacity( 0.1),
               shape: BoxShape.circle,
             ),
             child: Icon(icon, color: color, size: 24),
@@ -2687,7 +2687,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen>
           ),
           Text(
             label,
-            style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
+            style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity( 0.5),
               fontSize: 13,
             ),
           ),
@@ -2933,7 +2933,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen>
                   BoxShadow(
                     color: Theme.of(
                       context,
-                    ).colorScheme.primary.withValues(alpha: 0.2),
+                    ).colorScheme.primary.withOpacity( 0.2),
                     blurRadius: 10,
                     offset: const Offset(0, 4),
                   ),
@@ -3278,7 +3278,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen>
                                   AppLocalizations.of(context)!.saveOnlineDesc,
                                   style: TextStyle(color: Theme.of(
                                       context,
-                                    ).colorScheme.onSurface.withValues(alpha: 0.7),
+                                    ).colorScheme.onSurface.withOpacity( 0.7),
                                     fontSize: 13,
                                   ),
                                 ),
@@ -3301,7 +3301,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen>
                     Divider(
                       color: Theme.of(
                         context,
-                      ).colorScheme.onSurface.withValues(alpha: 0.2),
+                      ).colorScheme.onSurface.withOpacity( 0.2),
                     ),
                     const SizedBox(height: 16),
                     GestureDetector(
@@ -3326,7 +3326,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen>
                                   AppLocalizations.of(context)!.saveOfflineDesc,
                                   style: TextStyle(color: Theme.of(
                                       context,
-                                    ).colorScheme.onSurface.withValues(alpha: 0.7),
+                                    ).colorScheme.onSurface.withOpacity( 0.7),
                                     fontSize: 13,
                                   ),
                                 ),
@@ -3349,7 +3349,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen>
                     Divider(
                       color: Theme.of(
                         context,
-                      ).colorScheme.onSurface.withValues(alpha: 0.2),
+                      ).colorScheme.onSurface.withOpacity( 0.2),
                     ),
                     const SizedBox(height: 16),
                     Row(
@@ -3381,7 +3381,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen>
                             AppLocalizations.of(context)!.cancelBtn,
                             style: TextStyle(color: Theme.of(
                                 context,
-                              ).colorScheme.onSurface.withValues(alpha: 0.7),
+                              ).colorScheme.onSurface.withOpacity( 0.7),
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
                             ),
@@ -3463,7 +3463,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen>
                       AppLocalizations.of(context)!.selectRideLabel,
                       style: TextStyle(color: Theme.of(
                           context,
-                        ).colorScheme.onSurface.withValues(alpha: 0.7),
+                        ).colorScheme.onSurface.withOpacity( 0.7),
                         fontSize: 16,
                       ),
                     ),
@@ -3483,7 +3483,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen>
                             decoration: BoxDecoration(
                               color: Theme.of(
                                 context,
-                              ).colorScheme.onSurface.withValues(alpha: 0.05),
+                              ).colorScheme.onSurface.withOpacity( 0.05),
                               borderRadius: BorderRadius.circular(8),
                               border: Border.all(
                                 color: isSelected
@@ -3498,7 +3498,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen>
                                     ? Theme.of(context).colorScheme.primary
                                     : Theme.of(
                                         context,
-                                      ).colorScheme.onSurface.withValues(alpha: 0.7),
+                                      ).colorScheme.onSurface.withOpacity( 0.7),
                                 fontSize: 14,
                               ),
                             ),
@@ -3753,7 +3753,7 @@ class _DateRangePickerBottomSheetState extends State<_DateRangePickerBottomSheet
                 width: 44,
                 height: 5,
                 decoration: BoxDecoration(
-                  color: theme.dividerColor.withValues(alpha: 0.2),
+                  color: theme.dividerColor.withOpacity( 0.2),
                   borderRadius: BorderRadius.circular(3),
                 ),
               ),
@@ -3762,7 +3762,7 @@ class _DateRangePickerBottomSheetState extends State<_DateRangePickerBottomSheet
             TabBar(
               controller: _tabController,
               labelColor: colorScheme.primary,
-              unselectedLabelColor: colorScheme.onSurface.withValues(alpha: 0.6),
+              unselectedLabelColor: colorScheme.onSurface.withOpacity( 0.6),
               indicatorColor: colorScheme.primary,
               indicatorSize: TabBarIndicatorSize.tab,
               dividerColor: Colors.transparent,

@@ -207,9 +207,7 @@ class _DeviceWarrantyConfirmScreenState
                           Text(
                             state.message,
                             style: theme.textTheme.bodyMedium?.copyWith(
-                              color: colorScheme.onSurface.withValues(
-                                alpha: 0.7,
-                              ),
+                              color: colorScheme.onSurface.withOpacity(0.7),
                             ),
                             textAlign: TextAlign.center,
                           ),
@@ -298,7 +296,7 @@ class _DeviceWarrantyConfirmScreenState
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: theme.cardColor,
-        border: Border.all(color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5), width: 0.5),
+        border: Border.all(color: theme.colorScheme.outlineVariant.withOpacity( 0.5), width: 0.5),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Column(
@@ -310,7 +308,7 @@ class _DeviceWarrantyConfirmScreenState
               Text(
                 selectedPlan?.planName ?? l10n.yearExtendedWarranty,
                 style: TextStyle(
-                  color: colorScheme.onSurface.withValues(alpha: 0.7),
+                  color: colorScheme.onSurface.withOpacity( 0.7),
                   fontSize: 13,
                   fontWeight: FontWeight.w400,
                 ),
@@ -318,7 +316,7 @@ class _DeviceWarrantyConfirmScreenState
               Text(
                 '${l10n.currencySymbol}${selectedPlan?.originalPrice.toInt() ?? 730}',
                 style: TextStyle(
-                  color: colorScheme.onSurface.withValues(alpha: 0.4),
+                  color: colorScheme.onSurface.withOpacity( 0.4),
                   fontSize: 13,
                   decoration: TextDecoration.lineThrough,
                   fontWeight: FontWeight.w400,
@@ -334,7 +332,7 @@ class _DeviceWarrantyConfirmScreenState
                 selectedPlan?.displayName ??
                     '${l10n.vehicleNamePlaceholder}(${l10n.vehicleNumberPlaceholder})',
                 style: TextStyle(
-                  color: colorScheme.onSurface.withValues(alpha: 0.5),
+                  color: colorScheme.onSurface.withOpacity( 0.5),
                   fontSize: 13,
                   fontWeight: FontWeight.w400,
                 ),
@@ -353,7 +351,7 @@ class _DeviceWarrantyConfirmScreenState
           Text(
             selectedPlan?.productName ?? 'Trackify Lite',
             style: TextStyle(
-              color: colorScheme.onSurface.withValues(alpha: 0.5),
+              color: colorScheme.onSurface.withOpacity( 0.5),
               fontSize: 13,
               fontWeight: FontWeight.w400,
             ),
@@ -379,7 +377,7 @@ class _DeviceWarrantyConfirmScreenState
           child: Text(
             l10n.paymentSummary,
             style: TextStyle(
-              color: colorScheme.onSurface.withValues(alpha: 0.7),
+              color: colorScheme.onSurface.withOpacity( 0.7),
               fontSize: 14,
               fontWeight: FontWeight.w500,
             ),
@@ -389,7 +387,7 @@ class _DeviceWarrantyConfirmScreenState
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
             color: theme.cardColor,
-            border: Border.all(color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5), width: 0.5),
+            border: Border.all(color: theme.colorScheme.outlineVariant.withOpacity( 0.5), width: 0.5),
             borderRadius: BorderRadius.circular(8),
             
           ),
@@ -403,7 +401,7 @@ class _DeviceWarrantyConfirmScreenState
                     payment?.vehicleText ??
                         '${l10n.vehicleNamePlaceholder} (${l10n.vehicleNumberPlaceholder})',
                     style: TextStyle(
-                      color: colorScheme.onSurface.withValues(alpha: 0.8),
+                      color: colorScheme.onSurface.withOpacity( 0.8),
                       fontSize: 13,
                       fontWeight: FontWeight.w500,
                     ),
@@ -411,7 +409,7 @@ class _DeviceWarrantyConfirmScreenState
                   Text(
                     '${l10n.currencySymbol}${payment?.originalPrice.toInt() ?? 730}',
                     style: TextStyle(
-                      color: colorScheme.onSurface.withValues(alpha: 0.8),
+                      color: colorScheme.onSurface.withOpacity( 0.8),
                       fontSize: 13,
                       fontWeight: FontWeight.w500,
                     ),
@@ -422,7 +420,7 @@ class _DeviceWarrantyConfirmScreenState
               Text(
                 payment?.productName ?? 'Trackify Lite',
                 style: TextStyle(
-                  color: colorScheme.onSurface.withValues(alpha: 0.6),
+                  color: colorScheme.onSurface.withOpacity( 0.6),
                   fontSize: 13,
                   fontWeight: FontWeight.w400,
                 ),
@@ -434,7 +432,7 @@ class _DeviceWarrantyConfirmScreenState
                   Text(
                     payment?.discountText ?? l10n.boosterOffer,
                     style: TextStyle(
-                      color: colorScheme.onSurface.withValues(alpha: 0.5),
+                      color: colorScheme.onSurface.withOpacity( 0.5),
                       fontSize: 13,
                       fontWeight: FontWeight.w400,
                     ),
@@ -442,7 +440,7 @@ class _DeviceWarrantyConfirmScreenState
                   Text(
                     '-${l10n.currencySymbol}${payment?.discountAmount.toInt() ?? 0}',
                     style: TextStyle(
-                      color: colorScheme.onSurface.withValues(alpha: 0.5),
+                      color: colorScheme.onSurface.withOpacity( 0.5),
                       fontSize: 13,
                       fontWeight: FontWeight.w400,
                     ),
@@ -467,7 +465,7 @@ class _DeviceWarrantyConfirmScreenState
                         height: dashHeight,
                         child: DecoratedBox(
                           decoration: BoxDecoration(
-                            color: colorScheme.onSurface.withValues(alpha: 0.2),
+                            color: colorScheme.onSurface.withOpacity( 0.2),
                           ),
                         ),
                       );

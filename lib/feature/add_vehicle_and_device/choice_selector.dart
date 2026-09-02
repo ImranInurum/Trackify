@@ -102,13 +102,13 @@ class _ChoiceSelectorState extends State<ChoiceSelector> {
                   onPressed: () => LogoutConfirmationDialog.show(context),
                   icon: Icon(
                     Icons.logout,
-                    color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
+                    color: theme.colorScheme.onSurface.withOpacity( 0.5),
                     size: 20,
                   ),
                   label: Text(
                     l10n.logout,
                     style: TextStyle(
-                      color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
+                      color: theme.colorScheme.onSurface.withOpacity( 0.5),
                       fontSize: 15,
                       fontWeight: FontWeight.w500,
                     ),
@@ -137,7 +137,7 @@ class _ChoiceSelectorState extends State<ChoiceSelector> {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: theme.colorScheme.outlineVariant.withValues(alpha: 0.4),
+          color: theme.colorScheme.outlineVariant.withOpacity( 0.4),
           width: 0.8,
         ),
         gradient: LinearGradient(
@@ -145,12 +145,12 @@ class _ChoiceSelectorState extends State<ChoiceSelector> {
           end: Alignment.bottomRight,
           colors: [
             theme.colorScheme.surface,
-            theme.colorScheme.primaryContainer.withValues(alpha: 0.25),
+            theme.colorScheme.primaryContainer.withOpacity( 0.25),
           ],
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.12),
+            color: Colors.black.withOpacity( 0.12),
             blurRadius: 12,
             offset: const Offset(0, 4),
           ),
@@ -182,7 +182,7 @@ class _ChoiceSelectorState extends State<ChoiceSelector> {
                       Text(
                         subtitle,
                         style: TextStyle(
-                          color: theme.colorScheme.onSurface.withValues(alpha: 0.65),
+                          color: theme.colorScheme.onSurface.withOpacity( 0.65),
                           fontSize: 13.5,
                           height: 1.4,
                         ),
@@ -200,7 +200,7 @@ class _ChoiceSelectorState extends State<ChoiceSelector> {
                         width: imageWidth,
                         height: imageHeight,
                         decoration: BoxDecoration(
-                          color: accentColor.withValues(alpha: 0.08),
+                          color: accentColor.withOpacity( 0.08),
                           borderRadius: BorderRadius.circular(16),
                         ),
                         child: Image.asset(
@@ -209,7 +209,7 @@ class _ChoiceSelectorState extends State<ChoiceSelector> {
                           errorBuilder: (context, error, stackTrace) => Icon(
                             Icons.devices_other_outlined,
                             size: 40,
-                            color: theme.hintColor.withValues(alpha: 0.5),
+                            color: theme.hintColor.withOpacity( 0.5),
                           ),
                         ),
                       ),
@@ -220,13 +220,13 @@ class _ChoiceSelectorState extends State<ChoiceSelector> {
                       child: Container(
                         padding: const EdgeInsets.all(4),
                         decoration: BoxDecoration(
-                          color: theme.colorScheme.surface.withValues(alpha: 0.85),
+                          color: theme.colorScheme.surface.withOpacity( 0.85),
                           shape: BoxShape.circle,
                         ),
                         child: Icon(
                           Icons.arrow_forward_ios_rounded,
                           size: 12,
-                          color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                          color: theme.colorScheme.onSurface.withOpacity( 0.6),
                         ),
                       ),
                     ),

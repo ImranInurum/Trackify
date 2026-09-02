@@ -61,7 +61,7 @@ class _ManualEntryDialogState extends State<ManualEntryDialog> {
                         child: Text(
                           l10n.close,
                           style: TextStyle(
-                            color: colorScheme.onSurface.withValues(alpha: 0.7),
+                            color: colorScheme.onSurface.withOpacity( 0.7),
                             fontSize: 16,
                           ),
                         ),
@@ -113,7 +113,7 @@ class _ManualEntryDialogState extends State<ManualEntryDialog> {
           color: theme.hintColor,
         ),
         filled: true,
-        fillColor: theme.dividerColor.withValues(alpha: 0.05),
+        fillColor: theme.dividerColor.withOpacity( 0.05),
         contentPadding:
             const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         enabledBorder: OutlineInputBorder(

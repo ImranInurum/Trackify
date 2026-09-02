@@ -43,7 +43,7 @@ class TripCard extends StatelessWidget {
         decoration: BoxDecoration(
           color: theme.cardColor,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5), width: 0.5),
+          border: Border.all(color: theme.colorScheme.outlineVariant.withOpacity( 0.5), width: 0.5),
         ),
         child: Row(
           children: [
@@ -82,12 +82,12 @@ class TripCard extends StatelessWidget {
                   const SizedBox(height: 12),
                   Row(
                     children: [
-                      Icon(Icons.location_on_outlined, color: theme.colorScheme.onSurface.withValues(alpha: 0.5), size: 16),
+                      Icon(Icons.location_on_outlined, color: theme.colorScheme.onSurface.withOpacity( 0.5), size: 16),
                       const SizedBox(width: 4),
                       Text(
                         "${totalDist.toStringAsFixed(1)} ${context.displayKms}",
                         style: TextStyle(
-                          color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                          color: theme.colorScheme.onSurface.withOpacity( 0.6),
                           fontSize: 14,
                         ),
                       ),
@@ -95,15 +95,15 @@ class TripCard extends StatelessWidget {
                       Container(
                         height: 14,
                         width: 1,
-                        color: theme.dividerColor.withValues(alpha: 0.3),
+                        color: theme.dividerColor.withOpacity( 0.3),
                       ),
                       const SizedBox(width: 12),
-                      Icon(Icons.route_outlined, color: theme.colorScheme.onSurface.withValues(alpha: 0.5), size: 16),
+                      Icon(Icons.route_outlined, color: theme.colorScheme.onSurface.withOpacity( 0.5), size: 16),
                       const SizedBox(width: 4),
                       Text(
                         l10n.ridesCount(rides.length.toString()),
                         style: TextStyle(
-                          color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                          color: theme.colorScheme.onSurface.withOpacity( 0.6),
                           fontSize: 14,
                         ),
                       ),

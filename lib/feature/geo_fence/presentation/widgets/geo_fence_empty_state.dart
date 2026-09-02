@@ -40,7 +40,7 @@ class GeoFenceEmptyState extends StatelessWidget {
               AppLocalizations.of(context)!.geoFenceEmptyStateDesc,
               textAlign: TextAlign.center,
               style: TextStyle(
-                color: colorScheme.onSurface.withValues(alpha: 0.7),
+                color: colorScheme.onSurface.withOpacity( 0.7),
                 fontSize: 14,
                 height: 1.5,
               ),

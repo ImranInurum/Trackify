@@ -254,13 +254,13 @@ class _AppNavigationState extends State<AppNavigation> {
                 topRight: Radius.circular(26),
               ),
               side: BorderSide(
-                color: Theme.of(context).dividerColor.withValues(alpha: 0.5),
+                color: Theme.of(context).dividerColor.withOpacity( 0.5),
                 width: 0.8,
               ),
             ),
             shadows: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: 
+                color: Colors.black.withOpacity( 
                   Theme.of(context).brightness == Brightness.dark ? 0.3 : 0.1,
                 ),
                 blurRadius: 10,
@@ -289,7 +289,7 @@ class _AppNavigationState extends State<AppNavigation> {
                           // border: Border(top: BorderSide(color: Colors.grey, width: 0.15)),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withValues(alpha: 0.15),
+                              color: Colors.black.withOpacity( 0.15),
                               blurRadius: 20,
                               offset: const Offset(1, 0),
                             ),
@@ -300,13 +300,13 @@ class _AppNavigationState extends State<AppNavigation> {
                             colors: [
                               Theme.of(
                                 context,
-                              ).colorScheme.primaryContainer.withValues(alpha: 0.02),
+                              ).colorScheme.primaryContainer.withOpacity( 0.02),
                               Theme.of(
                                 context,
-                              ).colorScheme.primaryContainer.withValues(alpha: 0.2),
+                              ).colorScheme.primaryContainer.withOpacity( 0.2),
                               Theme.of(
                                 context,
-                              ).colorScheme.primaryContainer.withValues(alpha: 0.4),
+                              ).colorScheme.primaryContainer.withOpacity( 0.4),
                             ],
                           ),
                         ),
@@ -423,7 +423,7 @@ class _RippleNavItemState extends State<_RippleNavItem>
   Widget build(BuildContext context) {
     final iconColor = widget.isSelected
         ? Theme.of(context).colorScheme.primary
-        : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.4);
+        : Theme.of(context).colorScheme.onSurface.withOpacity( 0.4);
 
     return GestureDetector(
       behavior: HitTestBehavior.opaque,

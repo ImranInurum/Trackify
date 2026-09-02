@@ -205,7 +205,7 @@ class _AddFuelScreenState extends State<AddFuelScreen> with TickerProviderStateM
           child: ElevatedButton(
             style: ElevatedButton.styleFrom(
               backgroundColor: colorScheme.primary,
-              disabledBackgroundColor: colorScheme.onSurface.withValues(alpha: 0.12),
+              disabledBackgroundColor: colorScheme.onSurface.withOpacity( 0.12),
               shape: RoundedRectangleBorder(
                 borderRadius:
                 BorderRadius.circular(16),
@@ -264,7 +264,7 @@ class _AddFuelScreenState extends State<AddFuelScreen> with TickerProviderStateM
                 fontSize: 18,
                 color: _isFormValid 
                     ? colorScheme.onPrimary 
-                    : colorScheme.onSurface.withValues(alpha: 0.38),
+                    : colorScheme.onSurface.withOpacity( 0.38),
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -456,11 +456,11 @@ class _AddFuelScreenState extends State<AddFuelScreen> with TickerProviderStateM
                               contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(20),
-                                borderSide: BorderSide(color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5), width: 0.5),
+                                borderSide: BorderSide(color: theme.colorScheme.outlineVariant.withOpacity( 0.5), width: 0.5),
                               ),
                               enabledBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(20),
-                                borderSide: BorderSide(color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5), width: 0.5),
+                                borderSide: BorderSide(color: theme.colorScheme.outlineVariant.withOpacity( 0.5), width: 0.5),
                               ),
                               focusedBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(20),
@@ -710,7 +710,7 @@ class _AddFuelScreenState extends State<AddFuelScreen> with TickerProviderStateM
                           padding: const EdgeInsets.all(20),
                           decoration: BoxDecoration(
                             color: theme.cardColor,
-                            border: Border.all(color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5), width: 0.5),
+                            border: Border.all(color: theme.colorScheme.outlineVariant.withOpacity( 0.5), width: 0.5),
                             borderRadius: BorderRadius.circular(24),
                           ),
                           child: Column(
@@ -729,7 +729,7 @@ class _AddFuelScreenState extends State<AddFuelScreen> with TickerProviderStateM
                                 height: 60,
                                 decoration: BoxDecoration(
                                   color: theme.cardColor,
-                                  border: Border.all(color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5), width: 0.5),
+                                  border: Border.all(color: theme.colorScheme.outlineVariant.withOpacity( 0.5), width: 0.5),
                                   borderRadius: BorderRadius.circular(16),
                                 ),
                                 child: TextField(
@@ -790,7 +790,7 @@ class _AddFuelScreenState extends State<AddFuelScreen> with TickerProviderStateM
                                       l10n.fuelBeforeRefuelDesc,
                                       style: TextStyle(
                                         fontSize: 11,
-                                        color: colorScheme.onSurface.withValues(alpha: 0.6),
+                                        color: colorScheme.onSurface.withOpacity( 0.6),
                                         height: 1.4,
                                       ),
                                     ),
@@ -820,7 +820,7 @@ class _AddFuelScreenState extends State<AddFuelScreen> with TickerProviderStateM
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: theme.cardColor,
-        border: Border.all(color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5), width: 0.5),
+        border: Border.all(color: theme.colorScheme.outlineVariant.withOpacity( 0.5), width: 0.5),
         borderRadius:
         BorderRadius.circular(28),
       ),
@@ -856,7 +856,7 @@ class _AddFuelScreenState extends State<AddFuelScreen> with TickerProviderStateM
           ),
           decoration: BoxDecoration(
             color: theme.cardColor,
-            border: Border.all(color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5), width: 0.5),
+            border: Border.all(color: theme.colorScheme.outlineVariant.withOpacity( 0.5), width: 0.5),
             borderRadius:
             BorderRadius.circular(
               20,
@@ -911,13 +911,13 @@ class _AddFuelScreenState extends State<AddFuelScreen> with TickerProviderStateM
       border: OutlineInputBorder(
         borderRadius:
         BorderRadius.circular(20),
-        borderSide: BorderSide(color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5), width: 0.5),
+        borderSide: BorderSide(color: theme.colorScheme.outlineVariant.withOpacity( 0.5), width: 0.5),
       ),
 
       enabledBorder: OutlineInputBorder(
         borderRadius:
         BorderRadius.circular(20),
-        borderSide: BorderSide(color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5), width: 0.5),
+        borderSide: BorderSide(color: theme.colorScheme.outlineVariant.withOpacity( 0.5), width: 0.5),
       ),
 
       focusedBorder: OutlineInputBorder(
@@ -950,7 +950,7 @@ class _AddFuelScreenState extends State<AddFuelScreen> with TickerProviderStateM
           color: colorScheme.primary,
           width: 1.5,
         )
-            : Border.all(color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5), width: 0.5),
+            : Border.all(color: theme.colorScheme.outlineVariant.withOpacity( 0.5), width: 0.5),
       ),
 
       child: Row(

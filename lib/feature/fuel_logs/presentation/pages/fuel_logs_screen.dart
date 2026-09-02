@@ -178,7 +178,7 @@ class _FuelLogsScreenState extends State<FuelLogsScreen>
                     padding: const EdgeInsets.all(4),
                     decoration: BoxDecoration(
                       color: theme.cardColor,
-                      border: Border.all(color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5), width: 0.5),
+                      border: Border.all(color: theme.colorScheme.outlineVariant.withOpacity( 0.5), width: 0.5),
                       borderRadius: BorderRadius.circular(16),
                     ),
                     child: TabBar(
@@ -186,7 +186,7 @@ class _FuelLogsScreenState extends State<FuelLogsScreen>
                       indicatorSize: TabBarIndicatorSize.tab,
                       dividerColor: Colors.transparent,
                       indicator: BoxDecoration(
-                        color: theme.colorScheme.surfaceContainerHighest,
+                        color: theme.colorScheme.surfaceVariant,
                         borderRadius: BorderRadius.circular(12),
                       ),
                       labelColor: theme.primaryColor,

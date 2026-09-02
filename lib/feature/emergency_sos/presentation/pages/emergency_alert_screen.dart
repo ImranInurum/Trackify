@@ -143,12 +143,12 @@ class _EmergencyAlertScreenState extends State<EmergencyAlertScreen> {
   }) {
     return Material(
       color: isPrimary
-          ? colorScheme.error.withValues(alpha: 0.05)
-          : colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
+          ? colorScheme.error.withOpacity( 0.05)
+          : colorScheme.surfaceVariant.withOpacity( 0.3),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
         side: BorderSide(
-          color: isPrimary ? colorScheme.error.withValues(alpha: 0.5) : colorScheme.outlineVariant.withValues(alpha: 0.5),
+          color: isPrimary ? colorScheme.error.withOpacity( 0.5) : colorScheme.outlineVariant.withOpacity( 0.5),
         ),
       ),
       child: ListTile(
@@ -158,8 +158,8 @@ class _EmergencyAlertScreenState extends State<EmergencyAlertScreen> {
           padding: const EdgeInsets.all(10),
           decoration: BoxDecoration(
             color: isPrimary
-                ? colorScheme.error.withValues(alpha: 0.15)
-                : colorScheme.primary.withValues(alpha: 0.15),
+                ? colorScheme.error.withOpacity( 0.15)
+                : colorScheme.primary.withOpacity( 0.15),
             shape: BoxShape.circle,
           ),
           child: Icon(

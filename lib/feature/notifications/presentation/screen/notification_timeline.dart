@@ -146,7 +146,7 @@ class _NotificationTimelineViewState extends State<NotificationTimelineView> {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Icon(Icons.notifications_off_outlined, size: 64, color: secondaryTextColor.withValues(alpha: 0.5)),
+                            Icon(Icons.notifications_off_outlined, size: 64, color: secondaryTextColor.withOpacity( 0.5)),
                             const SizedBox(height: 16),
                             Text(
                               AppLocalizations.of(context)!.noRecordsFound,

@@ -81,7 +81,7 @@ class DashboardTabView extends StatelessWidget {
             child: Text(
               l10n.noDataAvailable,
               style: TextStyle(
-                color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
+                color: theme.colorScheme.onSurface.withOpacity( 0.5),
                 fontSize: 14,
               ),
             ),

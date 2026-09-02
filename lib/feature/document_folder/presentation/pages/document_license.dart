@@ -473,7 +473,7 @@ class _DocumentLicenseState extends State<DocumentLicense> {
                           padding: const EdgeInsets.symmetric(horizontal: 14),
                           decoration: BoxDecoration(
                             color: Theme.of(context).cardColor,
-                            border: Border.all(color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5), width: 0.5),
+                            border: Border.all(color: Theme.of(context).colorScheme.outlineVariant.withOpacity( 0.5), width: 0.5),
                             borderRadius: BorderRadius.circular(10),
                           ),
                           child: Row(
@@ -508,7 +508,7 @@ class _DocumentLicenseState extends State<DocumentLicense> {
                         style: TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeightManager.medium,
-                          color: colorScheme.onSurface.withValues(alpha: 0.5),
+                          color: colorScheme.onSurface.withOpacity( 0.5),
                         ),),
 
                       const SizedBox(height: 20),
@@ -529,7 +529,7 @@ class _DocumentLicenseState extends State<DocumentLicense> {
                         l10n.fileSizeNote,style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeightManager.medium,
-                        color: colorScheme.onSurface.withValues(alpha: 0.7),
+                        color: colorScheme.onSurface.withOpacity( 0.7),
                       ),
                       ),
 
@@ -538,7 +538,7 @@ class _DocumentLicenseState extends State<DocumentLicense> {
                       Text(
                         l10n.commitmentText,
                         style: TextStyle(
-                            color: colorScheme.onSurface.withValues(alpha: 0.3),
+                            color: colorScheme.onSurface.withOpacity( 0.3),
                             fontSize: 18,
                             fontWeight: FontWeightManager.medium),
                       ),
@@ -641,7 +641,7 @@ class _DocumentLicenseState extends State<DocumentLicense> {
         height: size.width * 0.32,
         decoration: BoxDecoration(
           color: Theme.of(context).cardColor,
-          border: Border.all(color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5), width: 0.5),
+          border: Border.all(color: Theme.of(context).colorScheme.outlineVariant.withOpacity( 0.5), width: 0.5),
           borderRadius: BorderRadius.circular(12),
            
           ),

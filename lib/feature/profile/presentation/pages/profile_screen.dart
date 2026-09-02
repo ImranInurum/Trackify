@@ -254,7 +254,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 style: TextStyle(
                                   color: Theme.of(
                                     context,
-                                  ).colorScheme.onSurface.withValues(alpha: 0.6),
+                                  ).colorScheme.onSurface.withOpacity( 0.6),
                                 ),
                               ),
                               const SizedBox(height: 2),
@@ -263,7 +263,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 style: TextStyle(
                                   color: Theme.of(
                                     context,
-                                  ).colorScheme.onSurface.withValues(alpha: 0.6),
+                                  ).colorScheme.onSurface.withOpacity( 0.6),
                                 ),
                               ),
                             ],
@@ -274,7 +274,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           size: 40,
                           color: Theme.of(
                             context,
-                          ).colorScheme.onSurface.withValues(alpha: 0.3),
+                          ).colorScheme.onSurface.withOpacity( 0.3),
                         ),
                       ],
                     ),
@@ -385,15 +385,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         decoration: BoxDecoration(
                           gradient: LinearGradient(
                             colors: [
-                              Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
-                              Theme.of(context).colorScheme.secondary.withValues(alpha: 0.05),
+                              Theme.of(context).colorScheme.primary.withOpacity( 0.1),
+                              Theme.of(context).colorScheme.secondary.withOpacity( 0.05),
                             ],
                             begin: Alignment.topLeft,
                             end: Alignment.bottomRight,
                           ),
                           borderRadius: BorderRadius.circular(16),
                           border: Border.all(
-                            color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.2),
+                            color: Theme.of(context).colorScheme.primary.withOpacity( 0.2),
                           ),
                         ),
                         child: Row(
@@ -450,7 +450,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     style: TextStyle(
                                       color: Theme.of(
                                         context,
-                                      ).colorScheme.onSurface.withValues(alpha: 0.6),
+                                      ).colorScheme.onSurface.withOpacity( 0.6),
                                       fontSize: 12,
                                     ),
                                   ),
@@ -461,7 +461,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               Icons.chevron_right,
                               color: Theme.of(
                                 context,
-                              ).colorScheme.onSurface.withValues(alpha: 0.3),
+                              ).colorScheme.onSurface.withOpacity( 0.3),
                             ),
                           ],
                         ),
@@ -610,7 +610,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   decoration: BoxDecoration(
                     color: Theme.of(context).cardColor,
-                    border: Border.all(color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5), width: 0.5),
+                    border: Border.all(color: Theme.of(context).colorScheme.outlineVariant.withOpacity( 0.5), width: 0.5),
                     borderRadius: BorderRadius.circular(18),
                     boxShadow: const [
                       BoxShadow(color: Colors.black12, blurRadius: 6),
@@ -686,7 +686,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                   decoration: BoxDecoration(
                     color: Theme.of(context).cardColor,
-                    border: Border.all(color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5), width: 0.5),
+                    border: Border.all(color: Theme.of(context).colorScheme.outlineVariant.withOpacity( 0.5), width: 0.5),
                     borderRadius: BorderRadius.circular(18),
                     boxShadow: const [
                       BoxShadow(color: Colors.black12, blurRadius: 6),
@@ -804,7 +804,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         style: TextStyle(
                           color: Theme.of(
                             context,
-                          ).colorScheme.onSurface.withValues(alpha: 0.6),
+                          ).colorScheme.onSurface.withOpacity( 0.6),
                           fontSize: 13,
                         ),
                       ),
@@ -816,7 +816,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   size: 18,
                   color: Theme.of(
                     context,
-                  ).colorScheme.onSurface.withValues(alpha: 0.3),
+                  ).colorScheme.onSurface.withOpacity( 0.3),
                 ),
               ],
             ),

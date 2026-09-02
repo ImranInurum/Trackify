@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:trackify/core/utils/flutter_compat_extensions.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../l10n/app_localizations.dart';
@@ -80,7 +81,7 @@ class _BookCallSlotScreenState
               style: ElevatedButton.styleFrom(
                 backgroundColor: colorScheme.primary,
                 disabledBackgroundColor:
-                colorScheme.onSurface.withValues(alpha: 0.12),
+                colorScheme.onSurface.withOpacity( 0.12),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(40),
                 ),
@@ -229,7 +230,7 @@ class _BookCallSlotScreenState
                           Container(
                             padding: const EdgeInsets.all(8),
                             decoration: BoxDecoration(
-                              color: colorScheme.surfaceContainerHighest,
+                              color: colorScheme.surfaceVariant,
                               borderRadius:
                               BorderRadius.circular(18),
                             ),
@@ -401,7 +402,7 @@ class _BookCallSlotScreenState
                                   alignment: Alignment.center,
                                   decoration: BoxDecoration(
                                     color: isDisabled
-                                        ? colorScheme.onSurface.withValues(alpha: 0.10)
+                                        ? colorScheme.onSurface.withOpacity( 0.10)
                                         : (isSelected
                                         ? colorScheme.primary
                                         : colorScheme.surface),
@@ -409,7 +410,7 @@ class _BookCallSlotScreenState
                                     border: Border.all(
                                       color: isDisabled
                                           ? Colors.transparent
-                                          : colorScheme.outline.withValues(alpha: 0.3),
+                                          : colorScheme.outline.withOpacity( 0.3),
                                     ),
                                   ),
                                   child: Column(

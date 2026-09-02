@@ -82,7 +82,7 @@ class _AddInventoryScreenState extends State<AddInventoryScreen>
       context: context,
       useRootNavigator: false,
       barrierDismissible: true,
-      barrierColor: Colors.black.withValues(alpha: 0.8),
+      barrierColor: Colors.black.withOpacity( 0.8),
       builder: (dialogContext) => const ManualEntryDialog(vehicleId: ''),
     );
 
@@ -136,7 +136,7 @@ class _AddInventoryScreenState extends State<AddInventoryScreen>
                       Container(
                         padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
-                          color: (appColors?.success ?? Colors.green).withValues(alpha: 0.1),
+                          color: (appColors?.success ?? Colors.green).withOpacity( 0.1),
                           shape: BoxShape.circle,
                         ),
                         child: Icon(
@@ -157,7 +157,7 @@ class _AddInventoryScreenState extends State<AddInventoryScreen>
                         state.message,
                         textAlign: TextAlign.center,
                         style: theme.textTheme.bodyLarge?.copyWith(
-                          color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+                          color: theme.colorScheme.onSurface.withOpacity( 0.7),
                         ),
                       ),
                       const SizedBox(height: 32.0),
@@ -230,7 +230,7 @@ class _AddInventoryScreenState extends State<AddInventoryScreen>
                       Container(
                         padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
-                          color: theme.colorScheme.error.withValues(alpha: 0.1),
+                          color: theme.colorScheme.error.withOpacity( 0.1),
                           shape: BoxShape.circle,
                         ),
                         child: Icon(
@@ -251,7 +251,7 @@ class _AddInventoryScreenState extends State<AddInventoryScreen>
                         state.message,
                         textAlign: TextAlign.center,
                         style: theme.textTheme.bodyLarge?.copyWith(
-                          color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+                          color: theme.colorScheme.onSurface.withOpacity( 0.7),
                         ),
                       ),
                       const SizedBox(height: 32.0),
@@ -383,7 +383,7 @@ class _AddInventoryScreenState extends State<AddInventoryScreen>
                                                         borderRadius: BorderRadius.circular(2),
                                                         boxShadow: [
                                                           BoxShadow(
-                                                            color: theme.colorScheme.secondary.withValues(alpha: 0.6),
+                                                            color: theme.colorScheme.secondary.withOpacity( 0.6),
                                                             blurRadius: 12,
                                                             spreadRadius: 3,
                                                           ),
@@ -407,7 +407,7 @@ class _AddInventoryScreenState extends State<AddInventoryScreen>
                                               Container(
                                                 padding: const EdgeInsets.all(16),
                                                 decoration: BoxDecoration(
-                                                  color: Colors.green.withValues(alpha: 0.2),
+                                                  color: Colors.green.withOpacity( 0.2),
                                                   shape: BoxShape.circle,
                                                 ),
                                                 child: const Icon(
@@ -420,7 +420,7 @@ class _AddInventoryScreenState extends State<AddInventoryScreen>
                                               Container(
                                                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                                                 decoration: BoxDecoration(
-                                                  color: Colors.white.withValues(alpha: 0.1),
+                                                  color: Colors.white.withOpacity( 0.1),
                                                   borderRadius: BorderRadius.circular(20),
                                                   border: Border.all(color: Colors.white24),
                                                 ),
@@ -442,7 +442,7 @@ class _AddInventoryScreenState extends State<AddInventoryScreen>
                                         if (state is InventoryLoading) {
                                           return Container(
                                             decoration: BoxDecoration(
-                                              color: theme.colorScheme.surface.withValues(alpha: 0.8),
+                                              color: theme.colorScheme.surface.withOpacity( 0.8),
                                               borderRadius: BorderRadius.circular(12),
                                             ),
                                             child: Center(
@@ -454,7 +454,7 @@ class _AddInventoryScreenState extends State<AddInventoryScreen>
                                                   Text(
                                                     'Adding Inventory...',
                                                     style: theme.textTheme.bodyMedium?.copyWith(
-                                                      color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+                                                      color: theme.colorScheme.onSurface.withOpacity( 0.7),
                                                     ),
                                                   ),
                                                 ],
@@ -499,7 +499,7 @@ class _AddInventoryScreenState extends State<AddInventoryScreen>
                 child: CommonButton(
                   text: 'Scan Next',
                   backgroundColor: theme.colorScheme.secondary,
-                  disabledBackgroundColor: theme.hintColor.withValues(alpha: 0.3),
+                  disabledBackgroundColor: theme.hintColor.withOpacity( 0.3),
                   disabledForegroundColor: Colors.white54,
                   foregroundColor: theme.colorScheme.onSecondary,
                   borderRadius: 8,

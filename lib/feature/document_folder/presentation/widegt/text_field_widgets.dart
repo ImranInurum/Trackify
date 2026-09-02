@@ -58,13 +58,13 @@ class TextFieldWidgets extends StatelessWidget {
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
           borderSide: BorderSide(
-            color: colorScheme.outlineVariant.withValues(alpha: 0.2),
+            color: colorScheme.outlineVariant.withOpacity( 0.2),
           ),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
           borderSide: BorderSide(
-            color: colorScheme.outlineVariant.withValues(alpha: 0.2),
+            color: colorScheme.outlineVariant.withOpacity( 0.2),
           ),
         ),
         focusedBorder: OutlineInputBorder(

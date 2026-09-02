@@ -153,7 +153,7 @@ class PrivacyScreen extends StatelessWidget {
                         hintStyle: TextStyle(
                           color: Theme.of(
                             context,
-                          ).colorScheme.onSurface.withValues(alpha: 0.5),
+                          ).colorScheme.onSurface.withOpacity( 0.5),
                           fontSize: 14,
                           fontWeight: FontWeight.w400,
                         ),
@@ -161,7 +161,7 @@ class PrivacyScreen extends StatelessWidget {
                           borderSide: BorderSide(
                             color: Theme.of(
                               context,
-                            ).colorScheme.onSurface.withValues(alpha: 0.5),
+                            ).colorScheme.onSurface.withOpacity( 0.5),
                           ),
                         ),
                         focusedBorder: UnderlineInputBorder(
@@ -186,7 +186,7 @@ class PrivacyScreen extends StatelessWidget {
                         hintStyle: TextStyle(
                           color: Theme.of(
                             context,
-                          ).colorScheme.onSurface.withValues(alpha: 0.5),
+                          ).colorScheme.onSurface.withOpacity( 0.5),
                           fontSize: 14,
                           fontWeight: FontWeight.w400,
                         ),
@@ -194,7 +194,7 @@ class PrivacyScreen extends StatelessWidget {
                           borderSide: BorderSide(
                             color: Theme.of(
                               context,
-                            ).colorScheme.onSurface.withValues(alpha: 0.5),
+                            ).colorScheme.onSurface.withOpacity( 0.5),
                           ),
                         ),
                         focusedBorder: UnderlineInputBorder(
@@ -219,7 +219,7 @@ class PrivacyScreen extends StatelessWidget {
                         hintStyle: TextStyle(
                           color: Theme.of(
                             context,
-                          ).colorScheme.onSurface.withValues(alpha: 0.5),
+                          ).colorScheme.onSurface.withOpacity( 0.5),
                           fontSize: 14,
                           fontWeight: FontWeight.w400,
                         ),
@@ -227,7 +227,7 @@ class PrivacyScreen extends StatelessWidget {
                           borderSide: BorderSide(
                             color: Theme.of(
                               context,
-                            ).colorScheme.onSurface.withValues(alpha: 0.5),
+                            ).colorScheme.onSurface.withOpacity( 0.5),
                           ),
                         ),
                         focusedBorder: UnderlineInputBorder(
