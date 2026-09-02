@@ -197,7 +197,7 @@ class _NotificationFilterScreenState extends State<NotificationFilterScreen> {
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(4),
                 border: Border.all(
-                  color: isSelected ? activeColor : secondaryColor.withValues(alpha: 0.5),
+                  color: isSelected ? activeColor : secondaryColor.withOpacity(0.5),
                   width: 2,
                 ),
                 color: isSelected ? activeColor : Colors.transparent,

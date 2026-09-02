@@ -138,7 +138,7 @@ class AccessoryBillDetailsScreen extends StatelessWidget {
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
                 color: theme.cardColor,
-                border: Border.all(color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5), width: 0.5),
+                border: Border.all(color: theme.colorScheme.outlineVariant.withOpacity(0.5), width: 0.5),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Column(
@@ -222,7 +222,7 @@ class AccessoryBillDetailsScreen extends StatelessWidget {
                           borderRadius: BorderRadius.circular(12),
                           child: imageUrl.toLowerCase().endsWith('.pdf')
                               ? Container(
-                                  color: colorScheme.surfaceContainerHighest,
+                                  color: colorScheme.surfaceVariant,
                                   child: Column(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [

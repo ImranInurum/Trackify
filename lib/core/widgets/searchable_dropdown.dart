@@ -68,7 +68,7 @@ class _SearchableDropdownState<T> extends State<SearchableDropdown<T>> {
               widget.label,
               style: theme.textTheme.labelMedium?.copyWith(
                 fontWeight: FontWeight.w500,
-                color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                color: theme.colorScheme.onSurface.withOpacity(0.6),
               ),
             ),
             if (widget.isLoading)
@@ -94,7 +94,7 @@ class _SearchableDropdownState<T> extends State<SearchableDropdown<T>> {
             decoration: BoxDecoration(
               color: Colors.transparent,
               borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: theme.colorScheme.onSurface.withValues(alpha: 0.12)),
+              border: Border.all(color: theme.colorScheme.onSurface.withOpacity(0.12)),
             ),
             padding: const EdgeInsets.symmetric(horizontal: 14),
             child: Theme(
@@ -109,7 +109,7 @@ class _SearchableDropdownState<T> extends State<SearchableDropdown<T>> {
                   hint: Text(
                     widget.hint ?? widget.label,
                     style: TextStyle(
-                      color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
+                      color: theme.colorScheme.onSurface.withOpacity(0.5),
                       fontSize: 14,
                     ),
                   ),
