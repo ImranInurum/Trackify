@@ -1,3 +1,5 @@
+import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:trackify/l10n/app_localizations.dart';
@@ -23,6 +25,60 @@ class _UpgradeToPlusScreenState extends State<UpgradeToPlusScreen> {
 
   final GlobalKey _topButtonKey = GlobalKey();
   final GlobalKey _bottomButtonKey = GlobalKey();
+
+  // =========================================================================
+  // [NEW CODE - Platform condition for Guideline 3.1.1 (Payments / In-App Purchase)]
+  // =========================================================================
+  void _handleUpgradePress(BuildContext context) {
+    if (!kIsWeb && Platform.isIOS) {
+      // On iOS: Display compliant information dialog to comply with Apple Guideline 3.1.1
+      showDialog(
+        context: context,
+        builder: (dialogCtx) => AlertDialog(
+          backgroundColor: const Color(0xFF1A1A1A),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+            side: BorderSide(
+              color: AppColors.goldStart.withValues(alpha: 0.4),
+            ),
+          ),
+          title: const Row(
+            children: [
+              Icon(Icons.workspace_premium, color: AppColors.goldStart),
+              SizedBox(width: 8),
+              Text(
+                "Trackify Plus",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
+                ),
+              ),
+            ],
+          ),
+          content: const Text(
+            "Trackify Plus features and subscriptions are managed via your account portal.\n\nIn-App Purchase integration on iOS will be available in an upcoming update.",
+            style: TextStyle(color: Colors.white70, fontSize: 14, height: 1.4),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(dialogCtx),
+              child: const Text(
+                "OK",
+                style: TextStyle(
+                  color: AppColors.goldStart,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    } else {
+      // On Android / Web: Proceed with existing upgrade flow
+      context.read<UpgradeToPlusCubit>().upgradeToPlus();
+    }
+  }
 
   @override
   void initState() {
@@ -231,6 +287,10 @@ class _UpgradeToPlusScreenState extends State<UpgradeToPlusScreen> {
                               ),
                               _buildViewMoreButton(l10n),
                               SizedBox(height: screenHeight * 0.025),
+                              /*
+                              // =========================================================================
+                              // [OLD CODE - Direct Upgrade to Plus without iOS StoreKit Compliance check]
+                              // =========================================================================
                               _buildPremiumButton(
                                 key: _bottomButtonKey,
                                 text: l10n.upgradeNowAtJust(
@@ -238,6 +298,19 @@ class _UpgradeToPlusScreenState extends State<UpgradeToPlusScreen> {
                                 onPressed: () => context
                                     .read<UpgradeToPlusCubit>()
                                     .upgradeToPlus(),
+                                height: screenHeight * 0.07,
+                              ),
+                              */
+                              // =========================================================================
+                              // [NEW CODE - Platform aware Upgrade to Plus button]
+                              // =========================================================================
+                              _buildPremiumButton(
+                                key: _bottomButtonKey,
+                                text: (!kIsWeb && Platform.isIOS)
+                                    ? l10n.plusMembershipTitle
+                                    : l10n.upgradeNowAtJust(
+                                        details.currentPrice.toInt().toString()),
+                                onPressed: () => _handleUpgradePress(context),
                                 height: screenHeight * 0.07,
                               ),
                               SizedBox(height: screenHeight * 0.06),
@@ -329,10 +402,27 @@ class _UpgradeToPlusScreenState extends State<UpgradeToPlusScreen> {
           bottom: show ? 20 : -100,
           left: screenWidth * 0.05,
           right: screenWidth * 0.05,
+          /*
+          // =========================================================================
+          // [OLD CODE - Sticky Button direct upgrade]
+          // =========================================================================
           child: _buildPremiumButton(
             text: l10n.upgradeNowAtJust(
                 details.currentPrice.toInt().toString()),
             onPressed: () => context.read<UpgradeToPlusCubit>().upgradeToPlus(),
+            isSticky: true,
+            height: screenHeight * 0.07,
+          ),
+          */
+          // =========================================================================
+          // [NEW CODE - Sticky Button with platform condition]
+          // =========================================================================
+          child: _buildPremiumButton(
+            text: (!kIsWeb && Platform.isIOS)
+                ? l10n.plusMembershipTitle
+                : l10n.upgradeNowAtJust(
+                    details.currentPrice.toInt().toString()),
+            onPressed: () => _handleUpgradePress(context),
             isSticky: true,
             height: screenHeight * 0.07,
           ),
@@ -522,11 +612,27 @@ class _UpgradeToPlusScreenState extends State<UpgradeToPlusScreen> {
                 ],
               ),
               const SizedBox(height: 30),
+              /*
+              // =========================================================================
+              // [OLD CODE - Pricing Card direct upgrade]
+              // =========================================================================
               _buildPremiumButton(
                 key: _topButtonKey,
                 text: l10n.upgradeToPlus,
                 onPressed: () =>
                     context.read<UpgradeToPlusCubit>().upgradeToPlus(),
+                height: screenHeight * 0.07,
+              ),
+              */
+              // =========================================================================
+              // [NEW CODE - Pricing Card with platform condition]
+              // =========================================================================
+              _buildPremiumButton(
+                key: _topButtonKey,
+                text: (!kIsWeb && Platform.isIOS)
+                    ? l10n.plusMembershipTitle
+                    : l10n.upgradeToPlus,
+                onPressed: () => _handleUpgradePress(context),
                 height: screenHeight * 0.07,
               ),
             ],

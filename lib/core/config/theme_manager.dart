@@ -93,7 +93,7 @@ class ThemeManager {
         ),
       ),
       
-      cardTheme: CardTheme(
+      cardTheme: CardThemeData(
         color: config.card.color,
         elevation: config.card.elevation,
         shadowColor: colors.shadow,
@@ -183,7 +183,7 @@ class ThemeManager {
         color: Colors.black,
       ),
     ),
-    cardTheme: CardTheme(
+    cardTheme: CardThemeData(
       color: AppColors.cardLight,
       elevation: 2,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -246,7 +246,7 @@ class ThemeManager {
         color: Colors.white,
       ),
     ),
-    cardTheme: CardTheme(
+    cardTheme: CardThemeData(
       color: AppColors.cardDark,
       elevation: 2,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),

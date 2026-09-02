@@ -1,8 +1,10 @@
+import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:trackify/core/utils/flutter_compat_extensions.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:trackify/feature/settings/presentation/pages/notification_settings.dart';
 import 'package:trackify/feature/settings/presentation/pages/privacy_screen.dart';
+import 'package:trackify/feature/settings/presentation/pages/delete_account_screen.dart';
 import 'package:trackify/feature/settings/presentation/widgets/setting_list_tile.dart';
 import 'package:trackify/l10n/app_localizations.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -277,6 +279,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 },
               ),
 */
+            /*
+            // =========================================================================
+            // [OLD CODE - Direct Play Store link without iOS check & without Delete Account tile]
+            // =========================================================================
             if (_isVisible(l10n.rateUsOnPlayStore))
               SettingListTile(
                 icon: Icons.play_arrow_outlined,
@@ -299,6 +305,55 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       );
                     }
                   }
+                },
+              ),
+            */
+
+            // =========================================================================
+            // [NEW CODE - Only show Play Store link on Android, Hide on iOS]
+            // =========================================================================
+            if ((kIsWeb || !Platform.isIOS) && _isVisible(l10n.rateUsOnPlayStore))
+              SettingListTile(
+                icon: Icons.play_arrow_outlined,
+                title: l10n.rateUsOnPlayStore,
+                subtitle: l10n.rateUsOnPlayStoreDesc,
+                showArrow: false,
+                showIcon: true,
+                onTap: () async {
+                  final url = Uri.parse(
+                    'https://play.google.com/store/apps/details?id=com.trackify.mytrackmate.trackify',
+                  );
+                  if (await canLaunchUrl(url)) {
+                    await launchUrl(url, mode: LaunchMode.externalApplication);
+                  } else {
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Could not open the Play Store'),
+                        ),
+                      );
+                    }
+                  }
+                },
+              ),
+
+            // =========================================================================
+            // [NEW CODE - Direct Delete Account option in Settings for Guideline 5.1.1]
+            // =========================================================================
+            if (_isVisible(l10n.deleteAccountTitle))
+              SettingListTile(
+                icon: Icons.person_remove_outlined,
+                title: l10n.deleteAccountTitle,
+                subtitle: l10n.deleteAccountSubtitle,
+                showArrow: true,
+                showIcon: true,
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const DeleteAccountScreen(),
+                    ),
+                  );
                 },
               ),
 

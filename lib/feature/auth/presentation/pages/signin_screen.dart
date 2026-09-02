@@ -1,6 +1,8 @@
+import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:trackify/core/utils/flutter_compat_extensions.dart';
+import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:trackify/feature/add_vehicle_and_device/choice_selector.dart';
 import 'package:trackify/feature/auth/presentation/pages/signup_screen.dart';
@@ -475,6 +477,73 @@ class _SignInScreenState extends State<SignInScreen> {
                             ],
                           ),
                           const SizedBox(height: 20),
+
+                          /*
+                          // =========================================================================
+                          // [OLD CODE - Single Google Sign In Button without Sign in with Apple on iOS]
+                          // =========================================================================
+                          OutlinedButton(
+                            onPressed: (state is AuthLoading || _isNavigating)
+                                ? null
+                                : () =>
+                                    context.read<AuthCubit>().loginWithGoogle(),
+                            style: OutlinedButton.styleFrom(
+                              minimumSize: const Size(double.infinity, 50),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              side: BorderSide(
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .onSurface
+                                    .withValues(alpha: 0.15),
+                                width: 1.2,
+                              ),
+                              backgroundColor: Theme.of(context)
+                                  .colorScheme
+                                  .surface,
+                              elevation: 0,
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                SvgPicture.asset(
+                                  AppImages.googleIcon,
+                                  height: 22,
+                                  width: 22,
+                                ),
+                                const SizedBox(width: 12),
+                                Text(
+                                  'Continue with Google',
+                                  style: TextStyle(
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w600,
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .onSurface,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          */
+
+                          // =========================================================================
+                          // [NEW CODE - Platform condition: Sign in with Apple only on iOS devices (Guideline 4.8)]
+                          // =========================================================================
+                          if (!kIsWeb && Platform.isIOS) ...[
+                            SignInWithAppleButton(
+                              onPressed: (state is AuthLoading || _isNavigating)
+                                  ? () {}
+                                  : () => context.read<AuthCubit>().loginWithApple(),
+                              height: 50,
+                              borderRadius: const BorderRadius.all(Radius.circular(10)),
+                              style: Theme.of(context).brightness == Brightness.dark
+                                  ? SignInWithAppleButtonStyle.white
+                                  : SignInWithAppleButtonStyle.black,
+                            ),
+                            const SizedBox(height: 14),
+                          ],
                           OutlinedButton(
                             onPressed: (state is AuthLoading || _isNavigating)
                                 ? null

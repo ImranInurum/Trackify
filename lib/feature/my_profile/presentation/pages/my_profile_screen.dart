@@ -12,6 +12,7 @@ import 'package:trackify/core/config/network/api_host.dart';
 import 'package:trackify/feature/auth/data/entity/login_response_model.dart';
 
 import 'edit_profile_screen.dart';
+import 'package:trackify/feature/settings/presentation/pages/delete_account_screen.dart';
 import 'package:trackify/core/widgets/trackify_loader.dart';
 import 'package:trackify/feature/document_folder/presentation/pages/document_screen.dart';
 import 'package:trackify/feature/Vehicle_control/presentation/pages/vehicle_control_screen.dart';
@@ -680,7 +681,33 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                       ],
                     ),
                   ),
-                  const SizedBox(height: 32),
+                  const SizedBox(height: 24),
+
+                  // =========================================================================
+                  // [NEW CODE - Delete Account option in Profile Screen (Guideline 5.1.1)]
+                  // =========================================================================
+                  Center(
+                    child: TextButton.icon(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const DeleteAccountScreen(),
+                          ),
+                        );
+                      },
+                      icon: const Icon(Icons.person_remove_outlined, color: Colors.redAccent, size: 18),
+                      label: Text(
+                        l10n.deleteAccountTitle,
+                        style: const TextStyle(
+                          color: Colors.redAccent,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 24),
                 ],
               ),
             );

@@ -8,6 +8,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
 import '../../../../core/services/google_auth_service.dart';
+import '../../../../core/services/apple_auth_service.dart';
 import '../../../../core/utils/shared_preferences.dart';
 import '../../../../core/widgets/loading_screen_ol.dart';
 import '../../domain/usecase/auth_case.dart';
@@ -226,6 +227,74 @@ class AuthCubit extends Cubit<AuthState> {
       } else {}
     } catch (e) {
       print("Google Login Failed ${e.toString()}");
+    }
+  }
+
+  // ==========================================
+  // [NEW CODE] Apple Sign In (iOS / Guideline 4.8)
+  // ==========================================
+  Future<void> loginWithApple() async {
+    try {
+      final appleResult = await AppleAuthService.instance.signInWithApple();
+
+      if (appleResult != null && appleResult.userIdentifier.isNotEmpty) {
+        LoadingScreenOL().show();
+        emit(AuthLoading());
+
+        final devInfo = await _getDeviceInfo();
+        var fcmToken = await AppPreference.instance.get(key: AppPreference.KEY_FCM_TOKEN);
+        if (fcmToken.isEmpty) {
+          try {
+            fcmToken = await FirebaseMessaging.instance.getToken() ?? "";
+            if (fcmToken.isNotEmpty) {
+              await AppPreference.instance.set(key: AppPreference.KEY_FCM_TOKEN, value: fcmToken);
+            }
+          } catch (e) {
+            debugPrint('Error fetching FCM token: $e');
+          }
+        }
+
+        final body = {
+          "name": appleResult.name.isNotEmpty ? appleResult.name : "Apple User",
+          "email": appleResult.email.isNotEmpty ? appleResult.email : "${appleResult.userIdentifier}@privaterelay.appleid.com",
+          "socialId": appleResult.userIdentifier,
+          "deviceModel": devInfo['deviceModel'],
+          "osVersion": devInfo['osVersion'],
+          "fcmToken": fcmToken,
+        };
+
+        final result = await _authCase.socialLoginCall(body);
+
+        result.fold(
+          (failure) {
+            emit(AuthFailure(failure));
+          },
+          (user) async {
+            final prefs = AppPreference.instance;
+            await prefs.set(
+              key: AppPreference.KEY_TOKEN,
+              value: user.token ?? "",
+            );
+            await prefs.set(
+              key: AppPreference.KEY_USER_ID,
+              value: user.user?.id ?? "",
+            );
+            await prefs.set(
+              key: AppPreference.KEY_USER_DETAILS,
+              value: jsonEncode(user.user?.toJson()),
+            );
+            ApiURL.updateAuthToken(user.token ?? "");
+
+            await _updateFcmToken(user.user?.id ?? "");
+
+            emit(AuthSuccess(user));
+          },
+        );
+      }
+    } catch (e) {
+      debugPrint("Apple Login Failed: $e");
+    } finally {
+      LoadingScreenOL().hide();
     }
   }
 
