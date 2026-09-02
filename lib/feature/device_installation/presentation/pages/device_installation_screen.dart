@@ -17,7 +17,6 @@ import '../../../../feature/profile/presentation/cubit/profile_state.dart';
 import '../../../../app/app_navigation.dart';
 import '../../../../feature/map/presentation/cubit/map_cubit.dart';
 import '../../../../core/utils/shared_preferences.dart';
-import '../../../../core/common/models/vehicle_list_model.dart';
 
 class DeviceInstallationScreen extends StatefulWidget {
   final String? vehicleId;
@@ -691,34 +690,15 @@ class _DeviceInstallationScreenState extends State<DeviceInstallationScreen>
     // Fetch fresh vehicles to ensure we don't use stale cached data from a previous user
     await context.read<ProfileCubit>().fetchVehicles();
 
-    if (!mounted) return;
+    final bool isExistingVehicleFlow =
+        (widget.vehicleId != null && widget.vehicleId!.trim().isNotEmpty);
 
-    final state = context.read<ProfileCubit>().state;
-    List<Vehicle> userVehicles = [];
-    if (state is VehiclesLoaded) {
-      userVehicles = state.vehicles;
-    }
-
-    final prefsId = await AppPreference.instance.get(
-      key: AppPreference.KEY_SELECTED_UID,
-    );
-
-    // Determine target vehicle ID:
-    // 1. If explicit vehicleId was passed to DeviceInstallationScreen, use it!
-    // 2. Otherwise if user has a selected vehicle in AppPreference or userVehicles, use it!
     String vId = '';
-    if (widget.vehicleId != null &&
-        widget.vehicleId!.trim().isNotEmpty &&
-        userVehicles.any((v) => v.id == widget.vehicleId)) {
+    if (isExistingVehicleFlow) {
+      // Flow 3: Existing vehicle targeted from Home "Activate Now" or My Garage "Install Now"
       vId = widget.vehicleId!.trim();
-    } else if (prefsId.isNotEmpty && userVehicles.any((v) => v.id == prefsId)) {
-      vId = prefsId;
-    } else if (userVehicles.isNotEmpty) {
-      vId = userVehicles.first.id ?? '';
-    }
-
-    // ONLY prompt AddVehicleDialog if user has NO vehicles in their profile/garage at all!
-    if (vId.isEmpty) {
+    } else {
+      // Flow 1: "Install Trackify Device" from Choice Selector (new device + new vehicle flow)
       final added = await showDialog<bool>(
         context: context,
         barrierDismissible: false,
@@ -754,10 +734,12 @@ class _DeviceInstallationScreenState extends State<DeviceInstallationScreen>
     }
 
     if (!mounted) return;
-    context.read<DeviceInstallationCubit>().assignDevice(
-      vehicleId: vId,
-      imei: targetImei,
-    );
+    if (vId.isNotEmpty) {
+      context.read<DeviceInstallationCubit>().assignDevice(
+        vehicleId: vId,
+        imei: targetImei,
+      );
+    }
   }
 
   void _showManualEntryDialog(BuildContext context) async {
