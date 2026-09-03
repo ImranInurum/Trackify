@@ -3117,9 +3117,9 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen>
                         ),
                       ),
                       const SizedBox(height: 8),
-                      const Icon(
+                      Icon(
                         Icons.location_on,
-                        color: Colors.amber,
+                        color: Theme.of(context).colorScheme.primary,
                         size: 16,
                       ),
                       const Text(
@@ -3128,21 +3128,25 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen>
                       ),
                       const SizedBox(height: 12),
                       _buildMockOption(
+                        context,
                         AppLocalizations.of(context)!.allowAllTheTime,
                         true,
                       ),
                       const SizedBox(height: 6),
                       _buildMockOption(
+                        context,
                         AppLocalizations.of(context)!.onlyWhileUsingTheApp,
                         false,
                       ),
                       const SizedBox(height: 6),
                       _buildMockOption(
+                        context,
                         AppLocalizations.of(context)!.askEveryTime,
                         false,
                       ),
                       const SizedBox(height: 6),
                       _buildMockOption(
+                        context,
                         AppLocalizations.of(context)!.dontAllow,
                         false,
                       ),
@@ -3203,14 +3207,15 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen>
     );
   }
 
-  Widget _buildMockOption(String text, bool isSelected) {
+  Widget _buildMockOption(BuildContext context, String text, bool isSelected) {
+    final activeColor = Theme.of(context).colorScheme.primary;
     return Row(
       children: [
         Icon(
           isSelected
               ? Icons.radio_button_checked
               : Icons.radio_button_unchecked,
-          color: isSelected ? Colors.amber : Colors.grey,
+          color: isSelected ? activeColor : Colors.grey,
           size: 10,
         ),
         const SizedBox(width: 4),
@@ -3218,7 +3223,7 @@ class _RecordViaPhoneScreenState extends State<RecordViaPhoneScreen>
           child: Text(
             text,
             style: TextStyle(
-              color: isSelected ? Colors.amber : Colors.grey,
+              color: isSelected ? activeColor : Colors.grey,
               fontSize: 8,
               fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
             ),
