@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:country_state_city/country_state_city.dart' as csc;
 import '../../../../core/config/network/network_api_service.dart';
 import '../../../../core/constants/api_constants.dart';
 import '../../../../l10n/app_localizations.dart';
+import '../../../../app/cubit/app_cubit.dart';
 
 class CheckoutScreen extends StatefulWidget {
   const CheckoutScreen({super.key});
@@ -48,7 +50,132 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   @override
   void initState() {
     super.initState();
-    _loadCountries();
+    _loadCountriesAndPrefill();
+  }
+
+  /// Loads countries first, then auto-fills address fields from the user's profile.
+  Future<void> _loadCountriesAndPrefill() async {
+    await _loadCountries();
+    if (mounted) await _prefillFromProfile();
+  }
+
+  /// Reads saved profile data from AppCubit and pre-populates
+  /// the address form (name, mobile, country, state, city, address).
+  Future<void> _prefillFromProfile() async {
+    final user = context.read<AppCubit>().state.userData;
+    if (user == null) return;
+
+    // Text fields
+    if ((user.name ?? '').isNotEmpty) {
+      final fullName = [
+        user.name ?? '',
+        user.middleName ?? '',
+        user.lastName ?? '',
+      ].where((s) => s.isNotEmpty).join(' ');
+      _fullNameController.text = fullName.trim();
+    }
+    if ((user.mobileNumber ?? '').isNotEmpty) {
+      _mobileController.text = user.mobileNumber!.trim();
+    }
+    if ((user.address ?? '').isNotEmpty) {
+      _addressController.text = user.address!.trim();
+    }
+
+    // Country match (by name, case-insensitive)
+    final profileCountry = (user.country ?? '').trim().toLowerCase();
+    if (profileCountry.isNotEmpty && _countries.isNotEmpty) {
+      csc.Country? matchedCountry;
+      try {
+        matchedCountry = _countries.firstWhere(
+          (c) => c.name.toLowerCase() == profileCountry,
+        );
+      } catch (_) {
+        // try partial match
+        try {
+          matchedCountry = _countries.firstWhere(
+            (c) => c.name.toLowerCase().contains(profileCountry) ||
+                profileCountry.contains(c.name.toLowerCase()),
+          );
+        } catch (_) {}
+      }
+
+      if (matchedCountry != null && mounted) {
+        setState(() {
+          _selectedCountry = matchedCountry;
+          final code = matchedCountry!.phoneCode.startsWith('+')
+              ? matchedCountry.phoneCode
+              : '+${matchedCountry.phoneCode}';
+          _selectedCountryCode = code;
+          _selectedFlag = matchedCountry.flag.isNotEmpty
+              ? matchedCountry.flag
+              : _selectedFlag;
+        });
+
+        // Load states for matched country
+        final states = await csc.getStatesOfCountry(matchedCountry.isoCode);
+        if (!mounted) return;
+        setState(() {
+          _states = states;
+          _selectedState = null;
+          _selectedCity = null;
+          _cities = [];
+        });
+
+        // State match
+        final profileState = (user.state ?? '').trim().toLowerCase();
+        if (profileState.isNotEmpty && states.isNotEmpty) {
+          csc.State? matchedState;
+          try {
+            matchedState = states.firstWhere(
+              (s) => s.name.toLowerCase() == profileState,
+            );
+          } catch (_) {
+            try {
+              matchedState = states.firstWhere(
+                (s) => s.name.toLowerCase().contains(profileState) ||
+                    profileState.contains(s.name.toLowerCase()),
+              );
+            } catch (_) {}
+          }
+
+          if (matchedState != null && mounted) {
+            setState(() => _selectedState = matchedState);
+
+            // Load cities for matched state
+            final cities = await csc.getStateCities(
+              matchedCountry.isoCode,
+              matchedState.isoCode,
+            );
+            if (!mounted) return;
+            setState(() {
+              _cities = cities;
+              _selectedCity = null;
+            });
+
+            // City match
+            final profileCity = (user.city ?? '').trim().toLowerCase();
+            if (profileCity.isNotEmpty && cities.isNotEmpty) {
+              csc.City? matchedCity;
+              try {
+                matchedCity = cities.firstWhere(
+                  (c) => c.name.toLowerCase() == profileCity,
+                );
+              } catch (_) {
+                try {
+                  matchedCity = cities.firstWhere(
+                    (c) => c.name.toLowerCase().contains(profileCity) ||
+                        profileCity.contains(c.name.toLowerCase()),
+                  );
+                } catch (_) {}
+              }
+              if (matchedCity != null && mounted) {
+                setState(() => _selectedCity = matchedCity);
+              }
+            }
+          }
+        }
+      }
+    }
   }
 
   Future<void> _loadCountries() async {
