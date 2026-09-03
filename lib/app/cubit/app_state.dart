@@ -34,7 +34,7 @@ class AppState extends Equatable {
     this.isSocketConnected = false,
     this.devices = const [],
     this.dynamicTheme,
-    this.mapStyle = 'Dark',
+    this.mapStyle = 'Light',
     this.mapType = 'normal',
     this.isTrafficEnabled = false,
     this.isLabelsEnabled = true,
