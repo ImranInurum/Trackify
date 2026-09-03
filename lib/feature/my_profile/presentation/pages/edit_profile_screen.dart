@@ -184,6 +184,45 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     super.dispose();
   }
 
+  Future<bool> _showUnsavedChangesDialog() async {
+    final result = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: Theme.of(ctx).cardColor,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        title: const Text(
+          "Unsaved Changes",
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+        content: const Text(
+          "You have unsaved changes. Are you sure you want to go back without saving?",
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: Text(
+              "Keep Editing",
+              style: TextStyle(
+                color: Theme.of(ctx).colorScheme.primary,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.red.shade600,
+              foregroundColor: Colors.white,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            ),
+            onPressed: () => Navigator.pop(ctx, true),
+            child: const Text("Discard"),
+          ),
+        ],
+      ),
+    );
+    return result ?? false;
+  }
+
   Future<void> _onSave() async {
     if (!(_formKey.currentState?.validate() ?? false)) return;
 
@@ -789,20 +828,35 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       },
       child: BlocBuilder<AppCubit, AppState>(
         builder: (context, state) {
-        return Scaffold(
-          backgroundColor: theme.scaffoldBackgroundColor,
-          appBar: AppBar(
+        return PopScope(
+          canPop: false,
+          onPopInvokedWithResult: (didPop, result) async {
+            if (didPop) return;
+            final shouldPop = await _showUnsavedChangesDialog();
+            if (shouldPop && context.mounted) {
+              Navigator.pop(context);
+            }
+          },
+          child: Scaffold(
             backgroundColor: theme.scaffoldBackgroundColor,
-            elevation: 0,
-            surfaceTintColor: Colors.transparent,
-            leading: IconButton(
-              icon: Icon(Icons.arrow_back_ios_new, color: onSurface),
-              onPressed: () => Navigator.pop(context),
+            appBar: AppBar(
+              backgroundColor: theme.scaffoldBackgroundColor,
+              elevation: 0,
+              surfaceTintColor: Colors.transparent,
+              leading: IconButton(
+                icon: Icon(Icons.arrow_back_ios_new, color: onSurface),
+                onPressed: () async {
+                  final shouldPop = await _showUnsavedChangesDialog();
+                  if (shouldPop && context.mounted) {
+                    Navigator.pop(context);
+                  }
+                },
+              ),
+              title: Text(
+                l10n.personalDetails,
+              ),
+              centerTitle: false,
             ),
-            title: Text(
-              l10n.personalDetails, ),
-            centerTitle: false,
-          ),
           body: Form(
             key: _formKey,
             child: SingleChildScrollView(
@@ -1052,10 +1106,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               ),
             ),
           ),
-        );
-      },
-    ),
-  );
+        ),
+      );
+    },
+  ),
+);
 }
 
   // ─── Underline Field (editable) ─────────────────────────────────────────────
