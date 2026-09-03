@@ -828,14 +828,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       },
       child: BlocBuilder<AppCubit, AppState>(
         builder: (context, state) {
-        return PopScope(
-          canPop: false,
-          onPopInvokedWithResult: (didPop, result) async {
-            if (didPop) return;
-            final shouldPop = await _showUnsavedChangesDialog();
-            if (shouldPop && context.mounted) {
-              Navigator.pop(context);
-            }
+        return WillPopScope(
+          onWillPop: () async {
+            return await _showUnsavedChangesDialog();
           },
           child: Scaffold(
             backgroundColor: theme.scaffoldBackgroundColor,
