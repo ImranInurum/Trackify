@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:country_state_city/country_state_city.dart' as csc;
+import '../../../../core/config/network/network_api_service.dart';
+import '../../../../core/constants/api_constants.dart';
 import '../../../../l10n/app_localizations.dart';
 
 class CheckoutScreen extends StatefulWidget {
@@ -13,7 +15,7 @@ class CheckoutScreen extends StatefulWidget {
 class _CheckoutScreenState extends State<CheckoutScreen> {
   int _currentStep = 0; // 0 = Address, 1 = Summary
   bool _isHomeSelected = true;
-  String _selectedPaymentMethod = 'COD';
+  String _selectedPaymentMethod = 'ONLINE';
   String _selectedCountryCode = '+91';
   String _selectedFlag = '🇮🇳';
 
@@ -798,12 +800,30 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                     color: Colors.transparent,
                     child: InkWell(
                       borderRadius: BorderRadius.circular(14),
-                      onTap: () {
+                      onTap: () async {
                         if (_currentStep == 0) {
                           if (_validateAddressForm()) {
                             setState(() => _currentStep = 1);
                           }
                         } else {
+                          try {
+                            final body = {
+                              "userName": _fullNameController.text.trim(),
+                              "userPhone": "$_selectedCountryCode${_mobileController.text.trim()}",
+                              "productTitle": "Trackify Pro",
+                              "price": 2690,
+                              "notes": "Address: ${_addressController.text.trim()}, ${_landmarkController.text.trim()}, ${_selectedCity?.name ?? ''}, ${_selectedState?.name ?? ''}, Pincode: ${_pincodeController.text.trim()}. Payment Method: $_selectedPaymentMethod",
+                            };
+
+                            await NetworkApiService().getPostApiResponse(
+                              "${ApiConstants.baseUrl}/api/product-catalog/order",
+                              body,
+                            );
+                          } catch (e) {
+                            debugPrint("Error submitting order inquiry: $e");
+                          }
+
+                          if (!mounted) return;
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
                               content: Row(
@@ -813,7 +833,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                                     color: Colors.white,
                                   ),
                                   SizedBox(width: 10),
-                                  Text("Order Placed Successfully!"),
+                                  Expanded(child: Text("Order Inquiry Submitted! Trackify team will contact you.")),
                                 ],
                               ),
                               backgroundColor: Colors.green.shade700,
@@ -1438,15 +1458,6 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 
         const SizedBox(height: 10),
 
-        _buildPaymentOption(
-          id: 'COD',
-          title: 'Cash on Delivery',
-          subtitle: 'Pay when your item arrives at your doorstep',
-          icon: Icons.payments_outlined,
-          colorScheme: colorScheme,
-          isDark: isDark,
-        ),
-        const SizedBox(height: 10),
         _buildPaymentOption(
           id: 'ONLINE',
           title: 'Online Payment (UPI / Cards)',
