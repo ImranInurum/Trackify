@@ -256,13 +256,12 @@ class _RidePlaybackScreenState extends State<RidePlaybackScreen> {
     double lng = p1.longitude + (p2.longitude - p1.longitude) * t;
     _currentPosition = LatLng(lat, lng);
     
-    // Simulate speed based on distance between points
+    // Calculate realistic playback speed based on total ride metrics
     if (index1 != index2) {
-      double dist = Geolocator.distanceBetween(
-        p1.latitude, p1.longitude, p2.latitude, p2.longitude
-      );
-      // Rough speed estimate for UI
-      _currentSpeed = dist * 3.6; // convert m/s to km/h, assume 1 sec between points for now
+      double totalSeconds = widget.totalDuration.inSeconds > 0 ? widget.totalDuration.inSeconds.toDouble() : 1.0;
+      double calculatedSpeed = (widget.totalDistance / (totalSeconds / 3600.0));
+      // Cap realistic speed display to avgSpeed * 1.5 if formula overflows
+      _currentSpeed = calculatedSpeed > 0 ? calculatedSpeed.clamp(0.0, widget.avgSpeed * 1.5) : widget.avgSpeed;
       _currentRotation = Geolocator.bearingBetween(
         p1.latitude, p1.longitude, p2.latitude, p2.longitude
       );
