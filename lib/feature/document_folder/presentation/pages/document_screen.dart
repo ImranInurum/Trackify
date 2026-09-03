@@ -161,6 +161,7 @@ class _DocumentFolderScreenState extends State<DocumentFolderScreen> {
           hideBottomControls: false,
           initAspectRatio: CropAspectRatioPreset.ratio3x2,
           lockAspectRatio: true,
+          showCropGrid: true,
         ),
         IOSUiSettings(
           title: l10n.cropVehicleImage,
