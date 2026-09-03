@@ -723,8 +723,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     );
     if (picked != null && mounted) {
       setState(() {
-        _dob =
-        '${picked.day.toString().padLeft(2, '0')}/${picked.month.toString().padLeft(2, '0')}/${picked.year}';
+        _dob = DateFormat('yyyy-MM-dd').format(picked);
       });
     }
   }
