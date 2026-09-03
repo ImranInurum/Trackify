@@ -9,6 +9,7 @@ import 'package:trackify/feature/add_vehicle_and_device/choice_selector.dart';
 import 'package:trackify/feature/get_more_out/presentation/cubit/disocver_state.dart';
 import 'package:trackify/feature/help_and_support/presentation/pages/help_support_screen.dart';
 import 'package:trackify/feature/my_garage/presentation/view/my_garage_screen.dart';
+import 'package:trackify/feature/my_garage/presentation/view/my_orders_screen.dart';
 import 'package:trackify/feature/my_profile/presentation/pages/my_profile_screen.dart';
 import 'package:trackify/feature/profile/presentation/cubit/profile_cubit.dart';
 import 'package:trackify/feature/profile/presentation/cubit/profile_state.dart';
@@ -627,6 +628,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             context,
                             MaterialPageRoute(
                               builder: (_) => const MyGarageScreen(),
+                            ),
+                          );
+                        },
+                      ),
+                      _menu(
+                        "My Orders",
+                        "View ordered devices & tracking status",
+                        Icons.shopping_bag_outlined,
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const MyOrdersScreen(),
                             ),
                           );
                         },
