@@ -54,6 +54,11 @@ class NotificationService {
   static const _androidChannelName = 'Trackify Reminders';
   static const _androidChannelDesc = 'General app notifications';
 
+  // Recording session notification constants
+  static const _recordingChannelId = 'recording_session';
+  static const _recordingChannelName = 'Recording Session';
+  static const _recordingNotificationId = 9999;
+
   static Future<void> initialize() async {
     const androidInit = AndroidInitializationSettings('@drawable/ic_notification');
     const iosInit = DarwinInitializationSettings(
@@ -93,6 +98,14 @@ class NotificationService {
       const AndroidNotificationChannel('speed_alerts', 'Speed alerts', description: 'Notifications for Speed Alerts', importance: Importance.max),
       const AndroidNotificationChannel('other_alerts', 'Other alerts', description: 'General Notifications', importance: Importance.max),
       const AndroidNotificationChannel('custom_notifications', 'Custom notifications', description: 'Custom App Notifications', importance: Importance.max),
+      const AndroidNotificationChannel(
+        _recordingChannelId,
+        _recordingChannelName,
+        description: 'Shows live recording timer while phone GPS is active',
+        importance: Importance.low,
+        playSound: false,
+        enableVibration: false,
+      ),
     ];
 
     for (var channel in channels) {
@@ -202,6 +215,47 @@ class NotificationService {
 
   static Future<void> showNow({required String title, required String body}) async {
     await _plugin.show(DateTime.now().millisecondsSinceEpoch % 100000, title, body, _details());
+  }
+
+  /// Shows (or updates) a persistent recording notification with a live elapsed timer.
+  static Future<void> showRecordingNotification(Duration elapsed) async {
+    final hours = elapsed.inHours;
+    final minutes = elapsed.inMinutes.remainder(60).toString().padLeft(2, '0');
+    final seconds = elapsed.inSeconds.remainder(60).toString().padLeft(2, '0');
+    final timeStr = hours > 0
+        ? '${hours.toString().padLeft(2, '0')}:$minutes:$seconds'
+        : '$minutes:$seconds';
+
+    const android = AndroidNotificationDetails(
+      _recordingChannelId,
+      _recordingChannelName,
+      channelDescription: 'Shows live recording timer while phone GPS is active',
+      importance: Importance.low,
+      priority: Priority.low,
+      ongoing: true,             // Cannot be swiped away
+      autoCancel: false,
+      playSound: false,
+      enableVibration: false,
+      icon: '@drawable/ic_notification',
+      color: Color(0xFF0284C7),
+      showWhen: false,
+    );
+    const ios = DarwinNotificationDetails(
+      presentAlert: false,
+      presentBadge: false,
+      presentSound: false,
+    );
+    await _plugin.show(
+      _recordingNotificationId,
+      '📍 Recording Started',
+      'Recording in progress • $timeStr',
+      const NotificationDetails(android: android, iOS: ios),
+    );
+  }
+
+  /// Cancels the recording session notification.
+  static Future<void> cancelRecordingNotification() async {
+    await _plugin.cancel(_recordingNotificationId);
   }
 
   static Future<void> cancelAll() async {

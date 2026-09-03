@@ -11,6 +11,7 @@ import 'package:trackify/core/utils/shared_preferences.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:trackify/feature/record_via_phone/domain/usecase/record_via_phone_use_case.dart';
 import 'package:trackify/feature/record_via_phone/presentation/cubit/record_via_phone_state.dart';
+import 'package:trackify/core/services/notification_service.dart';
 
 class RecordViaPhoneCubit extends Cubit<RecordViaPhoneState> {
   final RecordViaPhoneUseCase _recordViaPhoneUseCase;
@@ -59,14 +60,18 @@ class RecordViaPhoneCubit extends Cubit<RecordViaPhoneState> {
       updateRecordingData(position);
     });
 
+    // Show initial notification immediately
+    NotificationService.showRecordingNotification(Duration.zero);
+
     _rideTimer?.cancel();
     _rideTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (state.isRecording) {
+        final elapsed = state.rideDuration + const Duration(seconds: 1);
         emit(
           MapRecordingUpdate(
             isRecording: true,
             currentRidePoints: state.currentRidePoints,
-            rideDuration: state.rideDuration + const Duration(seconds: 1),
+            rideDuration: elapsed,
             rideDistance: state.rideDistance,
             currentSpeed: state.currentSpeed,
             topSpeed: state.topSpeed,
@@ -74,6 +79,8 @@ class RecordViaPhoneCubit extends Cubit<RecordViaPhoneState> {
             polylines: state.polylines,
           ),
         );
+        // Update notification with latest elapsed time
+        NotificationService.showRecordingNotification(elapsed);
       }
     });
   }
@@ -81,6 +88,8 @@ class RecordViaPhoneCubit extends Cubit<RecordViaPhoneState> {
   void stopRecording() {
     _positionStream?.cancel();
     _rideTimer?.cancel();
+    // Cancel the ongoing notification
+    NotificationService.cancelRecordingNotification();
     emit(
       MapRecordingUpdate(
         isRecording: false,
@@ -499,6 +508,7 @@ class RecordViaPhoneCubit extends Cubit<RecordViaPhoneState> {
   Future<void> close() {
     _positionStream?.cancel();
     _rideTimer?.cancel();
+    NotificationService.cancelRecordingNotification();
     return super.close();
   }
 }
