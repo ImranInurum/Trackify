@@ -6,6 +6,7 @@ import '../../../../core/config/network/network_api_service.dart';
 import '../../../../core/config/network/api_host.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../../../app/cubit/app_cubit.dart';
+import 'package:razorpay_flutter/razorpay_flutter.dart';
 
 class CheckoutScreen extends StatefulWidget {
   const CheckoutScreen({super.key});
@@ -20,6 +21,8 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   String _selectedPaymentMethod = 'ONLINE';
   String _selectedCountryCode = '+91';
   String _selectedFlag = '🇮🇳';
+
+  late Razorpay _razorpay;
 
   csc.Country? _selectedCountry;
   csc.State? _selectedState;
@@ -50,7 +53,98 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   @override
   void initState() {
     super.initState();
+    _razorpay = Razorpay();
+    _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
+    _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
+    _razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, _handleExternalWallet);
     _loadCountriesAndPrefill();
+  }
+
+  @override
+  void dispose() {
+    _razorpay.clear();
+    super.dispose();
+  }
+
+  void _handlePaymentSuccess(PaymentSuccessResponse response) async {
+    if (!mounted) return;
+    try {
+      final user = context.read<AppCubit>().state.userData;
+      final body = {
+        "userId": user?.id,
+        "userName": _fullNameController.text.trim(),
+        "userPhone": "$_selectedCountryCode${_mobileController.text.trim()}",
+        "userEmail": user?.email ?? "",
+        "productTitle": "Trackify Pro",
+        "price": 1999,
+        "notes": "Payment ID: ${response.paymentId}. Address: ${_addressController.text.trim()}, ${_landmarkController.text.trim()}, ${_selectedCity?.name ?? ''}, ${_selectedState?.name ?? ''}, Pincode: ${_pincodeController.text.trim()}",
+      };
+
+      await NetworkApiService().getPostApiResponse(
+        "${ApiURL.baseURL}/api/product-catalog/order",
+        body,
+      );
+
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Row(
+            children: const [
+              Icon(Icons.check_circle_rounded, color: Colors.white),
+              SizedBox(width: 10),
+              Expanded(child: Text("Payment Successful & Order Placed!")),
+            ],
+          ),
+          backgroundColor: Colors.green.shade700,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        ),
+      );
+      Navigator.pop(context);
+    } catch (e) {
+      debugPrint("Error creating order after payment: $e");
+    }
+  }
+
+  void _handlePaymentError(PaymentFailureResponse response) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text("Payment Failed: ${response.message ?? 'Cancelled by user'}"),
+        backgroundColor: Colors.red.shade700,
+        behavior: SnackBarBehavior.floating,
+      ),
+    );
+  }
+
+  void _handleExternalWallet(ExternalWalletResponse response) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text("External Wallet Selected: ${response.walletName}")),
+    );
+  }
+
+  void _startRazorpayPayment() {
+    final user = context.read<AppCubit>().state.userData;
+    final options = <String, dynamic>{
+      'key': ApiURL.razorpayKey,
+      'amount': 1999 * 100, // ₹1,999 in paise
+      'name': 'Trackify',
+      'description': 'Trackify Pro Order',
+      'prefill': {
+        'contact': _mobileController.text.trim(),
+        'email': user?.email ?? '',
+      },
+      'external': {
+        'wallets': ['paytm'],
+      },
+    };
+
+    try {
+      _razorpay.open(options);
+    } catch (e) {
+      debugPrint("Error opening Razorpay: $e");
+    }
   }
 
   /// Loads countries first, then auto-fills address fields from the user's profile.
@@ -927,50 +1021,13 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                     color: Colors.transparent,
                     child: InkWell(
                       borderRadius: BorderRadius.circular(14),
-                      onTap: () async {
+                      onTap: () {
                         if (_currentStep == 0) {
                           if (_validateAddressForm()) {
                             setState(() => _currentStep = 1);
                           }
                         } else {
-                          try {
-                            final body = {
-                              "userName": _fullNameController.text.trim(),
-                              "userPhone": "$_selectedCountryCode${_mobileController.text.trim()}",
-                              "productTitle": "Trackify Pro",
-                              "price": 2690,
-                              "notes": "Address: ${_addressController.text.trim()}, ${_landmarkController.text.trim()}, ${_selectedCity?.name ?? ''}, ${_selectedState?.name ?? ''}, Pincode: ${_pincodeController.text.trim()}. Payment Method: $_selectedPaymentMethod",
-                            };
-
-                            await NetworkApiService().getPostApiResponse(
-                              "${ApiURL.baseURL}/api/product-catalog/order",
-                              body,
-                            );
-                          } catch (e) {
-                            debugPrint("Error submitting order inquiry: $e");
-                          }
-
-                          if (!mounted) return;
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Row(
-                                children: const [
-                                  Icon(
-                                    Icons.check_circle_rounded,
-                                    color: Colors.white,
-                                  ),
-                                  SizedBox(width: 10),
-                                  Expanded(child: Text("Order Inquiry Submitted! Trackify team will contact you.")),
-                                ],
-                              ),
-                              backgroundColor: Colors.green.shade700,
-                              behavior: SnackBarBehavior.floating,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                            ),
-                          );
-                          Navigator.pop(context);
+                          _startRazorpayPayment();
                         }
                       },
                       child: Center(
