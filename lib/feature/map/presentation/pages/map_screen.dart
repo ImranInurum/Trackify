@@ -453,6 +453,22 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin, Wi
     });
   }
 
+  // Pull-to-Refresh handler
+  Future<void> _onRefresh() async {
+    if (!mounted) return;
+    await Future.wait([
+      context.read<MapCubit>().fetchVehicles(),
+      _fetchOffers(),
+      Future(() {
+        if (mounted && _selectedDevice?.imei != null) {
+          context.read<PromoVideoCubit>().fetchPromoVideos(
+            _selectedDevice!.imei!,
+          );
+        }
+      }),
+    ]);
+  }
+
   BitmapDescriptor? _homeIcon;
   BitmapDescriptor? _officeIcon;
   BitmapDescriptor? _familyIcon;
@@ -1246,34 +1262,43 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin, Wi
                         }
                         return false;
                       },
-                      child: SingleChildScrollView(
-                        controller: _scrollController,
-                        physics: const BouncingScrollPhysics(),
-                        child: Column(
-                          children: [
-                            SizedBox(height: topSpacing),
-                            _buildOfferSection(),
-                            if (_isWarrantyLoading)
-                              const Padding(
-                                padding: EdgeInsets.symmetric(vertical: 100.0),
-                                child: Center(child: TrackifyLoader()),
-                              )
-                            else if (isDeviceNotInstalledOrExpired)
-                              _buildPhoneAsGpsBanner()
-                            else
-                              _buildMapSection(),
-                            if (!_hidePromoBanner &&
-                                !isDeviceNotInstalledOrExpired &&
-                                !_isWarrantyLoading) ...[
-                              const SizedBox(height: 5),
-                              _buildPromoBanner(),
+                      child: RefreshIndicator(
+                        onRefresh: _onRefresh,
+                        color: const Color(0xFF0284C7),
+                        backgroundColor: Colors.white,
+                        strokeWidth: 2.5,
+                        displacement: 60,
+                        child: SingleChildScrollView(
+                          controller: _scrollController,
+                          physics: const BouncingScrollPhysics(
+                            parent: AlwaysScrollableScrollPhysics(),
+                          ),
+                          child: Column(
+                            children: [
+                              SizedBox(height: topSpacing),
+                              _buildOfferSection(),
+                              if (_isWarrantyLoading)
+                                const Padding(
+                                  padding: EdgeInsets.symmetric(vertical: 100.0),
+                                  child: Center(child: TrackifyLoader()),
+                                )
+                              else if (isDeviceNotInstalledOrExpired)
+                                _buildPhoneAsGpsBanner()
+                              else
+                                _buildMapSection(),
+                              if (!_hidePromoBanner &&
+                                  !isDeviceNotInstalledOrExpired &&
+                                  !_isWarrantyLoading) ...[
+                                const SizedBox(height: 5),
+                                _buildPromoBanner(),
+                              ],
+                              SizedBox(height: 5),
+                              _buildExploreMore(_selectedDevice),
+                              _buildRecentRidesSection(_selectedDevice),
+                              _buildVideosSection(),
+                              const SizedBox(height: 100),
                             ],
-                            SizedBox(height: 5),
-                            _buildExploreMore(_selectedDevice),
-                            _buildRecentRidesSection(_selectedDevice),
-                            _buildVideosSection(),
-                            const SizedBox(height: 100),
-                          ],
+                          ),
                         ),
                       ),
                     ),
