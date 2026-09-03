@@ -57,6 +57,7 @@ class _SearchableDropdownState<T> extends State<SearchableDropdown<T>> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
     final l10n = AppLocalizations.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -66,9 +67,10 @@ class _SearchableDropdownState<T> extends State<SearchableDropdown<T>> {
           children: [
             Text(
               widget.label,
-              style: theme.textTheme.labelMedium?.copyWith(
-                fontWeight: FontWeight.w500,
-                color: theme.colorScheme.onSurface.withOpacity(0.6),
+              style: TextStyle(
+                fontWeight: FontWeight.w600,
+                fontSize: 13,
+                color: theme.colorScheme.onSurface,
               ),
             ),
             if (widget.isLoading)
@@ -89,12 +91,18 @@ class _SearchableDropdownState<T> extends State<SearchableDropdown<T>> {
               : null,
           behavior: HitTestBehavior.opaque,
           child: Container(
-            height: 48,
+            height: 50,
             alignment: Alignment.center,
             decoration: BoxDecoration(
-              color: Colors.transparent,
-              borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: theme.colorScheme.onSurface.withOpacity(0.12)),
+              color: isDark
+                  ? theme.colorScheme.onSurface.withOpacity(0.05)
+                  : const Color(0xFFF8FAFC),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: isDark
+                    ? theme.colorScheme.outline.withOpacity(0.2)
+                    : const Color(0xFFE2E8F0),
+              ),
             ),
             padding: const EdgeInsets.symmetric(horizontal: 14),
             child: Theme(
@@ -133,13 +141,13 @@ class _SearchableDropdownState<T> extends State<SearchableDropdown<T>> {
                     width: double.infinity,
                   ),
                   iconStyleData: IconStyleData(
-                    icon: Icon(Icons.arrow_drop_down, color: theme.colorScheme.primary),
+                    icon: const Icon(Icons.keyboard_arrow_down_rounded, color: Color(0xFF0284C7)),
                   ),
                   dropdownStyleData: DropdownStyleData(
                     maxHeight: 300,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(12),
-                      color: theme.scaffoldBackgroundColor,
+                      color: isDark ? theme.colorScheme.surface : Colors.white,
                     ),
                     elevation: 4,
                   ),

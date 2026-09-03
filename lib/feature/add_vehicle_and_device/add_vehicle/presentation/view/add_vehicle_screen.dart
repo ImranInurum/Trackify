@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:trackify/core/config/font_manager.dart';
+import 'package:trackify/core/widgets/searchable_dropdown.dart';
 import 'package:trackify/feature/add_vehicle_and_device/add_vehicle/data/models/vehicle_config_models.dart';
 
 import '../../../../../app/app_navigation.dart';
@@ -192,118 +193,6 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
     );
   }
 
-  // ─── Labelled dropdown ─────────────────────────────────────────────────────
-  Widget _buildDropdown<T>({
-    required String label,
-    required T? value,
-    required List<T> items,
-    required String Function(T) itemLabel,
-    ValueChanged<T?>? onChanged,
-    bool isLoading = false,
-    String? hint,
-    VoidCallback? onDisabledTap,
-  }) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-    final isDark = theme.brightness == Brightness.dark;
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              label,
-              style: TextStyle(
-                fontWeight: FontWeight.w600,
-                fontSize: 13,
-                color: colorScheme.onSurface,
-                fontFamily: FontFamilyManager.fontFamily,
-              ),
-            ),
-            if (isLoading)
-              const SizedBox(
-                height: 14,
-                width: 14,
-                child: CircularProgressIndicator(
-                  strokeWidth: 1.5,
-                  color: Color(0xFF0284C7),
-                ),
-              ),
-          ],
-        ),
-        const SizedBox(height: 6),
-        GestureDetector(
-          onTap: (onChanged == null || items.isEmpty) && !isLoading
-              ? onDisabledTap
-              : null,
-          behavior: HitTestBehavior.opaque,
-          child: Container(
-            height: 50,
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              color: isDark
-                  ? colorScheme.onSurface.withOpacity(0.05)
-                  : const Color(0xFFF8FAFC),
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(
-                color: isDark
-                    ? colorScheme.outline.withOpacity(0.2)
-                    : const Color(0xFFE2E8F0),
-              ),
-            ),
-            padding: const EdgeInsets.symmetric(horizontal: 14),
-            child: Theme(
-              data: theme.copyWith(
-                splashColor: Colors.transparent,
-                highlightColor: Colors.transparent,
-                hoverColor: Colors.transparent,
-              ),
-              child: DropdownButtonHideUnderline(
-                child: DropdownButton<T>(
-                  dropdownColor: isDark ? colorScheme.surface : Colors.white,
-                  value: value,
-                  isExpanded: true,
-                  isDense: true,
-                  focusColor: Colors.transparent,
-                  borderRadius: BorderRadius.circular(12),
-                  elevation: 4,
-                  hint: Text(
-                    hint ?? label,
-                    style: TextStyle(
-                      color: colorScheme.onSurface.withOpacity(0.4),
-                      fontSize: 14,
-                    ),
-                  ),
-                  icon: const Icon(
-                    Icons.keyboard_arrow_down_rounded,
-                    color: Color(0xFF0284C7),
-                  ),
-                  items: items
-                      .map(
-                        (e) => DropdownMenuItem(
-                          value: e,
-                          child: Text(
-                            itemLabel(e),
-                            style: TextStyle(
-                              color: colorScheme.onSurface,
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ),
-                      )
-                      .toList(),
-                  onChanged: isLoading ? null : onChanged,
-                ),
-              ),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
 
   // ─── Section label ─────────────────────────────────────────────────────────
   Widget _sectionLabel(String text, ThemeData theme) => Padding(
@@ -573,7 +462,7 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
                             const SizedBox(height: 24),
 
                             // ── Vehicle Make ──────────────────────────────────────────
-                            _buildDropdown<VehicleMaker>(
+                            SearchableDropdown<VehicleMaker>(
                               label: l10n.vehicleMake,
                               hint: l10n.selectMake,
                               value: state.selectedMaker,
@@ -610,7 +499,7 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
                             const SizedBox(height: 18),
 
                             // ── Vehicle Model ─────────────────────────────────────────
-                            _buildDropdown<VehicleModelInfo>(
+                            SearchableDropdown<VehicleModelInfo>(
                               label: l10n.vehicleModel,
                               hint: l10n.selectModel,
                               value: state.selectedModel,
