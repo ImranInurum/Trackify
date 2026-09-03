@@ -370,6 +370,20 @@ class _FullScreenMapState extends State<FullScreenMap>
     }
   }
 
+  Brightness? _currentBrightness;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final brightness = Theme.of(context).brightness;
+    if (_currentBrightness != brightness) {
+      _currentBrightness = brightness;
+      if (_mapController != null && mounted) {
+        _updateMapStyle(_mapController!);
+      }
+    }
+  }
+
   Future<void> _checkWarrantyStatus(String imei) async {
     try {
       final repository = DeviceWarrantyRepositoryImpl(
@@ -514,7 +528,7 @@ class _FullScreenMapState extends State<FullScreenMap>
       'assets/map_styles/light_map.json',
     );
     _darkMapStyle = await MapUtils.loadStyle(
-      'assets/map_styles/full_map_style.json',
+      'assets/map_styles/dark_map.json',
     );
   }
 
@@ -1802,7 +1816,7 @@ class _FullScreenMapState extends State<FullScreenMap>
                           if (_darkMapStyle == null || _lightMapStyle == null) {
                             await _loadMapStyles();
                           }
-                          _updateMapStyle(controller);
+                          await _updateMapStyle(controller);
 
                           // Initialize camera state fields
                           _cameraTarget = bestPos;
