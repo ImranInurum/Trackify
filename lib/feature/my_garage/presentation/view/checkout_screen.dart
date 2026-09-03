@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:country_state_city/country_state_city.dart' as csc;
 import '../../../../core/config/network/network_api_service.dart';
-import '../../../../core/constants/api_constants.dart';
+import '../../../../core/config/network/api_host.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../../../app/cubit/app_cubit.dart';
 
@@ -943,7 +943,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                             };
 
                             await NetworkApiService().getPostApiResponse(
-                              "${ApiConstants.baseUrl}/api/product-catalog/order",
+                              "${ApiURL.baseURL}/api/product-catalog/order",
                               body,
                             );
                           } catch (e) {

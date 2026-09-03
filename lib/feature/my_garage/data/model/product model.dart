@@ -10,17 +10,20 @@ class ProductModel extends ProductEntity{
   required super.discount, required super.price, required super.deliveryText, required super.deviceType, required super.idealText, required super.vehicleIcons,
   });
 
-  factory ProductModel.fromJson(Map<String,dynamic>json){
-    return ProductModel(title: json['title'],
-     description: json['description'],
-     image: json['image'],
-      mrp: json['mrp'],
-      discount: json['discount'],
-        price: json['price'],
-        deliveryText: json['deliveryText'],
-        deviceType: json['deviceType'],
-        idealText: json['idealText'],
-        vehicleIcons: json['vehicleIcons']
-       );
+  factory ProductModel.fromJson(Map<String, dynamic> json) {
+    return ProductModel(
+      title: json['title'] ?? '',
+      description: json['description'] ?? '',
+      image: (json['imageUrl'] != null && json['imageUrl'].toString().isNotEmpty)
+          ? json['imageUrl'].toString()
+          : (json['image'] ?? 'assets/images/device_image.png'),
+      mrp: (json['mrp'] is num) ? (json['mrp'] as num).toInt() : int.tryParse(json['mrp']?.toString() ?? '0') ?? 0,
+      discount: (json['discount'] is num) ? (json['discount'] as num).toInt() : int.tryParse(json['discount']?.toString() ?? '0') ?? 0,
+      price: (json['price'] is num) ? (json['price'] as num).toInt() : int.tryParse(json['price']?.toString() ?? '0') ?? 0,
+      deliveryText: json['deliveryText'] ?? 'Free delivery from Trackify',
+      deviceType: json['deviceType'] ?? 'Wired Device',
+      idealText: json['idealText'] ?? 'Ideal for:',
+      vehicleIcons: json['vehicleIcons'] != null ? List<String>.from(json['vehicleIcons']) : ["🛵", "🚗", "🚚", "🚜"],
+    );
   }
 }

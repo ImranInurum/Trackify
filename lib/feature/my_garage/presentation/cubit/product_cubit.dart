@@ -12,14 +12,12 @@ class ProductCubit extends Cubit<ProductState> {
       this.getProductsUsecase,
       ) : super(ProductInitial());
 
-
-  void loadProducts() {
-
+  Future<void> loadProducts() async {
     final usecase = GetProductsUsecase(
       ProductRepositoryImpl(),
     );
 
-    final data = usecase();
+    final data = await usecase();
 
     emit(ProductLoaded(data));
   }
