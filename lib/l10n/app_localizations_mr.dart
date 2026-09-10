@@ -1033,7 +1033,7 @@ class AppLocalizationsMr extends AppLocalizations {
   String get addImage => 'प्रतिमा जोडा';
 
   @override
-  String get maxFileSizeNote => 'टीप: कमाल फाइल आकार 5MB आहे';
+  String get maxFileSizeNote => 'टीप: कमाल फाइल आकार 10MB आहे';
 
   @override
   String get serviceDate => 'सर्व्हिस दिनांक';
@@ -1695,7 +1695,7 @@ class AppLocalizationsMr extends AppLocalizations {
   String get pdf => 'PDF';
 
   @override
-  String get fileTooLarge => 'फाइलचा आकार 5MB मर्यादेपेक्षा जास्त आहे';
+  String get fileTooLarge => 'फाइलचा आकार 10MB मर्यादेपेक्षा जास्त आहे';
 
   @override
   String get pickImageError => 'प्रतिमा निवडताना त्रुटी आली';
@@ -1704,7 +1704,7 @@ class AppLocalizationsMr extends AppLocalizations {
   String get pickPdfError => 'PDF निवडताना त्रुटी आली';
 
   @override
-  String get pdfTooLarge => 'PDF चा आकार 5MB मर्यादेपेक्षा जास्त आहे';
+  String get pdfTooLarge => 'PDF चा आकार 10MB मर्यादेपेक्षा जास्त आहे';
 
   @override
   String get uploadDocuments => 'दस्तऐवज अपलोड करा';
@@ -1739,7 +1739,7 @@ class AppLocalizationsMr extends AppLocalizations {
       'तुमचे दस्तऐवज एन्क्रिप्टेड आणि सुरक्षित आहेत';
 
   @override
-  String get fileSizeNote => 'टीप: कमाल फाइल आकार 5MB आहे';
+  String get fileSizeNote => 'टीप: कमाल फाइल आकार 10MB आहे';
 
   @override
   String get personalDocumentsTitle => 'वैयक्तिक दस्तऐवज';

@@ -10,6 +10,7 @@ import '../../../../core/widgets/square_flat_button.dart';
 import '../cubit/auth_cubit.dart';
 import '../cubit/auth_state.dart';
 import 'otp_verification_screen.dart';
+import '../../../../core/constants/app_images.dart';
 import '../../../../core/utils/validators.dart';
 import '../../../../l10n/app_localizations.dart';
 
@@ -98,7 +99,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                         height: 220,
                         fit: BoxFit.contain,
                         placeholder: (context, url) => const CircularProgressIndicator(),
-                        errorWidget: (context, url, err) => Icon(Icons.track_changes_rounded, size: 88, color: Theme.of(context).colorScheme.primary),
+                        errorWidget: (context, url, err) => Image.asset(AppImages.appLogo, height: 140, fit: BoxFit.contain),
                       ),
                     ),
                   );
@@ -106,7 +107,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                 return Center(
                   child: Padding(
                     padding: const EdgeInsets.symmetric(vertical: 40),
-                    child: Icon(Icons.track_changes_rounded, size: 88, color: Theme.of(context).colorScheme.primary),
+                    child: Image.asset(AppImages.appLogo, height: 140, fit: BoxFit.contain),
                   ),
                 );
               },

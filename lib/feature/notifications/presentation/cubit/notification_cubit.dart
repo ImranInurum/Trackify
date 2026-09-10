@@ -28,4 +28,19 @@ class NotificationCubit extends Cubit<NotificationState> {
       );
     }
   }
+
+  Future<bool> deleteNotification(String notificationId) async {
+    if (isClosed) return false;
+    final result = await _repository.deleteNotification(notificationId);
+    return result.fold((_) => false, (_) => true);
+  }
+
+  Future<bool> deleteAllNotifications() async {
+    if (isClosed) return false;
+    final userId = await AppPreference.instance.get(key: AppPreference.KEY_USER_ID);
+    if (userId.isEmpty) return false;
+    final result = await _repository.deleteAllNotifications(userId);
+    return result.fold((_) => false, (_) => true);
+  }
 }
+

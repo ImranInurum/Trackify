@@ -22,4 +22,31 @@ class NotificationRepositoryImpl implements NotificationRepository {
       return Left(e);
     }
   }
+
+  @override
+  ResultFuture<bool> deleteNotification(String notificationId) async {
+    try {
+      final res = await _apiServices.getDeleteApiResponse(ApiURL.deleteNotification(notificationId), {});
+      return res.fold(
+        (error) => Left(error),
+        (_) => const Right(true),
+      );
+    } on AppException catch (e) {
+      return Left(e);
+    }
+  }
+
+  @override
+  ResultFuture<bool> deleteAllNotifications(String userId) async {
+    try {
+      final res = await _apiServices.getDeleteApiResponse(ApiURL.deleteAllNotifications(userId), {});
+      return res.fold(
+        (error) => Left(error),
+        (_) => const Right(true),
+      );
+    } on AppException catch (e) {
+      return Left(e);
+    }
+  }
 }
+

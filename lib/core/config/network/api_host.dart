@@ -20,7 +20,7 @@ class ApiURL {
   // Razorpay
   static const String razorpayKey = String.fromEnvironment(
     'RAZORPAY_KEY',
-    defaultValue: 'rzp_test_1DP5mmOlF5G5ag',
+    defaultValue: 'rzp_test_TXysjLdwAQzNj0',
   );
 
   static String authToken = '';
@@ -121,6 +121,10 @@ class ApiURL {
   // -------------------------
   static String notifications(String userId, {int page = 1, int limit = 20}) =>
       "$baseURL/api/notification/user/$userId?page=$page&limit=$limit";
+  static String deleteNotification(String notificationId) =>
+      "$baseURL/api/notification/$notificationId";
+  static String deleteAllNotifications(String userId) =>
+      "$baseURL/api/notification/delete-all/$userId";
   static const String alertTypes = "$baseURL/api/alert-types";
 
   // -------------------------

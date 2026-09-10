@@ -133,16 +133,16 @@ class _SignInScreenState extends State<SignInScreen> {
               height: MediaQuery.of(context).size.height < 700 ? 100 : 130,
               fit: BoxFit.contain,
               placeholder: (context, url) => const Center(child: TrackifyLoader()),
-              errorWidget: (context, url, error) => Icon(
-                Icons.track_changes_rounded,
-                size: 64,
-                color: colorScheme.primary,
+              errorWidget: (context, url, error) => Image.asset(
+                AppImages.appLogo,
+                height: MediaQuery.of(context).size.height < 700 ? 100 : 130,
+                fit: BoxFit.contain,
               ),
             )
-          : Icon(
-              Icons.track_changes_rounded,
-              size: 64,
-              color: colorScheme.primary,
+          : Image.asset(
+              AppImages.appLogo,
+              height: MediaQuery.of(context).size.height < 700 ? 100 : 130,
+              fit: BoxFit.contain,
             ),
     );
   }
@@ -262,7 +262,7 @@ class _SignInScreenState extends State<SignInScreen> {
               
               if (_emailController.text.trim().toLowerCase() == 'inventory@gmail.com') {
 
-                Navigator.pushReplacement(
+                Navigator.pushAndRemoveUntil(
                   context,
                   MaterialPageRoute(
                     builder: (_) => BlocProvider(
@@ -276,17 +276,20 @@ class _SignInScreenState extends State<SignInScreen> {
                       child: const AddInventoryScreen(),
                     ),
                   ),
+                  (route) => false,
                 );
               } else if (mapState is MapLoaded &&
                   (mapState.vehicleList.vehicles?.isNotEmpty ?? false)) {
-                Navigator.pushReplacement(
+                Navigator.pushAndRemoveUntil(
                   context,
                   MaterialPageRoute(builder: (_) => AppNavigation()),
+                  (route) => false,
                 );
               } else {
-                Navigator.pushReplacement(
+                Navigator.pushAndRemoveUntil(
                   context,
                   MaterialPageRoute(builder: (_) => const ChoiceSelector()),
+                  (route) => false,
                 );
               }
             } else if (state is AuthFailure) {

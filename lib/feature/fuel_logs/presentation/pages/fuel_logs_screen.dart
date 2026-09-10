@@ -122,6 +122,13 @@ class _FuelLogsScreenState extends State<FuelLogsScreen>
         },
         child: BlocConsumer<ServiceLogsCubit, ServiceLogsState>(
         listener: (context, state) {
+          if (state is ServiceLogsLoaded && state.selectedVehicle != null) {
+            final vId = state.selectedVehicle!.id ?? '';
+            if (vId.isNotEmpty) {
+              context.read<FuelLogsCubit>().loadFuelLogs(vId);
+              context.read<RefuelHistoryCubit>().loadRefuelHistory(vId);
+            }
+          }
           if (state is ServiceLogsSuccess) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text(l10n.serviceLogAddedSuccess)),

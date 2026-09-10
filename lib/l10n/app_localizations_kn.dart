@@ -1037,7 +1037,7 @@ class AppLocalizationsKn extends AppLocalizations {
   String get addImage => 'ಚಿತ್ರ ಸೇರಿಸಿ';
 
   @override
-  String get maxFileSizeNote => 'ಸೂಚನೆ: ಗರಿಷ್ಠ ಫೈಲ್ ಗಾತ್ರ 5MB';
+  String get maxFileSizeNote => 'ಸೂಚನೆ: ಗರಿಷ್ಠ ಫೈಲ್ ಗಾತ್ರ 10MB';
 
   @override
   String get serviceDate => 'ಸೇವೆ ದಿನಾಂಕ';
@@ -1701,7 +1701,7 @@ class AppLocalizationsKn extends AppLocalizations {
   String get pdf => 'PDF';
 
   @override
-  String get fileTooLarge => 'ಫೈಲ್ ಗಾತ್ರವು 5MB ಮಿತಿಯನ್ನು ಮೀರಿದೆ';
+  String get fileTooLarge => 'ಫೈಲ್ ಗಾತ್ರವು 10MB ಮಿತಿಯನ್ನು ಮೀರಿದೆ';
 
   @override
   String get pickImageError => 'ಚಿತ್ರ ಆಯ್ಕೆ ಮಾಡುವಲ್ಲಿ ದೋಷ';
@@ -1710,7 +1710,7 @@ class AppLocalizationsKn extends AppLocalizations {
   String get pickPdfError => 'PDF ಆಯ್ಕೆ ಮಾಡುವಲ್ಲಿ ದೋಷ';
 
   @override
-  String get pdfTooLarge => 'PDF ಗಾತ್ರವು 5MB ಮಿತಿಯನ್ನು ಮೀರಿದೆ';
+  String get pdfTooLarge => 'PDF ಗಾತ್ರವು 10MB ಮಿತಿಯನ್ನು ಮೀರಿದೆ';
 
   @override
   String get uploadDocuments => 'ದಾಖಲೆಗಳನ್ನು ಅಪ್‌ಲೋಡ್ ಮಾಡಿ';
@@ -1745,7 +1745,7 @@ class AppLocalizationsKn extends AppLocalizations {
       'ನಿಮ್ಮ ದಾಖಲೆಗಳು ಎನ್‌ಕ್ರಿಪ್ಟ್ ಆಗಿ ಸುರಕ್ಷಿತವಾಗಿವೆ';
 
   @override
-  String get fileSizeNote => 'ಸೂಚನೆ: ಗರಿಷ್ಠ ಫೈಲ್ ಗಾತ್ರ 5MB';
+  String get fileSizeNote => 'ಸೂಚನೆ: ಗರಿಷ್ಠ ಫೈಲ್ ಗಾತ್ರ 10MB';
 
   @override
   String get personalDocumentsTitle => 'ವೈಯಕ್ತಿಕ ದಾಖಲೆಗಳು';

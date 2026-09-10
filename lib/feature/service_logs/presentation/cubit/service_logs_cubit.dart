@@ -1,6 +1,8 @@
 import 'dart:io';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:trackify/core/common/models/vehicle_list_model.dart';
 import 'package:trackify/core/common/usecase/get_user_vehicles_usecase.dart';
+import 'package:trackify/core/utils/shared_preferences.dart';
 import '../../domain/usecase/get_service_logs_usecase.dart';
 import '../../domain/usecase/save_service_log_usecase.dart';
 import '../../domain/usecase/update_service_log_usecase.dart';
@@ -35,7 +37,20 @@ class ServiceLogsCubit extends Cubit<ServiceLogsState> {
       response,
     ) {
       final vehicles = response.vehicles ?? [];
-      final selected = vehicles.isNotEmpty ? vehicles.first : null;
+      Vehicle? selected;
+      if (vehicles.isNotEmpty) {
+        final selectedUid = AppPreference.instance.getSync(
+          key: AppPreference.KEY_SELECTED_UID,
+        );
+        if (selectedUid != null && selectedUid.toString().isNotEmpty) {
+          selected = vehicles.firstWhere(
+            (v) => v.id == selectedUid,
+            orElse: () => vehicles.first,
+          );
+        } else {
+          selected = vehicles.first;
+        }
+      }
 
       emit(ServiceLogsLoaded(vehicles: vehicles, selectedVehicle: selected));
 
@@ -79,6 +94,7 @@ class ServiceLogsCubit extends Cubit<ServiceLogsState> {
     if (state is ServiceLogsLoaded) {
       final currentState = state as ServiceLogsLoaded;
       final selected = currentState.vehicles.firstWhere((v) => v.id == vehicleId);
+      await AppPreference.instance.set(key: AppPreference.KEY_SELECTED_UID, value: vehicleId);
       emit(currentState.copyWith(selectedVehicle: selected));
       fetchServiceLogs(vehicleId: selected.id);
     }

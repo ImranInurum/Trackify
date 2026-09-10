@@ -136,10 +136,20 @@ class _ProductScreenState extends State<ProductScreen> {
                             color: colorScheme.outlineVariant.withOpacity( 0.4),
                           ),
                         ),
-                        child: Image.asset(
-                          product.image,
-                          fit: BoxFit.contain,
-                        ),
+                        child: (product.image.startsWith('http://') || product.image.startsWith('https://'))
+                            ? Image.network(
+                                product.image,
+                                fit: BoxFit.contain,
+                                errorBuilder: (context, error, stackTrace) => Image.asset(
+                                  'assets/images/device_image.png',
+                                  fit: BoxFit.contain,
+                                ),
+                              )
+                            : Image.asset(
+                                product.image,
+                                fit: BoxFit.contain,
+                                errorBuilder: (context, error, stackTrace) => const Icon(Icons.inventory_2_outlined),
+                              ),
                       ),
                       if (product.discount > 0)
                         Positioned(
@@ -398,7 +408,7 @@ class _ProductScreenState extends State<ProductScreen> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (_) => const CheckoutScreen(),
+                          builder: (_) => CheckoutScreen(product: product),
                         ),
                       );
                     },

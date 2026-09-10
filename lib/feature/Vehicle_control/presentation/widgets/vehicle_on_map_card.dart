@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../../../../l10n/app_localizations.dart';
-import '../../../../core/constants/app_images.dart';
 import 'icon_option.dart';
 import 'color_option.dart';
 
@@ -42,36 +41,7 @@ class VehicleOnMapCard extends StatefulWidget {
   State<VehicleOnMapCard> createState() => _VehicleOnMapCardState();
 }
 
-class _VehicleOnMapCardState extends State<VehicleOnMapCard>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _shakeController;
-  late Animation<double> _shakeAnimation;
-
-  @override
-  void initState() {
-    super.initState();
-    _shakeController = AnimationController(
-      duration: const Duration(milliseconds: 500),
-      vsync: this,
-    );
-
-    _shakeAnimation = TweenSequence<double>([
-      TweenSequenceItem(tween: Tween(begin: 0.0, end: 10.0), weight: 1),
-      TweenSequenceItem(tween: Tween(begin: 10.0, end: -10.0), weight: 1),
-      TweenSequenceItem(tween: Tween(begin: -10.0, end: 10.0), weight: 1),
-      TweenSequenceItem(tween: Tween(begin: 10.0, end: 0.0), weight: 1),
-    ]).animate(_shakeController);
-  }
-
-  @override
-  void dispose() {
-    _shakeController.dispose();
-    super.dispose();
-  }
-
-  void _triggerShake() {
-    _shakeController.forward(from: 0.0);
-  }
+class _VehicleOnMapCardState extends State<VehicleOnMapCard> {
 
   @override
   Widget build(BuildContext context) {
@@ -86,60 +56,13 @@ class _VehicleOnMapCardState extends State<VehicleOnMapCard>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                AppLocalizations.of(context)!.yourVehicleOnMap,
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w700,
-                  color: widget.primaryTextColor,
-                ),
-              ),
-              AnimatedBuilder(
-                animation: _shakeAnimation,
-                builder: (context, child) {
-                  return Transform.translate(
-                    offset: Offset(_shakeAnimation.value, 0),
-                    child: child,
-                  );
-                },
-                child: InkWell(
-                  onTap: widget.onUpgrade,
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 8,
-                    ),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(25),
-                      gradient: const LinearGradient(
-                        colors: [
-                          Color(0xFFD6B57B),
-                          Color(0xFFE7D0B7),
-                          Color(0xFFD6B57B),
-                        ],
-                      ),
-                    ),
-                    child: Row(
-                      children: [
-                        Image.asset(AppImages.kingIcon, height: 16, width: 16),
-                        const SizedBox(width: 6),
-                        Text(
-                          AppLocalizations.of(context)!.upgradeToPlus,
-                          style: const TextStyle(
-                            color: Colors.black,
-                            fontSize: 12,
-                            fontWeight: FontWeight.w800,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ],
+          Text(
+            AppLocalizations.of(context)!.yourVehicleOnMap,
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w700,
+              color: widget.primaryTextColor,
+            ),
           ),
           const SizedBox(height: 12),
           Text(
@@ -232,25 +155,22 @@ class _VehicleOnMapCardState extends State<VehicleOnMapCard>
                 ColorOption(
                   label: AppLocalizations.of(context)!.red,
                   color: const Color(0xFF7B3D3D),
-                  isLocked: true,
                   isSelected: widget.selectedColor == 'Red',
-                  onTap: _triggerShake,
+                  onTap: () => widget.onColorChanged('Red'),
                 ),
                 const SizedBox(width: 20),
                 ColorOption(
                   label: AppLocalizations.of(context)!.aqua,
                   color: const Color(0xFF4D7B7B),
-                  isLocked: true,
                   isSelected: widget.selectedColor == 'Aqua',
-                  onTap: _triggerShake,
+                  onTap: () => widget.onColorChanged('Aqua'),
                 ),
                 const SizedBox(width: 20),
                 ColorOption(
                   label: AppLocalizations.of(context)!.orange,
                   color: const Color(0xFF7B551D),
-                  isLocked: true,
                   isSelected: widget.selectedColor == 'Orange',
-                  onTap: _triggerShake,
+                  onTap: () => widget.onColorChanged('Orange'),
                 ),
                 const SizedBox(width: 20),
                 ColorOption(

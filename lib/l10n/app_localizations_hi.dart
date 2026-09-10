@@ -1033,7 +1033,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get addImage => 'छवि जोड़ें';
 
   @override
-  String get maxFileSizeNote => 'नोट: अधिकतम फ़ाइल आकार 5MB है';
+  String get maxFileSizeNote => 'नोट: अधिकतम फ़ाइल आकार 10MB है';
 
   @override
   String get serviceDate => 'सर्विस की तारीख';
@@ -1698,7 +1698,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get pdf => 'पीडीएफ';
 
   @override
-  String get fileTooLarge => 'फ़ाइल बहुत बड़ी है (अधिकतम 5MB)';
+  String get fileTooLarge => 'फ़ाइल बहुत बड़ी है (अधिकतम 10MB)';
 
   @override
   String get pickImageError => 'छवि चुनने में त्रुटि';
@@ -1707,7 +1707,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get pickPdfError => 'पीडीएफ चुनने में त्रुटि';
 
   @override
-  String get pdfTooLarge => 'पीडीएफ का आकार 5MB से अधिक है';
+  String get pdfTooLarge => 'पीडीएफ का आकार 10MB से अधिक है';
 
   @override
   String get uploadDocuments => 'दस्तावेज़ अपलोड करें';
@@ -1741,7 +1741,7 @@ class AppLocalizationsHi extends AppLocalizations {
       'आपके दस्तावेज़ एन्क्रिप्टेड और सुरक्षित हैं';
 
   @override
-  String get fileSizeNote => 'नोट: अधिकतम फ़ाइल का आकार 5MB है';
+  String get fileSizeNote => 'नोट: अधिकतम फ़ाइल का आकार 10MB है';
 
   @override
   String get personalDocumentsTitle => 'व्यक्तिगत दस्तावेज़';

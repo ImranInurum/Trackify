@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:trackify/feature/auth/presentation/pages/signin_screen.dart';
 
 import 'package:trackify/feature/onboarding/presentation/cubit/splash_cubit.dart';
 import 'package:trackify/feature/onboarding/presentation/cubit/splash_state.dart';
@@ -8,6 +9,7 @@ import '../../../../core/widgets/custom_form_field.dart';
 import '../../../../core/widgets/square_flat_button.dart';
 import '../cubit/auth_cubit.dart';
 import '../cubit/auth_state.dart';
+import '../../../../core/constants/app_images.dart';
 import '../../../../core/utils/validators.dart';
 import '../../../../l10n/app_localizations.dart';
 
@@ -51,7 +53,10 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
             SnackBar(content: Text(l10n.passwordResetSuccess)),
           );
           // Navigate back to Login Screen
-          Navigator.of(context).popUntil((route) => route.isFirst);
+          Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(builder: (_) => const SignInScreen()),
+            (route) => false,
+          );
         } else if (state is AuthFailure) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text(state.error.message ?? "")),
@@ -103,10 +108,10 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                 return Center(
                   child: Padding(
                     padding: const EdgeInsets.symmetric(vertical: 40),
-                    child: Icon(
-                      Icons.track_changes_rounded,
-                      size: 88,
-                      color: Theme.of(context).colorScheme.primary,
+                    child: Image.asset(
+                      AppImages.appLogo,
+                      height: 140,
+                      fit: BoxFit.contain,
                     ),
                   ),
                 );

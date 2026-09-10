@@ -320,18 +320,31 @@ class _DraggableAppBarState extends State<DraggableAppBar>
                                             child: Row(
                                               children: [
                                                 Expanded(
-                                                  child: Text(
-                                                    AppLocalizations.of(
-                                                      context,
-                                                    )!.myGarage,
-                                                    style: TextStyle(
-                                                      fontSize: 16,
-                                                      fontWeight:
-                                                          FontWeight.w600,
-                                                      color: Theme.of(
-                                                        context,
-                                                      ).colorScheme.onSurface,
-                                                    ),
+                                                  child: Column(
+                                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                                    children: [
+                                                      Text(
+                                                        AppLocalizations.of(
+                                                          context,
+                                                        )!.myGarage,
+                                                        style: TextStyle(
+                                                          fontSize: 16,
+                                                          fontWeight:
+                                                              FontWeight.w600,
+                                                          color: Theme.of(
+                                                            context,
+                                                          ).colorScheme.onSurface,
+                                                        ),
+                                                      ),
+                                                      const SizedBox(height: 2),
+                                                      Text(
+                                                        "Tap any vehicle to select it as default",
+                                                        style: TextStyle(
+                                                          fontSize: 11,
+                                                          color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
+                                                        ),
+                                                      ),
+                                                    ],
                                                   ),
                                                 ),
                                                 if (widget.expandedTrailing !=
@@ -624,15 +637,53 @@ class _DraggableAppBarState extends State<DraggableAppBar>
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      "${device.vehicleMaker} ${device.vehicleModel}",
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w700,
-                        color: Theme.of(context).colorScheme.onSurface,
-                      ),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            "${device.vehicleMaker} ${device.vehicleModel}",
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w700,
+                              color: Theme.of(context).colorScheme.onSurface,
+                            ),
+                          ),
+                        ),
+                        if (isSelectedDevice)
+                          Container(
+                            margin: const EdgeInsets.only(left: 6),
+                            padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+                            decoration: BoxDecoration(
+                              color: Theme.of(context).colorScheme.primary.withOpacity(0.12),
+                              borderRadius: BorderRadius.circular(8),
+                              border: Border.all(
+                                color: Theme.of(context).colorScheme.primary.withOpacity(0.4),
+                                width: 0.8,
+                              ),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  Icons.check_circle_rounded,
+                                  size: 11,
+                                  color: Theme.of(context).colorScheme.primary,
+                                ),
+                                const SizedBox(width: 3),
+                                Text(
+                                  "Default",
+                                  style: TextStyle(
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.bold,
+                                    color: Theme.of(context).colorScheme.primary,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                      ],
                     ),
                     const SizedBox(height: 6),
                     Wrap(
@@ -693,7 +744,7 @@ class _DraggableAppBarState extends State<DraggableAppBar>
                               : const SizedBox.shrink()
                         else if (isExpired && _isExpanded)
                           const SizedBox.shrink()
-                        else
+                        else ...[
                           Container(
                             padding: const EdgeInsets.symmetric(
                               horizontal: 8,
@@ -723,6 +774,8 @@ class _DraggableAppBarState extends State<DraggableAppBar>
                               ],
                             ),
                           ),
+
+                        ],
                       ],
                     ),
                   ],

@@ -16,6 +16,7 @@ import 'package:trackify/feature/emergency_sos/presentation/pages/emergency_aler
 import 'package:trackify/feature/overspeed_alert/presentation/screens/overspeed_alert_screen.dart';
 import 'package:trackify/feature/map/presentation/cubit/map_cubit.dart';
 import 'package:trackify/feature/map/presentation/cubit/map_state.dart';
+import 'package:trackify/core/constants/app_images.dart';
 
 class IntroDetailsScreen extends StatefulWidget {
   final String title;
@@ -74,7 +75,9 @@ class _IntroDetailsScreenState extends State<IntroDetailsScreen> {
     if (titleLower.contains('geofence')) {
       targetScreen = GeoFenceScreen(vehicleName: vehicleName, imei: imei);
     } else if (titleLower.contains('location') ||
-        titleLower.contains('share')) {
+        titleLower.contains('share') ||
+        titleLower.contains('tracking') ||
+        titleLower.contains('vehicle')) {
       targetScreen = const LocationSharingScreen();
     } else if (titleLower.contains('safe') || titleLower.contains('parking')) {
       targetScreen = const SafeParkingScreen();
@@ -171,20 +174,25 @@ class _IntroDetailsScreenState extends State<IntroDetailsScreen> {
                               ),
                               child: ClipRRect(
                                 borderRadius: BorderRadius.circular(30),
-                                child: Image.network(
-                                  slide.image,
-                                  fit: BoxFit.cover,
-                                  errorBuilder: (context, error, stackTrace) {
-                                    return Center(
-                                      child: Icon(
-                                        Icons.image_not_supported,
-                                        size: 50,
-                                        color: colorScheme.onSurface
-                                            .withOpacity( 0.5),
+                                child: (slide.image.startsWith('http://') || slide.image.startsWith('https://'))
+                                    ? Image.network(
+                                        slide.image,
+                                        fit: BoxFit.cover,
+                                        width: double.infinity,
+                                        height: double.infinity,
+                                        errorBuilder: (context, error, stackTrace) {
+                                          return _buildFallbackImage(colorScheme);
+                                        },
+                                      )
+                                    : Image.asset(
+                                        slide.image.isNotEmpty ? slide.image : AppImages.roadImage,
+                                        fit: BoxFit.cover,
+                                        width: double.infinity,
+                                        height: double.infinity,
+                                        errorBuilder: (context, error, stackTrace) {
+                                          return _buildFallbackImage(colorScheme);
+                                        },
                                       ),
-                                    );
-                                  },
-                                ),
                               ),
                             ),
 
@@ -301,6 +309,27 @@ class _IntroDetailsScreenState extends State<IntroDetailsScreen> {
           return const Center(child: TrackifyLoader());
         },
       ),
+    );
+  }
+
+  Widget _buildFallbackImage(ColorScheme colorScheme) {
+    return Image.asset(
+      'assets/images/tracking.jpg',
+      fit: BoxFit.cover,
+      width: double.infinity,
+      height: double.infinity,
+      errorBuilder: (context, error, stackTrace) {
+        return Container(
+          color: colorScheme.surfaceVariant,
+          child: Center(
+            child: Icon(
+              Icons.location_on_outlined,
+              size: 64,
+              color: colorScheme.primary,
+            ),
+          ),
+        );
+      },
     );
   }
 }

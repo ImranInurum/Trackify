@@ -5,6 +5,7 @@ import 'package:trackify/feature/auth/presentation/pages/signin_screen.dart';
 import 'package:trackify/feature/onboarding/presentation/cubit/splash_cubit.dart';
 import 'package:trackify/feature/onboarding/presentation/cubit/splash_state.dart';
 
+import '../../../../core/constants/app_images.dart';
 import '../../../../core/utils/validators.dart';
 import '../../../../core/widgets/custom_form_field.dart';
 import '../../../../core/widgets/square_flat_button.dart';
@@ -85,18 +86,18 @@ class _SignUpScreenState extends State<SignUpScreen> {
               color: Theme.of(context).colorScheme.primary,
             ),
           ),
-          errorWidget: (context, url, error) => Icon(
-            Icons.track_changes_rounded,
-            size: 60, // Reduced from 88
-            color: Theme.of(context).colorScheme.primary,
+          errorWidget: (context, url, error) => Image.asset(
+            AppImages.appLogo,
+            height: 120,
+            fit: BoxFit.contain,
           ),
         ),
       );
     }
-    return Icon(
-      Icons.track_changes_rounded,
-      size: 60, // Reduced from 88
-      color: Theme.of(context).colorScheme.primary,
+    return Image.asset(
+      AppImages.appLogo,
+      height: 120,
+      fit: BoxFit.contain,
     );
   }
 

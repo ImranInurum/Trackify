@@ -7,17 +7,28 @@ import '../../../../core/config/network/api_host.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../../../app/cubit/app_cubit.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
+import 'my_orders_screen.dart';
+
+import '../../domain/entities/product_entity.dart';
 
 class CheckoutScreen extends StatefulWidget {
-  const CheckoutScreen({super.key});
+  final ProductEntity? product;
+
+  const CheckoutScreen({super.key, this.product});
 
   @override
   State<CheckoutScreen> createState() => _CheckoutScreenState();
 }
 
 class _CheckoutScreenState extends State<CheckoutScreen> {
+  int get _effectivePrice => widget.product?.price ?? 1999;
+  int get _effectiveMrp => widget.product?.mrp ?? (_effectivePrice > 0 ? _effectivePrice + 500 : 2499);
+  int get _effectiveDiscount => (_effectiveMrp > _effectivePrice) ? (_effectiveMrp - _effectivePrice) : 0;
+  String get _effectiveTitle => widget.product?.title ?? "Trackify Pro";
+
   int _currentStep = 0; // 0 = Address, 1 = Summary
   bool _isHomeSelected = true;
+  bool _isPlacingOrder = false;
   String _selectedPaymentMethod = 'ONLINE';
   String _selectedCountryCode = '+91';
   String _selectedFlag = '🇮🇳';
@@ -63,6 +74,11 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   @override
   void dispose() {
     _razorpay.clear();
+    _fullNameController.dispose();
+    _mobileController.dispose();
+    _addressController.dispose();
+    _landmarkController.dispose();
+    _pincodeController.dispose();
     super.dispose();
   }
 
@@ -75,8 +91,8 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         "userName": _fullNameController.text.trim(),
         "userPhone": "$_selectedCountryCode${_mobileController.text.trim()}",
         "userEmail": user?.email ?? "",
-        "productTitle": "Trackify Pro",
-        "price": 1999,
+        "productTitle": _effectiveTitle,
+        "price": _effectivePrice,
         "notes": "Payment ID: ${response.paymentId}. Address: ${_addressController.text.trim()}, ${_landmarkController.text.trim()}, ${_selectedCity?.name ?? ''}, ${_selectedState?.name ?? ''}, Pincode: ${_pincodeController.text.trim()}",
       };
 
@@ -86,54 +102,284 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       );
 
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Row(
-            children: const [
-              Icon(Icons.check_circle_rounded, color: Colors.white),
-              SizedBox(width: 10),
-              Expanded(child: Text("Payment Successful & Order Placed!")),
-            ],
-          ),
-          backgroundColor: Colors.green.shade700,
-          behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        ),
-      );
-      Navigator.pop(context);
+      setState(() => _isPlacingOrder = false);
+      _showSuccessDialog(response);
     } catch (e) {
+      if (mounted) setState(() => _isPlacingOrder = false);
       debugPrint("Error creating order after payment: $e");
     }
   }
 
   void _handlePaymentError(PaymentFailureResponse response) {
     if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text("Payment Failed: ${response.message ?? 'Cancelled by user'}"),
-        backgroundColor: Colors.red.shade700,
-        behavior: SnackBarBehavior.floating,
-      ),
+    setState(() => _isPlacingOrder = false);
+    _showFailureDialog(response);
+  }
+
+  void _showSuccessDialog(PaymentSuccessResponse response) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (ctx) {
+        final theme = Theme.of(ctx);
+        final colorScheme = theme.colorScheme;
+        return Dialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          elevation: 8,
+          child: Padding(
+            padding: const EdgeInsets.all(24.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: 72,
+                  height: 72,
+                  decoration: BoxDecoration(
+                    color: Colors.green.shade50,
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    Icons.check_circle_rounded,
+                    color: Colors.green.shade600,
+                    size: 48,
+                  ),
+                ),
+                const SizedBox(height: 18),
+                Text(
+                  "Order Placed Successfully!",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: colorScheme.onSurface,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  "Your order for '$_effectiveTitle' has been confirmed.",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 13,
+                    color: colorScheme.onSurface.withOpacity(0.65),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: colorScheme.surfaceVariant.withOpacity(0.4),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Column(
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text("Amount Paid", style: TextStyle(fontSize: 12, color: colorScheme.onSurface.withOpacity(0.6))),
+                          Text("₹$_effectivePrice", style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: colorScheme.primary)),
+                        ],
+                      ),
+                      if (response.paymentId != null && response.paymentId!.isNotEmpty) ...[
+                        const SizedBox(height: 6),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text("Payment ID", style: TextStyle(fontSize: 12, color: colorScheme.onSurface.withOpacity(0.6))),
+                            Text(response.paymentId!, style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: colorScheme.onSurface)),
+                          ],
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 24),
+                SizedBox(
+                  width: double.infinity,
+                  height: 46,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: colorScheme.primary,
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      elevation: 0,
+                    ),
+                    onPressed: () {
+                      Navigator.pop(ctx); // Close dialog
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(builder: (_) => const MyOrdersScreen()),
+                      );
+                    },
+                    child: const Text(
+                      "View My Orders",
+                      style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  void _showFailureDialog(PaymentFailureResponse response) {
+    showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (ctx) {
+        final theme = Theme.of(ctx);
+        final colorScheme = theme.colorScheme;
+        final errorMsg = response.message != null && response.message!.isNotEmpty
+            ? response.message!
+            : "Transaction could not be completed.";
+
+        return Dialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          elevation: 8,
+          child: Padding(
+            padding: const EdgeInsets.all(24.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: 72,
+                  height: 72,
+                  decoration: BoxDecoration(
+                    color: Colors.red.shade50,
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    Icons.cancel_rounded,
+                    color: Colors.red.shade600,
+                    size: 48,
+                  ),
+                ),
+                const SizedBox(height: 18),
+                Text(
+                  "Payment Failed",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: colorScheme.onSurface,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  errorMsg,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 13,
+                    color: colorScheme.onSurface.withOpacity(0.65),
+                  ),
+                ),
+                const SizedBox(height: 24),
+                Row(
+                  children: [
+                    Expanded(
+                      child: OutlinedButton(
+                        style: OutlinedButton.styleFrom(
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                          side: BorderSide(color: colorScheme.outlineVariant),
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                        ),
+                        onPressed: () => Navigator.pop(ctx),
+                        child: const Text("Close"),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: colorScheme.primary,
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          elevation: 0,
+                        ),
+                        onPressed: () {
+                          Navigator.pop(ctx);
+                          _startRazorpayPayment();
+                        },
+                        child: const Text(
+                          "Try Again",
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 
   void _handleExternalWallet(ExternalWalletResponse response) {
     if (!mounted) return;
+    setState(() => _isPlacingOrder = false);
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text("External Wallet Selected: ${response.walletName}")),
     );
   }
 
-  void _startRazorpayPayment() {
+  Future<void> _startRazorpayPayment() async {
+    if (_isPlacingOrder) return;
+    setState(() => _isPlacingOrder = true);
     final user = context.read<AppCubit>().state.userData;
+
+    String? razorpayOrderId;
+    String? backendKeyId;
+    try {
+      final res = await NetworkApiService().getPostApiResponse(
+        "${ApiURL.baseURL}/api/product-catalog/razorpay-order",
+        {
+          "amount": _effectivePrice,
+          "currency": "INR",
+          "receipt": "rcpt_${DateTime.now().millisecondsSinceEpoch}",
+          "keyId": ApiURL.razorpayKey,
+        },
+      );
+      res.fold(
+        (l) => debugPrint("Razorpay order error: $l"),
+        (r) {
+          if (r != null && r['success'] == true && r['data'] != null) {
+            razorpayOrderId = r['data']['orderId'];
+            backendKeyId = r['data']['keyId'];
+          }
+        },
+      );
+    } catch (e) {
+      debugPrint("Error fetching Razorpay order id: $e");
+    }
+
+    final currentKey = ApiURL.razorpayKey;
+    final bool isLiveOrderWithTestKey = backendKeyId != null &&
+        backendKeyId!.startsWith('rzp_live_') &&
+        currentKey.startsWith('rzp_test_');
+
     final options = <String, dynamic>{
-      'key': ApiURL.razorpayKey,
-      'amount': 1999 * 100, // ₹1,999 in paise
+      'key': currentKey,
+      'amount': _effectivePrice * 100, // in paise
       'name': 'Trackify',
-      'description': 'Trackify Pro Order',
+      'description': '$_effectiveTitle Order',
+      if (razorpayOrderId != null &&
+          razorpayOrderId!.isNotEmpty &&
+          !isLiveOrderWithTestKey)
+        'order_id': razorpayOrderId,
+      'retry': {'enabled': true, 'max_count': 1},
+      'send_sms_hash': true,
       'prefill': {
-        'contact': _mobileController.text.trim(),
-        'email': user?.email ?? '',
+        'contact': _mobileController.text.trim().isNotEmpty
+            ? _mobileController.text.trim()
+            : '9876543210',
+        'email': (user?.email != null && user!.email!.isNotEmpty)
+            ? user.email
+            : 'customer@trackify.com',
       },
       'external': {
         'wallets': ['paytm'],
@@ -143,6 +389,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     try {
       _razorpay.open(options);
     } catch (e) {
+      if (mounted) setState(() => _isPlacingOrder = false);
       debugPrint("Error opening Razorpay: $e");
     }
   }
@@ -574,15 +821,6 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     );
   }
 
-  @override
-  void dispose() {
-    _fullNameController.dispose();
-    _mobileController.dispose();
-    _addressController.dispose();
-    _landmarkController.dispose();
-    _pincodeController.dispose();
-    super.dispose();
-  }
 
   bool _validateAddressForm() {
     bool isValid = true;
@@ -1021,40 +1259,51 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                     color: Colors.transparent,
                     child: InkWell(
                       borderRadius: BorderRadius.circular(14),
-                      onTap: () {
-                        if (_currentStep == 0) {
-                          if (_validateAddressForm()) {
-                            setState(() => _currentStep = 1);
-                          }
-                        } else {
-                          _startRazorpayPayment();
-                        }
-                      },
+                      onTap: _isPlacingOrder
+                          ? null
+                          : () {
+                              if (_currentStep == 0) {
+                                if (_validateAddressForm()) {
+                                  setState(() => _currentStep = 1);
+                                }
+                              } else {
+                                _startRazorpayPayment();
+                              }
+                            },
                       child: Center(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              _currentStep == 0
-                                  ? l10n.proceed
-                                  : "Confirm & Place Order",
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 14.5,
-                                fontWeight: FontWeight.bold,
-                                letterSpacing: 0.2,
+                        child: _isPlacingOrder
+                            ? const SizedBox(
+                                height: 22,
+                                width: 22,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2.5,
+                                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                ),
+                              )
+                            : Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    _currentStep == 0
+                                        ? l10n.proceed
+                                        : "Confirm & Place Order",
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 14.5,
+                                      fontWeight: FontWeight.bold,
+                                      letterSpacing: 0.2,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 6),
+                                  Icon(
+                                    _currentStep == 0
+                                        ? Icons.arrow_forward_rounded
+                                        : Icons.check_circle_outline_rounded,
+                                    color: Colors.white,
+                                    size: 18,
+                                  ),
+                                ],
                               ),
-                            ),
-                            const SizedBox(width: 6),
-                            Icon(
-                              _currentStep == 0
-                                  ? Icons.arrow_forward_rounded
-                                  : Icons.check_circle_outline_rounded,
-                              color: Colors.white,
-                              size: 18,
-                            ),
-                          ],
-                        ),
                       ),
                     ),
                   ),
@@ -1585,11 +1834,11 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                 ),
               ),
               const SizedBox(height: 14),
-              _buildPriceRow("Product Price", "₹2,499", colorScheme),
+              _buildPriceRow("Product Price", "₹${_effectiveMrp.toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (m) => '${m[1]},')}", colorScheme),
               const SizedBox(height: 10),
               _buildPriceRow(
                 "Discount",
-                "-₹500",
+                "-₹${_effectiveDiscount.toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (m) => '${m[1]},')}",
                 colorScheme,
                 valueColor: Colors.green.shade600,
               ),
@@ -1615,7 +1864,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                     ),
                   ),
                   Text(
-                    "₹1,999",
+                    "₹${_effectivePrice.toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (m) => '${m[1]},')}",
                     style: TextStyle(
                       color: colorScheme.primary,
                       fontSize: 20,

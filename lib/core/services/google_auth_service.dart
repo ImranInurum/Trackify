@@ -23,8 +23,9 @@ class GoogleAuthService {
       );
 
       return await _auth.signInWithCredential(credentials);
-    } catch (error) {
+    } catch (error, stackTrace) {
       print("Google Auth Error: $error");
+      print("Google Auth StackTrace: $stackTrace");
       return null;
     }
   }

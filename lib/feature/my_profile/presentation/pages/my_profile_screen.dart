@@ -52,6 +52,15 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
     );
     if (pickedFile != null) {
       final fileBytes = await pickedFile.readAsBytes();
+      if (fileBytes.length > 10 * 1024 * 1024) {
+        if (mounted) {
+          final l10n = AppLocalizations.of(context)!;
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(l10n.fileTooLarge)),
+          );
+        }
+        return;
+      }
       final fileName = pickedFile.name;
 
       final userName = user?.name ?? "";

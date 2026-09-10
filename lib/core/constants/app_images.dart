@@ -9,6 +9,7 @@ class AppImages {
   static const String rickshawImage = '$icons/rickshaw.png';
   static const String busImage = '$icons/bus-icon.png';
   static const String vanImage = '$icons/van.png';
+  static const String truckImage = '$icons/truck.png';
   static const String appLogo = '$icons/appLogo.png';
 
   static const String kingIcon = "$icons/king.png";
@@ -43,6 +44,8 @@ class AppImages {
   static const String trafficMapStyle = "$images/trafficStyle.png";
 
   static const String roadImage = "$images/road.jpg";
+  static const String trackingImage = "$images/tracking.jpg";
+  static const String rideImage = "$images/ride.jpg";
 
   static const String safeParking = "$images/safe_parking_.png";
   static const String bikeUpgrade = "$images/bike upgrade.png";

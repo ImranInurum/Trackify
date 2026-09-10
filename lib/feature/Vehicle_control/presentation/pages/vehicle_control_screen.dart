@@ -1041,8 +1041,8 @@ class _VehicleControlViewState extends State<VehicleControlView> {
                               ].where((s) => s.isNotEmpty).join(' ');
 
                               bool proceed = true;
-                              if (vehicle.vehicleLock) {
-                                // Vehicle is currently locked -> Unlocking requires PIN
+                              if (!vehicle.vehicleLock) {
+                                // Vehicle is currently UNLOCKED -> LOCKING requires PIN
                                 proceed = await VehiclePinDialog.show(
                                   context,
                                   vehicle.vehicleLock,
@@ -1535,6 +1535,15 @@ class _VehicleControlViewState extends State<VehicleControlView> {
       final picker = ImagePicker();
       final pickedFile = await picker.pickImage(source: source);
       if (pickedFile != null) {
+        final file = File(pickedFile.path);
+        if (file.lengthSync() > 10 * 1024 * 1024) {
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text(l10n.fileTooLarge)),
+            );
+          }
+          return;
+        }
         final croppedFile = await ImageCropper().cropImage(
           sourcePath: pickedFile.path,
           uiSettings: [

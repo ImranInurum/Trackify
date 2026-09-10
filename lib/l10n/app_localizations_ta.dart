@@ -1032,7 +1032,7 @@ class AppLocalizationsTa extends AppLocalizations {
   String get addImage => 'படம் சேர்க்கவும்';
 
   @override
-  String get maxFileSizeNote => 'குறிப்பு: அதிகபட்ச கோப்பு அளவு 5MB';
+  String get maxFileSizeNote => 'குறிப்பு: அதிகபட்ச கோப்பு அளவு 10MB';
 
   @override
   String get serviceDate => 'சேவை தேதி';
@@ -1703,7 +1703,7 @@ class AppLocalizationsTa extends AppLocalizations {
   String get pdf => 'PDF';
 
   @override
-  String get fileTooLarge => 'கோப்பு அளவு 5MB வரம்பை மீறுகிறது';
+  String get fileTooLarge => 'கோப்பு அளவு 10MB வரம்பை தாண்டியது';
 
   @override
   String get pickImageError => 'படத்தை தேர்வு செய்வதில் பிழை';
@@ -1712,7 +1712,7 @@ class AppLocalizationsTa extends AppLocalizations {
   String get pickPdfError => 'PDF தேர்வு செய்வதில் பிழை';
 
   @override
-  String get pdfTooLarge => 'PDF அளவு 5MB வரம்பை மீறுகிறது';
+  String get pdfTooLarge => 'PDF அளவு 10MB வரம்பை தாண்டியது';
 
   @override
   String get uploadDocuments => 'ஆவணங்களை பதிவேற்றுக';
@@ -1747,7 +1747,7 @@ class AppLocalizationsTa extends AppLocalizations {
       'உங்கள் ஆவணங்கள் குறியாக்கம் செய்யப்பட்டு பாதுகாப்பாக உள்ளன';
 
   @override
-  String get fileSizeNote => 'குறிப்பு: அதிகபட்ச கோப்பு அளவு 5MB';
+  String get fileSizeNote => 'குறிப்பு: அதிகபட்ச கோப்பு அளவு 10MB';
 
   @override
   String get personalDocumentsTitle => 'தனிப்பட்ட ஆவணங்கள்';

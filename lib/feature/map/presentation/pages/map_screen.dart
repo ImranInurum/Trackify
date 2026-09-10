@@ -1495,7 +1495,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin, Wi
     return GestureDetector(
       onTap: () {
         Navigator.of(context).push(
-          MaterialPageRoute(builder: (context) => const UpgradeToPlusScreen()),
+          MaterialPageRoute(builder: (context) => const ProductScreen()),
         );
       },
       child: Container(
@@ -1526,33 +1526,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin, Wi
                     child: const TrackifyLoader(size: 80, animated: true),
                   ),
                 ),
-                errorWidget: (context, url, error) => Container(
-                  color: theme.cardColor,
-                  child: Stack(
-                    children: [
-                      Positioned.fill(
-                        child: Opacity(
-                          opacity: 0.1,
-                          child: Icon(
-                            Icons.local_offer,
-                            size: 80,
-                            color: theme.colorScheme.onSurface,
-                          ),
-                        ),
-                      ),
-                      Center(
-                        child: Text(
-                          "Special Offer Available",
-                          style: TextStyle(
-                            color: theme.colorScheme.onSurface,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+                errorWidget: (context, url, error) => const SizedBox.shrink(),
               ),
               Positioned.fill(
                 child: IgnorePointer(
@@ -2158,10 +2132,14 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin, Wi
               }
             }
 
-            final batteryVal = liveDevice['api_battery'] ?? liveDevice['battery'] ?? liveDevice['internalBatteryLevel'];
+            final batteryVal = liveDevice['api_battery'] ?? 
+                               liveDevice['battery'] ?? 
+                               liveDevice['internalBatteryLevel'] ??
+                               (attrs is Map ? (attrs['batteryLevel'] ?? attrs['battery'] ?? attrs['io200'] ?? attrs['internalBatteryLevel']) : null);
 
             // Extract external voltage or raw voltage from liveDevice dictionary
-            final rawVoltage = liveDevice['externalVoltage'] ??
+            final rawVoltage = liveDevice['api_externalVoltage'] ??
+                liveDevice['externalVoltage'] ??
                 liveDevice['external_voltage'] ??
                 liveDevice['voltage'] ??
                 liveDevice['extVoltage'] ??
@@ -2186,7 +2164,11 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin, Wi
                 batteryVal.toString().trim().toLowerCase() != 'null' &&
                 batteryVal.toString().trim().isNotEmpty) {
               final b = batteryVal.toString().trim();
-              if (b.endsWith('%') || b.toLowerCase().endsWith('v')) {
+              final double? bLevel = double.tryParse(b);
+              if (bLevel != null && bLevel <= 6 && bLevel >= 0) {
+                final calcVolt = 10.0 + (bLevel / 6.0) * 4.7;
+                bracketText = " (${calcVolt.toStringAsFixed(1)}V)";
+              } else if (b.endsWith('%') || b.toLowerCase().endsWith('v')) {
                 bracketText = " ($b)";
               }
             }
@@ -2251,6 +2233,10 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin, Wi
               } else {
                 batteryText = rawStr;
               }
+            }
+
+            if (batteryText == "--" && bracketText.isNotEmpty) {
+              batteryText = "Normal";
             }
 
             if (batteryText != "--" && bracketText.isNotEmpty) {
@@ -2320,7 +2306,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin, Wi
                             ),
                           ],
                         ),
-                        if (batteryText.isNotEmpty)
+                        if (batteryText.isNotEmpty && batteryText != "--")
                           Builder(
                             builder: (context) {
                               String combinedText = batteryText;
@@ -2457,33 +2443,36 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin, Wi
             } else {
               catTotal = int.tryParse(item.exploredText) ?? 0;
             }
+            if (catTotal == 0) catTotal = 1;
 
-            if (catTotal > 0) {
-              total += catTotal;
-
-              final catExplored = list
-                  .where((id) => id.startsWith('${item.id}_'))
-                  .length;
-              explored += (catExplored > catTotal ? catTotal : catExplored);
-            }
+            total += catTotal;
+            final catExplored = list
+                .where((id) => id.startsWith('${item.id}_'))
+                .length;
+            explored += (catExplored > catTotal ? catTotal : catExplored);
           }
-          if (total > 0) {
-            final calculatedValue = explored / total;
-            final calculatedString = (calculatedValue * 100).toInt().toString();
 
-            if (calculatedValue != progressValue ||
-                calculatedString != progressString) {
-              progressValue = calculatedValue;
-              progressString = calculatedString;
-              prefs.set(
-                key: 'discover_progress_value',
-                value: progressValue.toString(),
-              );
-              prefs.set(key: 'discover_progress_string', value: progressString);
-              prefs.set(key: 'discover_explored', value: explored.toString());
-              prefs.set(key: 'discover_total', value: total.toString());
-            }
-          }
+          if (total == 0) total = state.discoverList.length > 0 ? state.discoverList.length : 4;
+
+          final calculatedValue = total > 0 ? (explored / total) : 0.0;
+          final calculatedString = (calculatedValue * 100).toInt().toString();
+
+          progressValue = calculatedValue;
+          progressString = calculatedString;
+
+          prefs.set(
+            key: 'discover_progress_value',
+            value: progressValue.toString(),
+          );
+          prefs.set(key: 'discover_progress_string', value: progressString);
+          prefs.set(key: 'discover_explored', value: explored.toString());
+          prefs.set(key: 'discover_total', value: total.toString());
+        } else {
+          final prefs = AppPreference.instance;
+          final list = prefs.getStringList(key: AppPreference.KEY_EXPLORED_FEATURES);
+          final explored = list.length > 4 ? 4 : list.length;
+          progressValue = explored / 4;
+          progressString = (progressValue * 100).toInt().toString();
         }
 
         final Color progressColor = Theme.of(context).colorScheme.primary;
@@ -3093,6 +3082,11 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin, Wi
         "badge": null,
       },
       {
+        "icon": Icons.shopping_bag_outlined,
+        "label": "Buy New\nDevice",
+        "badge": null,
+      },
+      {
         "icon": Icons.play_arrow_outlined,
         "label": l10n.videoTutorials,
         "badge": null,
@@ -3633,6 +3627,11 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin, Wi
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => const DocumentFolderScreen()),
+      );
+    } else if (label == "Buy New\nDevice" || label == "Buy New Device") {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const ProductScreen()),
       );
     } else if (label == l10n.videoTutorials) {
       Navigator.push(

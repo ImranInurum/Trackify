@@ -598,11 +598,28 @@ class AppCubit extends Cubit<AppState> with WidgetsBindingObserver {
             }
           }
         }
+
+        // Persist externalVoltage from DeviceStatus API
+        final voltage = deviceData['externalVoltage'];
+        if (voltage != null && voltage.toString().isNotEmpty && voltage.toString() != 'null') {
+          AppPreference.instance.set(key: 'api_voltage_$deviceId', value: voltage.toString());
+          deviceData['api_externalVoltage'] = voltage;
+        } else {
+          final savedVoltage = AppPreference.instance.getSync(key: 'api_voltage_$deviceId');
+          if (savedVoltage.isNotEmpty && savedVoltage != 'null') {
+            deviceData['api_externalVoltage'] = savedVoltage;
+          }
+        }
       } else {
         // Keep existing api_battery when socket updates come in
         final savedBattery = AppPreference.instance.getSync(key: 'api_battery_$deviceId');
         if (savedBattery.isNotEmpty && savedBattery != 'null') {
           deviceData['api_battery'] = savedBattery;
+        }
+        // Keep existing api_externalVoltage when socket updates come in
+        final savedVoltage = AppPreference.instance.getSync(key: 'api_voltage_$deviceId');
+        if (savedVoltage.isNotEmpty && savedVoltage != 'null') {
+          deviceData['api_externalVoltage'] = savedVoltage;
         }
       }
 

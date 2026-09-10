@@ -6,6 +6,7 @@ import 'package:trackify/feature/document_folder/presentation/cubit/document_fol
 import 'package:trackify/feature/document_folder/presentation/pages/accessory_bill_screen.dart';
 import 'package:trackify/l10n/app_localizations.dart';
 import 'package:intl/intl.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class AccessoryBillDetailsScreen extends StatelessWidget {
   final DocumentEntity bill;
@@ -221,25 +222,81 @@ class AccessoryBillDetailsScreen extends StatelessWidget {
                         return ClipRRect(
                           borderRadius: BorderRadius.circular(12),
                           child: imageUrl.toLowerCase().endsWith('.pdf')
-                              ? Container(
-                                  color: colorScheme.surfaceVariant,
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      const Icon(
-                                        Icons.picture_as_pdf,
-                                        color: Colors.red,
-                                        size: 48,
+                              ? GestureDetector(
+                                  onTap: () async {
+                                    final uri = Uri.parse(imageUrl);
+                                    try {
+                                      if (await canLaunchUrl(uri)) {
+                                        await launchUrl(uri, mode: LaunchMode.externalApplication);
+                                      } else {
+                                        await launchUrl(uri, mode: LaunchMode.platformDefault);
+                                      }
+                                    } catch (e) {
+                                      if (context.mounted) {
+                                        ScaffoldMessenger.of(context).showSnackBar(
+                                          SnackBar(content: Text('Could not open PDF: $e')),
+                                        );
+                                      }
+                                    }
+                                  },
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      color: colorScheme.surfaceVariant.withOpacity(0.5),
+                                      borderRadius: BorderRadius.circular(12),
+                                      border: Border.all(
+                                        color: colorScheme.outlineVariant.withOpacity(0.5),
+                                        width: 0.5,
                                       ),
-                                      const SizedBox(height: 8),
-                                      Text(
-                                        'PDF Document',
-                                        style: TextStyle(
-                                          color: colorScheme.onSurface,
-                                          fontSize: 12,
+                                    ),
+                                    child: Column(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        Container(
+                                          padding: const EdgeInsets.all(12),
+                                          decoration: BoxDecoration(
+                                            color: Colors.red.withOpacity(0.1),
+                                            shape: BoxShape.circle,
+                                          ),
+                                          child: const Icon(
+                                            Icons.picture_as_pdf_rounded,
+                                            color: Colors.red,
+                                            size: 36,
+                                          ),
                                         ),
-                                      ),
-                                    ],
+                                        const SizedBox(height: 8),
+                                        Text(
+                                          'PDF Document',
+                                          style: TextStyle(
+                                            color: colorScheme.onSurface,
+                                            fontSize: 13,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 6),
+                                        Container(
+                                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                                          decoration: BoxDecoration(
+                                            color: colorScheme.primary.withOpacity(0.1),
+                                            borderRadius: BorderRadius.circular(12),
+                                          ),
+                                          child: Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              Icon(Icons.visibility_outlined, size: 14, color: colorScheme.primary),
+                                              const SizedBox(width: 4),
+                                              Text(
+                                                'Tap to View PDF',
+                                                style: TextStyle(
+                                                  color: colorScheme.primary,
+                                                  fontSize: 11,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 )
                               : GestureDetector(

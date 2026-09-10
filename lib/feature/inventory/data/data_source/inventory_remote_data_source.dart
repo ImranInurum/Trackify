@@ -1,3 +1,4 @@
+import 'package:trackify/core/config/network/api_host.dart';
 import 'package:trackify/core/config/network/base_api_service.dart';
 import '../models/add_inventory_request.dart';
 
@@ -13,7 +14,7 @@ class InventoryRemoteDataSourceImpl implements InventoryRemoteDataSource {
   @override
   Future<String> addInventory(AddInventoryRequest request) async {
     final response = await _apiServices.getPostApiResponse(
-      'http://139.59.1.109:5000/api/inventory/add-single',
+      '${ApiURL.baseURL}/api/inventory/add-single',
       request.toJson(),
     );
     

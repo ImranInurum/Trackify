@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:trackify/core/utils/flutter_compat_extensions.dart';
 import 'package:trackify/feature/document_folder/domain/entities/doucment_entity.dart';
 import 'package:trackify/l10n/app_localizations.dart';
@@ -30,9 +32,15 @@ class DocumentDetailsScreen extends StatelessWidget {
     final colorScheme = theme.colorScheme;
     final l10n = AppLocalizations.of(context)!;
 
-    final expiryDateText = (document.expiryDate != null && document.expiryDate!.isNotEmpty) 
-        ? document.expiryDate! 
-        : 'N/A';
+    String expiryDateText = 'N/A';
+    if (document.expiryDate != null && document.expiryDate!.isNotEmpty) {
+      try {
+        final parsed = DateTime.parse(document.expiryDate!);
+        expiryDateText = DateFormat('dd MMM yyyy').format(parsed);
+      } catch (_) {
+        expiryDateText = document.expiryDate!;
+      }
+    }
 
     final frontUrl = _getImageUrl(document.fontpath);
     final backUrl = _getImageUrl(document.backpath);
@@ -64,7 +72,7 @@ class DocumentDetailsScreen extends StatelessWidget {
         centerTitle: true,
         actions: [
           IconButton(
-            icon: Icon(Icons.delete, color: colorScheme.onSurface),
+            icon: Icon(Icons.delete_outline, color: Colors.redAccent),
             onPressed: () {
               // Confirm delete
               showDialog(
@@ -90,7 +98,7 @@ class DocumentDetailsScreen extends StatelessWidget {
             },
           ),
           IconButton(
-            icon: Icon(Icons.edit, color: colorScheme.onSurface),
+            icon: Icon(Icons.edit_outlined, color: colorScheme.onSurface),
             onPressed: onEdit,
           ),
         ],
@@ -106,8 +114,15 @@ class DocumentDetailsScreen extends StatelessWidget {
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
                 color: theme.cardColor,
-                border: Border.all(color: theme.colorScheme.outlineVariant.withOpacity( 0.5), width: 0.5),
+                border: Border.all(color: colorScheme.outlineVariant.withOpacity(0.5), width: 0.5),
                 borderRadius: BorderRadius.circular(12),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.02),
+                    blurRadius: 8,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -125,7 +140,7 @@ class DocumentDetailsScreen extends StatelessWidget {
                     style: TextStyle(
                       color: colorScheme.onSurface,
                       fontSize: 16,
-                      fontWeight: FontWeight.w500,
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
                   const SizedBox(height: 16),
@@ -137,12 +152,23 @@ class DocumentDetailsScreen extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 4),
-                  Text(
-                    expiryDateText,
-                    style: TextStyle(
-                      color: expiryDateText == 'N/A' ? Colors.redAccent : colorScheme.onSurface,
-                      fontSize: 16,
-                    ),
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.calendar_month_outlined,
+                        size: 16,
+                        color: expiryDateText == 'N/A' ? Colors.redAccent : colorScheme.primary,
+                      ),
+                      const SizedBox(width: 6),
+                      Text(
+                        expiryDateText,
+                        style: TextStyle(
+                          color: expiryDateText == 'N/A' ? Colors.redAccent : colorScheme.onSurface,
+                          fontSize: 15,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -153,7 +179,7 @@ class DocumentDetailsScreen extends StatelessWidget {
               style: TextStyle(
                 color: colorScheme.onSurfaceVariant,
                 fontSize: 14,
-                fontWeight: FontWeight.w500,
+                fontWeight: FontWeight.w600,
               ),
             ),
             const SizedBox(height: 12),
@@ -175,20 +201,84 @@ class DocumentDetailsScreen extends StatelessWidget {
                       itemBuilder: (context, index) {
                         final isPdf = images[index].toLowerCase().endsWith('.pdf');
                         return ClipRRect(
-                          borderRadius: BorderRadius.circular(8),
+                          borderRadius: BorderRadius.circular(12),
                           child: isPdf
-                              ? Container(
-                                  color: theme.cardColor,
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      const Icon(Icons.picture_as_pdf, color: Colors.red, size: 48),
-                                      const SizedBox(height: 8),
-                                      Text(
-                                        l10n.pdfDocumentText,
-                                        style: TextStyle(color: colorScheme.onSurface, fontSize: 12),
+                              ? GestureDetector(
+                                  onTap: () async {
+                                    final pdfUrl = images[index];
+                                    final uri = Uri.parse(pdfUrl);
+                                    try {
+                                      if (await canLaunchUrl(uri)) {
+                                        await launchUrl(uri, mode: LaunchMode.externalApplication);
+                                      } else {
+                                        await launchUrl(uri, mode: LaunchMode.platformDefault);
+                                      }
+                                    } catch (e) {
+                                      if (context.mounted) {
+                                        ScaffoldMessenger.of(context).showSnackBar(
+                                          SnackBar(content: Text('Could not open PDF: $e')),
+                                        );
+                                      }
+                                    }
+                                  },
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      color: theme.cardColor,
+                                      borderRadius: BorderRadius.circular(12),
+                                      border: Border.all(
+                                        color: colorScheme.outlineVariant.withOpacity(0.5),
+                                        width: 0.5,
                                       ),
-                                    ],
+                                    ),
+                                    child: Column(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        Container(
+                                          padding: const EdgeInsets.all(12),
+                                          decoration: BoxDecoration(
+                                            color: Colors.red.withOpacity(0.1),
+                                            shape: BoxShape.circle,
+                                          ),
+                                          child: const Icon(
+                                            Icons.picture_as_pdf_rounded,
+                                            color: Colors.red,
+                                            size: 36,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 8),
+                                        Text(
+                                          l10n.pdfDocumentText,
+                                          style: TextStyle(
+                                            color: colorScheme.onSurface,
+                                            fontSize: 13,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 6),
+                                        Container(
+                                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                                          decoration: BoxDecoration(
+                                            color: colorScheme.primary.withOpacity(0.1),
+                                            borderRadius: BorderRadius.circular(12),
+                                          ),
+                                          child: Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              Icon(Icons.visibility_outlined, size: 14, color: colorScheme.primary),
+                                              const SizedBox(width: 4),
+                                              Text(
+                                                'Tap to View PDF',
+                                                style: TextStyle(
+                                                  color: colorScheme.primary,
+                                                  fontSize: 11,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 )
                               : GestureDetector(

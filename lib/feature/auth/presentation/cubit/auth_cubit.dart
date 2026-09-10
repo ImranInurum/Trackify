@@ -6,6 +6,8 @@ import 'package:flutter/foundation.dart';
 import 'package:trackify/core/config/network/api_host.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../core/config/network/exceptions.dart';
+
 import 'package:firebase_messaging/firebase_messaging.dart';
 import '../../../../core/services/google_auth_service.dart';
 import '../../../../core/services/apple_auth_service.dart';
@@ -168,9 +170,10 @@ class AuthCubit extends Cubit<AuthState> {
   }
 
   Future<void> loginWithGoogle() async {
+    LoadingScreenOL().show();
+    emit(AuthLoading());
     try {
-      final userCredential = await GoogleAuthService.instance
-          .signInWithGoogle();
+      final userCredential = await GoogleAuthService.instance.signInWithGoogle();
 
       if (userCredential != null && userCredential.user != null) {
         final firebaseUser = userCredential.user!;
@@ -201,6 +204,7 @@ class AuthCubit extends Cubit<AuthState> {
 
         result.fold(
           (failure) {
+            debugPrint("Social Login Failure: ${failure.message}");
             emit(AuthFailure(failure));
           },
           (user) async {
@@ -224,9 +228,15 @@ class AuthCubit extends Cubit<AuthState> {
             emit(AuthSuccess(user));
           },
         );
-      } else {}
+      } else {
+        debugPrint("Google Sign-In canceled or failed (userCredential is null)");
+        emit(const AuthFailure(FetchDataException("Google sign-in was canceled or failed")));
+      }
     } catch (e) {
-      print("Google Login Failed ${e.toString()}");
+      debugPrint("Google Login Failed Exception: ${e.toString()}");
+      emit(AuthFailure(FetchDataException("Google Login error: ${e.toString()}")));
+    } finally {
+      LoadingScreenOL().hide();
     }
   }
 

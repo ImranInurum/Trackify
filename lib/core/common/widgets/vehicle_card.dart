@@ -148,7 +148,9 @@ class _VehicleCardState extends State<VehicleCard> {
                                 return AppImages.carImage;
                               } else if (lower.contains('bus')) {
                                 return AppImages.busImage;
-                              } else if (lower.contains('van') || lower.contains('truck') || lower.contains('pickup') || lower.contains('pick-up')) {
+                              } else if (lower.contains('truck') || lower.contains('lorry') || lower.contains('heavy') || lower.contains('pickup') || lower.contains('pick-up') || lower.contains('lcv') || lower.contains('hcv')) {
+                                return AppImages.truckImage;
+                              } else if (lower.contains('van') || lower.contains('tempo') || lower.contains('traveller')) {
                                 return AppImages.vanImage;
                               }
                               return AppImages.bikeImage;
@@ -246,6 +248,27 @@ class _VehicleCardState extends State<VehicleCard> {
                                     ),
                                 ],
                               ),
+                              if (widget.isDeviceInstalled && widget.vehicle.imei != null && widget.vehicle.imei!.isNotEmpty) ...[
+                                const SizedBox(height: 4),
+                                Row(
+                                  children: [
+                                    Icon(
+                                      Icons.memory,
+                                      size: 13,
+                                      color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
+                                    ),
+                                    const SizedBox(width: 4),
+                                    Text(
+                                      'IMEI: ${widget.vehicle.imei}',
+                                      style: TextStyle(
+                                        fontSize: 13,
+                                        color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
                             ],
                           ),
                         ),

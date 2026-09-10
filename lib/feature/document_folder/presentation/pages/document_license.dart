@@ -49,7 +49,7 @@ class _DocumentLicenseState extends State<DocumentLicense> {
     }
   }
 
-  static const int _maxBytes = 5 * 1024 * 1024;
+  static const int _maxBytes = 10 * 1024 * 1024;
   final ImagePicker _picker = ImagePicker();
 
   bool _isPdf(File f) => f.path.toLowerCase().endsWith('.pdf');

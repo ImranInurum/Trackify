@@ -66,6 +66,7 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
 
   String? _lightMapStyle;
   String? _darkMapStyle;
+  int _topMetricIndex = 0;
 
   Future<void> _loadMapStyles() async {
     _lightMapStyle = await MapUtils.loadStyle(
@@ -627,34 +628,50 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
   Future<BitmapDescriptor> _createVehicleMarker(BuildContext context) async {
     final ui.PictureRecorder pictureRecorder = ui.PictureRecorder();
     final Canvas canvas = Canvas(pictureRecorder);
-    const double size = 50.0; // Reduced size for a smaller marker
+    const double size = 170.0;
+    
+    final primaryColor = Theme.of(context).colorScheme.primary;
+
+    // Draw outer glow / pulse background
+    final Paint pulsePaint = Paint()
+      ..color = primaryColor.withOpacity(0.25)
+      ..style = PaintingStyle.fill;
+    canvas.drawCircle(const Offset(size / 2, size / 2), size / 2, pulsePaint);
+
     final Paint arrowPaint = Paint()
-      ..color = Theme.of(context)
-          .colorScheme
-          .primary // Use theme's primary color
+      ..color = primaryColor
       ..style = PaintingStyle.fill;
     final Paint borderPaint = Paint()
       ..color = Colors.white
       ..style = PaintingStyle.stroke
-      ..strokeWidth =
-          2.0 // Reduced border width
+      ..strokeWidth = 5.5
       ..strokeJoin = StrokeJoin.round;
 
     final Path path = Path();
     // Start at top tip
-    path.moveTo(size / 2, 4);
+    path.moveTo(size / 2, 16);
     // Draw to right wing tip
-    path.lineTo(size - 9, size - 11);
+    path.lineTo(size - 30, size - 30);
     // Draw to bottom center indentation
-    path.lineTo(size / 2, size - 20);
+    path.lineTo(size / 2, size - 54);
     // Draw to left wing tip
-    path.lineTo(9, size - 11);
+    path.lineTo(30, size - 30);
     path.close();
 
-    // Add a slightly larger, softer drop shadow
-    canvas.drawShadow(path, Colors.black, 4.0, false);
+    canvas.drawShadow(path, Colors.black.withOpacity(0.6), 8.0, false);
     canvas.drawPath(path, arrowPaint);
     canvas.drawPath(path, borderPaint);
+
+    // Inner vertical accent line for direction clarity
+    final Paint innerLinePaint = Paint()
+      ..color = Colors.white.withOpacity(0.9)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 3.5;
+    
+    final Path innerPath = Path();
+    innerPath.moveTo(size / 2, 32);
+    innerPath.lineTo(size / 2, size - 60);
+    canvas.drawPath(innerPath, innerLinePaint);
 
     final img = await pictureRecorder.endRecording().toImage(
       size.toInt(),
@@ -1069,74 +1086,11 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
                   );
                 } else {
                   return Positioned(
-                    top: MediaQuery.of(context).padding.top + 80,
+                    top: MediaQuery.of(context).padding.top + 70,
                     left: 16,
                     right: 16,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 12,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Theme.of(
-                          context,
-                        ).cardColor.withOpacity( 0.85),
-                        borderRadius: BorderRadius.circular(16),
-                        border: Border.all(
-                          color: Theme.of(context).colorScheme.outlineVariant.withOpacity( 0.5),
-                          width: 0.5,
-                        ),
-                      ),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: _buildLiveStatColumn(
-                              l10n.speed,
-                              "${statsState.currentSpeedDisplay.toStringAsFixed(1)} ${context.displayKmh}",
-                            ),
-                          ),
-                          Container(
-                            width: 1,
-                            height: 30,
-                            color: Theme.of(
-                              context,
-                            ).colorScheme.onSurface.withOpacity( 0.2),
-                          ),
-                          Expanded(
-                            child: _buildLiveStatColumn(
-                              l10n.timeLabel,
-                              statsState.currentTimeDisplay ??
-                                  widget.ride.startTime,
-                            ),
-                          ),
-                          Container(
-                            width: 1,
-                            height: 30,
-                            color: Theme.of(
-                              context,
-                            ).colorScheme.onSurface.withOpacity( 0.2),
-                          ),
-                          Expanded(
-                            child: _buildLiveStatColumn(
-                              l10n.distanceLabel,
-                              "${statsState.currentDistanceDisplay.toStringAsFixed(2)} ${context.displayKm}",
-                            ),
-                          ),
-                          Container(
-                            width: 1,
-                            height: 30,
-                            color: Theme.of(
-                              context,
-                            ).colorScheme.onSurface.withOpacity( 0.2),
-                          ),
-                          Expanded(
-                            child: _buildLiveStatColumn(
-                              l10n.averageSpeed,
-                              "${statsState.currentAvgSpeedDisplay.toStringAsFixed(1)} ${context.displayKmh}",
-                            ),
-                          ),
-                        ],
-                      ),
+                    child: Center(
+                      child: _buildTopMetricStepperCard(context, l10n, statsState),
                     ),
                   );
                 }
@@ -1236,7 +1190,81 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
                                 ),
                                 child: Row(
                                   children: [
-                                    const Expanded(child: SizedBox()),
+                                    Expanded(
+                                      child: Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: FittedBox(
+                                          fit: BoxFit.scaleDown,
+                                          alignment: Alignment.centerLeft,
+                                          child: Container(
+                                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                                            decoration: BoxDecoration(
+                                              color: Theme.of(context).colorScheme.primary.withOpacity(0.08),
+                                              borderRadius: BorderRadius.circular(12),
+                                              border: Border.all(
+                                                color: Theme.of(context).colorScheme.primary.withOpacity(0.18),
+                                                width: 0.8,
+                                              ),
+                                            ),
+                                            child: Column(
+                                              mainAxisAlignment: MainAxisAlignment.center,
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                Row(
+                                                  mainAxisSize: MainAxisSize.min,
+                                                  children: [
+                                                    Icon(
+                                                      Icons.currency_rupee_rounded,
+                                                      size: 13,
+                                                      color: Theme.of(context).colorScheme.primary,
+                                                    ),
+                                                    const SizedBox(width: 2),
+                                                    Text(
+                                                      "${l10n.currencySymbol}${(widget.ride.distance * fuelRate).toStringAsFixed(0)}",
+                                                      style: TextStyle(
+                                                        fontSize: 13,
+                                                        fontWeight: FontWeight.bold,
+                                                        color: Theme.of(context).colorScheme.onSurface,
+                                                      ),
+                                                    ),
+                                                    const SizedBox(width: 4),
+                                                    Text(
+                                                      "Fuel Cost",
+                                                      style: TextStyle(
+                                                        fontSize: 11,
+                                                        fontWeight: FontWeight.w600,
+                                                        color: Theme.of(context).colorScheme.onSurface.withOpacity(0.65),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                                const SizedBox(height: 2),
+                                                Row(
+                                                  mainAxisSize: MainAxisSize.min,
+                                                  children: [
+                                                    Icon(
+                                                      Icons.local_gas_station_rounded,
+                                                      size: 13,
+                                                      color: Theme.of(context).colorScheme.primary,
+                                                    ),
+                                                    const SizedBox(width: 3),
+                                                    Text(
+                                                      "${l10n.currencySymbol}${fuelRate.toStringAsFixed(1)}/${context.displayKm}",
+                                                      style: TextStyle(
+                                                        fontSize: 11.5,
+                                                        fontWeight: FontWeight.w600,
+                                                        color: Theme.of(context).colorScheme.onSurface.withOpacity(0.75),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
                                     // Play Button strictly in the center
                                     GestureDetector(
                                       onTap: _togglePlayback,
@@ -1441,17 +1469,6 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
 
                           const SizedBox(height: 8),
 
-                          Text(
-                            "${l10n.rideDuration}: ${widget.ride.duration}",
-                            style: TextStyle(
-                              color: Theme.of(context).colorScheme.onSurface,
-                              fontSize: 15,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-
-                          const SizedBox(height: 12),
-
                           Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 16.0),
                             child: Column(
@@ -1473,14 +1490,6 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
                                         l10n.durationLabel,
                                       ),
                                     ),
-                                    const SizedBox(width: 8),
-                                    Expanded(
-                                      child: _buildPanelStat(
-                                        Icons.currency_rupee_rounded,
-                                        "${l10n.currencySymbol}${(widget.ride.distance * fuelRate).toStringAsFixed(0)}",
-                                        "Fuel Cost",
-                                      ),
-                                    ),
                                   ],
                                 ),
                                 const SizedBox(height: 8),
@@ -1500,14 +1509,6 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
                                         "${widget.ride.topSpeed.toStringAsFixed(1)} ${context.displayKmh}",
                                         l10n.topSpeed,
                                         isHighlight: true,
-                                      ),
-                                    ),
-                                    const SizedBox(width: 8),
-                                    Expanded(
-                                      child: _buildPanelStat(
-                                        Icons.local_gas_station_rounded,
-                                        "${l10n.currencySymbol}${fuelRate.toStringAsFixed(1)}/${context.displayKm}",
-                                        "Cost / ${context.displayKm}",
                                       ),
                                     ),
                                   ],
@@ -1544,6 +1545,158 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildTopMetricStepperCard(
+    BuildContext context,
+    AppLocalizations l10n,
+    RideHistoryDetailsState statsState,
+  ) {
+    String value = "";
+    String unit = "";
+    String label = "";
+
+    switch (_topMetricIndex) {
+      case 0:
+        value = statsState.currentSpeedDisplay.toStringAsFixed(1);
+        unit = context.displayKmh;
+        label = l10n.speed;
+        break;
+      case 1:
+        value = statsState.currentTimeDisplay ?? widget.ride.startTime;
+        unit = "";
+        label = l10n.timeLabel;
+        break;
+      case 2:
+        value = statsState.currentDistanceDisplay.toStringAsFixed(2);
+        unit = context.displayKm;
+        label = l10n.distanceLabel;
+        break;
+      case 3:
+        value = statsState.currentAvgSpeedDisplay.toStringAsFixed(1);
+        unit = context.displayKmh;
+        label = l10n.averageSpeed;
+        break;
+    }
+
+    final theme = Theme.of(context);
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.primary.withOpacity(0.08),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: theme.colorScheme.primary.withOpacity(0.18),
+          width: 1,
+        ),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.baseline,
+                textBaseline: TextBaseline.alphabetic,
+                children: [
+                  Text(
+                    value,
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: theme.colorScheme.onSurface,
+                    ),
+                  ),
+                  if (unit.isNotEmpty) ...[
+                    const SizedBox(width: 3),
+                    Text(
+                      unit,
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                        color: theme.colorScheme.primary,
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+              Text(
+                label,
+                style: TextStyle(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w600,
+                  color: theme.colorScheme.onSurface.withOpacity(0.6),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(width: 10),
+          Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              GestureDetector(
+                onTap: () {
+                  setState(() {
+                    _topMetricIndex = (_topMetricIndex - 1 + 4) % 4;
+                  });
+                },
+                child: Container(
+                  padding: const EdgeInsets.all(2),
+                  decoration: BoxDecoration(
+                    color: theme.cardColor,
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.08),
+                        blurRadius: 3,
+                        offset: const Offset(0, 1),
+                      ),
+                    ],
+                  ),
+                  child: Icon(
+                    Icons.keyboard_arrow_up_rounded,
+                    size: 15,
+                    color: theme.colorScheme.primary,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 3),
+              GestureDetector(
+                onTap: () {
+                  setState(() {
+                    _topMetricIndex = (_topMetricIndex + 1) % 4;
+                  });
+                },
+                child: Container(
+                  padding: const EdgeInsets.all(2),
+                  decoration: BoxDecoration(
+                    color: theme.cardColor,
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.08),
+                        blurRadius: 3,
+                        offset: const Offset(0, 1),
+                      ),
+                    ],
+                  ),
+                  child: Icon(
+                    Icons.keyboard_arrow_down_rounded,
+                    size: 15,
+                    color: theme.colorScheme.primary,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }
@@ -1666,7 +1819,7 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
                     color: isHighlight
                         ? const Color(0xFF0284C7)
                         : theme.colorScheme.onSurface,
-                    fontSize: 12.5,
+                    fontSize: 14,
                     fontWeight: FontWeight.bold,
                   ),
                   maxLines: 1,
@@ -1679,9 +1832,9 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
           Text(
             label,
             style: TextStyle(
-              color: theme.colorScheme.onSurface.withOpacity(0.55),
-              fontSize: 10,
-              fontWeight: FontWeight.w500,
+              color: theme.colorScheme.onSurface.withOpacity(0.7),
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
             ),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
@@ -1969,17 +2122,107 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
     await MapUtils.setStyle(controller, style);
   }
 
+  int _parseTimeToMinutes(String timeStr, {String? rawIso}) {
+    if (rawIso != null && rawIso.isNotEmpty) {
+      try {
+        final dt = DateTime.parse(rawIso).toLocal();
+        return dt.hour * 60 + dt.minute;
+      } catch (_) {}
+    }
+    if (timeStr.isEmpty) return 0;
+
+    try {
+      final str = timeStr.trim().toUpperCase();
+      bool isPm = str.contains('PM');
+      bool isAm = str.contains('AM');
+      final cleanStr = str.replaceAll(RegExp(r'[A-Z\s]'), '');
+      final parts = cleanStr.split(':');
+      if (parts.isNotEmpty) {
+        int hour = int.tryParse(parts[0]) ?? 0;
+        int minute = parts.length > 1 ? (int.tryParse(parts[1]) ?? 0) : 0;
+
+        if (isPm && hour < 12) hour += 12;
+        if (isAm && hour == 12) hour = 0;
+
+        return (hour * 60 + minute).clamp(0, 1440);
+      }
+    } catch (_) {}
+
+    return 0;
+  }
+
   Widget _buildIgnitionTimelineBar(BuildContext context, List<IgnitionTimelineModel> timeline) {
-    final List<IgnitionTimelineModel> displayTimeline = timeline.isNotEmpty
-        ? timeline
-        : [
+    List<IgnitionTimelineModel> full24hTimeline = [];
+    int totalTimelineMins = timeline.fold(0, (sum, item) => sum + item.durationMinutes);
+
+    if (timeline.isNotEmpty && totalTimelineMins >= 1400) {
+      full24hTimeline = timeline;
+    } else {
+      int startMins = _parseTimeToMinutes(widget.ride.startTime, rawIso: widget.ride.rawStartTime);
+      int durationMins = math.max(1, Ride.parseDurationToMinutes(widget.ride.duration));
+      int endMins = (startMins + durationMins).clamp(0, 1440);
+
+      if (startMins > 0) {
+        full24hTimeline.add(
+          IgnitionTimelineModel(
+            status: 'OFF',
+            startTime: '00:00',
+            endTime: widget.ride.startTime,
+            durationMinutes: startMins,
+          ),
+        );
+      }
+
+      if (timeline.isNotEmpty) {
+        full24hTimeline.addAll(timeline);
+      } else if (widget.ride.trips.isNotEmpty) {
+        int currentMins = startMins;
+        for (var trip in widget.ride.trips) {
+          int tStart = _parseTimeToMinutes(trip.startTime);
+          int tDur = math.max(1, trip.durationMinutes);
+          if (tStart > currentMins) {
+            full24hTimeline.add(
+              IgnitionTimelineModel(
+                status: 'OFF',
+                startTime: '',
+                endTime: '',
+                durationMinutes: tStart - currentMins,
+              ),
+            );
+          }
+          full24hTimeline.add(
             IgnitionTimelineModel(
               status: 'ON',
-              startTime: widget.ride.startTime,
-              endTime: widget.ride.endTime,
-              durationMinutes: math.max(1, Ride.parseDurationToMinutes(widget.ride.duration)),
-            )
-          ];
+              startTime: trip.startTime,
+              endTime: trip.endTime,
+              durationMinutes: tDur,
+            ),
+          );
+          currentMins = math.max(currentMins, tStart + tDur);
+        }
+        endMins = math.max(endMins, currentMins);
+      } else {
+        full24hTimeline.add(
+          IgnitionTimelineModel(
+            status: 'ON',
+            startTime: widget.ride.startTime,
+            endTime: widget.ride.endTime,
+            durationMinutes: math.max(1, endMins - startMins),
+          ),
+        );
+      }
+
+      if (endMins < 1440) {
+        full24hTimeline.add(
+          IgnitionTimelineModel(
+            status: 'OFF',
+            startTime: widget.ride.endTime,
+            endTime: '24:00',
+            durationMinutes: 1440 - endMins,
+          ),
+        );
+      }
+    }
 
     final theme = Theme.of(context);
     return Container(
@@ -2032,7 +2275,7 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
             child: SizedBox(
               height: 14,
               child: Row(
-                children: displayTimeline.map((seg) {
+                children: full24hTimeline.map((seg) {
                   final int flexVal = math.max<int>(1, seg.durationMinutes);
                   return Expanded(
                     flex: flexVal,

@@ -2601,7 +2601,7 @@ class _FullScreenMapState extends State<FullScreenMap>
             final screenHeight = constraints.maxHeight;
             // Consistent initial and max heights across all devices
             final double initialExtent = (142.0 / screenHeight).clamp(0.10, 0.40);
-            final double maxExtent = (395.0 / screenHeight).clamp(0.35, 0.75);
+            final double maxExtent = (340.0 / screenHeight).clamp(0.30, 0.70);
 
             return DraggableScrollableSheet(
           initialChildSize: initialExtent,
@@ -2668,11 +2668,11 @@ class _FullScreenMapState extends State<FullScreenMap>
                                 _buildStatsGrid(),
                                 const SizedBox(height: 10),
                                 _buildBottomInfoCards(),
-                                SizedBox(height: MediaQuery.of(context).padding.bottom + 8),
+                                const SizedBox(height: 4),
                               ] else ...[
                                 const SizedBox(height: 40),
                                 _buildBuyDeviceButton(),
-                                SizedBox(height: MediaQuery.of(context).padding.bottom + 20),
+                                const SizedBox(height: 10),
                               ],
                             ],
                           ),
@@ -3688,10 +3688,14 @@ class _FullScreenMapState extends State<FullScreenMap>
           } catch (_) {}
         }
 
-        final batteryVal = liveDevice['api_battery'] ?? liveDevice['battery'] ?? liveDevice['internalBatteryLevel'];
+        final batteryVal = liveDevice['api_battery'] ?? 
+                           liveDevice['battery'] ?? 
+                           liveDevice['internalBatteryLevel'] ??
+                           (attrs is Map ? (attrs['batteryLevel'] ?? attrs['battery'] ?? attrs['io200'] ?? attrs['internalBatteryLevel']) : null);
 
         // Extract external voltage or raw voltage from liveDevice dictionary
-        final rawVoltage = liveDevice['externalVoltage'] ??
+        final rawVoltage = liveDevice['api_externalVoltage'] ??
+            liveDevice['externalVoltage'] ??
             liveDevice['external_voltage'] ??
             liveDevice['voltage'] ??
             liveDevice['extVoltage'] ??
@@ -3716,7 +3720,11 @@ class _FullScreenMapState extends State<FullScreenMap>
             batteryVal.toString().trim().toLowerCase() != 'null' &&
             batteryVal.toString().trim().isNotEmpty) {
           final b = batteryVal.toString().trim();
-          if (b.endsWith('%') || b.toLowerCase().endsWith('v')) {
+          final double? bLevel = double.tryParse(b);
+          if (bLevel != null && bLevel <= 6 && bLevel >= 0) {
+            final calcVolt = 10.0 + (bLevel / 6.0) * 4.7;
+            bracketText = " (${calcVolt.toStringAsFixed(1)}V)";
+          } else if (b.endsWith('%') || b.toLowerCase().endsWith('v')) {
             bracketText = " ($b)";
           }
         }
@@ -3781,6 +3789,10 @@ class _FullScreenMapState extends State<FullScreenMap>
           } else {
             batteryText = rawStr;
           }
+        }
+
+        if (batteryText == "--" && bracketText.isNotEmpty) {
+          batteryText = "Normal";
         }
 
         if (batteryText != "--" && bracketText.isNotEmpty) {

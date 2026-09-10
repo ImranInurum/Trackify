@@ -40,7 +40,7 @@ class _DocumentSubScreenState extends State<DocumentSubScreen> {
   String? _error;
   bool _isPickerActive = false;
 
-  static const int _maxBytes = 5 * 1024 * 1024;
+  static const int _maxBytes = 10 * 1024 * 1024;
   final ImagePicker _picker = ImagePicker();
 
   @override

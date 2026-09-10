@@ -235,8 +235,8 @@ class _MyGarageScreenState extends State<MyGarageScreen> {
 
     final brandAndModel = [vehicle.vehicleMaker ?? '', vehicle.vehicleModel ?? ''].where((s) => s.isNotEmpty).join(' ');
     
-    // Require PIN only when UNLOCKING (currentLockState == true). Skip PIN when LOCKING.
-    if (currentLockState) {
+    // PIN is required ONLY when LOCKING the engine (currentLockState == false). Skip PIN when UNLOCKING.
+    if (!currentLockState) {
       final success = await VehiclePinDialog.show(
         context,
         currentLockState,

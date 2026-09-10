@@ -35,7 +35,7 @@ class AppStrings {
   static const String sendResetLink = 'Send Reset Link';
   static const String otpSentSuccess = 'OTP sent successfully';
   static const String emailLabel = 'Email';
-  static const String emailHint = 'example@test.com';
+  static const String emailHint = 'john@gmail.com';
   static const String emailRequired = 'Email required';
   static const String invalidEmail = 'Please enter a valid email address';
 

@@ -34,7 +34,7 @@ class _SelectLanguageScreenState extends State<SelectLanguageScreen> {
     );
 
     if (!mounted) return;
-    Navigator.push(
+    Navigator.pushReplacement(
       context,
       MaterialPageRoute(builder: (_) => const SignInScreen()),
     );
@@ -201,11 +201,11 @@ class _SelectLanguageScreenState extends State<SelectLanguageScreen> {
         ],
       ),
       child: imageProvider != null
-          ? Image(image: imageProvider, height: 220, fit: BoxFit.contain)
-          : Icon(
-              Icons.track_changes_rounded,
-              size: 88,
-              color: colorScheme.primary,
+          ? Image(image: imageProvider, height: 110, fit: BoxFit.contain)
+          : Image.asset(
+              AppImages.appLogo,
+              height: 110,
+              fit: BoxFit.contain,
             ),
     );
   }

@@ -62,6 +62,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     super.initState();
     context.read<AppCubit>().loadUserSession();
     context.read<ProfileCubit>().fetchVehicles();
+    context.read<DiscoverCubit>().fetchDiscoverFeatures();
     AppNavigation.currentTabNotifier.addListener(_onTabChanged);
   }
 
@@ -75,6 +76,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     if (AppNavigation.currentTabNotifier.value == 3) {
       if (mounted) {
         context.read<ProfileCubit>().fetchVehicles();
+        context.read<DiscoverCubit>().fetchDiscoverFeatures();
         setState(() {});
       }
     }
@@ -98,8 +100,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final l10n = AppLocalizations.of(context)!;
     final brandAndModel = [vehicle.vehicleMaker ?? '', vehicle.vehicleModel ?? ''].where((s) => s.isNotEmpty).join(' ');
 
-    // Require PIN only when UNLOCKING (currentLockState == true). Skip PIN when LOCKING.
-    if (currentLockState) {
+    // PIN is required ONLY when LOCKING the engine (currentLockState == false). Skip PIN when UNLOCKING.
+    if (!currentLockState) {
       final success = await VehiclePinDialog.show(
         context,
         currentLockState,
@@ -328,12 +330,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         progressString = "0";
                       }
 
-                      int currentExplored = 10;
-                      int currentTotal = 16;
+                      int currentExplored = 0;
+                      int currentTotal = 4;
                       String exploredStr = AppPreference.instance.getSync(key: 'discover_explored');
                       String totalStr = AppPreference.instance.getSync(key: 'discover_total');
-                      if (exploredStr.isNotEmpty) currentExplored = int.tryParse(exploredStr) ?? 10;
-                      if (totalStr.isNotEmpty) currentTotal = int.tryParse(totalStr) ?? 16;
+                      if (exploredStr.isNotEmpty) currentExplored = int.tryParse(exploredStr) ?? 0;
+                      if (totalStr.isNotEmpty) currentTotal = int.tryParse(totalStr) ?? 4;
 
                       if (state is DiscoverLoaded) {
                         int explored = 0;
@@ -350,31 +352,34 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           } else {
                             catTotal = int.tryParse(item.exploredText) ?? 0;
                           }
+                          if (catTotal == 0) catTotal = 1;
                           
-                          if (catTotal > 0) {
-                            total += catTotal;
-                            
-                            final catExplored = list.where((id) => id.startsWith('${item.id}_')).length;
-                            explored += (catExplored > catTotal ? catTotal : catExplored);
-                          }
+                          total += catTotal;
+                          final catExplored = list.where((id) => id.startsWith('${item.id}_')).length;
+                          explored += (catExplored > catTotal ? catTotal : catExplored);
                         }
-                        if (total > 0) {
-                          final calculatedValue = explored / total;
-                          final calculatedString = (calculatedValue * 100).toInt().toString();
 
-                          if (calculatedValue != progressValue || calculatedString != progressString) {
-                            progressValue = calculatedValue;
-                            progressString = calculatedString;
-                            prefs.set(key: 'discover_progress_value', value: progressValue.toString());
-                            prefs.set(key: 'discover_progress_string', value: progressString);
-                          }
-                          if (explored != currentExplored || total != currentTotal) {
-                            currentExplored = explored;
-                            currentTotal = total;
-                            prefs.set(key: 'discover_explored', value: currentExplored.toString());
-                            prefs.set(key: 'discover_total', value: currentTotal.toString());
-                          }
-                        }
+                        if (total == 0) total = state.discoverList.length > 0 ? state.discoverList.length : 4;
+
+                        final calculatedValue = total > 0 ? (explored / total) : 0.0;
+                        final calculatedString = (calculatedValue * 100).toInt().toString();
+
+                        progressValue = calculatedValue;
+                        progressString = calculatedString;
+                        currentExplored = explored;
+                        currentTotal = total;
+
+                        prefs.set(key: 'discover_progress_value', value: progressValue.toString());
+                        prefs.set(key: 'discover_progress_string', value: progressString);
+                        prefs.set(key: 'discover_explored', value: currentExplored.toString());
+                        prefs.set(key: 'discover_total', value: currentTotal.toString());
+                      } else {
+                        final prefs = AppPreference.instance;
+                        final list = prefs.getStringList(key: AppPreference.KEY_EXPLORED_FEATURES);
+                        currentExplored = list.length > 4 ? 4 : list.length;
+                        currentTotal = 4;
+                        progressValue = currentExplored / currentTotal;
+                        progressString = (progressValue * 100).toInt().toString();
                       }
 
                       return Container(

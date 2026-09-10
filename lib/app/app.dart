@@ -101,6 +101,7 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return BlocBuilder<AppCubit, AppState>(
       builder: (context, state) => MaterialApp(
+        title: 'Trackify GPS Tracker',
         debugShowCheckedModeBanner: false,
         navigatorKey: rootNavigatorKey,
         themeMode: state.themeMode,

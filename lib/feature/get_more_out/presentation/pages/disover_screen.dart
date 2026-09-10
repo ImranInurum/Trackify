@@ -16,6 +16,7 @@ import 'package:trackify/feature/get_more_out/data/repository/geo_fenc_repositor
 import 'package:trackify/feature/get_more_out/data/data%20source/geo_fence_local_data.dart';
 import 'package:trackify/feature/get_more_out/presentation/pages/intro_details_screen.dart';
 import 'package:trackify/feature/location_sharing/presentation/pages/location_sharing_screen.dart';
+import 'package:trackify/core/constants/app_images.dart';
 import 'package:trackify/core/utils/shared_preferences.dart';
 import '../../domain/entities/discover_entity.dart';
 
@@ -64,61 +65,31 @@ class _DiscoverFeaturesScreenState extends State<DiscoverFeaturesScreen> {
   }
 
   void _handleNavigation(BuildContext context, DiscoverEntity feature) {
-    Widget? targetScreen;
-
-    if (feature.route != null && feature.route!.isNotEmpty) {
-      final route = feature.route!.toLowerCase();
-      if (route.contains('geofence')) {
-        targetScreen = BlocProvider(
-          create: (_) => GeoFenceIntroCubit(
-            GetGeoFenceIntroUseCase(
-              GeoFenceIntroRepositoryImpl(GeoFenceIntroDataSource()),
-            ),
-          ),
-          child: IntroDetailsScreen(title: feature.title, categoryId: feature.id),
-        );
-      } else if (route.contains('location') || route.contains('share')) {
-        targetScreen = const LocationSharingScreen();
-      }
+    final prefs = AppPreference.instance;
+    final list = prefs.getStringList(key: AppPreference.KEY_EXPLORED_FEATURES);
+    final key = '${feature.id}_main';
+    if (!list.contains(key)) {
+      list.add(key);
+      prefs.setStringList(key: AppPreference.KEY_EXPLORED_FEATURES, value: list);
     }
 
-    if (targetScreen != null) {
-      final prefs = AppPreference.instance;
-      final list = prefs.getStringList(key: AppPreference.KEY_EXPLORED_FEATURES);
-      final key = '${feature.id}_main';
-      if (!list.contains(key)) {
-        list.add(key);
-        prefs.setStringList(key: AppPreference.KEY_EXPLORED_FEATURES, value: list);
-      }
-
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (_) => targetScreen!),
-      ).then((_) {
-        if (context.mounted) {
-          setState(() {});
-        }
-      });
-    } else {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (_) => BlocProvider(
-            create: (_) => FeatureCubit(
-              GetFeatureUseCase(FeatureRepositoryImpl(FeatureDataSource())),
-            ),
-            child: FeatureDetailsScreen(
-              appBarTitle: feature.title,
-              categoryId: feature.id,
-            ),
-          ),
+    final targetScreen = BlocProvider(
+      create: (_) => GeoFenceIntroCubit(
+        GetGeoFenceIntroUseCase(
+          GeoFenceIntroRepositoryImpl(GeoFenceIntroDataSource()),
         ),
-      ).then((_) {
-        if (context.mounted) {
-          setState(() {});
-        }
-      });
-    }
+      ),
+      child: IntroDetailsScreen(title: feature.title, categoryId: feature.id),
+    );
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => targetScreen),
+    ).then((_) {
+      if (context.mounted) {
+        setState(() {});
+      }
+    });
   }
 
   @override
@@ -176,8 +147,15 @@ class _DiscoverFeaturesScreenState extends State<DiscoverFeaturesScreen> {
                         color: colorScheme.outlineVariant.withOpacity( 0.2),
                       ),
                       image: DecorationImage(
-                        image: NetworkImage(feature.image),
+                        image: (feature.image.startsWith('http://') || feature.image.startsWith('https://'))
+                            ? NetworkImage(feature.image) as ImageProvider
+                            : AssetImage(
+                                feature.image.startsWith('assets/')
+                                    ? feature.image
+                                    : AppImages.roadImage,
+                              ),
                         fit: BoxFit.cover,
+                        alignment: feature.image.contains('road') ? Alignment.bottomCenter : Alignment.center,
                       ),
                     ),
                     child: Container(
@@ -188,9 +166,9 @@ class _DiscoverFeaturesScreenState extends State<DiscoverFeaturesScreen> {
                           begin: Alignment.centerLeft,
                           end: Alignment.centerRight,
                           colors: [
-                            colorScheme.surface.withOpacity( 0.95),
-                            colorScheme.surface.withOpacity( 0.65),
-                            Colors.transparent,
+                            Colors.black.withOpacity(0.82),
+                            Colors.black.withOpacity(0.55),
+                            Colors.black.withOpacity(0.20),
                           ],
                         ),
                       ),
@@ -208,11 +186,10 @@ class _DiscoverFeaturesScreenState extends State<DiscoverFeaturesScreen> {
                                   vertical: 6,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: colorScheme.surface.withOpacity( 0.54),
+                                  color: Colors.black.withOpacity(0.65),
                                   borderRadius: BorderRadius.circular(12),
                                   border: Border.all(
-                                    color: colorScheme.outlineVariant
-                                        .withOpacity( 0.2),
+                                    color: Colors.white.withOpacity(0.25),
                                   ),
                                 ),
                                 child: Builder(
@@ -222,11 +199,9 @@ class _DiscoverFeaturesScreenState extends State<DiscoverFeaturesScreen> {
                                       localText.toLowerCase().contains('feature') 
                                           ? localText 
                                           : '$localText Features explored',
-                                      style: TextStyle(color: _getStatusColor(
-                                          localText,
-                                          colorScheme,
-                                        ),
-                                        fontWeight: FontWeight.w600,
+                                      style: const TextStyle(
+                                        color: Colors.amberAccent,
+                                        fontWeight: FontWeight.bold,
                                         fontSize: 13,
                                       ),
                                     );
@@ -236,15 +211,15 @@ class _DiscoverFeaturesScreenState extends State<DiscoverFeaturesScreen> {
 
                               /// ARROW BUTTON
                               Container(
-                                height: 24,
-                                width: 24,
+                                height: 28,
+                                width: 28,
                                 decoration: BoxDecoration(
-                                  color: colorScheme.surface.withOpacity( 0.45),
+                                  color: Colors.white.withOpacity(0.25),
                                   shape: BoxShape.circle,
                                 ),
-                                child: Icon(
+                                child: const Icon(
                                   Icons.arrow_forward_ios,
-                                  color: colorScheme.onSurface,
+                                  color: Colors.white,
                                   size: 14,
                                 ),
                               ),
@@ -256,10 +231,17 @@ class _DiscoverFeaturesScreenState extends State<DiscoverFeaturesScreen> {
                           /// ================= TITLE =================
                           Text(
                             feature.title,
-                            style: TextStyle(
-                              color: colorScheme.onSurface,
+                            style: const TextStyle(
+                              color: Colors.white,
                               fontSize: 22,
                               fontWeight: FontWeight.bold,
+                              shadows: [
+                                Shadow(
+                                  color: Colors.black,
+                                  blurRadius: 6,
+                                  offset: Offset(0, 2),
+                                ),
+                              ],
                             ),
                           ),
 
@@ -268,9 +250,17 @@ class _DiscoverFeaturesScreenState extends State<DiscoverFeaturesScreen> {
                           /// ================= SUBTITLE =================
                           Text(
                             feature.subtitle,
-                            style: TextStyle(color: colorScheme.onSurface.withOpacity( 0.7),
+                            style: TextStyle(
+                              color: Colors.white.withOpacity(0.92),
                               fontSize: 14,
-                              height: 1.4,
+                              height: 1.3,
+                              shadows: [
+                                Shadow(
+                                  color: Colors.black.withOpacity(0.80),
+                                  blurRadius: 4,
+                                  offset: const Offset(0, 1),
+                                ),
+                              ],
                             ),
                           ),
                         ],

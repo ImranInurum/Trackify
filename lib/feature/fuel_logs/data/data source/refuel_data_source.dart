@@ -16,7 +16,11 @@ class RefuelDataSource {
     );
 
     return response.fold(
-      (l) => throw Exception('Failed to load refuel logs: ${l.message}'),
+      (l) {
+        print("REFUEL HISTORY API ERROR : ${l.message}");
+        // If no records exist or 404, treat as empty list rather than breaking UI error
+        return <RefuelLogModel>[];
+      },
       (r) {
         print("=========== REFUEL HISTORY API HIT ===========");
         print("RESPONSE BODY : $r");

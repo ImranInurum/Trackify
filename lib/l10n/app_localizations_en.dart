@@ -21,7 +21,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get password => 'Password';
 
   @override
-  String get emailHint => 'example@test.com';
+  String get emailHint => 'john@gmail.com';
 
   @override
   String get passwordHint => '******';
@@ -1033,7 +1033,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get addImage => 'Add Image';
 
   @override
-  String get maxFileSizeNote => 'Note: Max file size is 5MB';
+  String get maxFileSizeNote => 'Note: Max file size is 10MB';
 
   @override
   String get serviceDate => 'Service Date';
@@ -1697,7 +1697,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get pdf => 'PDF';
 
   @override
-  String get fileTooLarge => 'File is too large (max 5MB)';
+  String get fileTooLarge => 'File is too large (max 10MB)';
 
   @override
   String get pickImageError => 'Error picking image';
@@ -1706,7 +1706,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get pickPdfError => 'Error picking PDF';
 
   @override
-  String get pdfTooLarge => 'PDF size exceeds 5MB limit';
+  String get pdfTooLarge => 'PDF size exceeds 10MB limit';
 
   @override
   String get uploadDocuments => 'Upload Documents';
@@ -1740,7 +1740,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get documentsEncrypted => 'Your documents are encrypted & safe';
 
   @override
-  String get fileSizeNote => 'Note: Maximum File Size is 5MB';
+  String get fileSizeNote => 'Note: Maximum File Size is 10MB';
 
   @override
   String get personalDocumentsTitle => 'Personal Documents';
