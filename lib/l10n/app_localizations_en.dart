@@ -3386,7 +3386,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'Sharing your phone\'s location works correctly only if it can access your location \"all the time\"';
 
   @override
-  String get trackifyApp => 'Trackify';
+  String get trackifyApp => 'Trackify GPS Tracker';
 
   @override
   String get locationText => 'Location';

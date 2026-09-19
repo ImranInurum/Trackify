@@ -1703,7 +1703,7 @@ class AppLocalizationsTa extends AppLocalizations {
   String get pdf => 'PDF';
 
   @override
-  String get fileTooLarge => 'கோப்பு அளவு 10MB வரம்பை தாண்டியது';
+  String get fileTooLarge => 'கோப்பு அளவு 10MB வரம்பை மீறுகிறது';
 
   @override
   String get pickImageError => 'படத்தை தேர்வு செய்வதில் பிழை';
@@ -1712,7 +1712,7 @@ class AppLocalizationsTa extends AppLocalizations {
   String get pickPdfError => 'PDF தேர்வு செய்வதில் பிழை';
 
   @override
-  String get pdfTooLarge => 'PDF அளவு 10MB வரம்பை தாண்டியது';
+  String get pdfTooLarge => 'PDF அளவு 10MB வரம்பை மீறுகிறது';
 
   @override
   String get uploadDocuments => 'ஆவணங்களை பதிவேற்றுக';

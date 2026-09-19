@@ -121,6 +121,15 @@ class AppCubit extends Cubit<AppState> with WidgetsBindingObserver {
         },
       );
 
+      // Always ensure User model has the active FCM token
+      await _apiServices.getPostApiResponse(
+        ApiURL.saveFcmToken,
+        {
+          "userId": userId,
+          "fcmToken": fcmToken,
+        },
+      );
+
       if (currentSessionId != null && currentSessionId!.isNotEmpty) {
         debugPrint("AppCubit: [FCM SYNC] Updating FCM for session $currentSessionId");
         await _apiServices.getPostApiResponse(

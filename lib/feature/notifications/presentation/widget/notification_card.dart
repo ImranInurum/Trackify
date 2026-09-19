@@ -46,7 +46,7 @@ class NotificationCard extends StatelessWidget {
           context: context,
           builder: (ctx) => AlertDialog(
             title: const Text('Delete Notification'),
-            content: const Text('Kya aap ye notification delete karna chahte hain?'),
+            content: const Text('Are you sure you want to delete this notification?'),
             actions: [
               TextButton(onPressed: () => Navigator.of(ctx).pop(false), child: const Text('Cancel')),
               TextButton(
@@ -153,7 +153,7 @@ class NotificationCard extends StatelessWidget {
                                   context: context,
                                   builder: (ctx) => AlertDialog(
                                     title: const Text('Delete Notification'),
-                                    content: const Text('Kya aap ye notification delete karna chahte hain?'),
+                                    content: const Text('Are you sure you want to delete this notification?'),
                                     actions: [
                                       TextButton(
                                         onPressed: () => Navigator.of(ctx).pop(false),

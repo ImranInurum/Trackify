@@ -50,7 +50,7 @@ class NotificationListScreen extends StatelessWidget {
                           builder: (ctx) => AlertDialog(
                             title: const Text('Delete All Notifications'),
                             content: const Text(
-                                'Kya aap sabhi notifications delete karna chahte hain?'),
+                                'Are you sure you want to delete all notifications?'),
                             actions: [
                               TextButton(
                                 onPressed: () => Navigator.of(ctx).pop(false),

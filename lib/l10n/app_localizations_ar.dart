@@ -1027,7 +1027,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get addImage => 'إضافة صورة';
 
   @override
-  String get maxFileSizeNote => 'ملاحظة: الحد الأقصى لحجم الملف هو 10 ميجابايت';
+  String get maxFileSizeNote => 'ملاحظة: الحد الأقصى لحجم الملف هو 5 ميجابايت';
 
   @override
   String get serviceDate => 'تاريخ الخدمة';
@@ -1688,7 +1688,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get pdf => 'PDF';
 
   @override
-  String get fileTooLarge => 'حجم الملف يتجاوز حد 10 ميجابايت';
+  String get fileTooLarge => 'حجم الملف يتجاوز حد 5 ميجابايت';
 
   @override
   String get pickImageError => 'خطأ في اختيار الصورة';
@@ -1697,7 +1697,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get pickPdfError => 'خطأ في اختيار ملف PDF';
 
   @override
-  String get pdfTooLarge => 'حجم ملف PDF يتجاوز حد 10 ميجابايت';
+  String get pdfTooLarge => 'حجم ملف PDF يتجاوز حد 5 ميجابايت';
 
   @override
   String get uploadDocuments => 'رفع المستندات';
@@ -1731,7 +1731,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get documentsEncrypted => 'مستنداتك مشفرة وآمنة';
 
   @override
-  String get fileSizeNote => 'ملاحظة: الحد الأقصى لحجم الملف هو 10 ميجابايت';
+  String get fileSizeNote => 'ملاحظة: الحد الأقصى لحجم الملف هو 5 ميجابايت';
 
   @override
   String get personalDocumentsTitle => 'المستندات الشخصية';

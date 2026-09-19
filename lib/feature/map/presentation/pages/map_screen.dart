@@ -2028,15 +2028,22 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin, Wi
               } catch (_) {}
             }
 
-            String speed =
-                "${liveDevice['sp'] ?? _selectedDevice?.currentLocation?.speed ?? 0} ${context.displayKmh}";
-            if (!isLastRideToday) {
-              speed = "0 ${context.displayKmh}";
-            }
+            double liveSpeedNum = double.tryParse(
+              (liveDevice['sp'] ??
+                      liveDevice['speed'] ??
+                      _selectedDevice?.currentLocation?.speed ??
+                      0)
+                  .toString(),
+            ) ?? 0.0;
+            String speed = "${liveSpeedNum.toStringAsFixed(1)} ${context.displayKmh}";
 
             String todayDistanceStr = "0.0";
             String durationStr = "0${l10n.minutesShort} 0${l10n.secondsShort}";
-            String topSpeed = "0 ${context.displayKmh}";
+            double topSpeedVal = (isLastRideToday && lastRide != null) ? lastRide.topSpeed : 0.0;
+            if (liveSpeedNum > topSpeedVal) {
+              topSpeedVal = liveSpeedNum;
+            }
+            String topSpeed = "${topSpeedVal.toStringAsFixed(1)} ${context.displayKmh}";
 
             final lastUpdateRaw =
                 liveDevice['last_update']?.toString() ??
@@ -2076,59 +2083,78 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin, Wi
               } catch (_) {}
             }
 
-            if (isLastRideToday && lastRide != null) {
+            final todayDistanceRaw =
+                liveDevice['todayDistance'] ?? liveDevice['td'];
+            if (todayDistanceRaw != null &&
+                todayDistanceRaw.toString().isNotEmpty) {
+              double val =
+                  double.tryParse(todayDistanceRaw.toString()) ?? 0.0;
+              todayDistanceStr = val.toStringAsFixed(2);
+            } else if (isLastRideToday && lastRide != null) {
               todayDistanceStr = lastRide.distance.toStringAsFixed(2);
-              durationStr = lastRide.duration;
-              topSpeed =
-                  "${lastRide.topSpeed.toStringAsFixed(1)} ${context.displayKmh}";
               if (startTimeStr.isEmpty) {
                 startTimeStr = lastRide.startTime;
               }
             } else {
-              final todayDistanceRaw =
-                  liveDevice['todayDistance'] ?? liveDevice['td'];
-              if (todayDistanceRaw != null &&
-                  todayDistanceRaw.toString().isNotEmpty) {
-                double val =
-                    double.tryParse(todayDistanceRaw.toString()) ?? 0.0;
-                todayDistanceStr = val.toStringAsFixed(2);
-              } else {
-                todayDistanceStr = "0.00";
-              }
+              todayDistanceStr = "0.00";
+            }
 
-              final todayDurationRaw =
-                  liveDevice['todayDuration'] ??
-                  liveDevice['dur'] ??
-                  liveDevice['duration'] ??
-                  "0";
-              if (todayDurationRaw != null &&
-                  todayDurationRaw.toString().isNotEmpty &&
-                  todayDurationRaw.toString() != "0") {
-                final rawStr = todayDurationRaw.toString();
-                if (rawStr.contains('m') ||
-                    rawStr.contains('h') ||
-                    rawStr.contains(':')) {
-                  durationStr = rawStr;
-                } else {
-                  final double? numVal = double.tryParse(rawStr);
-                  if (numVal != null && numVal > 0) {
-                    int totalSeconds = numVal.round();
-                    if (numVal > 100000) {
-                      totalSeconds = (numVal / 1000).round();
-                    } else if (numVal < 1440) {
-                      totalSeconds = (numVal * 60).round();
-                    }
-                    final int h = totalSeconds ~/ 3600;
-                    final int m = (totalSeconds % 3600) ~/ 60;
-                    final int s = totalSeconds % 60;
+            final todayDurationRaw =
+                liveDevice['todayDuration'] ??
+                liveDevice['dur'] ??
+                liveDevice['duration'] ??
+                liveDevice['rideDuration'];
+            if (todayDurationRaw != null &&
+                todayDurationRaw.toString().isNotEmpty &&
+                todayDurationRaw.toString() != "0") {
+              final rawStr = todayDurationRaw.toString();
+              if (rawStr.contains('m') ||
+                  rawStr.contains('h') ||
+                  rawStr.contains(':')) {
+                durationStr = rawStr;
+              } else {
+                final double? numVal = double.tryParse(rawStr);
+                if (numVal != null && numVal > 0) {
+                  int totalSeconds = numVal.round();
+                  if (numVal > 100000) {
+                    totalSeconds = (numVal / 1000).round();
+                  } else if (numVal < 1440) {
+                    totalSeconds = (numVal * 60).round();
+                  }
+                  final int h = totalSeconds ~/ 3600;
+                  final int m = (totalSeconds % 3600) ~/ 60;
+                  final int s = totalSeconds % 60;
+                  if (h > 0) {
+                    durationStr = "${h}h $m${l10n.minutesShort}";
+                  } else {
+                    durationStr =
+                        "$m${l10n.minutesShort} $s${l10n.secondsShort}";
+                  }
+                }
+              }
+            } else if (isLastRideToday && lastRide != null) {
+              if (liveSpeedNum > 0 && lastRide.rawStartTime.isNotEmpty) {
+                try {
+                  final startTime = DateTime.parse(lastRide.rawStartTime).toLocal();
+                  final now = DateTime.now();
+                  final diff = now.difference(startTime);
+                  if (diff.inSeconds > 0) {
+                    final int h = diff.inHours;
+                    final int m = (diff.inMinutes % 60);
+                    final int s = (diff.inSeconds % 60);
                     if (h > 0) {
                       durationStr = "${h}h $m${l10n.minutesShort}";
                     } else {
-                      durationStr =
-                          "$m${l10n.minutesShort} $s${l10n.secondsShort}";
+                      durationStr = "$m${l10n.minutesShort} $s${l10n.secondsShort}";
                     }
+                  } else {
+                    durationStr = lastRide.duration;
                   }
+                } catch (_) {
+                  durationStr = lastRide.duration;
                 }
+              } else {
+                durationStr = lastRide.duration;
               }
             }
 

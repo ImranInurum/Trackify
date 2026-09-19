@@ -52,12 +52,25 @@ class _AddInventoryScreenState extends State<AddInventoryScreen>
     for (final barcode in barcodes) {
       final String? rawValue = barcode.rawValue;
       if (rawValue != null && rawValue.isNotEmpty) {
+        final trimmed = rawValue.trim();
+
+        if (!RegExp(r'^\d{15}$').hasMatch(trimmed)) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Invalid IMEI ($trimmed)! IMEI must be exactly 15 digits.'),
+              backgroundColor: Colors.red,
+              duration: const Duration(seconds: 2),
+            ),
+          );
+          continue;
+        }
+
         _cameraController.stop();
 
         setState(() {
           _hasScanned = true;
           _isSuccess = false;
-          _scannedImei = rawValue.trim();
+          _scannedImei = trimmed;
         });
         _handleContinue();
         break;
@@ -67,6 +80,15 @@ class _AddInventoryScreenState extends State<AddInventoryScreen>
 
   void _handleContinue() {
     if (_scannedImei == null) return;
+    if (!RegExp(r'^\d{15}$').hasMatch(_scannedImei!)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Invalid IMEI ($_scannedImei)! Must be exactly 15 digits.'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
     context.read<InventoryCubit>().addInventory(_scannedImei!, "abc"); // default model_no
   }
 

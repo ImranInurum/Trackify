@@ -947,135 +947,98 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
                     previous.playProgress != current.playProgress;
               },
               builder: (context, statsState) {
-                if (!statsState.isPlaying && statsState.playProgress == 0.0) {
-                  return Positioned(
-                    top: MediaQuery.of(context).padding.top + 60,
-                    right: 16,
+                return Positioned(
+                  top: MediaQuery.of(context).padding.top + 60,
+                  left: 16,
+                  right: 16,
+                  child: Center(
                     child: Container(
                       padding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 8,
+                        horizontal: 18,
+                        vertical: 10,
                       ),
                       decoration: BoxDecoration(
-                        color: Theme.of(
-                          context,
-                        ).cardColor.withOpacity( 0.85),
-                        borderRadius: BorderRadius.circular(30),
+                        color: Theme.of(context).cardColor,
+                        borderRadius: BorderRadius.circular(20),
                         border: Border.all(
-                          color: Theme.of(context).colorScheme.outlineVariant.withOpacity( 0.5),
+                          color: Theme.of(context).colorScheme.outlineVariant.withOpacity(0.5),
                           width: 0.5,
                         ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.08),
+                            blurRadius: 10,
+                            offset: const Offset(0, 3),
+                          ),
+                        ],
                       ),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Column(
-                            children: [
-                              Container(
-                                width: 24,
-                                height: 24,
-                                decoration: BoxDecoration(
-                                  color: Theme.of(
-                                    context,
-                                  ).colorScheme.primary.withOpacity( 0.2),
-                                  shape: BoxShape.circle,
-                                ),
-                                child: Center(
-                                  child: Icon(
-                                    Icons.two_wheeler,
-                                    color: Theme.of(
-                                      context,
-                                    ).colorScheme.primary,
-                                    size: 14,
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(height: 2),
-                              Text(
-                                "Trackify",
-                                style: TextStyle(
-                                  color: Theme.of(context).colorScheme.primary,
-                                  fontSize: 8,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(width: 12),
-                          Column(
+                            mainAxisSize: MainAxisSize.min,
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
+                              Row(
+                                mainAxisSize: MainAxisSize.min,
+                                crossAxisAlignment: CrossAxisAlignment.baseline,
+                                textBaseline: TextBaseline.alphabetic,
+                                children: [
+                                  Text(
+                                    statsState.currentSpeedDisplay.toStringAsFixed(1),
+                                    style: TextStyle(
+                                      color: Theme.of(context).colorScheme.onSurface,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 3),
+                                  Text(
+                                    context.displayKmh,
+                                    style: TextStyle(
+                                      color: Theme.of(context).colorScheme.primary,
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ],
+                              ),
                               Text(
                                 l10n.speed,
-                                textAlign: TextAlign.center,
-                                style: const TextStyle(
-                                  color: Colors.grey,
+                                style: TextStyle(
+                                  color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
                                   fontSize: 10,
-                                ),
-                              ),
-                              Text(
-                                context.displayKmh,
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  color: Theme.of(
-                                    context,
-                                  ).colorScheme.onSurface,
-                                  fontSize: 7,
-                                ),
-                              ),
-                              Text(
-                                statsState.currentSpeedDisplay.toStringAsFixed(
-                                  1,
-                                ),
-                                style: TextStyle(
-                                  color: Theme.of(
-                                    context,
-                                  ).colorScheme.onSurface,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
                                 ),
                               ),
                             ],
                           ),
-                          const SizedBox(width: 12),
+                          const SizedBox(width: 16),
                           Container(
                             width: 1,
-                            height: 30,
-                            color: Theme.of(
-                              context,
-                            ).colorScheme.onSurface.withOpacity( 0.2),
+                            height: 28,
+                            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.2),
                           ),
-                          const SizedBox(width: 12),
+                          const SizedBox(width: 16),
                           Column(
+                            mainAxisSize: MainAxisSize.min,
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               Text(
-                                l10n.timeLabel,
-                                textAlign: TextAlign.center,
-                                style: const TextStyle(
-                                  color: Colors.grey,
-                                  fontSize: 10,
-                                ),
-                              ),
-                              Text(
-                                l10n.hrMin,
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  color: Theme.of(
-                                    context,
-                                  ).colorScheme.onSurface,
-                                  fontSize: 7,
-                                ),
-                              ),
-                              Text(
                                 statsState.currentTimeDisplay ??
-                                    widget.ride.startTime,
+                                    (widget.ride.startTime.isNotEmpty
+                                        ? widget.ride.startTime
+                                        : "--:--"),
                                 style: TextStyle(
-                                  color: Theme.of(
-                                    context,
-                                  ).colorScheme.onSurface,
+                                  color: Theme.of(context).colorScheme.onSurface,
                                   fontSize: 16,
                                   fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              Text(
+                                l10n.timeLabel,
+                                style: TextStyle(
+                                  color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+                                  fontSize: 10,
                                 ),
                               ),
                             ],
@@ -1083,17 +1046,8 @@ class __RideHistoryDetailsViewState extends State<_RideHistoryDetailsView>
                         ],
                       ),
                     ),
-                  );
-                } else {
-                  return Positioned(
-                    top: MediaQuery.of(context).padding.top + 70,
-                    left: 16,
-                    right: 16,
-                    child: Center(
-                      child: _buildTopMetricStepperCard(context, l10n, statsState),
-                    ),
-                  );
-                }
+                  ),
+                );
               },
             ),
 

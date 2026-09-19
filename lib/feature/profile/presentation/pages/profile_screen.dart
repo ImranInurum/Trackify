@@ -155,32 +155,33 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      body: BlocBuilder<AppCubit, AppState>(
-        builder: (context, appState) {
-          final user = appState.userData;
-          final userName = user?.name ?? l10n.guest;
-          final userInitials = userName.isNotEmpty
-              ? userName[0].toUpperCase()
-              : "G";
-          final userMobile = user?.mobileNumber ?? "";
+      body: SafeArea(
+        child: BlocBuilder<AppCubit, AppState>(
+          builder: (context, appState) {
+            final user = appState.userData;
+            final userName = user?.name ?? l10n.guest;
+            final userInitials = userName.isNotEmpty
+                ? userName[0].toUpperCase()
+                : "G";
+            final userMobile = user?.mobileNumber ?? "";
 
-          String profileImageUrl = '';
-          if (user?.userProfile != null && user!.userProfile!.isNotEmpty) {
-            String path = user.userProfile!.replaceAll('\\', '/');
-            if (path.startsWith('http://') || path.startsWith('https://')) {
-              profileImageUrl = path;
-            } else {
-              final base = ApiURL.baseURL;
-              profileImageUrl = path.startsWith('/')
-                  ? '$base$path'
-                  : '$base/$path';
+            String profileImageUrl = '';
+            if (user?.userProfile != null && user!.userProfile!.isNotEmpty) {
+              String path = user.userProfile!.replaceAll('\\', '/');
+              if (path.startsWith('http://') || path.startsWith('https://')) {
+                profileImageUrl = path;
+              } else {
+                final base = ApiURL.baseURL;
+                profileImageUrl = path.startsWith('/')
+                    ? '$base$path'
+                    : '$base/$path';
+              }
             }
-          }
 
-          return SingleChildScrollView(
-            child: Column(
-              children: [
-                const SizedBox(height: 60),
+            return SingleChildScrollView(
+              child: Column(
+                children: [
+                  const SizedBox(height: 16),
 
                 /// 🔹 PROFILE SECTION
                 GestureDetector(
@@ -777,11 +778,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                 ),
 
-                const SizedBox(height: 24),
+                const SizedBox(height: 16),
+
+                /// 🔹 LOGOUT BUTTON
+                _logoutButton(l10n),
+
+                const SizedBox(height: 32),
               ],
             ),
           );
         },
+        ),
       ),
     );
   }
@@ -851,15 +858,35 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Widget _logoutButton(AppLocalizations l10n) {
-    return Center(
-      child: TextButton.icon(
-        onPressed: () => LogoutConfirmationDialog.show(context),
-        icon: Icon(Icons.logout, color: Theme.of(context).colorScheme.error),
-        label: Text(
-          l10n.logout,
-          style: TextStyle(
-            color: Theme.of(context).colorScheme.error,
-            fontWeight: FontWeight.bold,
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16),
+      child: Material(
+        color: Theme.of(context).colorScheme.errorContainer.withOpacity(0.12),
+        borderRadius: BorderRadius.circular(16),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(16),
+          onTap: () => LogoutConfirmationDialog.show(context),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.logout_rounded,
+                  color: Theme.of(context).colorScheme.error,
+                  size: 20,
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  l10n.logout,
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.error,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 15,
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

@@ -21,7 +21,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get password => 'पासवर्ड';
 
   @override
-  String get emailHint => 'example@test.com';
+  String get emailHint => 'john@gmail.com';
 
   @override
   String get passwordHint => '******';

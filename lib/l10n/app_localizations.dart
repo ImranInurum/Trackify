@@ -2035,7 +2035,7 @@ abstract class AppLocalizations {
   /// No description provided for @maxFileSizeNote.
   ///
   /// In en, this message translates to:
-  /// **'Note: Max file size is 5MB'**
+  /// **'Note: Max file size is 10MB'**
   String get maxFileSizeNote;
 
   /// No description provided for @serviceDate.
@@ -3301,7 +3301,7 @@ abstract class AppLocalizations {
   /// No description provided for @fileTooLarge.
   ///
   /// In en, this message translates to:
-  /// **'File is too large (max 5MB)'**
+  /// **'File is too large (max 10MB)'**
   String get fileTooLarge;
 
   /// No description provided for @pickImageError.
@@ -3319,7 +3319,7 @@ abstract class AppLocalizations {
   /// No description provided for @pdfTooLarge.
   ///
   /// In en, this message translates to:
-  /// **'PDF size exceeds 5MB limit'**
+  /// **'PDF size exceeds 10MB limit'**
   String get pdfTooLarge;
 
   /// No description provided for @uploadDocuments.
@@ -3385,7 +3385,7 @@ abstract class AppLocalizations {
   /// No description provided for @fileSizeNote.
   ///
   /// In en, this message translates to:
-  /// **'Note: Maximum File Size is 5MB'**
+  /// **'Note: Maximum File Size is 10MB'**
   String get fileSizeNote;
 
   /// No description provided for @personalDocumentsTitle.
@@ -6499,7 +6499,7 @@ abstract class AppLocalizations {
   /// No description provided for @trackifyApp.
   ///
   /// In en, this message translates to:
-  /// **'Trackify'**
+  /// **'Trackify GPS Tracker'**
   String get trackifyApp;
 
   /// No description provided for @locationText.

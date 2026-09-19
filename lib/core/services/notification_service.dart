@@ -2,6 +2,8 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import '../utils/shared_preferences.dart';
+import '../config/network/api_host.dart';
+import '../config/network/network_api_service.dart';
 import 'package:trackify/main.dart';
 import 'package:trackify/feature/notifications/presentation/screen/notification_list_screen.dart';
 
@@ -154,13 +156,32 @@ class NotificationService {
       if (token != null) {
         debugPrint('FCM TOKEN: $token');
         await AppPreference.instance.set(key: AppPreference.KEY_FCM_TOKEN, value: token);
+        await syncFcmTokenToServer(token);
       }
       FirebaseMessaging.instance.onTokenRefresh.listen((t) async {
         debugPrint('FCM TOKEN REFRESH: $t');
         await AppPreference.instance.set(key: AppPreference.KEY_FCM_TOKEN, value: t);
+        await syncFcmTokenToServer(t);
       });
     } on Exception catch (e) {
       debugPrint('FCM TOKEN ERROR: $e');
+    }
+  }
+
+  static Future<void> syncFcmTokenToServer(String token) async {
+    try {
+      final prefs = AppPreference.instance;
+      final userId = await prefs.get(key: AppPreference.KEY_USER_ID);
+      if (userId.isEmpty || token.isEmpty) return;
+
+      final api = NetworkApiService();
+      await api.getPostApiResponse(ApiURL.saveFcmToken, {
+        "userId": userId,
+        "fcmToken": token,
+      });
+      debugPrint('NotificationService: FCM token successfully synced to backend for user $userId');
+    } catch (e) {
+      debugPrint("NotificationService: Error syncing FCM token: $e");
     }
   }
 
